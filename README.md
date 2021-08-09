@@ -29,7 +29,11 @@ We decided to put this repo public and make it as generic as possible. (still so
 
 ## Usage
 
-1. Create `.env` file with the following variables in the project root folder:
+1. Install PostgreSQL from the offical site.
+2. Install Zerotier from their offical site.
+3. Clone package: `git clone https://github.com/Sinamics/ztnet.git`
+4. `cd ztnet && npm install && npm install -g concurrently nodemon ts-node typescript`
+5. Create `.env` file with the following variables in the project root folder:
 
 ```
 REACT_APP_SITE_NAME="ztnet"
@@ -75,10 +79,6 @@ REACT_APP_WEB_ADDRESS="https://domain.com"
 
 ```
 
-2. Install PostgreSql from the offical site.
-3. Install Zerotier from their offical site.
-4. Clone package: `git clone https://github.com/Sinamics/ztnet.git`
-5. `cd ztnet && npm install && npm install -g concurrently nodemon ts-node typescript`
 6. `npx prisma generate && npx prisma migrate dev --name init --preview-feature`
 7. `npx prisma db seed --preview-feature`
 8. `npm start`
