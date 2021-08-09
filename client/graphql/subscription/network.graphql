@@ -1,0 +1,3 @@
+# subscription liveNetwork($nwid: String!, $userid: ID) {
+#   liveNetwork(nwid: $nwid, userid: $userid)
+# }

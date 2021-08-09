@@ -1,0 +1,181 @@
+.profile-img {
+  text-align: center;
+  position: relative;
+  width: 170px;
+  height: 170px;
+  margin: 0 auto;
+}
+
+.profile-img .file-add {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  background: #212529b8;
+}
+.profile-img .file-add input {
+  position: absolute;
+  opacity: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.profile-img .file {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  background: #212529b8;
+}
+.profile-img .file input {
+  position: absolute;
+  opacity: 0;
+  right: 0;
+  top: 0;
+  height: 100%;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.profile-img .file-delete {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  right: 0;
+  width: 50%;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  background: #212529b8;
+}
+
+.profile-img .file-add:hover {
+  background: rgb(38, 38, 209);
+}
+.profile-img .file-delete:hover {
+  background: rgb(182, 53, 36);
+}
+
+.profile-head h5 {
+  color: #333;
+}
+.profile-head h6 {
+  color: #0062cc;
+}
+.profile-edit-btn {
+  text-align: center;
+}
+.profile-edit-btn input {
+  border: none;
+  border-radius: 1.5rem;
+  /* width: 70%; */
+  margin: 0px 5px 10px 5px;
+  padding: 1% 5% 1% 5%;
+  /* padding: 2%; */
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+}
+.profile-edit-btn input:hover {
+  color: #0c528f;
+  background-color: #ced8e4;
+}
+.proile-rating {
+  font-size: 12px;
+  color: #818182;
+  margin-top: 5%;
+}
+.proile-rating span {
+  color: #495057;
+  font-size: 15px;
+  font-weight: 600;
+}
+.nav-tabs {
+  border-bottom: none !important;
+}
+.tab-pane .nav-tabs {
+  margin-bottom: 5%;
+}
+.tab-pane .nav-tabs .nav-link {
+  color: #3472b5;
+  font-weight: 500;
+  border: none;
+}
+.tab-pane .nav-tabs .nav-link.active {
+  border: none;
+  border-bottom: 2px solid #0062cc;
+}
+.profile-work p {
+  font-size: 14px;
+  /* color: #818182;
+  font-weight: 600;
+  margin-top: 10%; */
+}
+.profile-work a {
+  text-decoration: none;
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
+}
+.profile-work ul {
+  list-style: none;
+}
+
+/* .profile-tab label {
+  font-weight: 600;
+}
+.personal-nav-items {
+  cursor: pointer;
+}
+.personal-nav-items:hover .personal-nav-items-icon {
+  color: #da4848;
+}
+.personal-confirm-btn {
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
+  height: 27px;
+} */
+
+/* .favorite-container {
+  position: relative;
+  height: 200px;
+  width: 200px;
+  border: 1px solid black;
+  border-radius: 15px;
+  display: flex;
+  cursor: pointer;
+  background: #f7f7f7;
+} */
+/* 
+.favorite-container:hover {
+  background-color: #ececec;
+}
+
+.favorite-container h3 {
+  margin: auto;
+}
+.favorite-delete-icon {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  cursor: pointer;
+}
+.favorite-delete-icon:hover {
+  color: red;
+}
+.MuiBox-root {
+  padding: 0 !important;
+  padding-top: 15px !important;
+} */

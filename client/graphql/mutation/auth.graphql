@@ -1,0 +1,16 @@
+mutation changePassword($newPassword: String!, $password: String!, $token: String!) {
+  changePassword(newPassword: $newPassword, password: $password, token: $token) {
+    user {
+      email
+    }
+    error {
+      message
+    }
+  }
+}
+mutation firstTimeLoginChangePassword($newPassword: String!, $password: String!) {
+  firstTimeLoginChangePassword(newPassword: $newPassword, password: $password) {
+    userid
+    email
+  }
+}

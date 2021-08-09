@@ -1,0 +1,20 @@
+mutation login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    accessToken
+    error {
+      userId
+      mailNotValidated
+      email
+      message
+    }
+    user {
+      userid
+      firstname
+      lastname
+      firstTime
+      email
+      role
+      loggedIn
+    }
+  }
+}

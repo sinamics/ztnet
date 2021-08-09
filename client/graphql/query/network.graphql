@@ -1,0 +1,71 @@
+query ztnetworks {
+  allNetworks
+}
+
+query networkDetails($nwid: ID!) {
+  networkDetails(nwid: $nwid) {
+    network {
+      name
+      nwid
+      private
+      cidr
+      ipAssignmentPools {
+        ipRangeEnd
+        ipRangeStart
+      }
+      routes {
+        target
+      }
+    }
+    members {
+      nodeid
+      id
+      name
+      ip
+      lastseen
+      online
+      address
+      authorized
+      creationTime
+      ipAssignments
+      noAutoAssignIps
+      nwid
+      peers {
+        address
+        isBonded
+        latency
+        role
+        version
+        versionMajor
+        versionMinor
+        versionRev
+        paths {
+          active
+          address
+          expired
+          lastReceive
+          lastSend
+          preferred
+          trustedPathId
+        }
+      }
+    }
+    zombieMembers {
+      nodeid
+      id
+      name
+      ip
+      lastseen
+      online
+      address
+      authorized
+      creationTime
+      ipAssignments
+      noAutoAssignIps
+      nwid
+    }
+    error {
+      message
+    }
+  }
+}

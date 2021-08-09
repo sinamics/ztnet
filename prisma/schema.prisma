@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CONNECTION_STRING")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+model users {
+  userid              Int       @id @default(autoincrement())
+  firstname           String?
+  lastname            String?
+  role                Role      @default(USER)
+  licenseKey          String?   @default("")
+  email               String    @unique
+  hash                String?
+  tempPassword        String?
+  lastlogin           String?
+  firstTime           Boolean   @default(true)
+  network             network[]
+  licenseStatus       String?   @default("")
+  orderStatus         String?   @default("")
+  expirationDate      String    @default("")
+  orderId             Int       @default(0)
+  max_instance_number String    @default("")
+  product_id          Int?      @default(0)
+}
+
+model network {
+  nwid            String            @id
+  nwname          String
+  nw_userid       users             @relation(fields: [authorId], references: [userid])
+  authorId        Int
+  network_members network_members[]
+}
+
+model network_members {
+  nodeid               Int       @id @default(autoincrement())
+  id                   String
+  nwid_ref             network   @relation(fields: [nwid], references: [nwid])
+  nwid                 String
+  lastseen             DateTime?
+  online               Boolean?  @default(false)
+  deleted              Boolean?  @default(false)
+  name                 String?
+  ip                   String[]
+  activeBridge         Boolean   @default(false)
+  address              String?   @default("")
+  authorized           Boolean   @default(false)
+  capabilities         String?
+  creationTime         DateTime?
+  identity             String?
+  lastAuthorizedTime   Int?
+  lastDeauthorizedTime Int?
+  objtype              String?
+  revision             Int?
+  tags                 String?
+  vRev                 Int?
+  ipAssignments        String?
+  noAutoAssignIps      Boolean?  @default(false)
+}
+
+model settings {
+  id                    Int     @id @default(autoincrement())
+  enableRegistration    Boolean @default(true)
+  firstUserRegistration Boolean @default(true)
+}
+
+// To map your data model to the database schema, you need to use the prisma migrate CLI commands:
+// npx prisma migrate dev --name init --preview-feature
+
+// Deploy
+// npx prisma migrate deploy --preview-feature
+
+// Issues with migration
+// npx prisma migrate resolve --rolled-back 20210112134813_init --preview-feature
+
+// generate local draft
+// npx prisma migrate dev --create-only --preview-feature
+
+// Update postgres from cmd line
+// su auvnet
+// UPDATE users SET role = 'ADMIN' WHERE email = 'bernt.christian.egeland@gmail.com';
+// INSERT INTO settings VALUES(1, false);
+// SELECT * FROM settings;
+
+// ----------- Deploy proccess --------------
+// git pull
+// npm run prisma-gen
+// npx prisma migrate deploy --preview-feature
+// pm2 restart ztnet

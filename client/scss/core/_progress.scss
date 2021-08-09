@@ -1,0 +1,67 @@
+.progress-xs {
+  height: 4px;
+}
+
+.progress-sm {
+  height: 8px;
+}
+
+// White progress bar
+.progress-white {
+  background-color: rgba(255,255,255,.2) !important;
+  .progress-bar {
+    background-color: #fff;
+  }
+}
+
+* { box-sizing: border-box; }
+
+$signal-strength-bar-height: 19px;
+$signal-strength-bar-width: 39px;
+
+.sizing-box {
+  height: $signal-strength-bar-height;
+  width: $signal-strength-bar-width;
+}
+
+.signal-bars {
+  display: inline-block;
+}
+
+.signal-bars .bar {
+  width: 14%;
+  margin-left: 4%;
+  min-height: 20%;
+  display: inline-block;
+}
+.signal-bars .bar.first-bar  { height: 25%; }
+.signal-bars .bar.second-bar { height: 50%; }
+.signal-bars .bar.third-bar  { height: 75%; }
+.signal-bars .bar.fourth-bar { height: 100%; }
+.signal-bars .bar.fifth-bar  { height: 125%; }
+
+.good .bar {
+  background-color: #16a085;
+  border: thin solid darken(#16a085, 7%);
+}
+.bad .bar {
+  background-color: #e74c3c;
+  border: thin solid darken(#e74c3c, 20%);
+}
+.ok .bar {
+  background-color: #f1c40f;
+  border: thin solid darken(#f1c40f, 7%);
+}
+
+.none .bar {
+  background-color: #fafafa;
+  border: thin solid darken(#fafafa, 7%);
+}
+
+.four-bars .bar.fifth-bar,
+.three-bars .bar.fifth-bar,
+.three-bars .bar.fourth-bar,
+.one-bar .bar:not(.first-bar),
+.two-bars .bar:not(.first-bar):not(.second-bar) {       background-color: #fafafa;
+  border: thin solid #f3f3f3;
+}

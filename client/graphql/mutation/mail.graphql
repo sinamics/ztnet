@@ -1,0 +1,7 @@
+mutation mailActivationLink($userId: ID!) {
+  sendMailLink(userId: $userId)
+}
+
+mutation resendMailActivation($userId: ID!) {
+  sendMailLink(userId: $userId)
+}

@@ -1,0 +1,20 @@
+.logo {
+  /* float: left; */
+  /* margin: 0 0 0 100px; */
+  color: rgba(255, 255, 255, 0.801);
+  /* font-weight: bold; */
+  font-family: var(--header-font);
+}
+.logo a {
+  font-size: 40px;
+  letter-spacing: 4px;
+  color: inherit;
+}
+.logo small {
+  display: block;
+  line-height: 0;
+  position: relative;
+  bottom: 7px;
+  letter-spacing: 0.25em;
+  left: 3px;
+}

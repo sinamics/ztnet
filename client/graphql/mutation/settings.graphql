@@ -1,0 +1,6 @@
+mutation updateSettings($data: updateSettingsInput) {
+  updateSettings(data: $data) {
+    id
+    enableRegistration
+  }
+}

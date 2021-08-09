@@ -1,0 +1,11 @@
+mutation updateUser($userid: ID!, $user: User!) {
+  updateUser(userid: $userid, user: $user) {
+    userid
+    role
+    licenseStatus
+  }
+}
+
+mutation removeUser($userid: ID!) {
+  removeUser(userid: $userid)
+}

@@ -1,0 +1,76 @@
+# This is a basic workflow to help you get started with Actions
+
+#  ##########################################################
+#      Add Swap File to DO!!  Important
+#      https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-16-04
+#
+#############################################################
+name: DIGTAL OCEAN
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  maintenance:
+    runs-on: self-hosted
+    steps:
+      - name: Set Maintenance On
+        run: mv /home/uavnet/maintenance-page/disabled_index.html /home/uavnet/maintenance-page/index.html
+  # This workflow contains a single job called "build"
+  prepear:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+    needs: maintenance
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          clean: false
+      - name: Enviorment
+        run: |
+          touch .env
+          echo REACT_APP_SITE_NAME="UAVnet" >> .env
+          echo REACT_APP_WEB_ADDRESS="https://uavnet.uavmatrix.com" >> .env
+          echo SERVER_PORT="4000" >> .env
+          echo ACCESS_TOKEN_SECRET="${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env
+          echo REFRESH_TOKEN_SECRET="${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
+          echo REFRESH_TOKEN_LIFE="${{ secrets.REFRESH_TOKEN_LIFE }}" >> .env
+          echo ACCESS_TOKEN_LIFE="${{ secrets.ACCESS_TOKEN_LIFE }}" >> .env
+          echo JWT_CLOCKDIFFRENCE_ALLOWED="${{ secrets.JWT_CLOCKDIFFRENCE_ALLOWED }}" >> .env
+          echo POSTGRES_USER="${{ secrets.POSTGRES_USER }}" >> .env
+          echo POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo POSTGRES_PORT="5432" >> .env
+          echo POSTGRES_DB="uavnet" >> .env
+          echo CONNECTION_STRING="postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/uavnet?schema=public" >> .env
+
+      - name: install dependencies
+        run: npm install
+
+      - name: Install global
+        run: npm i -g ts-node typescript
+
+  deploy:
+    runs-on: self-hosted
+    needs: prepear
+    steps:
+      - name: Build Application
+        run: npm run build
+
+      - name: Restart Server
+        run: pm2 restart ecosystem.config.js
+
+      - name: Sleep 10sec
+        run: sleep 10s
+
+  finally:
+    runs-on: self-hosted
+    needs: deploy
+    steps:
+      - name: Set Maintenance On
+        run: mv /home/uavnet/maintenance-page/index.html /home/uavnet/maintenance-page/disabled_index.html

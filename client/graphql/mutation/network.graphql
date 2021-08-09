@@ -1,0 +1,83 @@
+mutation createNetwork {
+  createNetwork {
+    network {
+      name
+      nwid
+    }
+  }
+}
+
+mutation deleteNetwork($nwid: ID!) {
+  deleteNetwork(nwid: $nwid)
+}
+
+mutation updateNetwork($nwid: ID!, $data: JSONObject) {
+  updateNetwork(nwid: $nwid, data: $data) {
+    network {
+      name
+      nwid
+      private
+      ipAssignmentPools {
+        ipRangeEnd
+        ipRangeStart
+      }
+      routes {
+        target
+      }
+    }
+    error {
+      message
+    }
+  }
+}
+
+mutation memberUpdate($nwid: ID!, $memberId: String!, $data: JSONObject) {
+  memberUpdate(nwid: $nwid, memberId: $memberId, data: $data) {
+    member {
+      nodeid
+      id
+      address
+      authorized
+      creationTime
+      ip
+      ipAssignments
+      noAutoAssignIps
+      nwid
+    }
+    error {
+      message
+    }
+  }
+}
+mutation memberUpdateDatabaseOnly($nwid: ID!, $nodeid: ID!, $data: JSONObject) {
+  memberUpdateDatabaseOnly(nwid: $nwid, nodeid: $nodeid, data: $data) {
+    member {
+      nodeid
+      id
+      name
+    }
+    error {
+      message
+    }
+  }
+}
+
+mutation removeMember($nwid: ID!, $memberId: String!) {
+  removeMember(nwid: $nwid, memberId: $memberId)
+}
+
+mutation addMember($nwid: ID!, $memberId: ID!) {
+  addMember(nwid: $nwid, memberId: $memberId) {
+    member {
+      nodeid
+      id
+      address
+      authorized
+      creationTime
+      ip
+      ipAssignments
+      noAutoAssignIps
+      nwid
+    }
+  }
+}

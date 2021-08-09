@@ -1,0 +1,31 @@
+query admin {
+  admin {
+    userid
+    firstname
+    lastname
+    email
+    role
+    # payment
+  }
+}
+query getUsers {
+  getUsers {
+    userid
+    firstname
+    lastname
+    email
+    role
+    licenseKey
+    email
+    lastlogin
+    licenseStatus
+    orderStatus
+    orderId
+    max_instance_number
+    product_id
+  }
+}
+
+query controllerStats {
+  controllerStats
+}
