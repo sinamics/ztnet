@@ -18,12 +18,12 @@ We decided to put this repo public and make it as generic as possible. (still so
 - React & Typescript
 - React Lazy Loading with Suspense
 - Semantic-Ui React (https://react.semantic-ui.com/)
-- Express Server (port 4000)
+- Nodejs Express Server
 - type-GraphQL Entry Point (/graphql)
 - GraphQL-code-generator
 - GraphQL Playground Page (http://localhost:4000/graphql)
 - GraphQL Decorators for hasRole (@hasRole(roles: [USER, ...]))
-- PostgrSQL database.
+- PostgreSQL database.
 - Prisma
 - JasonWebToken (JWT) accessToken / refreshToken cookie for authorization.
 
