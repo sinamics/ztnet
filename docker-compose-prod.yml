@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  postgres:
+    env_file: .env
+    image: postgres:latest
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - .:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h ${POSTGRES_HOST} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - local_net
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    volumes:
+      - static:/usr/share/nginx/html
+    ports:
+      - 80:80
+    networks:
+      - local_net
+    container_name: nginx
+    depends_on:
+      - api
+
+  api:
+    env_file: .env
+    user: node
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./server/:/app
+    networks:
+      - local_net
+    container_name: api
+    command: bash -c 'while !</dev/tcp/postgres/5432; do echo "sleep" && sleep 1; done; ./zt_install.sh && npm run start'
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    devices:
+      - /dev/net/tun
+
+  client:
+    env_file: .env
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+      - static:/app/build
+    networks:
+      - local_net
+    container_name: client
+
+networks:
+  local_net:
+    driver: bridge
+volumes:
+  static:
+  pgadmin-data:
+  postgres-data:

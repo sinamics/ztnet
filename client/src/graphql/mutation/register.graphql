@@ -1,0 +1,30 @@
+mutation register(
+  $lastname: String!
+  $firstname: String!
+  $email: String!
+  $password: String!
+  $orderId: Int
+  $licenseStatus: String
+  $licenseKey: String
+  $orderStatus: String
+) {
+  register(
+    lastname: $lastname
+    firstname: $firstname
+    email: $email
+    password: $password
+    orderId: $orderId
+    licenseStatus: $licenseStatus
+    licenseKey: $licenseKey
+    orderStatus: $orderStatus
+  ) {
+    error {
+      message
+    }
+    user {
+      userid
+      firstname
+      lastname
+    }
+  }
+}

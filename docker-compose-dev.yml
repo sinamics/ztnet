@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  postgres:
+    env_file: .env
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - .:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h ${POSTGRES_HOST} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nginx_network
+
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - 3000:80
+    networks:
+      - nginx_network
+    container_name: nginx
+    depends_on:
+      - api
+      - client
+
+  api:
+    env_file: .env
+    user: node
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./server/:/app
+    networks:
+      - nginx_network
+    container_name: api
+    command: bash -c 'while !</dev/tcp/postgres/5432; do echo "sleep" && sleep 1; done; ./zt_install.sh && npm run server'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    devices:
+      - /dev/net/tun
+
+  client:
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    networks:
+      - nginx_network
+    container_name: client
+
+networks:
+  nginx_network:
+    driver: bridge
+volumes:
+  pgadmin-data:
+  postgres-data:

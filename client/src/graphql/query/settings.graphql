@@ -1,0 +1,6 @@
+query getSettings {
+  getSettings {
+    id
+    enableRegistration
+  }
+}

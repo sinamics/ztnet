@@ -1,0 +1,9 @@
+// Temp fix for reactstrap
+.app-header {
+  .navbar-nav {
+    .dropdown-menu-right {
+      right: auto;
+      z-index: 10000;
+    }
+  }
+}

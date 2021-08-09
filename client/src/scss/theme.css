@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
+html {
+  --primaryFont: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  /* --primaryFont: 'Poppins', sans-serif; */
+
+  --primaryTheme: #fff;
+
+  --primaryBg: #fff;
+
+  --primaryText: #212121;
+
+  --primaryHover: #596574;
+
+  --primaryMain: #eff3f8;
+
+  --primarySiderbar: #1f2c3c;
+
+  --primaryCardHeader: #f8f9fa;
+
+  --secondaryText: #7b7b7b;
+
+  --primaryButtonText: #fff;
+
+  --primaryBorderBg: #efefef;
+
+  --activeSelectionBg: rgba(162, 162, 162, 0.1);
+
+  --primaryShadowBg: rgba(21, 23, 27, 0.856);
+
+  --primaryShadowBg: rgba(21, 23, 27, 0.856);
+
+  /* --primaryLogo: rgba(0, 0, 0, 0.18); */
+}
+html[data-theme='dark'] {
+  --primaryTheme: #383838;
+  --primaryBg: #0d0d0e;
+  --primaryMain: #1a1a1d;
+  --primarySiderbar: #191919;
+  --primaryCardHeader: #383838;
+  --primaryText: rgba(194, 194, 194, 0.897);
+  --primaryHover: #545454;
+  --secondaryText: rgba(54, 55, 124, 0.794);
+  --primaryButtonText: #fff;
+  --primaryBorderBg: #292929;
+  --activeSelectionBg: rgba(0, 0, 0, 0.18);
+  --primaryShadowBg: rgba(8, 8, 8, 0.7);
+  /* --primaryLogo: rgba(0, 0, 0, 0.18); */
+}
+
+body {
+  font-family: var(--primaryFont);
+  color: var(--primaryText);
+  background-color: var(--primaryBg);
+  font-size: 15px;
+}
+
+th,
+tr {
+  color: var(--primaryText);
+}
+
+legend {
+  width: auto !important;
+}
+
+.MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label {
+  background-color: inherit !important;
+}
+.MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label:hover {
+  background-color: rgba(63, 81, 181, 0.08) !important;
+}
+
+.MuiStepLabel-label.MuiStepLabel-completed {
+  color: var(--primaryText) !important;
+}
+.MuiInputBase-root input {
+  color: var(--primaryText);
+}
+.MuiFormControl-root label {
+  color: var(--secondaryText);
+}
+
+.table-darkmode tbody tr td {
+  color: var(--primaryText);
+}
+.app-header {
+  background-color: var(--primaryTheme) !important;
+}
+.card-header {
+  background-color: var(--primaryCardHeader);
+}
+.app-footer {
+  background-color: var(--primaryTheme);
+}
+.navbar-brand {
+  background-color: var(--primaryTheme) !important;
+}
+.breadcrumb {
+  background-color: var(--primaryTheme);
+}
+.card {
+  background-color: var(--primaryBg);
+}
+.main {
+  background-color: var(--primaryMain);
+}
+/* react select theam */
+.Select-value {
+  background-color: var(--primaryTheme) !important;
+}
+.Select-value-label,
+.react-select__single-value,
+.react-select__placeholder {
+  color: var(--primaryText) !important;
+}
+.react-select__value-container {
+  background-color: var(--primaryTheme) !important;
+}
+.react-select__option {
+  background-color: var(--primaryTheme) !important;
+}
+.react-select__option:hover {
+  background-color: var(--primaryHover) !important;
+}
+.react-select__control {
+  background-color: var(--primaryTheme) !important;
+}
+.react-select__menu {
+  z-index: 10 !important;
+  background-color: var(--primaryTheme) !important;
+}
+
+.form-control {
+  background-color: var(--primaryTheme) !important;
+  color: var(--primaryText) !important;
+}
+/* .nav {
+  background-color: var(--primarySiderbar);
+} */
+.aplication-newversion-notification {
+  background-color: var(--primaryBorderBg) !important;
+}

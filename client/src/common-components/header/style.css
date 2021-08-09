@@ -1,0 +1,9 @@
+.dropdown-item i {
+  color: rgb(138, 141, 145) !important;
+}
+.animationTextContainer {
+  overflow: hidden;
+  width: 70%;
+  /* position: relative;
+  width: 100%; */
+}

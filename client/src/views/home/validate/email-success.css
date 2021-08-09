@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins");
+
+.body-box {
+  width: 250px;
+  height: 250px;
+  background-color: #323e44;
+  border-radius: 10px;
+}
+
+.header-box {
+  width: 250px;
+  height: 40px;
+  background-color: #27a54b;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.exit-button {
+  color: white;
+  float: right;
+  margin-right: 10px;
+  margin-top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.content-box {
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+/*Flexbox justify-content: space-between isn't working in JsFiddle This is the fix*/
+.content-box > * {
+  margin-top: 30px;
+}
+
+.content-icon {
+  font-size: 75px;
+  color: #27a54b;
+}
+
+.content-text {
+  font-family: "Poppins", sans-serif;
+  padding: 5px;
+}
