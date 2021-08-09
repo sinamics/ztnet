@@ -46,8 +46,22 @@ const Dashboard: React.FC<any> = (): JSX.Element => {
             <Step.Group size='big' widths={3} ordered items={steps} />
           </Grid.Column>
         </Grid>
-        <Row className='mt-3 mb-3'>
-          <Col md='12'>{/* col 2 */}</Col>
+        <Row className='mt-3 mb-3 text-center'>
+          <Col md='12'>
+            <p>
+              Checkout our tutorial using UAVnet
+              <br />
+            </p>
+            <iframe
+              width='560'
+              height='315'
+              src='https://www.youtube.com/embed/mcJ2LyNYyzE'
+              title='YouTube video player'
+              frameBorder='0'
+              allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+              allowFullScreen
+            ></iframe>
+          </Col>
         </Row>
       </div>
     </Container>
