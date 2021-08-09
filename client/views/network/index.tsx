@@ -23,7 +23,6 @@ const Network: React.FC<any> = ({ history }): JSX.Element => {
   if (error) return <div className='text-center text-danger'>{error.message}</div>;
 
   const { allNetworks }: any = data;
-
   return (
     <Container>
       <div>

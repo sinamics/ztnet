@@ -202,6 +202,19 @@ const networkResolvers = {
       if (data.changeCidr) {
         data = IP.randomIPv4(data.changeCidr);
       }
+
+      // update new network name TODO : make more generic
+      if (data.hasOwnProperty('name')) {
+        await NetworkService.network.update({
+          where: {
+            nwid: nwid,
+          },
+          data: {
+            nwname: data.name,
+          },
+        });
+      }
+
       // Update ZT network
       return await zt.network_update(nwid, data).catch((err: any) => new ApolloError(err));
     },
