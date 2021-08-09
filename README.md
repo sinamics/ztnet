@@ -91,7 +91,7 @@ REACT_APP_WEB_ADDRESS="https://domain.com"
 ## Images
 
 Dashboard
-![dashboard](https://i.ibb.co/47XSvNx/dashboard.jpg)
+![dashboard](https://i.ibb.co/G08MYPj/dashboard.jpg)
 
 Networks
 ![networks](https://i.ibb.co/mTJwrsR/Network.png)
