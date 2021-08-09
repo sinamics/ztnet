@@ -10,13 +10,11 @@ We decided to put this repo public and make it as generic as possible. (still so
 ## Features
 
 - User Registration
-- Admin panel, set roles and remove members and networks.
-- Manage Network
+- Admin panel, set roles and add / remove members / Network admin.
 - Add / Remove Members from Network
 
 ## Built with
 
-- Docker DEV Container (easy setup)
 - React & Typescript
 - React Lazy Loading with Suspense
 - Semantic-Ui React (https://react.semantic-ui.com/)
@@ -29,22 +27,21 @@ We decided to put this repo public and make it as generic as possible. (still so
 - Prisma
 - JasonWebToken (JWT) accessToken / refreshToken cookie for authorization.
 
-## Developers
+## Usage
 
-1. Clone package: `git clone https://github.com/Sinamics/ztnet.git`
-2. Create `.env` file with the following variables in the project root folder:
+1. Create `.env` file with the following variables in the project root folder:
 
 ```
-SITE_NAME="ztnet"
+REACT_APP_SITE_NAME="ztnet"
 SERVER_PORT=4000
-ACCESS_TOKEN_SECRET=random_token
-REFRESH_TOKEN_SECRET=random_token
+ACCESS_TOKEN_SECRET=(random_token)
+REFRESH_TOKEN_SECRET=(random_token)
 REFRESH_TOKEN_LIFE="7 days"
 ACCESS_TOKEN_LIFE="5s"
 JWT_CLOCKDIFFRENCE_ALLOWED=5
 
 POSTGRES_USER="ztnet"
-POSTGRES_PASSWORD=random_token
+POSTGRES_PASSWORD=(random_password)
 POSTGRES_PORT=5432
 POSTGRES_DB="ztnet"
 CONNECTION_STRING="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
@@ -55,38 +52,40 @@ EMAIL_PASSWORD="password"
 EMAIL_ACTIVATIONLINK="https://domain.com/validation/email"
 EMAIL_RESETPASSWORDLINK="https://domain.com/resetpassword"
 
-REACT_APP_WEB_ADDRESS="https://domain.com"
-
-#random 32 character token (ONLY FOR DEV)
-#NOTE - For production, use the token in "/var/lib/zerotier-one/authtoken.secret"
-ZT_SECRET="EouV2KcEVozwx4zrofVoDsZ44lOCAp66"
+WEB_ADDRESS="https://domain.com"
 
 #When creating a user, a new network is automatically added. Set the name below.
 ZT_DEFAULT_NETWORKNAME="ztnetwork"
 
+#(OPTIONAL)
+#ztnet will get the token from zerotier automatically, but you can override the token if you uncomment the zt_secret below.
+#32 character token.
+#ZT_SECRET="zerotier_auth_token"
+
+################################
+#                              #
+#        PRODUCTION            #
+################################
+
+REACT_APP_WEB_ADDRESS="https://domain.com"
+
+#(optional) will override the ZT_SECRET token
+#ZT_SECRET="zerotier_token"
+
+
 ```
 
-3. Install vscode remote extension (https://github.com/Microsoft/vscode-remote-release)
-4. Ctrl + Shift + p => select open in container.
-5. Add new shell and type "npm start"
-
-### Old fasion way
-
-1. Install PostgreSql from the offical site.
-2. Install Zerotier from their offical site. If you are on windows, you need to set the ZT_SECRET enviroment in .env
-3. Clone package: `git clone https://github.com/Sinamics/ztnet.git`
-4. Create `.env` file with the variables (above) in the project root folder:
-5. `npm install -g concurrently nodemon ts-node typescript`
-6. `npm install`
-7. `npx prisma generate`
-8. `npx prisma migrate dev --name init --preview-feature`
-9. `npx prisma db seed --preview-feature`
-10. `npm start`
-
-If you make any changes to the graphql files, you need to generate new sources using the `npm run codegen` command.
+2. Install PostgreSql from the offical site.
+3. Install Zerotier from their offical site.
+4. Clone package: `git clone https://github.com/Sinamics/ztnet.git`
+5. `cd ztnet && npm install && npm install -g concurrently nodemon ts-node typescript`
+6. `npx prisma generate && npx prisma migrate dev --name init --preview-feature`
+7. `npx prisma db seed --preview-feature`
+8. `npm start`
 
 ## Notes
 
+- If you make any changes to the graphql files, you need to generate new sources using the `npm run codegen` command.
 - First user that register will automatically get Admin role.
 
 ## Images
