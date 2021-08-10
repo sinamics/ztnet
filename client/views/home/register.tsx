@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 //   history: any;
 // }
 
-const SignUp: React.FC<RouteComponentProps> = ({history}) => {
+const SignUp: React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles();
   const [user, setUser] = useState<any>({
     firstname: '',
@@ -107,12 +107,11 @@ const SignUp: React.FC<RouteComponentProps> = ({history}) => {
     if (user.firstname && user.lastname && user.email && user.password && user.read) {
       register({ variables: { ...user } })
         .then(() => {
-
           // Instead of let user login after register, we will do it for him
           login({
             variables: { ...user },
             // Fetch user and cache data
-            update: (store:any, { data }:any) => {
+            update: (store: any, { data }: any) => {
               if (!data || !data.login) {
                 return null;
               }
@@ -123,11 +122,11 @@ const SignUp: React.FC<RouteComponentProps> = ({history}) => {
                   me: data.login.user,
                 },
               });
-              
+
               return null;
             },
           })
-            .then(({ errors, data }:any) => {
+            .then(({ errors, data }: any) => {
               if (errors) return history.push('/login');
               if (data && data.login) {
                 setAccessToken(data.login.accessToken).then(() => {
@@ -224,7 +223,15 @@ const SignUp: React.FC<RouteComponentProps> = ({history}) => {
                 />
               </Grid>
             </Grid>
-            <Button disabled={registerLoading} type='submit' fullWidth variant='contained' color='primary' className={classes.submit} onClick={handleSubmit}>
+            <Button
+              disabled={registerLoading}
+              type='submit'
+              fullWidth
+              variant='contained'
+              color='primary'
+              className={classes.submit}
+              onClick={handleSubmit}
+            >
               Register
             </Button>
             {registerLoading && (

@@ -10,7 +10,7 @@ import {
   useRemoveMemberMutation,
   useMemberUpdateDatabaseOnlyMutation,
 } from 'client/graphql/generated/dist';
-import { Button } from '@material-ui/core';
+import { Button } from 'semantic-ui-react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 //@ts-ignore
 import cellEditFactory from 'react-bootstrap-table2-editor';
@@ -106,7 +106,7 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
         return map(ipAssignments, (ip, key: number) => {
           const block = new Netmask(cidr);
           return (
-            <div key={key} className='d-flex justify-content-center align-items-center'>
+            <div key={ip} className='d-flex justify-content-center align-items-center'>
               <div className='d-flex align-self-end'>
                 {true ? (
                   <CopyToClipboard text={ip} onCopy={() => copyClipboard(ip)}>
@@ -157,7 +157,8 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       sort: true,
       isDummyField: true,
       formatter: (_: any, row: any) => {
-        if (!row.peers || (row.ipAssignments && row.ipAssignments?.length === 0)) return <div className='text-danger'>unknown</div>;
+        console.log(row);
+        if (!row.peers) return <div className='text-danger'>unknown</div>;
         if (row.peers.versionMajor !== -1) {
           if (row.peers?.latency !== -1) {
             return <span className='text-success'>Online (v{row.peers?.version})</span>;
@@ -184,9 +185,9 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       formatter: (_cell: any, row: any) => {
         return (
           <Button
-            size='small'
-            variant='contained'
-            color='secondary'
+            size='tiny'
+            basic
+            color='red'
             onClick={() =>
               removeMember({
                 variables: { nwid: row.nwid, memberId: row.id },

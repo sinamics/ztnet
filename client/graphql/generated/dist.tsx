@@ -337,11 +337,13 @@ export type UpdateSettings = {
   __typename?: 'updateSettings';
   id?: Maybe<Scalars['ID']>;
   enableRegistration?: Maybe<Scalars['Boolean']>;
+  firstUserRegistration?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateSettingsInput = {
   id?: Maybe<Scalars['ID']>;
   enableRegistration?: Maybe<Scalars['Boolean']>;
+  firstUserRegistration?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -753,7 +755,7 @@ export type NetworkDetailsQuery = (
       )>>> }
     )>, members?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'lastseen' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
       & { peers?: Maybe<(
         { __typename?: 'Peers' }
         & Pick<Peers, 'address' | 'isBonded' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
@@ -764,7 +766,7 @@ export type NetworkDetailsQuery = (
       )> }
     )>>>, zombieMembers?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'lastseen' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
     )>>>, error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'message'>
@@ -779,7 +781,7 @@ export type GetSettingsQuery = (
   { __typename?: 'Query' }
   & { getSettings?: Maybe<(
     { __typename?: 'updateSettings' }
-    & Pick<UpdateSettings, 'id' | 'enableRegistration'>
+    & Pick<UpdateSettings, 'id' | 'enableRegistration' | 'firstUserRegistration'>
   )> }
 );
 
@@ -1693,7 +1695,6 @@ export const NetworkDetailsDocument = gql`
       id
       name
       ip
-      lastseen
       online
       address
       authorized
@@ -1726,7 +1727,6 @@ export const NetworkDetailsDocument = gql`
       id
       name
       ip
-      lastseen
       online
       address
       authorized
@@ -1772,6 +1772,7 @@ export const GetSettingsDocument = gql`
   getSettings {
     id
     enableRegistration
+    firstUserRegistration
   }
 }
     `;

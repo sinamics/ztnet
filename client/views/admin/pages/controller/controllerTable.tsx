@@ -47,7 +47,6 @@ export const ControllerTable: any = ({ tableData = { network: {} }, history }: a
       history.push(`/network/${network.nwid}`);
     },
   };
-  console.log(tableData);
   return (
     <ToolkitProvider keyField='network.id' columns={columns} data={userTableDataFromDatabase} search>
       {(props) => (

@@ -142,15 +142,14 @@ const ViewNetwork = ({ match }: any) => {
                   <Input
                     onKeyPress={(e: any) => {
                       if (e.key === 'Enter') {
-                        updateNetworkHandler({ name: handler.networkName });
+                        updateNetworkHandler({ name: handler.networkName || network.name });
                       }
                     }}
                     onChange={handleChange}
                     name='networkName'
                     size='mini'
                     placeholder='network name'
-                    value={handler.networkName || network.name}
-                    // defaultValue={network.name}
+                    defaultValue={network.name}
                   />
                 ) : (
                   <span style={{ cursor: 'pointer' }} onClick={() => setState({ editName: true })} className='ml-1'>
@@ -199,16 +198,16 @@ const ViewNetwork = ({ match }: any) => {
               IPv4 Assignments <small>(Do not change unless you have to)</small>
             </div>
             <div style={{ cursor: 'pointer', fontSize: '24px', color: '#636363' }}>
-              {map(network.cidr, (cidr, idx) => {
+              {map(network.cidr, (cidr) => {
                 return cidr === network?.routes[0]?.target ? (
-                  <span style={{ fontWeight: 'unset' }} key={idx} className='ml-1 mr-1 badge bg-success text-dark'>
+                  <span style={{ fontWeight: 'unset' }} key={cidr} className='ml-1 mr-1 badge bg-success text-dark'>
                     {cidr}
                   </span>
                 ) : (
                   <span
                     style={{ border: '1px dotted #a5a2a2', fontWeight: 'unset' }}
                     onClick={() => updateNetworkHandler({ changeCidr: cidr })}
-                    key={idx}
+                    key={cidr}
                     className='ml-1 mr-1 badge bg-light text-dark'
                   >
                     {cidr}

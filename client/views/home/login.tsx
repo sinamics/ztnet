@@ -11,7 +11,7 @@ import Container from '@material-ui/core/Container';
 import { Link, withRouter } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { setAccessToken } from '../../utils/accessToken';
-import { MeDocument, MeQuery, useLoginMutation } from 'client/graphql/generated/dist';
+import { MeDocument, MeQuery, useGetSettingsQuery, useLoginMutation } from 'client/graphql/generated/dist';
 
 function Copyright() {
   return (
@@ -28,7 +28,6 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   loginWrapper: {
-    // marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -41,17 +40,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     borderRadius: 10,
-
     padding: '10%',
     background: 'white',
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    // width: "100%", // Fix IE 11 issue.
-    // marginTop: theme.spacing(3),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -68,10 +62,9 @@ const LoginPage: React.FC<RouteComponentProps> = ({ history }: LoginProps) => {
   const [user, setUser] = useState({ email: '', password: '' });
 
   const [submitted, setSubmitted] = useState(false);
-  // const [login] = useMutation(LOGIN);
-  const [login, { error: loginError, loading: loginLoading }] = useLoginMutation({ errorPolicy: 'all' });
 
-  // if (data && data.login) setAccessToken(data.login.accessToken);
+  const [login, { error: loginError, loading: loginLoading }] = useLoginMutation({ errorPolicy: 'all' });
+  const { data: { getSettings = {} } = {} } = useGetSettingsQuery();
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -117,7 +110,7 @@ const LoginPage: React.FC<RouteComponentProps> = ({ history }: LoginProps) => {
         .catch((err) => console.log(err));
     }
   };
-
+  const { enableRegistration = false } = getSettings || {};
   return (
     <Container className={classes.loginWrapper} maxWidth='xs'>
       {/* <CssBaseline /> */}
@@ -131,7 +124,7 @@ const LoginPage: React.FC<RouteComponentProps> = ({ history }: LoginProps) => {
         <Typography color='error' component='p' variant='body1'>
           {typeof loginError === 'object' && loginError.message}
         </Typography>
-        <form className={classes.form} noValidate>
+        <form noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField required fullWidth id='email' label='Email Address' name='email' autoComplete='email' onChange={handleChange} />
@@ -178,9 +171,11 @@ const LoginPage: React.FC<RouteComponentProps> = ({ history }: LoginProps) => {
             <Grid item style={{ cursor: 'pointer' }}>
               <Link to='/forgot'>Forgot password?</Link>
             </Grid>
-            <Grid item style={{ cursor: 'pointer' }}>
-              <Link to='/register'>Register</Link>
-            </Grid>
+            {enableRegistration && (
+              <Grid item style={{ cursor: 'pointer' }}>
+                <Link to='/register'>Register</Link>
+              </Grid>
+            )}
           </Grid>
         </form>
         <Box mt={5}>

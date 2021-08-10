@@ -22,7 +22,7 @@ query networkDetails($nwid: ID!) {
       id
       name
       ip
-      lastseen
+      # lastseen
       online
       address
       authorized
@@ -55,7 +55,7 @@ query networkDetails($nwid: ID!) {
       id
       name
       ip
-      lastseen
+      # lastseen
       online
       address
       authorized

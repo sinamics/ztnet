@@ -4,15 +4,15 @@ const settingsTypes = gql`
   type updateSettings {
     id: ID
     enableRegistration: Boolean
+    firstUserRegistration: Boolean
   }
-
   input updateSettingsInput {
     id: ID
     enableRegistration: Boolean
+    firstUserRegistration: Boolean
   }
-
   extend type Query {
-    getSettings: updateSettings @hasRole(roles: [ADMIN])
+    getSettings: updateSettings
   }
   extend type Mutation {
     updateSettings(data: updateSettingsInput): updateSettings @hasRole(roles: [ADMIN])

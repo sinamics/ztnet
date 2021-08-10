@@ -23,7 +23,20 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
       dataField: 'nodeid',
       hidden: true,
     },
-
+    {
+      dataField: 'authorized',
+      text: 'Authorized',
+      align: 'center',
+      headerAlign: 'center',
+      headerStyle: () => {
+        return { width: '10%' };
+      },
+      formatter: (cell: any) => {
+        return cell ? 'Authorized' : 'Not Authorized';
+      },
+      editable: false,
+      sort: true,
+    },
     {
       dataField: 'name',
       text: 'Member name',
@@ -63,8 +76,8 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
       editable: false,
       sort: true,
       isDummyField: true,
-      formatter: (_cell: any, row: any) => {
-        return row.lastseen ? <span className=''>Zombie</span> : <div className='text-danger'>unknown</div>;
+      formatter: (_cell: any) => {
+        return <span>Zombie</span>;
       },
     },
     {
@@ -76,7 +89,7 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
       formatter: (_cell: any, row: any) => {
         return (
           <Button
-            size='small'
+            size='tiny'
             variant='contained'
             color='green'
             onClick={() =>

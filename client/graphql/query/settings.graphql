@@ -2,5 +2,6 @@ query getSettings {
   getSettings {
     id
     enableRegistration
+    firstUserRegistration
   }
 }

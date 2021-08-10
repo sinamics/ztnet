@@ -56,7 +56,6 @@ export const Table: any = ({ tableData = {} }: any) => {
 
       case 'action':
         if (!newValue) return { async: true };
-        // console.log(newValue);
         return newValue;
       default:
         return { async: true };
