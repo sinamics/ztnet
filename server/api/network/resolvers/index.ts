@@ -1,3 +1,5 @@
+import { fetchControllerIntervall } from '../../_utils/zt_listner';
+
 const { ApolloError } = require('apollo-server-express');
 const { isAuthenticated } = require('../../../middleware/authorization/user.is.authenticated');
 const zt = require('../../_utils/zt.ts');
@@ -6,6 +8,17 @@ const IP = require('../../_utils/ipGenerator');
 const Sentencer = require('sentencer');
 const NetworkService = require('../../../db/postgres/prisma');
 const bluebird = require('bluebird');
+
+const withCancel = (asyncIterator: any, onCancel: any) => {
+  const asyncReturn = asyncIterator.return;
+
+  asyncIterator.return = () => {
+    onCancel();
+    return asyncReturn ? asyncReturn.call(asyncIterator) : Promise.resolve({ value: undefined, done: true });
+  };
+
+  return asyncIterator;
+};
 
 const networkResolvers = {
   Query: {
@@ -379,6 +392,20 @@ const networkResolvers = {
         })
         .then((member: any) => ({ member }))
         .catch((err: any) => console.log(err));
+    },
+  },
+  Subscription: {
+    memberInformation: {
+      subscribe: async (_: any, { nwid }: any, { pubsub }: any) => {
+        // await fetchControllerIntervall(pubsub, nwid, false);
+        return withCancel(await pubsub.asyncIterator([nwid]), async () => {
+          await fetchControllerIntervall(pubsub, nwid, true);
+        });
+      },
+      resolve: (payload: any) => {
+        // console.log(payload);
+        return { ...payload };
+      },
     },
   },
 };

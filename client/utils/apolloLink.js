@@ -1,6 +1,8 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, split } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { onError } from 'apollo-link-error';
 import { ApolloLink, Observable } from 'apollo-link';
+import { WebSocketLink } from '@apollo/client/link/ws';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import config from 'config';
@@ -36,6 +38,13 @@ const cache = new InMemoryCache({
 const uploadLink = createUploadLink({
   uri: `${config.apiUrl}/graphQl`,
   credentials: 'include', // include  /  same-origin
+});
+
+const wsLink = new WebSocketLink({
+  uri: `${config.wsUrl}/subscription`,
+  options: {
+    reconnect: true,
+  },
 });
 
 const requestLink = new ApolloLink(
@@ -108,14 +117,14 @@ const TokenRefresh = new TokenRefreshLink({
 // * A function that's called for each operation to execute
 // * The Link to use for an operation if the function returns a "truthy" value
 // * The Link to use for an operation if the function returns a "falsy" value
-// const splitLink = split(
-//   ({ query }) => {
-//     const definition = getMainDefinition(query);
-//     return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-//   },
-//   wsLink,
-//   uploadLink
-// );
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+  },
+  wsLink,
+  uploadLink
+);
 
 export const client = new ApolloClient({
   link: ApolloLink.from([
@@ -126,7 +135,7 @@ export const client = new ApolloClient({
     }),
     requestLink,
     // subscribeLink,
-    uploadLink,
+    splitLink,
   ]),
   request: async (operation) => {
     operation.setContext({

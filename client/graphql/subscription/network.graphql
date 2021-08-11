@@ -1,3 +1,36 @@
-# subscription liveNetwork($nwid: String!, $userid: ID) {
-#   liveNetwork(nwid: $nwid, userid: $userid)
-# }
+subscription memberInformation($nwid: String, $userid: ID) {
+  memberInformation(nwid: $nwid, userid: $userid) {
+    members {
+      nodeid
+      id
+      name
+      ip
+      online
+      address
+      authorized
+      creationTime
+      ipAssignments
+      noAutoAssignIps
+      nwid
+      peers {
+        address
+        isBonded
+        latency
+        role
+        version
+        versionMajor
+        versionMinor
+        versionRev
+        paths {
+          active
+          address
+          expired
+          lastReceive
+          lastSend
+          preferred
+          trustedPathId
+        }
+      }
+    }
+  }
+}

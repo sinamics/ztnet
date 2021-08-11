@@ -331,6 +331,13 @@ export type Routes = {
 export type Subscription = {
   __typename?: 'Subscription';
   _empty?: Maybe<Scalars['String']>;
+  memberInformation?: Maybe<NetworkDetailsCallback>;
+};
+
+
+export type SubscriptionMemberInformationArgs = {
+  nwid?: Maybe<Scalars['String']>;
+  userid?: Maybe<Scalars['ID']>;
 };
 
 export type UpdateSettings = {
@@ -794,6 +801,31 @@ export type UsersQuery = (
     { __typename?: 'Users' }
     & Pick<Users, 'userid' | 'firstname' | 'lastname' | 'email' | 'tokenVersion' | 'emailConfirmed' | 'createdDate' | 'lastlogin' | 'role'>
   )>>> }
+);
+
+export type MemberInformationSubscriptionVariables = Exact<{
+  nwid?: Maybe<Scalars['String']>;
+  userid?: Maybe<Scalars['ID']>;
+}>;
+
+
+export type MemberInformationSubscription = (
+  { __typename?: 'Subscription' }
+  & { memberInformation?: Maybe<(
+    { __typename?: 'NetworkDetailsCallback' }
+    & { members?: Maybe<Array<Maybe<(
+      { __typename?: 'Member' }
+      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & { peers?: Maybe<(
+        { __typename?: 'Peers' }
+        & Pick<Peers, 'address' | 'isBonded' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
+        & { paths?: Maybe<Array<Maybe<(
+          { __typename?: 'PeerPaths' }
+          & Pick<PeerPaths, 'active' | 'address' | 'expired' | 'lastReceive' | 'lastSend' | 'preferred' | 'trustedPathId'>
+        )>>> }
+      )> }
+    )>>> }
+  )> }
 );
 
 
@@ -1841,3 +1873,64 @@ export function useUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<User
 export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
 export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>;
 export type UsersQueryResult = Apollo.QueryResult<UsersQuery, UsersQueryVariables>;
+export const MemberInformationDocument = gql`
+    subscription memberInformation($nwid: String, $userid: ID) {
+  memberInformation(nwid: $nwid, userid: $userid) {
+    members {
+      nodeid
+      id
+      name
+      ip
+      online
+      address
+      authorized
+      creationTime
+      ipAssignments
+      noAutoAssignIps
+      nwid
+      peers {
+        address
+        isBonded
+        latency
+        role
+        version
+        versionMajor
+        versionMinor
+        versionRev
+        paths {
+          active
+          address
+          expired
+          lastReceive
+          lastSend
+          preferred
+          trustedPathId
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useMemberInformationSubscription__
+ *
+ * To run a query within a React component, call `useMemberInformationSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useMemberInformationSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMemberInformationSubscription({
+ *   variables: {
+ *      nwid: // value for 'nwid'
+ *      userid: // value for 'userid'
+ *   },
+ * });
+ */
+export function useMemberInformationSubscription(baseOptions?: Apollo.SubscriptionHookOptions<MemberInformationSubscription, MemberInformationSubscriptionVariables>) {
+        return Apollo.useSubscription<MemberInformationSubscription, MemberInformationSubscriptionVariables>(MemberInformationDocument, baseOptions);
+      }
+export type MemberInformationSubscriptionHookResult = ReturnType<typeof useMemberInformationSubscription>;
+export type MemberInformationSubscriptionResult = Apollo.SubscriptionResult<MemberInformationSubscription>;

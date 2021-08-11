@@ -1,7 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Typography } from '@material-ui/core';
 import { Button, Container, Divider, Grid, GridRow, Icon, Input, Label, Message } from 'semantic-ui-react';
-import { NetworkDetailsDocument, useAddMemberMutation, useNetworkDetailsQuery, useUpdateNetworkMutation } from 'client/graphql/generated/dist';
+import {
+  MemberInformationDocument,
+  NetworkDetailsDocument,
+  useAddMemberMutation,
+  useMeQuery,
+  useNetworkDetailsQuery,
+  useUpdateNetworkMutation,
+} from 'client/graphql/generated/dist';
 import MembersTable from './components/memberTable';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
@@ -9,51 +16,6 @@ import PrivacyCard from './components/privacyCard';
 import { LoaderPlaceholder } from 'client/common-components/Loader/Placeholder';
 import { map } from 'lodash';
 import ZombiesTable from './components/zombiesTable';
-
-// const JoinSteps = [
-//   {
-//     key: 'copy',
-//     title: 'Copy the Network ID',
-//     description: 'This is your VPN ID',
-//   },
-//   {
-//     key: 'paste',
-//     title: 'Paste in UAVcast-Pro',
-//     description: 'Paste in Zerotier VPN section',
-//   },
-//   {
-//     key: 'confirm',
-//     completed: true,
-//     title: 'Your Raspberry will show up here!',
-//   },
-// ];
-
-// const StreamSteps = [
-//   {
-//     key: 'JoinGCS',
-//     title: 'Well done!',
-//     description:
-//       'Download Zerotier application for your Pc or Tablet and join this network ID. When a device joins this network it will show up in the list bellow',
-//   },
-//   {
-//     key: 'pasteIP',
-//     title: 'Copy IP',
-//     description:
-//       'Tick the Auth box to allow the device on this network. Copy the IP assigned for the GCS, this is the destination for your telemetry and video',
-//   },
-//   {
-//     key: 'start',
-//     title: 'Paste in UAVcast-Pro',
-//     description:
-//       'Head over to UAVcast-Pro and Navigate to the ground control page and paste in the IP for your Pc / Tablet. Then enable the switch for video and telemetry.',
-//   },
-//   {
-//     key: 'firewall',
-//     title: 'GCS firewall',
-//     description:
-//       'Make sure your GCS pc has port 5600 and 14550 added to the firewall rules. Open Mission Planner or QGC and it will connect automatically.',
-//   },
-// ];
 
 const ViewNetwork = ({ match }: any) => {
   const [state, setState] = useState<any>({ copied: false, editName: false });
@@ -63,10 +25,19 @@ const ViewNetwork = ({ match }: any) => {
 
   const copyNwidIntercalCleanup = useRef<any>({});
 
-  const { data: { networkDetails } = {}, loading: loadingNetwork, error: loadingNetworkError } = useNetworkDetailsQuery({
+  const {
+    data: { networkDetails } = {},
+    loading: loadingNetwork,
+    error: loadingNetworkError,
+    subscribeToMore: memberInformationListner,
+  } = useNetworkDetailsQuery({
     variables: { nwid: match.params.nwid },
     fetchPolicy: 'network-only',
     pollInterval: 15000,
+  });
+
+  const { data: { me = {} } = {} } = useMeQuery({
+    fetchPolicy: 'network-only',
   });
 
   const [addMemberToDatabase] = useAddMemberMutation({
@@ -75,10 +46,29 @@ const ViewNetwork = ({ match }: any) => {
   const [updateNetwork] = useUpdateNetworkMutation();
 
   useEffect(() => {
+    // Listen for application updates and update Cache.
+    const unsubscribe = memberInformationListner({
+      document: MemberInformationDocument,
+      variables: { nwid: match.params.nwid, userid: me?.userid },
+      updateQuery: (prev, { subscriptionData }): any => {
+        console.log(subscriptionData);
+        if (!subscriptionData.data) return prev;
+        //@ts-ignore
+        // const newText = subscriptionData.data?.onApplication;
+
+        // return Object.assign(
+        //   {},
+        //   {
+        //     getApplication: { ...prev.getApplication, ...newText },
+        //   }
+        // );
+      },
+    });
     return () => {
       clearTimeout(copyNwidIntercalCleanup.current);
+      unsubscribe();
     };
-  }, []);
+  }, [memberInformationListner, match, me]);
 
   const copyClipboard = () => {
     setState({ copied: true });
@@ -118,10 +108,6 @@ const ViewNetwork = ({ match }: any) => {
   const { network, members, zombieMembers }: any = networkDetails;
   return (
     <Container>
-      {/* <Dimmer inverted active={loadingNetworkUpdates}>
-        <Loader size='large'>Loading</Loader>
-      </Dimmer> */}
-
       <GridRow className='mt-3 mb-3'>
         <Grid>
           <Grid.Column mobile={16} computer={8}>

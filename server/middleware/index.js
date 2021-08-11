@@ -2,10 +2,8 @@ import { typeDefs } from '../db/graphQL/rootDef';
 import { resolvers } from '../db/graphQL/rootResolvers';
 import { ApolloServer } from 'apollo-server-express';
 import { AuthDirective } from '../db/graphQL/authDirective';
-import fs from 'fs';
-// const pubsub from './pubsub'
+import pubsub from './pubsub';
 
-//.unless({ path: ['/token'] });
 class MiddleWare {
   constructor(app, http) {
     this.app = app;
@@ -16,9 +14,12 @@ class MiddleWare {
       typeDefs,
       resolvers,
       uploads: false,
-      context: async ({ req, res }) => ({ req, res }),
+      context: async ({ req, res }) => ({ req, res, pubsub }),
       schemaDirectives: {
         hasRole: AuthDirective,
+      },
+      subscriptions: {
+        path: '/subscription',
       },
       playground: {
         settings: {

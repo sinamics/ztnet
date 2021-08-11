@@ -87,6 +87,9 @@ const networkTypes = gql`
     removeMember(nwid: ID!, memberId: String!): JSONObject
     addMember(nwid: ID!, memberId: ID!): MemberCallback
   }
+  extend type Subscription {
+    memberInformation(nwid: String, userid: ID): NetworkDetailsCallback
+  }
 `;
 
 module.exports = {
