@@ -157,7 +157,6 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       sort: true,
       isDummyField: true,
       formatter: (_: any, row: any) => {
-        console.log(row);
         if (!row.peers) return <div className='text-danger'>unknown</div>;
         if (row.peers.versionMajor !== -1) {
           if (row.peers?.latency !== -1) {
