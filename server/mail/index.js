@@ -1,5 +1,5 @@
 const MailEngine = require('email-templates');
-const isDev = process.env.NODE_ENV !== 'production';
+// const isDev = process.env.NODE_ENV !== 'production';
 
 class Email {
   constructor() {
@@ -19,7 +19,9 @@ class Email {
           pass: process.env.EMAIL_PASSWORD,
         },
         tls: {
-          secureProtocol: 'TLSv1_method',
+          maxVersion: 'TLSv1.3',
+          minVersion: 'TLSv1.2',
+          // secureProtocol: 'TLSv1_method',
         },
       },
     });

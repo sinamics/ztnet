@@ -124,14 +124,24 @@ function ForGot() {
                     {submitted && !user.email && <div className='help-block text-danger'>email is required!</div>}
                   </>
                 ) : (
-                  <div className='text-center'>
-                    <b>Check your mail</b>
+                  <div className='text-center mb-5'>
+                    <b>Mail sent if address exsist!</b>
+                    <br />
+                    <p>Also check your spam folder.</p>
                   </div>
                 )}
               </Grid>
             </Grid>
             {!user.sent && (
-              <Button disabled={forgotLoading} type='submit' fullWidth variant='contained' color='primary' className={classes.submit} onClick={handleSubmit}>
+              <Button
+                disabled={forgotLoading}
+                type='submit'
+                fullWidth
+                variant='contained'
+                color='primary'
+                className={classes.submit}
+                onClick={handleSubmit}
+              >
                 Send email
               </Button>
             )}

@@ -6,7 +6,7 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import { Button } from '@material-ui/core';
 import DeleteNetworkModal from './deleteModal';
 
-export const NetworksTable = ({ tableData = [], history }: any) => {
+export const NetworksTable = React.memo(({ tableData = [], history }: any) => {
   const [deleteWarning, setDeleteWarning] = useState<any>({ open: false, nwid: '' });
 
   let paginationOptions = {
@@ -84,6 +84,6 @@ export const NetworksTable = ({ tableData = [], history }: any) => {
       </ToolkitProvider>
     </>
   );
-};
+});
 
 export default NetworksTable;

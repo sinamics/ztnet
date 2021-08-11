@@ -112,7 +112,7 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
                   <CopyToClipboard text={ip} onCopy={() => copyClipboard(ip)}>
                     <span style={{ cursor: 'pointer', paddingLeft: 10, color: 'rgb(253 106 1)' }}>
                       <span className={`${state.includes(ip) && 'text-muted'} ${block.contains(ip) && 'text-success'}`}>{`${ip}`}</span>
-                      <span style={{ color: 'black' }}>{row.peers && row.peers.latency !== -1 && ` (${row.peers?.latency}ms)`}</span>
+                      <span>{row.peers && row.peers.latency !== -1 && ` (${row.peers?.latency}ms)`}</span>
                       <FileCopyOutlinedIcon fontSize='inherit' titleAccess='Copy IP address' className='ml-1' />
                     </span>
                   </CopyToClipboard>

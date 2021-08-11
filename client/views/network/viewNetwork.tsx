@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Typography } from '@material-ui/core';
-import { Button, Container, Divider, Grid, GridRow, Icon, Input, Label, Step } from 'semantic-ui-react';
+import { Button, Container, Divider, Grid, GridRow, Icon, Input, Label, Message } from 'semantic-ui-react';
 import { NetworkDetailsDocument, useAddMemberMutation, useNetworkDetailsQuery, useUpdateNetworkMutation } from 'client/graphql/generated/dist';
 import MembersTable from './components/memberTable';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -10,50 +10,50 @@ import { LoaderPlaceholder } from 'client/common-components/Loader/Placeholder';
 import { map } from 'lodash';
 import ZombiesTable from './components/zombiesTable';
 
-const JoinSteps = [
-  {
-    key: 'copy',
-    title: 'Copy the Network ID',
-    description: 'This is your VPN ID',
-  },
-  {
-    key: 'paste',
-    title: 'Paste in UAVcast-Pro',
-    description: 'Paste in Zerotier VPN section',
-  },
-  {
-    key: 'confirm',
-    completed: true,
-    title: 'Your Raspberry will show up here!',
-  },
-];
+// const JoinSteps = [
+//   {
+//     key: 'copy',
+//     title: 'Copy the Network ID',
+//     description: 'This is your VPN ID',
+//   },
+//   {
+//     key: 'paste',
+//     title: 'Paste in UAVcast-Pro',
+//     description: 'Paste in Zerotier VPN section',
+//   },
+//   {
+//     key: 'confirm',
+//     completed: true,
+//     title: 'Your Raspberry will show up here!',
+//   },
+// ];
 
-const StreamSteps = [
-  {
-    key: 'JoinGCS',
-    title: 'Well done!',
-    description:
-      'Download Zerotier application for your Pc or Tablet and join this network ID. When a device joins this network it will show up in the list bellow',
-  },
-  {
-    key: 'pasteIP',
-    title: 'Copy IP',
-    description:
-      'Tick the Auth box to allow the device on this network. Copy the IP assigned for the GCS, this is the destination for your telemetry and video',
-  },
-  {
-    key: 'start',
-    title: 'Paste in UAVcast-Pro',
-    description:
-      'Head over to UAVcast-Pro and Navigate to the ground control page and paste in the IP for your Pc / Tablet. Then enable the switch for video and telemetry.',
-  },
-  {
-    key: 'firewall',
-    title: 'GCS firewall',
-    description:
-      'Make sure your GCS pc has port 5600 and 14550 added to the firewall rules. Open Mission Planner or QGC and it will connect automatically.',
-  },
-];
+// const StreamSteps = [
+//   {
+//     key: 'JoinGCS',
+//     title: 'Well done!',
+//     description:
+//       'Download Zerotier application for your Pc or Tablet and join this network ID. When a device joins this network it will show up in the list bellow',
+//   },
+//   {
+//     key: 'pasteIP',
+//     title: 'Copy IP',
+//     description:
+//       'Tick the Auth box to allow the device on this network. Copy the IP assigned for the GCS, this is the destination for your telemetry and video',
+//   },
+//   {
+//     key: 'start',
+//     title: 'Paste in UAVcast-Pro',
+//     description:
+//       'Head over to UAVcast-Pro and Navigate to the ground control page and paste in the IP for your Pc / Tablet. Then enable the switch for video and telemetry.',
+//   },
+//   {
+//     key: 'firewall',
+//     title: 'GCS firewall',
+//     description:
+//       'Make sure your GCS pc has port 5600 and 14550 added to the firewall rules. Open Mission Planner or QGC and it will connect automatically.',
+//   },
+// ];
 
 const ViewNetwork = ({ match }: any) => {
   const [state, setState] = useState<any>({ copied: false, editName: false });
@@ -66,7 +66,7 @@ const ViewNetwork = ({ match }: any) => {
   const { data: { networkDetails } = {}, loading: loadingNetwork, error: loadingNetworkError } = useNetworkDetailsQuery({
     variables: { nwid: match.params.nwid },
     fetchPolicy: 'network-only',
-    pollInterval: 15000,
+    pollInterval: 8000,
   });
 
   const [addMemberToDatabase] = useAddMemberMutation({
@@ -224,30 +224,21 @@ const ViewNetwork = ({ match }: any) => {
         </Divider>
       </GridRow>
       <Grid className='mb-3'>
-        <Grid.Column width={3} floated='left'>
-          {members && members.length ? (
-            <div>
-              <Typography variant='h5'>
-                <div className='ui label'>Network Members</div>
-              </Typography>
-            </div>
-          ) : (
-            <Typography variant='h5'>
-              <span className='ui label yellow'>No Members found!</span>
-            </Typography>
-          )}
-        </Grid.Column>
         <Grid.Column floated='right' width={5}>
-          <small className=''>Devices will show up automatically, no need to refresh!</small>
+          <Typography variant='h5'>
+            <div className='ui label'>Devices will show up automatically, no need to refresh!</div>
+          </Typography>
         </Grid.Column>
         <Grid.Column width={16}>
           {members.length ? (
-            <>
-              <Step.Group widths={4} ordered items={StreamSteps} />
-              <MembersTable cidr={network?.routes[0]?.target} tableData={members} />
-            </>
+            <MembersTable cidr={network?.routes[0]?.target} tableData={members} />
           ) : (
-            <Step.Group widths={3} ordered items={JoinSteps} />
+            <Message
+              color='yellow'
+              icon='user'
+              header='No members found!'
+              content='Join this network ID and the device will automatically be displayed in this table'
+            />
           )}
         </Grid.Column>
       </Grid>
