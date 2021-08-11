@@ -8,6 +8,7 @@ We decided to put this repo public and make it as generic as possible. (still so
 - User Registration
 - Admin panel, set roles and add / remove members / Network admin.
 - Add / Remove Members from Network
+- Light / Dark Theme
 
 ## Built with
 
