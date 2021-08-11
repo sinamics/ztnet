@@ -66,7 +66,7 @@ const ViewNetwork = ({ match }: any) => {
   const { data: { networkDetails } = {}, loading: loadingNetwork, error: loadingNetworkError } = useNetworkDetailsQuery({
     variables: { nwid: match.params.nwid },
     fetchPolicy: 'network-only',
-    pollInterval: 1500,
+    pollInterval: 15000,
   });
 
   const [addMemberToDatabase] = useAddMemberMutation({

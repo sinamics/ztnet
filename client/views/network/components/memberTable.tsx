@@ -87,6 +87,9 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       // editable: true,
       align: 'center',
       headerAlign: 'center',
+      // formatter: (_cell: any, _row: any) => {
+      //   return <Input focus placeholder='Search...' />;
+      // },
     },
     {
       dataField: 'id',
