@@ -1,37 +1,41 @@
-## Welcome to GitHub Pages
+## About
 
-You can use the [editor on GitHub](https://github.com/Sinamics/ztnet/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+This application was initally built for https://uavmatrix.com members which use the zerotier vpn to communicate with their UAV or Drone.
+We decided to put this repo public and make it as generic as possible. (still some naming convensions to be changed).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Features
 
-### Markdown
+- User Registration
+- Admin panel, set roles and add / remove members / Network admin.
+- Add / Remove Members from Network
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Built with
 
-```markdown
-Syntax highlighted code block
+- React & Typescript
+- React Lazy Loading with Suspense
+- Semantic-Ui React (https://react.semantic-ui.com/)
+- Nodejs Express Server
+- type-GraphQL Entry Point (/graphql)
+- GraphQL-code-generator
+- GraphQL Playground Page (http://localhost:4000/graphql)
+- GraphQL Decorators for hasRole (@hasRole(roles: [USER, ...]))
+- PostgreSQL database.
+- Prisma
+- JasonWebToken (JWT) accessToken / refreshToken cookie for authorization.
 
-# Header 1
-## Header 2
-### Header 3
+## Images
 
-- Bulleted
-- List
+Dashboard
+![dashboard](https://i.ibb.co/G08MYPj/dashboard.jpg)
 
-1. Numbered
-2. List
+Networks
+![networks](https://i.ibb.co/mTJwrsR/Network.png)
 
-**Bold** and _Italic_ and `Code` text
+Network Details
+![network](https://i.ibb.co/DWdxVkq/Network-Details.png)
 
-[Link](url) and ![Image](src)
-```
+Members
+![members](https://i.ibb.co/GCMYpqw/Members.png)
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Sinamics/ztnet/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Settings
+![settings](https://i.ibb.co/yQHR6pH/settings.png)
