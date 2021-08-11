@@ -51,8 +51,8 @@ export const columns = [
     dataField: 'lastlogin',
     text: 'Last Seen',
     editable: false,
-    formatter: (cell: string | number | Date) => (cell ? <TimeAgo date={cell} /> : 'unknown'),
-    sortValue: (cell: any) => cell,
+    formatter: (cell: string | number | Date) => (cell ? <TimeAgo date={cell} /> : ''),
+    // sortValue: (cell: any) => (cell ? cell : Math.max()),
     sort: true,
   },
   {
