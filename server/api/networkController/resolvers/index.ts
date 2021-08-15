@@ -1,5 +1,4 @@
-const Controller = require('../../_utils/zt');
-
+const Controller = require('../../_utils/zt_api');
 const NetworkServices = require('../../../db/postgres/prisma');
 
 const controllerResolvers = {

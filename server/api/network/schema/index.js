@@ -20,7 +20,7 @@ const networkTypes = gql`
     cidr: [String]
   }
   type Peers {
-    address: String
+    address: ID
     isBonded: Boolean
     latency: Int
     paths: [PeerPaths]
@@ -32,7 +32,7 @@ const networkTypes = gql`
   }
   type PeerPaths {
     active: Boolean
-    address: String
+    address: ID
     expired: Boolean
     lastReceive: Float
     lastSend: Float
@@ -55,6 +55,7 @@ const networkTypes = gql`
   }
   type Member {
     nodeid: ID
+    identity: ID
     id: ID
     name: String
     ip: [String]
@@ -83,9 +84,12 @@ const networkTypes = gql`
 
     # Member CRUD
     memberUpdate(nwid: ID!, memberId: String!, data: JSONObject): MemberCallback
-    memberUpdateDatabaseOnly(nwid: ID!, nodeid: ID!, data: JSONObject): MemberCallback
+    memberUpdateDatabaseOnly(nwid: ID!, nodeid: ID!, identity: ID, data: JSONObject): MemberCallback
     removeMember(nwid: ID!, memberId: String!): JSONObject
     addMember(nwid: ID!, memberId: ID!): MemberCallback
+  }
+  extend type Subscription {
+    memberInformation(nwid: String, userid: ID): NetworkDetailsCallback
   }
 `;
 

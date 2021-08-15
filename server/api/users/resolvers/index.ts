@@ -1,6 +1,6 @@
 const { ApolloError: UserError } = require('apollo-server-express');
 const UserService = require('../../../db/postgres/prisma');
-const zerotier = require('../../_utils/zt');
+const zerotier = require('../../_utils/zt_api');
 const BlueBird = require('bluebird');
 
 const userResolvers = {

@@ -1,11 +1,23 @@
+import { fetchControllerIntervall } from '../service/zt_ctrl_watcher';
+import { psql_fetchMembersInNetwork, psql_updateOrCreateMembers } from '../service/members';
+
 const { ApolloError } = require('apollo-server-express');
 const { isAuthenticated } = require('../../../middleware/authorization/user.is.authenticated');
-const zt = require('../../_utils/zt.ts');
-const { map } = require('lodash');
+const zt = require('../../_utils/zt_api');
 const IP = require('../../_utils/ipGenerator');
 const Sentencer = require('sentencer');
 const NetworkService = require('../../../db/postgres/prisma');
 const bluebird = require('bluebird');
+
+const withCancel = (asyncIterator: any, onCancel: any) => {
+  const asyncReturn = asyncIterator.return;
+  asyncIterator.return = () => {
+    onCancel();
+    return asyncReturn ? asyncReturn.call(asyncIterator) : Promise.resolve({ value: undefined, done: true });
+  };
+
+  return asyncIterator;
+};
 
 const networkResolvers = {
   Query: {
@@ -48,71 +60,7 @@ const networkResolvers = {
 
       // Copy in data from network db
       nwDetails.network = { ...nwDetails.network, ...networkAuthor, cidr: ipAssignmentPools.cidrOptions };
-
       const { members, network } = nwDetails;
-
-      const updateMemberPromise = new Promise((resolve) => {
-        if (!members.length) resolve([]);
-
-        map(members, async (member: any) => {
-          const updateMember = await NetworkService.network_members.updateMany({
-            where: {
-              nwid: member.nwid,
-              id: member.id,
-            },
-            data: {
-              lastseen: new Date(),
-              id: member.id,
-              online: false,
-              authorized: member.authorized,
-              address: member.address,
-              ip: member.ipAssignments,
-            },
-          });
-          if (updateMember.count) return resolve(updateMember);
-
-          const createMember = await NetworkService.network_members.create({
-            data: {
-              creationTime: new Date(),
-              id: member.id,
-              online: false,
-              authorized: member.authorized,
-              address: member.address,
-              ip: member.ipAssignments,
-              nwid_ref: {
-                connect: { nwid: member.nwid },
-              },
-            },
-          });
-          resolve(createMember);
-        });
-      });
-
-      // If no members we jsut ship the previous members and network details
-      // if (!members.length) return { network, members };
-      // TODO when user add manually, check if member exsist from controller API and notify user
-      // Return db values
-      const fetchMemberPromise = new Promise(async (resolve) => {
-        const getMembers = await NetworkService.network_members.findMany({
-          where: {
-            nwid,
-            deleted: false,
-          },
-        });
-
-        // Get peers to view online status members
-        const peers = await zt.peers();
-        for (const member of getMembers) {
-          member.peers = peers.find((x: any) => x.address === member.address) || null;
-          // Example::
-          // {
-          //   versionMajor: 1,
-          //   latency: -1,
-          //   paths: [{ lastReceive: 1627763576642 }],
-          // };
-        }
-        resolve(getMembers);
-      });
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
@@ -127,7 +75,7 @@ const networkResolvers = {
         });
       });
 
-      return Promise.all([updateMemberPromise, fetchMemberPromise, getZombieMembers]).then(async (res) => {
+      return Promise.all([psql_updateOrCreateMembers(members), psql_fetchMembersInNetwork(nwid), getZombieMembers]).then(async (res) => {
         const zombieMembers = res[2].filter((a: any) => a);
         return { network, members: res[1], zombieMembers };
       });
@@ -379,6 +327,19 @@ const networkResolvers = {
         })
         .then((member: any) => ({ member }))
         .catch((err: any) => console.log(err));
+    },
+  },
+  Subscription: {
+    memberInformation: {
+      subscribe: async (_: any, { nwid }: any, { pubsub }: any) => {
+        await fetchControllerIntervall(pubsub, nwid, false);
+        return withCancel(await pubsub.asyncIterator([nwid]), async () => {
+          await fetchControllerIntervall(pubsub, nwid, true);
+        });
+      },
+      resolve: (payload: any) => {
+        return { ...payload };
+      },
     },
   },
 };

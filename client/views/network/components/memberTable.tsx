@@ -26,7 +26,7 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import DeleteIPmodal from './deleteIPmodal';
 
-export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
+export const MembersTable = ({ tableData = { ip: [] }, cidr, setEditing }: any) => {
   const [state, setState] = useState<any>([]);
   const copyIPIntercalCleanup = useRef<any>([]);
   const [deleteWarning, setDeleteWarning] = useState<any>({
@@ -37,7 +37,6 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
   });
 
   const _tableData = JSON.parse(JSON.stringify(tableData));
-
   const [updateMember, { error: updateMemberError, loading: loadingUpdateMember }] = useMemberUpdateMutation();
   const [updateMembersDatabase, { error: updateMembersDatabaseError, loading: loadingMemberDatabase }] = useMemberUpdateDatabaseOnlyMutation();
   const [removeMember] = useRemoveMemberMutation();
@@ -50,7 +49,7 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
   };
   const columns: any = [
     {
-      dataField: 'nodeid',
+      dataField: 'identity',
       hidden: true,
     },
     {
@@ -87,9 +86,7 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       // editable: true,
       align: 'center',
       headerAlign: 'center',
-      // formatter: (_cell: any, _row: any) => {
-      //   return <Input focus placeholder='Search...' />;
-      // },
+      // editorRenderer: (editorProps: any, value: any) => <CallbackModal {...editorProps} value={value} />,
     },
     {
       dataField: 'id',
@@ -103,9 +100,12 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       text: 'IP / Latency',
       align: 'center',
       headerAlign: 'center',
+      headerStyle: () => {
+        return { width: '20%' };
+      },
       editable: false,
       formatter: (ipAssignments: any, row: any) => {
-        if (!ipAssignments.length) return <span>waiting for IP ...</span>;
+        if (!ipAssignments || !ipAssignments.length) return <span>waiting for IP ...</span>;
         return map(ipAssignments, (ip, key: number) => {
           const block = new Netmask(cidr);
           return (
@@ -146,6 +146,9 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       text: 'Created',
       editable: false,
       align: 'center',
+      headerStyle: () => {
+        return { width: '12%' };
+      },
       headerAlign: 'center',
       formatter: (cell: any, _row: any) => {
         return <TimeAgo date={cell} />;
@@ -158,6 +161,9 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       headerAlign: 'center',
       editable: false,
       sort: true,
+      headerStyle: () => {
+        return { width: '12%' };
+      },
       isDummyField: true,
       formatter: (_: any, row: any) => {
         if (!row.peers) return <div className='text-danger'>unknown</div>;
@@ -207,23 +213,25 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
   ];
 
   const rowStyle = (row: { authorized: any }): any => {
-    if (!row.authorized) return { backgroundColor: 'rgb(253 189 189 / 70%)', border: '0.01em dotted red' };
-
-    // return { border: '0.01em dotted black' };
+    if (!row.authorized) return { backgroundColor: 'rgb(83 63 63)', border: '0.01em dotted rgb(155 104 104)' };
   };
   const beforeSaveCell = async (_oldValue: any, newValue: any, row: any, _column: any, _done: any) => {
     const newName = JSON.parse(JSON.stringify(newValue));
-
+    // cancle subscription if user is editing the members table.
+    setEditing(false);
     try {
       return updateMembersDatabase({
-        variables: { nwid: row.nwid, nodeid: row.nodeid, data: { name: newName } },
+        variables: { nwid: row.nwid, nodeid: row.nodeid, identity: row.identity, data: { name: newName } },
         refetchQueries: [{ query: NetworkDetailsDocument, variables: { nwid: row.nwid } }],
       });
     } catch (err) {
       return console.error(err);
     }
   };
-
+  const onStartEdit = async (_row: any, _column: any, _done: any) => {
+    // cancle subscription if user is editing the members table.
+    setEditing(true);
+  };
   const defaultSorted = [
     {
       dataField: 'id', // if dataField is not match to any column you defined, it will be ignored.
@@ -233,7 +241,6 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
 
   return (
     <>
-      <div>{/* <SearchBar {...props.searchProps} /> */}</div>
       <div style={{ fontSize: '14px', height: '20px' }} className={`text-danger text-center  ${updateMemberError ? 'visible' : 'invisible'}`}>
         <p>{updateMemberError?.message}</p>
       </div>
@@ -241,12 +248,11 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr }: any) => {
       <DeleteIPmodal data={deleteWarning} cancle={() => setDeleteWarning((prev: any) => ({ ...prev, viewModal: false }))} />
 
       {updateMembersDatabaseError && <div className='text-danger text-center'>{updateMembersDatabaseError.message}</div>}
-      <ToolkitProvider keyField='nodeid' columns={columns} data={_tableData} search>
+      <ToolkitProvider keyField='identity' columns={columns} data={_tableData} search>
         {(props: any) => (
           <div>
-            {/* <SearchBar {...props.searchProps} /> */}
             <BootstrapTable
-              cellEdit={cellEditFactory({ mode: 'click', blurToSave: true, beforeSaveCell })}
+              cellEdit={cellEditFactory({ mode: 'click', blurToSave: true, beforeSaveCell, onStartEdit })}
               rowStyle={rowStyle}
               defaultSorted={defaultSorted}
               {...props.baseProps}

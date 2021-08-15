@@ -7,7 +7,7 @@ const { badNames, nameLength } = require('../../_helpers/name-validation');
 const ForgotPassword = require('../../mail/forgotPassword/forgot.service');
 const { createAccessToken, createRefreshToken, sendRefreshToken } = require('../../jwt/validate.token');
 const AuthService = require('../../db/postgres/prisma');
-const ztn = require('../_utils/zt');
+const ztn = require('../_utils/zt_api');
 const Ip4 = require('../_utils/ipGenerator');
 
 const mediumPassword = new RegExp('^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})');
@@ -92,19 +92,19 @@ async function register(userParam) {
       ...userParam,
       lastlogin: new Date(),
       hash,
-      role: settings.firstUserRegistration ? "ADMIN" : 'USER'
+      role: settings.firstUserRegistration ? 'ADMIN' : 'USER',
     },
   });
 
   // Update settings for first user (ADMIN)
-  if(settings.firstUserRegistration) {
+  if (settings.firstUserRegistration) {
     await AuthService.settings.update({
       where: {
         id: 1,
       },
       data: {
-        firstUserRegistration:false
-      }
+        firstUserRegistration: false,
+      },
     });
   }
 
