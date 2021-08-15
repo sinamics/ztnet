@@ -2,7 +2,7 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 module.exports = JSON.stringify({
   apiUrl: isDev ? 'http://localhost:4000' : process.env.REACT_APP_WEB_ADDRESS,
-  wsUrl: isDev ? 'ws://localhost:4000' : `wss://${process.env.REACT_APP_WEB_ADDRESS}`,
+  wsUrl: isDev ? 'ws://localhost:4000' : `wss://${window.location.hostname}`,
   admin: 'ADMIN',
   roles: [
     {
