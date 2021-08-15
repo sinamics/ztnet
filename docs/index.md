@@ -7,7 +7,8 @@ We decided to put this repo public and make it as generic as possible. (still so
 
 - User Registration
 - Admin panel, set roles and add / remove members / Network admin.
-- Add / Remove Members from Network
+- Users can add / remove members from VPN Network
+- Users are able to change network name, subnet, private or public.
 - Light / Dark Theme
 
 ## Built with
@@ -17,6 +18,7 @@ We decided to put this repo public and make it as generic as possible. (still so
 - Semantic-Ui React (https://react.semantic-ui.com/)
 - Nodejs Express Server
 - type-GraphQL Entry Point (/graphql)
+- Graphql subscription, pushing live network data to users.
 - GraphQL-code-generator
 - GraphQL Playground Page (http://localhost:4000/graphql)
 - GraphQL Decorators for hasRole (@hasRole(roles: [USER, ...]))
