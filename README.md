@@ -56,8 +56,6 @@ EMAIL_PASSWORD="password"
 EMAIL_ACTIVATIONLINK="https://domain.com/validation/email"
 EMAIL_RESETPASSWORDLINK="https://domain.com/resetpassword"
 
-WEB_ADDRESS="https://domain.com"
-
 #When creating a user, a new network is automatically added. Set the name below.
 ZT_DEFAULT_NETWORKNAME="ztnetwork"
 
@@ -72,6 +70,7 @@ ZT_DEFAULT_NETWORKNAME="ztnetwork"
 ################################
 
 REACT_APP_WEB_ADDRESS="https://domain.com"
+REACT_APP_WEBSOCKET_ADDRESS="wss://domain.com"
 
 #(optional) will override the ZT_SECRET token
 #ZT_SECRET="zerotier_token"
