@@ -52,30 +52,26 @@ CONNECTION_STRING="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:
 
 EMAIL_USER="post@domain.com"
 EMAIL_SUPPORT="support@domain.com"
-EMAIL_PASSWORD="password"
+EMAIL_PASSWORD="smtp_password"
 EMAIL_ACTIVATIONLINK="https://domain.com/validation/email"
 EMAIL_RESETPASSWORDLINK="https://domain.com/resetpassword"
 
 #When creating a user, a new network is automatically added. Set the name below.
 ZT_DEFAULT_NETWORKNAME="ztnetwork"
 
-#(OPTIONAL)
-#ztnet will get the token from zerotier automatically, but you can override the token if you uncomment the zt_secret below.
-#32 character token.
-#ZT_SECRET="zerotier_auth_token"
-
 ################################
 #                              #
 #        PRODUCTION            #
+#                              #
 ################################
 
 REACT_APP_WEB_ADDRESS="https://domain.com"
 REACT_APP_WEBSOCKET_ADDRESS="wss://domain.com"
 
-#(optional) will override the ZT_SECRET token
-#ZT_SECRET="zerotier_token"
-
-
+#(OPTIONAL)
+#ztnet will get the token from zerotier automatically, but you can override the token if you uncomment the zt_secret below.
+#32 character token.
+#ZT_SECRET="zerotier_auth_token"
 ```
 
 6. `npx prisma generate && npx prisma migrate dev --name init --preview-feature`
