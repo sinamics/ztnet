@@ -19,6 +19,7 @@ import ZombiesTable from './components/zombiesTable';
 
 const ViewNetwork = ({ match }: any) => {
   const [state, setState] = useState<any>({ copied: false, editName: false });
+  const [editing, setEditing] = useState<boolean>(false);
   const [viewDeletedMembers, setViewDeletedMembers] = useState<boolean>(false);
   const zombieTableRef = useRef<HTMLInputElement>(null);
   const [handler, setHandler] = useState<any>({ networkName: '', memberId: '', value: '' });
@@ -32,8 +33,6 @@ const ViewNetwork = ({ match }: any) => {
     subscribeToMore: memberInformationListner,
   } = useNetworkDetailsQuery({
     variables: { nwid: match.params.nwid },
-    fetchPolicy: 'network-only',
-    pollInterval: 15000,
   });
 
   const { data: { me = {} } = {} } = useMeQuery({
@@ -46,29 +45,29 @@ const ViewNetwork = ({ match }: any) => {
   const [updateNetwork] = useUpdateNetworkMutation();
 
   useEffect(() => {
-    // Listen for application updates and update Cache.
-    const unsubscribe = memberInformationListner({
-      document: MemberInformationDocument,
-      variables: { nwid: match.params.nwid, userid: me?.userid },
-      updateQuery: (prev, { subscriptionData }): any => {
-        console.log(subscriptionData);
-        if (!subscriptionData.data) return prev;
-        //@ts-ignore
-        // const newText = subscriptionData.data?.onApplication;
+    let unsubscribe: any;
 
-        // return Object.assign(
-        //   {},
-        //   {
-        //     getApplication: { ...prev.getApplication, ...newText },
-        //   }
-        // );
-      },
-    });
+    // cancle subscription if user is editing the members table.
+    if (!editing) {
+      // Listen for application updates and update Cache.
+      unsubscribe = memberInformationListner({
+        document: MemberInformationDocument,
+        variables: { nwid: match.params.nwid, userid: me?.userid },
+        updateQuery: (prev, { subscriptionData }): any => {
+          if (!subscriptionData.data) return prev;
+          //@ts-ignore
+          const newFeedData = subscriptionData.data?.memberInformation;
+          return Object.assign({}, prev, {
+            networkDetails: { ...prev.networkDetails, members: newFeedData.members },
+          });
+        },
+      });
+    }
+    if (unsubscribe) return () => unsubscribe();
     return () => {
       clearTimeout(copyNwidIntercalCleanup.current);
-      unsubscribe();
     };
-  }, [memberInformationListner, match, me]);
+  }, [memberInformationListner, match, me, editing]);
 
   const copyClipboard = () => {
     setState({ copied: true });
@@ -217,7 +216,7 @@ const ViewNetwork = ({ match }: any) => {
         </Grid.Column>
         <Grid.Column width={16}>
           {members.length ? (
-            <MembersTable cidr={network?.routes[0]?.target} tableData={members} />
+            <MembersTable cidr={network?.routes[0]?.target} tableData={members} setEditing={(e: boolean) => setEditing(e)} />
           ) : (
             <Message
               color='yellow'

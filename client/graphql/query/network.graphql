@@ -18,12 +18,11 @@ query networkDetails($nwid: ID!) {
       }
     }
     members {
+      identity
       nodeid
       id
       name
       ip
-      # lastseen
-      online
       address
       authorized
       creationTime
@@ -32,7 +31,6 @@ query networkDetails($nwid: ID!) {
       nwid
       peers {
         address
-        isBonded
         latency
         role
         version
@@ -52,11 +50,10 @@ query networkDetails($nwid: ID!) {
     }
     zombieMembers {
       nodeid
+      identity
       id
       name
       ip
-      # lastseen
-      online
       address
       authorized
       creationTime

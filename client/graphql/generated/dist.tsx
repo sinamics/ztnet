@@ -80,6 +80,7 @@ export type LoginResponse = {
 export type Member = {
   __typename?: 'Member';
   nodeid?: Maybe<Scalars['ID']>;
+  identity?: Maybe<Scalars['ID']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   ip?: Maybe<Array<Maybe<Scalars['String']>>>;
@@ -209,6 +210,7 @@ export type MutationMemberUpdateArgs = {
 export type MutationMemberUpdateDatabaseOnlyArgs = {
   nwid: Scalars['ID'];
   nodeid: Scalars['ID'];
+  identity?: Maybe<Scalars['ID']>;
   data?: Maybe<Scalars['JSONObject']>;
 };
 
@@ -256,7 +258,7 @@ export type NetworkDetailsCallback = {
 export type PeerPaths = {
   __typename?: 'PeerPaths';
   active?: Maybe<Scalars['Boolean']>;
-  address?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['ID']>;
   expired?: Maybe<Scalars['Boolean']>;
   lastReceive?: Maybe<Scalars['Float']>;
   lastSend?: Maybe<Scalars['Float']>;
@@ -266,7 +268,7 @@ export type PeerPaths = {
 
 export type Peers = {
   __typename?: 'Peers';
-  address?: Maybe<Scalars['String']>;
+  address?: Maybe<Scalars['ID']>;
   isBonded?: Maybe<Scalars['Boolean']>;
   latency?: Maybe<Scalars['Int']>;
   paths?: Maybe<Array<Maybe<PeerPaths>>>;
@@ -572,7 +574,7 @@ export type MemberUpdateMutation = (
     { __typename?: 'MemberCallback' }
     & { member?: Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'address' | 'authorized' | 'creationTime' | 'ip' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'identity' | 'id' | 'address' | 'authorized' | 'creationTime' | 'ip' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
     )>, error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'message'>
@@ -583,6 +585,7 @@ export type MemberUpdateMutation = (
 export type MemberUpdateDatabaseOnlyMutationVariables = Exact<{
   nwid: Scalars['ID'];
   nodeid: Scalars['ID'];
+  identity: Scalars['ID'];
   data?: Maybe<Scalars['JSONObject']>;
 }>;
 
@@ -593,7 +596,7 @@ export type MemberUpdateDatabaseOnlyMutation = (
     { __typename?: 'MemberCallback' }
     & { member?: Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name'>
+      & Pick<Member, 'nodeid' | 'identity' | 'id' | 'name'>
     )>, error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'message'>
@@ -624,7 +627,7 @@ export type AddMemberMutation = (
     { __typename?: 'MemberCallback' }
     & { member?: Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'address' | 'authorized' | 'creationTime' | 'ip' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'identity' | 'id' | 'address' | 'authorized' | 'creationTime' | 'ip' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
     )> }
   )> }
 );
@@ -762,10 +765,10 @@ export type NetworkDetailsQuery = (
       )>>> }
     )>, members?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'identity' | 'nodeid' | 'id' | 'name' | 'ip' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
       & { peers?: Maybe<(
         { __typename?: 'Peers' }
-        & Pick<Peers, 'address' | 'isBonded' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
+        & Pick<Peers, 'address' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
         & { paths?: Maybe<Array<Maybe<(
           { __typename?: 'PeerPaths' }
           & Pick<PeerPaths, 'active' | 'address' | 'expired' | 'lastReceive' | 'lastSend' | 'preferred' | 'trustedPathId'>
@@ -773,7 +776,7 @@ export type NetworkDetailsQuery = (
       )> }
     )>>>, zombieMembers?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'identity' | 'id' | 'name' | 'ip' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
     )>>>, error?: Maybe<(
       { __typename?: 'Error' }
       & Pick<Error, 'message'>
@@ -815,13 +818,13 @@ export type MemberInformationSubscription = (
     { __typename?: 'NetworkDetailsCallback' }
     & { members?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'id' | 'name' | 'ip' | 'online' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'identity' | 'online' | 'address' | 'authorized' | 'ipAssignments' | 'nwid'>
       & { peers?: Maybe<(
         { __typename?: 'Peers' }
-        & Pick<Peers, 'address' | 'isBonded' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
+        & Pick<Peers, 'address' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
         & { paths?: Maybe<Array<Maybe<(
           { __typename?: 'PeerPaths' }
-          & Pick<PeerPaths, 'active' | 'address' | 'expired' | 'lastReceive' | 'lastSend' | 'preferred' | 'trustedPathId'>
+          & Pick<PeerPaths, 'active' | 'address' | 'expired' | 'lastReceive' | 'lastSend' | 'preferred'>
         )>>> }
       )> }
     )>>> }
@@ -1221,6 +1224,7 @@ export const MemberUpdateDocument = gql`
   memberUpdate(nwid: $nwid, memberId: $memberId, data: $data) {
     member {
       nodeid
+      identity
       id
       address
       authorized
@@ -1264,10 +1268,11 @@ export type MemberUpdateMutationHookResult = ReturnType<typeof useMemberUpdateMu
 export type MemberUpdateMutationResult = Apollo.MutationResult<MemberUpdateMutation>;
 export type MemberUpdateMutationOptions = Apollo.BaseMutationOptions<MemberUpdateMutation, MemberUpdateMutationVariables>;
 export const MemberUpdateDatabaseOnlyDocument = gql`
-    mutation memberUpdateDatabaseOnly($nwid: ID!, $nodeid: ID!, $data: JSONObject) {
-  memberUpdateDatabaseOnly(nwid: $nwid, nodeid: $nodeid, data: $data) {
+    mutation memberUpdateDatabaseOnly($nwid: ID!, $nodeid: ID!, $identity: ID!, $data: JSONObject) {
+  memberUpdateDatabaseOnly(nwid: $nwid, nodeid: $nodeid, identity: $identity, data: $data) {
     member {
       nodeid
+      identity
       id
       name
     }
@@ -1294,6 +1299,7 @@ export type MemberUpdateDatabaseOnlyMutationFn = Apollo.MutationFunction<MemberU
  *   variables: {
  *      nwid: // value for 'nwid'
  *      nodeid: // value for 'nodeid'
+ *      identity: // value for 'identity'
  *      data: // value for 'data'
  *   },
  * });
@@ -1340,6 +1346,7 @@ export const AddMemberDocument = gql`
   addMember(nwid: $nwid, memberId: $memberId) {
     member {
       nodeid
+      identity
       id
       address
       authorized
@@ -1723,11 +1730,11 @@ export const NetworkDetailsDocument = gql`
       }
     }
     members {
+      identity
       nodeid
       id
       name
       ip
-      online
       address
       authorized
       creationTime
@@ -1736,7 +1743,6 @@ export const NetworkDetailsDocument = gql`
       nwid
       peers {
         address
-        isBonded
         latency
         role
         version
@@ -1756,10 +1762,10 @@ export const NetworkDetailsDocument = gql`
     }
     zombieMembers {
       nodeid
+      identity
       id
       name
       ip
-      online
       address
       authorized
       creationTime
@@ -1878,19 +1884,14 @@ export const MemberInformationDocument = gql`
   memberInformation(nwid: $nwid, userid: $userid) {
     members {
       nodeid
-      id
-      name
-      ip
+      identity
       online
       address
       authorized
-      creationTime
       ipAssignments
-      noAutoAssignIps
       nwid
       peers {
         address
-        isBonded
         latency
         role
         version
@@ -1904,7 +1905,6 @@ export const MemberInformationDocument = gql`
           lastReceive
           lastSend
           preferred
-          trustedPathId
         }
       }
     }

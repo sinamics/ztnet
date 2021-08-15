@@ -2,19 +2,15 @@ subscription memberInformation($nwid: String, $userid: ID) {
   memberInformation(nwid: $nwid, userid: $userid) {
     members {
       nodeid
-      id
       name
-      ip
+      identity
       online
       address
       authorized
-      creationTime
       ipAssignments
-      noAutoAssignIps
       nwid
       peers {
         address
-        isBonded
         latency
         role
         version
@@ -28,7 +24,6 @@ subscription memberInformation($nwid: String, $userid: ID) {
           lastReceive
           lastSend
           preferred
-          trustedPathId
         }
       }
     }

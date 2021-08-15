@@ -20,7 +20,7 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
 
   const columns: any = [
     {
-      dataField: 'nodeid',
+      dataField: 'identity',
       hidden: true,
     },
     {
@@ -115,10 +115,9 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
   };
   const beforeSaveCell = async (_oldValue: any, newValue: any, row: any, _column: any, _done: any) => {
     const newName = JSON.parse(JSON.stringify(newValue));
-
     try {
       return updateMembersDatabase({
-        variables: { nwid: row.nwid, nodeid: row.nodeid, data: { name: newName } },
+        variables: { nwid: row.nwid, nodeid: row.nodeid, identity: row.identity, data: { name: newName } },
         refetchQueries: [{ query: NetworkDetailsDocument, variables: { nwid: row.nwid } }],
       });
     } catch (err) {
@@ -135,7 +134,7 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
   return (
     <>
       {updateMembersDatabaseError && <div className='text-danger text-center'>{updateMembersDatabaseError.message}</div>}
-      <ToolkitProvider keyField='nodeid' columns={columns} data={_tableData} search>
+      <ToolkitProvider keyField='id' columns={columns} data={_tableData} search>
         {(props: any) => (
           <div>
             {/* <SearchBar {...props.searchProps} /> */}
@@ -144,8 +143,6 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
               rowStyle={rowStyle}
               defaultSorted={defaultSorted}
               {...props.baseProps}
-              striped
-              hover
               condensed
               loading={loadingMemberDatabase}
               overlay={overlayFactory({ spinner: true, styles: { overlay: (base: any) => ({ ...base, background: '#de9b0440' }) } })}

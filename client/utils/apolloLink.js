@@ -21,7 +21,7 @@ const cache = new InMemoryCache({
     },
     Member: {
       // uniquely identifying id.
-      keyFields: ['nodeid'],
+      keyFields: ['identity'],
     },
     Query: {
       fields: {

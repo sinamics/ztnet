@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const router = express.Router();
 const prisma = require('../../db/postgres/prisma');
-const ztn = require('../_utils/zt');
+const ztn = require('../_utils/zt_api');
 const Ip4 = require('../_utils/ipGenerator');
 
 router.post('/genNewUser', generateNewUser);

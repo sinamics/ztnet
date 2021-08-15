@@ -35,6 +35,7 @@ mutation memberUpdate($nwid: ID!, $memberId: String!, $data: JSONObject) {
   memberUpdate(nwid: $nwid, memberId: $memberId, data: $data) {
     member {
       nodeid
+      identity
       id
       address
       authorized
@@ -49,10 +50,11 @@ mutation memberUpdate($nwid: ID!, $memberId: String!, $data: JSONObject) {
     }
   }
 }
-mutation memberUpdateDatabaseOnly($nwid: ID!, $nodeid: ID!, $data: JSONObject) {
-  memberUpdateDatabaseOnly(nwid: $nwid, nodeid: $nodeid, data: $data) {
+mutation memberUpdateDatabaseOnly($nwid: ID!, $nodeid: ID!, $identity: ID!, $data: JSONObject) {
+  memberUpdateDatabaseOnly(nwid: $nwid, nodeid: $nodeid, identity: $identity, data: $data) {
     member {
       nodeid
+      identity
       id
       name
     }
@@ -70,6 +72,7 @@ mutation addMember($nwid: ID!, $memberId: ID!) {
   addMember(nwid: $nwid, memberId: $memberId) {
     member {
       nodeid
+      identity
       id
       address
       authorized
