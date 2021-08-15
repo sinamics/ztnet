@@ -2,7 +2,7 @@ import map from 'lodash/map';
 const NetworkService = require('../../../db/postgres/prisma');
 const zt = require('../../_utils/zt_api');
 
-export const psql_updateMembers = (members: Array<any>) =>
+export const psql_updateOrCreateMembers = (members: Array<any>) =>
   new Promise((resolve) => {
     if (!members.length) resolve([]);
 
@@ -40,9 +40,8 @@ export const psql_updateMembers = (members: Array<any>) =>
     });
   });
 
-// TODO when user add manually, check if member exsist from controller API and notify user
 // Return db values
-export const psql_fetchMembers = (nwid: string) =>
+export const psql_fetchMembersInNetwork = (nwid: string) =>
   new Promise(async (resolve) => {
     const getMembers = await NetworkService.network_members.findMany({
       where: {

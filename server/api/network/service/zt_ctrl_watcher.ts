@@ -1,6 +1,6 @@
 import map from 'lodash/map';
 import Promises from 'bluebird';
-import { psql_fetchMembers, psql_updateMembers } from './members';
+import { psql_fetchMembersInNetwork, psql_updateOrCreateMembers } from './members';
 
 const _zt = require('../../_utils/zt_api');
 
@@ -27,9 +27,9 @@ export const fetchControllerIntervall = async (pubsub: any, nwid: string, unsubs
       map(networks.members, (mem: any) => {
         mem.creationTime = mem.creationTime / 1000;
       });
-      await psql_updateMembers(networks.members);
+      await psql_updateOrCreateMembers(networks.members);
 
-      pubsub.publish(_nwid, { members: psql_fetchMembers(nwid) });
+      pubsub.publish(_nwid, { members: psql_fetchMembersInNetwork(nwid) });
     }).then(() => fn());
 
   if (unsubscribe) {

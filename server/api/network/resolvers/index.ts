@@ -1,5 +1,5 @@
 import { fetchControllerIntervall } from '../service/zt_ctrl_watcher';
-import { psql_fetchMembers, psql_updateMembers } from '../service/members';
+import { psql_fetchMembersInNetwork, psql_updateOrCreateMembers } from '../service/members';
 
 const { ApolloError } = require('apollo-server-express');
 const { isAuthenticated } = require('../../../middleware/authorization/user.is.authenticated');
@@ -75,7 +75,7 @@ const networkResolvers = {
         });
       });
 
-      return Promise.all([psql_updateMembers(members), psql_fetchMembers(nwid), getZombieMembers]).then(async (res) => {
+      return Promise.all([psql_updateOrCreateMembers(members), psql_fetchMembersInNetwork(nwid), getZombieMembers]).then(async (res) => {
         const zombieMembers = res[2].filter((a: any) => a);
         return { network, members: res[1], zombieMembers };
       });
