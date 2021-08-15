@@ -40,6 +40,7 @@ jobs:
           touch .env
           echo REACT_APP_SITE_NAME="UAVnet" >> .env
           echo REACT_APP_WEB_ADDRESS="https://uavnet.uavmatrix.com" >> .env
+          echo REACT_APP_WEBSOCKET_ADDRESS="wss://uavnet.uavmatrix.com" >> .env
           echo SERVER_PORT="4000" >> .env
           echo ACCESS_TOKEN_SECRET="${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env
           echo REFRESH_TOKEN_SECRET="${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
