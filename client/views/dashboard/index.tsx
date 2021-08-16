@@ -1,7 +1,6 @@
-//@ts-nocheck
 import { Typography } from '@material-ui/core';
 import React from 'react';
-import { Container, Grid, GridRow, Step } from 'semantic-ui-react';
+import { Container, Grid, GridRow } from 'semantic-ui-react';
 
 const Dashboard: React.FC<any> = (): JSX.Element => {
   return (
