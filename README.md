@@ -99,4 +99,4 @@ This project is still "work in progess", ztnet is provided "as is" without any w
 
 ## Demo Video
 
-![Demo Video](https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/preview)
+[![Demo Video](https://drive.google.com/file/d/11oN10w5RDk45ID9E4nZgQwAiaKtulot6/view?usp=sharing)](https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/view?usp=sharing 'Demo Video')
