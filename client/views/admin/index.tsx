@@ -1,39 +1,36 @@
+//@ts-nocheck
 import React from 'react';
-import { Link, Switch, Route, Redirect } from 'react-router-dom';
-import { Card, CardHeader, CardBody } from 'reactstrap';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import Users from './pages/users';
 import Controller from './pages/controller';
 import Settings from './pages/settings';
-import './style.css';
+import { Grid, Menu } from 'semantic-ui-react';
 
 const Index: React.FC<any> = (props): JSX.Element => {
-  const { params } = props.match;
+  const { match, history } = props;
 
   return (
-    <div>
-      <Card className='menu_list_tabs'>
-        <CardHeader style={{ border: 'none', borderRadius: 0 }} className='text-center menu_list_tabs__header'>
-          <Link className='mr-4' to='/admin/users'>
-            {params.submenu === 'users' ? <span style={{ color: 'white' }}>USERS</span> : 'USERS'}
-          </Link>
-          <Link className='mr-4' to='/admin/controller'>
-            {params.submenu === 'users' ? <span style={{ color: 'white' }}>CONTROLLER</span> : 'CONTROLLER'}
-          </Link>
-          <Link className='mr-4' to='/admin/settings'>
-            {params.submenu === 'users' ? <span style={{ color: 'white' }}>SETTINGS</span> : 'SETTINGS'}
-          </Link>
-        </CardHeader>
-        <CardBody>
+    <Grid padded>
+      <Grid.Row centered>
+        <Grid.Column width={16} textAlign='center'>
+          <Menu compact pointing secondary className='lightdarktheme'>
+            <Menu.Item name='USERS' onClick={() => history.push('/admin/users')} active={match.params.submenu === 'users'} />
+            <Menu.Item name='CONTROLLER' onClick={() => history.push('/admin/controller')} active={match.params.submenu === 'controller'} />
+            <Menu.Item name='SETTINGS' onClick={() => history.push('/admin/settings')} active={match.params.submenu === 'settings'} />
+          </Menu>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row centered>
+        <Grid.Column width={14}>
           <Switch>
             <Route exact path='/admin/users' component={() => <Users />} />
             <Route exact path='/admin/controller' component={() => <Controller {...props} />} />
             <Route exact path='/admin/settings' component={() => <Settings />} />
-
             <Redirect from='/admin' to='/admin/users' />
           </Switch>
-        </CardBody>
-      </Card>
-    </div>
+        </Grid.Column>
+      </Grid.Row>
+    </Grid>
   );
 };
 

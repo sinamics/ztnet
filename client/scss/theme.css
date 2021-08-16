@@ -10,6 +10,8 @@ html {
 
   --primaryText: #212121;
 
+  --primaryActiveText:#212121;
+
   --primaryHover: #596574;
 
   --primaryMain: #eff3f8;
@@ -39,6 +41,7 @@ html[data-theme='dark'] {
   --primarySiderbar: #191919;
   --primaryCardHeader: #383838;
   --primaryText: rgba(194, 194, 194, 0.897);
+  --primaryActiveText: #fff;
   --primaryHover: #545454;
   --secondaryText: rgba(54, 55, 124, 0.794);
   --primaryButtonText: #fff;
@@ -58,6 +61,13 @@ body {
 th,
 tr {
   color: var(--primaryText);
+}
+.lightdarktheme > * {
+  color: var(--primaryText) !important;
+}
+
+.lightdarktheme > .active {
+  color: var(--primaryActiveText) !important;
 }
 
 legend {
