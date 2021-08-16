@@ -9,15 +9,15 @@ import {
   useNetworkDetailsQuery,
   useUpdateNetworkMutation,
 } from 'client/graphql/generated/dist';
-import MembersTable from './components/memberTable';
+import MembersTable from './containers/memberTable';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import PrivacyCard from './components/privacyCard';
 import { LoaderPlaceholder } from 'client/common-components/Loader/Placeholder';
 import { map } from 'lodash';
-import ZombiesTable from './components/zombiesTable';
+import ZombiesTable from './containers/zombieTable';
 
-const ViewNetwork = ({ match }: any) => {
+const ViewNetworkById = ({ match }: any) => {
   const [state, setState] = useState<any>({ copied: false, editName: false });
   const [editing, setEditing] = useState<boolean>(false);
   const [viewDeletedMembers, setViewDeletedMembers] = useState<boolean>(false);
@@ -288,4 +288,4 @@ const ViewNetwork = ({ match }: any) => {
   );
 };
 
-export default ViewNetwork;
+export default ViewNetworkById;

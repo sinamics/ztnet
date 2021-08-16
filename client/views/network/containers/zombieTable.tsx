@@ -1,20 +1,13 @@
 import React from 'react';
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
-//@ts-ignore
-import overlayFactory from 'react-bootstrap-table2-overlay';
+import BootstrapTable from '../components/table';
+
 import { NetworkDetailsDocument, useMemberUpdateDatabaseOnlyMutation, useAddMemberMutation } from 'client/graphql/generated/dist';
 import { Button } from 'semantic-ui-react';
-//@ts-ignore
-import cellEditFactory from 'react-bootstrap-table2-editor';
-
 import TimeAgo from 'react-timeago';
 
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
 export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
-  const _tableData = JSON.parse(JSON.stringify(tableData));
-
   const [updateMembersDatabase, { error: updateMembersDatabaseError, loading: loadingMemberDatabase }] = useMemberUpdateDatabaseOnlyMutation();
   const [addMemberToDatabase] = useAddMemberMutation();
 
@@ -125,32 +118,16 @@ export const ZombiesTable = ({ tableData = { ip: [] } }: any) => {
     }
   };
 
-  const defaultSorted = [
-    {
-      dataField: 'id', // if dataField is not match to any column you defined, it will be ignored.
-      order: 'desc', // desc or asc
-    },
-  ];
   return (
-    <>
-      {updateMembersDatabaseError && <div className='text-danger text-center'>{updateMembersDatabaseError.message}</div>}
-      <ToolkitProvider keyField='id' columns={columns} data={_tableData} search>
-        {(props: any) => (
-          <div>
-            {/* <SearchBar {...props.searchProps} /> */}
-            <BootstrapTable
-              cellEdit={cellEditFactory({ mode: 'click', blurToSave: true, beforeSaveCell })}
-              rowStyle={rowStyle}
-              defaultSorted={defaultSorted}
-              {...props.baseProps}
-              condensed
-              loading={loadingMemberDatabase}
-              overlay={overlayFactory({ spinner: true, styles: { overlay: (base: any) => ({ ...base, background: '#de9b0440' }) } })}
-            />
-          </div>
-        )}
-      </ToolkitProvider>
-    </>
+    <BootstrapTable
+      keyField='id'
+      columns={columns}
+      error={updateMembersDatabaseError}
+      beforeSaveCell={beforeSaveCell}
+      rowStyle={rowStyle}
+      tableData={tableData}
+      loading={loadingMemberDatabase}
+    />
   );
 };
 

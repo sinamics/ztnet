@@ -16,8 +16,7 @@ import Dashboard from '../views/dashboard';
 
 // AUTH
 import Admin from '../views/admin';
-import Networks from '../views/network';
-import ViewNetworks from '../views/network/viewNetwork';
+import { Network, ViewNetworkById } from '../views/network';
 import AdminRoute from '../common-components/auth/adminRoute';
 import PrivateRoute from '../common-components/auth/PrivateRoute';
 import Profile from '../views/profile';
@@ -96,13 +95,13 @@ const privateRoutes = [
   {
     key: 'networks',
     path: '/network',
-    component: Networks,
+    component: Network,
     exact: true, // important, ProfileRoutes is just a new Router switch container
   },
   {
     key: 'viewnetworks',
     path: '/network/:nwid',
-    component: ViewNetworks, // sub routing is handled in that component
+    component: ViewNetworkById, // sub routing is handled in that component
     exact: true, // important, ProfileRoutes is just a new Router switch container
   },
   {

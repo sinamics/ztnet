@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react';
-import BootstrapTable from 'react-bootstrap-table-next';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import BootstrapTable from '../components/table';
 //@ts-ignore
-import overlayFactory from 'react-bootstrap-table2-overlay';
 import Checkbox from '@material-ui/core/Checkbox';
 import {
   NetworkDetailsDocument,
@@ -13,7 +11,6 @@ import {
 import { Button } from 'semantic-ui-react';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 //@ts-ignore
-import cellEditFactory from 'react-bootstrap-table2-editor';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 //@ts-ignore
 import { Netmask } from 'netmask';
@@ -232,12 +229,6 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr, setEditing }: any) 
     // cancle subscription if user is editing the members table.
     setEditing(true);
   };
-  const defaultSorted = [
-    {
-      dataField: 'id', // if dataField is not match to any column you defined, it will be ignored.
-      order: 'desc', // desc or asc
-    },
-  ];
 
   return (
     <>
@@ -247,22 +238,16 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr, setEditing }: any) 
 
       <DeleteIPmodal data={deleteWarning} cancle={() => setDeleteWarning((prev: any) => ({ ...prev, viewModal: false }))} />
 
-      {updateMembersDatabaseError && <div className='text-danger text-center'>{updateMembersDatabaseError.message}</div>}
-      <ToolkitProvider keyField='identity' columns={columns} data={_tableData} search>
-        {(props: any) => (
-          <div>
-            <BootstrapTable
-              cellEdit={cellEditFactory({ mode: 'click', blurToSave: true, beforeSaveCell, onStartEdit })}
-              rowStyle={rowStyle}
-              defaultSorted={defaultSorted}
-              {...props.baseProps}
-              condensed
-              loading={loadingUpdateMember || loadingMemberDatabase}
-              overlay={overlayFactory({ spinner: true, styles: { overlay: (base: any) => ({ ...base, background: '#de9b0440' }) } })}
-            />
-          </div>
-        )}
-      </ToolkitProvider>
+      <BootstrapTable
+        keyField='id'
+        columns={columns}
+        error={updateMembersDatabaseError}
+        beforeSaveCell={beforeSaveCell}
+        onStartEdit={onStartEdit}
+        rowStyle={rowStyle}
+        tableData={_tableData}
+        loading={loadingUpdateMember || loadingMemberDatabase}
+      />
     </>
   );
 };

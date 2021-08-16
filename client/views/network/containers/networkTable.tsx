@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import BootstrapTable from 'react-bootstrap-table-next';
+import BootstrapTable from '../components/table';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import { Button } from '@material-ui/core';
 import DeleteNetworkModal from './deleteModal';
@@ -67,21 +66,14 @@ export const NetworksTable = React.memo(({ tableData = [], history }: any) => {
   return (
     <>
       {deleteWarning.open && <DeleteNetworkModal data={deleteWarning} cancle={() => setDeleteWarning({ ...deleteWarning, open: false })} />}
-      <ToolkitProvider keyField='nwid' columns={columns} data={tableData} search>
-        {(props: any) => (
-          <div>
-            {/* <SearchBar {...props.searchProps} /> */}
-            <BootstrapTable
-              rowStyle={rowStyle}
-              pagination={paginationFactory(paginationOptions)}
-              // defaultSorted={defaultSorted}
-              rowEvents={rowEvents}
-              {...props.baseProps}
-              condensed
-            />
-          </div>
-        )}
-      </ToolkitProvider>
+      <BootstrapTable
+        keyField='nwid'
+        rowEvents={rowEvents}
+        columns={columns}
+        rowStyle={rowStyle}
+        tableData={tableData}
+        pagination={paginationFactory(paginationOptions)}
+      />
     </>
   );
 });
