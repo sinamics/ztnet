@@ -818,7 +818,7 @@ export type MemberInformationSubscription = (
     { __typename?: 'NetworkDetailsCallback' }
     & { members?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'nodeid' | 'identity' | 'online' | 'address' | 'authorized' | 'ipAssignments' | 'nwid'>
+      & Pick<Member, 'nodeid' | 'name' | 'identity' | 'online' | 'address' | 'authorized' | 'ipAssignments' | 'nwid'>
       & { peers?: Maybe<(
         { __typename?: 'Peers' }
         & Pick<Peers, 'address' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
@@ -1884,6 +1884,7 @@ export const MemberInformationDocument = gql`
   memberInformation(nwid: $nwid, userid: $userid) {
     members {
       nodeid
+      name
       identity
       online
       address

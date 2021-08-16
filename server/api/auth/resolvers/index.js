@@ -28,9 +28,9 @@ const authResolvers = {
         },
       };
     },
-    // validateEmail: async (parent, args, context) => {
-    //   return authService.ValidateMailLink(args);
-    // },
+    validateEmail: async (parent, args, context) => {
+      return authService.ValidateMailLink(args);
+    },
     changePassword: async (parent, args) => {
       return authService.changePassword({ ...args });
     },

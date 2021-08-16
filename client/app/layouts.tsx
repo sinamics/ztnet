@@ -5,7 +5,6 @@ import { useMeQuery } from 'client/graphql/generated/dist';
 import HomeHeader from '../views/home/components/header';
 import Header from '../common-components/header';
 import Sidebar from '../common-components/sidebar/sidebar';
-import Aside from '../common-components/Aside/Aside';
 
 export const LayoutPublic: React.FC<any> = (props: any) => {
   const { loading, data: { me = null } = {} }: any = useMeQuery({ fetchPolicy: 'network-only' });
@@ -35,7 +34,6 @@ export const LayoutAuthenticated = withRouter(({ children }: any): any => {
       <div className='app-body'>
         <Sidebar />
         <main className='main'>{children}</main>
-        <Aside />
       </div>
     </div>
   );

@@ -13,9 +13,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 // Import Main styles for this application
 import './scss/style.scss';
 
-// Temp fix for reactstrap
-import './scss/core/_dropdown-menu-right.scss';
-
 // Custom styles
 import './scss/_custom.css';
 import './scss/theme.css';

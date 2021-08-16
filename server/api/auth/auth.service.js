@@ -4,7 +4,8 @@ const { AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { badNames, nameLength } = require('../../_helpers/name-validation');
-const ForgotPassword = require('../../mail/forgotPassword/forgot.service');
+const ForgotPasswordEmail = require('../../mail/forgotPassword/forgot.service');
+const NewUserRegistrationEmail = require('../../mail/user.registration/registration.service');
 const { createAccessToken, createRefreshToken, sendRefreshToken } = require('../../jwt/validate.token');
 const AuthService = require('../../db/postgres/prisma');
 const ztn = require('../_utils/zt_api');
@@ -16,7 +17,8 @@ const validEmail = new RegExp(
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 );
 
-const SendForgotPasswordEmail = new ForgotPassword();
+const SendForgotPasswordEmail = new ForgotPasswordEmail();
+const UserRegistrationMail = new NewUserRegistrationEmail();
 
 module.exports = {
   register,
@@ -24,8 +26,8 @@ module.exports = {
   forgot,
   FirstLoginChangePassword,
   changePassword,
-  // sendMailValidationLink,
-  // ValidateMailLink,
+  sendMailValidationLink,
+  ValidateMailLink,
 };
 
 async function register(userParam) {
@@ -175,31 +177,56 @@ async function login({ email, password }, { res }) {
  * @param  {Object} data user object
  * This function is called by the registration function and re-send activation link API.
  */
-// async function sendMailValidationLink(data) {
-//   // eslint-disable-next-line no-throw-literal
+async function sendMailValidationLink(data) {
+  // eslint-disable-next-line no-throw-literal
+  const registerUser = await AuthService.users.findFirst({
+    where: {
+      userid: data.userid,
+    },
+  });
 
-//   const user = await User.findById(data._id);
-//   if (!user || !user.hash) throw `User not found!`;
+  if (!registerUser || !registerUser.hash) throw `User not found!`;
 
-//   const validationToken = jwt.sign(
-//     {
-//       id: user._id,
-//     },
-//     user.hash,
-//     {
-//       expiresIn: '15m',
-//     }
-//   );
-// const weblink = `${process.env.EMAIL_ACTIVATIONLINK}/${validationToken}`;
-
-//   return SendMail.NewUserRegistrationLink({ ...user._doc, weblink });
-// }
+  const validationToken = jwt.sign(
+    {
+      id: registerUser.userid,
+    },
+    registerUser.hash,
+    {
+      expiresIn: '15m',
+    }
+  );
+  const weblink = `${process.env.EMAIL_ACTIVATIONLINK}/${validationToken}`;
+  return UserRegistrationMail.NewUserRegistrationLink({ ...registerUser, weblink });
+}
 
 /**
  * @param  {String} token
  * This function is validating the token sent to use uppon registration. Token has 15min expire time.
  */
+async function ValidateMailLink(data) {
+  if (!data.token) throw `Key not found!`;
 
+  try {
+    const { userid } = jwt.decode(data.token);
+    if (!userid) throw new AuthenticationError('Invalid Token!');
+
+    const loginUser = await AuthService.users.findFirst({
+      where: {
+        userid: userid,
+      },
+    });
+
+    if (!loginUser || !loginUser.hash) throw `Ops, dette er flaut. Det har skjedd en feil. Kode 15001`;
+    if (loginUser.emailConfirmed) throw `Du har allerede validert denne eposten.`;
+
+    jwt.verify(data.token, loginUser.hash);
+    Object.assign(loginUser, { emailConfirmed: true });
+    return loginUser.save();
+  } catch (error) {
+    throw new AuthenticationError(`An error occured!, please send new verification email!`);
+  }
+}
 async function forgot({ email }) {
   const user = await AuthService.users.findFirst({
     where: {
