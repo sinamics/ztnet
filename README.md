@@ -86,23 +86,6 @@ REACT_APP_WEBSOCKET_ADDRESS="wss://domain.com"
 - If you make any changes to the graphql files, you need to generate new sources using the `npm run codegen` command.
 - First user that register will automatically get Admin role.
 
-## Images
-
-Dashboard
-![dashboard](https://i.ibb.co/G08MYPj/dashboard.jpg)
-
-Networks
-![networks](https://i.ibb.co/mTJwrsR/Network.png)
-
-Network Details
-![network](https://i.ibb.co/DWdxVkq/Network-Details.png)
-
-Members
-![members](https://i.ibb.co/GCMYpqw/Members.png)
-
-Settings
-![settings](https://i.ibb.co/yQHR6pH/settings.png)
-
 # Security
 
 This project is still "work in progess", ztnet is provided "as is" without any warranty. Use at your own risk!
@@ -113,3 +96,7 @@ This project is still "work in progess", ztnet is provided "as is" without any w
 - Convert all files to TS
 - Implement more detailed TS
 - Generall improvement
+
+## Demo Video
+
+<iframe src="https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/preview" width="640" height="480" allow="autoplay"></iframe>
