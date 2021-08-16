@@ -32,7 +32,6 @@ const networkResolvers = {
     },
     networkDetails: async (_: any, { nwid }: any, context: any) => {
       const authUser = await isAuthenticated(context);
-      const isAdmin = authUser.role.includes('ADMIN');
       const networkAuthor = await NetworkService.network.findFirst({
         where: {
           AND: [
@@ -48,10 +47,10 @@ const networkResolvers = {
       });
 
       // Only return nw details for author user!
-      if (!networkAuthor && !isAdmin) throw new ApolloError('You are not the Author of this network!');
+      if (!networkAuthor) throw new ApolloError('You are not the Author of this network!');
 
       // Return nw obj details
-      let nwDetails = await zt.network_detail(isAdmin ? nwid : networkAuthor.nwid).catch((err: any) => {
+      let nwDetails = await zt.network_detail(networkAuthor.nwid).catch((err: any) => {
         throw new ApolloError(err);
       });
 
