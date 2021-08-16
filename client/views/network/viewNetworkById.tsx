@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Typography } from '@material-ui/core';
-import { Button, Container, Divider, Grid, GridRow, Icon, Input, Label, Message } from 'semantic-ui-react';
+import { Button, Card, Container, Divider, Grid, GridRow, Icon, Input, Label, Message } from 'semantic-ui-react';
 import {
   MemberInformationDocument,
   NetworkDetailsDocument,
@@ -12,7 +12,7 @@ import {
 import MembersTable from './containers/memberTable';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import PrivacyCard from './components/privacyCard';
+import PrivatePublic from './components/privatePublic';
 import { LoaderPlaceholder } from 'client/common-components/Loader/Placeholder';
 import { map } from 'lodash';
 import ZombiesTable from './containers/zombieTable';
@@ -148,23 +148,23 @@ const ViewNetworkById = ({ match }: any) => {
               </div>
             </Typography>
           </Grid.Column>
-          <Grid.Column mobile={8} computer={4}>
-            <PrivacyCard
-              onClick={() => updateNetworkHandler({ private: true })}
-              faded={!network.private}
-              title='Private'
-              color='green'
-              content='Each user needs to be Autorization by network administrator.'
-            />
-          </Grid.Column>
-          <Grid.Column mobile={8} computer={4}>
-            <PrivacyCard
-              onClick={() => updateNetworkHandler({ private: false })}
-              faded={network.private}
-              title='Public'
-              color='red'
-              content='All users can connect to this network without Autorization'
-            />
+          <Grid.Column mobile={16} computer={8}>
+            <Card.Group itemsPerRow={2}>
+              <PrivatePublic
+                onClick={() => updateNetworkHandler({ private: true })}
+                faded={!network.private}
+                title='Private'
+                color='green'
+                content='Each user needs to be Autorization by network administrator.'
+              />
+              <PrivatePublic
+                onClick={() => updateNetworkHandler({ private: false })}
+                faded={network.private}
+                title='Public'
+                color='red'
+                content='All users can connect to this network without Autorization'
+              />
+            </Card.Group>
           </Grid.Column>
         </Grid>
       </GridRow>
