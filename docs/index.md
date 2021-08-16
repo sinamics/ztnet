@@ -28,17 +28,4 @@ We decided to put this repo public and make it as generic as possible. (still so
 
 ## Images
 
-Dashboard
-![dashboard](https://i.ibb.co/G08MYPj/dashboard.jpg)
-
-Networks
-![networks](https://i.ibb.co/mTJwrsR/Network.png)
-
-Network Details
-![network](https://i.ibb.co/DWdxVkq/Network-Details.png)
-
-Members
-![members](https://i.ibb.co/GCMYpqw/Members.png)
-
-Settings
-![settings](https://i.ibb.co/yQHR6pH/settings.png)
+![Demo Video]({https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/view?usp=sharing})
