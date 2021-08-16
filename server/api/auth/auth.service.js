@@ -230,7 +230,7 @@ async function ValidateMailLink(data) {
 async function forgot({ email }) {
   const user = await AuthService.users.findFirst({
     where: {
-      email,
+      email: email.toLowerCase(),
     },
   });
   if (!user) throw new AuthenticationError('Mail sent if email exist!');
