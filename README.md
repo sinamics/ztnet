@@ -99,4 +99,5 @@ This project is still "work in progess", ztnet is provided "as is" without any w
 
 ## Demo Video
 
+Video from Dev server, all Network ID`s and sensitivity data would not be valid.
 [![Demo Video](https://i.ibb.co/PFZFrLP/thumb.jpg)](https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/view?usp=sharing 'Demo Video')
