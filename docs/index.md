@@ -28,4 +28,4 @@ We decided to put this repo public and make it as generic as possible. (still so
 
 ## Images
 
-![Demo Video]({https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/view?usp=sharing})
+<iframe src="https://drive.google.com/file/d/1xWPNRzGePCmrZ6iiMjcyFIQkrDUrBItj/preview" width="640" height="480" allow="autoplay"></iframe>
