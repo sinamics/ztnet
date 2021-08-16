@@ -1,6 +1,10 @@
 theme: jekyll-theme-slate
 title: ztnet
+name: ztnet
 tagline: Web application for self-hosted zerotier controller.
 description: Host your own private VPN controller using ztnet. This application is built on top of zerotier-one.
 author: Bernt Christian Egeland
 url: https://sinamics.github.io/ztnet/
+twitter:
+  username: BerntChris
+  card: summary_large_image
