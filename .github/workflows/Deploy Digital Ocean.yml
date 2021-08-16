@@ -54,6 +54,7 @@ jobs:
           echo CONNECTION_STRING="postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/uavnet?schema=public" >> .env
           echo EMAIL_USER="${{ secrets.EMAIL_USER }}" >> .env
           echo EMAIL_PASSWORD="${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo EMAIL_RESETPASSWORDLINK="https://uavnet.uavmatrix.com/resetpassword" >> .env
 
       - name: install dependencies
         run: npm install
