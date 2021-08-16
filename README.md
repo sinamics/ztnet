@@ -106,3 +106,10 @@ Settings
 # Security
 
 This project is still "work in progess", ztnet is provided "as is" without any warranty. Use at your own risk!
+
+## Work to be done
+
+- Remove reactstrap and Bootstrap package.
+- Convert all files to TS
+- Implement more detailed TS
+- Generall improvement
