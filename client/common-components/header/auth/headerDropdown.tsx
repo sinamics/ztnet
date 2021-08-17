@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { authActions } from '../../../common-actions/auth.actions';
