@@ -1,7 +1,6 @@
 //@ts-nocheck
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Nav, NavItem, NavLink as RsNavLink } from 'reactstrap';
 import classNames from 'classnames';
 import nav from './_nav';
 import SidebarFooter from '../sidebarFooter';
@@ -97,19 +96,19 @@ const Sidebar = (props: any) => {
   const navLink = (item: any, key: number, classes: any) => {
     const url = item.url ? item.url : '';
     return (
-      <NavItem key={key} className={classes.item}>
+      <nav className={`${classes.item} nav-item`} key={key}>
         {isExternal(url) ? (
-          <RsNavLink href={url} className={classes.link} active>
+          <a href={url} className={classes.link} active>
             {badge(item.badge)}
             {item.name}
-          </RsNavLink>
+          </a>
         ) : (
-          <NavLink to={url} className={classes.link} activeClassName='active' onClick={hideMobile}>
+          <NavLink to={url} className={`${classes.link}`} activeClassName='active' onClick={hideMobile}>
             {badge(item.badge)}
             {item.name}
           </NavLink>
         )}
-      </NavItem>
+      </nav>
     );
   };
 
@@ -165,7 +164,7 @@ const Sidebar = (props: any) => {
       <SidebarHeader />
       <SidebarForm />
       <nav className='sidebar-nav'>
-        <Nav>{navList(nav.items)}</Nav>
+        <ul className='nav'>{navList(nav.items)}</ul>
       </nav>
       <SidebarFooter />
       <SidebarMinimizer />
