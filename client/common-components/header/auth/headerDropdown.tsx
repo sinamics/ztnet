@@ -1,19 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-//@ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
-// import {  Dropdown } from 'reactstrap';
-import { Link } from 'react-router-dom';
 import { authActions } from '../../../common-actions/auth.actions';
-import { Icon, Dropdown, Menu, Image, Header } from 'semantic-ui-react';
+import { Icon, Dropdown, Header } from 'semantic-ui-react';
 
 type Props = {
-  mw: any;
+  me: any;
   history: any;
 };
 
 const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
-  const [state, setState] = useState({ dropdownOpen: false, darkmode: false });
   const [darkTheme, setDarkTheme] = useState(false);
 
   useEffect(() => {
@@ -35,13 +31,6 @@ const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
     window.localStorage.setItem('Theme', theme);
   };
 
-  const toggle = () => {
-    setState({
-      ...state,
-      dropdownOpen: !state.dropdownOpen,
-    });
-  };
-
   const logout = () => {
     authActions.Logout().then(async () => {
       //@ts-ignore
@@ -58,7 +47,8 @@ const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
       </Header.Content>
     </Header>
   );
-  const routes = (route) => {
+
+  const routes = (route: any) => {
     history.push(route);
   };
 

@@ -136,8 +136,12 @@
     }
 
     .badge {
-      float: right;
-      margin-top: 2px;
+      float: left;
+      margin-right: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 4px;
     }
 
     &.active {
@@ -321,13 +325,6 @@
               margin: $spacer / 4 0;
               font-size: 24px;
             }
-
-            .badge {
-              position: absolute;
-              top: 18px;
-              right: 10px;
-            }
-
             &.nav-dropdown-toggle {
               &::before {
                 top: 30px;
@@ -407,7 +404,7 @@
 
         .badge {
           position: absolute;
-          right: 15px;
+          left: 15px;
           display: none;
         }
 

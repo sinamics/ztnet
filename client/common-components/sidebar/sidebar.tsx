@@ -1,23 +1,25 @@
+//@ts-nocheck
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Badge, Nav, NavItem, NavLink as RsNavLink } from 'reactstrap';
+import { Nav, NavItem, NavLink as RsNavLink } from 'reactstrap';
 import classNames from 'classnames';
 import nav from './_nav';
-import SidebarFooter from './../sidebarFooter';
-import SidebarForm from './../sidebarForm';
-import SidebarHeader from './../sidebarHeader';
-import SidebarMinimizer from './../sidebarMinimizer';
+import SidebarFooter from '../sidebarFooter';
+import SidebarForm from '../sidebarForm';
+import SidebarHeader from '../sidebarHeader';
+import SidebarMinimizer from '../sidebarMinimizer';
 import { useMeQuery } from 'client/graphql/generated/dist';
+import { Icon } from 'semantic-ui-react';
 
-const Sidebar = (props) => {
+const Sidebar = (props: any) => {
   const { loading: meLoading, data: { me = null } = {} } = useMeQuery();
 
-  const handleClick = (e) => {
+  const handleClick = (e: any) => {
     e.preventDefault();
     e.target.parentElement.classList.toggle('open');
   };
 
-  const activeRoute = (routeName, props) => {
+  const activeRoute = (routeName: any, props: any) => {
     // return props.location.pathname.indexOf(routeName) > -1 ? 'nav-item nav-dropdown open' : 'nav-item nav-dropdown';
     return props.location.pathname.indexOf(routeName) > -1 ? 'nav-item nav-dropdown open' : 'nav-item nav-dropdown';
   };
@@ -34,26 +36,25 @@ const Sidebar = (props) => {
   // }
 
   // badge addon to NavItem
-  const badge = (badge) => {
+  const badge = (badge: any) => {
     if (badge) {
-      const classes = classNames(badge.class);
+      // const classes = classNames(badge.class);
       return (
-        <Badge className={classes} color={badge.variant}>
+        <Icon size='small' className='badge' name={badge.icon}>
           {badge.text}
-        </Badge>
+        </Icon>
       );
     }
+    return null;
   };
 
   // simple wrapper for nav-title item
-  const wrapper = (item) => {
-    return item.wrapper && item.wrapper.element
-      ? React.createElement(item.wrapper.element, item.wrapper.attributes, item.name)
-      : item.name;
+  const wrapper = (item: any) => {
+    return item.wrapper && item.wrapper.element ? React.createElement(item.wrapper.element, item.wrapper.attributes, item.name) : item.name;
   };
 
   // nav list section title
-  const title = (title, key) => {
+  const title = (title: any, key: number) => {
     const classes = classNames('nav-title', title.class);
     return (
       <li key={key} className={classes}>
@@ -63,13 +64,13 @@ const Sidebar = (props) => {
   };
 
   // nav list divider
-  const divider = (divider, key) => {
+  const divider = (divider: any, key: number) => {
     const classes = classNames('divider', divider.class);
     return <li key={key} className={classes}></li>;
   };
 
   // nav label with nav link
-  const navLabel = (item, key) => {
+  const navLabel = (item: any, key: number) => {
     const classes = {
       item: classNames('hidden-cn', item.class),
       link: classNames('nav-label', item.class ? item.class : ''),
@@ -83,7 +84,7 @@ const Sidebar = (props) => {
   };
 
   // nav item with nav link
-  const navItem = (item, key) => {
+  const navItem = (item: any, key: number) => {
     const classes = {
       item: classNames(item.class),
       link: classNames('nav-link', item.variant ? `nav-link-${item.variant}` : ''),
@@ -93,21 +94,19 @@ const Sidebar = (props) => {
   };
 
   // nav link
-  const navLink = (item, key, classes) => {
+  const navLink = (item: any, key: number, classes: any) => {
     const url = item.url ? item.url : '';
     return (
       <NavItem key={key} className={classes.item}>
         {isExternal(url) ? (
           <RsNavLink href={url} className={classes.link} active>
-            <i className={classes.icon}></i>
-            {item.name}
             {badge(item.badge)}
+            {item.name}
           </RsNavLink>
         ) : (
           <NavLink to={url} className={classes.link} activeClassName='active' onClick={hideMobile}>
-            <i className={classes.icon}></i>
-            {item.name}
             {badge(item.badge)}
+            {item.name}
           </NavLink>
         )}
       </NavItem>
@@ -115,7 +114,7 @@ const Sidebar = (props) => {
   };
 
   // nav dropdown
-  const navDropdown = (item, key) => {
+  const navDropdown = (item: any, key: number) => {
     return (
       <li key={key} className={activeRoute(item.url, props)}>
         <div className='nav-link nav-dropdown-toggle' onClick={handleClick}>
@@ -128,7 +127,7 @@ const Sidebar = (props) => {
   };
 
   // nav type
-  const navType = (item, idx) =>
+  const navType = (item: any, idx: number) =>
     item.title
       ? title(item, idx)
       : item.divider
@@ -140,8 +139,8 @@ const Sidebar = (props) => {
       : navItem(item, idx);
 
   // nav list
-  const navList = (items) => {
-    return items.map((item, index) => {
+  const navList = (items: any) => {
+    return items.map((item: any, index: number) => {
       // !TODO
       //Bc. Check if user role is set, and hide elements if not correct permissions.
       // if (item.role) {
@@ -155,7 +154,7 @@ const Sidebar = (props) => {
     });
   };
 
-  const isExternal = (url) => {
+  const isExternal = (url: any) => {
     const link = url ? url.substring(0, 4) : '';
     return link === 'http';
   };

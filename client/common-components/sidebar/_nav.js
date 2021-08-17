@@ -5,7 +5,7 @@ export default {
       url: '/dashboard',
       icon: 'fas fa-tachometer-alt',
       badge: {
-        variant: 'info',
+        icon: 'tachometer alternate',
       },
     },
     {
@@ -13,6 +13,9 @@ export default {
       url: '/network',
       icon: 'fas fa-sitemap',
       subscription: true,
+      badge: {
+        icon: 'bity',
+      },
     },
     {
       divider: true,
