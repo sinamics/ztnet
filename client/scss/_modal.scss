@@ -1,24 +1,18 @@
 
-.card-header {
-    background-color: #f8f9fa;
-    /* font-size: 17px; */
-    font-family: sans-serif;
-  }
-  
-  /* override bootsrap til fordel for sematic  */
-  .modal {
+  /* override bootsrap and use sematic  */
+.modal {
     position: absolute;
     right: 0px;
     top: 20%;
     width: 300px;
     border: 3px solid #73ad21;
     padding: 10px;
-  }
-  .ui.mini.input {
+}
+.ui.mini.input {
     height: 10px;
-  }
-  .ui.tiny.button {
+}
+.ui.tiny.button {
     font-size: 10px;
     padding: 6px;
-  }
+}
   

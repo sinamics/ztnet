@@ -75,35 +75,11 @@ tr {
 .themeBackgroundColor{
   background: var(--secondaryText) !important;
 }
-legend {
-  width: auto !important;
-}
-
-.MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label {
-  background-color: inherit !important;
-}
-.MuiTreeItem-root.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label:hover {
-  background-color: rgba(63, 81, 181, 0.08) !important;
-}
-
-.MuiStepLabel-label.MuiStepLabel-completed {
-  color: var(--primaryText) !important;
-}
-.MuiInputBase-root input {
-  color: var(--primaryText);
-}
-.MuiFormControl-root label {
-  color: var(--secondaryText);
-}
-
 .table-darkmode tbody tr td {
   color: var(--primaryText);
 }
 .app-header {
   background-color: var(--primaryTheme) !important;
-}
-.card-header {
-  background-color: var(--primaryCardHeader);
 }
 .app-footer {
   background-color: var(--primaryTheme);
@@ -111,48 +87,12 @@ legend {
 .navbar-brand {
   background-color: var(--primaryTheme) !important;
 }
-.breadcrumb {
-  background-color: var(--primaryTheme);
-}
-.card {
-  background-color: var(--primaryBg);
-}
+
 .main {
   background-color: var(--primaryMain);
-}
-/* react select theam */
-.Select-value {
-  background-color: var(--primaryTheme) !important;
-}
-.Select-value-label,
-.react-select__single-value,
-.react-select__placeholder {
-  color: var(--primaryText) !important;
-}
-.react-select__value-container {
-  background-color: var(--primaryTheme) !important;
-}
-.react-select__option {
-  background-color: var(--primaryTheme) !important;
-}
-.react-select__option:hover {
-  background-color: var(--primaryHover) !important;
-}
-.react-select__control {
-  background-color: var(--primaryTheme) !important;
-}
-.react-select__menu {
-  z-index: 10 !important;
-  background-color: var(--primaryTheme) !important;
 }
 
 .form-control {
   background-color: var(--primaryTheme) !important;
   color: var(--primaryText) !important;
-}
-/* .nav {
-  background-color: var(--primarySiderbar);
-} */
-.aplication-newversion-notification {
-  background-color: var(--primaryBorderBg) !important;
 }

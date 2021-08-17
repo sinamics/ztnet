@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Nav, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import HeaderDropdown from './headerDropdown';
 
-const Header = () => {
+const Header = (props: any) => {
   const { data: { me = null } = {}, loading: meLoading } = useMeQuery();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const Header = () => {
       <Nav className='ml-auto d-md-inline-flex' navbar>
         <Nav className='ml-auto' navbar>
           {/* Badge name with dropdown  */}
-          <HeaderDropdown accnt me={me} />
+          <HeaderDropdown me={me} {...props} />
           <NavItem className='d-md-down-none'>
             <NavLink href='#'>
               <i className='icon-location-pin'></i>

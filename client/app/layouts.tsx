@@ -2,7 +2,7 @@
 import React from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 import { useMeQuery } from 'client/graphql/generated/dist';
-import HomeHeader from '../common-components/header/login/header';
+import HomeHeader from '../common-components/header/public';
 import Header from '../common-components/header/auth';
 import Sidebar from '../common-components/sidebar/sidebar';
 
