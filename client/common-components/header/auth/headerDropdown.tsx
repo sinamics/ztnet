@@ -41,8 +41,8 @@ const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
   const trigger = (
     <Header className='themeTextColor' as='segment' size='tiny'>
       <Icon name='settings' />
-      <Header.Content>
-        Account Settings
+      <Header.Content className='d-none d-sm-table-cell'>
+        {me.firstname}
         <Header.Subheader className='themeTextColor'>Manage your preferences</Header.Subheader>
       </Header.Content>
     </Header>
@@ -53,28 +53,26 @@ const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
   };
 
   return (
-    <>
-      <Dropdown trigger={trigger} icon={null}>
-        <Dropdown.Menu>
-          <Dropdown.Header content='Settings' />
-          <Dropdown.Item className='dropdown-item' onClick={() => routes('/profile/me')}>
-            <Icon className='themeTextColor' name='user' /> Profile
+    <Dropdown basic item direction='left' floating trigger={trigger} icon={null}>
+      <Dropdown.Menu>
+        <Dropdown.Header content='Settings' />
+        <Dropdown.Item className='dropdown-item' onClick={() => routes('/profile/me')}>
+          <Icon className='themeTextColor' name='user' /> Profile
+        </Dropdown.Item>
+        {me.role?.includes('ADMIN') && (
+          <Dropdown.Item className='dropdown-item' onClick={() => routes('/admin')}>
+            <Icon className='themeTextColor' name='star' /> Admin
           </Dropdown.Item>
-          {me.role?.includes('ADMIN') && (
-            <Dropdown.Item className='dropdown-item' onClick={() => routes('/admin')}>
-              <Icon className='themeTextColor' name='star' /> Admin
-            </Dropdown.Item>
-          )}
-          <Dropdown.Item onClick={toggleTheme} className='dropdown-item'>
-            <Icon className='themeTextColor' name='sun' /> {darkTheme ? 'Lightmode' : 'Darkmode'}
-          </Dropdown.Item>
+        )}
+        <Dropdown.Item onClick={toggleTheme} className='dropdown-item'>
+          <Icon className='themeTextColor' name='sun' /> {darkTheme ? 'Lightmode' : 'Darkmode'}
+        </Dropdown.Item>
 
-          <Dropdown.Item onClick={logout} className='dropdown-item'>
-            <Icon className='themeTextColor' name='unlock' /> Logout
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </>
+        <Dropdown.Item onClick={logout} className='dropdown-item'>
+          <Icon className='themeTextColor' name='unlock' /> Logout
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 };
 
