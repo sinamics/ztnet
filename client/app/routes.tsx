@@ -5,11 +5,12 @@ import { Switch, Route, Redirect, BrowserRouter as Router } from 'react-router-d
 
 // Public Views
 import PageNotFound from '../views/pageNotFound';
-import PageLogin from '../views/home/login';
-import Forgot from '../views/home/forgot';
-import PageSignup from '../views/home/register';
-import ValidateEmail from '../views/home/validate';
-import Resetpassword from '../views/home/resetpassword';
+import PageLogin from '../views/login';
+import FirstLoginChangePassword from 'client/views/login/firstLogin';
+import Forgot from '../views/forgot';
+import PageSignup from '../views/register';
+import ValidateEmail from '../views/validateEmail';
+import Resetpassword from '../views/resetPassword';
 // import Forgot from '../views/home/forgot';
 // Authorized views
 import Dashboard from '../views/dashboard';
@@ -21,7 +22,6 @@ import AdminRoute from '../common-components/auth/adminRoute';
 import PrivateRoute from '../common-components/auth/PrivateRoute';
 import { ProfileRoutes } from '../views/profile';
 import { LayoutAnonymous, LayoutAuthenticated, LayoutPublic } from './layouts';
-import FirstLoginChangePassword from 'client/views/home/firstLogin';
 
 const anonymousRoutes = [
   {

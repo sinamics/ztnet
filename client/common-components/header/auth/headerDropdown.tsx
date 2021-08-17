@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { Badge, DropdownItem, DropdownMenu, DropdownToggle, Dropdown, Container } from 'reactstrap';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
-import { authActions } from '../../common-actions/auth.actions';
+import { authActions } from '../../../common-actions/auth.actions';
 import './style.css';
 
 // const propTypes = {

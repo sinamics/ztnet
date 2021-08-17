@@ -2,8 +2,8 @@
 import React from 'react';
 import { Redirect, withRouter } from 'react-router-dom';
 import { useMeQuery } from 'client/graphql/generated/dist';
-import HomeHeader from '../views/home/components/header';
-import Header from '../common-components/header';
+import HomeHeader from '../common-components/header/login/header';
+import Header from '../common-components/header/auth';
 import Sidebar from '../common-components/sidebar/sidebar';
 
 export const LayoutPublic: React.FC<any> = (props: any) => {
