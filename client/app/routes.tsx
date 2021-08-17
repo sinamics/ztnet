@@ -15,11 +15,11 @@ import Resetpassword from '../views/home/resetpassword';
 import Dashboard from '../views/dashboard';
 
 // AUTH
-import Admin from '../views/admin';
+import { Admin } from '../views/admin';
 import { Network, ViewNetworkById } from '../views/network';
 import AdminRoute from '../common-components/auth/adminRoute';
 import PrivateRoute from '../common-components/auth/PrivateRoute';
-import Profile from '../views/profile';
+import { ProfileRoutes } from '../views/profile';
 import { LayoutAnonymous, LayoutAuthenticated, LayoutPublic } from './layouts';
 import FirstLoginChangePassword from 'client/views/home/firstLogin';
 
@@ -107,7 +107,7 @@ const privateRoutes = [
   {
     key: 'profile',
     path: '/profile/:submenu',
-    component: Profile,
+    component: ProfileRoutes,
     exact: true,
   },
 ];
