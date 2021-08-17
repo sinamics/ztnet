@@ -128,7 +128,14 @@ const FirstLoginChangePassword = ({ history }: any) => {
               {submitted && !user.password && <div className='help-block text-danger'>Passord mangler!</div>}
             </Grid>
           </Grid>
-          <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit} onClick={handleSubmit}>
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            color='primary'
+            style={{ background: '#243244', color: 'white' }}
+            onClick={handleSubmit}
+          >
             Change
           </Button>
         </form>

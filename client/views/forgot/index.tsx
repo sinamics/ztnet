@@ -139,7 +139,8 @@ function ForGot() {
                 fullWidth
                 variant='contained'
                 color='primary'
-                className={classes.submit}
+                className='my-5'
+                style={{ background: '#243244', color: 'white' }}
                 onClick={handleSubmit}
               >
                 Send email

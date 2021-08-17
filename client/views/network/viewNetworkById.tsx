@@ -214,7 +214,7 @@ const ViewNetworkById = ({ match }: any) => {
             <div className='ui label'>Devices will show up automatically, no need to refresh!</div>
           </Typography>
         </Grid.Column>
-        <Grid.Column width={16}>
+        <Grid.Column width={16} className='overflow-auto'>
           {members.length ? (
             <MembersTable cidr={network?.routes[0]?.target} tableData={members} setEditing={(e: boolean) => setEditing(e)} />
           ) : (
@@ -271,7 +271,7 @@ const ViewNetworkById = ({ match }: any) => {
 
             <div ref={zombieTableRef}>
               {viewDeletedMembers ? (
-                <Grid.Column width={16} className='mt-5'>
+                <Grid.Column width={16} className='mt-5 overflow-auto'>
                   <>
                     <small>These members are zombies (deleted) and will be removed from the vpn controller after a while</small>
                     <br />

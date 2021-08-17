@@ -56,13 +56,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
-  form: {
-    // width: "100%", // Fix IE 11 issue.
-    // marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
 }));
 
 // interface RegisterProps {
@@ -155,7 +148,7 @@ const SignUp: React.FC<RouteComponentProps> = ({ history }) => {
               {typeof registerError === 'object' && registerError.message}
             </Typography>
           </div>
-          <form className={classes.form} noValidate>
+          <form noValidate>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -229,7 +222,8 @@ const SignUp: React.FC<RouteComponentProps> = ({ history }) => {
               fullWidth
               variant='contained'
               color='primary'
-              className={classes.submit}
+              className='my-5'
+              style={{ background: '#243244', color: 'white' }}
               onClick={handleSubmit}
             >
               Register

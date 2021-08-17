@@ -42,13 +42,12 @@ const Network: React.FC<any> = ({ history }): JSX.Element => {
               </Button>
             </div>
           </Grid.Column>
-          <Grid.Column mobile={16} computer={10}>
+          <Grid.Column mobile={16} computer={10} className='overflow-auto'>
             <Typography variant='subtitle1' className='mb-3'>
               Connect team members from anywhere in the world on any device. ZeroTier creates secure networks between on-premise, cloud, desktop, and
               mobile devices. Zerotier It's an encrypted Peer-to-Peer technology, meaning that unlike traditional VPN solutions, communications don't
               need to pass through a central server or router — messages are sent directly from host to host.
             </Typography>
-            <Typography variant='subtitle1' className='mb-3'></Typography>
             <div className='text-center'>
               {allNetworks && allNetworks.length > 0 && <NetworkTable tableData={allNetworks} history={history} />}
               {!allNetworks || (allNetworks.length === 0 && <div>No network found!</div>)}

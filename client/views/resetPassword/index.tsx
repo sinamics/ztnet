@@ -16,7 +16,6 @@ import config from 'config';
 
 const useStyles = makeStyles((theme) => ({
   loginWrapper: {
-    // marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -29,20 +28,12 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     borderRadius: 10,
-
     padding: '10%',
     background: 'white',
   },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    // width: "100%", // Fix IE 11 issue.
-    // marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
   },
 }));
 
@@ -100,7 +91,7 @@ const ResetPassword = ({ match, history }: any) => {
           {typeof changeError === 'object' && changeError.message}
         </Typography>
         {/* <Container component="main" maxWidth="xs"> */}
-        <form className={classes.form} noValidate>
+        <form noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Grid className='mb-1'>
@@ -136,7 +127,14 @@ const ResetPassword = ({ match, history }: any) => {
               {submitted && !user.password && <div className='help-block text-danger'>Passord mangler!</div>}
             </Grid>
           </Grid>
-          <Button type='submit' fullWidth variant='contained' color='primary' className={classes.submit} onClick={handleSubmit}>
+          <Button
+            type='submit'
+            fullWidth
+            variant='contained'
+            color='primary'
+            style={{ background: '#243244', color: 'white' }}
+            onClick={handleSubmit}
+          >
             Change
           </Button>
           <Grid container justify='flex-end'>
