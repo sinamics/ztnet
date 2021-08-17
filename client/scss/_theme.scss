@@ -69,7 +69,12 @@ tr {
 .lightdarktheme > .active {
   color: var(--primaryActiveText) !important;
 }
-
+.themeTextColor{
+  color: var(--primaryText) !important;
+}
+.themeBackgroundColor{
+  background: var(--secondaryText) !important;
+}
 legend {
   width: auto !important;
 }

@@ -8,14 +8,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './utils/apolloLink';
 
-import '@fortawesome/fontawesome-free/css/all.min.css';
+// import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Import Main styles for this application
 import './scss/style.scss';
-
-// Custom styles
-import './scss/_custom.css';
-import './scss/theme.css';
 
 const MOUNT_NODE = document.getElementById('root');
 

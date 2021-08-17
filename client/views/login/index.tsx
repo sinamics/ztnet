@@ -155,7 +155,7 @@ const LoginPage: React.FC<RouteComponentProps> = ({ history }: LoginProps) => {
             type='submit'
             fullWidth
             variant='contained'
-            color='primary'
+            style={{ background: '#243244', color: 'white' }}
             className={classes.submit}
             onClick={handleSubmit}
           >
