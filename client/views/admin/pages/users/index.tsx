@@ -19,7 +19,7 @@ const UserTable = () => {
           <Button onClick={() => setState({ adduser: !state.adduser })}>Add User</Button>
           {state.adduser && <Adduser />}
         </Grid.Column>
-        <Grid.Column width={16}>
+        <Grid.Column width={16} className='overflow-auto'>
           <Table tableData={getUsers} />
         </Grid.Column>
       </Grid>

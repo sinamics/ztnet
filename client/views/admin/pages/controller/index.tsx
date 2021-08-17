@@ -2,7 +2,6 @@ import React from 'react';
 import { ControllerTable } from './controllerTable';
 import { Grid, GridRow, Segment } from 'semantic-ui-react';
 import { useControllerStatsQuery } from 'client/graphql/generated/dist';
-import './style.css';
 
 const Controller = (props: any) => {
   const { loading, error, data: { controllerStats = {} } = {} } = useControllerStatsQuery();
@@ -54,7 +53,7 @@ const Controller = (props: any) => {
         <Grid.Column width={16}>{/* <ControllerTable tableData={data} /> */}</Grid.Column>
       </Grid>
       <Grid>
-        <Grid.Column width={16}>
+        <Grid.Column width={16} className='overflow-auto'>
           <ControllerTable {...props} tableData={nodes} />
         </Grid.Column>
       </Grid>

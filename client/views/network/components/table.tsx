@@ -43,7 +43,7 @@ export default function BootstrapTable({
   ...rest
 }: ITable) {
   return (
-    <>
+    <div className='overflow-auto'>
       {error && <div className='text-danger text-center'>{error.message}</div>}
       <ToolkitProvider keyField={keyField} columns={columns} data={tableData} search>
         {(props: any) => (
@@ -64,6 +64,6 @@ export default function BootstrapTable({
           </div>
         )}
       </ToolkitProvider>
-    </>
+    </div>
   );
 }
