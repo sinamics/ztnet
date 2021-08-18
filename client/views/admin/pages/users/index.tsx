@@ -3,7 +3,6 @@ import { useGetUsersQuery } from 'client/graphql/generated/dist';
 import { Table } from './table';
 import Adduser from './components/addUser';
 import { Button, Grid, GridRow } from 'semantic-ui-react';
-import './style.css';
 
 const UserTable = () => {
   const [state, setState] = useState({ adduser: false });

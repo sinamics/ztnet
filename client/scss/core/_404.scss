@@ -1,11 +1,3 @@
-/* @import url("https://fonts.googleapis.com/css?family=Poppins&display=swap");
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-} */
-
 #not-found-container {
   position: absolute;
   width: 100%;
@@ -13,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(p404.png) #151729;
+  background: url(/client/images/errors/p404.png) #151729;
 }
 .not-found-content {
   max-width: 600px;
