@@ -3,11 +3,9 @@ import React, { useEffect, useState } from 'react';
 import Routes from './routes';
 // AUTH
 import { setAccessToken } from 'client/utils/accessToken';
-import './style.css';
 
 // @ts-ignore
 import config from 'config';
-
 
 const App: React.FC = (): JSX.Element => {
   const [loading, setLoading] = useState(true);

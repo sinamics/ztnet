@@ -1,8 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Questrial&display=swap');
+:root {
+  --header-bg-color: #243244;
+  --header-font: 'Questrial', sans-serif;
+}
+
 html {
   --primaryFont: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  /* --primaryFont: 'Poppins', sans-serif; */
 
   --primaryTheme: #fff;
 
@@ -10,7 +14,7 @@ html {
 
   --primaryText: #212121;
 
-  --primaryActiveText:#212121;
+  --primaryActiveText: #212121;
 
   --primaryHover: #596574;
 
@@ -58,6 +62,17 @@ body {
   font-size: 15px;
 }
 
+.homepage {
+  margin: 0 !important;
+  font-family: Helvetica;
+  background: url('../images/home/network.png') no-repeat center center fixed !important;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
+  height: 100vh;
+}
+
 th,
 tr {
   color: var(--primaryText);
@@ -69,10 +84,10 @@ tr {
 .lightdarktheme > .active {
   color: var(--primaryActiveText) !important;
 }
-.themeTextColor{
+.themeTextColor {
   color: var(--primaryText) !important;
 }
-.themeBackgroundColor{
+.themeBackgroundColor {
   background: var(--secondaryText) !important;
 }
 .table-darkmode tbody tr td {

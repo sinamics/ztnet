@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './style.css';
 
 interface Props {
   pathname: String;
