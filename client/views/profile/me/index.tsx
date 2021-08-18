@@ -1,23 +1,13 @@
-/* eslint-disable jsx-a11y/interactive-supports-focus */
-/* eslint-disable no-underscore-dangle */
 import React from 'react';
 
 import { Container, Segment, Grid } from 'semantic-ui-react';
 import { useMeQuery } from 'client/graphql/generated/dist';
-
-// import "./style.css";
 
 const Profile = () => {
   const { data: { me = {} } = {}, loading: meLoading } = useMeQuery({
     fetchPolicy: 'network-only',
   });
 
-  // const [genEmailLink, { data: mailSent }] = useMailActivationLinkMutation();
-  // const [GQL_uploadProfileImage] = useUploadProfileImageMutation();
-
-  // const sendMailActivationLink = () => {
-  //   genEmailLink({ variables: { userId: me?._id } });
-  // };
   if (meLoading) return <div>Loading Profile...</div>;
 
   return (
@@ -65,11 +55,6 @@ const Profile = () => {
             </Segment>
           </Grid.Column>
         </Grid.Row>
-
-        {/* <Row>
-          <h5>Security</h5>
-          <p>Change Password</p>
-        </Row> */}
       </Grid>
     </Container>
   );
