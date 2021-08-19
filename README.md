@@ -1,4 +1,4 @@
-# ZTNET - Web application for self-hosted zerotier controller.
+# ZTNET - User interface for self hosted zerotier network controller.
 
 Read more about **zerotier** (https://www.zerotier.com/)
 
