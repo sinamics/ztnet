@@ -167,7 +167,8 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr, setEditing }: any) 
           return <span className='text-success'>Online (v{row.peers?.version})</span>;
         }
 
-        return <TimeAgo date={row.lastseen} />;
+        // return <TimeAgo date={row.lastseen} />;
+        return <span className='text-danger'>Offline</span>;
       },
     },
     {
