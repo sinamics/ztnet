@@ -163,22 +163,11 @@ export const MembersTable = ({ tableData = { ip: [] }, cidr, setEditing }: any) 
       },
       isDummyField: true,
       formatter: (_: any, row: any) => {
-        if (!row.peers) return <div className='text-danger'>unknown</div>;
-        if (row.peers.versionMajor !== -1) {
-          if (row.peers?.latency !== -1) {
-            return <span className='text-success'>Online (v{row.peers?.version})</span>;
-          } else {
-            if (row.peers?.paths.length > 0) {
-              return (
-                <span className=''>
-                  <TimeAgo date={row.peers?.paths[0].lastReceive} />
-                </span>
-              );
-            }
-          }
+        if (row.peers && row.peers.versionMajor !== -1 && row.peers?.latency !== -1) {
+          return <span className='text-success'>Online (v{row.peers?.version})</span>;
         }
 
-        return <span className='text-danger'>Offline</span>;
+        return <TimeAgo date={row.lastseen} />;
       },
     },
     {

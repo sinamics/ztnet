@@ -38,7 +38,7 @@ const HeaderDropdown: React.FC<any> = ({ me, history }: Props) => {
   };
 
   const trigger = (
-    <Header className='themeTextColor' as='segment' size='tiny'>
+    <Header className='themeTextColor' as='span' size='tiny'>
       <Icon name='settings' />
       <Header.Content className='d-none d-sm-table-cell'>
         {me.firstname}

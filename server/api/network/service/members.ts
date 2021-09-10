@@ -7,13 +7,15 @@ export const psql_updateOrCreateMembers = (members: Array<any>) =>
     if (!members.length) resolve([]);
 
     map(members, async (member: any) => {
+      const fetchMember = await NetworkService.network_members.findFirst(member.id);
+
       const updateMember = await NetworkService.network_members.updateMany({
         where: {
           nwid: member.nwid,
           id: member.id,
         },
         data: {
-          lastseen: new Date(),
+          lastseen: member.peers && member.peers?.versionMajor !== -1 ? member.peers?.paths[0]?.lastReceive : fetchMember.lastseen,
           id: member.id,
           identity: member.identity,
           authorized: member.authorized,

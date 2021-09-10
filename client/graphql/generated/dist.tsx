@@ -765,7 +765,7 @@ export type NetworkDetailsQuery = (
       )>>> }
     )>, members?: Maybe<Array<Maybe<(
       { __typename?: 'Member' }
-      & Pick<Member, 'identity' | 'nodeid' | 'id' | 'name' | 'ip' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
+      & Pick<Member, 'lastseen' | 'identity' | 'nodeid' | 'id' | 'name' | 'ip' | 'address' | 'authorized' | 'creationTime' | 'ipAssignments' | 'noAutoAssignIps' | 'nwid'>
       & { peers?: Maybe<(
         { __typename?: 'Peers' }
         & Pick<Peers, 'address' | 'latency' | 'role' | 'version' | 'versionMajor' | 'versionMinor' | 'versionRev'>
@@ -1730,6 +1730,7 @@ export const NetworkDetailsDocument = gql`
       }
     }
     members {
+      lastseen
       identity
       nodeid
       id

@@ -18,6 +18,7 @@ query networkDetails($nwid: ID!) {
       }
     }
     members {
+      lastseen
       identity
       nodeid
       id
