@@ -15,7 +15,7 @@ export const psql_updateOrCreateMembers = (members: Array<any>) =>
           id: member.id,
         },
         data: {
-          lastseen: member.peers && member.peers?.versionMajor !== -1 ? member.peers?.paths[0]?.lastReceive : fetchMember.lastseen,
+          lastseen: member.peers && member.peers?.versionMajor !== -1 ? member.peers?.paths[0]?.lastReceive / 1000 : fetchMember.lastseen,
           id: member.id,
           identity: member.identity,
           authorized: member.authorized,
