@@ -8,7 +8,6 @@ export const psql_updateOrCreateMembers = (members: Array<any>) =>
 
     map(members, async (member: any) => {
       const fetchMember = await NetworkService.network_members.findFirst({ where: { id: member.id, nwid: member.nwid } });
-      console.log(fetchMember);
       const updateMember = await NetworkService.network_members.updateMany({
         where: {
           nwid: member.nwid,
