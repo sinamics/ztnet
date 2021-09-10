@@ -10,7 +10,6 @@ export const psql_updateOrCreateMembers = (members: Array<any>) =>
       const fetchMember = await NetworkService.network_members.findFirst({ where: { id: member.id, nwid: member.nwid } });
 
       const lastseen = member.peers && member.peers?.latency !== -1 ? member.peers?.paths[0]?.lastReceive : fetchMember.lastseen;
-      console.log(member.peers?.paths[0]?.lastReceive);
       const updateMember = await NetworkService.network_members.updateMany({
         where: {
           nwid: member.nwid,
