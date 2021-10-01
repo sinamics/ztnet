@@ -17,3 +17,5 @@ main()
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());
+
+  // npx prisma db seed --preview-feature --schema=./prisma/schema.prisma

@@ -99,3 +99,7 @@ model settings {
 // npm run prisma-gen
 // npx prisma migrate deploy --preview-feature
 // pm2 restart ztnet
+
+
+// Seeding prisma
+// npx prisma db seed --preview-feature --schema=./prisma/schema.prisma
