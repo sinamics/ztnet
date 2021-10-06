@@ -45,6 +45,7 @@ jobs:
           echo ACCESS_TOKEN_SECRET="${{ secrets.ACCESS_TOKEN_SECRET }}" >> .env
           echo REFRESH_TOKEN_SECRET="${{ secrets.REFRESH_TOKEN_SECRET }}" >> .env
           echo REFRESH_TOKEN_LIFE="${{ secrets.REFRESH_TOKEN_LIFE }}" >> .env
+          echo LICENSE_MANAGER_TOKEN="${{ secrets.LICENSE_MANAGER_TOKEN }}" >> .env
           echo ACCESS_TOKEN_LIFE="${{ secrets.ACCESS_TOKEN_LIFE }}" >> .env
           echo JWT_CLOCKDIFFRENCE_ALLOWED="${{ secrets.JWT_CLOCKDIFFRENCE_ALLOWED }}" >> .env
           echo POSTGRES_USER="${{ secrets.POSTGRES_USER }}" >> .env
