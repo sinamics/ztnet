@@ -60,6 +60,7 @@ export const columns = [
     text: 'Expiration Date',
     // width: 5,
     editable: true,
+    sort: true,
   },
   {
     dataField: 'licenseKey',
