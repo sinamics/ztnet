@@ -23,6 +23,7 @@ query getUsers {
     orderId
     max_instance_number
     product_id
+    expirationDate
   }
 }
 

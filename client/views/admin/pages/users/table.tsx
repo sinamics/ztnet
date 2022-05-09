@@ -53,7 +53,16 @@ export const Table: any = ({ tableData = {} }: any) => {
             },
           },
         }).catch((err) => console.log(err));
-
+      case 'expirationDate':
+          if (!newValue) return { async: true };
+          return updateUser({
+            variables: {
+              userid: row.userid,
+              user: {
+                expirationDate: newValue,
+              },
+            },
+          }).catch((err) => console.log(err));
       case 'action':
         if (!newValue) return { async: true };
         return newValue;

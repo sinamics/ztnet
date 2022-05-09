@@ -11,6 +11,7 @@ const UserTable = () => {
 
   if (loading) return <div></div>;
   if (error) return <div>Error! ${error.message}`</div>;
+
   return (
     <GridRow className='mt-3 mb-3'>
       <Grid>

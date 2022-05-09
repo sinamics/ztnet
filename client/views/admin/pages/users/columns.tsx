@@ -56,6 +56,12 @@ export const columns = [
     sort: true,
   },
   {
+    dataField: 'expirationDate',
+    text: 'Expiration Date',
+    // width: 5,
+    editable: true,
+  },
+  {
     dataField: 'licenseKey',
     text: 'License Key',
     // width: 5,

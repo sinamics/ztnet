@@ -100,6 +100,7 @@
     "react-timeago": "^4.4.0",
     "resolve": "1.15.0",
     "resolve-url-loader": "3.1.1",
+    "sass": "^1.51.0",
     "save-dev": "0.0.1-security",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.1",

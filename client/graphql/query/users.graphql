@@ -9,5 +9,6 @@ query users {
     createdDate
     lastlogin
     role
+    expirationDate
   }
 }

@@ -713,7 +713,7 @@ export type GetUsersQuery = (
   { __typename?: 'Query' }
   & { getUsers?: Maybe<Array<Maybe<(
     { __typename?: 'Users' }
-    & Pick<Users, 'userid' | 'firstname' | 'lastname' | 'email' | 'role' | 'licenseKey' | 'lastlogin' | 'licenseStatus' | 'orderStatus' | 'orderId' | 'max_instance_number' | 'product_id'>
+    & Pick<Users, 'userid' | 'firstname' | 'lastname' | 'email' | 'role' | 'licenseKey' | 'lastlogin' | 'licenseStatus' | 'orderStatus' | 'orderId' | 'max_instance_number' | 'product_id' | 'expirationDate'>
   )>>> }
 );
 
@@ -802,7 +802,7 @@ export type UsersQuery = (
   { __typename?: 'Query' }
   & { getUsers?: Maybe<Array<Maybe<(
     { __typename?: 'Users' }
-    & Pick<Users, 'userid' | 'firstname' | 'lastname' | 'email' | 'tokenVersion' | 'emailConfirmed' | 'createdDate' | 'lastlogin' | 'role'>
+    & Pick<Users, 'userid' | 'firstname' | 'lastname' | 'email' | 'tokenVersion' | 'emailConfirmed' | 'createdDate' | 'lastlogin' | 'role' | 'expirationDate'>
   )>>> }
 );
 
@@ -1580,6 +1580,7 @@ export const GetUsersDocument = gql`
     orderId
     max_instance_number
     product_id
+    expirationDate
   }
 }
     `;
@@ -1852,6 +1853,7 @@ export const UsersDocument = gql`
     createdDate
     lastlogin
     role
+    expirationDate
   }
 }
     `;
