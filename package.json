@@ -94,6 +94,7 @@
     "react-copy-to-clipboard": "^5.0.2",
     "react-dev-utils": ">=11.0.4",
     "react-dom": "^17.0.1",
+    "react-ga4": "^1.4.1",
     "react-loading-skeleton": "^2.1.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
