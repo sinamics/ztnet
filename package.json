@@ -32,7 +32,7 @@
     "apollo-link-token-refresh": "^0.3.2",
     "apollo-server-express": "^2.16.1",
     "apollo-upload-client": "^14.1.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "babel-eslint": "10.1.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.1.0",
