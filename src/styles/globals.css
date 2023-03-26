@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-content {
+  /* min-height: 100vh; */
+  min-height: 100dvh;
+  /* min-height: -webkit-fill-available; */
+}
+.table-wrapper {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  overflow: auto;
+  white-space: nowrap;
+}

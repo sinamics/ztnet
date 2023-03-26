@@ -1,0 +1,75 @@
+import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { useSidebarStore } from "~/utils/store";
+
+const Themes = ["light", "dark", "black", "business"];
+
+const Header = () => {
+  const session = useSession();
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const { toggle } = useSidebarStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  return (
+    <header className="header bg-neutral-focus py-1 px-4 shadow">
+      <div className="header-content flex flex-row items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="h-6 w-6 sm:block md:hidden"
+          onClick={toggle}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+          />
+        </svg>
+
+        <div className="ml-auto flex">
+          {/* <a href="#" className="flex flex-row items-center"> */}
+          <div className="dropdown-end dropdown">
+            <label tabIndex={0} className="btn m-1">
+              {theme}
+            </label>
+            <ul
+              tabIndex={0}
+              className="dropdown-content menu rounded-box w-52 bg-primary p-2 shadow"
+            >
+              {Themes.map((theme) => {
+                return (
+                  <li key={theme} onClick={() => setTheme(theme)}>
+                    <a>{theme}</a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <span className="ml-2 flex flex-col justify-center">
+            <span className="truncate font-semibold leading-none tracking-wide">
+              {session.data?.user.name}
+            </span>
+            <span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
+              operator
+            </span>
+          </span>
+          {/* </a> */}
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
