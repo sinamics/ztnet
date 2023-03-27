@@ -18,7 +18,10 @@ const CardComponent: React.FC<CardProps> = ({
   faded,
 }) => {
   return (
-    <div onClick={onClick} className={rootClassName}>
+    <div
+      onClick={onClick}
+      className={`${faded ? "opacity-25" : "opacity-100"} ${rootClassName}`}
+    >
       <div className="p-4">
         <div className="flex items-center justify-between">
           <span>{title}</span>

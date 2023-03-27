@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRouter } from "next/router";
-import { ReactElement, useRef, useState } from "react";
+import { type ReactElement, useRef, useState } from "react";
 import { LayoutAuthenticated } from "~/components/layout";
 import { MembersTable } from "~/components/membersTable";
 import CardComponent from "~/components/privatePublic";
@@ -29,12 +29,14 @@ const NetworkById = () => {
   const {
     data: networkById,
     isLoading: loadingNetwork,
+    refetch: refetchNetworkById,
     // error: loadingNetworkError,
     // subscribeToMore: memberInformationListner,
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
     },
+    // { enabled: !!query.id, refetchInterval: 10000 }
     { enabled: !!query.id }
   );
 
@@ -50,7 +52,7 @@ const NetworkById = () => {
     // });
   };
   const { network, members, zombieMembers }: any = networkById;
-  console.log(members);
+
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
@@ -89,7 +91,7 @@ const NetworkById = () => {
               faded={network.private}
               title="Public"
               rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid opacity-50 cursor-pointer bg-transparent text-inherit flex-1"
-              iconClassName="text-red-500"
+              iconClassName="text-warning"
               content="All users can connect to this network without Autorization"
             />
           </div>
@@ -151,6 +153,7 @@ const NetworkById = () => {
               cidr={network?.routes[0]?.target}
               tableData={members}
               setEditing={(e: boolean) => setEditing(e)}
+              refetchNetworkById={refetchNetworkById}
             />
           </div>
         ) : (

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // function randomOctet() {
 //   return Math.floor(Math.random() * 255);
 // }

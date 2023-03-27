@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -26,18 +28,95 @@ interface NetworksTableProps {
 
 export const networkRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    console.log(typeof ctx.session.user.id);
     const networks = await ctx.prisma.network.findMany({
       where: {
         authorId: ctx.session.user.id,
       },
     });
-    console.log(networks);
-    // return {
-    //   network: ,
-    // };
     return networks;
   }),
+  memberUpdate: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+        memberId: z.string(),
+        data: z.any(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // async (_: any, nw: any) => {
+      // if users click the re-generate icon on IP address
+      // if (input.nw.data && input.nw.data.generateIp4) {
+      //   // Generate ipv4 address, cidr, start & end
+      //   //TODO add options in UI for IPv4 selector
+      //   const ipAssignmentPools = IP.randomIPv4();
+      //   await ztController.network_update(input.nw.nwid, ipAssignmentPools);
+      //   // Generate new ipv4 address by passing in empty array '10.24.118.16'
+      //   input.nw.data = Object.assign({}, { ipAssignments: [], noAutoAssignIps: false });
+      // }
+
+      // remove ip specified by user UI
+      // if (input.nw.data && input.nw.data.hasOwnProperty('removeIp4index')) {
+      //   const { ipAssignments, removeIp4index } = input.nw.data;
+      //   // slice out ip
+      //   ipAssignments.splice(removeIp4index, 1);
+
+      //   // update controller
+      //   return await ztController.member_update(input.nw.nwid, input.nw.memberId, { ipAssignments }).catch((err: any) => console.log(err));
+      // }
+
+      const updatedMember = await ztController
+        .member_update(input.nwid, input.memberId, input.data)
+        .catch(() => {
+          throw new TRPCError({
+            message:
+              "Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
+            code: "FORBIDDEN",
+          });
+        });
+
+      const response = await ctx.prisma.network
+        .update({
+          where: {
+            nwid: input.nwid,
+          },
+          data: {
+            network_members: {
+              updateMany: {
+                where: { id: input.memberId, nwid: input.nwid },
+                data: {
+                  ipAssignments: updatedMember.ipAssignments,
+                  authorized: updatedMember.authorized,
+                },
+              },
+            },
+          },
+          include: {
+            network_members: {
+              where: {
+                id: input.memberId,
+                nwid: input.nwid,
+              },
+            },
+          },
+        })
+        .catch((err: any) => console.log(err));
+      if (!response) {
+        throw new TRPCError({
+          message: "Network database response is empty.",
+          code: "BAD_REQUEST",
+        });
+      }
+
+      if ("network_members" in response) {
+        return { member: response.network_members[0] };
+      } else {
+        throw new TRPCError({
+          message: "Response does not have network members.",
+          code: "BAD_REQUEST",
+        });
+      }
+    }),
   memberUpdateDatabaseOnly: protectedProcedure
     .input(
       z.object({
@@ -47,16 +126,15 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
       // if users click the re-generate icon on IP address
-      const returnNewMember = await ctx.prisma.network.update({
+      const response = await ctx.prisma.network.update({
         where: {
           nwid: input.nwid,
         },
         data: {
           network_members: {
             update: {
-              where: { nodeid: parseInt(input.nodeid) },
+              where: { nodeid: input.nodeid },
               data: {
                 name: input.newName,
               },
@@ -66,12 +144,12 @@ export const networkRouter = createTRPCRouter({
         include: {
           network_members: {
             where: {
-              nodeid: parseInt(input.nodeid),
+              nodeid: input.nodeid,
             },
           },
         },
       });
-      return { member: returnNewMember.network_members[0] };
+      return { member: response.network_members[0] };
     }),
   getNetworkById: protectedProcedure
     .input(z.object({ nwid: z.string() }))
@@ -148,17 +226,41 @@ export const networkRouter = createTRPCRouter({
           deleted: false,
         },
       });
-      console.log(members);
+
       // Get peers to view client version of zt
       for (const member of getActiveMembers) {
         // member.creationTime = new Date(member.creationTime * 1000);
+
+        const peers = await ztController.peer(member.address);
+        const memberPeer = peers.find((peer) => peer.address === member.id);
+
         try {
           Object.assign(member, {
-            peers: await ztController.peer(member.address),
+            peers: memberPeer,
           });
         } catch (error) {}
       }
 
+      // const latencyInfo: { [memberId: string]: number } = {};
+      // for (const member of getActiveMembers) {
+      //   if (member.id === "4ef7287f63") {
+      //     //@ts-ignore
+      //     const filteredPeers = member.peers.filter(
+      //       (peer) => peer.latency >= 0
+      //     );
+      //     //@ts-ignore
+      //     const totalLatency = filteredPeers.reduce(
+      //       (sum, peer) => sum + peer.latency,
+      //       0
+      //     );
+      //     //@ts-ignore
+      //     const averageLatency = totalLatency / filteredPeers.length;
+      //     latencyInfo[member.id] = averageLatency;
+      //     // console.log(latencyInfo);
+      //   }
+      // }
+
+      // console.log(ztControllerResponse);
       return Promise.all([getActiveMembers, getZombieMembers]).then((res) => {
         // if no zombie members, remove the [null] from array caused by the map function.
         const zombieMembers = res[1].filter((a: any) => a);
