@@ -9,8 +9,9 @@ import { type User, type Session } from "next-auth";
 import { getSession } from "next-auth/react";
 // import { signIn } from "next-auth/react";
 // import { signIn, signOut, useSession } from "next-auth/react";
-import LoginForm from "~/components/loginForm";
+import LoginForm from "~/components/modules/loginForm";
 import Link from "next/link";
+import RegisterForm from "~/components/modules/registerForm";
 
 const Home: NextPage<{ auth: User }> = ({ auth }) => {
   console.log(auth);

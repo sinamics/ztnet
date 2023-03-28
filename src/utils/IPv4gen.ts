@@ -21,7 +21,7 @@ const generateCidr = () => {
   return cidrOptions[Math.floor(Math.random() * cidrOptions.length)];
 };
 
-export const randomIPv4 = (CIDR: any) => {
+export const IPv4gen = (CIDR: any) => {
   const cidr = CIDR ? CIDR : generateCidr();
 
   const [start, prefix] = cidr.split("/");

@@ -8,6 +8,7 @@ import type { AppProps } from "next/app";
 import { api } from "~/utils/api";
 import { ThemeProvider, useTheme } from "next-themes";
 import "~/styles/globals.css";
+import { Toaster } from "react-hot-toast";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -25,6 +26,7 @@ const App: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <ThemeProvider defaultTheme="system">
+      <Toaster />
       <SessionProvider session={session}>
         {getLayout(<Component {...pageProps} />)}
       </SessionProvider>

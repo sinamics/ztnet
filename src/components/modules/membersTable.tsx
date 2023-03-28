@@ -117,7 +117,6 @@ export const MembersTable = ({
             return <span>waiting for IP ...</span>;
           return ipAssignments.map((ip, key) => {
             const block = new Netmask(cidr);
-            console.log(peers);
             return (
               <div key={ip}>
                 {true ? (
@@ -126,7 +125,7 @@ export const MembersTable = ({
                     onCopy={() => console.log(ip)}
                     title="copy to clipboard"
                   >
-                    <div className="badge-primary badge badge-lg flex w-full cursor-pointer items-center justify-between rounded-md pl-2 text-center">
+                    <div className="badge badge-primary badge-lg flex w-full cursor-pointer items-center justify-between rounded-md pl-2 text-center">
                       <div className={`${block.contains(ip) ? "" : ""}`}>
                         {ip}
                       </div>

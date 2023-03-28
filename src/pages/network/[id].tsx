@@ -5,10 +5,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRouter } from "next/router";
 import { type ReactElement, useRef, useState } from "react";
-import { LayoutAuthenticated } from "~/components/layout";
-import { MembersTable } from "~/components/membersTable";
-import CardComponent from "~/components/privatePublic";
+import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { NettworkSettings } from "~/components/modules/networkRoutes";
+import { MembersTable } from "~/components/modules/membersTable";
+import CardComponent from "~/components/modules/privatePublic";
 import { api } from "~/utils/api";
+import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 
 const NetworkById = () => {
   const [state, setState] = useState<Record<"copied" | "editName", boolean>>({
@@ -113,33 +115,21 @@ const NetworkById = () => {
           </div>
         </div>
       </div>
-
-      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <div>
-          <div>IPv4 Assignments (Do not change unless you have to)</div>
-          <div
-            className="grid cursor-pointer grid-cols-2 gap-2 lg:grid-cols-4"
-            // style={{ cursor: "pointer", fontSize: "24px", color: "#636363" }}
-          >
-            {network.cidr?.map((cidr) => {
-              return cidr === network?.routes[0]?.target ? (
-                <div
-                  key={cidr}
-                  className="badge badge-lg rounded-md bg-primary text-xs md:text-base"
-                >
-                  {cidr}
-                </div>
-              ) : (
-                <div
-                  key={cidr}
-                  onClick={() => updateNetworkHandler({ changeCidr: cidr })}
-                  className="badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 hover:bg-primary md:text-base"
-                >
-                  {cidr}
-                </div>
-              );
-            })}
-          </div>
+      <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        Network Settings
+      </div>
+      <div className="mx-auto w-full text-center text-xs sm:w-4/5 sm:px-10">
+        <p>
+          This is used for advanced routing, and should not be changed unless
+          you absolutely have to.
+        </p>
+      </div>
+      <div className="mx-auto flex w-full justify-between px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <NetworkIpAssignment />
+        <div className="divider lg:divider-horizontal"></div>
+        {/* Manged routes section */}
+        <div className="w-6/12">
+          <NettworkSettings />
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
@@ -150,7 +140,7 @@ const NetworkById = () => {
           <div className="table-wrapper">
             <MembersTable
               nwid={network.nwid}
-              cidr={network?.routes[0]?.target}
+              cidr={network?.routes[0]?.target ?? "0.0.0.0/24"}
               tableData={members}
               setEditing={(e: boolean) => setEditing(e)}
               refetchNetworkById={refetchNetworkById}

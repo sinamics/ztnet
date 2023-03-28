@@ -1,6 +1,6 @@
 import Head from "next/head";
 import type { ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layout";
+import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 
 // import { api } from "~/utils/api";

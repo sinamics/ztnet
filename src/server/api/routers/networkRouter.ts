@@ -8,23 +8,12 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { randomIPv4 } from "~/utils/ipGenerator";
+import { IPv4gen } from "~/utils/IPv4gen";
 import Sentencer from "sentencer";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import bluebird from "bluebird";
-import { type network, type network_members } from "@prisma/client";
 import { updateNetworkMembers } from "../networkService";
-
-interface NetworksTableProps {
-  network: network;
-  members: network_members[];
-  zombieMembers: network_members[];
-  updateNetworkHandler: (updateData: any) => void;
-  setEditing: (editing: boolean) => void;
-  addMember: (nwid: string) => void;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
 
 export const networkRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -49,7 +38,7 @@ export const networkRouter = createTRPCRouter({
       // if (input.nw.data && input.nw.data.generateIp4) {
       //   // Generate ipv4 address, cidr, start & end
       //   //TODO add options in UI for IPv4 selector
-      //   const ipAssignmentPools = IP.randomIPv4();
+      //   const ipAssignmentPools = IP.IPv4gen();
       //   await ztController.network_update(input.nw.nwid, ipAssignmentPools);
       //   // Generate new ipv4 address by passing in empty array '10.24.118.16'
       //   input.nw.data = Object.assign({}, { ipAssignments: [], noAutoAssignIps: false });
@@ -154,7 +143,7 @@ export const networkRouter = createTRPCRouter({
   getNetworkById: protectedProcedure
     .input(z.object({ nwid: z.string() }))
     .query(async ({ ctx, input }) => {
-      const NetworkById = await ctx.prisma.network.findFirst({
+      const psqlNetworkData = await ctx.prisma.network.findFirst({
         where: {
           AND: [
             {
@@ -169,7 +158,7 @@ export const networkRouter = createTRPCRouter({
       });
 
       // Only return nw details for author user!
-      if (!NetworkById)
+      if (!psqlNetworkData)
         throw new TRPCError({
           message: "You are not the Author of this network!",
           code: "FORBIDDEN",
@@ -177,28 +166,29 @@ export const networkRouter = createTRPCRouter({
 
       // Return nw obj details
       const ztControllerResponse = await ztController
-        .network_detail(NetworkById.nwid)
+        .network_detail(psqlNetworkData.nwid)
         .catch((err: string) => {
           throw new TRPCError({
             message: err,
             code: "BAD_REQUEST",
           });
         });
+      // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
       await updateNetworkMembers(ztControllerResponse);
 
       // Generate ipv4 address, cidr, start & end
-      const ipAssignmentPools = randomIPv4(null);
+      const ipAssignmentPools = IPv4gen(null);
 
       // Merge data from network DB and zt_controller.network
-      const { network: ctrl_network, ...rest } = ztControllerResponse;
+      const { network: controllerNetworkData, ...rest } = ztControllerResponse;
       const { cidrOptions } = ipAssignmentPools;
 
       const combined = {
         ...rest,
         network: {
-          ...ctrl_network,
-          ...NetworkById,
+          ...psqlNetworkData,
+          ...controllerNetworkData,
           cidr: cidrOptions,
         },
       };
@@ -264,13 +254,111 @@ export const networkRouter = createTRPCRouter({
       return Promise.all([getActiveMembers, getZombieMembers]).then((res) => {
         // if no zombie members, remove the [null] from array caused by the map function.
         const zombieMembers = res[1].filter((a: any) => a);
+
         // Return obj
         return { network, members: res[0], zombieMembers };
       });
     }),
+  deleteNetwork: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // async (_: any, { nwid }: any, context: any) => {
+      // Create ZT network
+      await ztController
+        .network_delete(input.nwid)
+        .then(async () => {
+          // delete network_members
+          await ctx.prisma.network_members.deleteMany({
+            where: {
+              nwid: input.nwid,
+            },
+          });
+        })
+        .then(async () => {
+          // delete network
+          await ctx.prisma.network.deleteMany({
+            where: {
+              authorId: ctx.session.user.id,
+              nwid: input.nwid,
+            },
+          });
+        })
+        .finally(() => true)
+        .catch((err: any) => {
+          throw new TRPCError({
+            message: err,
+            code: "BAD_REQUEST",
+          });
+        });
+    }),
+  updateNetwork: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        updateParams: z.object({
+          ipPool: z.string().optional(),
+          name: z.string().optional(),
+          routes: z
+            .array(
+              z.object({
+                target: z.string({
+                  required_error: "Via IP must has a value!",
+                  // invalid_type_error: "Name must be a string",
+                }),
+                via: z.union([z.string(), z.null()]).optional(),
+              })
+            )
+            .optional(),
+          changeCidr: z.array(z.null()).default([]).optional(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // console.log(input);
+      // Construct the API request payload using the provided updateParams
+      const payload: any = {};
+
+      if (input.updateParams.ipPool) {
+        Object.assign(payload, {}, IPv4gen(input.updateParams.ipPool));
+      }
+
+      if (input.updateParams.name) {
+        payload.name = input.updateParams.name;
+        await ctx.prisma.network.update({
+          where: {
+            nwid: input.nwid,
+          },
+          data: {
+            nwname: payload.name,
+          },
+        });
+      }
+
+      if (input.updateParams.routes) {
+        payload.routes = input.updateParams.routes;
+      }
+
+      if (input.updateParams.changeCidr) {
+        payload.cidr = IPv4gen(input.updateParams.changeCidr);
+      }
+
+      try {
+        return await ztController.network_update(input.nwid, payload);
+      } catch (err) {
+        throw new TRPCError({
+          message: err,
+          code: "BAD_REQUEST",
+        });
+      }
+    }),
+
   createNetwork: protectedProcedure.mutation(async ({ ctx }) => {
     // Generate ipv4 address, cidr, start & end
-    const ipAssignmentPools = randomIPv4(null);
+    const ipAssignmentPools = IPv4gen(null);
 
     // Generate adjective and noun word
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

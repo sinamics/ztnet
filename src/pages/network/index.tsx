@@ -1,9 +1,9 @@
 import Head from "next/head";
 import type { ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layout";
+import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
-import { NetworkTable } from "../../components/networkTable";
+import { NetworkTable } from "../../components/modules/networkTable";
 
 const Networks: NextPageWithLayout = () => {
   const { data: userNetworks, isLoading } = api.network.getAll.useQuery();
@@ -11,9 +11,7 @@ const Networks: NextPageWithLayout = () => {
   //   const network = api.networkRouter.message.useQuery();
   const addNewNetwork = () => {
     // New network
-    // createNetwork().catch((res) => console.error(res));
-    const res = createNetwork();
-    console.log(res);
+    createNetwork();
   };
 
   if (isLoading) {

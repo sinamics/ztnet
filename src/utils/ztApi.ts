@@ -6,7 +6,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import fs from "fs";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { Member, Network } from "~/types/network";
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 const ZT_FILE =
@@ -103,31 +104,44 @@ export const network_delete = async function (nwid: string) {
   }
 };
 
-export const network_detail = async function (nwid: string) {
+type ZTControllerResponse = {
+  network: Network;
+  members: Member[];
+};
+
+export const network_detail = async function (
+  nwid: string
+): Promise<ZTControllerResponse> {
   try {
-    const members = await axios.get(
+    const members: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}/member/`,
       options
     );
-    const network = await axios.get(
+    const network: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}`,
       options
     );
     const membersArr: any = [];
     for (const member in members.data) {
-      const memberetails = await axios.get(
+      const memberDetails: AxiosResponse = await axios.get(
         `${ZT_ADDR}/controller/network/${nwid}/member/${member}`,
         options
       );
-      membersArr.push(memberetails.data);
+      membersArr.push(memberDetails.data);
     }
-    return { network: { ...network.data }, members: [...membersArr] };
+    return {
+      network: { ...network.data },
+      members: [...membersArr],
+    };
   } catch (err) {
-    return { network: {}, members: [] };
+    return { network: null, members: [] };
   }
 };
 
-export const network_update = async function (nwid: any, data: any) {
+export const network_update = async function (
+  nwid: any,
+  data: any
+): Promise<Partial<ZTControllerResponse>> {
   try {
     const updated = await axios.post(
       `${ZT_ADDR}/controller/network/${nwid}`,

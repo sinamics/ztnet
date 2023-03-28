@@ -29,6 +29,7 @@
     "react": "18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.0",
     "react-table": "^7.8.0",
     "react-timeago": "^7.1.0",
     "sentencer": "^0.2.1",

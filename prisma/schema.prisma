@@ -62,6 +62,7 @@ model network {
   nwname          String
   nw_userid       User              @relation(fields: [authorId], references: [id])
   authorId        Int
+  routes               String[]
   network_members network_members[]
 }
 
