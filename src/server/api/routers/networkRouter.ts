@@ -24,122 +24,7 @@ export const networkRouter = createTRPCRouter({
     });
     return networks;
   }),
-  memberUpdate: protectedProcedure
-    .input(
-      z.object({
-        nwid: z.string(),
-        memberId: z.string(),
-        data: z.any(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      // async (_: any, nw: any) => {
-      // if users click the re-generate icon on IP address
-      // if (input.nw.data && input.nw.data.generateIp4) {
-      //   // Generate ipv4 address, cidr, start & end
-      //   //TODO add options in UI for IPv4 selector
-      //   const ipAssignmentPools = IP.IPv4gen();
-      //   await ztController.network_update(input.nw.nwid, ipAssignmentPools);
-      //   // Generate new ipv4 address by passing in empty array '10.24.118.16'
-      //   input.nw.data = Object.assign({}, { ipAssignments: [], noAutoAssignIps: false });
-      // }
 
-      // remove ip specified by user UI
-      // if (input.nw.data && input.nw.data.hasOwnProperty('removeIp4index')) {
-      //   const { ipAssignments, removeIp4index } = input.nw.data;
-      //   // slice out ip
-      //   ipAssignments.splice(removeIp4index, 1);
-
-      //   // update controller
-      //   return await ztController.member_update(input.nw.nwid, input.nw.memberId, { ipAssignments }).catch((err: any) => console.log(err));
-      // }
-
-      const updatedMember = await ztController
-        .member_update(input.nwid, input.memberId, input.data)
-        .catch(() => {
-          throw new TRPCError({
-            message:
-              "Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
-            code: "FORBIDDEN",
-          });
-        });
-
-      const response = await ctx.prisma.network
-        .update({
-          where: {
-            nwid: input.nwid,
-          },
-          data: {
-            network_members: {
-              updateMany: {
-                where: { id: input.memberId, nwid: input.nwid },
-                data: {
-                  ipAssignments: updatedMember.ipAssignments,
-                  authorized: updatedMember.authorized,
-                },
-              },
-            },
-          },
-          include: {
-            network_members: {
-              where: {
-                id: input.memberId,
-                nwid: input.nwid,
-              },
-            },
-          },
-        })
-        .catch((err: any) => console.log(err));
-      if (!response) {
-        throw new TRPCError({
-          message: "Network database response is empty.",
-          code: "BAD_REQUEST",
-        });
-      }
-
-      if ("network_members" in response) {
-        return { member: response.network_members[0] };
-      } else {
-        throw new TRPCError({
-          message: "Response does not have network members.",
-          code: "BAD_REQUEST",
-        });
-      }
-    }),
-  memberUpdateDatabaseOnly: protectedProcedure
-    .input(
-      z.object({
-        nwid: z.string(),
-        nodeid: z.number(),
-        newName: z.string(),
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      // if users click the re-generate icon on IP address
-      const response = await ctx.prisma.network.update({
-        where: {
-          nwid: input.nwid,
-        },
-        data: {
-          network_members: {
-            update: {
-              where: { nodeid: input.nodeid },
-              data: {
-                name: input.newName,
-              },
-            },
-          },
-        },
-        include: {
-          network_members: {
-            where: {
-              nodeid: input.nodeid,
-            },
-          },
-        },
-      });
-      return { member: response.network_members[0] };
-    }),
   getNetworkById: protectedProcedure
     .input(z.object({ nwid: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -173,7 +58,7 @@ export const networkRouter = createTRPCRouter({
             code: "BAD_REQUEST",
           });
         });
-      // console.log(JSON.stringify(ztControllerResponse, null, 2));
+      console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
       await updateNetworkMembers(ztControllerResponse);
 
@@ -300,7 +185,9 @@ export const networkRouter = createTRPCRouter({
       z.object({
         nwid: z.string().nonempty(),
         updateParams: z.object({
-          ipPool: z.string().optional(),
+          privateNetwork: z.boolean().optional(),
+          ipPool: z.union([z.array(z.string()), z.string()]).optional(),
+          removeIpPool: z.string().optional(),
           name: z.string().optional(),
           routes: z
             .array(
@@ -318,35 +205,55 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // console.log(input);
       // Construct the API request payload using the provided updateParams
       const payload: any = {};
-
-      if (input.updateParams.ipPool) {
-        Object.assign(payload, {}, IPv4gen(input.updateParams.ipPool));
-      }
-
-      if (input.updateParams.name) {
-        payload.name = input.updateParams.name;
-        await ctx.prisma.network.update({
-          where: {
-            nwid: input.nwid,
-          },
-          data: {
-            nwname: payload.name,
-          },
-        });
-      }
-
-      if (input.updateParams.routes) {
-        payload.routes = input.updateParams.routes;
-      }
-
-      if (input.updateParams.changeCidr) {
-        payload.cidr = IPv4gen(input.updateParams.changeCidr);
-      }
-
       try {
+        // Private or public network
+        if (typeof input.updateParams.privateNetwork === "boolean") {
+          Object.assign(
+            payload,
+            {},
+            { private: input.updateParams.privateNetwork }
+          );
+        }
+        // Ip pool assignments
+        if (input.updateParams.ipPool) {
+          // when user select a new ip subnet, it will be a CIDR string
+          if (typeof input.updateParams.ipPool === "string") {
+            Object.assign(payload, {}, IPv4gen(input.updateParams.ipPool));
+          }
+
+          // when user delete a ip subnet, a new array will be sent from the UI.
+          if (typeof input.updateParams.ipPool === "object") {
+            Object.assign(
+              payload,
+              {},
+              { ipAssignmentPools: input.updateParams.ipPool }
+            );
+          }
+        }
+
+        // network name
+        if (input.updateParams.name) {
+          payload.name = input.updateParams.name;
+          await ctx.prisma.network.update({
+            where: {
+              nwid: input.nwid,
+            },
+            data: {
+              nwname: payload.name,
+            },
+          });
+        }
+
+        if (input.updateParams.routes) {
+          payload.routes = input.updateParams.routes;
+        }
+
+        if (input.updateParams.changeCidr) {
+          payload.cidr = IPv4gen(input.updateParams.changeCidr);
+        }
+
         return await ztController.network_update(input.nwid, payload);
       } catch (err) {
         throw new TRPCError({

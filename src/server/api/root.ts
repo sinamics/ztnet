@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { authRouter } from "./routers/authRouter";
+import { networkMemberRouter } from "./routers/networkMemberRouter";
 import { networkRouter } from "./routers/networkRouter";
 
 /**
@@ -9,6 +10,7 @@ import { networkRouter } from "./routers/networkRouter";
  */
 export const appRouter = createTRPCRouter({
   network: networkRouter,
+  networkMember: networkMemberRouter,
   auth: authRouter,
 });
 

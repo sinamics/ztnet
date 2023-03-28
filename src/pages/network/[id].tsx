@@ -11,6 +11,7 @@ import { MembersTable } from "~/components/modules/membersTable";
 import CardComponent from "~/components/modules/privatePublic";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
+import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
 
 const NetworkById = () => {
   const [state, setState] = useState<Record<"copied" | "editName", boolean>>({
@@ -48,7 +49,7 @@ const NetworkById = () => {
     return <progress className="progress w-56"></progress>;
   }
   const updateNetworkHandler = (data: any) => {
-    setState((prev: any) => ({ ...prev, editName: false }));
+    // setState((prev: any) => ({ ...prev, editName: false }));
     // updateNetwork({
     //   variables: { nwid: network.nwid, data },
     // });
@@ -78,26 +79,7 @@ const NetworkById = () => {
             </div>
           </div>
         </div>
-        <div className="">
-          <div className="flex flex-wrap gap-3">
-            <CardComponent
-              onClick={() => updateNetworkHandler({ private: true })}
-              faded={!network.private}
-              title="Private"
-              rootClassName="min-w-full sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid opacity-90 cursor-pointer bg-transparent text-inherit flex-1 "
-              iconClassName="text-green-500"
-              content="Each user needs to be Autorization by network administrator."
-            />
-            <CardComponent
-              onClick={() => updateNetworkHandler({ private: false })}
-              faded={network.private}
-              title="Public"
-              rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid opacity-50 cursor-pointer bg-transparent text-inherit flex-1"
-              iconClassName="text-warning"
-              content="All users can connect to this network without Autorization"
-            />
-          </div>
-        </div>
+        <NetworkPrivatePublic />
       </div>
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
@@ -154,7 +136,7 @@ const NetworkById = () => {
           //   header='No members found!'
           //   content='Join this network ID and the device will automatically be displayed in this table'
           // />
-          <div className="alert alert-warning shadow-lg">
+          <div className="alert alert-warning flex justify-center shadow-lg">
             <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +153,7 @@ const NetworkById = () => {
               </svg>
               <span>
                 Join this network ID and the device will automatically be
-                displayed in this table
+                displayed
               </span>
             </div>
           </div>
