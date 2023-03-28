@@ -8,33 +8,17 @@ import { type ReactElement, useRef, useState } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkSettings } from "~/components/modules/networkRoutes";
 import { MembersTable } from "~/components/modules/membersTable";
-import CardComponent from "~/components/modules/privatePublic";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
+import { AddMemberById } from "~/components/modules/addMemberById";
 
 const NetworkById = () => {
-  const [state, setState] = useState<Record<"copied" | "editName", boolean>>({
-    copied: false,
-    editName: false,
-  });
-  const [editing, setEditing] = useState<boolean>(false);
-  const [viewDeletedMembers, setViewDeletedMembers] = useState<boolean>(false);
-  const zombieTableRef = useRef<HTMLInputElement>(null);
-  const [handler, setHandler] = useState<
-    Record<"networkName" | "memberId" | "value", string>
-  >({
-    networkName: "",
-    memberId: "",
-    value: "",
-  });
   const { query } = useRouter();
   const {
     data: networkById,
     isLoading: loadingNetwork,
     refetch: refetchNetworkById,
-    // error: loadingNetworkError,
-    // subscribeToMore: memberInformationListner,
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
@@ -43,17 +27,10 @@ const NetworkById = () => {
     { enabled: !!query.id }
   );
 
-  const copyNwidIntercalCleanup = useRef<any>({});
-  // console.log(networkById);
   if (loadingNetwork) {
     return <progress className="progress w-56"></progress>;
   }
-  const updateNetworkHandler = (data: any) => {
-    // setState((prev: any) => ({ ...prev, editName: false }));
-    // updateNetwork({
-    //   variables: { nwid: network.nwid, data },
-    // });
-  };
+
   const { network, members, zombieMembers }: any = networkById;
 
   return (
@@ -123,9 +100,7 @@ const NetworkById = () => {
             <MembersTable
               nwid={network.nwid}
               cidr={network?.routes[0]?.target ?? "0.0.0.0/24"}
-              tableData={members}
-              setEditing={(e: boolean) => setEditing(e)}
-              refetchNetworkById={refetchNetworkById}
+              // setEditing={(e: boolean) => setEditing(e)}
             />
           </div>
         ) : (
@@ -158,6 +133,9 @@ const NetworkById = () => {
             </div>
           </div>
         )}
+      </div>
+      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <AddMemberById />
       </div>
     </div>
   );

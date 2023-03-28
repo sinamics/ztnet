@@ -34,7 +34,7 @@ enum Role {
 
 model network_members {
   nodeid               Int       @id @default(autoincrement())
-  id                   String
+  id                   String    @unique
   nwid_ref             network   @relation(fields: [nwid], references: [nwid])
   nwid                 String
   lastseen             DateTime?

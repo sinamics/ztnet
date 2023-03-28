@@ -7,10 +7,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { useRouter } from "next/router";
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import TimeAgo from "react-timeago";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Netmask } from "netmask";
@@ -19,13 +17,11 @@ import {
   useBlockLayout,
   useResizeColumns,
   useSortBy,
-  type Column,
 } from "react-table";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import { CustomError } from "~/types/errorHandling";
-// import { useHistory } from "react-router-dom";
-// import "./react-table-styles.css"; // Import the necessary styles for react-table
+import { type CustomError } from "~/types/errorHandling";
+import { useRouter } from "next/router";
 
 interface IpAssignmentsProps {
   ipAssignments: string[];
@@ -36,38 +32,29 @@ interface IpAssignmentsProps {
   copyClipboard: (ip: string) => void;
   setDeleteWarning: (args: any) => void;
 }
-interface Network {
-  nwid: string;
-  nwname: string;
-}
 
-interface NetworksTableProps {
-  tableData?: Network[];
-}
-
-interface DeleteNetworkModalProps {
-  data: any;
-  cancle: () => void;
-}
-
-export const MembersTable = ({
-  tableData = { ip: [] },
-  nwid,
-  refetchNetworkById,
-  cidr,
-  setEditing,
-}: any) => {
+export const MembersTable = ({ nwid, cidr }: any) => {
   const { query } = useRouter();
+  const { data: networkById, refetch: refetchNetworkById } =
+    api.network.getNetworkById.useQuery(
+      {
+        nwid,
+      },
+      { enabled: !!query.id, networkMode: "online" }
+    );
+
   const { mutate: updateMemberDatabaseOnly } =
     api.networkMember.UpdateDatabaseOnly.useMutation();
 
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
     onError: ({ shape }: CustomError) => {
-      console.log(shape?.data?.zodError.fieldErrors);
+      // console.log(shape?.data?.zodError.fieldErrors);
       void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
     },
+    onSuccess: () => refetchNetworkById(),
   });
   const { mutate: removeUser } = api.networkMember.Delete.useMutation();
+
   const deleteIpAssignment = (
     ipAssignments: Array<string>,
     Ipv4: string,
@@ -82,11 +69,12 @@ export const MembersTable = ({
         memberId: id,
         nwid,
       },
-      { onSuccess: void refetchNetworkById() }
+      { onSuccess: () => void refetchNetworkById() }
     );
   };
+
   const deleteMember = (id: string) => {
-    const update = updateMember(
+    updateMember(
       {
         nwid,
         memberId: id,
@@ -102,7 +90,7 @@ export const MembersTable = ({
       }
     );
   };
-  const columns: Column<Network>[] = useMemo(
+  const columns = useMemo(
     () => [
       {
         Header: "Authorized",
@@ -120,7 +108,7 @@ export const MembersTable = ({
                       memberId: id,
                       updateParams: { authorized: event.target.checked },
                     },
-                    { onSuccess: () => refetchNetworkById() }
+                    { onSuccess: () => void refetchNetworkById() }
                   )
                 }
                 // className="checkbox-error checkbox"
@@ -149,7 +137,7 @@ export const MembersTable = ({
         accessor: ({ ipAssignments, peers, id }: IpAssignmentsProps) => {
           if (!ipAssignments || !ipAssignments.length)
             return <span>waiting for IP ...</span>;
-          return ipAssignments.map((ip, key) => {
+          return ipAssignments.map((ip) => {
             const block = new Netmask(cidr);
             return (
               <div key={ip} className="flex justify-center pb-2">
@@ -286,7 +274,7 @@ export const MembersTable = ({
   // Create an editable cell renderer
   const EditableCell = ({
     value: initialValue,
-    row: { index, original },
+    row: { original },
     column: { id },
   }) => {
     // We need to keep and update the state of the cell normally
@@ -301,10 +289,12 @@ export const MembersTable = ({
       updateMemberDatabaseOnly(
         {
           nwid,
-          nodeid: original.nodeid,
-          newName: value,
+          id: original.id,
+          updateParams: {
+            newName: value,
+          },
         },
-        { onSuccess: () => refetchNetworkById() }
+        { onSuccess: () => void refetchNetworkById() }
       );
       // updateMyData(index, id, value, original);
     };
@@ -331,7 +321,7 @@ export const MembersTable = ({
     Cell: EditableCell,
   };
 
-  const data = useMemo(() => tableData, [tableData]);
+  const data = useMemo(() => networkById.members, [networkById.members]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {

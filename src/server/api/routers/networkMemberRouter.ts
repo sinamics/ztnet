@@ -113,8 +113,14 @@ export const networkMemberRouter = createTRPCRouter({
     .input(
       z.object({
         nwid: z.string(),
-        nodeid: z.number(),
-        newName: z.string(),
+        id: z.string(),
+        updateParams: z.object({
+          // ipAssignments: z
+          //   .array(z.string({ required_error: "No Ip assignment provided!" }))
+          //   .optional(),
+          deleted: z.boolean().optional(),
+          newName: z.string().optional(),
+        }),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -126,9 +132,9 @@ export const networkMemberRouter = createTRPCRouter({
         data: {
           network_members: {
             update: {
-              where: { nodeid: input.nodeid },
+              where: { id: input.id },
               data: {
-                name: input.newName,
+                ...input.updateParams,
               },
             },
           },
@@ -136,7 +142,7 @@ export const networkMemberRouter = createTRPCRouter({
         include: {
           network_members: {
             where: {
-              nodeid: input.nodeid,
+              id: input.id,
             },
           },
         },
