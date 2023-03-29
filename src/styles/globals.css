@@ -7,7 +7,7 @@
   min-height: 100dvh;
   /* min-height: -webkit-fill-available; */
 }
-.table-wrapper {
+.membersTable-wrapper {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
   overflow: auto;

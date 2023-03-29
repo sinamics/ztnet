@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { useRouter } from "next/router";
-import { type ReactElement, useRef, useState } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkSettings } from "~/components/modules/networkRoutes";
 import { MembersTable } from "~/components/modules/membersTable";
@@ -15,17 +14,14 @@ import { AddMemberById } from "~/components/modules/addMemberById";
 
 const NetworkById = () => {
   const { query } = useRouter();
-  const {
-    data: networkById,
-    isLoading: loadingNetwork,
-    refetch: refetchNetworkById,
-  } = api.network.getNetworkById.useQuery(
-    {
-      nwid: query.id as string,
-    },
-    // { enabled: !!query.id, refetchInterval: 10000 }
-    { enabled: !!query.id }
-  );
+  const { data: networkById, isLoading: loadingNetwork } =
+    api.network.getNetworkById.useQuery(
+      {
+        nwid: query.id as string,
+      },
+      // { enabled: !!query.id, refetchInterval: 10000 }
+      { enabled: !!query.id }
+    );
 
   if (loadingNetwork) {
     return <progress className="progress w-56"></progress>;
@@ -83,11 +79,16 @@ const NetworkById = () => {
           you absolutely have to.
         </p>
       </div>
-      <div className="mx-auto flex w-full justify-between px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <NetworkIpAssignment />
-        <div className="divider lg:divider-horizontal"></div>
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm  sm:w-4/5 sm:px-10 md:text-base xl:flex">
+        {/* Ipv4 assignment  */}
+        <div className="w-6/6 xl:w-3/6">
+          <NetworkIpAssignment />
+        </div>
+
+        <div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex"></div>
+
         {/* Manged routes section */}
-        <div className="w-6/12">
+        <div className="w-6/6 xl:w-3/6 ">
           <NettworkSettings />
         </div>
       </div>
@@ -96,7 +97,7 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
-          <div className="table-wrapper">
+          <div className="membersTable-wrapper">
             <MembersTable
               nwid={network.nwid}
               cidr={network?.routes[0]?.target ?? "0.0.0.0/24"}

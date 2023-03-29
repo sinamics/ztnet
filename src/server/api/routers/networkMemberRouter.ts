@@ -119,7 +119,7 @@ export const networkMemberRouter = createTRPCRouter({
           //   .array(z.string({ required_error: "No Ip assignment provided!" }))
           //   .optional(),
           deleted: z.boolean().optional(),
-          newName: z.string().optional(),
+          name: z.string().optional(),
         }),
       })
     )
@@ -157,13 +157,14 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // remove member from controller
-      await ztController
-        .member_delete(input)
-        .catch(() => console.log("Member does not exist in controller!"));
+      const caller = networkMemberRouter.createCaller(ctx);
 
+      // remove member from controller
+      await ztController.member_delete(input);
+
+      await caller.Update({ ...input, updateParams: { authorized: false } });
       // Set member with deleted status in database.
-      return await ctx.prisma.network
+      await ctx.prisma.network
         .update({
           where: {
             nwid: input.nwid,
@@ -182,6 +183,7 @@ export const networkMemberRouter = createTRPCRouter({
             network_members: {
               where: {
                 id: input.memberId,
+                deleted: false,
               },
             },
           },

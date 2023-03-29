@@ -40,7 +40,7 @@ export const MembersTable = ({ nwid, cidr }: any) => {
       {
         nwid,
       },
-      { enabled: !!query.id, networkMode: "online" }
+      { enabled: !!query.id }
     );
 
   const { mutate: updateMemberDatabaseOnly } =
@@ -53,7 +53,9 @@ export const MembersTable = ({ nwid, cidr }: any) => {
     },
     onSuccess: () => refetchNetworkById(),
   });
-  const { mutate: removeUser } = api.networkMember.Delete.useMutation();
+  const { mutate: removeUser } = api.networkMember.Delete.useMutation({
+    onSuccess: () => refetchNetworkById(),
+  });
 
   const deleteIpAssignment = (
     ipAssignments: Array<string>,
@@ -63,32 +65,18 @@ export const MembersTable = ({ nwid, cidr }: any) => {
     const _ipv4 = [...ipAssignments];
     const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
-    updateMember(
-      {
-        updateParams: { ipAssignments: [...newIpPool] },
-        memberId: id,
-        nwid,
-      },
-      { onSuccess: () => void refetchNetworkById() }
-    );
+    updateMember({
+      updateParams: { ipAssignments: [...newIpPool] },
+      memberId: id,
+      nwid,
+    });
   };
 
   const deleteMember = (id: string) => {
-    updateMember(
-      {
-        nwid,
-        memberId: id,
-        updateParams: { authorized: false },
-      },
-      {
-        onSuccess: () => {
-          removeUser({
-            nwid,
-            memberId: id,
-          });
-        },
-      }
-    );
+    removeUser({
+      nwid,
+      memberId: id,
+    });
   };
   const columns = useMemo(
     () => [
@@ -145,8 +133,8 @@ export const MembersTable = ({ nwid, cidr }: any) => {
                   <div
                     className={`${
                       block.contains(ip)
-                        ? "badge badge-primary badge-lg rounded-md"
-                        : "badge badge-ghost badge-lg rounded-md opacity-60"
+                        ? "badge-primary badge badge-lg rounded-md"
+                        : "badge-ghost badge badge-lg rounded-md opacity-60"
                     } flex min-w-fit justify-between`}
                   >
                     <CopyToClipboard
@@ -159,22 +147,6 @@ export const MembersTable = ({ nwid, cidr }: any) => {
                     <div className="text-xs">
                       {peers?.latency > 0 && ` (${peers.latency}ms)`}
                     </div>
-                    {/* <div className="">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="h-5 w-5"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-                            />
-                          </svg>
-                        </div> */}
                     {ipAssignments.length > 1 && (
                       <div title="delete ip assignment">
                         <svg
@@ -291,7 +263,7 @@ export const MembersTable = ({ nwid, cidr }: any) => {
           nwid,
           id: original.id,
           updateParams: {
-            newName: value,
+            name: value,
           },
         },
         { onSuccess: () => void refetchNetworkById() }
@@ -421,16 +393,6 @@ export const MembersTable = ({ nwid, cidr }: any) => {
                             scope="col"
                             className="py-3 pl-4"
                           >
-                            {/* <div className="flex h-5 items-center">
-                      <input
-                        id="checkbox-all"
-                        type="checkbox"
-                        className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
-                      />
-                      <label htmlFor="checkbox" className="sr-only">
-                        Checkbox
-                      </label>
-                    </div> */}
                             {
                               // Render the header
                               column.render("Header")
@@ -481,70 +443,10 @@ export const MembersTable = ({ nwid, cidr }: any) => {
                                   // Render the cell contents
                                   cell.render("Cell")
                                 }
-                                {/* <div className="flex h-5 items-center">
-                      <input
-                        type="checkbox"
-                        className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
-                      />
-                      <label htmlFor="checkbox" className="sr-only">
-                        Checkbox
-                      </label>
-                    </div> */}
                               </td>
                             );
                           })
                         }
-                        {/* <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-800">
-                    1
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-800">
-                    Jone Doe
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-800">
-                    jonne62@gmail.com
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <a className="text-green-500 hover:text-green-700" href="#">
-                      Edit
-                    </a>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <a className="text-red-500 hover:text-red-700" href="#">
-                      Delete
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 pl-4">
-                    <div className="flex h-5 items-center">
-                      <input
-                        type="checkbox"
-                        className="rounded border-gray-200 text-blue-600 focus:ring-blue-500"
-                      />
-                      <label htmlFor="checkbox" className="sr-only">
-                        Checkbox
-                      </label>
-                    </div>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-800">
-                    1
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-800">
-                    Jone Doe
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-800">
-                    jonne62@gmail.com
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <a className="text-green-500 hover:text-green-700" href="#">
-                      Edit
-                    </a>
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                    <a className="text-red-500 hover:text-red-700" href="#">
-                      Delete
-                    </a>
-                  </td> */}
                       </tr>
                     );
                   })

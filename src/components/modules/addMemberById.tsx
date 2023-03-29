@@ -6,7 +6,7 @@ type User = {
   memberid: string;
 };
 export const AddMemberById = () => {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User>({ memberid: "" });
   const { query } = useRouter();
 
   const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
@@ -57,17 +57,21 @@ export const AddMemberById = () => {
           <input
             onChange={inputHandler}
             name="memberid"
+            value={user.memberid}
             type="text"
             placeholder="10-digit hex number"
             className="input-bordered input"
           />
           <button
             onClick={() =>
-              updateUserDb({
-                id: user.memberid,
-                nwid: query.id as string,
-                updateParams: { deleted: false },
-              })
+              updateUserDb(
+                {
+                  id: user.memberid,
+                  nwid: query.id as string,
+                  updateParams: { deleted: false },
+                },
+                { onSuccess: () => setUser({ memberid: "" }) }
+              )
             }
             className="btn-square btn"
           >

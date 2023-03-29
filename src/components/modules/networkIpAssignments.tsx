@@ -36,9 +36,9 @@ export const NetworkIpAssignment = () => {
   if (isLoading) return <div>Loading</div>;
 
   return (
-    <div className="w-6/12">
+    <>
       <div>IPv4 assignment</div>
-      <div className="grid cursor-pointer grid-cols-2 gap-2 lg:grid-cols-4">
+      <div className="xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4">
         {network.cidr?.map((cidr) => {
           return network?.routes?.some((route) => route.target === cidr) ? (
             <div
@@ -51,13 +51,13 @@ export const NetworkIpAssignment = () => {
             <div
               key={cidr}
               onClick={() => submitHandler(cidr)}
-              className="badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 hover:bg-primary md:text-base"
+              className="badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 hover:bg-primary md:text-base"
             >
               {cidr}
             </div>
           );
         })}
       </div>
-    </div>
+    </>
   );
 };
