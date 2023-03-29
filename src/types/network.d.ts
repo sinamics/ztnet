@@ -1,87 +1,119 @@
 // Network
 export interface NetworkAndMembers {
-  network: Network;
-  members: Member[];
+  network: ZtControllerNetwork;
+  members?: MembersEntity[] | null;
 }
-
-export interface Member {
+export interface MembersEntity {
   activeBridge: boolean;
   address: string;
   authenticationExpiryTime: number;
   authorized: boolean;
-  capabilities: any[];
-  creationTime: number;
+  creationTime: DateTime;
   id: string;
   identity: string;
-  ipAssignments: string[];
-  lastAuthorizedCredential: null;
-  lastAuthorizedCredentialType: string;
+  ipAssignments?: string[];
+  lastAuthorizedCredential?: null;
+  lastAuthorizedCredentialType?: null;
   lastAuthorizedTime: number;
   lastDeauthorizedTime: number;
   noAutoAssignIps: boolean;
   nwid: string;
   objtype: string;
   remoteTraceLevel: number;
-  remoteTraceTarget: null;
+  remoteTraceTarget?: null;
   revision: number;
   ssoExempt: boolean;
-  tags: any[];
+  tags?: string[];
   vMajor: number;
   vMinor: number;
   vProto: number;
   vRev: number;
+  peers?: Peers[];
+  conStatus: number;
 }
-
-export interface Network {
-  authTokens: null[];
+export interface ZtControllerNetwork {
+  nwid: string;
+  nwname: string;
+  authorId: number;
+  routes?: RoutesEntity[] | null;
+  network_members?: NetworkMembersEntity[] | null;
+  authTokens?: null[] | null;
   authorizationEndpoint: string;
-  capabilities: any[];
+  capabilities?: null[] | null;
   clientId: string;
-  creationTime: number;
-  dns: any[];
+  creationTime: DateTime;
+  dns?: null[] | null;
   enableBroadcast: boolean;
   id: string;
-  ipAssignmentPools: IPAssignmentPool[];
+  ipAssignmentPools?: IpAssignmentPoolsEntity[] | null;
   mtu: number;
   multicastLimit: number;
   name: string;
-  nwid: string;
   objtype: string;
   private: boolean;
   remoteTraceLevel: number;
-  remoteTraceTarget: null;
+  remoteTraceTarget?: null;
   revision: number;
-  routes: Route[];
-  rules: Rule[];
+  rules?: RulesEntity[] | null;
   rulesSource: string;
   ssoEnabled: boolean;
-  tags: any[];
+  tags?: string[];
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
+  cidr?: string[] | null;
 }
-
-export interface IPAssignmentPool {
+export interface RoutesEntity {
+  target: string;
+  via?: null;
+}
+export interface NetworkMembersEntity {
+  nodeid: number;
+  id: string;
+  nwid: string;
+  lastseen: DateTime;
+  online: boolean;
+  conStatus: number;
+  deleted: boolean;
+  name: string;
+  activeBridge: boolean;
+  address: string;
+  authorized: boolean;
+  creationTime: DateTime;
+  identity: string;
+  lastAuthorizedTime?: number;
+  lastDeauthorizedTime?: number;
+  objtype?: string;
+  revision?: number;
+  tags?: string[];
+  vRev?: number;
+  ipAssignments?: string[];
+  noAutoAssignIps: boolean;
+}
+export interface IpAssignmentPoolsEntity {
   ipRangeEnd: string;
   ipRangeStart: string;
 }
-
-export interface Route {
-  target: string;
-  via: string | null;
-}
-
-export interface Rule {
+export interface RulesEntity {
   not: boolean;
   or: boolean;
   type: string;
 }
-
 export interface V4AssignMode {
   zt: boolean;
 }
-
 export interface V6AssignMode {
   "6plane": boolean;
   rfc4193: boolean;
   zt: boolean;
+}
+export interface Peers {
+  address: string;
+  isBonded: boolean;
+  latency: number;
+  paths?: null[] | null;
+  role: string;
+  version: string;
+  versionMajor: number;
+  versionMinor: number;
+  versionRev: number;
 }

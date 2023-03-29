@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
@@ -27,8 +23,8 @@ const NetworkById = () => {
     return <progress className="progress w-56"></progress>;
   }
 
-  const { network, members, zombieMembers }: any = networkById;
-
+  const { network, members } = networkById;
+  // console.log(zombieMembers);
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
@@ -81,7 +77,7 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm  sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
-        <div className="w-6/6 xl:w-3/6">
+        <div className="w-6/6 xl:w-3/6 ">
           <NetworkIpAssignment />
         </div>
 
@@ -100,7 +96,7 @@ const NetworkById = () => {
           <div className="membersTable-wrapper">
             <MembersTable
               nwid={network.nwid}
-              cidr={network?.routes[0]?.target ?? "0.0.0.0/24"}
+
               // setEditing={(e: boolean) => setEditing(e)}
             />
           </div>

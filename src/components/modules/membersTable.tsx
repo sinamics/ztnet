@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import React, { useMemo } from "react";
 import TimeAgo from "react-timeago";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Netmask } from "netmask";
 import {
   useTable,
   useBlockLayout,
@@ -20,8 +21,9 @@ import {
 } from "react-table";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import { type CustomError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
+import { isIPInSubnet } from "~/utils/isIpInsubnet";
+import { type CustomError } from "~/types/errorHandling";
 
 interface IpAssignmentsProps {
   ipAssignments: string[];
@@ -33,7 +35,7 @@ interface IpAssignmentsProps {
   setDeleteWarning: (args: any) => void;
 }
 
-export const MembersTable = ({ nwid, cidr }: any) => {
+export const MembersTable = ({ nwid }) => {
   const { query } = useRouter();
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
@@ -78,6 +80,7 @@ export const MembersTable = ({ nwid, cidr }: any) => {
       memberId: id,
     });
   };
+
   const columns = useMemo(
     () => [
       {
@@ -115,7 +118,7 @@ export const MembersTable = ({ nwid, cidr }: any) => {
       },
       {
         Header: "ID",
-        accessor: (d) => d["id"],
+        accessor: (d: string) => d["id"],
         // maxWidth: 200,
         // width: 150,
       },
@@ -126,13 +129,17 @@ export const MembersTable = ({ nwid, cidr }: any) => {
           if (!ipAssignments || !ipAssignments.length)
             return <span>waiting for IP ...</span>;
           return ipAssignments.map((ip) => {
-            const block = new Netmask(cidr);
+            // const block = new Netmask(networkById.network?.routes[0]?.target);
+            const match = isIPInSubnet(
+              networkById.network?.routes[0]?.target,
+              ip
+            );
             return (
               <div key={ip} className="flex justify-center pb-2">
                 {true ? (
                   <div
                     className={`${
-                      block.contains(ip)
+                      match
                         ? "badge-primary badge badge-lg rounded-md"
                         : "badge-ghost badge badge-lg rounded-md opacity-60"
                     } flex min-w-fit justify-between`}
@@ -183,7 +190,7 @@ export const MembersTable = ({ nwid, cidr }: any) => {
       },
       {
         Header: "Created",
-        accessor: (d) => <TimeAgo date={d["creationTime"]} />,
+        accessor: (d: string) => <TimeAgo date={d["creationTime"]} />,
       },
       {
         Header: "Conn Status",

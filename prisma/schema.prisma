@@ -45,24 +45,22 @@ model network_members {
   activeBridge         Boolean   @default(false)
   address              String?   @default("")
   authorized           Boolean   @default(false)
-  capabilities         String?
-  creationTime         DateTime?
+  creationTime         DateTime
   identity             String?
   lastAuthorizedTime   Int?
   lastDeauthorizedTime Int?
   objtype              String?
   revision             Int?
-  tags                 String?
+  tags                 String[]
   vRev                 Int?
   ipAssignments        String[]
   noAutoAssignIps      Boolean?  @default(false)
 }
 model network {
-  nwid            String            @id
-  nwname          String
-  nw_userid       User              @relation(fields: [authorId], references: [id])
-  authorId        Int
-  routes               String[]
+  nwid                 String            @id
+  nwname               String
+  nw_userid            User              @relation(fields: [authorId], references: [id])
+  authorId             Int
   network_members network_members[]
 }
 

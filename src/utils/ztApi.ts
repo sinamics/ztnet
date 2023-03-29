@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import fs from "fs";
 import axios, { AxiosResponse } from "axios";
-import { Member, Network } from "~/types/network";
+import { Member, Network, NetworkAndMembers, Peers } from "~/types/network";
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 const ZT_FILE =
@@ -111,7 +111,7 @@ type ZTControllerResponse = {
 
 export const network_detail = async function (
   nwid: string
-): Promise<ZTControllerResponse> {
+): Promise<NetworkAndMembers> {
   try {
     const members: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}/member/`,
@@ -204,7 +204,7 @@ export const peer = async function (user_zt_adress: any) {
       options
     );
 
-    return response.data;
+    return response.data as Peers[];
   } catch (err) {
     // throw err;
   }
