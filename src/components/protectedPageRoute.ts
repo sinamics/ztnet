@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 export default function ProtectedPageRoute(
   context,
   redirectTo, // string route where user will be redirected if they are not authenticated

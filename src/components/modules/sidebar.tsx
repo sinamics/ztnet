@@ -15,7 +15,7 @@ const Sidebar = (): JSX.Element => {
   const sidebarRef = useRef<HTMLDivElement>();
   const router = useRouter();
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: MouseEvent) => {
       if (open) {
         if (!sidebarRef.current) return;
         toggle();

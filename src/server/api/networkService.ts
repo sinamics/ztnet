@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import Promises from "bluebird";
+
 // import { PubSub } from "apollo-server-express";
 
 import * as ztController from "~/utils/ztApi";

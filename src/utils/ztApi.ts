@@ -6,8 +6,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import fs from "fs";
-import axios, { AxiosResponse } from "axios";
-import { Member, Network, NetworkAndMembers, Peers } from "~/types/network";
+import axios, { type AxiosResponse } from "axios";
+import {
+  type MembersEntity,
+  type ZtControllerNetwork,
+  type NetworkAndMembers,
+  type Peers,
+} from "~/types/network";
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 const ZT_FILE =
@@ -77,7 +82,7 @@ export const network_create = async function (name: any, ipAssignment: any) {
   };
 
   try {
-    const post = await axios
+    const post = (await axios
       .post(
         `${ZT_ADDR}/controller/network/${zt_address}______`,
         config,
@@ -85,7 +90,7 @@ export const network_create = async function (name: any, ipAssignment: any) {
       )
       .catch((err: { response: { statusText: string } }) =>
         console.log(err.response.statusText)
-      );
+      )) as AxiosResponse;
     return post.data;
   } catch (err) {
     console.log(err);
@@ -105,8 +110,8 @@ export const network_delete = async function (nwid: string) {
 };
 
 type ZTControllerResponse = {
-  network: Network;
-  members: Member[];
+  network: ZtControllerNetwork;
+  members: MembersEntity[];
 };
 
 export const network_detail = async function (

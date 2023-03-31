@@ -2,7 +2,6 @@
 import { signIn } from "next-auth/react";
 import router from "next/router";
 import { useState } from "react";
-import { api } from "~/utils/api";
 
 interface FormData {
   email: string;

@@ -2,12 +2,12 @@ import { useRouter } from "next/router";
 import { type ChangeEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import { type CustomError } from "~/types/errorHandling";
-import { type Route } from "~/types/network";
+import { type RoutesEntity } from "~/types/network";
 import { api } from "~/utils/api";
 
 export const NettworkSettings = () => {
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
-  const [routeInput, setRouteInput] = useState<Route>();
+  const [routeInput, setRouteInput] = useState<RoutesEntity>();
 
   const { query } = useRouter();
   const {
@@ -28,7 +28,7 @@ export const NettworkSettings = () => {
       },
     });
 
-  const deleteRoute = (route: Route) => {
+  const deleteRoute = (route: RoutesEntity) => {
     const _routes = [...network?.routes];
     const newRouteArr = _routes.filter((r) => r.target !== route.target);
 

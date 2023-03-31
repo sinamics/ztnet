@@ -14,8 +14,10 @@ import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import bluebird from "bluebird";
 import { updateNetworkMembers } from "../networkService";
-import { type network_members } from "@prisma/client";
-import { MembersEntity, type NetworkAndMembers } from "~/types/network";
+import {
+  type NetworkMembersEntity,
+  type NetworkAndMembers,
+} from "~/types/network";
 
 export const networkRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -86,7 +88,7 @@ export const networkRouter = createTRPCRouter({
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-      const getZombieMembers: network_members[] = await bluebird.map(
+      const getZombieMembers: NetworkMembersEntity[] = await bluebird.map(
         members,
         async (member: any) => {
           return await ctx.prisma.network_members.findFirst({
@@ -204,7 +206,7 @@ export const networkRouter = createTRPCRouter({
               })
             )
             .optional(),
-          changeCidr: z.array(z.null()).default([]).optional(),
+          changeCidr: z.string().optional(),
         }),
       })
     )
