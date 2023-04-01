@@ -89,6 +89,7 @@ services:
       POSTGRES_DB: postgres
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
+      NEXT_PUBLIC_SITE_NAME: "Next ZTNet"
     networks:
       - app-network
     links:
@@ -132,6 +133,7 @@ The `docker-compose.yml` file includes several environment variables that you ca
 - `NEXTAUTH_URL`: The URL for NextAuth authentication.
 - `NEXTAUTH_SECRET`: The secret key for NextAuth authentication.
 - `NEXT_PUBLIC_CLIENTVAR`: A public client variable used by the Next.js application.
+- `NEXT_PUBLIC_SITE_NAME`: Site name used in the Next.js application.
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
