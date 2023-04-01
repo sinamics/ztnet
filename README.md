@@ -121,20 +121,17 @@ You can now access the Next ZTNet web interface at `http://localhost:3000`.
 
 The `docker-compose.yml` file includes several environment variables that you can customize based on your needs. Here is a description of each variable:
 
+- `POSTGRES_HOST`: The hostname of the PostgreSQL service.
+- `POSTGRES_PORT`: The port number for the PostgreSQL service.
 - `POSTGRES_USER`: The username for the PostgreSQL database.
 - `POSTGRES_PASSWORD`: The password for the PostgreSQL database user.
 - `POSTGRES_DB`: The name of the PostgreSQL database.
 - `ZT_OVERRIDE_LOCAL_CONF`: Allows overriding local ZeroTier configuration.
 - `ZT_ALLOW_MANAGEMENT_FROM`: Defines the IP range allowed to access the ZeroTier management interface.
-- `NEXT_PUBLIC_CLIENTVAR`: A public client variable used by the Next.js application.
 - `ZT_ADDR`: The address of the ZeroTier service.
-- `POSTGRES_HOST`: The hostname of the PostgreSQL service.
-- `POSTGRES_PORT`: The port number for the PostgreSQL service.
-- `POSTGRES_USER`: The username for the PostgreSQL service.
-- `POSTGRES_PASSWORD`: The password for the PostgreSQL service user.
-- `POSTGRES_DB`: The name of the PostgreSQL database.
 - `NEXTAUTH_URL`: The URL for NextAuth authentication.
 - `NEXTAUTH_SECRET`: The secret key for NextAuth authentication.
+- `NEXT_PUBLIC_CLIENTVAR`: A public client variable used by the Next.js application.
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
