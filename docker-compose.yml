@@ -57,6 +57,7 @@ services:
       POSTGRES_DB: postgres
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
+      NEXT_PUBLIC_SITE_NAME: "Next ZTnet"
     networks:
       - app-network
     links:
