@@ -34,4 +34,7 @@ jobs:
           push: true
           # target: production
           # platforms: linux/amd64,linux/arm64,linux/arm/v7
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ steps.lowercaseRepo.outputs.lowercase }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+          # create a tag with latest and commit hash
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/next_ztnet:latest
+            ${{ secrets.DOCKER_USERNAME }}/next_ztnet:${{ github.ref_name }}-${{ env.SHORT_SHA }}
