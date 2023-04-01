@@ -1,6 +1,6 @@
 # Next ZTNet
 
-## This is a work in progress. It is not ready for production use.
+## ⚠️ This is a work in progress. It is not ready for production use!
 
 Next ZTNet is a ZeroTier controller that provides an easy-to-use interface for managing your ZeroTier networks. Built with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, this powerful web application simplifies the process of creating, configuring, and monitoring your ZeroTier networks.
 
@@ -14,7 +14,7 @@ With Next ZTNet, you can:
 ## Table of Contents
 
 - [Next ZTNet](#next-ztnet)
-  - [This is a work in progress. It is not ready for production use.](#this-is-a-work-in-progress-it-is-not-ready-for-production-use)
+  - [⚠️ This is a work in progress. It is not ready for production use!](#️-this-is-a-work-in-progress-it-is-not-ready-for-production-use)
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Using Docker Compose](#using-docker-compose)
