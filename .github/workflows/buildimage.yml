@@ -28,4 +28,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ env.SHORT_SHA }}
+          target: production
+          # platforms: linux/amd64,linux/arm64,linux/arm/v7
+          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
