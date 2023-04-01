@@ -32,6 +32,6 @@ jobs:
         with:
           context: .
           push: true
-          target: production
+          # target: production
           # platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ steps.lowercaseRepo.outputs.lowercase }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
