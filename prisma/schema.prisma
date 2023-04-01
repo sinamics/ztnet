@@ -16,8 +16,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("CONNECTION_STRING")
-  shadowDatabaseUrl = env("MIGRATE_CONNECTION_STRING")
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
 }
 
 model settings {

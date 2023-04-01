@@ -272,7 +272,7 @@ export const networkRouter = createTRPCRouter({
   createNetwork: protectedProcedure.mutation(async ({ ctx }) => {
     // Generate ipv4 address, cidr, start & end
     const ipAssignmentPools = IPv4gen(null);
-
+    console.log(ipAssignmentPools);
     // Generate adjective and noun word
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const networkName: string = Sentencer.make(
@@ -305,6 +305,7 @@ export const networkRouter = createTRPCRouter({
             console.log(err);
             // throw new ApolloError("Could not create network! Please try again");
           });
-      });
+      })
+      .catch((err) => console.log(err));
   }),
 });

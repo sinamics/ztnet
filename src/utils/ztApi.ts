@@ -15,6 +15,7 @@ import {
 } from "~/types/network";
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
+
 const ZT_FILE =
   process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
 

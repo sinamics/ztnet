@@ -1,0 +1,77 @@
+version: "3.1"
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ztnet
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  zerotier:
+    image: zyclonite/zerotier:1.10.6
+    hostname: zerotier
+    container_name: zerotier
+    restart: unless-stopped
+    volumes:
+      - zerotier:/var/lib/zerotier-one
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      - app-network
+    ports:
+      - "9993:9993/udp"
+    environment:
+      - ZT_OVERRIDE_LOCAL_CONF=true
+      - ZT_ALLOW_MANAGEMENT_FROM=172.28.0.0/16
+
+  ztnet:
+    image: sinamics/next_ztnet
+    container_name: ztnet
+    platform: "linux/amd64"
+    working_dir: /app
+    volumes:
+      - zerotier:/var/lib/zerotier-one:ro
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_CLIENTVAR: "clientvar"
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    environment:
+      ZT_ADDR: http://zerotier:9993
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_SECRET: "g2hacSKpssm9EQcDRw5J8bBe4U9WG3B"
+    networks:
+      - app-network
+    links:
+      - postgres
+    depends_on:
+      - postgres
+      - zerotier
+volumes:
+  zerotier:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16

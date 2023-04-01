@@ -68,7 +68,7 @@ const RegisterForm: React.FC = () => {
               className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
               value={formData.email}
               onChange={handleChange}
-              type=""
+              type="email"
               name="email"
               placeholder="mail@gmail.com"
             />
@@ -81,7 +81,7 @@ const RegisterForm: React.FC = () => {
               className="w-full content-center rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
               value={formData.password}
               onChange={handleChange}
-              type=""
+              type="password"
               name="password"
               placeholder="Enter your password"
             />
