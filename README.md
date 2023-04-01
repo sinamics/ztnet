@@ -139,7 +139,7 @@ To change any of these values, update the corresponding environment variable in 
 
 ### Clone the Repository
 
-To start development in a traditional way, first, clone the repository:
+To start development, first, clone the repository:
 
 `git clone https://github.com/yourusername/next_ztnet.git
 cd next_ztnet`
@@ -148,13 +148,21 @@ cd next_ztnet`
 
 Create a `.env` file in the root of the project and set the necessary environment variables:
 
-ZT_ADDR=http://zerotier:9993
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=ztnet
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your_nextauth_secret
-MIGRATE_POSTGRES_DB="shaddow_ztnet"
-MIGRATE_DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
+- `ZT_ADDR`=http://zerotier:9993
+- `POSTGRES_HOST`=localhost
+- `POSTGRES_PORT`=5432
+- `POSTGRES_USER`=postgres
+- `POSTGRES_PASSWORD`=postgres
+- `POSTGRES_DB`=ztnet
+- `NEXTAUTH_URL`=http://localhost:3000
+- `NEXTAUTH_SECRET`="your_nextauth_secret"
+- `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
+- `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
+
+You need to run the following command to create the database:
+
+`npx prisma db push`
+
+Now start the development server:
+
+`npm run dev`
