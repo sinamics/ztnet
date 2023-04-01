@@ -14,13 +14,6 @@ const LoginForm: React.FC = () => {
     password: "",
   });
   const [loginError, setLoginError] = useState("");
-  // const { data: sessionData } = useSession();
-
-  // const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-  //   undefined, // no input
-  //   { enabled: sessionData?.user !== undefined }
-  // );
-  // const { mutate: login, error: loginError } = api.auth.login.useMutation();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
