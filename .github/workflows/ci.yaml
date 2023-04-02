@@ -9,15 +9,19 @@ on:
       - "v*"
   # trigger workflow manually
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v0.0.2)"
+        required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        # checkout dev branch
         with:
-          fetch-depth: 0
           ref: main
+          fetch-depth: 0
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -34,6 +38,21 @@ jobs:
       - name: Create short sha
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
+      - name: "Get Previous tag"
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - name: Extract version number
+        id: extract_version
+        run: |
+          echo "raw_tag=${{ steps.previoustag.outputs.tag }}"
+          version_number="${{ steps.previoustag.outputs.tag }}"
+          if [[ ${version_number:0:1} == "v" ]]; then
+            version_number=${version_number:1}
+          fi
+          echo "version_number=$version_number"
+          echo "::set-output name=version_number::$version_number"
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
@@ -41,22 +60,28 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest, ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ env.SHORT_SHA }}
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ steps.extract_version.outputs.version_number }}
 
   tagged-release:
     name: "Tagged Release"
     runs-on: "ubuntu-latest"
-
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+
       - name: "Get Previous tag"
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          tag_pattern: "v*"
+
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
+          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
           title: ${{ steps.previoustag.outputs.tag }}
           files: |
             README.md
