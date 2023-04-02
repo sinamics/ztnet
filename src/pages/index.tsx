@@ -61,7 +61,7 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
                 <p className="pr-3">
                   A VPN management for drones using the UAVcast application is a
                   powerful solution that helps drone operators securely and
-                  easily manage their UAVcast VPN connections..
+                  easily manage their UAVcast VPN connections.
                 </p>
               </div>
               {auth && (
