@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
@@ -9,6 +10,7 @@
 import { useRouter } from "next/router";
 import React, { useState, useMemo } from "react";
 import { useTable, type Column } from "react-table";
+import { api } from "~/utils/api";
 // import { useHistory } from "react-router-dom";
 // import "./react-table-styles.css"; // Import the necessary styles for react-table
 
@@ -27,14 +29,10 @@ interface DeleteNetworkModalProps {
 }
 
 export const NetworkTable = ({ tableData = [] }) => {
-  // console.log(tableData);
-  const router = useRouter();
-  const [deleteWarning, setDeleteWarning] = useState({
-    open: false,
-    nwid: "",
-  });
+  const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
+  const { refetch: fetchNetwork } = api.network.getAll.useQuery();
 
-  //   const history = useHistory();
+  const router = useRouter();
 
   const columns: Column<Network>[] = useMemo(
     () => [
@@ -48,84 +46,94 @@ export const NetworkTable = ({ tableData = [] }) => {
       },
       {
         Header: "Actions",
-        id: "action",
-        // Cell: ({ row }) => (
-        //   <button
-        //     className="rounded bg-red-600 px-2 py-1 text-white"
-        //     onClick={(e) => {
-        //       e.stopPropagation();
-        //       setDeleteWarning({ open: true, nwid: row.original.nwid });
-        //     }}
-        //   >
-        //     Delete
-        //   </button>
-        // ),
+        accessor: "action",
       },
     ],
     []
   );
 
   const data = useMemo(() => tableData, [tableData]);
-
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
       data,
+      initialState: {
+        sortBy: [
+          {
+            id: "nwid",
+            desc: false,
+          },
+        ],
+      },
     });
 
   const handleRowClick = (row: any) => {
-    // console.log(row);
     router.push(`/network/${row.original.nwid}`);
   };
+  const deleteNetworkHandler = (event, nwid) => {
+    event.stopPropagation();
+    if (!nwid) return;
 
+    deleteNetwork({ nwid }, { onSuccess: () => void fetchNetwork() });
+  };
   return (
-    <>
-      {/* {deleteWarning.open && (
-        <DeleteNetworkModal
-          data={deleteWarning}
-          cancle={() => setDeleteWarning({ ...deleteWarning, open: false })}
-        />
-      )} */}
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="">
-          {headerGroups.map((headerGroup, key) => (
-            <tr key={key}>
-              {headerGroup.headers.map((column, key) => (
-                <th
-                  key={key}
-                  // {...column.getHeaderProps()}
-                  className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider "
-                >
-                  {column.render("Header")}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()} className="divide-y divide-gray-200 ">
-          {rows.map((row, key) => {
-            prepareRow(row);
-            return (
-              <tr
-                key={key}
-                onClick={() => handleRowClick(row)}
-                className="cursor-pointer hover:bg-secondary"
-              >
-                {row.cells.map((cell, key) => {
-                  return (
-                    <td
-                      key={key}
-                      className="whitespace-nowrap border border-primary px-6 py-4 text-sm"
-                    >
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
+    <div className="inline-block w-full p-1.5 text-center align-middle">
+      <div className="overflow-hidden rounded-lg border">
+        <table
+          {...getTableProps()}
+          className="table-wrapper min-w-full divide-y divide-gray-400"
+        >
+          <thead className="">
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th
+                    {...column.getHeaderProps()}
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs uppercase tracking-wider "
+                  >
+                    {column.render("Header")}
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()} className="divide-y divide-gray-200">
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr
+                  onClick={() => handleRowClick(row)}
+                  {...row.getRowProps()}
+                  className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
+                >
+                  {row.cells.map((cell) => {
+                    return (
+                      <td
+                        {...cell.getCellProps()}
+                        className="whitespace-nowrap border border-primary px-6 py-2 text-sm"
+                      >
+                        {cell.column.id === "action" ? (
+                          <button
+                            className="btn-error btn-xs btn z-20"
+                            onClick={(event) =>
+                              deleteNetworkHandler(event, row.original.nwid)
+                            }
+                          >
+                            Delete
+                          </button>
+                        ) : (
+                          cell.render("Cell")
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
