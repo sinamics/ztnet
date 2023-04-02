@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           lfs: true
           fetch-depth: 0
@@ -91,4 +91,5 @@ jobs:
           automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
           title: ${{ steps.previoustag.outputs.tag }}
           files: |
+            LICENSE
             README.md
