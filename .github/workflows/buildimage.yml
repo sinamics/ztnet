@@ -3,7 +3,8 @@ name: Build Image
 on:
   push:
     branches:
-      - main
+      - dev
+
 jobs:
   build:
     runs-on: ubuntu-latest
