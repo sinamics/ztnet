@@ -15,7 +15,7 @@ import RegisterForm from "~/components/modules/registerForm";
 import { useState } from "react";
 
 const Home: NextPage<{ auth: User }> = ({ auth }) => {
-  const [viewRegisterForm, setViewRegisterForm] = useState<boolean>();
+  const [viewRegisterForm, setViewRegisterForm] = useState<boolean>(false);
 
   return (
     <>
@@ -36,7 +36,7 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
                 onClick={() => setViewRegisterForm(!viewRegisterForm)}
                 className="btn"
               >
-                Sign Up
+                {viewRegisterForm ? "Sign In" : "Sign Up"}
               </button>
             </div>
           ) : null}
@@ -49,8 +49,8 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
               <div className="hidden flex-col self-start text-white lg:flex">
                 {/* <img src="" className="mb-3" /> */}
                 <div className="md:mb-10">
-                  <h1 className="mb-3 text-center text-5xl font-bold">
-                    Hi, Welcome Back
+                  <h1 className="mb-3  text-5xl font-bold">
+                    Hi, Welcome {auth ? "Back" : null}
                   </h1>
                   {auth?.name && (
                     <h2 className="mb-3 text-center text-4xl font-bold text-slate-200">
@@ -59,9 +59,10 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
                   )}
                 </div>
                 <p className="pr-3">
-                  A VPN management for drones using the UAVcast application is a
-                  powerful solution that helps drone operators securely and
-                  easily manage their UAVcast VPN connections..
+                  ZeroTier VPN is your key to boundless connectivity and
+                  ultimate privacy. Experience a secure and borderless digital
+                  world, free from limitations. Empower yourself with unmatched
+                  performance, while safeguarding your data.
                 </p>
               </div>
               {auth && (
