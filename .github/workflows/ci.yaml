@@ -24,9 +24,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
-          ref: main
+          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Set up QEMU
@@ -46,19 +46,25 @@ jobs:
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.61.0 # Don't use @master unless you're happy to test the latest version
+        id: tagger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
+          RELEASE_BRANCHES: main
+          DEFAULT_BUMP: patch
+          # DRY_RUN: true
 
-      - name: "Get Previous tag"
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      # get the previous created tag from anothrNick/github-tag-action@1.61.0
+
+      # - name: "Get Previous tag"
+      #   id: previoustag
+      #   uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Extract version number
         id: extract_version
         run: |
-          echo "raw_tag=${{ steps.previoustag.outputs.tag }}"
-          version_number="${{ steps.previoustag.outputs.tag }}"
+          echo "raw_tag=${{ steps.tagger.outputs.new_tag }}"
+          version_number="${{ steps.tagger.outputs.new_tag }}"
           if [[ ${version_number:0:1} == "v" ]]; then
             version_number=${version_number:1}
           fi
@@ -93,7 +99,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
-          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
-          title: ${{ steps.previoustag.outputs.tag }}
+          automatic_release_tag: ${{ github.event.inputs.version || steps.tagger.outputs.new_tag }}
+          title: ${{ steps.tagger.outputs.new_tag }}
           files: |
             README.md
