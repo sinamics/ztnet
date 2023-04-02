@@ -25,7 +25,9 @@ const Networks: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>UAVnet - Networks</title>
+        <title>
+          {process.env.NEXT_PUBLIC_SITE_NAME || "Next ZTnet"} - Networks
+        </title>
         <meta name="description" content="UAV vpn Networks" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

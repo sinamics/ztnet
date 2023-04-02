@@ -1,22 +1,27 @@
 # Build new docker image when a new tag is pushed, and generate changelog and release notes and use the tag as the release name.
 # if the tag has beta or alfa in the name, set the release as a pre-release.
 
-name: Auto create Tag and container
+name: Push Tag build container
 
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
+  push:
+    tags:
+      - "v*"
+
+  # trigger workflow manually
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v0.0.2)"
+        required: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
-          ref: ${{ github.sha }}
+          ref: main
           fetch-depth: 0
 
       - name: Set up QEMU
@@ -36,19 +41,19 @@ jobs:
 
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.61.0 # Don't use @master unless you're happy to test the latest version
-        id: tagger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
-          RELEASE_BRANCHES: main
-          DEFAULT_BUMP: patch
-          # DRY_RUN: true
+
+      - name: "Get Previous tag"
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - name: Extract version number
         id: extract_version
         run: |
-          echo "raw_tag=${{ steps.tagger.outputs.new_tag }}"
-          version_number="${{ steps.tagger.outputs.new_tag }}"
+          echo "raw_tag=${{ steps.previoustag.outputs.tag }}"
+          version_number="${{ steps.previoustag.outputs.tag }}"
           if [[ ${version_number:0:1} == "v" ]]; then
             version_number=${version_number:1}
           fi
@@ -66,12 +71,24 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ steps.extract_version.outputs.version_number }}
 
-      - name: Automatic Releases
-        uses: "marvinpinto/action-automatic-releases@latest"
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: "Get Previous tag"
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
-          automatic_release_tag: ${{ github.event.inputs.version || steps.tagger.outputs.new_tag }}
-          title: ${{ steps.tagger.outputs.new_tag }}
+          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
+          title: ${{ steps.previoustag.outputs.tag }}
           files: |
             README.md

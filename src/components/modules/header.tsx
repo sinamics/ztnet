@@ -40,7 +40,7 @@ const Header = () => {
         <div className="ml-10 hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
             <span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
-              UAVnet
+              {process.env.NEXT_PUBLIC_SITE_NAME || "Next ZTnet"}
             </span>
           </a>
         </div>
