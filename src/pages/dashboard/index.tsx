@@ -2,17 +2,14 @@ import Head from "next/head";
 import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
-
-// import { api } from "~/utils/api";
+import { globalSiteTitle } from "~/utils/global";
 
 const Dashboard: NextPageWithLayout = () => {
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  //   const network = api.networkRouter.message.useQuery();
-
+  const title = `${globalSiteTitle} - Dashboard`;
   return (
     <>
       <Head>
-        <title>{process.env.NEXT_PUBLIC_SITE_NAME} - Dashboard</title>
+        <title>{title}</title>
         <meta name="description" content="UAV vpn dashboard" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -20,7 +17,7 @@ const Dashboard: NextPageWithLayout = () => {
         <div className="mx-auto max-w-6xl space-y-10 bg-cover bg-center bg-no-repeat">
           {/* <div className="absolute inset-0 z-0">test </div> */}
           <div className="col-start-2 mx-0 flex justify-center text-5xl">
-            Welcome to {process.env.NEXT_PUBLIC_SITE_NAME}
+            Welcome to {globalSiteTitle}
           </div>
           {/* grid with cards  */}
           <div className="grid grid-flow-col gap-3">

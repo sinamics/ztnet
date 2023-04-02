@@ -1,6 +1,7 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 
 const Themes = ["light", "dark", "black", "business"];
@@ -40,7 +41,7 @@ const Header = () => {
         <div className="ml-10 hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
             <span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
-              {process.env.NEXT_PUBLIC_SITE_NAME || "Next ZTnet"}
+              {globalSiteTitle}
             </span>
           </a>
         </div>
