@@ -1,0 +1,32 @@
+name: On pull request
+
+on: pull_request
+
+jobs:
+  build_devcontainer:
+    runs-on: ubuntu-latest
+    name: Build Devcontainer
+    # The Dockerfile contains features that requires buildkit, and since the
+    # devcontainer cli uses docker-compose to build the image, the only way to
+    # ensure docker-compose uses buildkit is to explicitly enable it.
+    env:
+      DOCKER_BUILDKIT: "1"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@master
+        with:
+          node-version: 18.x
+
+  web_lint:
+    name: Web - Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@master
+        with:
+          node-version: 18.x
+      - run: npm install
+        working-directory: ./web
+      - name: Lint
+        run: npm run lint
+        working-directory: ./web
