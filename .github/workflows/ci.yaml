@@ -74,4 +74,5 @@ jobs:
           automatic_release_tag: ${{ github.event.inputs.version || steps.tagger.outputs.new_tag }}
           title: ${{ steps.tagger.outputs.new_tag }}
           files: |
+            LICENSE
             README.md
