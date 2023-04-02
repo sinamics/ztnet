@@ -28,7 +28,7 @@ declare module "next-auth" {
   }
 
   interface User {
-    id: number;
+    id?: number;
     // ...other properties
     // role: UserRole;
     //   email: string;
@@ -70,12 +70,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.email || !user.hash || !user.id || !user.name)
-          return null;
+          //  return a nextauth error message
+          throw new Error(`User does not exist!`);
 
         const isValid = await compare(_credentials?.password ?? "", user.hash);
 
         if (!isValid) {
-          return null;
+          throw new Error("email or password is wrong!");
         }
 
         return {
