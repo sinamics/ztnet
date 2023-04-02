@@ -3,19 +3,19 @@ name: On pull request
 on: pull_request
 
 jobs:
-  build_devcontainer:
-    runs-on: ubuntu-latest
-    name: Build Devcontainer
-    # The Dockerfile contains features that requires buildkit, and since the
-    # devcontainer cli uses docker-compose to build the image, the only way to
-    # ensure docker-compose uses buildkit is to explicitly enable it.
-    env:
-      DOCKER_BUILDKIT: "1"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@master
-        with:
-          node-version: 18.x
+  # build_devcontainer:
+  #   runs-on: ubuntu-latest
+  #   name: Build Devcontainer
+  #   # The Dockerfile contains features that requires buildkit, and since the
+  #   # devcontainer cli uses docker-compose to build the image, the only way to
+  #   # ensure docker-compose uses buildkit is to explicitly enable it.
+  #   env:
+  #     DOCKER_BUILDKIT: "1"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@master
+  #       with:
+  #         node-version: 18.x
 
   web_lint:
     name: Web - Lint
@@ -25,8 +25,16 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
+      # write local env file .env with secrets
+      # add dummy keys to get the required markers for next-auth and postgres
+      - name: Write local env file
+        run: |
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
+          echo "NEXTAUTH_SECRET=dummy_key" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+
       - run: npm install
-        working-directory: ./web
+        # working-directory:
       - name: Lint
         run: npm run lint
-        working-directory: ./web
+        # working-directory: ./
