@@ -46,6 +46,11 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
+      - name: "Get Previous tag"
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          tag_pattern: "v*"
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
