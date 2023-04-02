@@ -91,4 +91,5 @@ jobs:
           automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
           title: ${{ steps.previoustag.outputs.tag }}
           files: |
+            LICENSE
             README.md
