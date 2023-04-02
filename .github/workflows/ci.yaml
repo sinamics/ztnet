@@ -7,6 +7,12 @@ on:
   push:
     tags:
       - "v*"
+  pull_request:
+    types:
+      - closed
+    branches:
+      - master
+
   # trigger workflow manually
   workflow_dispatch:
     inputs:
