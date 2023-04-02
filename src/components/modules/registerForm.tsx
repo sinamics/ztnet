@@ -1,4 +1,5 @@
 // import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
 
@@ -22,6 +23,7 @@ const RegisterForm: React.FC = () => {
   // );
   const { mutate: register, error: loginError } =
     api.auth.register.useMutation();
+  const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -34,7 +36,7 @@ const RegisterForm: React.FC = () => {
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    register(formData);
+    register(formData, { onSuccess: () => void router.push("/") });
   };
   return (
     <div className="z-10 flex justify-center  self-center">
