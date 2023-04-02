@@ -128,13 +128,16 @@ The `docker-compose.yml` file includes several environment variables that you ca
 - `POSTGRES_USER`: The username for the PostgreSQL database.
 - `POSTGRES_PASSWORD`: The password for the PostgreSQL database user.
 - `POSTGRES_DB`: The name of the PostgreSQL database.
+- `NEXTAUTH_URL`: The URL for NextAuth authentication.
+- `NEXTAUTH_SECRET`: The secret key for NextAuth authentication.
+- `NEXT_PUBLIC_SITE_NAME`: Site name used in the Next.js application.
+
+These are system environment variables used by the ZeroTier service and should not be changed:
+
 - `ZT_OVERRIDE_LOCAL_CONF`: Allows overriding local ZeroTier configuration.
 - `ZT_ALLOW_MANAGEMENT_FROM`: Defines the IP range allowed to access the ZeroTier management interface.
 - `ZT_ADDR`: The address of the ZeroTier service.
-- `NEXTAUTH_URL`: The URL for NextAuth authentication.
-- `NEXTAUTH_SECRET`: The secret key for NextAuth authentication.
 - `NEXT_PUBLIC_CLIENTVAR`: A public client variable used by the Next.js application.
-- `NEXT_PUBLIC_SITE_NAME`: Site name used in the Next.js application.
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
@@ -151,7 +154,6 @@ cd next_ztnet`
 
 Create a `.env` file in the root of the project and set the necessary environment variables:
 
-- `ZT_ADDR`=http://zerotier:9993
 - `POSTGRES_HOST`=localhost
 - `POSTGRES_PORT`=5432
 - `POSTGRES_USER`=postgres
@@ -159,10 +161,10 @@ Create a `.env` file in the root of the project and set the necessary environmen
 - `POSTGRES_DB`=ztnet
 - `NEXTAUTH_URL`=http://localhost:3000
 - `NEXTAUTH_SECRET`="your_nextauth_secret"
+- `NEXT_PUBLIC_SITE_NAME`="Next ZTNet"
 - `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
 - `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
-
-You need to run the following command to create the database:
+  You need to run the following command to create the database:
 
 `npx prisma db push`
 
