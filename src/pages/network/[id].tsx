@@ -15,8 +15,7 @@ const NetworkById = () => {
       {
         nwid: query.id as string,
       },
-      // { enabled: !!query.id, refetchInterval: 10000 }
-      { enabled: !!query.id }
+      { enabled: !!query.id, refetchInterval: 10000 }
     );
 
   if (loadingNetwork) {
