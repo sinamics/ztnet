@@ -83,7 +83,7 @@ export const networkRouter = createTRPCRouter({
       };
       const { members, network } = combined;
 
-      console.log(JSON.stringify(combined, null, 2));
+      // console.log(JSON.stringify(combined, null, 2));
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
@@ -271,7 +271,6 @@ export const networkRouter = createTRPCRouter({
   createNetwork: protectedProcedure.mutation(async ({ ctx }) => {
     // Generate ipv4 address, cidr, start & end
     const ipAssignmentPools = IPv4gen(null);
-    console.log(ipAssignmentPools);
     // Generate adjective and noun word
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const networkName: string = Sentencer.make(
@@ -279,32 +278,36 @@ export const networkRouter = createTRPCRouter({
     ) as string;
 
     // Create ZT network
-    return ztController
-      .network_create(networkName, ipAssignmentPools)
-      .then(async (newNw: { name: string; nwid: string }) => {
-        // store the created User in db
-        return ctx.prisma.user
-          .update({
-            where: {
-              id: ctx.session.user.id,
-            },
-            data: {
-              network: {
-                create: {
-                  nwname: newNw.name,
-                  nwid: newNw.nwid,
+    return (
+      ztController
+        .network_create(networkName, ipAssignmentPools)
+        .then(async (newNw: { name: string; nwid: string }) => {
+          // store the created User in db
+          return ctx.prisma.user
+            .update({
+              where: {
+                id: ctx.session.user.id,
+              },
+              data: {
+                network: {
+                  create: {
+                    nwname: newNw.name,
+                    nwid: newNw.nwid,
+                  },
                 },
               },
-            },
-            select: {
-              network: true,
-            },
-          })
-          .catch((err: any) => {
-            console.log(err);
-            // throw new ApolloError("Could not create network! Please try again");
-          });
-      })
-      .catch((err) => console.log(err));
+              select: {
+                network: true,
+              },
+            })
+            .catch((err: any) => {
+              // eslint-disable-next-line no-console
+              console.log(err);
+              // throw new ApolloError("Could not create network! Please try again");
+            });
+        })
+        // eslint-disable-next-line no-console
+        .catch((err) => console.log(err))
+    );
   }),
 });

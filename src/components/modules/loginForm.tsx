@@ -37,7 +37,6 @@ const LoginForm: React.FC = () => {
     if (!result.error) {
       await router.push("/dashboard");
     }
-    console.log(result);
     setLoginError(result.error);
   };
   return (
