@@ -60,7 +60,7 @@ const LoginForm: React.FC = () => {
               onChange={handleChange}
               type="email"
               name="email"
-              placeholder="mail@gmail.com"
+              placeholder="mail@example.com"
             />
           </div>
           <div className="space-y-2">
@@ -77,7 +77,7 @@ const LoginForm: React.FC = () => {
             />
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <input
                 id="remember_me"
                 name="remember_me"
@@ -90,7 +90,7 @@ const LoginForm: React.FC = () => {
               >
                 Remember me
               </label>
-            </div>
+            </div> */}
             <div className="text-sm">
               <a href="#" className="text-gray-400 hover:text-green-500">
                 Forgot your password?

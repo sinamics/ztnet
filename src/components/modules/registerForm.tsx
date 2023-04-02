@@ -57,7 +57,7 @@ const RegisterForm: React.FC = () => {
               onChange={handleChange}
               type=""
               name="name"
-              placeholder="mail@gmail.com"
+              placeholder="First & Last Name"
             />
           </div>
           <div className="space-y-2">
@@ -70,7 +70,7 @@ const RegisterForm: React.FC = () => {
               onChange={handleChange}
               type="email"
               name="email"
-              placeholder="mail@gmail.com"
+              placeholder="mail@example.com"
             />
           </div>
           <div className="space-y-2">
@@ -86,33 +86,12 @@ const RegisterForm: React.FC = () => {
               placeholder="Enter your password"
             />
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 bg-blue-500 focus:ring-blue-400"
-              />
-              <label
-                //   for='remember_me'
-                className="ml-2 block text-sm text-gray-800"
-              >
-                Remember me
-              </label>
-            </div>
-            <div className="text-sm">
-              <a href="#" className="text-gray-400 hover:text-green-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-          <div>
+          <div className="pt-5">
             <button
               type="submit"
               className="flex w-full cursor-pointer justify-center  rounded-full bg-gray-600 p-3  font-semibold tracking-wide text-gray-100  shadow-lg transition duration-500 ease-in hover:bg-slate-500"
             >
-              Sign in
+              Sign Up
             </button>
           </div>
         </form>
