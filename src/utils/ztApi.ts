@@ -13,7 +13,7 @@ import {
   type NetworkAndMembers,
   type Peers,
 } from "~/types/network";
-const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
+const ZT_ADDR = process.env.ZT_ADDR || "http://localhost:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 
 const ZT_FILE =
