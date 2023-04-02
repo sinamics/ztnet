@@ -98,32 +98,23 @@ export const authRouter = createTRPCRouter({
       // Send validation link to user by mail
       // sendMailValidationLink(i);
 
-      // store the created User in db
-      // delete input.password;
+      // Check the total number of users in the database
+      const userCount = await ctx.prisma.user.count();
 
+      // create new user
       const newUser = await ctx.prisma.user.create({
         data: {
           name,
           email,
           lastLogin: new Date(),
-          role: settings.firstUserRegistration ? "ADMIN" : "USER",
+          role: userCount === 0 ? "ADMIN" : "USER",
           hash,
         },
       });
+
       return {
         user: newUser,
       };
-      // Update settings for first user (ADMIN)
-      // if (settings.firstUserRegistration) {
-      //   await AuthService.settings.update({
-      //     where: {
-      //       id: 1,
-      //     },
-      //     data: {
-      //       firstUserRegistration: false,
-      //     },
-      //   });
-      // }
 
       // Generate ipv4 address, cidr, start & end
       // const ipAssignmentPools = Ip4.randomIPv4();
