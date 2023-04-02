@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: main
+          lfs: true
           fetch-depth: 0
 
       - name: Set up QEMU
