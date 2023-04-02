@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: 18.x
       - run: npm install
-        working-directory: ./web
+        # working-directory:
       - name: Lint
         run: npm run lint
-        working-directory: ./web
+        # working-directory: ./
