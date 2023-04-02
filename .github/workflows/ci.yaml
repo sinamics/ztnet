@@ -11,7 +11,7 @@ on:
     types:
       - closed
     branches:
-      - master
+      - main
 
   # trigger workflow manually
   workflow_dispatch:
