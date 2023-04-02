@@ -7,9 +7,27 @@ import {
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
+// This regular expression (regex) is used to validate a password based on the following criteria:
+// - The password must be at least 6 characters long.
+// - The password must contain at least two of the following three character types:
+//  - Lowercase letters (a-z)
+//  - Uppercase letters (A-Z)
+//  - Digits (0-9)
 const mediumPassword = new RegExp(
   "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
 );
+
+// create a zod password schema
+const passwordSchema = z
+  .string()
+  .nonempty()
+  .max(40)
+  .refine((val) => {
+    if (!mediumPassword.test(val)) {
+      throw new Error(`Password does not meet the requirements!`);
+    }
+    return true;
+  });
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -20,7 +38,7 @@ export const authRouter = createTRPCRouter({
           .nonempty()
           .email()
           .transform((val) => val.trim()),
-        password: z.string().nonempty().max(40),
+        password: passwordSchema,
         name: z.string().nonempty().max(40),
       })
     )
