@@ -47,16 +47,6 @@ export const NetworkTable = ({ tableData = [] }) => {
       {
         Header: "Actions",
         accessor: "action",
-        // Cell: ({ nwid }) => (
-        //   <button
-        //     onClick={() =>
-        //       deleteNetwork({ nwid }, { onSuccess: () => void fetchNetwork() })
-        //     }
-        //     className="btn-error btn-xs btn z-20"
-        //   >
-        //     Delete
-        //   </button>
-        // ),
       },
     ],
     []
