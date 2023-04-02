@@ -12,66 +12,6 @@ const mediumPassword = new RegExp(
 );
 
 export const authRouter = createTRPCRouter({
-  // login: publicProcedure
-  //   .input(z.object({ email: z.string(), password: z.string() }))
-  //   .mutation(async ({ ctx, input }) => {
-  //     if (!input.email || !input.password)
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "Email or Password cannot be empty!",
-  //       });
-
-  //     const { email, password } = input;
-
-  //     if (!z.string().nonempty().parse(email)) {
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "Email cannot be empty!",
-  //         // optional: pass the original error to retain stack trace
-  //         // cause: theError,
-  //       });
-  //     }
-
-  //     if (!z.string().nonempty().parse(password)) {
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "Password cannot be empty!",
-  //         // optional: pass the original error to retain stack trace
-  //         // cause: theError,
-  //       });
-  //     }
-  //     const user = await ctx.prisma.user.findFirst({
-  //       where: {
-  //         email,
-  //       },
-  //       include: {
-  //         sessions: true,
-  //       },
-  //     });
-
-  //     if (!user || !user?.hash)
-  //       //  return a next auth error message to the client
-  //       return new Error(`User does not exist!`);
-  //     // throw new TRPCError({
-  //     //   code: "NOT_FOUND",
-  //     //   message: "User does not exist!",
-  //     //   // optional: pass the original error to retain stack trace
-  //     //   // cause: theError,
-  //     // });
-
-  //     const valid = bcrypt.compareSync(password, user?.hash);
-  //     if (!valid)
-  //       throw new TRPCError({
-  //         code: "UNAUTHORIZED",
-  //         message: "Username or Password is wrong!",
-  //         // optional: pass the original error to retain stack trace
-  //         // cause: theError,
-  //       });
-
-  //     return {
-  //       user: input,
-  //     };
-  //   }),
   register: publicProcedure
     .input(
       z.object({
@@ -86,6 +26,19 @@ export const authRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { email, password, name } = input;
+      const settings = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      // check if enableRegistration is true
+      if (!settings.enableRegistration) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Registration is disabled!`,
+        });
+      }
 
       // Email validation
       if (!email) return new Error(`Email required!`);
@@ -135,7 +88,7 @@ export const authRouter = createTRPCRouter({
           name,
           email,
           lastLogin: new Date(),
-          role: "USER",
+          role: settings.firstUserRegistration ? "ADMIN" : "USER",
           hash,
         },
       });

@@ -20,7 +20,7 @@ datasource db {
   shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
 }
 
-model settings {
+model GlobalOptions {
   id                    Int     @id @default(autoincrement())
   enableRegistration    Boolean @default(true)
   firstUserRegistration Boolean @default(true)
