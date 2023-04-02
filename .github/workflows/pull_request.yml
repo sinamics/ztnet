@@ -29,7 +29,7 @@ jobs:
       # add dummy keys to get the required markers for next-auth and postgres
       - name: Write local env file
         run: |
-          echo "DATABASE_URL=postgres" >> .env
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
           echo "NEXTAUTH_SECRET=dummy_key" >> .env
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
 
