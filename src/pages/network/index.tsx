@@ -4,6 +4,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/modules/networkTable";
+import { globalSiteTitle } from "~/utils/global";
 
 const Networks: NextPageWithLayout = () => {
   const {
@@ -21,13 +22,12 @@ const Networks: NextPageWithLayout = () => {
   if (isLoading) {
     return <div>loading</div>;
   }
+  const title = `${globalSiteTitle} - Networks`;
 
   return (
     <>
       <Head>
-        <title>
-          {process.env.NEXT_PUBLIC_SITE_NAME || "Next ZTnet"} - Networks
-        </title>
+        <title>{title}</title>
         <meta name="description" content="UAV vpn Networks" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
