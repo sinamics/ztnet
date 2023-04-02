@@ -13,6 +13,14 @@ jobs:
         with:
           ref: dev
 
+      # write local env file .env with secrets
+      # add dummy keys to get the required markers for next-auth and postgres
+      - name: Write local env file
+        run: |
+          echo "DATABASE_URL=postgres" >> .env
+          echo "NEXTAUTH_SECRET=dummy_key" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
