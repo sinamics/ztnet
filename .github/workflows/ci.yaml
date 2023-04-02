@@ -9,6 +9,13 @@ on:
       - "v*"
   # trigger workflow manually
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g. v0.0.2)"
+        required: true
+      message:
+        description: "Tag Title"
+        required: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -56,7 +63,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
-          automatic_release_tag: ${{ steps.previoustag.outputs.tag }}
-          title: ${{ steps.previoustag.outputs.tag }}
+          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
+          title: ${{ github.event.inputs.message || steps.previoustag.outputs.tag }}
           files: |
             README.md
