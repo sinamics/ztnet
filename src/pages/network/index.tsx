@@ -6,12 +6,16 @@ import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/modules/networkTable";
 
 const Networks: NextPageWithLayout = () => {
-  const { data: userNetworks, isLoading } = api.network.getAll.useQuery();
+  const {
+    data: userNetworks,
+    isLoading,
+    refetch,
+  } = api.network.getAll.useQuery();
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
   //   const network = api.networkRouter.message.useQuery();
   const addNewNetwork = () => {
     // New network
-    createNetwork();
+    createNetwork(null, { onSuccess: () => void refetch() });
   };
 
   if (isLoading) {

@@ -106,7 +106,7 @@ const Sidebar = (): JSX.Element => {
               Account
             </span>
           </li>
-          <li className="my-px">
+          {/* <li className="my-px">
             <a
               href="#"
               className="flex h-10 flex-row items-center rounded-lg px-3 text-gray-300 hover:bg-gray-100 hover:text-gray-700"
@@ -126,8 +126,8 @@ const Sidebar = (): JSX.Element => {
               </span>
               <span className="ml-3">Profile</span>
             </a>
-          </li>
-          <li className="my-px">
+          </li> */}
+          {/* <li className="my-px">
             <a
               href="#"
               className="flex h-10 flex-row items-center rounded-lg px-3 text-gray-300 hover:bg-gray-100 hover:text-gray-700"
@@ -148,7 +148,7 @@ const Sidebar = (): JSX.Element => {
               </span>
               <span className="ml-3">Settings</span>
             </a>
-          </li>
+          </li> */}
           <li className="my-px">
             <a
               href="#"
