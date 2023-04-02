@@ -12,7 +12,7 @@ on:
     inputs:
       version:
         description: "Release version (e.g. v0.0.2)"
-        required: true
+        required: false
       message:
         description: "Tag Title"
         required: false
