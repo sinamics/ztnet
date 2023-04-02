@@ -21,9 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        # checkout dev branch
         with:
-          fetch-depth: 0
           ref: main
 
       - name: Set up QEMU
@@ -55,6 +53,11 @@ jobs:
     runs-on: "ubuntu-latest"
     needs: build
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+
       - name: "Get Previous tag"
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
