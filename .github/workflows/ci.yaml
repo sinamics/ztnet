@@ -6,9 +6,7 @@ name: Build Release Image
 on:
   push:
     tags:
-      - "*"
-    branches:
-      - main
+      - "v*"
 
 jobs:
   build:
