@@ -23,7 +23,7 @@ if (!ZT_SECRET) {
   try {
     ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }
 
@@ -66,7 +66,6 @@ export const get_controller_networks = async function () {
 export const get_zt_address = async function () {
   try {
     const { data } = await axios.get(ZT_ADDR + "/status", options);
-    console.log(data);
     return data.address;
   } catch (err) {
     throw err;
@@ -90,11 +89,12 @@ export const network_create = async function (name: any, ipAssignment: any) {
         options
       )
       .catch((err: { response: { statusText: string } }) =>
+        // eslint-disable-next-line no-console
         console.log(err.response.statusText)
       )) as AxiosResponse;
     return post.data;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -106,7 +106,7 @@ export const network_delete = async function (nwid: string) {
     );
     return response.statusText;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -168,7 +168,6 @@ export const member_detail = async function (nwid: string, id: string) {
     );
     return response.data;
   } catch (err) {
-    console.log(err);
     throw err;
   }
 };
@@ -198,7 +197,6 @@ export const peers = async function () {
     const response = await axios.get(`${ZT_ADDR}/peer`, options);
     return response.data;
   } catch (err) {
-    console.log(err);
     throw err;
   }
 };
@@ -212,6 +210,6 @@ export const peer = async function (user_zt_adress: any) {
 
     return response.data as Peers[];
   } catch (err) {
-    // throw err;
+    throw err;
   }
 };

@@ -92,6 +92,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
         })
+        // eslint-disable-next-line no-console
         .catch((err: any) => console.log(err));
       if (!response) {
         throw new TRPCError({
@@ -188,6 +189,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
         })
+        // eslint-disable-next-line no-console
         .catch((err: any) => console.log(err));
     }),
 });
