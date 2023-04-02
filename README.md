@@ -18,6 +18,7 @@ With Next ZTNet, you can:
   - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
     - [Using Docker Compose](#using-docker-compose)
+    - [Note! First user that register will be automatically assigned as admin.](#note-first-user-that-register-will-be-automatically-assigned-as-admin)
     - [Environment Variables](#environment-variables)
   - [Development](#development)
     - [Clone the Repository](#clone-the-repository)
@@ -118,6 +119,8 @@ Next, run the following command in the same directory as the `docker-compose.yml
 This will pull the required images, create the containers, and start the services.
 
 You can now access the Next ZTNet web interface at `http://localhost:3000`.
+
+### Note! First user that register will be automatically assigned as admin.
 
 ### Environment Variables
 

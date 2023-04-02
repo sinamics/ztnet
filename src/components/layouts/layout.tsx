@@ -21,8 +21,12 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
           <footer className="hidden px-4 py-6 sm:block">
             <div className="">
               <p className="text-center text-sm text-gray-600">
-                © UAVMATRIX 2023. All rights reserved.{" "}
-                <a href="https://uavmatrix.com">by Bernt Christian Egeland</a>
+                © Kodea Solutions {new Date().getFullYear()}. All rights
+                reserved
+                <a href="https://uavmatrix.com">
+                  {" "}
+                  by Bernt Christian Egeland / aka @sinamics
+                </a>
               </p>
             </div>
           </footer>

@@ -2,13 +2,18 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'MODERATOR', 'ADMIN');
 
 -- CreateTable
-CREATE TABLE "settings" (
+CREATE TABLE "GlobalOptions" (
     "id" SERIAL NOT NULL,
     "enableRegistration" BOOLEAN NOT NULL DEFAULT true,
     "firstUserRegistration" BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT "settings_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "GlobalOptions_pkey" PRIMARY KEY ("id")
 );
+
+-- Insert default row
+INSERT INTO "GlobalOptions" ("enableRegistration", "firstUserRegistration")
+VALUES (true, true);
+
 
 -- CreateTable
 CREATE TABLE "network_members" (
