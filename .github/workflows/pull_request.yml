@@ -25,6 +25,14 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
+      # write local env file .env with secrets
+      # add dummy keys to get the required markers for next-auth and postgres
+      - name: Write local env file
+        run: |
+          echo "DATABASE_URL=postgres" >> .env
+          echo "NEXTAUTH_SECRET=dummy_key" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+
       - run: npm install
         # working-directory:
       - name: Lint
