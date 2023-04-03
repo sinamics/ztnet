@@ -123,6 +123,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
     try {
       await psql_addMember(member);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   }
