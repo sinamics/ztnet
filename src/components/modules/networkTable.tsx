@@ -84,7 +84,7 @@ export const NetworkTable = ({ tableData = [] }) => {
       <div className="overflow-hidden rounded-lg border">
         <table
           {...getTableProps()}
-          className="table-wrapper min-w-full divide-y divide-gray-400"
+          className="table-wrapper min-w-full divide-y "
         >
           <thead className="">
             {headerGroups.map((headerGroup) => (
@@ -93,7 +93,7 @@ export const NetworkTable = ({ tableData = [] }) => {
                   <th
                     {...column.getHeaderProps()}
                     scope="col"
-                    className="px-6 py-3 text-left text-xs uppercase tracking-wider "
+                    className="px-6 py-3 text-center text-xs uppercase tracking-wider"
                   >
                     {column.render("Header")}
                   </th>
@@ -101,7 +101,7 @@ export const NetworkTable = ({ tableData = [] }) => {
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()} className="divide-y divide-gray-200">
+          <tbody {...getTableBodyProps()} className="divide-y ">
             {rows.map((row) => {
               prepareRow(row);
               return (
