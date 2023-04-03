@@ -67,6 +67,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   );
 
   if (parsed.success === false) {
+    // eslint-disable-next-line no-console
     console.error(
       "❌ Invalid environment variables:",
       parsed.error.flatten().fieldErrors

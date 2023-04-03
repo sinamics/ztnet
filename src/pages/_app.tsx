@@ -10,6 +10,7 @@ import { ThemeProvider } from "next-themes";
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import Modal from "~/components/elements/modal";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -27,6 +28,7 @@ const App: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <ThemeProvider defaultTheme="system">
+      <Modal />
       <ReactQueryDevtools initialIsOpen={false} />
       <Toaster />
       <SessionProvider session={session}>

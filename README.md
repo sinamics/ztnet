@@ -1,3 +1,7 @@
+[![GithubCI](https://github.com/sinamics/next_ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/next_ztnet/actions)
+[![Release](https://img.shields.io/github/v/release/sinamics/next_ztnet.svg)](https://github.com/sinamics/next_ztnet/releases/latest)
+[![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/next_ztnet.svg)](https://hub.docker.com/r/sinamics/next_ztnet/)
+
 # Next ZTNet
 
 ## ⚠️ This is a work in progress. It is not ready for production use!

@@ -7,9 +7,27 @@ import {
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 
+// This regular expression (regex) is used to validate a password based on the following criteria:
+// - The password must be at least 6 characters long.
+// - The password must contain at least two of the following three character types:
+//  - Lowercase letters (a-z)
+//  - Uppercase letters (A-Z)
+//  - Digits (0-9)
 const mediumPassword = new RegExp(
   "^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})"
 );
+
+// create a zod password schema
+const passwordSchema = z
+  .string()
+  .nonempty()
+  .max(40)
+  .refine((val) => {
+    if (!mediumPassword.test(val)) {
+      throw new Error(`Password does not meet the requirements!`);
+    }
+    return true;
+  });
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -20,7 +38,7 @@ export const authRouter = createTRPCRouter({
           .nonempty()
           .email()
           .transform((val) => val.trim()),
-        password: z.string().nonempty().max(40),
+        password: passwordSchema,
         name: z.string().nonempty().max(40),
       })
     )
@@ -80,32 +98,23 @@ export const authRouter = createTRPCRouter({
       // Send validation link to user by mail
       // sendMailValidationLink(i);
 
-      // store the created User in db
-      // delete input.password;
+      // Check the total number of users in the database
+      const userCount = await ctx.prisma.user.count();
 
+      // create new user
       const newUser = await ctx.prisma.user.create({
         data: {
           name,
           email,
           lastLogin: new Date(),
-          role: settings.firstUserRegistration ? "ADMIN" : "USER",
+          role: userCount === 0 ? "ADMIN" : "USER",
           hash,
         },
       });
+
       return {
         user: newUser,
       };
-      // Update settings for first user (ADMIN)
-      // if (settings.firstUserRegistration) {
-      //   await AuthService.settings.update({
-      //     where: {
-      //       id: 1,
-      //     },
-      //     data: {
-      //       firstUserRegistration: false,
-      //     },
-      //   });
-      // }
 
       // Generate ipv4 address, cidr, start & end
       // const ipAssignmentPools = Ip4.randomIPv4();

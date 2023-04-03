@@ -31,6 +31,7 @@ const Networks: NextPageWithLayout = () => {
         <meta name="description" content="UAV vpn Networks" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <main className="w-full  bg-gradient-to-b">
         <div className="mt-3 mb-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>

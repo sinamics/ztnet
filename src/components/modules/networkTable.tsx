@@ -11,6 +11,8 @@ import { useRouter } from "next/router";
 import React, { useState, useMemo } from "react";
 import { useTable, type Column } from "react-table";
 import { api } from "~/utils/api";
+import Modal from "../elements/modal";
+import { useModalStore } from "~/utils/store";
 // import { useHistory } from "react-router-dom";
 // import "./react-table-styles.css"; // Import the necessary styles for react-table
 
@@ -31,6 +33,7 @@ interface DeleteNetworkModalProps {
 export const NetworkTable = ({ tableData = [] }) => {
   const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
   const { refetch: fetchNetwork } = api.network.getAll.useQuery();
+  const { description, callModal } = useModalStore((state) => state);
 
   const router = useRouter();
 
@@ -70,12 +73,12 @@ export const NetworkTable = ({ tableData = [] }) => {
   const handleRowClick = (row: any) => {
     router.push(`/network/${row.original.nwid}`);
   };
-  const deleteNetworkHandler = (event, nwid) => {
-    event.stopPropagation();
+  const deleteNetworkHandler = (nwid) => {
     if (!nwid) return;
 
     deleteNetwork({ nwid }, { onSuccess: () => void fetchNetwork() });
   };
+
   return (
     <div className="inline-block w-full p-1.5 text-center align-middle">
       <div className="overflow-hidden rounded-lg border">
@@ -103,7 +106,6 @@ export const NetworkTable = ({ tableData = [] }) => {
               prepareRow(row);
               return (
                 <tr
-                  onClick={() => handleRowClick(row)}
                   {...row.getRowProps()}
                   className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
                 >
@@ -115,15 +117,24 @@ export const NetworkTable = ({ tableData = [] }) => {
                       >
                         {cell.column.id === "action" ? (
                           <button
-                            className="btn-error btn-xs btn z-20"
-                            onClick={(event) =>
-                              deleteNetworkHandler(event, row.original.nwid)
+                            onClick={() =>
+                              callModal({
+                                title: "Delete Network?",
+                                description:
+                                  "Are you sure you want to delete this network?",
+                                yesAction: () => {
+                                  deleteNetworkHandler(row.original.nwid);
+                                },
+                              })
                             }
+                            className="btn-error btn-xs btn z-20"
                           >
                             Delete
                           </button>
                         ) : (
-                          cell.render("Cell")
+                          <span onClick={() => handleRowClick(row)}>
+                            {cell.render("Cell")}
+                          </span>
                         )}
                       </td>
                     );
