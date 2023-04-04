@@ -150,7 +150,19 @@ To change any of these values, update the corresponding environment variable in 
 
 ## Development
 
-### Clone the Repository
+### vscode container development (recommended)
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
+2. Clone this repository.
+3. Open the repository in Visual Studio Code.
+4. Select **Remote-Containers: Open Folder in Container...** from the Command Palette (<kbd>F1</kbd>).
+5. Select **Reopen in Container** when prompted.
+6. Once the container is running, hit (<kbd>F1</kbd>) and type Task to open the task menu.
+7. Select **Install dependencies packages** to install all the dependencies.
+8. Select **Start Development Server** to start the development server.
+9. Open browser and go to `http://localhost:3000`.
+
+### The traditional way
 
 To start development, first, clone the repository:
 
