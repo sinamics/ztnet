@@ -12,7 +12,7 @@
   "service": "next_ztnet",
   // The optional 'workspaceFolder' property is the path VS Code should open by default when
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "workspaceFolder": "/workspaces",
   "features": {
     "ghcr.io/devcontainers/features/node:1": {}
   },
@@ -22,11 +22,12 @@
         "git.path": ["/usr/bin/git", "C:/Program Files/Git/bin/git.exe"]
       },
       "extensions": [
-		"esbenp.prettier-vscode",
-		"eamodio.gitlens",
-		"GitHub.vscode-pull-request-github",
-		"ms-azuretools.vscode-docker"
-	]
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens",
+        "GitHub.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker",
+        "Prisma.prisma"
+      ]
     }
   }
 
@@ -43,7 +44,7 @@
   // "shutdownAction": "none",
 
   // Uncomment the next line to run commands after the container is created.
-  // "postCreateCommand": "cat /etc/os-release",
+  // "postCreateCommand": "chmod +x .devcontainer/init-cmd.sh"
 
   // Configure tool-specific properties.
   // "customizations": {},

@@ -83,7 +83,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
 
 RUN chmod +x init-db.sh
 
-# USER nextjs
+USER nextjs
 
 EXPOSE 3000
 
