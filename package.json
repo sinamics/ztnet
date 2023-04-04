@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "WATCHPACK_POLLING=true next dev",
+    "dev": "WATCHPACK_POLLING=false next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"
