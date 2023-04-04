@@ -33,7 +33,7 @@ interface DeleteNetworkModalProps {
 export const NetworkTable = ({ tableData = [] }) => {
   const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
   const { refetch: fetchNetwork } = api.network.getAll.useQuery();
-  const { description, callModal } = useModalStore((state) => state);
+  const { callModal } = useModalStore((state) => state);
 
   const router = useRouter();
 

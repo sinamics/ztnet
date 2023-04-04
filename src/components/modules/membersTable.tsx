@@ -24,6 +24,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { type CustomError } from "~/types/errorHandling";
+import { useModalStore } from "~/utils/store";
 
 interface IpAssignmentsProps {
   ipAssignments: string[];
@@ -37,6 +38,7 @@ interface IpAssignmentsProps {
 
 export const MembersTable = ({ nwid }) => {
   const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
@@ -238,7 +240,15 @@ export const MembersTable = ({ nwid }) => {
         accessor: ({ id }) => {
           return (
             <button
-              onClick={() => deleteMember(id)}
+              onClick={() =>
+                callModal({
+                  title: "Delete Member?",
+                  description: `Are you sure you want to delete member id ${id} ?`,
+                  yesAction: () => {
+                    deleteMember(id);
+                  },
+                })
+              }
               className="btn-error btn-xs rounded-sm"
             >
               Delete
