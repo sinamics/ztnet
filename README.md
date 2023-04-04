@@ -162,6 +162,8 @@ To change any of these values, update the corresponding environment variable in 
 8. Select **Start Development Server** to start the development server.
 9. Open browser and go to `http://localhost:3000`.
 
+**NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload.
+
 ### The traditional way
 
 To start development, first, clone the repository:
