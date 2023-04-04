@@ -20,7 +20,7 @@ const config = {
     themes: [
       {
         dark: {
-          primary: "#793ef9",
+          primary: "#7e22ce",
           "primary-focus": "#570df8",
           "primary-content": "#ffffff",
           secondary: "#e5e7eb",
@@ -45,6 +45,7 @@ const config = {
       "light",
       "black",
       "business",
+      "forest",
     ],
   },
   // daisyui: {

@@ -32,7 +32,7 @@ const Networks: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full  bg-gradient-to-b">
+      <main className="w-full bg-base-100">
         <div className="mt-3 mb-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>
         </div>
