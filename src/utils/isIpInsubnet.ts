@@ -3,6 +3,8 @@
 //   via: string | null;
 // };
 
+// make a function that check if an ip is in a subnet
+
 export const isIPInSubnet = (ip: string, target: string): boolean => {
   const [subnet, mask] = target.split("/");
   const subnetBits = parseInt(mask, 10);

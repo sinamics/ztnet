@@ -129,17 +129,17 @@ export const MembersTable = ({ nwid }) => {
           if (!ipAssignments || !ipAssignments.length)
             return <span>waiting for IP ...</span>;
           return ipAssignments.map((ip) => {
-            // const block = new Netmask(networkById.network?.routes[0]?.target);
-            const match = isIPInSubnet(
-              networkById.network?.routes[0]?.target,
-              ip
+            const subnetMatch = isIPInSubnet(
+              ip,
+              networkById.network?.routes[0]?.target
             );
+
             return (
-              <div key={ip} className="flex justify-center pb-2">
+              <div key={ip} className="flex justify-center text-center">
                 {true ? (
                   <div
                     className={`${
-                      match
+                      subnetMatch
                         ? "badge-primary badge badge-lg rounded-md"
                         : "badge-ghost badge badge-lg rounded-md opacity-60"
                     } flex min-w-fit justify-between`}
