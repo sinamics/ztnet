@@ -20,7 +20,6 @@ With Next ZTNet, you can:
 - [Next ZTNet](#next-ztnet)
   - [⚠️ This is a work in progress. It is not ready for production use!](#️-this-is-a-work-in-progress-it-is-not-ready-for-production-use)
   - [Table of Contents](#table-of-contents)
-  - [Screenshots](#screenshots)
   - [Features](#features)
   - [Installations](#installations)
     - [Using Docker Compose](#using-docker-compose)
@@ -29,14 +28,6 @@ With Next ZTNet, you can:
   - [Development](#development)
     - [vscode container development (recommended)](#vscode-container-development-recommended)
     - [traditional development](#the-traditional-way)
-
-## Screenshots
-
-![Dashboard](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/dashboard.png)
-
-![Networks](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/networks.png)
-
-![Nodes](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/nodes.png)
 
 ## Features
 
