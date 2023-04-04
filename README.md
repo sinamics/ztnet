@@ -20,15 +20,32 @@ With Next ZTNet, you can:
 - [Next ZTNet](#next-ztnet)
   - [⚠️ This is a work in progress. It is not ready for production use!](#️-this-is-a-work-in-progress-it-is-not-ready-for-production-use)
   - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
+  - [Screenshots](#screenshots)
+  - [Features](#features)
+  - [Installations](#installations)
     - [Using Docker Compose](#using-docker-compose)
     - [Note! First user that register will be automatically assigned as admin.](#note-first-user-that-register-will-be-automatically-assigned-as-admin)
     - [Environment Variables](#environment-variables)
   - [Development](#development)
-    - [Clone the Repository](#clone-the-repository)
-    - [Setup Environment Variables](#setup-environment-variables)
+    - [vscode container development (recommended)](#vscode-container-development-recommended)
+    - [traditional development](#the-traditional-way)
 
-## Installation
+## Screenshots
+
+![Dashboard](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/dashboard.png)
+
+![Networks](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/networks.png)
+
+![Nodes](https://raw.githubusercontent.com/sinamics/next_ztnet/main/screenshots/nodes.png)
+
+## Features
+
+- Create and manage multiple ZeroTier networks
+- Monitor network status and connected nodes
+- Easily add and remove nodes from your networks
+- Configure network settings such as IP ranges, routes, and access control
+
+## Installations
 
 ### Using Docker Compose
 
@@ -148,9 +165,9 @@ These are system environment variables used by the ZeroTier service and should n
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
-## Development
+# Development
 
-### vscode container development (recommended)
+## vscode container development (recommended)
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
 2. Clone this repository.
@@ -164,7 +181,7 @@ To change any of these values, update the corresponding environment variable in 
 
 **NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload.
 
-### The traditional way
+## The traditional way
 
 To start development, first, clone the repository:
 
