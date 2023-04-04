@@ -27,7 +27,7 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
       </Head>
       <main className="flex min-h-screen flex-col">
         {/* Header */}
-        <div className="mx-auto flex w-4/6">
+        <div className="mx-auto flex w-5/6">
           <div>
             <h1 className="mb-3 text-5xl font-bold">{globalSiteTitle}</h1>
           </div>
