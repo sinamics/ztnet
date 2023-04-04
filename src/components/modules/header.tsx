@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 
-const Themes = ["light", "dark", "black", "business"];
+const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
 const Header = () => {
   const session = useSession();
@@ -21,7 +21,7 @@ const Header = () => {
   }
 
   return (
-    <header className="header bg-neutral-focus py-1 px-4 shadow">
+    <header className="header bg-base-300 py-1 px-4 shadow">
       <div className="header-content flex flex-row items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +71,7 @@ const Header = () => {
               {session.data?.user.name}
             </span>
             <span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-              operator
+              {session.data?.user.role}
             </span>
           </span>
           {/* </a> */}

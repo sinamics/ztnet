@@ -37,7 +37,7 @@ const Sidebar = (): JSX.Element => {
   return (
     <aside
       ref={sidebarRef}
-      className={`fixed h-full w-64 -translate-x-full transform flex-row bg-neutral-focus transition-transform duration-150 ease-in md:relative md:shadow
+      className={`fixed h-full w-64 -translate-x-full transform flex-row bg-base-300 transition-transform duration-150 ease-in md:relative md:shadow
     ${open ? "z-10  translate-x-0" : "md:translate-x-0"}`}
     >
       <div className="sidebar-content px-4 py-3">
@@ -102,7 +102,7 @@ const Sidebar = (): JSX.Element => {
           </li>
 
           <li className="my-px">
-            <span className="my-4 flex px-4 text-sm font-medium uppercase text-gray-300">
+            <span className="my-4 flex px-4 text-sm font-medium uppercase text-secondary">
               Account
             </span>
           </li>

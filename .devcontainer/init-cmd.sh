@@ -2,8 +2,6 @@
 
 set -e
 
-cmd="$@"
-
 # Create .env file
 cat << EOF > .env
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
@@ -21,5 +19,4 @@ echo "Applying migrations to the database..."
 npx prisma migrate deploy
 echo "Migrations applied successfully!"
 
->&2 echo "Executing command"
-exec $cmd
+while sleep 1000; do :; done
