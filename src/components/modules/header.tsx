@@ -71,7 +71,7 @@ const Header = () => {
               {session.data?.user.name}
             </span>
             <span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-              operator
+              {session.data?.user.role}
             </span>
           </span>
           {/* </a> */}

@@ -21,6 +21,7 @@ declare module "next-auth" {
     user: {
       id: number;
       email: string;
+      role: string;
       accessToken: string;
       // ...other properties
       // role: UserRole;
@@ -29,6 +30,8 @@ declare module "next-auth" {
 
   interface User {
     id?: number;
+    name: string;
+    role: string;
     // ...other properties
     // role: UserRole;
     //   email: string;
@@ -69,7 +72,7 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        if (!user || !user.email || !user.hash || !user.id || !user.name)
+        if (!user || !user.email || !user.hash)
           //  return a nextauth error message
           throw new Error(`User does not exist!`);
 
@@ -83,6 +86,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role,
         };
       },
     }),
@@ -109,6 +113,8 @@ export const authOptions: NextAuthOptions = {
       }
       if (user) {
         token.id = user.id;
+        token.name = user.name;
+        token.role = user.role;
       }
       return token;
     },
@@ -117,6 +123,8 @@ export const authOptions: NextAuthOptions = {
       // session.user = user;
       // session.accessToken = token.accessToken as string;
       session.user.id = token.id as number;
+      session.user.name = token.name;
+      session.user.role = token.role as string;
       return session;
     },
     redirect({ url, baseUrl }) {
