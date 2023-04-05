@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -6,9 +8,11 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-// import { env } from "~/env.mjs";
+import bcrypt from "bcryptjs";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
+import { type User as IUser } from "@prisma/client";
+// import { type User } from ".prisma/client";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -18,14 +22,11 @@ import { compare } from "bcryptjs";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: number;
-      email: string;
-      role: string;
-      accessToken: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: IUser;
+    update: {
+      name?: string;
+      email?: string;
+    };
   }
 
   interface User {
@@ -83,10 +84,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          ...user,
+          hash: null,
         };
       },
     }),
@@ -106,25 +105,63 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 Days
   },
   callbacks: {
-    jwt({ token, user, account }) {
+    async jwt({ token, user, trigger, account, session }) {
+      if (trigger === "update") {
+        if (session.update) {
+          const user = await prisma.user.findFirst({
+            where: {
+              id: token.id,
+            },
+          });
+          // session update => https://github.com/nextauthjs/next-auth/discussions/3941
+          // verify that name has at least one character
+          if (typeof session.update.name === "string") {
+            // TODO throwing error will logout user.
+            // if (session.update.name.length < 1) {
+            //   throw new Error("Name must be at least one character long.");
+            // }
+            token.name = session.update.name;
+          }
+
+          // verify that email is valid
+          if (typeof session.update.email === "string") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            // if (!session.update.email.includes("@")) {
+            //   throw new Error("Email must be a valid email address.");
+            // }
+            token.email = session.update.email;
+          }
+
+          // update user with new values
+          await prisma.user.update({
+            where: {
+              id: token.id as number,
+            },
+            data: {
+              email: session.update.email || user.email,
+              name: session.update.name || user.name,
+            },
+          });
+        }
+        return token;
+      }
+
       // Persist the OAuth access_token to the token right after signin
       if (account) {
         token.accessToken = account.accessToken;
       }
       if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.role = user.role;
+        // token.id = user.id;
+        // token.name = user.name;
+        // token.role = user.role;
+        token = { ...user };
       }
       return token;
     },
     session: ({ session, token }) => {
       if (!token.id) return null;
-      // session.user = user;
-      // session.accessToken = token.accessToken as string;
-      session.user.id = token.id as number;
-      session.user.name = token.name;
-      session.user.role = token.role as string;
+
+      session.user = { ...token } as IUser;
       return session;
     },
     redirect({ url, baseUrl }) {
