@@ -1,4 +1,5 @@
 // import { signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
@@ -36,7 +37,19 @@ const RegisterForm: React.FC = () => {
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    register(formData, { onSuccess: () => void router.push("/") });
+    register(formData, {
+      onSuccess: () =>
+        void (async () => {
+          const result = await signIn("credentials", {
+            redirect: false,
+            ...formData,
+          });
+
+          if (!result.error) {
+            await router.push("/dashboard");
+          }
+        })(),
+    });
   };
   return (
     <div className="z-10 flex justify-center  self-center">
