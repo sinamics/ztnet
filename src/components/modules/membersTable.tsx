@@ -11,107 +11,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import React, { useMemo } from "react";
-import TimeAgo from "react-timeago";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import {
-  useTable,
-  useBlockLayout,
-  useResizeColumns,
-  useSortBy,
-} from "react-table";
+import { useTable, useSortBy } from "react-table";
 import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
-import { isIPInSubnet } from "~/utils/isIpInsubnet";
-import { type CustomError } from "~/types/errorHandling";
-import { useModalStore } from "~/utils/store";
 
-interface IpAssignmentsProps {
-  ipAssignments: string[];
-  state: string[];
-  id: string;
-  nwid: string;
-  peers?: { latency: number };
-  copyClipboard: (ip: string) => void;
-  setDeleteWarning: (args: any) => void;
-}
-
-export const MembersTable = ({ nwid }) => {
-  const { query } = useRouter();
-  const { callModal } = useModalStore((state) => state);
-  const { data: networkById, refetch: refetchNetworkById } =
-    api.network.getNetworkById.useQuery(
-      {
-        nwid,
-      },
-      { enabled: !!query.id }
-    );
-
-  const { mutate: updateMemberDatabaseOnly } =
-    api.networkMember.UpdateDatabaseOnly.useMutation();
-
-  const { mutate: updateMember } = api.networkMember.Update.useMutation({
-    onError: ({ shape }: CustomError) => {
-      // console.log(shape?.data?.zodError.fieldErrors);
-      void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
-    },
-    onSuccess: () => refetchNetworkById(),
-  });
-  const { mutate: removeUser } = api.networkMember.Delete.useMutation({
-    onSuccess: () => refetchNetworkById(),
-  });
-
-  const deleteIpAssignment = (
-    ipAssignments: Array<string>,
-    Ipv4: string,
-    id: string
-  ) => {
-    const _ipv4 = [...ipAssignments];
-    const newIpPool = _ipv4.filter((r) => r !== Ipv4);
-
-    updateMember({
-      updateParams: { ipAssignments: [...newIpPool] },
-      memberId: id,
-      nwid,
-    });
-  };
-
-  const deleteMember = (id: string) => {
-    removeUser({
-      nwid,
-      memberId: id,
-    });
-  };
-
+export const MembersTable = () => {
+  const { data: members } = api.admin.getUsers.useQuery();
+  console.log(members);
   const columns = useMemo(
     () => [
       {
-        Header: "Authorized",
-        // accessor: "authorized",
-        accessor: ({ id, authorized }) => {
-          return (
-            <label className="label cursor-pointer justify-center">
-              <input
-                type="checkbox"
-                checked={authorized}
-                onChange={(event) =>
-                  updateMember(
-                    {
-                      nwid,
-                      memberId: id,
-                      updateParams: { authorized: event.target.checked },
-                    },
-                    { onSuccess: () => void refetchNetworkById() }
-                  )
-                }
-                // className="checkbox-error checkbox"
-                className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
-              />
-            </label>
-          );
-        },
-        // maxWidth: 200,
-        // width: 150,
+        Header: "ID",
+        accessor: (d: string) => d["id"],
       },
       {
         Header: "Member name",
@@ -119,142 +29,35 @@ export const MembersTable = ({ nwid }) => {
         width: 300,
       },
       {
-        Header: "ID",
-        accessor: (d: string) => d["id"],
-        // maxWidth: 200,
-        // width: 150,
+        Header: "Email",
+        accessor: "email",
+        width: 300,
       },
       {
-        Header: "IP / Latency",
-        width: 170,
-        accessor: ({ ipAssignments, peers, id }: IpAssignmentsProps) => {
-          if (!ipAssignments || !ipAssignments.length)
-            return <span>waiting for IP ...</span>;
-          return ipAssignments.map((ip) => {
-            const subnetMatch = isIPInSubnet(
-              ip,
-              networkById.network?.routes[0]?.target
-            );
-
-            return (
-              <div key={ip} className="flex justify-center text-center">
-                {true ? (
-                  <div
-                    className={`${
-                      subnetMatch
-                        ? "badge-primary badge badge-lg rounded-md"
-                        : "badge-ghost badge badge-lg rounded-md opacity-60"
-                    } flex min-w-fit justify-between`}
-                  >
-                    <CopyToClipboard
-                      text={ip}
-                      onCopy={() => toast.success(`${ip} copied to clipboard`)}
-                      title="copy to clipboard"
-                    >
-                      <div className="cursor-pointer">{ip}</div>
-                    </CopyToClipboard>
-                    <div className="text-xs">
-                      {peers?.latency > 0 && ` (${peers.latency}ms)`}
-                    </div>
-                    {ipAssignments.length > 1 && (
-                      <div title="delete ip assignment">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
-                          onClick={() =>
-                            deleteIpAssignment(ipAssignments, ip, id)
-                          }
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <span className="cursor-pointer pl-2 text-sm text-green-500">
-                    copied!
-                  </span>
-                )}
-              </div>
-            );
-          });
-        },
-
-        // width: 200,
-      },
-      {
-        Header: "Created",
-        accessor: (d: string) => <TimeAgo date={d["creationTime"]} />,
-      },
-      {
-        Header: "Conn Status",
-        accessor: ({ conStatus, peers, lastseen }) => {
-          if (conStatus === 1) {
-            return (
-              <span
-                style={{ cursor: "pointer" }}
-                className="cursor-pointer text-warning"
-                title="Could not establish direct connection and is currently
-                           being Relayed through zerotier servers with higher latency"
-              >
-                RELAYED
-              </span>
-            );
+        Header: "Email Verified",
+        accessor: (d: string) => {
+          if (d["emailVerified"]) {
+            return "Yes";
           }
 
-          if (conStatus === 2) {
-            return (
-              <span
-                style={{ cursor: "pointer" }}
-                className="text-success"
-                title="Direct connection established"
-              >
-                DIRECT (v{peers?.version})
-              </span>
-            );
-          }
-
-          // remove the timeago suffix
-          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
-          return (
-            <span
-              style={{ cursor: "pointer" }}
-              className="text-error"
-              title="User is offline"
-            >
-              offline <TimeAgo date={lastseen} formatter={formatTime} />
-            </span>
-          );
+          return "No";
         },
+        width: 300,
       },
       {
-        Header: "Action",
-        accessor: ({ id }) => {
-          return (
-            <button
-              onClick={() =>
-                callModal({
-                  title: "Delete Member?",
-                  description: `Are you sure you want to delete member id ${id} ?`,
-                  yesAction: () => {
-                    deleteMember(id);
-                  },
-                })
-              }
-              className="btn-error btn-xs rounded-sm"
-            >
-              Delete
-            </button>
-          );
+        Header: "Online",
+        accessor: (d: string) => {
+          if (d["online"]) {
+            return "Yes";
+          }
+
+          return "No";
         },
+        width: 300,
+      },
+      {
+        Header: "role",
+        accessor: "role",
       },
     ],
     []
@@ -263,7 +66,7 @@ export const MembersTable = ({ nwid }) => {
   // Create an editable cell renderer
   const EditableCell = ({
     value: initialValue,
-    row: { original },
+    // row: { original },
     column: { id },
   }) => {
     // We need to keep and update the state of the cell normally
@@ -275,16 +78,6 @@ export const MembersTable = ({ nwid }) => {
 
     // We'll only update the external data when the input is blurred
     const onBlur = () => {
-      updateMemberDatabaseOnly(
-        {
-          nwid,
-          id: original.id,
-          updateParams: {
-            name: value,
-          },
-        },
-        { onSuccess: () => void refetchNetworkById() }
-      );
       // updateMyData(index, id, value, original);
     };
 
@@ -310,7 +103,7 @@ export const MembersTable = ({ nwid }) => {
     Cell: EditableCell,
   };
 
-  const data = useMemo(() => networkById.members, [networkById.members]);
+  const data = useMemo(() => members || [], [members]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
@@ -326,8 +119,8 @@ export const MembersTable = ({ nwid }) => {
           ],
         },
       },
-      useBlockLayout,
-      useResizeColumns,
+      // useBlockLayout,
+      // useResizeColumns,
       useSortBy
       // updateMyData
     );
@@ -439,14 +232,7 @@ export const MembersTable = ({ nwid }) => {
                     prepareRow(row);
                     return (
                       // Apply the row props
-                      <tr
-                        className={`items-center ${
-                          !row.original.authorized
-                            ? "border-dotted bg-error bg-opacity-20"
-                            : ""
-                        }`}
-                        {...row.getRowProps()}
-                      >
+                      <tr className={`items-center`} {...row.getRowProps()}>
                         {
                           // Loop over the rows cells
                           row.cells.map((cell) => {
