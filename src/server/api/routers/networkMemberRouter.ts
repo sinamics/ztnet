@@ -152,16 +152,21 @@ export const networkMemberRouter = createTRPCRouter({
     }),
   Delete: protectedProcedure
     .input(
-      z.object({
-        nwid: z.string({ required_error: "network ID not provided!" }),
-        memberId: z.string({ required_error: "memberId not provided!" }),
-      })
+      z
+        .object({
+          nwid: z.string({ required_error: "network ID not provided!" }),
+          memberId: z.string({ required_error: "memberId not provided!" }),
+        })
+        .required()
     )
     .mutation(async ({ ctx, input }) => {
       const caller = networkMemberRouter.createCaller(ctx);
 
       // remove member from controller
-      await ztController.member_delete(input);
+      await ztController.member_delete({
+        nwid: input.nwid,
+        memberId: input.memberId,
+      });
 
       await caller.Update({ ...input, updateParams: { authorized: false } });
       // Set member with deleted status in database.

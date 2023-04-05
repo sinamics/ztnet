@@ -105,16 +105,16 @@ const Sidebar = (): JSX.Element => {
           {session?.user.role === "ADMIN" ? (
             <>
               <li className="my-px">
-                <span className="my-4 flex px-4 text-sm font-medium uppercase text-secondary">
+                <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">
                   Admin
                 </span>
               </li>
               <li className="my-px">
                 <Link
-                  href="/members"
+                  href="/admin/members"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/members"
+                router.pathname === "/admin/members"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -138,10 +138,39 @@ const Sidebar = (): JSX.Element => {
                   <span className="ml-3">Members</span>
                 </Link>
               </li>
+              <li className="my-px">
+                <Link
+                  href="/admin/controller"
+                  className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname === "/admin/controller"
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
+                >
+                  <span className="flex items-center justify-center text-lg text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z"
+                      />
+                    </svg>
+                  </span>
+                  <span className="ml-3">ZT Controller</span>
+                </Link>
+              </li>
             </>
           ) : null}
           <li className="my-px">
-            <span className="my-4 flex px-4 text-sm font-medium uppercase text-secondary">
+            <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
               Account
             </span>
           </li>
