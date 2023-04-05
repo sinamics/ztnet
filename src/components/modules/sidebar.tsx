@@ -106,10 +106,15 @@ const Sidebar = (): JSX.Element => {
               Account
             </span>
           </li>
-          {/* <li className="my-px">
-            <a
-              href="#"
-              className="flex h-10 flex-row items-center rounded-lg px-3 text-gray-300 hover:bg-gray-100 hover:text-gray-700"
+          <li className="my-px">
+            <Link
+              href="/profile"
+              className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname === "/profile"
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
             >
               <span className="flex items-center justify-center text-lg text-gray-400">
                 <svg
@@ -125,8 +130,8 @@ const Sidebar = (): JSX.Element => {
                 </svg>
               </span>
               <span className="ml-3">Profile</span>
-            </a>
-          </li> */}
+            </Link>
+          </li>
           {/* <li className="my-px">
             <a
               href="#"

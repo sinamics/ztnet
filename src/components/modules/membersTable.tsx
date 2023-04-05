@@ -24,6 +24,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { type CustomError } from "~/types/errorHandling";
+import { useModalStore } from "~/utils/store";
 
 interface IpAssignmentsProps {
   ipAssignments: string[];
@@ -37,6 +38,7 @@ interface IpAssignmentsProps {
 
 export const MembersTable = ({ nwid }) => {
   const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
@@ -129,17 +131,17 @@ export const MembersTable = ({ nwid }) => {
           if (!ipAssignments || !ipAssignments.length)
             return <span>waiting for IP ...</span>;
           return ipAssignments.map((ip) => {
-            // const block = new Netmask(networkById.network?.routes[0]?.target);
-            const match = isIPInSubnet(
-              networkById.network?.routes[0]?.target,
-              ip
+            const subnetMatch = isIPInSubnet(
+              ip,
+              networkById.network?.routes[0]?.target
             );
+
             return (
-              <div key={ip} className="flex justify-center pb-2">
+              <div key={ip} className="flex justify-center text-center">
                 {true ? (
                   <div
                     className={`${
-                      match
+                      subnetMatch
                         ? "badge-primary badge badge-lg rounded-md"
                         : "badge-ghost badge badge-lg rounded-md opacity-60"
                     } flex min-w-fit justify-between`}
@@ -238,7 +240,15 @@ export const MembersTable = ({ nwid }) => {
         accessor: ({ id }) => {
           return (
             <button
-              onClick={() => deleteMember(id)}
+              onClick={() =>
+                callModal({
+                  title: "Delete Member?",
+                  description: `Are you sure you want to delete member id ${id} ?`,
+                  yesAction: () => {
+                    deleteMember(id);
+                  },
+                })
+              }
               className="btn-error btn-xs rounded-sm"
             >
               Delete
