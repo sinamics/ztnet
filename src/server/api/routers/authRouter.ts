@@ -2,6 +2,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import {
   createTRPCRouter,
+  protectedProcedure,
   publicProcedure,
   //   protectedProcedure,
 } from "~/server/api/trpc";
@@ -18,16 +19,17 @@ const mediumPassword = new RegExp(
 );
 
 // create a zod password schema
-const passwordSchema = z
-  .string()
-  .nonempty()
-  .max(40)
-  .refine((val) => {
-    if (!mediumPassword.test(val)) {
-      throw new Error(`Password does not meet the requirements!`);
-    }
-    return true;
-  });
+const passwordSchema = (errorMessage: string) =>
+  z
+    .string()
+    .nonempty()
+    .max(40)
+    .refine((val) => {
+      if (!mediumPassword.test(val)) {
+        throw new Error(errorMessage);
+      }
+      return true;
+    });
 
 export const authRouter = createTRPCRouter({
   register: publicProcedure
@@ -38,7 +40,7 @@ export const authRouter = createTRPCRouter({
           .nonempty()
           .email()
           .transform((val) => val.trim()),
-        password: passwordSchema,
+        password: passwordSchema("password does not meet the requirements!"),
         name: z.string().nonempty().max(40),
       })
     )
@@ -106,7 +108,7 @@ export const authRouter = createTRPCRouter({
         data: {
           name,
           email,
-          lastLogin: new Date(),
+          lastLogin: new Date().toISOString(),
           role: userCount === 0 ? "ADMIN" : "USER",
           hash,
         },
@@ -141,5 +143,107 @@ export const authRouter = createTRPCRouter({
       //       },
       //     });
       //   });
+    }),
+  me: protectedProcedure.query(async ({ ctx }) => {
+    await ctx.prisma.user.findFirst({
+      where: {
+        id: ctx.session.user.id,
+      },
+    });
+  }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        email: z
+          .string()
+          .email()
+          .transform((val) => val.trim())
+          .optional(),
+        password: passwordSchema(
+          "Current password does not meet the requirements!"
+        )
+          .transform((val) => val.trim())
+          .optional(),
+        newPassword: passwordSchema(
+          "New Password does not meet the requirements!"
+        )
+          .transform((val) => val.trim())
+          .optional(),
+        repeatNewPassword: passwordSchema(
+          "Repeat NewPassword does not meet the requirements!"
+        )
+          .transform((val) => val.trim())
+          .optional(),
+        name: z.string().nonempty().max(40).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+
+      // validate
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `User not found!`,
+        });
+      }
+
+      if (input.newPassword || input.repeatNewPassword || input.password) {
+        // make sure all fields are filled
+        if (!input.newPassword || !input.repeatNewPassword || !input.password) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Please fill all fields!`,
+            // optional: pass the original error to retain stack trace
+
+            // cause: theError,
+          });
+        }
+
+        if (!mediumPassword.test(input.newPassword))
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Password does not meet the requirements!`,
+            // optional: pass the original error to retain stack trace
+            // cause: theError,
+          });
+
+        // check if old password is correct
+        if (!bcrypt.compareSync(input.password, user.hash)) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Old password is incorrect!`,
+            // optional: pass the original error to retain stack trace
+            // cause: theError,
+          });
+        }
+        // make sure both new passwords are the same
+        if (input.newPassword !== input.repeatNewPassword) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: `Passwords do not match!`,
+            // optional: pass the original error to retain stack trace
+            // cause: theError,
+          });
+        }
+      }
+
+      // update user with new values
+      await ctx.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          email: input.email || user.email,
+          name: input.name || user.name,
+          hash: input.newPassword
+            ? bcrypt.hashSync(input.newPassword, 10)
+            : user.hash,
+        },
+      });
     }),
 });
