@@ -73,7 +73,6 @@ export const adminRouter = createTRPCRouter({
         };
       }
 
-      console.log(totalNodes);
       return {
         controllerVersion,
         nodes,

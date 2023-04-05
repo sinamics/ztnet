@@ -4,7 +4,6 @@ import { api } from "~/utils/api";
 
 const Controller = () => {
   const { data: controllerStats } = api.admin.getControllerStats.useQuery({});
-  console.log(controllerStats);
   return (
     <div>
       Controller
