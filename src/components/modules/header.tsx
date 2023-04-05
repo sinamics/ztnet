@@ -38,7 +38,7 @@ const Header = () => {
             d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
           />
         </svg>
-        <div className="ml-10 hidden md:inline-flex">
+        <div className="hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
             <span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
               {globalSiteTitle}

@@ -119,6 +119,20 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+/** Reusable middleware that enforces users have ADMIN role before running the procedure. */
+const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
+  // Make sure the user is authenticated
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  // Check if the user has the ADMIN role
+  if (!ctx.session.user || ctx.session.user.role !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+
+  return next();
+});
 /**
  * Protected (authenticated) procedure
  *
@@ -128,3 +142,11 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+/**
+ * Admin Role Protected (authenticated and ADMIN role) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to users with the ADMIN role, use this.
+ * It verifies the session is valid and guarantees `ctx.session.user` is not null and has the ADMIN role.
+ */
+export const adminRoleProtectedRoute = t.procedure.use(enforceUserIsAdmin);

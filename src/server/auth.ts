@@ -8,7 +8,6 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import bcrypt from "bcryptjs";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
