@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          lfs: true
+          ref: main
           fetch-depth: 0
 
       - name: Set up QEMU
@@ -70,19 +70,6 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ steps.extract_version.outputs.version_number }}
-
-  tagged-release:
-    name: "Tagged Release"
-    runs-on: "ubuntu-latest"
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-          ref: main
-
-      - name: "Get Previous tag"
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:

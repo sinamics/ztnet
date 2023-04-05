@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkSettings } from "~/components/modules/networkRoutes";
-import { MembersTable } from "~/components/modules/membersTable";
+import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
@@ -93,7 +93,7 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
           <div className="membersTable-wrapper">
-            <MembersTable
+            <NetworkMembersTable
               nwid={network.nwid}
 
               // setEditing={(e: boolean) => setEditing(e)}
