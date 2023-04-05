@@ -16,7 +16,7 @@ import { api } from "~/utils/api";
 
 export const MembersTable = () => {
   const { data: members } = api.admin.getUsers.useQuery();
-  console.log(members);
+
   const columns = useMemo(
     () => [
       {
