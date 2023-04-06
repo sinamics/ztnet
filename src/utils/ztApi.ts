@@ -184,9 +184,15 @@ export const network_create = async (
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       // eslint-disable-next-line no-console
-      console.error(axiosError.response?.statusText || "Unknown error");
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
       throw axiosError;
     }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 };
