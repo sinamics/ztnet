@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { signIn } from "next-auth/react";
 import router from "next/router";
 import { useState } from "react";
@@ -7,6 +6,12 @@ interface FormData {
   email: string;
   password: string;
 }
+
+type NextAuthError = {
+  message: string;
+  code?: string;
+  statusCode?: number;
+};
 
 const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -24,20 +29,24 @@ const LoginForm: React.FC = () => {
     }));
   };
 
-  const submitHandler = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // login(formData);
-    const result = await signIn("credentials", {
+    setLoginError("");
+
+    signIn("credentials", {
       redirect: false,
       ...formData,
-    });
-
-    if (!result.error) {
-      await router.push("/dashboard");
-    }
-    setLoginError(result.error);
+    })
+      .then(async (result) => {
+        if (!result.error) {
+          await router.push("/dashboard");
+        }
+      })
+      .catch((error: NextAuthError) => {
+        // Handle any errors that might occur during the signIn process
+        setLoginError(error.message);
+        // console.error(error);
+      });
   };
   return (
     <div className="z-10 flex justify-center  self-center">
