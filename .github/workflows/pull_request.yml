@@ -18,9 +18,10 @@ jobs:
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
           echo "NEXTAUTH_SECRET=dummy_key" >> .env
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+          echo "NEXT_PUBLIC_SITE_NAME=Next ZTnet" >> .env
+          echo "NEXT_PUBLIC_APP_VERSION=" >> .env
 
       - run: npm install
-
       - name: Lint
         run: npm run lint
 
