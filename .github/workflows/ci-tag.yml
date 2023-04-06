@@ -1,7 +1,7 @@
 # Build new docker image when a new tag is pushed, and generate changelog and release notes and use the tag as the release name.
 # if the tag has beta or alfa in the name, set the release as a pre-release.
 
-name: Push Tag build container
+name: Build release image
 
 on:
   push:
@@ -62,13 +62,13 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ steps.extract_version.outputs.version_number }}
 
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
-          files: |
-            LICENSE
-            README.md
+      # - uses: "marvinpinto/action-automatic-releases@latest"
+      #   with:
+      #     repo_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
+      #     files: |
+      #       LICENSE
+      #       README.md
 
 #          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
 #          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
