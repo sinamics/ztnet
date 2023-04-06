@@ -175,7 +175,7 @@ export const network_create = async (
 
   try {
     const response: AxiosResponse = await axios.post(
-      `${ZT_ADDR}/controller/network/${zt_address.address}`,
+      `${ZT_ADDR}/controller/network/${zt_address.address}______`,
       config,
       options
     );
