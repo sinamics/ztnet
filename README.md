@@ -76,7 +76,7 @@ services:
       - "9993:9993/udp"
     environment:
       - ZT_OVERRIDE_LOCAL_CONF=true
-      - ZT_ALLOW_MANAGEMENT_FROM=172.28.0.0/16
+      - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
   next_ztnet:
     # image: sinamics/next_ztnet:latest-dev   # Use this for testing latest development build
@@ -86,11 +86,6 @@ services:
     working_dir: /app
     volumes:
       - zerotier:/var/lib/zerotier-one:ro
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_CLIENTVAR: "clientvar"
     restart: unless-stopped
     ports:
       - 3000:3000
@@ -121,7 +116,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.28.0.0/16
+        - subnet: 172.31.255.0/29
 ```
 
 Next, run the following command in the same directory as the `docker-compose.yml` file:
