@@ -63,16 +63,14 @@ jobs:
       - name: Create short sha
         run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-      - name: "set app version to env"
-        env:
-          NEXT_PUBLIC_APP_VERSION: v${{ github.ref_name }}-${{ env.SHORT_SHA }}"
-
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
+          build-args: |
+            "NEXT_PUBLIC_APP_VERSION=${{ steps.previoustag.outputs.tag }}"
           # platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
