@@ -113,9 +113,9 @@ const InputField = ({
       ) : (
         <dd className="mt-1 flex items-center gap-2 text-sm">
           {placeholder ?? fields[0].placeholder}
-          {badge && (
+          {badge ? (
             <div className={`badge badge-${badge.color}`}>{badge.text}</div>
-          )}
+          ) : null}
         </dd>
       )}
     </>
