@@ -18,7 +18,7 @@ done
 
 # set the correct permissions for the zerotier-one identity file
 chown -R nextjs:sudo /var/lib/zerotier-one
-chmod 777 /var/lib/zerotier-one/filename
+chmod 777 /var/lib/zerotier-one/authtoken.secret
 
 # apply migrations to the database
 echo "Applying migrations to the database..."
