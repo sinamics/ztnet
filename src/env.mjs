@@ -27,8 +27,8 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-  NEXT_PUBLIC_SITE_NAME: z.string(),
-  NEXT_PUBLIC_APP_VERSION: z.string(),
+  NEXT_PUBLIC_SITE_NAME: z.string().optional(),
+  NEXT_PUBLIC_APP_VERSION: z.string().optional(),
 });
 
 /**
