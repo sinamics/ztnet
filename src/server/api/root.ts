@@ -3,6 +3,7 @@ import { authRouter } from "./routers/authRouter";
 import { networkMemberRouter } from "./routers/networkMemberRouter";
 import { networkRouter } from "./routers/networkRouter";
 import { adminRouter } from "./routers/adminRoute";
+import { globalOptionsRouter } from "./routers/globalOptions";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   networkMember: networkMemberRouter,
   auth: authRouter,
   admin: adminRouter,
+  options: globalOptionsRouter,
 });
 
 // export type definition of API
