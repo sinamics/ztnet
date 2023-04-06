@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import React, { useMemo } from "react";
 import { useTable, useSortBy } from "react-table";
@@ -21,7 +15,7 @@ export const MembersTable = () => {
     () => [
       {
         Header: "ID",
-        accessor: (d: string) => d["id"],
+        accessor: (d: string) => d["id"] as string,
       },
       {
         Header: "Member name",
@@ -70,9 +64,9 @@ export const MembersTable = () => {
     column: { id },
   }) => {
     // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState(initialValue);
+    const [value, setValue] = React.useState<string | number>(initialValue);
 
-    const onChange = (e) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value);
     };
 
@@ -119,10 +113,7 @@ export const MembersTable = () => {
           ],
         },
       },
-      // useBlockLayout,
-      // useResizeColumns,
       useSortBy
-      // updateMyData
     );
 
   return (
