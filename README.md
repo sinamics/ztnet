@@ -2,9 +2,9 @@
 [![Release](https://img.shields.io/github/v/release/sinamics/next_ztnet.svg)](https://github.com/sinamics/next_ztnet/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/next_ztnet.svg)](https://hub.docker.com/r/sinamics/next_ztnet/)
 
-# Next ZTNet
+# Next ZTnet
 
-## ⚠️ This is a work in progress. It is not ready for production use!
+## ⚠️ This project is currently under development and not yet suitable for production environments.
 
 Next ZTNet is a ZeroTier controller that provides an easy-to-use interface for managing your ZeroTier networks. Built with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, this powerful web application simplifies the process of creating, configuring, and monitoring your ZeroTier networks.
 
