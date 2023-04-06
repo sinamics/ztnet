@@ -81,9 +81,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
 
-RUN chmod +x init-db.sh
+# prepeare .env file for the init-db.sh script
+RUN touch .env && chown nextjs:nodejs .env
 
-USER nextjs
+RUN chmod u+x init-db.sh
+
+# USER nextjs
 
 EXPOSE 3000
 
