@@ -34,24 +34,28 @@ const passwordSchema = (errorMessage: string) =>
 export const authRouter = createTRPCRouter({
   register: publicProcedure
     .input(
-      z.object({
-        email: z
-          .string()
-          .nonempty()
-          .email()
-          .transform((val) => val.trim()),
-        password: passwordSchema("password does not meet the requirements!"),
-        name: z.string().nonempty().max(40),
-      })
+      z
+        .object({
+          email: z
+            .string()
+            .email()
+            .transform((val) => val.trim()),
+          password: passwordSchema("password does not meet the requirements!"),
+          name: z.string().min(3).max(40),
+        })
+        .required()
     )
     .mutation(async ({ ctx, input }) => {
+      // eslint-disable-next-line no-console
+      console.log("register called");
       const { email, password, name } = input;
       const settings = await ctx.prisma.globalOptions.findFirst({
         where: {
           id: 1,
         },
       });
-
+      // eslint-disable-next-line no-console
+      console.log("register input", input);
       // check if enableRegistration is true
       if (!settings.enableRegistration) {
         throw new TRPCError({
