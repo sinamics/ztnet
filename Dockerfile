@@ -86,7 +86,7 @@ RUN touch .env && chown nextjs:nodejs .env
 
 RUN chmod u+x init-db.sh
 
-USER nextjs
+# USER nextjs
 
 EXPOSE 3000
 
