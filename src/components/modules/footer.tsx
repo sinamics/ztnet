@@ -1,4 +1,5 @@
 import React from "react";
+import { globalSiteVersion } from "~/utils/global";
 
 const Footer = () => (
   <footer className="hidden px-4 py-6 sm:block">
@@ -11,10 +12,8 @@ const Footer = () => (
           by Bernt Christian Egeland / aka @sinamics
         </a>
       </p>
-      {process.env.NEXT_PUBLIC_APP_VERSION ? (
-        <p className="text-right text-sm text-gray-600">
-          {process.env.NEXT_PUBLIC_APP_VERSION}
-        </p>
+      {globalSiteVersion ? (
+        <p className="text-right text-sm text-gray-600">{globalSiteVersion}</p>
       ) : (
         <div></div>
       )}
