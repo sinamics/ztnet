@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useState } from "react";
 import Input from "~/components/elements/input";
 import EditIcon from "~/icons/edit";
@@ -37,7 +33,7 @@ const InputField = ({
   isLoading,
 }: FormProps) => {
   const [showInputs, setShowInputs] = useState(false);
-  const [formValues, setFormValues] = useState(
+  const [formValues, setFormValues] = useState<Record<string, string>>(
     fields.reduce((acc, field) => {
       acc[field.name] = field.initialValue || "";
       return acc;
@@ -102,7 +98,7 @@ const InputField = ({
     <>
       <dt className="flex items-center gap-2 text-sm font-medium">
         {label}
-        <EditIcon onClick={handleEditClick} />
+        <EditIcon data-testid="edit-icon" onClick={handleEditClick} />
       </dt>
       {showInputs ? (
         isLoading ? (
