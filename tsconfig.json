@@ -19,7 +19,8 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "types": ["jest", "node", "@types/testing-library__jest-dom"]
   },
   "include": [
     ".eslintrc.cjs",
@@ -27,8 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs",
-    "jest.config.js"
+    "**/*.mjs"
   ],
   "exclude": ["node_modules"]
 }
