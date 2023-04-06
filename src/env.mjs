@@ -19,6 +19,8 @@ const server = z.object({
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
+  NEXT_PUBLIC_SITE_NAME: z.string().optional(),
+  NEXT_PUBLIC_APP_VERSION: z.string().optional(),
 });
 
 /**
