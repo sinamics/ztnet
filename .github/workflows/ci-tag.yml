@@ -40,6 +40,10 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
+      - name: "set app version to env"
+        env:
+          NEXT_PUBLIC_APP_VERSION: ${{ steps.previoustag.outputs.tag }}"
+
       - name: Extract version number
         id: extract_version
         run: |
