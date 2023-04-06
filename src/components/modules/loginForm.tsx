@@ -39,13 +39,14 @@ const LoginForm: React.FC = () => {
     })
       .then(async (result) => {
         if (!result.error) {
-          await router.push("/dashboard");
+          return await router.push("/dashboard");
         }
+
+        setLoginError(result.error);
       })
       .catch((error: NextAuthError) => {
         // Handle any errors that might occur during the signIn process
         setLoginError(error.message);
-        // console.error(error);
       });
   };
   return (
