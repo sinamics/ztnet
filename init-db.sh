@@ -16,6 +16,10 @@ until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER"
   sleep 1
 done
 
+# set the correct permissions for the zerotier-one identity file
+chown -R nextjs:sudo /var/lib/zerotier-one
+chmod 777 /var/lib/zerotier-one/filename
+
 # apply migrations to the database
 echo "Applying migrations to the database..."
 npx prisma migrate deploy

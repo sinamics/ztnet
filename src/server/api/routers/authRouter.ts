@@ -46,16 +46,13 @@ export const authRouter = createTRPCRouter({
         .required()
     )
     .mutation(async ({ ctx, input }) => {
-      // eslint-disable-next-line no-console
-      console.log("register called");
       const { email, password, name } = input;
       const settings = await ctx.prisma.globalOptions.findFirst({
         where: {
           id: 1,
         },
       });
-      // eslint-disable-next-line no-console
-      console.log("register input", input);
+
       // check if enableRegistration is true
       if (!settings.enableRegistration) {
         throw new TRPCError({
