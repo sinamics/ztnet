@@ -17,8 +17,8 @@ until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER"
 done
 
 # set the correct permissions for the zerotier-one identity file
-chown -R nextjs:sudo /var/lib/zerotier-one
-chmod 777 /var/lib/zerotier-one/authtoken.secret
+chown -R nextjs:sudo /var/lib/zerotier-one/authtoken.secret
+chmod 770 /var/lib/zerotier-one/authtoken.secret
 
 # apply migrations to the database
 echo "Applying migrations to the database..."
