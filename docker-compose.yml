@@ -50,16 +50,15 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-      NEXTAUTH_URL: "http://localhost:3000"
-      NEXTAUTH_SECRET: "random_secret"
-      NEXT_PUBLIC_SITE_NAME: "Next ZTnet"
+      NEXTAUTH_URL: "http://localhost:3000" # change localhost to your domain or server ip address if hosting on a server.
+      NEXTAUTH_SECRET: "random_secret" # change this to a random string of characters.
+      NEXT_PUBLIC_SITE_NAME: "Next ZTnet" # change this to your site name.
     networks:
       - app-network
-    links:
-      - postgres
     depends_on:
       - postgres
       - zerotier
+
 volumes:
   zerotier:
   postgres-data:
