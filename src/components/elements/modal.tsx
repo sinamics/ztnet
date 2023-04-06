@@ -3,12 +3,6 @@ import { useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { useModalStore } from "~/utils/store";
 
-// interface Imodal {
-//   children: React.ReactNode;
-//   disableClickOutside?: boolean;
-//   onClose(): void;
-// }
-
 const Modal = () => {
   const ref = useRef(null);
   const {

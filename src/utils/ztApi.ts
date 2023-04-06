@@ -80,6 +80,7 @@ export const get_controller_networks =
   Node status and addressing info
   https://docs.zerotier.com/service/v1/#operation/getStatus
 */
+
 export interface ZTControllerNodeStatus {
   address: string;
   clock: number;
@@ -101,12 +102,20 @@ export interface Config {
 }
 
 export interface Settings {
+  allowManagementFrom: null[];
   allowTcpFallbackRelay: boolean;
+  forceTcpRelay: boolean;
+  listeningOn: null[];
   portMappingEnabled: boolean;
   primaryPort: number;
+  secondaryPort: number;
+  softwareUpdate: string;
+  softwareUpdateChannel: string;
+  surfaceAddresses: null[];
+  tertiaryPort: number;
 }
 
-export const get_zt_address = async function () {
+export const get_controller_status = async function () {
   try {
     const { data } = await axios.get(ZT_ADDR + "/status", options);
     return data as ZTControllerNodeStatus;
@@ -166,7 +175,7 @@ export const network_create = async (
   name,
   ipAssignment
 ): Promise<ZTControllerCreateNetwork> => {
-  const zt_address = await get_zt_address();
+  const controllerStatus = await get_controller_status();
 
   const config = {
     name,
@@ -175,7 +184,7 @@ export const network_create = async (
 
   try {
     const response: AxiosResponse = await axios.post(
-      `${ZT_ADDR}/controller/network/${zt_address.address}______`,
+      `${ZT_ADDR}/controller/network/${controllerStatus.address}______`,
       config,
       options
     );
@@ -229,25 +238,53 @@ export async function network_delete(
 // Get Network Member Details by ID
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
-type ZTControllerResponse = {
-  network: ZtControllerNetwork;
-  members: MembersEntity[];
+type MemberRevisionCounters = {
+  [memberId: string]: number;
 };
-
-export const network_detail = async function (
+export const network_members = async function (
   nwid: string
-): Promise<NetworkAndMembers> {
+): Promise<MemberRevisionCounters> {
   try {
     const members: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}/member/`,
       options
     );
+
+    return members.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
+    throw error;
+  }
+};
+
+type ZTControllerResponse = {
+  network: ZtControllerNetwork;
+  members: MembersEntity[];
+};
+export const network_detail = async function (
+  nwid: string
+): Promise<NetworkAndMembers> {
+  try {
+    // get all members for a specific network
+    const members = network_members(nwid);
+
     const network: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}`,
       options
     );
     const membersArr: any = [];
-    for (const member in members.data) {
+    for (const member in members) {
       const memberDetails: AxiosResponse = await axios.get(
         `${ZT_ADDR}/controller/network/${nwid}/member/${member}`,
         options
