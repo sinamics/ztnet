@@ -58,8 +58,8 @@ RUN \
 FROM base AS runner
 WORKDIR /app
 # set the app version as an environment variable. Used in the github action
+# used in the init-db.sh script
 ARG NEXT_PUBLIC_APP_VERSION
-ENV NEXT_PUBLIC_APP_VERSION ${NEXT_PUBLIC_APP_VERSION}
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
