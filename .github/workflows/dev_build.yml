@@ -1,7 +1,7 @@
 # create github action that will build nextjs application and push it to docker hub and tag with commit hash
 # apply this to every push to dev and pull request
 
-name: Commit docker build
+name: Build on every push to dev
 on:
   push:
     branches:
