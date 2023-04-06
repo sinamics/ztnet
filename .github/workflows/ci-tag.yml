@@ -66,8 +66,10 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
-          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
-          title: ${{ steps.previoustag.outputs.tag }}
           files: |
             LICENSE
             README.md
+
+#          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'alfa') }}
+#          automatic_release_tag: ${{ github.event.inputs.version || steps.previoustag.outputs.tag }}
+#          title: ${{ steps.previoustag.outputs.tag }}
