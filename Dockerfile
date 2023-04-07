@@ -31,9 +31,6 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 
-ARG NEXT_PUBLIC_APP_VERSION
-ENV NEXT_PUBLIC_APP_VERSION=$NEXT_PUBLIC_APP_VERSION
-
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
