@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 
@@ -28,30 +27,23 @@ export const adminRouter = createTRPCRouter({
       },
     });
     return users;
-
-    // await ctx.prisma.user.findMany();
   }),
 
-  getControllerStats: adminRoleProtectedRoute
-    // .input(
-    //   z.object({
-    //     userid: z.number().optional(),
-    //   })
-    // )
-    .query(async () => {
-      const networks = await ztController.get_controller_networks();
-      const networkCount = networks.length;
-      let totalMembers = 0;
-      for (const network of networks) {
-        const members = await ztController.network_members(network);
-        totalMembers += Object.keys(members).length;
-      }
+  getControllerStats: adminRoleProtectedRoute.query(async () => {
+    const networks = await ztController.get_controller_networks();
 
-      const controllerStatus = await ztController.get_controller_status();
-      return {
-        networkCount,
-        totalMembers,
-        controllerStatus,
-      };
-    }),
+    const networkCount = networks.length;
+    let totalMembers = 0;
+    for (const network of networks) {
+      const members = await ztController.network_members(network);
+      totalMembers += Object.keys(members).length;
+    }
+
+    const controllerStatus = await ztController.get_controller_status();
+    return {
+      networkCount,
+      totalMembers,
+      controllerStatus,
+    };
+  }),
 });

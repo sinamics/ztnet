@@ -69,10 +69,21 @@ export const get_controller_networks =
         ZT_ADDR + "/controller/network",
         options
       );
-
       return data;
-    } catch (err) {
-      throw err;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        // eslint-disable-next-line no-console
+        console.error(`Axios error: ${axiosError.message}`);
+        // eslint-disable-next-line no-console
+        console.error(`Status code: ${axiosError.response?.status}`);
+        // eslint-disable-next-line no-console
+        console.error(`Status text: ${axiosError.response?.statusText}`);
+        throw axiosError;
+      }
+      // eslint-disable-next-line no-console
+      console.error(`Unknown error: ${error.message}`);
+      throw error;
     }
   };
 
@@ -119,8 +130,20 @@ export const get_controller_status = async function () {
   try {
     const { data } = await axios.get(ZT_ADDR + "/status", options);
     return data as ZTControllerNodeStatus;
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
+    throw error;
   }
 };
 
