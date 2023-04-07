@@ -62,6 +62,7 @@ export const networkRouter = createTRPCRouter({
             code: "BAD_REQUEST",
           });
         });
+
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
       await updateNetworkMembers(ztControllerResponse);
