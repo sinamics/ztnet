@@ -7,10 +7,11 @@ import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
 import { AddMemberById } from "~/components/modules/addMemberById";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
-import { useCopyToClipboard } from "usehooks-ts";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
+import toast from "react-hot-toast";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -29,7 +30,6 @@ const NetworkById = () => {
     { enabled: !!query.id, refetchInterval: 10000 }
   );
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
-  const copy = useCopyToClipboard();
 
   if (loadingNetwork) {
     return <progress className="progress w-56"></progress>;
@@ -62,11 +62,20 @@ const NetworkById = () => {
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network ID:</span>
               <span className="relative left-7 flex items-center gap-2">
-                {network?.nwid}
-                <CopyIcon
-                  className="hover:text-opacity-50"
-                  onClick={() => void copy[1](network?.nwid)}
-                />
+                <CopyToClipboard
+                  text={network?.nwid}
+                  onCopy={() =>
+                    toast.success(`${network?.nwid} copied to clipboard`, {
+                      id: "copyNwid",
+                    })
+                  }
+                  title="copy to clipboard"
+                >
+                  <div className="flex cursor-pointer items-center gap-2">
+                    {network?.nwid}
+                    <CopyIcon />
+                  </div>
+                </CopyToClipboard>
               </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
@@ -105,7 +114,7 @@ const NetworkById = () => {
               {network.private ? (
                 <span className="text-success">Private</span>
               ) : (
-                <span className="text-danger">Public</span>
+                <span className="text-error">Public</span>
               )}
             </div>
           </div>
