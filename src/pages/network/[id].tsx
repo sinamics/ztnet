@@ -89,6 +89,7 @@ const NetworkById = () => {
                   network?.name
                 )}
                 <EditIcon
+                  data-testid="changeNetworkName"
                   className="hover:text-opacity-50"
                   onClick={() =>
                     setState({
