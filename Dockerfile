@@ -32,9 +32,9 @@ RUN \
 FROM base AS builder
 
 ARG NEXT_PUBLIC_APP_VERSION
-ARG NEXT_PUBLIC_SITE_NAME
 
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -56,14 +56,22 @@ ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Create a nodejs group and user for running the application
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+# Install necessary packages
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # RUN curl -s https://install.zerotier.com | sudo bash
+
+# Install prisma client and global package
 RUN npm install @prisma/client
 RUN npm install -g prisma
+
+# Create a directory for zerotier-one and set permissions
 RUN mkdir -p /var/lib/zerotier-one && chown -R nextjs:nodejs /var/lib/zerotier-one && chmod -R 777 /var/lib/zerotier-one
 
+# Copy all the necessary files from the builder stage
 COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
@@ -75,7 +83,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
 
-# prepeare .env file for the init-db.sh script
+# Create an empty .env file and set permissions
 RUN touch .env && chown nextjs:nodejs .env
 
 RUN chmod u+x init-db.sh
