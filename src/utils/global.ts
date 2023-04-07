@@ -6,3 +6,5 @@ import { env } from "~/env.mjs";
 export const globalSiteTitle = env.NEXT_PUBLIC_SITE_NAME || "Next ZTnet";
 
 export const globalSiteVersion = env.NEXT_PUBLIC_APP_VERSION || null;
+// eslint-disable-next-line no-console
+console.log(env);
