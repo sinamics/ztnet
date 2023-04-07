@@ -31,6 +31,7 @@ const Profile = () => {
                       name: "name",
                       type: "text",
                       placeholder: session?.user?.name,
+                      defaultValue: session?.user?.name,
                     },
                   ]}
                   submitHandler={async (params) =>
@@ -52,6 +53,7 @@ const Profile = () => {
                       name: "email",
                       type: "text",
                       placeholder: session?.user?.email,
+                      defaultValue: session?.user?.email,
                     },
                   ]}
                   submitHandler={async (params) =>
