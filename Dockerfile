@@ -32,7 +32,6 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 
-ARG NEXT_PUBLIC_CLIENTVAR
 ARG NEXT_PUBLIC_APP_VERSION
 ARG NEXT_PUBLIC_SITE_NAME
 
@@ -44,13 +43,9 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
-RUN \
-    if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
-    elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
-    elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && SKIP_ENV_VALIDATION=1 pnpm run build; \
-    else echo "Lockfile not found." && exit 1; \
-    fi
-
+RUN NEXT_PUBLIC_SITE_NAME=NEXT_PUBLIC_SITE_NAME \
+    SKIP_ENV_VALIDATION=1 \
+    npm run build
 
 # If using npm comment out above and use below instead
 # RUN npm run build
@@ -58,10 +53,6 @@ RUN \
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
-# set the app version as an environment variable. Used in the github action
-# used in the init-db.sh script
-ARG NEXT_PUBLIC_APP_VERSION
-ENV NEXT_PUBLIC_APP_VERSION ${NEXT_PUBLIC_APP_VERSION}
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.

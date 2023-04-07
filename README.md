@@ -186,7 +186,6 @@ Create a `.env` file in the root of the project and set the necessary environmen
 - `NEXTAUTH_URL`=http://localhost:3000
 - `NEXTAUTH_SECRET`="your_nextauth_secret"
 - `NEXT_PUBLIC_SITE_NAME`="Next ZTNet"
-- `NEXT_PUBLIC_APP_VERSION`="" # This is a required variable when building new images, but it can be empty.
 - `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
 - `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
   You need to run the following command to create the database:
