@@ -47,11 +47,20 @@ export const NettworkSettings = () => {
     });
   };
 
-  const submitHandler = () => {
-    updateNetworkMutation({
-      updateParams: { routes: [...network?.routes, { ...routeInput }] },
-      nwid: query.id as string,
-    });
+  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateNetworkMutation(
+      {
+        updateParams: { routes: [...network?.routes, { ...routeInput }] },
+        nwid: query.id as string,
+      },
+      {
+        onSuccess: () => {
+          void refecthNetworkById();
+          setShowRouteInput(false);
+        },
+      }
+    );
   };
   const { network } = networkByIdQuery;
   if (isLoading) return <div>Loading</div>;
@@ -94,12 +103,12 @@ export const NettworkSettings = () => {
         })}
       </div>
       {showRouteInput ? (
-        <div className="relative my-5 flex">
+        <form className="relative my-5 flex" onSubmit={submitHandler}>
           <input
             type="text"
             name="target"
             onChange={routeHandler}
-            placeholder="10.11.12.0/24"
+            placeholder="Destination"
             className="input-bordered input-primary input input-xs w-3/6 rounded-md"
           />
           <div className="px-4">via</div>
@@ -107,11 +116,11 @@ export const NettworkSettings = () => {
             type="text"
             name="via"
             onChange={routeHandler}
-            placeholder="192.168.168.1"
+            placeholder="target"
             className="input-bordered input-primary input input-xs w-3/6 rounded-md"
           />
           <button
-            onClick={submitHandler}
+            type="submit"
             className="btn-success btn-xs btn ml-4 rounded-md"
           >
             Add
@@ -122,7 +131,7 @@ export const NettworkSettings = () => {
           >
             Cancle
           </button>
-        </div>
+        </form>
       ) : null}
       <div>
         <svg

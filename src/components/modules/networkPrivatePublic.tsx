@@ -35,8 +35,9 @@ export const NetworkPrivatePublic = () => {
           void refecthNetworkById();
           toast.success(
             `Your network is now ${
-              privateNetwork ? "private" : "public, ⚠️ please use with caution!"
-            }`
+              privateNetwork ? "private" : "public, please use with caution!"
+            }`,
+            { icon: "⚠️" }
           );
         },
       }

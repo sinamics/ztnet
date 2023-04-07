@@ -30,7 +30,17 @@ const App: AppType<{ session: Session | null }> = ({
     <ThemeProvider defaultTheme="system">
       <Modal />
       <ReactQueryDevtools initialIsOpen={false} />
-      <Toaster />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          className: "bg-primary-500",
+          style: {
+            border: "1px solid #191919",
+            color: "#fff",
+            background: "#404040",
+          },
+        }}
+      />
       <SessionProvider session={session}>
         {getLayout(<Component {...pageProps} />)}
       </SessionProvider>

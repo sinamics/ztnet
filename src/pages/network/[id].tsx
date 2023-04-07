@@ -7,10 +7,11 @@ import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
 import { AddMemberById } from "~/components/modules/addMemberById";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
-import { useCopyToClipboard } from "usehooks-ts";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
+import toast from "react-hot-toast";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -21,6 +22,7 @@ const NetworkById = () => {
   const {
     data: networkById,
     isLoading: loadingNetwork,
+    error: errorNetwork,
     refetch: refetchNetwork,
   } = api.network.getNetworkById.useQuery(
     {
@@ -29,13 +31,19 @@ const NetworkById = () => {
     { enabled: !!query.id, refetchInterval: 10000 }
   );
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
-  const copy = useCopyToClipboard();
 
   if (loadingNetwork) {
-    return <progress className="progress w-56"></progress>;
+    // add loading progress bar to center of page, vertially and horizontally
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>s
+        </h1>
+      </div>
+    );
   }
 
-  const { network, members } = networkById;
+  const { network, members = [] } = networkById || {};
   const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateNetwork(
@@ -56,17 +64,33 @@ const NetworkById = () => {
   };
   return (
     <div>
+      {errorNetwork && (
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-center text-2xl font-semibold">
+            {errorNetwork.message}
+          </h1>
+        </div>
+      )}
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
         <div className="w-5/5 h-fit w-full xl:w-2/6 ">
           <div className="flex flex-col space-y-3 sm:space-y-0">
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network ID:</span>
               <span className="relative left-7 flex items-center gap-2">
-                {network?.nwid}
-                <CopyIcon
-                  className="hover:text-opacity-50"
-                  onClick={() => void copy[1](network?.nwid)}
-                />
+                <CopyToClipboard
+                  text={network?.nwid}
+                  onCopy={() =>
+                    toast.success(`${network?.nwid} copied to clipboard`, {
+                      id: "copyNwid",
+                    })
+                  }
+                  title="copy to clipboard"
+                >
+                  <div className="flex cursor-pointer items-center gap-2">
+                    {network?.nwid}
+                    <CopyIcon />
+                  </div>
+                </CopyToClipboard>
               </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
@@ -105,7 +129,7 @@ const NetworkById = () => {
               {network.private ? (
                 <span className="text-success">Private</span>
               ) : (
-                <span className="text-danger">Public</span>
+                <span className="text-error">Public</span>
               )}
             </div>
           </div>
