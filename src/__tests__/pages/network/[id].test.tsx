@@ -188,6 +188,9 @@ describe("NetworkById component", () => {
     await userEvent.type(input, "New Network Name");
     expect(input).toHaveValue("Test NetworkNew Network Name");
     fireEvent.submit(input);
-    // await waitFor(() => expect(input).not.toBeInTheDocument());
+    // hack to hide the input by toggle the edit icon
+    await userEvent.click(editIcon);
+
+    await waitFor(() => expect(input).not.toBeInTheDocument());
   });
 });
