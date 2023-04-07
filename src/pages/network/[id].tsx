@@ -22,6 +22,7 @@ const NetworkById = () => {
   const {
     data: networkById,
     isLoading: loadingNetwork,
+    error: errorNetwork,
     refetch: refetchNetwork,
   } = api.network.getNetworkById.useQuery(
     {
@@ -32,10 +33,17 @@ const NetworkById = () => {
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
 
   if (loadingNetwork) {
-    return <progress className="progress w-56"></progress>;
+    // add loading progress bar to center of page, vertially and horizontally
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>s
+        </h1>
+      </div>
+    );
   }
 
-  const { network, members } = networkById;
+  const { network, members = [] } = networkById || {};
   const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateNetwork(
@@ -56,6 +64,13 @@ const NetworkById = () => {
   };
   return (
     <div>
+      {errorNetwork && (
+        <div className="flex flex-col items-center justify-center">
+          <h1 className="text-center text-2xl font-semibold">
+            {errorNetwork.message}
+          </h1>
+        </div>
+      )}
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
         <div className="w-5/5 h-fit w-full xl:w-2/6 ">
           <div className="flex flex-col space-y-3 sm:space-y-0">

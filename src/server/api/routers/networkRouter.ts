@@ -199,7 +199,7 @@ export const networkRouter = createTRPCRouter({
             .array(
               z.object({
                 target: z.string({
-                  required_error: "Via IP must has a value!",
+                  required_error: "Destination IP must has a value!",
                   // invalid_type_error: "Name must be a string",
                 }),
                 via: z.union([z.string(), z.null()]).optional(),
