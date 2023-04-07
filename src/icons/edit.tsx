@@ -1,10 +1,10 @@
-interface IeditIcon {
+interface Icon {
   // add optional className prop
   className?: string;
   onClick?: () => void;
 }
 
-const EditIcon = ({ className, onClick, ...rest }: IeditIcon) => {
+const EditIcon = ({ className, onClick, ...rest }: Icon) => {
   return (
     <span onClick={onClick}>
       <svg

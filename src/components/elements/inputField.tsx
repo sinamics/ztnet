@@ -8,6 +8,7 @@ interface FieldConfig {
   type: string;
   placeholder: string;
   displayValue?: string;
+  defaultValue?: string;
 }
 
 interface FormProps {
@@ -15,6 +16,7 @@ interface FormProps {
   isLoading?: boolean;
   placeholder?: string;
   fields: FieldConfig[];
+
   submitHandler: (formValues: {
     [key: string]: string;
   }) => Promise<unknown> | string | void;
@@ -71,6 +73,7 @@ const InputField = ({
           value={formValues[field.name]}
           onChange={handleChange}
           name={field.name}
+          defaultValue={field.defaultValue}
         />
       ))}
       <div className="flex gap-3">

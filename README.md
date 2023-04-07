@@ -17,17 +17,18 @@ With Next ZTNet, you can:
 
 ## Table of Contents
 
-- [Next ZTNet](#next-ztnet)
-  - [⚠️ This is a work in progress. It is not ready for production use!](#️-this-is-a-work-in-progress-it-is-not-ready-for-production-use)
+- [Next ZTnet](#next-ztnet)
+  - [⚠️ This project is currently under development and not yet suitable for production environments.](#️-this-project-is-currently-under-development-and-not-yet-suitable-for-production-environments)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Installations](#installations)
     - [Using Docker Compose](#using-docker-compose)
     - [Note! First user that register will be automatically assigned as admin.](#note-first-user-that-register-will-be-automatically-assigned-as-admin)
     - [Environment Variables](#environment-variables)
-  - [Development](#development)
-    - [vscode container development (recommended)](#vscode-container-development-recommended)
-    - [traditional development](#the-traditional-way)
+- [Development](#development)
+  - [vscode container development (recommended)](#vscode-container-development-recommended)
+  - [The traditional way](#the-traditional-way)
+    - [Setup Environment Variables](#setup-environment-variables)
 
 ## Features
 
@@ -98,7 +99,6 @@ services:
       POSTGRES_DB: postgres
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
-      NEXT_PUBLIC_SITE_NAME: "Next ZTNet"
     networks:
       - app-network
     links:
@@ -140,14 +140,12 @@ The `docker-compose.yml` file includes several environment variables that you ca
 - `POSTGRES_DB`: The name of the PostgreSQL database.
 - `NEXTAUTH_URL`: The URL for NextAuth authentication.
 - `NEXTAUTH_SECRET`: The secret key for NextAuth authentication.
-- `NEXT_PUBLIC_SITE_NAME`: Site name used in the Next.js application.
 
 These are system environment variables used by the ZeroTier service and should not be changed:
 
 - `ZT_OVERRIDE_LOCAL_CONF`: Allows overriding local ZeroTier configuration.
 - `ZT_ALLOW_MANAGEMENT_FROM`: Defines the IP range allowed to access the ZeroTier management interface.
 - `ZT_ADDR`: The address of the ZeroTier service.
-- `NEXT_PUBLIC_CLIENTVAR`: A public client variable used by the Next.js application.
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
@@ -185,7 +183,6 @@ Create a `.env` file in the root of the project and set the necessary environmen
 - `POSTGRES_DB`=ztnet
 - `NEXTAUTH_URL`=http://localhost:3000
 - `NEXTAUTH_SECRET`="your_nextauth_secret"
-- `NEXT_PUBLIC_SITE_NAME`="Next ZTNet"
 - `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
 - `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
   You need to run the following command to create the database:
