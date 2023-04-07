@@ -300,7 +300,7 @@ export const network_detail = async function (
 ): Promise<NetworkAndMembers> {
   try {
     // get all members for a specific network
-    const members = network_members(nwid);
+    const members = await network_members(nwid);
 
     const network: AxiosResponse = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}`,
