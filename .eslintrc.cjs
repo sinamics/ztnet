@@ -8,7 +8,7 @@ const config = {
       extends: [
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
       ],
-      files: ["*.ts", "*.tsx"],
+      files: ["*.ts", "*.tsx"], // Exclude jest.config.js file
       parserOptions: {
         project: path.join(__dirname, "tsconfig.json"),
       },
@@ -20,6 +20,7 @@ const config = {
   },
   plugins: ["@typescript-eslint"],
   extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  ignorePatterns: ["**jest.config*.js"],
   rules: {
     "@typescript-eslint/consistent-type-imports": [
       "error",
