@@ -32,9 +32,10 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 
-
-
 ARG NEXT_PUBLIC_CLIENTVAR
+ARG NEXT_PUBLIC_APP_VERSION
+ARG NEXT_PUBLIC_SITE_NAME
+
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
