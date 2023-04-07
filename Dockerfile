@@ -43,7 +43,7 @@ COPY . .
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
-RUN NEXT_PUBLIC_SITE_NAME=NEXT_PUBLIC_SITE_NAME \
+RUN NEXT_PUBLIC_SITE_NAME=APP_NEXT_PUBLIC_SITE_NAME \
     SKIP_ENV_VALIDATION=1 \
     npm run build
 
