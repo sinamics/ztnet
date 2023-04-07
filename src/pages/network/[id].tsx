@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { type ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkSettings } from "~/components/modules/networkRoutes";
 import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
@@ -7,23 +7,53 @@ import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
 import { AddMemberById } from "~/components/modules/addMemberById";
+import CopyIcon from "~/icons/copy";
+import { useCopyToClipboard } from "usehooks-ts";
+import EditIcon from "~/icons/edit";
+import Input from "~/components/elements/input";
 
 const NetworkById = () => {
+  const [state, setState] = useState({
+    editNetworkName: false,
+    networkName: "",
+  });
   const { query } = useRouter();
-  const { data: networkById, isLoading: loadingNetwork } =
-    api.network.getNetworkById.useQuery(
-      {
-        nwid: query.id as string,
-      },
-      { enabled: !!query.id, refetchInterval: 10000 }
-    );
+  const {
+    data: networkById,
+    isLoading: loadingNetwork,
+    refetch: refetchNetwork,
+  } = api.network.getNetworkById.useQuery(
+    {
+      nwid: query.id as string,
+    },
+    { enabled: !!query.id, refetchInterval: 10000 }
+  );
+  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
+  const copy = useCopyToClipboard();
 
   if (loadingNetwork) {
     return <progress className="progress w-56"></progress>;
   }
 
   const { network, members } = networkById;
-  // console.log(zombieMembers);
+  const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateNetwork(
+      {
+        nwid: network.nwid,
+        updateParams: { name: state.networkName },
+      },
+      {
+        onSuccess: () => {
+          void refetchNetwork();
+          setState({ ...state, editNetworkName: false });
+        },
+      }
+    );
+  };
+  const eventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
@@ -31,11 +61,43 @@ const NetworkById = () => {
           <div className="flex flex-col space-y-3 sm:space-y-0">
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network ID:</span>
-              <span>{network?.nwid}</span>
+              <span className="relative left-7 flex items-center gap-2">
+                {network?.nwid}
+                <CopyIcon
+                  className="hover:text-opacity-50"
+                  onClick={() => void copy[1](network?.nwid)}
+                />
+              </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network Name:</span>
-              <span>{network?.name}</span>
+              <span className="relative left-7 flex items-center gap-2">
+                {state.editNetworkName ? (
+                  <form onSubmit={changeNameHandler}>
+                    <Input
+                      focus
+                      name="networkName"
+                      onChange={eventHandler}
+                      // value={state.networkName}
+                      defaultValue={network?.name}
+                      type="text"
+                      placeholder={network?.name}
+                      className="input-bordered input-primary input-xs"
+                    />
+                  </form>
+                ) : (
+                  network?.name
+                )}
+                <EditIcon
+                  className="hover:text-opacity-50"
+                  onClick={() =>
+                    setState({
+                      ...state,
+                      editNetworkName: !state.editNetworkName,
+                    })
+                  }
+                />
+              </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network is</span>

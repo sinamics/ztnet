@@ -19,7 +19,6 @@ const server = z.object({
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-  // NEXT_PUBLIC_SITE_NAME: z.string(),
 });
 
 /**
@@ -28,7 +27,7 @@ const server = z.object({
  */
 const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
-  // NEXT_PUBLIC_SITE_NAME: z.string(),
+  NEXT_PUBLIC_APP_VERSION: z.string().optional(),
 });
 
 /**
@@ -42,7 +41,7 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  // NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_,
+  NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
