@@ -31,6 +31,8 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 
+ARG NEXT_PUBLIC_APP_VERSION
+
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -80,6 +82,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
+COPY --from=builder --chown=nextjs:nodejs /app/.env.production ./.env.production
 
 # Create an empty .env file and set permissions
 RUN touch .env && chown nextjs:nodejs .env
