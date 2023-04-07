@@ -18,6 +18,41 @@ import {
   type NetworkMembersEntity,
   type NetworkAndMembers,
 } from "~/types/network";
+import { Address4, Address6 } from "ip-address";
+
+function isValidIP(ip: string): boolean {
+  return Address4.isValid(ip) || Address6.isValid(ip);
+}
+
+const RouteSchema = z.object({
+  target: z.string().refine(isValidCIDR, {
+    message: "Destination IP must be a valid CIDR notation!",
+  }),
+  via: z
+    .union([
+      z.string().refine(isValidIP, {
+        message: "Via IP must be a valid IP address!",
+      }),
+      z.null(),
+    ])
+    .optional(),
+});
+
+function isValidCIDR(cidr: string): boolean {
+  const [ip, prefix] = cidr.split("/");
+  const isIPv4 = isValidIP(ip);
+  const isIPv6 = isValidIP(ip);
+  const prefixNumber = parseInt(prefix);
+
+  if (isIPv4) {
+    return prefixNumber >= 0 && prefixNumber <= 32;
+  } else if (isIPv6) {
+    return prefixNumber >= 0 && prefixNumber <= 128;
+  } else {
+    return false;
+  }
+}
+const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -195,17 +230,7 @@ export const networkRouter = createTRPCRouter({
           ipPool: z.union([z.array(z.string()), z.string()]).optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
-          routes: z
-            .array(
-              z.object({
-                target: z.string({
-                  required_error: "Via IP must has a value!",
-                  // invalid_type_error: "Name must be a string",
-                }),
-                via: z.union([z.string(), z.null()]).optional(),
-              })
-            )
-            .optional(),
+          routes: RoutesArraySchema,
           changeCidr: z.string().optional(),
         }),
       })
@@ -251,9 +276,25 @@ export const networkRouter = createTRPCRouter({
             },
           });
         }
-
         if (input.updateParams.routes) {
-          payload.routes = input.updateParams.routes;
+          try {
+            const validatedRoutes = RoutesArraySchema.parse(
+              input.updateParams.routes
+            );
+            payload.routes = validatedRoutes;
+          } catch (error) {
+            if (error instanceof z.ZodError) {
+              // Handle validation errors here
+              throw new TRPCError({
+                message: `Invalid routes provided ${error.message}`,
+                code: "BAD_REQUEST",
+              });
+              throw new Error("Invalid routes provided");
+            } else {
+              // Handle other errors here
+              throw error;
+            }
+          }
         }
 
         if (input.updateParams.changeCidr) {
