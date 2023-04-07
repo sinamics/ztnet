@@ -1,17 +1,9 @@
 import React from "react";
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import NetworkById from "~/pages/network/[id]";
 import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/router";
-import { prisma } from "~/server/db";
-import { type network as Network } from "@prisma/client";
 import { api } from "../../../utils/api";
 
 // function createTestContext(network?: Network) {
@@ -21,42 +13,6 @@ import { api } from "../../../utils/api";
 //     network: network || null,
 //   };
 // }
-const MockValues = {
-  api: {
-    network: {
-      getNetworkById: {
-        useQuery: () => ({
-          data: {
-            network: {
-              nwid: "1234567890",
-              name: "Test Network",
-              private: true,
-              ipAssignmentPools: [
-                { ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-              ],
-              routes: [{ target: "10.0.0.0/24" }],
-            },
-            members: [],
-          },
-          isLoading: false,
-          refetch: jest.fn(),
-        }),
-      },
-      updateNetwork: {
-        useMutation: () => ({
-          mutate: jest.fn(),
-        }),
-      },
-    },
-    networkMember: {
-      UpdateDatabaseOnly: {
-        useMutation: () => ({
-          mutate: jest.fn(),
-        }),
-      },
-    },
-  },
-};
 jest.mock("../../../utils/api", () => ({
   api: {
     network: {
