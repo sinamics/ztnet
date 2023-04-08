@@ -150,14 +150,28 @@ export const networkRouter = createTRPCRouter({
       for (const member of getActiveMembers) {
         // member.creationTime = new Date(member.creationTime * 1000);
 
-        const peers = await ztController.peer(member.address);
+        const peers = await ztController
+          .peer(member.address)
+          .catch((err: APIError) => {
+            throw new TRPCError({
+              message: `${err.cause.toString()} --- ${err.message}`,
+              code: "BAD_REQUEST",
+              cause: err.cause,
+            });
+          });
+
         const memberPeer = peers.find((peer) => peer.address === member.id);
 
         try {
           Object.assign(member, {
             peers: memberPeer,
           });
-        } catch (error) {}
+        } catch (error) {
+          throw new TRPCError({
+            message: error,
+            code: "BAD_REQUEST",
+          });
+        }
       }
 
       // const latencyInfo: { [memberId: string]: number } = {};
