@@ -204,23 +204,21 @@ export const network_create = async (
 };
 // delete network
 // https://docs.zerotier.com/service/v1/#operation/deleteNetwork
-type HttpResponse200<T> = {
-  status: 200;
-  data: T;
+type HttpResponse<T> = {
+  status: number;
+  data: string;
 };
-
-type HttpResponse401 = {
-  status: 401;
-  error: string;
-};
-type HttpResponse<T> = HttpResponse200<T> | HttpResponse401;
 
 export async function network_delete(
   nwid: string
 ): Promise<HttpResponse<void>> {
   try {
-    await axios.delete(`${ZT_ADDR}/controller/network/${nwid}`);
-    return { status: 200, data: undefined };
+    const response = await axios.delete(
+      `${ZT_ADDR}/controller/network/${nwid}`,
+      options
+    );
+
+    return { status: response.status, data: undefined };
   } catch (error) {
     const message = "An error occurred while getting network_delete";
     throw new APIError(message, error as AxiosError);
