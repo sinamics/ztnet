@@ -29,7 +29,8 @@
         "Prisma.prisma",
         "bradlc.vscode-tailwindcss",
         "austenc.tailwind-docs",
-        "bourhaouta.tailwindshades"
+        "bourhaouta.tailwindshades",
+        "Gruntfuggly.todo-tree"
       ]
     }
   }
