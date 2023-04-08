@@ -1,21 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
 import Sentencer from "sentencer";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import { updateNetworkMembers } from "../networkService";
+import { Address4, Address6 } from "ip-address";
 import {
-  type NetworkMembersEntity,
   type NetworkAndMembers,
   type MembersEntity,
   type ZtControllerNetwork,
+  type IpAssignmentPoolsEntity,
+  type Peers,
 } from "~/types/network";
-import { Address4, Address6 } from "ip-address";
 import { type APIError } from "~/server/helpers/errorHandler";
+import { type network_members } from "@prisma/client";
 
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
@@ -141,9 +140,11 @@ export const networkRouter = createTRPCRouter({
 
       // Get peers to view client version of zt
       const updatedActiveMembers = await Promise.all(
-        getActiveMembers.map(async (member) => {
+        getActiveMembers.map(async (member: network_members) => {
           const peers = await ztController.peer(member.address).catch(() => []);
-          const memberPeer = peers.find((peer) => peer.address === member.id);
+          const memberPeer = peers.find(
+            (peer: Peers) => peer.address === member.id
+          ) as Peers | undefined;
           return {
             ...member,
             peers: memberPeer,
@@ -169,33 +170,34 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // async (_: any, { nwid }: any, context: any) => {
-      // Delete ZT network
-      await ztController
-        .network_delete(input.nwid)
-        .then(async () => {
-          // delete network_members
-          await ctx.prisma.network_members.deleteMany({
-            where: {
-              nwid: input.nwid,
-            },
-          });
-        })
-        .then(async () => {
-          // delete network
-          await ctx.prisma.network.deleteMany({
-            where: {
-              authorId: ctx.session.user.id,
-              nwid: input.nwid,
-            },
-          });
-        })
-        .catch((err) => {
+      try {
+        // Delete ZT network
+        await ztController.network_delete(input.nwid);
+
+        // Delete network_members
+        await ctx.prisma.network_members.deleteMany({
+          where: {
+            nwid: input.nwid,
+          },
+        });
+
+        // Delete network
+        await ctx.prisma.network.deleteMany({
+          where: {
+            authorId: ctx.session.user.id,
+            nwid: input.nwid,
+          },
+        });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
           throw new TRPCError({
-            message: err,
+            message: `Invalid routes provided ${error.message}`,
             code: "BAD_REQUEST",
           });
-        });
+        } else {
+          throw error;
+        }
+      }
     }),
   updateNetwork: protectedProcedure
     .input(
@@ -203,7 +205,12 @@ export const networkRouter = createTRPCRouter({
         nwid: z.string().nonempty(),
         updateParams: z.object({
           privateNetwork: z.boolean().optional(),
-          ipPool: z.union([z.array(z.string()), z.string()]).optional(),
+          ipPool: z.array(
+            z.object({
+              ipRangeEnd: z.string(),
+              ipRangeStart: z.string(),
+            })
+          ),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
           routes: RoutesArraySchema.optional(),
@@ -214,75 +221,60 @@ export const networkRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // Construct the API request payload using the provided updateParams
       const payload: Partial<ZtControllerNetwork> = {};
+
       try {
-        // Private or public network
-        if (typeof input.updateParams.privateNetwork === "boolean") {
-          Object.assign(
-            payload,
-            {},
-            { private: input.updateParams.privateNetwork }
-          );
-        }
-        // Ip pool assignments
-        if (input.updateParams.ipPool) {
-          // when user select a new ip subnet, it will be a CIDR string
-          if (typeof input.updateParams.ipPool === "string") {
-            Object.assign(payload, {}, IPv4gen(input.updateParams.ipPool));
-          }
+        const { privateNetwork, ipPool, name, routes, changeCidr } =
+          input.updateParams;
 
-          // when user delete a ip subnet, a new array will be sent from the UI.
-          if (typeof input.updateParams.ipPool === "object") {
-            Object.assign(
-              payload,
-              {},
-              { ipAssignmentPools: input.updateParams.ipPool }
-            );
+        if (typeof privateNetwork === "boolean") {
+          payload.private = privateNetwork;
+        }
+
+        if (ipPool) {
+          if (typeof ipPool === "string") {
+            Object.assign(payload, IPv4gen(ipPool));
+          } else if (Array.isArray(ipPool)) {
+            payload.ipAssignmentPools = ipPool as IpAssignmentPoolsEntity[];
           }
         }
 
-        // network name
-        if (input.updateParams.name) {
-          payload.name = input.updateParams.name;
+        if (name) {
+          payload.name = name;
           await ctx.prisma.network.update({
-            where: {
-              nwid: input.nwid,
-            },
-            data: {
-              nwname: payload.name,
-            },
+            where: { nwid: input.nwid },
+            data: { nwname: name },
           });
         }
-        if (input.updateParams.routes) {
+
+        if (routes) {
           try {
-            const validatedRoutes = RoutesArraySchema.parse(
-              input.updateParams.routes
-            );
-            payload.routes = validatedRoutes;
+            payload.routes = RoutesArraySchema.parse(routes);
           } catch (error) {
             if (error instanceof z.ZodError) {
-              // Handle validation errors here
               throw new TRPCError({
                 message: `Invalid routes provided ${error.message}`,
                 code: "BAD_REQUEST",
               });
-              throw new Error("Invalid routes provided");
             } else {
-              // Handle other errors here
               throw error;
             }
           }
         }
 
-        if (input.updateParams.changeCidr) {
-          payload.cidr = IPv4gen(input.updateParams.changeCidr).cidrOptions;
+        if (changeCidr) {
+          payload.cidr = IPv4gen(changeCidr).cidrOptions;
         }
 
         return await ztController.network_update(input.nwid, payload);
-      } catch (err) {
-        throw new TRPCError({
-          message: err,
-          code: "BAD_REQUEST",
-        });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw new TRPCError({
+            message: `Invalid routes provided ${error.message}`,
+            code: "BAD_REQUEST",
+          });
+        } else {
+          throw error;
+        }
       }
     }),
 
