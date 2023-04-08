@@ -126,7 +126,7 @@ const NetworkById = () => {
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
               <span className="font-semibold">Network is</span>
-              {network.private ? (
+              {network?.private ? (
                 <span className="text-success">Private</span>
               ) : (
                 <span className="text-error">Public</span>
@@ -140,15 +140,15 @@ const NetworkById = () => {
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
           <div>
             <span className="text-muted font-semibold">Network Start:</span>{" "}
-            <span>{network && network.ipAssignmentPools[0]?.ipRangeStart}</span>
+            <span>{network?.ipAssignmentPools[0]?.ipRangeStart}</span>
           </div>
           <div>
             <span className="text-muted font-semibold">Network End:</span>{" "}
-            {network && network.ipAssignmentPools[0]?.ipRangeEnd}
+            {network?.ipAssignmentPools[0]?.ipRangeEnd}
           </div>
           <div>
             <span className="text-muted font-semibold">Network Cidr:</span>{" "}
-            {network && network.routes[0]?.target}
+            {network?.routes[0]?.target}
           </div>
         </div>
       </div>
