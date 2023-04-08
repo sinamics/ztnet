@@ -7,12 +7,22 @@
 
 import fs from "fs";
 import axios, { type AxiosError, type AxiosResponse } from "axios";
-import {
-  type MembersEntity,
-  type ZtControllerNetwork,
-  type NetworkAndMembers,
-} from "~/types/network";
+import { type NetworkAndMembers } from "~/types/network";
 import { APIError } from "~/server/helpers/errorHandler";
+import {
+  type ZTControllerResponse,
+  type HttpResponse,
+  type MemberRevisionCounters,
+  type ZTControllerCreateNetwork,
+  type ZTControllerNodeStatus,
+  type ZTControllerStatus,
+  type ZTControllerMemberDetails,
+  type MemberDeleteInput,
+  type MemberDeleteResponse,
+  type ZTControllerMemberUpdate,
+  type ZTControllerGetPeer,
+} from "~/types/ztController";
+
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 
@@ -42,11 +52,6 @@ const options = {
 
 // Check for controller function and return controller status.
 // https://docs.zerotier.com/service/v1/#operation/getControllerStatus
-export interface ZTControllerStatus {
-  controller: boolean;
-  apiVersion: number;
-  clock: number;
-}
 
 //Get Version
 export const get_controller_version = async function () {
@@ -88,40 +93,6 @@ export const get_controller_networks =
   https://docs.zerotier.com/service/v1/#operation/getStatus
 */
 
-export interface ZTControllerNodeStatus {
-  address: string;
-  clock: number;
-  config: Config;
-  online: boolean;
-  planetWorldId: number;
-  planetWorldTimestamp: number;
-  publicIdentity: string;
-  tcpFallbackActive: boolean;
-  version: string;
-  versionBuild: number;
-  versionMajor: number;
-  versionMinor: number;
-  versionRev: number;
-}
-
-export interface Config {
-  settings: Settings;
-}
-
-export interface Settings {
-  allowManagementFrom: null[];
-  allowTcpFallbackRelay: boolean;
-  forceTcpRelay: boolean;
-  listeningOn: null[];
-  portMappingEnabled: boolean;
-  primaryPort: number;
-  secondaryPort: number;
-  softwareUpdate: string;
-  softwareUpdateChannel: string;
-  surfaceAddresses: null[];
-  tertiaryPort: number;
-}
-
 export const get_controller_status = async function () {
   try {
     const { data } = await axios.get(ZT_ADDR + "/status", options);
@@ -132,53 +103,10 @@ export const get_controller_status = async function () {
   }
 };
 
-// Create new network
-export interface ZTControllerCreateNetwork {
-  id: string;
-  nwid: string;
-  objtype: string;
-  name: string;
-  creationTime: number;
-  private: boolean;
-  enableBroadcast: boolean;
-  v4AssignMode: V4AssignMode;
-  v6AssignMode: V6AssignMode;
-  mtu: number;
-  multicastLimit: number;
-  revision: number;
-  routes: Route[];
-  ipAssignmentPools: IPAssignmentPool[];
-  rules: Capability[];
-  capabilities: Capability[];
-  tags: Capability[];
-  remoteTraceTarget: string;
-  remoteTraceLevel: number;
-}
-
-export interface Capability {
-  capability: string;
-}
-
-export interface IPAssignmentPool {
-  ipRangeStart: string;
-  ipRangeEnd: string;
-}
-
-export interface Route {
-  target: string;
-  via: string;
-}
-
-export interface V4AssignMode {
-  zt: boolean;
-}
-
-export interface V6AssignMode {
-  "6plane": boolean;
-  rfc4193: boolean;
-  zt: boolean;
-}
-
+/* 
+  Create new zerotier network
+  https://docs.zerotier.com/service/v1/#operation/createNetwork
+*/
 export const network_create = async (
   name,
   ipAssignment
@@ -204,38 +132,24 @@ export const network_create = async (
 };
 // delete network
 // https://docs.zerotier.com/service/v1/#operation/deleteNetwork
-type HttpResponse200<T> = {
-  status: 200;
-  data: T;
-};
 
-type HttpResponse401 = {
-  status: 401;
-  error: string;
-};
-type HttpResponse<T> = HttpResponse200<T> | HttpResponse401;
-
-export async function network_delete(
-  nwid: string
-): Promise<HttpResponse<void>> {
+export async function network_delete(nwid: string): Promise<HttpResponse> {
   try {
-    await axios.delete(`${ZT_ADDR}/controller/network/${nwid}`);
-    return { status: 200, data: undefined };
+    const response = await axios.delete(
+      `${ZT_ADDR}/controller/network/${nwid}`,
+      options
+    );
+
+    return { status: response.status, data: undefined };
   } catch (error) {
     const message = "An error occurred while getting network_delete";
     throw new APIError(message, error as AxiosError);
   }
 }
 
-// Get network details
-// https://docs.zerotier.com/service/v1/#operation/getNetwork
-
 // Get Network Member Details by ID
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
-type MemberRevisionCounters = {
-  [memberId: string]: number;
-};
 export const network_members = async function (
   nwid: string
 ): Promise<MemberRevisionCounters> {
@@ -252,10 +166,9 @@ export const network_members = async function (
   }
 };
 
-type ZTControllerResponse = {
-  network: ZtControllerNetwork;
-  members: MembersEntity[];
-};
+// Get network details
+// https://docs.zerotier.com/service/v1/#operation/getNetwork
+
 export const network_detail = async function (
   nwid: string
 ): Promise<NetworkAndMembers> {
@@ -286,6 +199,8 @@ export const network_detail = async function (
   }
 };
 
+// Get network details
+// https://docs.zerotier.com/service/v1/#operation/getNetwork
 export const network_update = async function (
   nwid: any,
   data: any
@@ -306,21 +221,6 @@ export const network_update = async function (
 // Get Network Member Details by ID
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
-export interface ZTControllerMemberDetails {
-  id: string;
-  address: string;
-  nwid: string;
-  authorized: boolean;
-  activeBridge: boolean;
-  identity: string;
-  ipAssignments: string[];
-  revision: number;
-  vMajor: number;
-  vMinor: number;
-  vRev: number;
-  vProto: number;
-}
-
 export const member_detail = async function (
   nwid: any,
   id: any
@@ -340,12 +240,6 @@ export const member_detail = async function (
 
 // Delete Network Member by ID
 // https://docs.zerotier.com/service/v1/#operation/deleteControllerNetworkMember
-type MemberDeleteResponse = 200 | 401 | 403 | 404;
-
-type MemberDeleteInput = {
-  nwid: string;
-  memberId: string;
-};
 
 export const member_delete = async ({
   nwid,
@@ -365,26 +259,6 @@ export const member_delete = async ({
 
 // Update Network Member by ID
 // https://docs.zerotier.com/service/v1/#operation/updateControllerNetworkMember
-
-export interface ZTControllerMemberUpdate {
-  activeBridge: boolean;
-  authorized: boolean;
-  capabilities: number[];
-  creationTime: number;
-  id: string;
-  identity: string;
-  ipAssignments: string[];
-  lastAuthorizedTime: number;
-  lastDeauthorizedTime: number;
-  noAutoAssignIps: boolean;
-  revision: number;
-  tags: Array<number[]>;
-  vMajor: number;
-  vMinor: number;
-  vRev: number;
-  vProto: number;
-}
-
 export const member_update = async (
   nwid: string,
   memberId: string,
@@ -405,28 +279,6 @@ export const member_update = async (
 
 // Get all peers
 // https://docs.zerotier.com/service/v1/#operation/getPeers
-export interface ZTControllerGetPeer {
-  address: string;
-  isBonded: boolean;
-  latency: number;
-  paths: Path[];
-  role: string;
-  version: string;
-  versionMajor: number;
-  versionMinor: number;
-  versionRev: number;
-}
-
-export interface Path {
-  active: boolean;
-  address: string;
-  expired: boolean;
-  lastReceive: number;
-  lastSend: number;
-  preferred: boolean;
-  trustedPathId: number;
-}
-
 export const peers = async (): Promise<ZTControllerGetPeer> => {
   try {
     const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, options);
@@ -439,7 +291,6 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 
 // Get information about a specific peer by Node ID.
 // https://docs.zerotier.com/service/v1/#operation/getPeer
-
 export const peer = async (
   userZtAddress: string
 ): Promise<ZTControllerGetPeer[]> => {

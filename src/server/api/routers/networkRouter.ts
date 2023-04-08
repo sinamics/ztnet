@@ -1,7 +1,12 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
-import Sentencer from "sentencer";
+import {
+  type Config,
+  adjectives,
+  animals,
+  uniqueNamesGenerator,
+} from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import { updateNetworkMembers } from "../networkService";
@@ -15,6 +20,12 @@ import {
 } from "~/types/network";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
+
+const customConfig: Config = {
+  dictionaries: [adjectives, animals],
+  separator: "-",
+  length: 2,
+};
 
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
@@ -272,47 +283,55 @@ export const networkRouter = createTRPCRouter({
         }
       }
     }),
-
   createNetwork: protectedProcedure.mutation(async ({ ctx }) => {
-    // Generate ipv4 address, cidr, start & end
-    const ipAssignmentPools = IPv4gen(null);
-    // Generate adjective and noun word
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const networkName: string = Sentencer.make(
-      "{{ adjective }}_{{ noun }}"
-    ) as string;
+    try {
+      // Generate ipv4 address, cidr, start & end
+      const ipAssignmentPools = IPv4gen(null);
 
-    // Create ZT network
-    return (
-      ztController
-        .network_create(networkName, ipAssignmentPools)
-        .then(async (newNw: { name: string; nwid: string }) => {
-          // store the created User in db
-          return ctx.prisma.user
-            .update({
-              where: {
-                id: ctx.session.user.id,
-              },
-              data: {
-                network: {
-                  create: {
-                    nwname: newNw.name,
-                    nwid: newNw.nwid,
-                  },
-                },
-              },
-              select: {
-                network: true,
-              },
-            })
-            .catch((err) => {
-              // eslint-disable-next-line no-console
-              console.log(err);
-              // throw new ApolloError("Could not create network! Please try again");
-            });
-        })
+      // Generate adjective and noun word
+      const networkName: string = uniqueNamesGenerator(customConfig);
+
+      // Create ZT network
+      const newNw = await ztController.network_create(
+        networkName,
+        ipAssignmentPools
+      );
+
+      // Store the created network in the database
+      const updatedUser = await ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          network: {
+            create: {
+              nwname: newNw.name,
+              nwid: newNw.nwid,
+            },
+          },
+        },
+        select: {
+          network: true,
+        },
+      });
+
+      return updatedUser;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        // Log the error and throw a custom error message
         // eslint-disable-next-line no-console
-        .catch((err) => console.log(err))
-    );
+        console.error(err);
+        throw new TRPCError({
+          message: "Could not create network! Please try again",
+          code: "BAD_REQUEST",
+        });
+      } else {
+        // Throw a generic error for unknown error types
+        throw new TRPCError({
+          message: "An unknown error occurred",
+          code: "BAD_REQUEST",
+        });
+      }
+    }
   }),
 });

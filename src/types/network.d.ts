@@ -117,10 +117,3 @@ export interface Peers {
   versionMinor: number;
   versionRev: number;
 }
-
-export enum ConnectionStatus {
-  Offline = 0,
-  Relayed = 1,
-  DirectLAN = 2,
-  DirectWAN = 3,
-}

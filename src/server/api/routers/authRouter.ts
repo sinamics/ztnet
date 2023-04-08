@@ -98,7 +98,7 @@ export const authRouter = createTRPCRouter({
 
       const hash = bcrypt.hashSync(password, 10);
 
-      // Send validation link to user by mail
+      // TODO send validation link to user by mail
       // sendMailValidationLink(i);
 
       // Check the total number of users in the database
@@ -118,32 +118,6 @@ export const authRouter = createTRPCRouter({
       return {
         user: newUser,
       };
-
-      // Generate ipv4 address, cidr, start & end
-      // const ipAssignmentPools = Ip4.randomIPv4();
-      // const networkName = process.env.ZT_DEFAULT_NETWORKNAME;
-      // // Create ZT network
-      // await ztn
-      //   .network_create(networkName, ipAssignmentPools)
-      //   .then(async (newNw) => {
-      //     // store the created User in db
-      //     return await AuthService.users.update({
-      //       where: {
-      //         userid: newuser.userid,
-      //       },
-      //       data: {
-      //         network: {
-      //           create: {
-      //             nwname: newNw.name,
-      //             nwid: newNw.nwid,
-      //           },
-      //         },
-      //       },
-      //       select: {
-      //         network: true,
-      //       },
-      //     });
-      //   });
     }),
   me: protectedProcedure.query(async ({ ctx }) => {
     await ctx.prisma.user.findFirst({
