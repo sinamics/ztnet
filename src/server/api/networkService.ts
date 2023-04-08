@@ -6,16 +6,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
-// import { PubSub } from "apollo-server-express";
-
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
-
-// const arrOfNetworks = new Set();
-// let timeout: ReturnType<typeof setTimeout>;
-
-// Fetch data for online users and push them via wesocket.
-// TODO i user has two tabs open on the same page, this logic will break, or data will not be pushed if one tab is closed.
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -70,7 +62,6 @@ export const updateNetworkMembers = async (zt_controller: any) => {
   if (zt_controller.members.length === 0) return;
 
   // Get peers to view online status members
-
   for (const member of zt_controller.members) {
     member.peers = (await ztController.peer(member.address)) || null;
     member.creationTime = member.creationTime / 1000;
