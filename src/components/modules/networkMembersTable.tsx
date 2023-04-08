@@ -120,7 +120,7 @@ export const NetworkMembersTable = ({ nwid }) => {
       },
       {
         Header: "ID",
-        accessor: (d: string) => d["id"],
+        accessor: "id",
         // maxWidth: 200,
         // width: 150,
       },
@@ -418,9 +418,7 @@ export const NetworkMembersTable = ({ nwid }) => {
                         // Loop over the headers in each row
                         headerGroup.headers.map((column) => (
                           <th
-                            {...column.getHeaderProps(
-                              column.getSortByToggleProps()
-                            )}
+                            {...column.getHeaderProps()}
                             scope="col"
                             className="py-3 pl-4"
                           >
