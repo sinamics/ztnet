@@ -1,33 +1,16 @@
-/* eslint-disable react/jsx-key */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-floating-promises */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useRouter } from "next/router";
-import React, { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTable, type Column } from "react-table";
 import { api } from "~/utils/api";
-import Modal from "../elements/modal";
 import { useModalStore } from "~/utils/store";
-// import { useHistory } from "react-router-dom";
-// import "./react-table-styles.css"; // Import the necessary styles for react-table
 
 interface Network {
   nwid: string;
   nwname: string;
-}
-
-interface NetworksTableProps {
-  tableData?: Network[];
-}
-
-interface DeleteNetworkModalProps {
-  data: any;
-  cancle: () => void;
 }
 
 export const NetworkTable = ({ tableData = [] }) => {
@@ -52,14 +35,59 @@ export const NetworkTable = ({ tableData = [] }) => {
         accessor: "action",
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
+  // Create an editable cell renderer
+  const EditableCell = ({
+    value: initialValue,
+    row: { original },
+    column: { id },
+  }) => {
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = useState(initialValue);
+
+    // If the initialValue is changed external, sync it up with our state
+    useEffect(() => {
+      setValue(initialValue);
+    }, [initialValue]);
+
+    if (id === "action") {
+      return (
+        <button
+          onClick={() =>
+            callModal({
+              title: "Delete Network?",
+              description: "Are you sure you want to delete this network?",
+              yesAction: () => {
+                deleteNetworkHandler(original.nwid);
+              },
+            })
+          }
+          className="btn-error btn-xs btn z-20"
+        >
+          Delete
+        </button>
+      );
+    }
+    return (
+      <span onClick={() => handleRowClick(original.nwid as string)}>
+        {value}
+      </span>
+    );
+  };
+
+  const defaultColumn = {
+    Cell: EditableCell,
+    Row: EditableCell,
+  };
   const data = useMemo(() => tableData, [tableData]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
       data,
+      defaultColumn,
       initialState: {
         sortBy: [
           {
@@ -70,8 +98,8 @@ export const NetworkTable = ({ tableData = [] }) => {
       },
     });
 
-  const handleRowClick = (row: any) => {
-    router.push(`/network/${row.original.nwid}`);
+  const handleRowClick = (nwid: string) => {
+    void router.push(`/network/${nwid}`);
   };
   const deleteNetworkHandler = (nwid) => {
     if (!nwid) return;
@@ -87,10 +115,11 @@ export const NetworkTable = ({ tableData = [] }) => {
           className="table-wrapper min-w-full divide-y "
         >
           <thead className="">
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
+            {headerGroups.map((headerGroup, key: number) => (
+              <tr key={key} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, key: number) => (
                   <th
+                    key={key}
                     {...column.getHeaderProps()}
                     scope="col"
                     className="px-6 py-3 text-center text-xs uppercase tracking-wider"
@@ -102,40 +131,23 @@ export const NetworkTable = ({ tableData = [] }) => {
             ))}
           </thead>
           <tbody {...getTableBodyProps()} className="divide-y ">
-            {rows.map((row) => {
+            {rows.map((row, key) => {
               prepareRow(row);
               return (
                 <tr
+                  key={key}
                   {...row.getRowProps()}
+                  // onClick={() => rowClick(row)}
                   className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
                 >
-                  {row.cells.map((cell) => {
+                  {row.cells.map((cell, key) => {
                     return (
                       <td
+                        key={key}
                         {...cell.getCellProps()}
                         className="whitespace-nowrap border border-primary px-6 py-2 text-sm"
                       >
-                        {cell.column.id === "action" ? (
-                          <button
-                            onClick={() =>
-                              callModal({
-                                title: "Delete Network?",
-                                description:
-                                  "Are you sure you want to delete this network?",
-                                yesAction: () => {
-                                  deleteNetworkHandler(row.original.nwid);
-                                },
-                              })
-                            }
-                            className="btn-error btn-xs btn z-20"
-                          >
-                            Delete
-                          </button>
-                        ) : (
-                          <span onClick={() => handleRowClick(row)}>
-                            {cell.render("Cell")}
-                          </span>
-                        )}
+                        {cell.render("Cell")}
                       </td>
                     );
                   })}
