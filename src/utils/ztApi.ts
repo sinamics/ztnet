@@ -248,9 +248,18 @@ export async function network_delete(
     await axios.delete(`${ZT_ADDR}/controller/network/${nwid}`);
     return { status: 200, data: undefined };
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      return { status: 401, error: "Unauthorized" };
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
     }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 }
@@ -318,8 +327,20 @@ export const network_detail = async function (
       network: { ...network.data },
       members: [...membersArr],
     };
-  } catch (err) {
-    return { network: null, members: [] };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
+    throw error;
   }
 };
 
@@ -334,8 +355,20 @@ export const network_update = async function (
       options
     );
     return { network: { ...updated.data } };
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
+    throw error;
   }
 };
 
@@ -352,9 +385,15 @@ export const member_detail = async function (nwid: string, id: string) {
     if (axios.isAxiosError(error)) {
       const axiosError = error as AxiosError;
       // eslint-disable-next-line no-console
-      console.error(axiosError.response?.statusText || "Unknown error");
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
       throw axiosError;
     }
+    // eslint-disable-next-line no-console
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 };
@@ -424,8 +463,18 @@ export const member_update = async (
     );
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
     // eslint-disable-next-line no-console
-    console.error("Error updating member:", error.message);
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 };
@@ -459,8 +508,18 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
     const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, options);
     return response.data as ZTControllerGetPeer;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
     // eslint-disable-next-line no-console
-    console.error("Error fetching peers:", error.message);
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 };
@@ -479,8 +538,18 @@ export const peer = async (
 
     return response.data as ZTControllerGetPeer[];
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      // eslint-disable-next-line no-console
+      console.error(`Axios error: ${axiosError.message}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status code: ${axiosError.response?.status}`);
+      // eslint-disable-next-line no-console
+      console.error(`Status text: ${axiosError.response?.statusText}`);
+      throw axiosError;
+    }
     // eslint-disable-next-line no-console
-    console.error("Error fetching peer:", error.message);
+    console.error(`Unknown error: ${error.message}`);
     throw error;
   }
 };
