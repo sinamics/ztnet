@@ -37,7 +37,7 @@ const NetworkById = () => {
     return (
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-center text-2xl font-semibold">
-          <progress className="progress progress-primary w-56"></progress>s
+          <progress className="progress progress-primary w-56"></progress>
         </h1>
       </div>
     );
