@@ -181,7 +181,7 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
-          <div className="membersTable-wrapper">
+          <div className="membersTable-wrapper text-center">
             <NetworkMembersTable
               nwid={network.nwid}
 
@@ -222,22 +222,27 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <AddMemberById />
       </div>
-
-      <div className="w-5/5 mx-auto w-full py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <button
-          onClick={() =>
-            setState({ ...state, viewZombieTable: !state.viewZombieTable })
-          }
-          className="btn-wide btn"
-        >
-          View deleted members ({networkById?.zombieMembers?.length})
-        </button>
-        {state.viewZombieTable ? (
-          <div className="membersTable-wrapper pt-5">
-            <DeletedNetworkMembersTable nwid={network.nwid} />
+      {networkById?.zombieMembers?.length > 0 ? (
+        <>
+          <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+            <button
+              onClick={() =>
+                setState({ ...state, viewZombieTable: !state.viewZombieTable })
+              }
+              className="btn-wide btn"
+            >
+              View deleted members ({networkById?.zombieMembers?.length})
+            </button>
           </div>
-        ) : null}
-      </div>
+          <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+            {state.viewZombieTable ? (
+              <div className="membersTable-wrapper text-center">
+                <DeletedNetworkMembersTable nwid={network.nwid} />
+              </div>
+            ) : null}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 };

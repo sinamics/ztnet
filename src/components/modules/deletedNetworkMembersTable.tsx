@@ -43,21 +43,18 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
     () => [
       {
         Header: "Authorized",
-        accessor: () => <span>No</span>,
+        accessor: () => <span>no</span>,
       },
       {
         Header: "Member name",
         accessor: "name",
-        width: 300,
+        // width: 300,
       },
       {
         Header: "ID",
         accessor: "id",
       },
-      {
-        Header: "IP / Latency",
-        width: 170,
-      },
+
       {
         Header: "Created",
         accessor: (d: string) => <TimeAgo date={d["creationTime"]} />,
@@ -65,11 +62,11 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 
       {
         Header: "Conn Status",
-        accessor: () => <span>Zombie</span>,
+        accessor: () => <span>zombie</span>,
       },
       {
         Header: "Action",
-        width: 190,
+        // width: 190,
         accessor: ({ id }: NetworkMembersEntity) => {
           return (
             <button
@@ -90,7 +87,9 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
     ],
     []
   );
-
+  const defaultColumn = {
+    width: "auto",
+  };
   const sortees = React.useMemo(
     () => [
       {
@@ -109,19 +108,20 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
       {
         columns,
         data,
+        // defaultColumn,
         initialState: {
           sortBy: sortees,
         },
       },
-      useBlockLayout,
-      useResizeColumns,
+      // useBlockLayout,
+      // useResizeColumns,
       useSortBy
     );
 
   return (
-    <div className="relative overflow-x-auto rounded-lg border">
+    <span className="pt-2">
       <table
-        className="divide-y divide-gray-400 text-center"
+        className="w-full overflow-x-auto border border-gray-500"
         {...getTableProps()}
       >
         <thead className="bg-base-100">
@@ -129,15 +129,11 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
             // Loop over the header rows
             headerGroups.map((headerGroup) => (
               // Apply the header row props
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr {...headerGroup.getHeaderGroupProps()} className="">
                 {
                   // Loop over the headers in each row
                   headerGroup.headers.map((column) => (
-                    <th
-                      {...column.getHeaderProps()}
-                      scope="col"
-                      className="py-3 pl-4"
-                    >
+                    <th {...column.getHeaderProps()} className="py-3 pl-4">
                       {
                         // Render the header
                         column.render("Header")
@@ -156,7 +152,10 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
             ))
           }
         </thead>
-        <tbody {...getTableBodyProps()} className=" divide-y divide-gray-200 ">
+        <tbody
+          {...getTableBodyProps()}
+          className="divide-y divide-gray-200 border "
+        >
           {
             // Loop over the table rows
             rows.map((row) => {
@@ -192,6 +191,6 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
           }
         </tbody>
       </table>
-    </div>
+    </span>
   );
 };
