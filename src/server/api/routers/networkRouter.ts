@@ -19,6 +19,7 @@ import {
   type NetworkAndMembers,
 } from "~/types/network";
 import { Address4, Address6 } from "ip-address";
+import { type APIError } from "~/server/helpers/errorHandler";
 
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
@@ -91,10 +92,11 @@ export const networkRouter = createTRPCRouter({
       // Return nw obj details
       const ztControllerResponse = await ztController
         .network_detail(psqlNetworkData.nwid)
-        .catch((err: string) => {
+        .catch((err: APIError) => {
           throw new TRPCError({
-            message: err,
+            message: `${err.cause.toString()} --- ${err.message}`,
             code: "BAD_REQUEST",
+            cause: err.cause,
           });
         });
 
