@@ -211,13 +211,24 @@ export const NetworkMembersTable = ({ nwid }) => {
           }
 
           if (conStatus === 2) {
+            if (peers.version !== "-1.-1.-1") {
+              return (
+                <span
+                  style={{ cursor: "pointer" }}
+                  className="text-success"
+                  title="Direct connection established"
+                >
+                  DIRECT (v{peers?.version})
+                </span>
+              );
+            }
             return (
               <span
                 style={{ cursor: "pointer" }}
                 className="text-success"
                 title="Direct connection established"
               >
-                DIRECT (v{peers?.version})
+                DIRECT
               </span>
             );
           }
@@ -309,7 +320,15 @@ export const NetworkMembersTable = ({ nwid }) => {
   const defaultColumn = {
     Cell: EditableCell,
   };
-
+  const sortees = React.useMemo(
+    () => [
+      {
+        id: "id",
+        desc: false,
+      },
+    ],
+    []
+  );
   const data = useMemo(() => networkById.members, [networkById.members]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
@@ -318,12 +337,7 @@ export const NetworkMembersTable = ({ nwid }) => {
         data,
         defaultColumn,
         initialState: {
-          sortBy: [
-            {
-              id: "id",
-              desc: false,
-            },
-          ],
+          sortBy: sortees,
         },
       },
       useBlockLayout,
