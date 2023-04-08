@@ -161,7 +161,6 @@ export const networkRouter = createTRPCRouter({
           });
 
         const memberPeer = peers.find((peer) => peer.address === member.id);
-
         try {
           Object.assign(member, {
             peers: memberPeer,

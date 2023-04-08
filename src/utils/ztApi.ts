@@ -449,6 +449,7 @@ export const peer = async (
       options
     );
 
+    if (!response.data) return [] as ZTControllerGetPeer[];
     return response.data as ZTControllerGetPeer[];
   } catch (error) {
     const message = "An error occurred while getting peer";
