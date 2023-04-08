@@ -13,7 +13,7 @@ export class APIError extends Error {
       this.statusText = axiosError.response?.statusText;
       this.cause = axiosError.cause;
       // eslint-disable-next-line no-console
-      console.error(axiosError.cause);
+      console.error(axiosError);
     }
   }
 }
