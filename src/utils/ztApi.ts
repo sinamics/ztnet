@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import fs from "fs";
 import axios, { type AxiosError, type AxiosResponse } from "axios";
 import {
@@ -12,6 +12,7 @@ import {
   type ZtControllerNetwork,
   type NetworkAndMembers,
 } from "~/types/network";
+import { APIError } from "~/server/helpers/errorHandler";
 const ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 let ZT_SECRET = process.env.ZT_SECRET;
 
@@ -22,6 +23,8 @@ if (!ZT_SECRET) {
   try {
     ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
   } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("an error occurred while reading the ZT_SECRET");
     throw error;
   }
 }
@@ -51,8 +54,9 @@ export const get_controller_version = async function () {
     const { data } = await axios.get(ZT_ADDR + "/controller", options);
 
     return data as ZTControllerStatus;
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    const message = "An error occurred while getting get_controller_version";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -69,21 +73,13 @@ export const get_controller_networks =
         ZT_ADDR + "/controller/network",
         options
       );
-      return data;
+      return data as ZTControllerListNetworks;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        // eslint-disable-next-line no-console
-        console.error(`Axios error: ${axiosError.message}`);
-        // eslint-disable-next-line no-console
-        console.error(`Status code: ${axiosError.response?.status}`);
-        // eslint-disable-next-line no-console
-        console.error(`Status text: ${axiosError.response?.statusText}`);
-        throw axiosError;
-      }
-      // eslint-disable-next-line no-console
-      console.error(`Unknown error: ${error.message}`);
-      throw error;
+      const message = "An error occurred while getting get_controller_networks";
+      throw new APIError(
+        message,
+        axios.isAxiosError(error) ? error : undefined
+      );
     }
   };
 
@@ -131,19 +127,8 @@ export const get_controller_status = async function () {
     const { data } = await axios.get(ZT_ADDR + "/status", options);
     return data as ZTControllerNodeStatus;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      // eslint-disable-next-line no-console
-      console.error(`Axios error: ${axiosError.message}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status code: ${axiosError.response?.status}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status text: ${axiosError.response?.statusText}`);
-      throw axiosError;
-    }
-    // eslint-disable-next-line no-console
-    console.error(`Unknown error: ${error.message}`);
-    throw error;
+    const message = "An error occurred while getting get_controller_status";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -213,19 +198,8 @@ export const network_create = async (
     );
     return response.data as ZTControllerCreateNetwork;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      // eslint-disable-next-line no-console
-      console.error(`Axios error: ${axiosError.message}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status code: ${axiosError.response?.status}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status text: ${axiosError.response?.statusText}`);
-      throw axiosError;
-    }
-    // eslint-disable-next-line no-console
-    console.error(`Unknown error: ${error.message}`);
-    throw error;
+    const message = "An error occurred while getting network_create";
+    throw new APIError(message, error as AxiosError);
   }
 };
 // delete network
@@ -248,10 +222,8 @@ export async function network_delete(
     await axios.delete(`${ZT_ADDR}/controller/network/${nwid}`);
     return { status: 200, data: undefined };
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      return { status: 401, error: "Unauthorized" };
-    }
-    throw error;
+    const message = "An error occurred while getting network_delete";
+    throw new APIError(message, error as AxiosError);
   }
 }
 
@@ -273,21 +245,10 @@ export const network_members = async function (
       options
     );
 
-    return members.data;
+    return members.data as MemberRevisionCounters;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      // eslint-disable-next-line no-console
-      console.error(`Axios error: ${axiosError.message}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status code: ${axiosError.response?.status}`);
-      // eslint-disable-next-line no-console
-      console.error(`Status text: ${axiosError.response?.statusText}`);
-      throw axiosError;
-    }
-    // eslint-disable-next-line no-console
-    console.error(`Unknown error: ${error.message}`);
-    throw error;
+    const message = "An error occurred while getting network_members";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -306,6 +267,7 @@ export const network_detail = async function (
       `${ZT_ADDR}/controller/network/${nwid}`,
       options
     );
+
     const membersArr: any = [];
     for (const member in members) {
       const memberDetails: AxiosResponse = await axios.get(
@@ -318,8 +280,9 @@ export const network_detail = async function (
       network: { ...network.data },
       members: [...membersArr],
     };
-  } catch (err) {
-    return { network: null, members: [] };
+  } catch (error) {
+    const message = "An error occurred while getting network_detail";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -334,28 +297,44 @@ export const network_update = async function (
       options
     );
     return { network: { ...updated.data } };
-  } catch (err) {
-    throw err;
+  } catch (error) {
+    const message = "An error occurred while getting network_update";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
 // Get Network Member Details by ID
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
-export const member_detail = async function (nwid: string, id: string) {
+
+export interface ZTControllerMemberDetails {
+  id: string;
+  address: string;
+  nwid: string;
+  authorized: boolean;
+  activeBridge: boolean;
+  identity: string;
+  ipAssignments: string[];
+  revision: number;
+  vMajor: number;
+  vMinor: number;
+  vRev: number;
+  vProto: number;
+}
+
+export const member_detail = async function (
+  nwid: any,
+  id: any
+): Promise<ZTControllerMemberDetails> {
   try {
     const response = await axios.get(
       `${ZT_ADDR}/controller/network/${nwid}/member/${id}`,
       options
     );
-    return response.data;
+
+    return response.data as ZTControllerMemberDetails;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const axiosError = error as AxiosError;
-      // eslint-disable-next-line no-console
-      console.error(axiosError.response?.statusText || "Unknown error");
-      throw axiosError;
-    }
-    throw error;
+    const message = "An error occurred while getting member_detail";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -379,13 +358,8 @@ export const member_delete = async ({
     );
     return response.status as MemberDeleteResponse;
   } catch (error) {
-    if (error.response) {
-      // Return the status code from the error response
-      return error.response.status as MemberDeleteResponse;
-    }
-    // eslint-disable-next-line no-console
-    console.error("Error deleting member:", error.message);
-    throw error;
+    const message = "An error occurred while getting member_delete";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -424,9 +398,8 @@ export const member_update = async (
     );
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error updating member:", error.message);
-    throw error;
+    const message = "An error occurred while getting member_update";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -459,9 +432,8 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
     const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, options);
     return response.data as ZTControllerGetPeer;
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error fetching peers:", error.message);
-    throw error;
+    const message = "An error occurred while getting peers";
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -477,10 +449,9 @@ export const peer = async (
       options
     );
 
+    if (!response.data) return [] as ZTControllerGetPeer[];
     return response.data as ZTControllerGetPeer[];
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Error fetching peer:", error.message);
-    throw error;
+    return [];
   }
 };
