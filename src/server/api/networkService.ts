@@ -16,65 +16,69 @@ import { prisma } from "../db";
 
 // Fetch data for online users and push them via wesocket.
 // TODO i user has two tabs open on the same page, this logic will break, or data will not be pushed if one tab is closed.
-// Need to store number of session in the array
 
-export const updateNetworkMembers = async (
-  zt_controller: any
-  //   unsubscribe: boolean
-) => {
-  //   arrOfNetworks.add(nwid);
-  //   const memberResults = (fn: () => void) =>
-  //   Promises.map(arrOfNetworks, async (_nwid: any) => {
-  //   const zt_controller = await ztController.network_detail(nwid);
+// This function checks if the given IP address is likely a private IP address
+function isPrivateIP(ip: string): boolean {
+  const ipInt = ip
+    .split(".")
+    .reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+  const ranges = [
+    { start: 10 << 24, end: (10 << 24) + (1 << 24) - 1 },
+    {
+      start: (172 << 24) + (16 << 16),
+      end: (172 << 24) + (31 << 16) + (1 << 16) - 1,
+    },
+    {
+      start: (192 << 24) + (168 << 16),
+      end: (192 << 24) + (168 << 16) + (1 << 16) - 1,
+    },
+  ];
+
+  return ranges.some((range) => ipInt >= range.start && ipInt <= range.end);
+}
+
+export enum ConnectionStatus {
+  Offline = 0,
+  Relayed = 1,
+  DirectLAN = 2,
+  DirectWAN = 3,
+}
+
+function determineConnectionStatus(peer: any): ConnectionStatus {
+  if (!peer) {
+    return ConnectionStatus.Offline;
+  }
+
+  if (peer?.latency === -1 || peer?.versionMajor === -1) {
+    return ConnectionStatus.Relayed;
+  }
+
+  // Check if at least one path has a private IP
+  if (peer?.paths && peer.paths.length > 0) {
+    for (const path of peer?.paths) {
+      const ip = path.address.split("/")[0];
+      if (isPrivateIP(ip)) {
+        return ConnectionStatus.DirectLAN;
+      }
+    }
+  }
+
+  return ConnectionStatus.DirectWAN;
+}
+export const updateNetworkMembers = async (zt_controller: any) => {
   // return if no members
   if (zt_controller.members.length === 0) return;
 
   // Get peers to view online status members
+
   for (const member of zt_controller.members) {
     member.peers = (await ztController.peer(member.address)) || null;
     member.creationTime = member.creationTime / 1000;
-
-    // user is in direct mode.
-    if (
-      member.peers &&
-      member.peers?.latency !== -1 &&
-      member.peers?.versionMajor !== -1
-    ) {
-      member.conStatus = 2;
-      continue;
-    }
-
-    // user is online with relayed connection
-    if (member.peers && member.peers?.latency === -1) {
-      member.conStatus = 1;
-      continue;
-    }
-
-    // user is offline.
-    member.conStatus = 0;
+    member.conStatus = determineConnectionStatus(member.peers);
   }
 
   // update or create members in db
   await psql_updateMember(zt_controller.members);
-
-  // push data to websocket
-  //   return pubsub.publish(_nwid, { members: zt_controller.members });
-  //   }).then(() => fn());
-
-  //   if (unsubscribe) {
-  //     arrOfNetworks.delete(nwid);
-  //     return clearTimeout(timeout);
-  //   }
-
-  // wait 10sec after proccess has finished. No race condition
-  //   function recursion() {
-  //     if (timeout) clearTimeout(timeout);
-  //     timeout = setTimeout(async () => {
-  //       await memberResults(recursion);
-  //     }, 10000);
-  //   }
-
-  //   await memberResults(recursion);
 };
 
 interface MemberI {

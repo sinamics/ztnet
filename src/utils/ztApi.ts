@@ -449,9 +449,9 @@ export const peer = async (
       options
     );
 
-    if (!response.data) return [] as ZTControllerGetPeer[];
+    if (!response.data) return null as ZTControllerGetPeer[];
     return response.data as ZTControllerGetPeer[];
   } catch (error) {
-    return [];
+    return null;
   }
 };

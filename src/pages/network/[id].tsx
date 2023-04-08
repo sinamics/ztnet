@@ -12,9 +12,11 @@ import CopyIcon from "~/icons/copy";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
+import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 
 const NetworkById = () => {
   const [state, setState] = useState({
+    viewZombieTable: false,
     editNetworkName: false,
     networkName: "",
   });
@@ -177,7 +179,7 @@ const NetworkById = () => {
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Members
       </div>
-      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+      <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
           <div className="membersTable-wrapper">
             <NetworkMembersTable
@@ -219,6 +221,22 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <AddMemberById />
+      </div>
+
+      <div className="w-5/5 mx-auto w-full py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <button
+          onClick={() =>
+            setState({ ...state, viewZombieTable: !state.viewZombieTable })
+          }
+          className="btn-wide btn"
+        >
+          View deleted members ({networkById?.zombieMembers?.length})
+        </button>
+        {state.viewZombieTable ? (
+          <div className="membersTable-wrapper pt-5">
+            <DeletedNetworkMembersTable nwid={network.nwid} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

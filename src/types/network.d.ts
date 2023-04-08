@@ -63,8 +63,8 @@ export interface ZtControllerNetwork {
   cidr?: string[] | null;
 }
 export interface RoutesEntity {
-  target: string;
-  via?: null;
+  target?: string | null;
+  via?: string | null;
 }
 export interface NetworkMembersEntity {
   nodeid: number;
@@ -116,4 +116,11 @@ export interface Peers {
   versionMajor: number;
   versionMinor: number;
   versionRev: number;
+}
+
+export enum ConnectionStatus {
+  Offline = 0,
+  Relayed = 1,
+  DirectLAN = 2,
+  DirectWAN = 3,
 }
