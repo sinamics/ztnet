@@ -120,7 +120,7 @@ export const NetworkMembersTable = ({ nwid }) => {
       },
       {
         Header: "ID",
-        accessor: (d: string) => d["id"],
+        accessor: "id",
         // maxWidth: 200,
         // width: 150,
       },
@@ -211,13 +211,24 @@ export const NetworkMembersTable = ({ nwid }) => {
           }
 
           if (conStatus === 2) {
+            if (peers.version !== "-1.-1.-1") {
+              return (
+                <span
+                  style={{ cursor: "pointer" }}
+                  className="text-success"
+                  title="Direct connection established"
+                >
+                  DIRECT (v{peers?.version})
+                </span>
+              );
+            }
             return (
               <span
                 style={{ cursor: "pointer" }}
                 className="text-success"
                 title="Direct connection established"
               >
-                DIRECT (v{peers?.version})
+                DIRECT
               </span>
             );
           }
@@ -309,7 +320,15 @@ export const NetworkMembersTable = ({ nwid }) => {
   const defaultColumn = {
     Cell: EditableCell,
   };
-
+  const sortees = React.useMemo(
+    () => [
+      {
+        id: "id",
+        desc: false,
+      },
+    ],
+    []
+  );
   const data = useMemo(() => networkById.members, [networkById.members]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
@@ -318,12 +337,7 @@ export const NetworkMembersTable = ({ nwid }) => {
         data,
         defaultColumn,
         initialState: {
-          sortBy: [
-            {
-              id: "id",
-              desc: false,
-            },
-          ],
+          sortBy: sortees,
         },
       },
       useBlockLayout,
@@ -404,9 +418,7 @@ export const NetworkMembersTable = ({ nwid }) => {
                         // Loop over the headers in each row
                         headerGroup.headers.map((column) => (
                           <th
-                            {...column.getHeaderProps(
-                              column.getSortByToggleProps()
-                            )}
+                            {...column.getHeaderProps()}
                             scope="col"
                             className="py-3 pl-4"
                           >
