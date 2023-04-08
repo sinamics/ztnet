@@ -211,14 +211,14 @@ export const NetworkMembersTable = ({ nwid }) => {
           }
 
           if (conStatus === 2) {
-            if (peers?.version !== "-1.-1.-1") {
+            if (peers?.version === "-1.-1.-1") {
               return (
                 <span
                   style={{ cursor: "pointer" }}
                   className="text-success"
                   title="Direct connection established"
                 >
-                  DIRECT (v{peers?.version})
+                  DIRECT
                 </span>
               );
             }
@@ -228,7 +228,7 @@ export const NetworkMembersTable = ({ nwid }) => {
                 className="text-success"
                 title="Direct connection established"
               >
-                DIRECT
+                DIRECT (v{peers?.version})
               </span>
             );
           }
