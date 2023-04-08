@@ -6,7 +6,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import fs from "fs";
-import axios, { type AxiosResponse } from "axios";
+import axios, { type AxiosError, type AxiosResponse } from "axios";
 import {
   type MembersEntity,
   type ZtControllerNetwork,
@@ -56,7 +56,7 @@ export const get_controller_version = async function () {
     return data as ZTControllerStatus;
   } catch (error) {
     const message = "An error occurred while getting get_controller_version";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -128,7 +128,7 @@ export const get_controller_status = async function () {
     return data as ZTControllerNodeStatus;
   } catch (error) {
     const message = "An error occurred while getting get_controller_status";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -199,7 +199,7 @@ export const network_create = async (
     return response.data as ZTControllerCreateNetwork;
   } catch (error) {
     const message = "An error occurred while getting network_create";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 // delete network
@@ -223,7 +223,7 @@ export async function network_delete(
     return { status: 200, data: undefined };
   } catch (error) {
     const message = "An error occurred while getting network_delete";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 }
 
@@ -248,7 +248,7 @@ export const network_members = async function (
     return members.data as MemberRevisionCounters;
   } catch (error) {
     const message = "An error occurred while getting network_members";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -267,6 +267,7 @@ export const network_detail = async function (
       `${ZT_ADDR}/controller/network/${nwid}`,
       options
     );
+
     const membersArr: any = [];
     for (const member in members) {
       const memberDetails: AxiosResponse = await axios.get(
@@ -281,7 +282,7 @@ export const network_detail = async function (
     };
   } catch (error) {
     const message = "An error occurred while getting network_detail";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -298,7 +299,7 @@ export const network_update = async function (
     return { network: { ...updated.data } };
   } catch (error) {
     const message = "An error occurred while getting network_update";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -333,7 +334,7 @@ export const member_detail = async function (
     return response.data as ZTControllerMemberDetails;
   } catch (error) {
     const message = "An error occurred while getting member_detail";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -358,7 +359,7 @@ export const member_delete = async ({
     return response.status as MemberDeleteResponse;
   } catch (error) {
     const message = "An error occurred while getting member_delete";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -398,7 +399,7 @@ export const member_update = async (
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
     const message = "An error occurred while getting member_update";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -432,7 +433,7 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
     return response.data as ZTControllerGetPeer;
   } catch (error) {
     const message = "An error occurred while getting peers";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
 
@@ -451,6 +452,6 @@ export const peer = async (
     return response.data as ZTControllerGetPeer[];
   } catch (error) {
     const message = "An error occurred while getting peer";
-    throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
+    throw new APIError(message, error as AxiosError);
   }
 };
