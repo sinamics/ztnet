@@ -205,12 +205,7 @@ export const networkRouter = createTRPCRouter({
         nwid: z.string().nonempty(),
         updateParams: z.object({
           privateNetwork: z.boolean().optional(),
-          ipPool: z.array(
-            z.object({
-              ipRangeEnd: z.string(),
-              ipRangeStart: z.string(),
-            })
-          ),
+          ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
           routes: RoutesArraySchema.optional(),
