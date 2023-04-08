@@ -150,16 +150,7 @@ export const networkRouter = createTRPCRouter({
       for (const member of getActiveMembers) {
         // member.creationTime = new Date(member.creationTime * 1000);
 
-        const peers = await ztController
-          .peer(member.address)
-          .catch((err: APIError) => {
-            throw new TRPCError({
-              message: `${err.cause.toString()} --- ${err.message}`,
-              code: "BAD_REQUEST",
-              cause: err.cause,
-            });
-          });
-
+        const peers = await ztController.peer(member.address).catch(() => []);
         const memberPeer = peers.find((peer) => peer.address === member.id);
         try {
           Object.assign(member, {
