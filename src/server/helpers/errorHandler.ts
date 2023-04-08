@@ -12,8 +12,6 @@ export class APIError extends Error {
       this.status = axiosError.response?.status;
       this.statusText = axiosError.response?.statusText;
       this.cause = axiosError.cause;
-      // eslint-disable-next-line no-console
-      console.error(axiosError);
     }
   }
 }
