@@ -1,25 +1,20 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
 import Sentencer from "sentencer";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import bluebird from "bluebird";
 import { updateNetworkMembers } from "../networkService";
-import {
-  type NetworkMembersEntity,
-  type NetworkAndMembers,
-} from "~/types/network";
 import { Address4, Address6 } from "ip-address";
+import {
+  type NetworkAndMembers,
+  type MembersEntity,
+  type ZtControllerNetwork,
+  type IpAssignmentPoolsEntity,
+  type Peers,
+} from "~/types/network";
 import { type APIError } from "~/server/helpers/errorHandler";
+import { type network_members } from "@prisma/client";
 
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
@@ -78,7 +73,7 @@ export const networkRouter = createTRPCRouter({
           ],
         },
         include: {
-          network_members: true,
+          network_members: false,
         },
       });
 
@@ -106,29 +101,26 @@ export const networkRouter = createTRPCRouter({
 
       // Generate ipv4 address, cidr, start & end
       const ipAssignmentPools = IPv4gen(null);
-
-      // Merge data from network DB and zt_controller.network
-      const { network: controllerNetworkData, ...rest } = ztControllerResponse;
       const { cidrOptions } = ipAssignmentPools;
 
+      // merge network data from psql and zt controller
+      const mergedNetwork = {
+        ...psqlNetworkData,
+        ...ztControllerResponse?.network,
+        cidr: cidrOptions,
+      };
+
       const combined: Partial<NetworkAndMembers> = {
-        ...rest,
-        network: {
-          ...psqlNetworkData,
-          ...controllerNetworkData,
-          cidr: cidrOptions,
-        },
+        ...ztControllerResponse,
+        network: mergedNetwork,
       };
       const { members, network } = combined;
-
-      // console.log(JSON.stringify(combined, null, 2));
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-      const getZombieMembers: NetworkMembersEntity[] = await bluebird.map(
-        members,
-        async (member: any) => {
+      const getZombieMembersPromises = members.map(
+        async (member: MembersEntity) => {
           return await ctx.prisma.network_members.findFirst({
             where: {
               nwid: input.nwid,
@@ -147,50 +139,29 @@ export const networkRouter = createTRPCRouter({
       });
 
       // Get peers to view client version of zt
-      for (const member of getActiveMembers) {
-        // member.creationTime = new Date(member.creationTime * 1000);
-
-        const peers = await ztController.peer(member.address).catch(() => []);
-        const memberPeer = peers.find((peer) => peer.address === member.id);
-        try {
-          Object.assign(member, {
+      const updatedActiveMembers = await Promise.all(
+        getActiveMembers.map(async (member: network_members) => {
+          const peers = await ztController.peer(member.address).catch(() => []);
+          const memberPeer = peers.find(
+            (peer: Peers) => peer.address === member.id
+          ) as Peers | undefined;
+          return {
+            ...member,
             peers: memberPeer,
-          });
-        } catch (error) {
-          throw new TRPCError({
-            message: error,
-            code: "BAD_REQUEST",
-          });
-        }
-      }
+          };
+        })
+      );
+      // Resolve the promises before passing them to Promise.all
+      const zombieMembers = await Promise.all(getZombieMembersPromises);
 
-      // const latencyInfo: { [memberId: string]: number } = {};
-      // for (const member of getActiveMembers) {
-      //   if (member.id === "4ef7287f63") {
-      //     //@ts-ignore
-      //     const filteredPeers = member.peers.filter(
-      //       (peer) => peer.latency >= 0
-      //     );
-      //     //@ts-ignore
-      //     const totalLatency = filteredPeers.reduce(
-      //       (sum, peer) => sum + peer.latency,
-      //       0
-      //     );
-      //     //@ts-ignore
-      //     const averageLatency = totalLatency / filteredPeers.length;
-      //     latencyInfo[member.id] = averageLatency;
-      //     // console.log(latencyInfo);
-      //   }
-      // }
+      // filters out any null or undefined elements in the zombieMembers array.
+      const filteredZombieMembers = zombieMembers.filter((a) => a);
 
-      // console.log(ztControllerResponse);
-      return Promise.all([getActiveMembers, getZombieMembers]).then((res) => {
-        // if no zombie members, remove the [null] from array caused by the map function.
-        const zombieMembers = res[1].filter((a: any) => a);
-
-        // Return obj
-        return { network, members: res[0], zombieMembers };
-      });
+      return {
+        network,
+        members: updatedActiveMembers,
+        zombieMembers: filteredZombieMembers,
+      };
     }),
   deleteNetwork: protectedProcedure
     .input(
@@ -199,33 +170,34 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // async (_: any, { nwid }: any, context: any) => {
-      // Delete ZT network
-      await ztController
-        .network_delete(input.nwid)
-        .then(async () => {
-          // delete network_members
-          await ctx.prisma.network_members.deleteMany({
-            where: {
-              nwid: input.nwid,
-            },
-          });
-        })
-        .then(async () => {
-          // delete network
-          await ctx.prisma.network.deleteMany({
-            where: {
-              authorId: ctx.session.user.id,
-              nwid: input.nwid,
-            },
-          });
-        })
-        .catch((err: any) => {
+      try {
+        // Delete ZT network
+        await ztController.network_delete(input.nwid);
+
+        // Delete network_members
+        await ctx.prisma.network_members.deleteMany({
+          where: {
+            nwid: input.nwid,
+          },
+        });
+
+        // Delete network
+        await ctx.prisma.network.deleteMany({
+          where: {
+            authorId: ctx.session.user.id,
+            nwid: input.nwid,
+          },
+        });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
           throw new TRPCError({
-            message: err,
+            message: `Invalid routes provided ${error.message}`,
             code: "BAD_REQUEST",
           });
-        });
+        } else {
+          throw error;
+        }
+      }
     }),
   updateNetwork: protectedProcedure
     .input(
@@ -233,86 +205,71 @@ export const networkRouter = createTRPCRouter({
         nwid: z.string().nonempty(),
         updateParams: z.object({
           privateNetwork: z.boolean().optional(),
-          ipPool: z.union([z.array(z.string()), z.string()]).optional(),
+          ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
-          routes: RoutesArraySchema,
+          routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
         }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       // Construct the API request payload using the provided updateParams
-      const payload: any = {};
+      const payload: Partial<ZtControllerNetwork> = {};
+
       try {
-        // Private or public network
-        if (typeof input.updateParams.privateNetwork === "boolean") {
-          Object.assign(
-            payload,
-            {},
-            { private: input.updateParams.privateNetwork }
-          );
-        }
-        // Ip pool assignments
-        if (input.updateParams.ipPool) {
-          // when user select a new ip subnet, it will be a CIDR string
-          if (typeof input.updateParams.ipPool === "string") {
-            Object.assign(payload, {}, IPv4gen(input.updateParams.ipPool));
-          }
+        const { privateNetwork, ipPool, name, routes, changeCidr } =
+          input.updateParams;
 
-          // when user delete a ip subnet, a new array will be sent from the UI.
-          if (typeof input.updateParams.ipPool === "object") {
-            Object.assign(
-              payload,
-              {},
-              { ipAssignmentPools: input.updateParams.ipPool }
-            );
+        if (typeof privateNetwork === "boolean") {
+          payload.private = privateNetwork;
+        }
+
+        if (ipPool) {
+          if (typeof ipPool === "string") {
+            Object.assign(payload, IPv4gen(ipPool));
+          } else if (Array.isArray(ipPool)) {
+            payload.ipAssignmentPools = ipPool as IpAssignmentPoolsEntity[];
           }
         }
 
-        // network name
-        if (input.updateParams.name) {
-          payload.name = input.updateParams.name;
+        if (name) {
+          payload.name = name;
           await ctx.prisma.network.update({
-            where: {
-              nwid: input.nwid,
-            },
-            data: {
-              nwname: payload.name,
-            },
+            where: { nwid: input.nwid },
+            data: { nwname: name },
           });
         }
-        if (input.updateParams.routes) {
+
+        if (routes) {
           try {
-            const validatedRoutes = RoutesArraySchema.parse(
-              input.updateParams.routes
-            );
-            payload.routes = validatedRoutes;
+            payload.routes = RoutesArraySchema.parse(routes);
           } catch (error) {
             if (error instanceof z.ZodError) {
-              // Handle validation errors here
               throw new TRPCError({
                 message: `Invalid routes provided ${error.message}`,
                 code: "BAD_REQUEST",
               });
-              throw new Error("Invalid routes provided");
             } else {
-              // Handle other errors here
               throw error;
             }
           }
         }
 
-        if (input.updateParams.changeCidr) {
-          payload.cidr = IPv4gen(input.updateParams.changeCidr);
+        if (changeCidr) {
+          payload.cidr = IPv4gen(changeCidr).cidrOptions;
         }
 
         return await ztController.network_update(input.nwid, payload);
-      } catch (err) {
-        throw new TRPCError({
-          message: err,
-          code: "BAD_REQUEST",
-        });
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          throw new TRPCError({
+            message: `Invalid routes provided ${error.message}`,
+            code: "BAD_REQUEST",
+          });
+        } else {
+          throw error;
+        }
       }
     }),
 
@@ -348,7 +305,7 @@ export const networkRouter = createTRPCRouter({
                 network: true,
               },
             })
-            .catch((err: any) => {
+            .catch((err) => {
               // eslint-disable-next-line no-console
               console.log(err);
               // throw new ApolloError("Could not create network! Please try again");

@@ -35,7 +35,12 @@ interface IpAssignmentsProps {
   copyClipboard: (ip: string) => void;
   setDeleteWarning: (args: any) => void;
 }
-
+enum ConnectionStatus {
+  Offline = 0,
+  Relayed = 1,
+  DirectLAN = 2,
+  DirectWAN = 3,
+}
 export const NetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
   const { callModal } = useModalStore((state) => state);
@@ -194,50 +199,52 @@ export const NetworkMembersTable = ({ nwid }) => {
         Header: "Created",
         accessor: (d: string) => <TimeAgo date={d["creationTime"]} />,
       },
+
       {
         Header: "Conn Status",
         accessor: ({ conStatus, peers, lastseen }) => {
-          if (conStatus === 1) {
+          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
+          const cursorStyle = { cursor: "pointer" };
+
+          if (conStatus === ConnectionStatus.Relayed) {
             return (
               <span
-                style={{ cursor: "pointer" }}
+                style={cursorStyle}
                 className="cursor-pointer text-warning"
-                title="Could not establish direct connection and is currently
-                           being Relayed through zerotier servers with higher latency"
+                title="Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency"
               >
                 RELAYED
               </span>
             );
           }
 
-          if (conStatus === 2) {
-            if (peers?.version === "-1.-1.-1") {
-              return (
-                <span
-                  style={{ cursor: "pointer" }}
-                  className="text-success"
-                  title="Direct connection established"
-                >
-                  DIRECT
-                </span>
-              );
-            }
+          if (
+            conStatus === ConnectionStatus.DirectLAN ||
+            conStatus === ConnectionStatus.DirectWAN
+          ) {
+            const directTitle =
+              conStatus === ConnectionStatus.DirectLAN
+                ? "Direct LAN connection established"
+                : "Direct WAN connection established";
+            const versionInfo =
+              peers && peers?.version !== "-1.-1.-1"
+                ? ` (v${peers?.version})`
+                : "";
+
             return (
               <span
-                style={{ cursor: "pointer" }}
+                style={cursorStyle}
                 className="text-success"
-                title="Direct connection established"
+                title={directTitle}
               >
-                DIRECT (v{peers?.version})
+                DIRECT{versionInfo}
               </span>
             );
           }
 
-          // remove the timeago suffix
-          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
           return (
             <span
-              style={{ cursor: "pointer" }}
+              style={cursorStyle}
               className="text-error"
               title="User is offline"
             >
@@ -402,87 +409,79 @@ export const NetworkMembersTable = ({ nwid }) => {
           </div>
         </div>
 
-        <div className="inline-block w-full p-1.5 text-center align-middle">
-          <div className="overflow-hidden rounded-lg border">
-            <table
-              {...getTableProps()}
-              className="table-wrapper min-w-full divide-y divide-gray-400"
+        <div className="overflow-x-auto rounded-lg border">
+          <table {...getTableProps()} className=" divide-y divide-gray-400">
+            <thead className="bg-base-100">
+              {
+                // Loop over the header rows
+                headerGroups.map((headerGroup) => (
+                  // Apply the header row props
+                  <tr {...headerGroup.getHeaderGroupProps()}>
+                    {
+                      // Loop over the headers in each row
+                      headerGroup.headers.map((column) => (
+                        <th
+                          {...column.getHeaderProps()}
+                          scope="col"
+                          className="py-3 pl-4"
+                        >
+                          {
+                            // Render the header
+                            column.render("Header")
+                          }
+                          <span>
+                            {column.isSorted
+                              ? column.isSortedDesc
+                                ? " 🔽"
+                                : " 🔼"
+                              : ""}
+                          </span>
+                        </th>
+                      ))
+                    }
+                  </tr>
+                ))
+              }
+            </thead>
+            <tbody
+              {...getTableBodyProps()}
+              className=" divide-y divide-gray-200"
             >
-              <thead className="bg-base-100">
-                {
-                  // Loop over the header rows
-                  headerGroups.map((headerGroup) => (
-                    // Apply the header row props
-                    <tr {...headerGroup.getHeaderGroupProps()}>
+              {
+                // Loop over the table rows
+                rows.map((row) => {
+                  // Prepare the row for display
+                  prepareRow(row);
+                  return (
+                    // Apply the row props
+                    <tr
+                      className={`items-center ${
+                        !row.original.authorized
+                          ? "border-dotted bg-error bg-opacity-20"
+                          : ""
+                      }`}
+                      {...row.getRowProps()}
+                    >
                       {
-                        // Loop over the headers in each row
-                        headerGroup.headers.map((column) => (
-                          <th
-                            {...column.getHeaderProps()}
-                            scope="col"
-                            className="py-3 pl-4"
-                          >
-                            {
-                              // Render the header
-                              column.render("Header")
-                            }
-                            <span>
-                              {column.isSorted
-                                ? column.isSortedDesc
-                                  ? " 🔽"
-                                  : " 🔼"
-                                : ""}
-                            </span>
-                          </th>
-                        ))
+                        // Loop over the rows cells
+                        row.cells.map((cell) => {
+                          // Apply the cell props
+                          return (
+                            <td {...cell.getCellProps()} className="py-1 pl-4">
+                              {
+                                // Render the cell contents
+                                cell.render("Cell")
+                              }
+                            </td>
+                          );
+                        })
                       }
                     </tr>
-                  ))
-                }
-              </thead>
-              <tbody
-                {...getTableBodyProps()}
-                className=" divide-y divide-gray-200"
-              >
-                {
-                  // Loop over the table rows
-                  rows.map((row) => {
-                    // Prepare the row for display
-                    prepareRow(row);
-                    return (
-                      // Apply the row props
-                      <tr
-                        className={`items-center ${
-                          !row.original.authorized
-                            ? "border-dotted bg-error bg-opacity-20"
-                            : ""
-                        }`}
-                        {...row.getRowProps()}
-                      >
-                        {
-                          // Loop over the rows cells
-                          row.cells.map((cell) => {
-                            // Apply the cell props
-                            return (
-                              <td
-                                {...cell.getCellProps()}
-                                className="py-1 pl-4"
-                              >
-                                {
-                                  // Render the cell contents
-                                  cell.render("Cell")
-                                }
-                              </td>
-                            );
-                          })
-                        }
-                      </tr>
-                    );
-                  })
-                }
-              </tbody>
-            </table>
-          </div>
+                  );
+                })
+              }
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
