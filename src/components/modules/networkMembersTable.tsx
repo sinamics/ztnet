@@ -35,7 +35,12 @@ interface IpAssignmentsProps {
   copyClipboard: (ip: string) => void;
   setDeleteWarning: (args: any) => void;
 }
-
+enum ConnectionStatus {
+  Offline = 0,
+  Relayed = 1,
+  DirectLAN = 2,
+  DirectWAN = 3,
+}
 export const NetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
   const { callModal } = useModalStore((state) => state);
@@ -194,50 +199,52 @@ export const NetworkMembersTable = ({ nwid }) => {
         Header: "Created",
         accessor: (d: string) => <TimeAgo date={d["creationTime"]} />,
       },
+
       {
         Header: "Conn Status",
         accessor: ({ conStatus, peers, lastseen }) => {
-          if (conStatus === 1) {
+          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
+          const cursorStyle = { cursor: "pointer" };
+
+          if (conStatus === ConnectionStatus.Relayed) {
             return (
               <span
-                style={{ cursor: "pointer" }}
+                style={cursorStyle}
                 className="cursor-pointer text-warning"
-                title="Could not establish direct connection and is currently
-                           being Relayed through zerotier servers with higher latency"
+                title="Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency"
               >
                 RELAYED
               </span>
             );
           }
 
-          if (conStatus === 2) {
-            if (!peers || peers?.version === "-1.-1.-1") {
-              return (
-                <span
-                  style={{ cursor: "pointer" }}
-                  className="text-success"
-                  title="Direct connection established"
-                >
-                  DIRECT
-                </span>
-              );
-            }
+          if (
+            conStatus === ConnectionStatus.DirectLAN ||
+            conStatus === ConnectionStatus.DirectWAN
+          ) {
+            const directTitle =
+              conStatus === ConnectionStatus.DirectLAN
+                ? "Direct LAN connection established"
+                : "Direct WAN connection established";
+            const versionInfo =
+              peers && peers?.version !== "-1.-1.-1"
+                ? ` (v${peers?.version})`
+                : "";
+
             return (
               <span
-                style={{ cursor: "pointer" }}
+                style={cursorStyle}
                 className="text-success"
-                title="Direct connection established"
+                title={directTitle}
               >
-                DIRECT (v{peers?.version})
+                DIRECT{versionInfo}
               </span>
             );
           }
 
-          // remove the timeago suffix
-          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
           return (
             <span
-              style={{ cursor: "pointer" }}
+              style={cursorStyle}
               className="text-error"
               title="User is offline"
             >

@@ -1,9 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { z } from "zod";
 
@@ -12,11 +7,12 @@ import { IPv4gen } from "~/utils/IPv4gen";
 import Sentencer from "sentencer";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import bluebird from "bluebird";
 import { updateNetworkMembers } from "../networkService";
 import {
   type NetworkMembersEntity,
   type NetworkAndMembers,
+  type MembersEntity,
+  type ZtControllerNetwork,
 } from "~/types/network";
 import { Address4, Address6 } from "ip-address";
 import { type APIError } from "~/server/helpers/errorHandler";
@@ -78,7 +74,7 @@ export const networkRouter = createTRPCRouter({
           ],
         },
         include: {
-          network_members: true,
+          network_members: false,
         },
       });
 
@@ -106,29 +102,26 @@ export const networkRouter = createTRPCRouter({
 
       // Generate ipv4 address, cidr, start & end
       const ipAssignmentPools = IPv4gen(null);
-
-      // Merge data from network DB and zt_controller.network
-      const { network: controllerNetworkData, ...rest } = ztControllerResponse;
       const { cidrOptions } = ipAssignmentPools;
 
+      // merge network data from psql and zt controller
+      const mergedNetwork = {
+        ...psqlNetworkData,
+        ...ztControllerResponse?.network,
+        cidr: cidrOptions,
+      };
+
       const combined: Partial<NetworkAndMembers> = {
-        ...rest,
-        network: {
-          ...psqlNetworkData,
-          ...controllerNetworkData,
-          cidr: cidrOptions,
-        },
+        ...ztControllerResponse,
+        network: mergedNetwork,
       };
       const { members, network } = combined;
-
-      // console.log(JSON.stringify(combined, null, 2));
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-      const getZombieMembers: NetworkMembersEntity[] = await bluebird.map(
-        members,
-        async (member: any) => {
+      const getZombieMembersPromises = members.map(
+        async (member: MembersEntity) => {
           return await ctx.prisma.network_members.findFirst({
             where: {
               nwid: input.nwid,
@@ -147,50 +140,27 @@ export const networkRouter = createTRPCRouter({
       });
 
       // Get peers to view client version of zt
-      for (const member of getActiveMembers) {
-        // member.creationTime = new Date(member.creationTime * 1000);
-
-        const peers = await ztController.peer(member.address).catch(() => []);
-        const memberPeer = peers.find((peer) => peer.address === member.id);
-        try {
-          Object.assign(member, {
+      const updatedActiveMembers = await Promise.all(
+        getActiveMembers.map(async (member) => {
+          const peers = await ztController.peer(member.address).catch(() => []);
+          const memberPeer = peers.find((peer) => peer.address === member.id);
+          return {
+            ...member,
             peers: memberPeer,
-          });
-        } catch (error) {
-          throw new TRPCError({
-            message: error,
-            code: "BAD_REQUEST",
-          });
-        }
-      }
+          };
+        })
+      );
+      // Resolve the promises before passing them to Promise.all
+      const zombieMembers = await Promise.all(getZombieMembersPromises);
 
-      // const latencyInfo: { [memberId: string]: number } = {};
-      // for (const member of getActiveMembers) {
-      //   if (member.id === "4ef7287f63") {
-      //     //@ts-ignore
-      //     const filteredPeers = member.peers.filter(
-      //       (peer) => peer.latency >= 0
-      //     );
-      //     //@ts-ignore
-      //     const totalLatency = filteredPeers.reduce(
-      //       (sum, peer) => sum + peer.latency,
-      //       0
-      //     );
-      //     //@ts-ignore
-      //     const averageLatency = totalLatency / filteredPeers.length;
-      //     latencyInfo[member.id] = averageLatency;
-      //     // console.log(latencyInfo);
-      //   }
-      // }
+      // filters out any null or undefined elements in the zombieMembers array.
+      const filteredZombieMembers = zombieMembers.filter((a) => a);
 
-      // console.log(ztControllerResponse);
-      return Promise.all([getActiveMembers, getZombieMembers]).then((res) => {
-        // if no zombie members, remove the [null] from array caused by the map function.
-        const zombieMembers = res[1].filter((a: any) => a);
-
-        // Return obj
-        return { network, members: res[0], zombieMembers };
-      });
+      return {
+        network,
+        members: updatedActiveMembers,
+        zombieMembers: filteredZombieMembers,
+      };
     }),
   deleteNetwork: protectedProcedure
     .input(
@@ -220,7 +190,7 @@ export const networkRouter = createTRPCRouter({
             },
           });
         })
-        .catch((err: any) => {
+        .catch((err) => {
           throw new TRPCError({
             message: err,
             code: "BAD_REQUEST",
@@ -236,14 +206,14 @@ export const networkRouter = createTRPCRouter({
           ipPool: z.union([z.array(z.string()), z.string()]).optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
-          routes: RoutesArraySchema,
+          routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
         }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       // Construct the API request payload using the provided updateParams
-      const payload: any = {};
+      const payload: Partial<ZtControllerNetwork> = {};
       try {
         // Private or public network
         if (typeof input.updateParams.privateNetwork === "boolean") {
@@ -304,7 +274,7 @@ export const networkRouter = createTRPCRouter({
         }
 
         if (input.updateParams.changeCidr) {
-          payload.cidr = IPv4gen(input.updateParams.changeCidr);
+          payload.cidr = IPv4gen(input.updateParams.changeCidr).cidrOptions;
         }
 
         return await ztController.network_update(input.nwid, payload);
@@ -348,7 +318,7 @@ export const networkRouter = createTRPCRouter({
                 network: true,
               },
             })
-            .catch((err: any) => {
+            .catch((err) => {
               // eslint-disable-next-line no-console
               console.log(err);
               // throw new ApolloError("Could not create network! Please try again");
