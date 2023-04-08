@@ -211,7 +211,7 @@ export const NetworkMembersTable = ({ nwid }) => {
           }
 
           if (conStatus === 2) {
-            if (peers?.version === "-1.-1.-1") {
+            if (!peers || peers?.version === "-1.-1.-1") {
               return (
                 <span
                   style={{ cursor: "pointer" }}
