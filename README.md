@@ -4,8 +4,6 @@
 
 # Next ZTnet
 
-## ⚠️ This project is currently under development and not yet suitable for production environments.
-
 Next ZTNet is a ZeroTier controller that provides an easy-to-use interface for managing your ZeroTier networks. Built with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, this powerful web application simplifies the process of creating, configuring, and monitoring your ZeroTier networks.
 
 With Next ZTNet, you can:
