@@ -30,15 +30,18 @@ const ZT_FILE =
   process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
 
 if (!ZT_SECRET) {
-  try {
-    ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("an error occurred while reading the ZT_SECRET");
-    throw error;
+  if (process.env.IS_GITHUB_ACTION !== "true") {
+    try {
+      ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("an error occurred while reading the ZT_SECRET");
+    }
+  } else {
+    // GitHub Actions
+    ZT_SECRET = "dummy_text_to_skip_gh";
   }
 }
-
 const options = {
   json: true,
   headers: {

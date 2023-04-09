@@ -73,6 +73,6 @@ test("updateDatabaseOnly test", async () => {
       },
     },
   });
-  // @ts-expect-error -- awaiting fix:
+
   expect(result).toEqual({ member: mockOutput.network_members[0] });
 });

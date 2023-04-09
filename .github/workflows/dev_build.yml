@@ -27,6 +27,7 @@ jobs:
           echo "NEXTAUTH_URL=http://localhost:3000" >> .env
           echo "NEXT_PUBLIC_SITE_NAME=Next ZTnet" >> .env
           echo "NEXT_PUBLIC_APP_VERSION=" >> .env
+          echo "IS_GITHUB_ACTION=true" >> .env
 
       - run: npm install
 
