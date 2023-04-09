@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { type CustomError } from "~/types/errorHandling";
