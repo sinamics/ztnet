@@ -17,7 +17,7 @@ const Input = ({
   name,
   onChange,
   type,
-  className,
+  className = "",
   defaultValue,
   focus = false,
   ...rest
