@@ -6,18 +6,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import React, { useMemo } from "react";
 import TimeAgo from "react-timeago";
-import {
-  useTable,
-  useBlockLayout,
-  useResizeColumns,
-  useSortBy,
-} from "react-table";
+import { useTable, useSortBy } from "react-table";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { type NetworkMembersEntity } from "~/types/network";
@@ -87,9 +81,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
     ],
     []
   );
-  const defaultColumn = {
-    width: "auto",
-  };
+
   const sortees = React.useMemo(
     () => [
       {

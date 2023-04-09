@@ -39,6 +39,11 @@ jest.mock("../../../utils/api", () => ({
           mutate: jest.fn(),
         }),
       },
+      deleteNetwork: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
     },
     networkMember: {
       UpdateDatabaseOnly: {
