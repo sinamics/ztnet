@@ -13,6 +13,7 @@ import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
+import { useModalStore } from "~/utils/store";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -20,7 +21,9 @@ const NetworkById = () => {
     editNetworkName: false,
     networkName: "",
   });
-  const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
+  const { query, push: router } = useRouter();
+  const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
   const {
     data: networkById,
     isLoading: loadingNetwork,
@@ -222,27 +225,51 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <AddMemberById />
       </div>
-      {networkById?.zombieMembers?.length > 0 ? (
-        <>
-          <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-            <button
-              onClick={() =>
-                setState({ ...state, viewZombieTable: !state.viewZombieTable })
-              }
-              className="btn-wide btn"
-            >
-              View deleted members ({networkById?.zombieMembers?.length})
-            </button>
-          </div>
-          <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-            {state.viewZombieTable ? (
-              <div className="membersTable-wrapper text-center">
-                <DeletedNetworkMembersTable nwid={network.nwid} />
+      <div className="w-5/5 mx-auto flex flex-col py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+        <div className="mb-4 flex-grow md:mb-0">
+          {networkById?.zombieMembers?.length > 0 ? (
+            <>
+              <button
+                onClick={() =>
+                  setState({
+                    ...state,
+                    viewZombieTable: !state.viewZombieTable,
+                  })
+                }
+                className="btn-wide btn"
+              >
+                View deleted members ({networkById?.zombieMembers?.length})
+              </button>
+              <div>
+                {state.viewZombieTable ? (
+                  <div className="membersTable-wrapper text-center">
+                    <DeletedNetworkMembersTable nwid={network.nwid} />
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-          </div>
-        </>
-      ) : null}
+            </>
+          ) : null}
+        </div>
+        <div className="flex items-end md:justify-end">
+          <button
+            onClick={() =>
+              callModal({
+                title: `Delete network ${network.name}`,
+                description: `Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network`,
+                yesAction: () => {
+                  deleteNetwork(
+                    { nwid: network.nwid },
+                    { onSuccess: () => void router("/network") }
+                  );
+                },
+              })
+            }
+            className="btn-outline btn-error btn-wide btn"
+          >
+            Delete network
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
