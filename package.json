@@ -9,7 +9,7 @@
     "lint": "next lint",
     "start": "next start",
     "test:dev": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts",
-    "test": "jest --ci --coverage"
+    "test": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts --ci --coverage"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
