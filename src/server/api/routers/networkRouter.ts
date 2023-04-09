@@ -62,10 +62,17 @@ function isValidCIDR(cidr: string): boolean {
 const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
+  getUserNetworks: protectedProcedure.query(async ({ ctx }) => {
     const networks = await ctx.prisma.network.findMany({
       where: {
         authorId: ctx.session.user.id,
+      },
+      include: {
+        network_members: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     return networks;

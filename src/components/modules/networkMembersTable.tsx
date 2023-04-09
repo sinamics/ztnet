@@ -145,8 +145,8 @@ export const NetworkMembersTable = ({ nwid }) => {
                   <div
                     className={`${
                       subnetMatch
-                        ? "badge-primary badge badge-lg rounded-md"
-                        : "badge-ghost badge badge-lg rounded-md opacity-60"
+                        ? "badge badge-primary badge-lg rounded-md"
+                        : "badge badge-ghost badge-lg rounded-md opacity-60"
                     } flex min-w-fit justify-between`}
                   >
                     <CopyToClipboard
