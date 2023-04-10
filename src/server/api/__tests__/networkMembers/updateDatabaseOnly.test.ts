@@ -2,7 +2,7 @@
 
 import { test, expect } from "@jest/globals";
 import { type PrismaClient } from "@prisma/client";
-import { type AppRouter, appRouter } from "../root";
+import { type AppRouter, appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
 import { type Session } from "next-auth";
 import { type ZtControllerNetwork } from "~/types/network";

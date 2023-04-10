@@ -1,10 +1,20 @@
 import { test, expect } from "@jest/globals";
-import { appRouter } from "../root";
+import { appRouter } from "../../root";
 import { type Session } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import { type PartialDeep } from "type-fest";
 
-test("getUserNetworks API test", async () => {
+const mockSession: PartialDeep<Session> = {
+  expires: new Date().toISOString(),
+  update: { name: "test" },
+  user: {
+    id: 1,
+    name: "Bernt Christian",
+    email: "mail@gmail.com",
+  },
+};
+
+test("getUserNetworks", async () => {
   const prismaMock = new PrismaClient();
 
   interface Network {
@@ -17,16 +27,6 @@ test("getUserNetworks API test", async () => {
   interface NetworkMember {
     id: string;
   }
-
-  const mockSession: PartialDeep<Session> = {
-    expires: new Date().toISOString(),
-    update: { name: "test" },
-    user: {
-      id: 1,
-      name: "Bernt Christian",
-      email: "mail@gmail.com",
-    },
-  };
 
   const mockOutput: Network[] = [
     {
