@@ -9,7 +9,8 @@
     "lint": "next lint",
     "start": "next start",
     "test:dev": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts",
-    "test": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts --ci --coverage"
+    "test": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts --ci --coverage",
+    "studio": "prisma studio"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
