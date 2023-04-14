@@ -3,7 +3,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
-
+import cn from "classnames";
+import { toast } from "react-hot-toast";
 interface FormData {
   email: string;
   password: string;
@@ -11,19 +12,14 @@ interface FormData {
 }
 
 const RegisterForm: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
     name: "",
   });
-  // const { data: sessionData } = useSession();
 
-  // const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-  //   undefined, // no input
-  //   { enabled: sessionData?.user !== undefined }
-  // );
-  const { mutate: register, error: loginError } =
-    api.auth.register.useMutation();
+  const { mutate: register } = api.auth.register.useMutation();
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +32,7 @@ const RegisterForm: React.FC = () => {
   };
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
     register(formData, {
       onSuccess: () =>
@@ -44,19 +41,21 @@ const RegisterForm: React.FC = () => {
             redirect: false,
             ...formData,
           });
+          setLoading(false);
 
           if (!result.error) {
             await router.push("/dashboard");
           }
         })(),
+      onError: (error) => {
+        setLoading(false);
+        toast.error(error.message, { duration: 10000 });
+      },
     });
   };
   return (
     <div className="z-10 flex justify-center  self-center">
       <div className="w-100 mx-auto rounded-2xl bg-white p-12 ">
-        <span className="flex justify-center text-red-600">
-          {loginError?.message ? loginError?.message : null}
-        </span>
         <div className="mb-4">
           <h3 className="text-2xl font-semibold text-gray-800">Register </h3>
           <p className="text-gray-500">Please sign up with your credentials</p>
@@ -104,7 +103,10 @@ const RegisterForm: React.FC = () => {
           <div className="pt-5">
             <button
               type="submit"
-              className="flex w-full cursor-pointer justify-center  rounded-full bg-gray-600 p-3  font-semibold tracking-wide text-gray-100  shadow-lg transition duration-500 ease-in hover:bg-slate-500"
+              className={cn(
+                "btn-block btn cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
+                { loading: loading }
+              )}
             >
               Sign Up
             </button>
