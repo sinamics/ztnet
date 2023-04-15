@@ -6,7 +6,7 @@ interface Icon {
   onClick?: () => void;
 }
 
-const CopyIcon = ({ className, onClick, ...rest }: Icon) => (
+const CopyIcon = ({ className = "", onClick, ...rest }: Icon) => (
   <span onClick={onClick}>
     <svg
       xmlns="http://www.w3.org/2000/svg"

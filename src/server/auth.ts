@@ -111,6 +111,15 @@ export const authOptions: NextAuthOptions = {
             where: {
               id: token.id,
             },
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              role: true,
+              emailVerified: true,
+              lastLogin: true,
+              lastseen: true,
+            },
           });
           // session update => https://github.com/nextauthjs/next-auth/discussions/3941
           // verify that name has at least one character

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { type CustomError } from "~/types/errorHandling";
@@ -39,7 +41,7 @@ export const NetworkIpAssignment = () => {
     <>
       <div>IPv4 assignment</div>
       <div className="xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4">
-        {network.cidr?.map((cidr) => {
+        {network.cidr?.map((cidr: string) => {
           return network?.routes?.some((route) => route.target === cidr) ? (
             <div
               key={cidr}
