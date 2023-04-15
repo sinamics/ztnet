@@ -1,7 +1,8 @@
 import { signIn } from "next-auth/react";
 import router from "next/router";
 import { useState } from "react";
-
+import cn from "classnames";
+import { toast } from "react-hot-toast";
 interface FormData {
   email: string;
   password: string;
@@ -14,11 +15,11 @@ type NextAuthError = {
 };
 
 const LoginForm: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
   });
-  const [loginError, setLoginError] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -30,8 +31,8 @@ const LoginForm: React.FC = () => {
   };
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     event.preventDefault();
-    setLoginError("");
 
     signIn("credentials", {
       redirect: false,
@@ -41,20 +42,19 @@ const LoginForm: React.FC = () => {
         if (!result.error) {
           return await router.push("/dashboard");
         }
-
-        setLoginError(result.error);
+        toast.error(result.error, { duration: 10000 });
+        setLoading(false);
       })
       .catch((error: NextAuthError) => {
         // Handle any errors that might occur during the signIn process
-        setLoginError(error.message);
+        toast.error(error.message);
+        setLoading(false);
       });
   };
+
   return (
     <div className="z-10 flex justify-center  self-center">
       <div className="w-100 mx-auto rounded-2xl bg-white p-12 ">
-        <span className="flex justify-center text-red-600">
-          {loginError ? loginError : null}
-        </span>
         <div className="mb-4">
           <h3 className="text-2xl font-semibold text-gray-800">Sign In </h3>
           <p className="text-gray-500">Please sign in to your account.</p>
@@ -96,7 +96,10 @@ const LoginForm: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="flex w-full cursor-pointer justify-center  rounded-full bg-gray-600 p-3  font-semibold tracking-wide text-gray-100  shadow-lg transition duration-500 ease-in hover:bg-slate-500"
+              className={cn(
+                "btn-block btn cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
+                { loading: loading }
+              )}
             >
               Sign in
             </button>

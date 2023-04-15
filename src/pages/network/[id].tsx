@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
@@ -67,15 +68,25 @@ const NetworkById = () => {
   const eventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
+
+  if (errorNetwork) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          {errorNetwork.message}
+        </h1>
+        <ul className="list-disc">
+          <li>Verify that the ZeroTier container is operational</li>
+          <li>
+            If other instances of ZeroTier are active locally, please deactivate
+            them as it might cause conflicts.
+          </li>
+        </ul>
+      </div>
+    );
+  }
   return (
     <div>
-      {errorNetwork && (
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-center text-2xl font-semibold">
-            {errorNetwork.message}
-          </h1>
-        </div>
-      )}
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
         <div className="w-5/5 h-fit w-full xl:w-2/6 ">
           <div className="flex flex-col space-y-3 sm:space-y-0">
@@ -192,13 +203,6 @@ const NetworkById = () => {
             />
           </div>
         ) : (
-          // <MembersTable cidr={network?.routes[0]?.target} tableData={members} setEditing={(e: boolean) => setEditing(e)} />
-          // <Message
-          //   color='yellow'
-          //   icon='user'
-          //   header='No members found!'
-          //   content='Join this network ID and the device will automatically be displayed in this table'
-          // />
           <div className="alert alert-warning flex justify-center shadow-lg">
             <div>
               <svg
@@ -225,8 +229,8 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <AddMemberById />
       </div>
-      <div className="w-5/5 mx-auto flex flex-col py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
-        <div className="mb-4 flex-grow md:mb-0">
+      <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <div className="mb-4 md:mb-0">
           {networkById?.zombieMembers?.length > 0 ? (
             <>
               <button
@@ -240,16 +244,20 @@ const NetworkById = () => {
               >
                 View deleted members ({networkById?.zombieMembers?.length})
               </button>
-              <div>
-                {state.viewZombieTable ? (
-                  <div className="membersTable-wrapper text-center">
-                    <DeletedNetworkMembersTable nwid={network.nwid} />
-                  </div>
-                ) : null}
-              </div>
+
+              {state.viewZombieTable ? (
+                <div className="membersTable-wrapper text-center">
+                  <DeletedNetworkMembersTable nwid={network.nwid} />
+                </div>
+              ) : null}
             </>
           ) : null}
         </div>
+      </div>
+      <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        Network Actions
+      </div>
+      <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
         <div className="flex items-end md:justify-end">
           <button
             onClick={() =>

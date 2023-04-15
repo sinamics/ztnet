@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { clearConfigCache } from "prettier";
 import { type ReactElement } from "react";
@@ -23,14 +26,14 @@ const Controller = () => {
     <div>
       <div className="flex items-center justify-center ">
         <div className="grid grid-cols-1 gap-5 space-y-4 pt-10 md:space-y-0 lg:grid-cols-2 xl:grid-cols-3">
-          <div className="card card-normal w-60 bg-base-300 sm:w-96">
+          <div className="card-normal card w-60 bg-base-300 sm:w-96">
             <div className="card-body flex-grow-0">
               <h2 className="card-title flex justify-center">Networks</h2>
               <p className="">Network Count: {networkCount}</p>
               <p className="">Total Members: {totalMembers}</p>
             </div>
           </div>
-          <div className="card card-normal w-60 bg-base-300 sm:w-96">
+          <div className="card-normal card w-60 bg-base-300 sm:w-96">
             <div className="card-body">
               <h2 className="card-title flex justify-center">Controller TCP</h2>
               <p className="">Allow Management From:</p>
@@ -51,7 +54,7 @@ const Controller = () => {
             </div>
           </div>
 
-          <div className="card card-normal w-60 bg-base-300 sm:w-96">
+          <div className="card-normal card w-60 bg-base-300 sm:w-96">
             <div className="card-body flex-grow-0">
               <h2 className="card-title flex justify-center">
                 Controller Stats
