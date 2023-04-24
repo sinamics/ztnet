@@ -51,6 +51,11 @@ jest.mock("../../../utils/api", () => ({
           mutate: jest.fn(),
         }),
       },
+      create: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
     },
   },
 }));

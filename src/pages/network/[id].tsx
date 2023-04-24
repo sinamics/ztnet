@@ -242,7 +242,7 @@ const NetworkById = () => {
                 }
                 className="btn-wide btn"
               >
-                View deleted members ({networkById?.zombieMembers?.length})
+                View stashed members ({networkById?.zombieMembers?.length})
               </button>
 
               {state.viewZombieTable ? (
