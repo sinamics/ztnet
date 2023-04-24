@@ -1,6 +1,6 @@
 import { createTRPCRouter } from "~/server/api/trpc";
 import { authRouter } from "./routers/authRouter";
-import { networkMemberRouter } from "./routers/networkMemberRouter";
+import { networkMemberRouter } from "./routers/memberRouter";
 import { networkRouter } from "./routers/networkRouter";
 import { adminRouter } from "./routers/adminRoute";
 import { globalOptionsRouter } from "./routers/globalOptions";
