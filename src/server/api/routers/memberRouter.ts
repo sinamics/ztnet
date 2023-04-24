@@ -14,6 +14,46 @@ export const networkMemberRouter = createTRPCRouter({
     });
     return networks;
   }),
+  create: protectedProcedure
+    .input(
+      z.object({
+        id: z.string({ required_error: "No member id provided!" }),
+        nwid: z.string({ required_error: "No network id provided!" }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // check if user exist in db, and if so set deleted:false
+      const member = await ctx.prisma.network_members.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+      if (member) {
+        return await ctx.prisma.network_members.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            deleted: false,
+          },
+        });
+      }
+
+      // if not, create new member
+      await ctx.prisma.network_members.create({
+        data: {
+          id: input.id,
+          authorized: false,
+          ipAssignments: [],
+          lastseen: new Date(),
+          creationTime: new Date(),
+          nwid_ref: {
+            connect: { nwid: input.nwid },
+          },
+        },
+      });
+    }),
+
   Update: protectedProcedure
     .input(
       z.object({
@@ -144,12 +184,12 @@ export const networkMemberRouter = createTRPCRouter({
       });
       return { member: response.network_members[0] };
     }),
-  Delete: protectedProcedure
+  stash: protectedProcedure
     .input(
       z
         .object({
           nwid: z.string({ required_error: "network ID not provided!" }),
-          memberId: z.string({ required_error: "memberId not provided!" }),
+          id: z.string({ required_error: "id not provided!" }),
         })
         .required()
     )
@@ -157,12 +197,10 @@ export const networkMemberRouter = createTRPCRouter({
       const caller = networkMemberRouter.createCaller(ctx);
 
       //user needs to be de-authorized before deleted.
-      await caller.Update({ ...input, updateParams: { authorized: false } });
-
-      // remove member from controller
-      await ztController.member_delete({
+      await caller.Update({
+        memberId: input.id,
         nwid: input.nwid,
-        memberId: input.memberId,
+        updateParams: { authorized: false },
       });
 
       // Set member with deleted status in database.
@@ -174,7 +212,7 @@ export const networkMemberRouter = createTRPCRouter({
           data: {
             network_members: {
               updateMany: {
-                where: { id: input.memberId, nwid: input.nwid },
+                where: { id: input.id, nwid: input.nwid },
                 data: {
                   deleted: true,
                 },
@@ -184,7 +222,7 @@ export const networkMemberRouter = createTRPCRouter({
           include: {
             network_members: {
               where: {
-                id: input.memberId,
+                id: input.id,
                 deleted: false,
               },
             },
@@ -192,5 +230,27 @@ export const networkMemberRouter = createTRPCRouter({
         })
         // eslint-disable-next-line no-console
         .catch((err: string) => console.log(err));
+    }),
+  delete: protectedProcedure
+    .input(
+      z
+        .object({
+          nwid: z.string({ required_error: "network ID not provided!" }),
+          id: z.string({ required_error: "memberId not provided!" }),
+        })
+        .required()
+    )
+    .mutation(async ({ ctx, input }) => {
+      // remove member from controller
+      await ztController.member_delete({
+        nwid: input.nwid,
+        memberId: input.id,
+      });
+
+      await ctx.prisma.network_members.delete({
+        where: {
+          id: input.id,
+        },
+      });
     }),
 });
