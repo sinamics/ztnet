@@ -11,13 +11,15 @@
 
 import React, { useMemo } from "react";
 import TimeAgo from "react-timeago";
-import { useTable, useSortBy } from "react-table";
+import { useTable, useSortBy, useResizeColumns } from "react-table";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { type NetworkMembersEntity } from "~/types/network";
+import { useModalStore } from "~/utils/store";
 
 export const DeletedNetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
@@ -26,13 +28,17 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
       { enabled: !!query.id }
     );
 
-  const { mutate: updateMemberDatabaseOnly } =
+  const { mutate: updateUser } =
     api.networkMember.UpdateDatabaseOnly.useMutation({
       onSuccess: () => {
         void refetchNetworkById();
       },
     });
-
+  const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+    onSuccess: () => {
+      void refetchNetworkById();
+    },
+  });
   const columns = useMemo(
     () => [
       {
@@ -56,25 +62,59 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 
       {
         Header: "Conn Status",
-        accessor: () => <span>zombie</span>,
+        accessor: () => <span>stashed</span>,
       },
       {
         Header: "Action",
         // width: 190,
         accessor: ({ id }: NetworkMembersEntity) => {
           return (
-            <button
-              onClick={() =>
-                void updateMemberDatabaseOnly({
-                  nwid,
-                  id,
-                  updateParams: { deleted: false },
-                })
-              }
-              className="btn-success btn-xs rounded-sm"
-            >
-              re-activate
-            </button>
+            <span className="space-x-5">
+              <button
+                onClick={() =>
+                  void updateUser({
+                    nwid,
+                    id,
+                    updateParams: { deleted: false },
+                  })
+                }
+                className="btn-success btn-xs rounded-sm"
+              >
+                Re-Activate
+              </button>
+              <button
+                onClick={() =>
+                  callModal({
+                    title: <p>Force delete {id}?</p>,
+                    description: (
+                      <>
+                        <p>
+                          By performing this action, the member will be removed
+                          from the database. To re-add the user in the future,
+                          you must manually enter their Member ID.
+                        </p>
+                      </>
+                    ),
+                    yesAction: () => {
+                      void deleteMember(
+                        {
+                          nwid,
+                          id,
+                        },
+                        {
+                          onSuccess: () => {
+                            void refetchNetworkById();
+                          },
+                        }
+                      );
+                    },
+                  })
+                }
+                className="btn-error btn-xs rounded-sm"
+              >
+                Force Delete
+              </button>
+            </span>
           );
         },
       },
@@ -105,8 +145,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
           sortBy: sortees,
         },
       },
-      // useBlockLayout,
-      // useResizeColumns,
+      useResizeColumns,
       useSortBy
     );
 
