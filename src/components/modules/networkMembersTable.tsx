@@ -13,18 +13,12 @@
 import React, { useMemo } from "react";
 import TimeAgo from "react-timeago";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import {
-  useTable,
-  useBlockLayout,
-  useResizeColumns,
-  useSortBy,
-} from "react-table";
+import { useTable, useResizeColumns, useSortBy } from "react-table";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { type CustomError } from "~/types/errorHandling";
-import { useModalStore } from "~/utils/store";
 
 interface IpAssignmentsProps {
   ipAssignments: string[];
@@ -43,7 +37,6 @@ enum ConnectionStatus {
 }
 export const NetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
-  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
@@ -62,7 +55,7 @@ export const NetworkMembersTable = ({ nwid }) => {
     },
     onSuccess: () => refetchNetworkById(),
   });
-  const { mutate: removeUser } = api.networkMember.Delete.useMutation({
+  const { mutate: stashUser } = api.networkMember.stash.useMutation({
     onSuccess: () => refetchNetworkById(),
   });
 
@@ -74,18 +67,28 @@ export const NetworkMembersTable = ({ nwid }) => {
     const _ipv4 = [...ipAssignments];
     const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
-    updateMember({
-      updateParams: { ipAssignments: [...newIpPool] },
-      memberId: id,
-      nwid,
-    });
+    updateMember(
+      {
+        updateParams: { ipAssignments: [...newIpPool] },
+        memberId: id,
+        nwid,
+      },
+      {
+        onSuccess: () => {
+          void refetchNetworkById();
+        },
+      }
+    );
   };
 
-  const deleteMember = (id: string) => {
-    removeUser({
-      nwid,
-      memberId: id,
-    });
+  const stashMember = (id: string) => {
+    stashUser(
+      {
+        nwid,
+        id,
+      },
+      { onSuccess: void refetchNetworkById() }
+    );
   };
 
   const columns = useMemo(
@@ -129,7 +132,7 @@ export const NetworkMembersTable = ({ nwid }) => {
       },
       {
         Header: "IP / Latency",
-        width: 170,
+        // width: 170,
         accessor: ({ ipAssignments, peers, id }: IpAssignmentsProps) => {
           if (!ipAssignments || !ipAssignments.length)
             return <span>waiting for IP ...</span>;
@@ -253,22 +256,14 @@ export const NetworkMembersTable = ({ nwid }) => {
       },
       {
         Header: "Action",
-        width: 190,
+        // width: 200,
         accessor: ({ id }) => {
           return (
             <button
-              onClick={() =>
-                callModal({
-                  title: "Delete Member?",
-                  description: `Are you sure you want to delete member id ${id} ?`,
-                  yesAction: () => {
-                    deleteMember(id);
-                  },
-                })
-              }
-              className="btn-error btn-xs rounded-sm"
+              onClick={() => stashMember(id)}
+              className="btn-outline btn-warning btn-xs btn rounded-sm"
             >
-              Delete
+              Stash
             </button>
           );
         },
@@ -324,7 +319,6 @@ export const NetworkMembersTable = ({ nwid }) => {
   };
   // Set our editable cell renderer as the default Cell renderer
   const defaultColumn = {
-    with: "auto",
     Cell: EditableCell,
   };
   const sortees = React.useMemo(
@@ -347,15 +341,91 @@ export const NetworkMembersTable = ({ nwid }) => {
           sortBy: sortees,
         },
       },
-      useBlockLayout,
       useResizeColumns,
       useSortBy
       // updateMyData
     );
 
   return (
-    <>
-      <div className="flex justify-between py-3 pl-2">
+    <span className="rounded-xl pt-2">
+      <table
+        {...getTableProps()}
+        className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500"
+      >
+        <thead className="bg-base-100">
+          {
+            // Loop over the header rows
+            headerGroups.map((headerGroup) => (
+              // Apply the header row props
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {
+                  // Loop over the headers in each row
+                  headerGroup.headers.map((column) => (
+                    <th
+                      {...column.getHeaderProps()}
+                      scope="col"
+                      className="py-3 pl-4"
+                    >
+                      {
+                        // Render the header
+                        column.render("Header")
+                      }
+                      <span>
+                        {column.isSorted
+                          ? column.isSortedDesc
+                            ? " 🔽"
+                            : " 🔼"
+                          : ""}
+                      </span>
+                    </th>
+                  ))
+                }
+              </tr>
+            ))
+          }
+        </thead>
+        <tbody {...getTableBodyProps()} className=" divide-y divide-gray-500">
+          {
+            // Loop over the table rows
+            rows.map((row) => {
+              // Prepare the row for display
+              prepareRow(row);
+              return (
+                // Apply the row props
+                <tr
+                  className={`items-center ${
+                    !row.original.authorized
+                      ? "border-dotted bg-error bg-opacity-20"
+                      : ""
+                  }`}
+                  {...row.getRowProps()}
+                >
+                  {
+                    // Loop over the rows cells
+                    row.cells.map((cell) => {
+                      // Apply the cell props
+                      return (
+                        <td {...cell.getCellProps()} className="py-1 pl-4">
+                          {
+                            // Render the cell contents
+                            cell.render("Cell")
+                          }
+                        </td>
+                      );
+                    })
+                  }
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </span>
+  );
+};
+
+{
+  /* <div className="flex justify-between py-3 pl-2">
         <div className="relative hidden max-w-xs lg:flex">
           <label htmlFor="hs-table-search" className="sr-only">
             Search
@@ -406,82 +476,5 @@ export const NetworkMembersTable = ({ nwid }) => {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="rounded-xl pt-2">
-        <table
-          {...getTableProps()}
-          className="divide-y divide-gray-400 overflow-x-auto border border-gray-500"
-        >
-          <thead className="bg-base-100">
-            {
-              // Loop over the header rows
-              headerGroups.map((headerGroup) => (
-                // Apply the header row props
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                  {
-                    // Loop over the headers in each row
-                    headerGroup.headers.map((column) => (
-                      <th
-                        {...column.getHeaderProps()}
-                        scope="col"
-                        className="py-3 pl-4"
-                      >
-                        {
-                          // Render the header
-                          column.render("Header")
-                        }
-                        <span>
-                          {column.isSorted
-                            ? column.isSortedDesc
-                              ? " 🔽"
-                              : " 🔼"
-                            : ""}
-                        </span>
-                      </th>
-                    ))
-                  }
-                </tr>
-              ))
-            }
-          </thead>
-          <tbody {...getTableBodyProps()} className=" divide-y divide-gray-500">
-            {
-              // Loop over the table rows
-              rows.map((row) => {
-                // Prepare the row for display
-                prepareRow(row);
-                return (
-                  // Apply the row props
-                  <tr
-                    className={`items-center ${
-                      !row.original.authorized
-                        ? "border-dotted bg-error bg-opacity-20"
-                        : ""
-                    }`}
-                    {...row.getRowProps()}
-                  >
-                    {
-                      // Loop over the rows cells
-                      row.cells.map((cell) => {
-                        // Apply the cell props
-                        return (
-                          <td {...cell.getCellProps()} className="py-1 pl-4">
-                            {
-                              // Render the cell contents
-                              cell.render("Cell")
-                            }
-                          </td>
-                        );
-                      })
-                    }
-                  </tr>
-                );
-              })
-            }
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
-};
+      </div> */
+}

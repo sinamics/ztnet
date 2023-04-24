@@ -16,10 +16,9 @@ export const AddMemberById = () => {
     { enabled: !!query.id }
   );
 
-  const { mutate: updateUserDb } =
-    api.networkMember.UpdateDatabaseOnly.useMutation({
-      onSuccess: () => refecthNetworkById(),
-    });
+  const { mutate: createUser } = api.networkMember.create.useMutation({
+    onSuccess: () => refecthNetworkById(),
+  });
 
   const inputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setUser({
@@ -64,11 +63,10 @@ export const AddMemberById = () => {
           />
           <button
             onClick={() =>
-              updateUserDb(
+              createUser(
                 {
                   id: user.memberid,
                   nwid: query.id as string,
-                  updateParams: { deleted: false },
                 },
                 { onSuccess: () => setUser({ memberid: "" }) }
               )
