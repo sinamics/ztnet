@@ -119,7 +119,9 @@ export const networkRouter = createTRPCRouter({
 
       // Generate ipv4 address, cidr, start & end
       const ipAssignmentPools = IPv4gen(null);
-      const { cidrOptions } = ipAssignmentPools;
+      const cidrOptions = psqlNetworkData.autoAssignIp
+        ? ipAssignmentPools.cidrOptions
+        : [];
 
       // merge network data from psql and zt controller
       const mergedNetwork = {
@@ -174,7 +176,6 @@ export const networkRouter = createTRPCRouter({
 
       // filters out any null or undefined elements in the zombieMembers array.
       const filteredZombieMembers = zombieMembers.filter((a) => a);
-
       return {
         network,
         members: updatedActiveMembers,
@@ -228,6 +229,7 @@ export const networkRouter = createTRPCRouter({
           name: z.string().optional(),
           routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
+          autoAssignIp: z.boolean().optional().default(true),
         }),
       })
     )
@@ -236,14 +238,20 @@ export const networkRouter = createTRPCRouter({
       const payload: Partial<ZtControllerNetwork> = {};
 
       try {
-        const { privateNetwork, ipPool, name, routes, changeCidr } =
-          input.updateParams;
+        const {
+          privateNetwork,
+          ipPool,
+          name,
+          routes,
+          changeCidr,
+          autoAssignIp,
+        } = input.updateParams;
 
         if (typeof privateNetwork === "boolean") {
           payload.private = privateNetwork;
         }
 
-        if (ipPool) {
+        if (ipPool && autoAssignIp) {
           if (typeof ipPool === "string") {
             Object.assign(payload, IPv4gen(ipPool));
           } else if (Array.isArray(ipPool)) {
@@ -258,7 +266,12 @@ export const networkRouter = createTRPCRouter({
             data: { nwname: name },
           });
         }
-
+        if (typeof autoAssignIp === "boolean") {
+          await ctx.prisma.network.update({
+            where: { nwid: input.nwid },
+            data: { autoAssignIp },
+          });
+        }
         if (routes) {
           try {
             payload.routes = RoutesArraySchema.parse(routes);

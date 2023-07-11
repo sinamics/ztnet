@@ -61,6 +61,7 @@ export interface ZtControllerNetwork {
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
   cidr?: string[] | null;
+  autoAssignIp: boolean;
 }
 export interface RoutesEntity {
   target?: string | null;

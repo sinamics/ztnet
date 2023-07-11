@@ -84,7 +84,6 @@ interface MemberI {
 
 const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
   if (members.length === 0) return;
-
   //loop array
   for (const member of members) {
     const storeValues = {
