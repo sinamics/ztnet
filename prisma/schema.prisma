@@ -59,6 +59,7 @@ model network_members {
 model network {
   nwid                 String            @id
   nwname               String
+  autoAssignIp         Boolean?          @default(true)
   nw_userid            User              @relation(fields: [authorId], references: [id])
   authorId             Int
   network_members network_members[]

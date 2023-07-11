@@ -25,21 +25,36 @@ export const NetworkIpAssignment = () => {
       },
     });
 
-  const submitHandler = (cidr: string) => {
+  const submitUpdate = (updateParams: {
+    ipPool?: string;
+    autoAssignIp?: boolean;
+  }) => {
     updateNetworkMutation(
       {
-        updateParams: { ipPool: cidr },
+        updateParams,
         nwid: query.id as string,
       },
       { onSuccess: void refecthNetworkById() }
     );
   };
+
   const { network } = networkByIdQuery;
   if (isLoading) return <div>Loading</div>;
 
   return (
     <>
-      <div>IPv4 assignment</div>
+      {/* <div>IPv4 assignment</div> */}
+      <div className="flex items-center gap-4 py-3">
+        <p>Auto-Assign from Range</p>
+        <input
+          type="checkbox"
+          checked={network.autoAssignIp}
+          className="checkbox-primary checkbox checkbox-sm"
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            submitUpdate({ autoAssignIp: e.target.checked });
+          }}
+        />
+      </div>
       <div className="xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4">
         {network.cidr?.map((cidr: string) => {
           return network?.routes?.some((route) => route.target === cidr) ? (
@@ -52,7 +67,7 @@ export const NetworkIpAssignment = () => {
           ) : (
             <div
               key={cidr}
-              onClick={() => submitHandler(cidr)}
+              onClick={() => submitUpdate({ ipPool: cidr })}
               className="badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 hover:bg-primary md:text-base"
             >
               {cidr}

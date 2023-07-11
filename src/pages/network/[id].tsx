@@ -177,9 +177,9 @@ const NetworkById = () => {
           you absolutely have to.
         </p>
       </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm  sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
-        <div className="w-6/6 xl:w-3/6 ">
+        <div className="w-6/6 xl:w-3/6">
           <NetworkIpAssignment />
         </div>
 
