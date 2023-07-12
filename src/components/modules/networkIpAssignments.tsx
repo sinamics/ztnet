@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { type CustomError } from "~/types/errorHandling";
 import { api } from "~/utils/api";
-
+import cn from "classnames";
 export const NetworkIpAssignment = () => {
   const { query } = useRouter();
   const {
@@ -28,15 +28,18 @@ export const NetworkIpAssignment = () => {
   const submitUpdate = (updateParams: {
     ipPool?: string;
     autoAssignIp?: boolean;
-  }) => {
+  }) =>
     updateNetworkMutation(
       {
         updateParams,
         nwid: query.id as string,
       },
-      { onSuccess: void refecthNetworkById() }
+      {
+        onSuccess: () => {
+          void refecthNetworkById();
+        },
+      }
     );
-  };
 
   const { network } = networkByIdQuery;
   if (isLoading) return <div>Loading</div>;
@@ -55,12 +58,26 @@ export const NetworkIpAssignment = () => {
           }}
         />
       </div>
-      <div className="xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4">
+      <div
+        className={cn(
+          "xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4",
+          {
+            "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
+              !network.autoAssignIp,
+          }
+        )}
+      >
         {network.cidr?.map((cidr: string) => {
           return network?.routes?.some((route) => route.target === cidr) ? (
             <div
               key={cidr}
-              className="badge badge-lg rounded-md bg-primary text-xs md:text-base"
+              className={cn(
+                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                {
+                  "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
+                    network.autoAssignIp,
+                }
+              )}
             >
               {cidr}
             </div>
@@ -68,7 +85,10 @@ export const NetworkIpAssignment = () => {
             <div
               key={cidr}
               onClick={() => submitUpdate({ ipPool: cidr })}
-              className="badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 hover:bg-primary md:text-base"
+              className={cn(
+                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                { "hover:bg-primary": network.autoAssignIp }
+              )}
             >
               {cidr}
             </div>

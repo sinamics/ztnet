@@ -9,7 +9,7 @@ import {
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import { updateNetworkMembers } from "../networkService";
+import { handleAutoAssignIP, updateNetworkMembers } from "../networkService";
 import { Address4, Address6 } from "ip-address";
 import {
   type NetworkAndMembers,
@@ -17,6 +17,7 @@ import {
   type ZtControllerNetwork,
   type IpAssignmentPoolsEntity,
   type Peers,
+  type NetworkEntity,
 } from "~/types/network";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
@@ -114,14 +115,14 @@ export const networkRouter = createTRPCRouter({
         });
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
+
+      // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
       await updateNetworkMembers(ztControllerResponse);
 
-      // Generate ipv4 address, cidr, start & end
+      // Get available cidr options.
       const ipAssignmentPools = IPv4gen(null);
-      const cidrOptions = psqlNetworkData.autoAssignIp
-        ? ipAssignmentPools.cidrOptions
-        : [];
+      const { cidrOptions } = ipAssignmentPools;
 
       // merge network data from psql and zt controller
       const mergedNetwork = {
@@ -235,7 +236,8 @@ export const networkRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // Construct the API request payload using the provided updateParams
-      const payload: Partial<ZtControllerNetwork> = {};
+      const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
+      const prismaUpdates: Partial<NetworkEntity> = {};
 
       try {
         const {
@@ -248,33 +250,38 @@ export const networkRouter = createTRPCRouter({
         } = input.updateParams;
 
         if (typeof privateNetwork === "boolean") {
-          payload.private = privateNetwork;
+          ztControllerUpdates.private = privateNetwork;
         }
 
+        // If the network is set to auto-assign IP addresses, and an IP pool has been specified,
+        // generate a new IP pool object using the IPv4gen function and assign it to the ztControllerUpdates.
+        // If the IP pool is specified as an array, it is assigned directly to the ztControllerUpdates.
         if (ipPool && autoAssignIp) {
           if (typeof ipPool === "string") {
-            Object.assign(payload, IPv4gen(ipPool));
+            Object.assign(ztControllerUpdates, IPv4gen(ipPool));
           } else if (Array.isArray(ipPool)) {
-            payload.ipAssignmentPools = ipPool as IpAssignmentPoolsEntity[];
+            ztControllerUpdates.ipAssignmentPools =
+              ipPool as IpAssignmentPoolsEntity[];
+          }
+
+          if (ztControllerUpdates.routes.length > 0) {
+            prismaUpdates.ipAssignments = ztControllerUpdates.routes[0].target;
           }
         }
 
+        // Network name
         if (name) {
-          payload.name = name;
-          await ctx.prisma.network.update({
-            where: { nwid: input.nwid },
-            data: { nwname: name },
-          });
+          prismaUpdates.nwname = name;
         }
+
+        // Auto assign IP
         if (typeof autoAssignIp === "boolean") {
-          await ctx.prisma.network.update({
-            where: { nwid: input.nwid },
-            data: { autoAssignIp },
-          });
+          prismaUpdates.autoAssignIp = autoAssignIp;
         }
+
         if (routes) {
           try {
-            payload.routes = RoutesArraySchema.parse(routes);
+            ztControllerUpdates.routes = RoutesArraySchema.parse(routes);
           } catch (error) {
             if (error instanceof z.ZodError) {
               throw new TRPCError({
@@ -288,10 +295,28 @@ export const networkRouter = createTRPCRouter({
         }
 
         if (changeCidr) {
-          payload.cidr = IPv4gen(changeCidr).cidrOptions;
+          ztControllerUpdates.cidr = IPv4gen(changeCidr).cidrOptions;
         }
 
-        return await ztController.network_update(input.nwid, payload);
+        // Update network in prisma
+        await ctx.prisma.network.update({
+          where: { nwid: input.nwid },
+          data: prismaUpdates,
+        });
+
+        if (typeof autoAssignIp === "boolean") {
+          await handleAutoAssignIP(
+            autoAssignIp,
+            ztControllerUpdates,
+            ctx,
+            input
+          );
+        }
+
+        return await ztController.network_update(
+          input.nwid,
+          ztControllerUpdates
+        );
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw new TRPCError({
@@ -327,6 +352,7 @@ export const networkRouter = createTRPCRouter({
             create: {
               nwname: newNw.name,
               nwid: newNw.nwid,
+              ipAssignments: newNw.routes[0].target,
             },
           },
         },

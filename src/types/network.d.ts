@@ -3,6 +3,13 @@ export interface NetworkAndMembers {
   network: ZtControllerNetwork;
   members?: MembersEntity[] | null;
 }
+export interface NetworkEntity {
+  nwname?: string;
+  autoAssignIp?: boolean;
+  ipAssignments?: string;
+  authorId?: number;
+}
+
 export interface MembersEntity {
   activeBridge: boolean;
   address: string;
