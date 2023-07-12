@@ -28,6 +28,7 @@
     "classnames": "^2.3.2",
     "daisyui": "^2.51.5",
     "ip-address": "^8.1.0",
+    "net": "^1.0.2",
     "next": "^13.2.1",
     "next-auth": "^4.21.1",
     "next-themes": "^0.2.1",

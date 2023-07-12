@@ -34,7 +34,8 @@ const NetworkById = () => {
     {
       nwid: query.id as string,
     },
-    { enabled: !!query.id, refetchInterval: 10000 }
+    // { enabled: !!query.id, refetchInterval: 10000 }
+    { enabled: !!query.id }
   );
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
 
