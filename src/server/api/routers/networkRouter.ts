@@ -114,7 +114,7 @@ export const networkRouter = createTRPCRouter({
           });
         });
 
-      console.log(JSON.stringify(ztControllerResponse, null, 2));
+      // console.log(JSON.stringify(ztControllerResponse, null, 2));
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
