@@ -91,7 +91,7 @@ export const networkMemberRouter = createTRPCRouter({
         );
       }
 
-      // remove ip specified by user UI
+      // update ip specified by user UI
       if (input.updateParams.ipAssignments) {
         // update member
         Object.assign(
@@ -101,8 +101,8 @@ export const networkMemberRouter = createTRPCRouter({
         );
       }
 
+      // update authorized
       if (typeof input.updateParams.authorized === "boolean") {
-        // update member
         Object.assign(
           payload,
           {},
