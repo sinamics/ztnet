@@ -245,6 +245,8 @@ export async function handleAutoAssignIP(
 
   // Then, for each member without an IP, try to assign one
   for (const member of controller?.members) {
+    if (member.noAutoAssignIps) continue;
+
     if (member.ipAssignments.length === 0) {
       // Get next available IP from the pool
       const nextIP = getNextIP(

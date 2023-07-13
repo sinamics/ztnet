@@ -8,7 +8,9 @@ const Modal = () => {
   const {
     isOpen,
     description,
+    content,
     title,
+    rootStyle,
     yesAction,
     toggleModal,
     disableClickOutside,
@@ -29,23 +31,35 @@ const Modal = () => {
     "modal modal-bottom sm:modal-middle z-20 ": true,
     "modal-open": isOpen,
   });
+
   return (
     // we add modal-bottom and modal-middle classes to make it responsive
     //add modal-open for now to test the modal
     <div className={modalClass}>
       {/* we want any content for this modal layout so we just pass the children */}
-      <div className="modal-box relative bg-primary text-center" ref={ref}>
+      <div
+        className={cn("modal-box relative bg-base-300", rootStyle)}
+        ref={ref}
+      >
         <h3 className="text-lg font-bold">{title}</h3>
         <p className="py-4">{description}</p>
-
+        <div>{content}</div>
         <div className="modal-action">
-          {/* closes the modal */}
-          <button className="btn" onClick={actionHandler}>
-            Yes
-          </button>
-          <button className="btn" onClick={closeModal}>
-            Cancle
-          </button>
+          {yesAction ? (
+            <>
+              {/* closes the modal */}
+              <button className="btn" onClick={actionHandler}>
+                Yes
+              </button>
+              <button className="btn" onClick={closeModal}>
+                Cancle
+              </button>
+            </>
+          ) : (
+            <button className="btn" onClick={closeModal}>
+              Close
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -114,7 +114,7 @@ export const networkRouter = createTRPCRouter({
           });
         });
 
-      // console.log(JSON.stringify(ztControllerResponse, null, 2));
+      console.log(JSON.stringify(ztControllerResponse, null, 2));
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
@@ -136,6 +136,8 @@ export const networkRouter = createTRPCRouter({
         network: mergedNetwork,
       };
       const { members, network } = combined;
+
+      // console.log(JSON.stringify(members, null, 2));
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
@@ -174,6 +176,7 @@ export const networkRouter = createTRPCRouter({
       );
       // Resolve the promises before passing them to Promise.all
       const zombieMembers = await Promise.all(getZombieMembersPromises);
+      // console.log(JSON.stringify(updatedActiveMembers, null, 2));
 
       // filters out any null or undefined elements in the zombieMembers array.
       const filteredZombieMembers = zombieMembers.filter((a) => a);
