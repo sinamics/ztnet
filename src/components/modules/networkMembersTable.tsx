@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
@@ -20,16 +16,9 @@ import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { type CustomError } from "~/types/errorHandling";
 import cn from "classnames";
+import { useModalStore } from "~/utils/store";
+import { MemberOptionsModal } from "./memberOptionsModal";
 
-interface IpAssignmentsProps {
-  ipAssignments: string[];
-  state: string[];
-  id: string;
-  nwid: string;
-  peers?: { latency: number };
-  copyClipboard: (ip: string) => void;
-  setDeleteWarning: (args: any) => void;
-}
 enum ConnectionStatus {
   Offline = 0,
   Relayed = 1,
@@ -38,12 +27,13 @@ enum ConnectionStatus {
 }
 export const NetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
         nwid,
       },
-      { enabled: !!query.id }
+      { enabled: !!query.id, networkMode: "online" }
     );
 
   const { mutate: updateMemberDatabaseOnly } =
@@ -145,7 +135,8 @@ export const NetworkMembersTable = ({ nwid }) => {
       {
         Header: "Conn Status",
         accessor: ({ conStatus, peers, lastseen }) => {
-          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
+          const formatTime = (value: string, unit: string) =>
+            `${value} ${unit}`;
           const cursorStyle = { cursor: "pointer" };
 
           if (conStatus === ConnectionStatus.Relayed) {
@@ -198,18 +189,40 @@ export const NetworkMembersTable = ({ nwid }) => {
       {
         Header: "Action",
         // width: 200,
-        accessor: ({ id }) => {
+        accessor: ({ id, name }) => {
           return (
-            <button
-              onClick={() => stashMember(id)}
-              className="btn-outline btn-warning btn-xs btn rounded-sm"
-            >
-              Stash
-            </button>
+            <div className="space-x-2">
+              <button
+                onClick={() =>
+                  callModal({
+                    title: (
+                      <p>
+                        Options for member{" "}
+                        <span className="text-primary">{`${
+                          name ? name : id
+                        }`}</span>
+                      </p>
+                    ),
+                    rootStyle: "text-left",
+                    content: <MemberOptionsModal nwid={nwid} memberId={id} />,
+                  })
+                }
+                className="btn-outline btn-xs btn rounded-sm"
+              >
+                Options
+              </button>
+              <button
+                onClick={() => stashMember(id)}
+                className="btn-outline btn-warning btn-xs btn rounded-sm"
+              >
+                Stash
+              </button>
+            </div>
           );
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -448,8 +461,8 @@ export const NetworkMembersTable = ({ nwid }) => {
   );
 };
 
-{
-  /* <div className="flex justify-between py-3 pl-2">
+// {
+/* <div className="flex justify-between py-3 pl-2">
         <div className="relative hidden max-w-xs lg:flex">
           <label htmlFor="hs-table-search" className="sr-only">
             Search
@@ -501,4 +514,4 @@ export const NetworkMembersTable = ({ nwid }) => {
           </div>
         </div>
       </div> */
-}
+// }
