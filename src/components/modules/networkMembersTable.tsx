@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
@@ -19,16 +15,9 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { type CustomError } from "~/types/errorHandling";
+import { useModalStore } from "~/utils/store";
+import { MemberOptionsModal } from "./memberOptionsModal";
 
-interface IpAssignmentsProps {
-  ipAssignments: string[];
-  state: string[];
-  id: string;
-  nwid: string;
-  peers?: { latency: number };
-  copyClipboard: (ip: string) => void;
-  setDeleteWarning: (args: any) => void;
-}
 enum ConnectionStatus {
   Offline = 0,
   Relayed = 1,
@@ -37,12 +26,13 @@ enum ConnectionStatus {
 }
 export const NetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
+  const { callModal } = useModalStore((state) => state);
   const { data: networkById, refetch: refetchNetworkById } =
     api.network.getNetworkById.useQuery(
       {
         nwid,
       },
-      { enabled: !!query.id }
+      { enabled: !!query.id, networkMode: "online" }
     );
 
   const { mutate: updateMemberDatabaseOnly } =
@@ -132,68 +122,8 @@ export const NetworkMembersTable = ({ nwid }) => {
       },
       {
         Header: "IP / Latency",
-        // width: 170,
-        accessor: ({ ipAssignments, peers, id }: IpAssignmentsProps) => {
-          if (!ipAssignments || !ipAssignments.length)
-            return <span>waiting for IP ...</span>;
-          return ipAssignments.map((ip) => {
-            const subnetMatch = isIPInSubnet(
-              ip,
-              networkById.network?.routes[0]?.target
-            );
-
-            return (
-              <div key={ip} className="flex justify-center text-center">
-                {true ? (
-                  <div
-                    className={`${
-                      subnetMatch
-                        ? "badge badge-primary badge-lg rounded-md"
-                        : "badge badge-ghost badge-lg rounded-md opacity-60"
-                    } flex min-w-fit justify-between`}
-                  >
-                    <CopyToClipboard
-                      text={ip}
-                      onCopy={() => toast.success(`${ip} copied to clipboard`)}
-                      title="copy to clipboard"
-                    >
-                      <div className="cursor-pointer">{ip}</div>
-                    </CopyToClipboard>
-                    <div className="text-xs">
-                      {peers?.latency > 0 && ` (${peers.latency}ms)`}
-                    </div>
-                    {ipAssignments.length > 1 && (
-                      <div title="delete ip assignment">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth="1.5"
-                          stroke="currentColor"
-                          className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
-                          onClick={() =>
-                            deleteIpAssignment(ipAssignments, ip, id)
-                          }
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                          />
-                        </svg>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <span className="cursor-pointer pl-2 text-sm text-green-500">
-                    copied!
-                  </span>
-                )}
-              </div>
-            );
-          });
-        },
-
+        accessor: "ipAssignments",
+        width: 170,
         // width: 200,
       },
       {
@@ -204,7 +134,8 @@ export const NetworkMembersTable = ({ nwid }) => {
       {
         Header: "Conn Status",
         accessor: ({ conStatus, peers, lastseen }) => {
-          const formatTime = (value: any, unit: string) => `${value} ${unit}`;
+          const formatTime = (value: string, unit: string) =>
+            `${value} ${unit}`;
           const cursorStyle = { cursor: "pointer" };
 
           if (conStatus === ConnectionStatus.Relayed) {
@@ -257,18 +188,40 @@ export const NetworkMembersTable = ({ nwid }) => {
       {
         Header: "Action",
         // width: 200,
-        accessor: ({ id }) => {
+        accessor: ({ id, name }) => {
           return (
-            <button
-              onClick={() => stashMember(id)}
-              className="btn-outline btn-warning btn-xs btn rounded-sm"
-            >
-              Stash
-            </button>
+            <div className="space-x-2">
+              <button
+                onClick={() =>
+                  callModal({
+                    title: (
+                      <p>
+                        Options for member{" "}
+                        <span className="text-primary">{`${
+                          name ? name : id
+                        }`}</span>
+                      </p>
+                    ),
+                    rootStyle: "text-left",
+                    content: <MemberOptionsModal nwid={nwid} memberId={id} />,
+                  })
+                }
+                className="btn-outline btn-xs btn rounded-sm"
+              >
+                Options
+              </button>
+              <button
+                onClick={() => stashMember(id)}
+                className="btn-outline btn-warning btn-xs btn rounded-sm"
+              >
+                Stash
+              </button>
+            </div>
           );
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -279,20 +232,20 @@ export const NetworkMembersTable = ({ nwid }) => {
     column: { id },
   }) => {
     // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState(initialValue);
+    const [name, setName] = React.useState(initialValue);
 
-    const onChange = (e) => {
-      setValue(e.target.value);
+    const nameOnChange = (e) => {
+      setName(e.target.value);
     };
 
     // We'll only update the external data when the input is blurred
-    const onBlur = () => {
+    const nameOnBlur = () => {
       updateMemberDatabaseOnly(
         {
           nwid,
           id: original.id,
           updateParams: {
-            name: value,
+            name,
           },
         },
         { onSuccess: () => void refetchNetworkById() }
@@ -302,20 +255,88 @@ export const NetworkMembersTable = ({ nwid }) => {
 
     // If the initialValue is changed external, sync it up with our state
     React.useEffect(() => {
-      setValue(initialValue);
+      setName(initialValue);
+      // setIpAssignment(initialValue);
     }, [initialValue]);
 
     if (id === "name") {
       return (
         <input
           className="m-0 border-0 bg-transparent p-0"
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
+          value={name}
+          onChange={nameOnChange}
+          onBlur={nameOnBlur}
         />
       );
     }
-    return value;
+
+    if (id === "ipAssignments") {
+      if (!original.ipAssignments || !original.ipAssignments.length)
+        return <p className="text-gray-500">Not assigned</p>;
+
+      return (
+        <div className="space-y-1">
+          {original?.ipAssignments.map((assignedIp) => {
+            const subnetMatch = isIPInSubnet(
+              assignedIp,
+              networkById.network?.routes[0]?.target
+            );
+
+            return (
+              <div key={assignedIp} className="flex justify-center text-center">
+                <div
+                  className={`${
+                    subnetMatch
+                      ? "badge-primary badge badge-lg rounded-md"
+                      : "badge-ghost badge badge-lg rounded-md opacity-60"
+                  } flex min-w-fit justify-between`}
+                >
+                  <CopyToClipboard
+                    text={assignedIp}
+                    onCopy={() =>
+                      toast.success(`${assignedIp} copied to clipboard`)
+                    }
+                    title="copy to clipboard"
+                  >
+                    <div className="cursor-pointer">{assignedIp}</div>
+                  </CopyToClipboard>
+                  <div className="text-xs">
+                    {original?.peers?.latency > 0 &&
+                      ` (${original?.peers.latency}ms)`}
+                  </div>
+                  {original?.ipAssignments.length > 0 && (
+                    <div title="delete ip assignment">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
+                        onClick={() =>
+                          deleteIpAssignment(
+                            original?.ipAssignments,
+                            assignedIp,
+                            original?.id
+                          )
+                        }
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    return initialValue;
   };
   // Set our editable cell renderer as the default Cell renderer
   const defaultColumn = {
@@ -424,8 +445,8 @@ export const NetworkMembersTable = ({ nwid }) => {
   );
 };
 
-{
-  /* <div className="flex justify-between py-3 pl-2">
+// {
+/* <div className="flex justify-between py-3 pl-2">
         <div className="relative hidden max-w-xs lg:flex">
           <label htmlFor="hs-table-search" className="sr-only">
             Search
@@ -477,4 +498,4 @@ export const NetworkMembersTable = ({ nwid }) => {
           </div>
         </div>
       </div> */
-}
+// }

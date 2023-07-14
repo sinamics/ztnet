@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
@@ -9,7 +11,7 @@ import {
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import { updateNetworkMembers } from "../networkService";
+import { handleAutoAssignIP, updateNetworkMembers } from "../networkService";
 import { Address4, Address6 } from "ip-address";
 import {
   type NetworkAndMembers,
@@ -17,9 +19,11 @@ import {
   type ZtControllerNetwork,
   type IpAssignmentPoolsEntity,
   type Peers,
+  type NetworkEntity,
 } from "~/types/network";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
+import RuleCompiler from "~/utils/rule-compiler";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -30,7 +34,11 @@ const customConfig: Config = {
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
 }
-
+function isValidDomain(domain: string): boolean {
+  const domainRegex =
+    /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+  return domainRegex.test(domain);
+}
 const RouteSchema = z.object({
   target: z.string().refine(isValidCIDR, {
     message: "Destination IP must be a valid CIDR notation!",
@@ -114,10 +122,12 @@ export const networkRouter = createTRPCRouter({
         });
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
+
+      // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
       await updateNetworkMembers(ztControllerResponse);
 
-      // Generate ipv4 address, cidr, start & end
+      // Get available cidr options.
       const ipAssignmentPools = IPv4gen(null);
       const { cidrOptions } = ipAssignmentPools;
 
@@ -133,6 +143,8 @@ export const networkRouter = createTRPCRouter({
         network: mergedNetwork,
       };
       const { members, network } = combined;
+
+      // console.log(JSON.stringify(members, null, 2));
 
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
@@ -171,10 +183,10 @@ export const networkRouter = createTRPCRouter({
       );
       // Resolve the promises before passing them to Promise.all
       const zombieMembers = await Promise.all(getZombieMembersPromises);
+      // console.log(JSON.stringify(updatedActiveMembers, null, 2));
 
       // filters out any null or undefined elements in the zombieMembers array.
       const filteredZombieMembers = zombieMembers.filter((a) => a);
-
       return {
         network,
         members: updatedActiveMembers,
@@ -222,46 +234,135 @@ export const networkRouter = createTRPCRouter({
       z.object({
         nwid: z.string().nonempty(),
         updateParams: z.object({
+          multicast: z
+            .object({
+              multicastLimit: z.number().optional(),
+              enableBroadcast: z.boolean().optional(),
+            })
+            .optional(),
           privateNetwork: z.boolean().optional(),
           ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
+          removeDns: z.boolean().optional(),
+          dns: z
+            .object({
+              domain: z.string().nonempty(),
+              address: z.string().nonempty(),
+            })
+            .optional(),
           routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
+          autoAssignIp: z.boolean().optional().default(true),
         }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       // Construct the API request payload using the provided updateParams
-      const payload: Partial<ZtControllerNetwork> = {};
-
+      const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
+      const prismaUpdates: Partial<NetworkEntity> = {};
       try {
-        const { privateNetwork, ipPool, name, routes, changeCidr } =
-          input.updateParams;
+        const {
+          privateNetwork,
+          ipPool,
+          name,
+          dns,
+          removeDns,
+          multicast,
+          routes,
+          changeCidr,
+          autoAssignIp,
+        } = input.updateParams;
 
         if (typeof privateNetwork === "boolean") {
-          payload.private = privateNetwork;
+          ztControllerUpdates.private = privateNetwork;
         }
 
-        if (ipPool) {
-          if (typeof ipPool === "string") {
-            Object.assign(payload, IPv4gen(ipPool));
-          } else if (Array.isArray(ipPool)) {
-            payload.ipAssignmentPools = ipPool as IpAssignmentPoolsEntity[];
+        if (typeof removeDns === "boolean") {
+          ztControllerUpdates.dns = {
+            domain: "",
+            servers: [],
+          };
+        }
+
+        if (typeof multicast === "object") {
+          ztControllerUpdates.multicastLimit = multicast.multicastLimit;
+          ztControllerUpdates.enableBroadcast = multicast.enableBroadcast;
+        }
+
+        if (typeof dns === "object") {
+          if (!isValidIP(dns?.address)) {
+            throw new TRPCError({
+              message: `Invalid DNS address provided ${dns?.address}`,
+              code: "BAD_REQUEST",
+            });
+          }
+
+          if (!isValidDomain(dns.domain)) {
+            throw new TRPCError({
+              message: `Invalid DNS domain provided ${dns.domain}`,
+              code: "BAD_REQUEST",
+            });
+          }
+
+          ztControllerUpdates.dns = {
+            domain: "",
+            servers: [],
+          };
+
+          // Return nw obj details
+          const ztControllerResponse = await ztController
+            .network_detail(input.nwid)
+            .catch((err: APIError) => {
+              throw new TRPCError({
+                message: `${err.cause.toString()} --- ${err.message}`,
+                code: "BAD_REQUEST",
+                cause: err.cause,
+              });
+            });
+
+          // Update domain
+          ztControllerUpdates.dns.domain = dns.domain;
+
+          if (Array.isArray(ztControllerResponse.network.dns.servers)) {
+            ztControllerUpdates.dns.servers = [
+              ...ztControllerResponse.network.dns.servers,
+              dns.address,
+            ] as string[];
+          } else {
+            ztControllerUpdates.dns.servers.push(dns.address);
           }
         }
 
+        // If the network is set to auto-assign IP addresses, and an IP pool has been specified,
+        // generate a new IP pool object using the IPv4gen function and assign it to the ztControllerUpdates.
+        // If the IP pool is specified as an array, it is assigned directly to the ztControllerUpdates.
+        if (ipPool && autoAssignIp) {
+          if (typeof ipPool === "string") {
+            Object.assign(ztControllerUpdates, IPv4gen(ipPool));
+          } else if (Array.isArray(ipPool)) {
+            ztControllerUpdates.ipAssignmentPools =
+              ipPool as IpAssignmentPoolsEntity[];
+          }
+
+          if (ztControllerUpdates.routes.length > 0) {
+            prismaUpdates.ipAssignments = ztControllerUpdates.routes[0].target;
+          }
+        }
+
+        // Network name
         if (name) {
-          payload.name = name;
-          await ctx.prisma.network.update({
-            where: { nwid: input.nwid },
-            data: { nwname: name },
-          });
+          prismaUpdates.nwname = name;
+        }
+
+        // Auto assign IP
+        if (typeof autoAssignIp === "boolean") {
+          prismaUpdates.autoAssignIp = autoAssignIp;
         }
 
         if (routes) {
           try {
-            payload.routes = RoutesArraySchema.parse(routes);
+            ztControllerUpdates.routes = RoutesArraySchema.parse(routes);
           } catch (error) {
             if (error instanceof z.ZodError) {
               throw new TRPCError({
@@ -275,10 +376,28 @@ export const networkRouter = createTRPCRouter({
         }
 
         if (changeCidr) {
-          payload.cidr = IPv4gen(changeCidr).cidrOptions;
+          ztControllerUpdates.cidr = IPv4gen(changeCidr).cidrOptions;
         }
 
-        return await ztController.network_update(input.nwid, payload);
+        // Update network in prisma
+        await ctx.prisma.network.update({
+          where: { nwid: input.nwid },
+          data: prismaUpdates,
+        });
+
+        if (typeof autoAssignIp === "boolean") {
+          await handleAutoAssignIP(
+            autoAssignIp,
+            ztControllerUpdates,
+            ctx,
+            input
+          );
+        }
+
+        return await ztController.network_update(
+          input.nwid,
+          ztControllerUpdates
+        );
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw new TRPCError({
@@ -314,6 +433,7 @@ export const networkRouter = createTRPCRouter({
             create: {
               nwname: newNw.name,
               nwid: newNw.nwid,
+              ipAssignments: newNw.routes[0].target,
             },
           },
         },
@@ -341,4 +461,121 @@ export const networkRouter = createTRPCRouter({
       }
     }
   }),
+  setFlowRule: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        flowRoute: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { flowRoute } = input;
+
+      const rules = [];
+      const caps = {};
+      const tags = {};
+      // try {
+      const err: string[] = RuleCompiler(flowRoute, rules, caps, tags);
+      if (err) {
+        throw new TRPCError({
+          message: JSON.stringify({
+            error: `ERROR parsing ${process.argv[2]} line ${err[0]} column ${err[1]}: ${err[2]}`,
+            line: err[0],
+          }),
+          code: "BAD_REQUEST",
+          cause: err[0],
+        });
+      }
+      const capsArray = [];
+      const capabilitiesByName = {};
+      for (const n in caps) {
+        capsArray.push(caps[n]);
+        capabilitiesByName[n] = caps[n].id;
+      }
+      const tagsArray = [];
+      for (const n in tags) {
+        const t = tags[n];
+        const dfl = t["default"];
+        tagsArray.push({
+          id: t.id,
+          default: dfl || dfl === 0 ? dfl : null,
+        });
+      }
+
+      // update zerotier network with the new flow route
+      await ztController.network_update(input.nwid, {
+        rules,
+        capabilities: capsArray,
+        tags: tagsArray,
+      });
+
+      // update network in prisma
+      await ctx.prisma.network.update({
+        where: { nwid: input.nwid },
+        data: {
+          flowRule: flowRoute,
+        },
+      });
+    }),
+  getFlowRule: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        reset: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const DEFAULT_NETWORK_ROUTE_CONFIG = `#
+# This is a default rule set that allows IPv4 and IPv6 traffic but otherwise
+# behaves like a standard Ethernet switch.
+#
+# Please keep in mind that ZeroTier versions prior to 1.2.0 do NOT support advanced
+# network rules.
+#
+# Since both senders and receivers enforce rules, you will get the following
+# behavior in a network with both old and new versions:
+#
+# (old: 1.1.14 and older, new: 1.2.0 and newer)
+#
+# old <--> old: No rules are honored.
+# old <--> new: Rules work but are only enforced by new side. Tags will NOT work, and
+#               capabilities will only work if assigned to the new side.
+# new <--> new: Full rules engine support including tags and capabilities.
+#
+# We recommend upgrading all your devices to 1.2.0 as soon as convenient. Version
+# 1.2.0 also includes a significantly improved software update mechanism that is
+# turned on by default on Mac and Windows. (Linux and mobile are typically kept up
+# to date using package/app management.)
+#
+#
+# Allow only IPv4, IPv4 ARP, and IPv6 Ethernet frames.
+#
+drop
+  not ethertype ipv4
+  and not ethertype arp
+  and not ethertype ipv6
+;
+#
+# Uncomment to drop non-ZeroTier issued and managed IP addresses.
+#
+# This prevents IP spoofing but also blocks manual IP management at the OS level and
+# bridging unless special rules to exempt certain hosts or traffic are added before
+# this rule.
+#
+#drop
+#	not chr ipauth
+#;
+# Accept anything else. This is required since default is 'drop'.
+accept;`;
+
+      const flow = await ctx.prisma.network.findFirst({
+        where: { nwid: input.nwid },
+      });
+
+      if (!flow.flowRule || input.reset) {
+        return DEFAULT_NETWORK_ROUTE_CONFIG;
+      }
+
+      return flow.flowRule;
+    }),
 });

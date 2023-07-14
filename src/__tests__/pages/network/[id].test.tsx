@@ -39,6 +39,16 @@ jest.mock("../../../utils/api", () => ({
           mutate: jest.fn(),
         }),
       },
+      getFlowRule: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      setFlowRule: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
       deleteNetwork: {
         useMutation: () => ({
           mutate: jest.fn(),

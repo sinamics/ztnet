@@ -8,6 +8,13 @@
 
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
+import { IPv4gen } from "~/utils/IPv4gen";
+import { TRPCError } from "@trpc/server";
+import { type APIError } from "../helpers/errorHandler";
+import {
+  type IpAssignmentPoolsEntity,
+  type ZtControllerNetwork,
+} from "~/types/network";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -84,7 +91,6 @@ interface MemberI {
 
 const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
   if (members.length === 0) return;
-
   //loop array
   for (const member of members) {
     const storeValues = {
@@ -139,3 +145,124 @@ const psql_addMember = async (member: MemberI) => {
     },
   });
 };
+
+function ip2long(ip: string) {
+  const parts = ip.split(".");
+  let res = 0;
+  res += parseInt(parts[0]) << 24;
+  res += parseInt(parts[1]) << 16;
+  res += parseInt(parts[2]) << 8;
+  res += parseInt(parts[3]);
+  return res >>> 0; // Convert to unsigned number
+}
+
+function long2ip(long: number) {
+  const part1 = (long & 255).toString();
+  const part2 = ((long >> 8) & 255).toString();
+  const part3 = ((long >> 16) & 255).toString();
+  const part4 = ((long >> 24) & 255).toString();
+
+  return part4 + "." + part3 + "." + part2 + "." + part1;
+}
+
+// Function to get the next available IP from a range
+export function getNextIP(
+  rangeStart: string,
+  rangeEnd: string,
+  allAssignedIPs: string[]
+): string | null {
+  const start = ip2long(rangeStart);
+  const end = ip2long(rangeEnd);
+
+  for (let ipLong = start; ipLong <= end; ipLong++) {
+    const ip = long2ip(ipLong);
+    if (!allAssignedIPs.includes(ip)) {
+      return ip;
+    }
+  }
+
+  // If we haven't returned by now, then there are no available IPs in the range
+  return null;
+}
+
+/**
+ * Checks and manages the auto-assignment of IP addresses to network members.
+ *
+ * The function receives a boolean `autoAssignIp`. If `autoAssignIp` is not set or false, it will
+ * clear any existing IP assignment pools for network members. This is achieved by setting the
+ * `ipAssignmentPools` of the payload to an empty array.
+ *
+ * If `autoAssignIp` is true, the function will create a new IP assignment pool, update the network
+ * with the new pool, fetch network details, and assign IPs to members without an assigned IP.
+ *
+ * The function first gathers all assigned IPs in the network. Then, for each member without an IP,
+ * it tries to assign an available IP from the pool.
+ *
+ */
+export async function handleAutoAssignIP(
+  autoAssignIp: boolean | undefined,
+  payload: Partial<ZtControllerNetwork>,
+  ctx,
+  input
+) {
+  if (autoAssignIp === false) {
+    // remove ipAssignmentPools if autoAssignIp is false
+    payload.ipAssignmentPools = [];
+    return;
+  }
+
+  const psqlNetworkData = await ctx.prisma.network.findFirst({
+    where: {
+      AND: [
+        {
+          authorId: { equals: ctx.session.user.id },
+          nwid: { equals: input.nwid },
+        },
+      ],
+    },
+  });
+
+  // else update network with new ipAssignmentPools
+  const pool = IPv4gen(psqlNetworkData.ipAssignments);
+  payload.ipAssignmentPools =
+    pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
+
+  const controller = await ztController
+    .network_detail(input.nwid)
+    .catch((err: APIError) => {
+      throw new TRPCError({
+        message: `${err.cause.toString()} --- ${err.message}`,
+        code: "BAD_REQUEST",
+        cause: err.cause,
+      });
+    });
+
+  // First, gather all assigned IPs in the network
+  let allAssignedIPs: string[] = [];
+  for (const member of controller?.members) {
+    allAssignedIPs = [...allAssignedIPs, ...member.ipAssignments];
+  }
+
+  // Then, for each member without an IP, try to assign one
+  for (const member of controller?.members) {
+    if (member.noAutoAssignIps) continue;
+
+    if (member.ipAssignments.length === 0) {
+      // Get next available IP from the pool
+      const nextIP = getNextIP(
+        pool.ipAssignmentPools[0].ipRangeStart,
+        pool.ipAssignmentPools[0].ipRangeEnd,
+        allAssignedIPs
+      );
+
+      if (nextIP !== null) {
+        // If a next IP is available, assign it to the member
+        await ztController.member_update(input.nwid, member.id, {
+          ipAssignments: [nextIP],
+        });
+        // Add this newly assigned IP to the allAssignedIPs array, to keep it up-to-date
+        allAssignedIPs.push(nextIP);
+      }
+    }
+  }
+}
