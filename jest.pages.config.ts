@@ -22,5 +22,5 @@ const jestConfig: JestConfigWithTsJest = {
   },
   testMatch: ["**/__tests__/**/*.test.tsx"],
 };
-
-export default createJestConfig(jestConfig);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+export default createJestConfig(jestConfig as any);
