@@ -6,4 +6,5 @@
 */
 -- AlterTable
 ALTER TABLE "network" ADD COLUMN     "autoAssignIp" BOOLEAN DEFAULT true,
+ADD COLUMN     "flowRule" TEXT,
 ADD COLUMN     "ipAssignments" TEXT NOT NULL;
