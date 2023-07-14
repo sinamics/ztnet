@@ -9,7 +9,7 @@ import { type CustomError } from "~/types/errorHandling";
 import { type RoutesEntity } from "~/types/network";
 import { api } from "~/utils/api";
 
-export const NettworkSettings = () => {
+export const NettworkRoutes = () => {
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
   const [routeInput, setRouteInput] = useState<RoutesEntity>();
 

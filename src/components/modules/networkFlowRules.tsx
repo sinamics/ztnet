@@ -91,7 +91,6 @@ export const NetworkFlowRules = () => {
           value={flowRoute}
           onChange={handleFlowRouteChange}
           maxHeight="1500px"
-          // height="1000px"
           width="100%"
           theme={okaidia}
           extensions={[python(), errorColorTheme, classnameExt]}
