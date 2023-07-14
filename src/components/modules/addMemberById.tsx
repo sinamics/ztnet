@@ -52,7 +52,7 @@ export const AddMemberById = () => {
           </span>
         </label>
         <label className="input-group">
-          <span>Member ID</span>
+          <span className="bg-base-300">Member ID</span>
           <input
             onChange={inputHandler}
             name="memberid"

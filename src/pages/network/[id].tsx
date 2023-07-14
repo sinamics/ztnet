@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkSettings } from "~/components/modules/networkRoutes";
+import { NettworkRoutes } from "~/components/modules/networkRoutes";
 import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
@@ -15,6 +14,9 @@ import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
+import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
+import { NetworkDns } from "~/components/modules/networkDns";
+import { NetworkMulticast } from "~/components/modules/networkMulticast";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -177,9 +179,9 @@ const NetworkById = () => {
           you absolutely have to.
         </p>
       </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm  sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
-        <div className="w-6/6 xl:w-3/6 ">
+        <div className="w-6/6 xl:w-3/6">
           <NetworkIpAssignment />
         </div>
 
@@ -187,7 +189,20 @@ const NetworkById = () => {
 
         {/* Manged routes section */}
         <div className="w-6/6 xl:w-3/6 ">
-          <NettworkSettings />
+          <NettworkRoutes />
+        </div>
+      </div>
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
+        {/* Ipv4 assignment  */}
+        <div className="w-6/6 xl:w-3/6">
+          <NetworkDns />
+        </div>
+
+        <div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex"></div>
+
+        {/* Manged broadcast section */}
+        <div className="w-6/6 xl:w-3/6">
+          <NetworkMulticast />
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
@@ -253,6 +268,9 @@ const NetworkById = () => {
             </>
           ) : null}
         </div>
+      </div>
+      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <NetworkFlowRules />
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Actions

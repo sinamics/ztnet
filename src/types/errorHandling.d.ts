@@ -14,6 +14,12 @@ interface ShapeError {
   data?: ErrorData;
 }
 
+interface CustomBackendError {
+  error?: string;
+  line?: number;
+}
+
 export interface CustomError {
   shape?: ShapeError;
+  message?: CustomBackendError;
 }

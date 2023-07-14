@@ -3,6 +3,13 @@ export interface NetworkAndMembers {
   network: ZtControllerNetwork;
   members?: MembersEntity[] | null;
 }
+export interface NetworkEntity {
+  nwname?: string;
+  autoAssignIp?: boolean;
+  ipAssignments?: string;
+  authorId?: number;
+}
+
 export interface MembersEntity {
   activeBridge: boolean;
   address: string;
@@ -31,6 +38,11 @@ export interface MembersEntity {
   peers?: Peers[];
   conStatus: number;
 }
+
+export interface dns {
+  domain: string;
+  servers: string[];
+}
 export interface ZtControllerNetwork {
   nwid: string;
   nwname: string;
@@ -42,7 +54,7 @@ export interface ZtControllerNetwork {
   capabilities?: null[] | null;
   clientId: string;
   creationTime: DateTime;
-  dns?: null[] | null;
+  dns?: dns;
   enableBroadcast: boolean;
   id: string;
   ipAssignmentPools?: IpAssignmentPoolsEntity[] | null;
@@ -61,6 +73,7 @@ export interface ZtControllerNetwork {
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
   cidr?: string[] | null;
+  autoAssignIp: boolean;
 }
 export interface RoutesEntity {
   target?: string | null;

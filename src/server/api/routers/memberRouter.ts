@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
@@ -60,6 +59,8 @@ export const networkMemberRouter = createTRPCRouter({
         nwid: z.string({ required_error: "No network id provided!" }),
         memberId: z.string({ required_error: "No member id provided!" }),
         updateParams: z.object({
+          activeBridge: z.boolean().optional(),
+          noAutoAssignIps: z.boolean().optional(),
           ipAssignments: z
             .array(z.string({ required_error: "No Ip assignment provided!" }))
             .optional(),
@@ -71,8 +72,26 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const payload: Partial<NetworkAndMembers> = {};
+      // update noAutoAssignIps
+      if (typeof input.updateParams.activeBridge === "boolean") {
+        // update member
+        Object.assign(
+          payload,
+          {},
+          { activeBridge: input.updateParams.activeBridge }
+        );
+      }
+      // update noAutoAssignIps
+      if (typeof input.updateParams.noAutoAssignIps === "boolean") {
+        // update member
+        Object.assign(
+          payload,
+          {},
+          { noAutoAssignIps: input.updateParams.noAutoAssignIps }
+        );
+      }
 
-      // remove ip specified by user UI
+      // update ip specified by user UI
       if (input.updateParams.ipAssignments) {
         // update member
         Object.assign(
@@ -82,8 +101,8 @@ export const networkMemberRouter = createTRPCRouter({
         );
       }
 
+      // update authorized
       if (typeof input.updateParams.authorized === "boolean") {
-        // update member
         Object.assign(
           payload,
           {},
@@ -113,6 +132,8 @@ export const networkMemberRouter = createTRPCRouter({
                 data: {
                   ipAssignments: updatedMember.ipAssignments,
                   authorized: updatedMember.authorized,
+                  noAutoAssignIps: updatedMember.noAutoAssignIps,
+                  activeBridge: updatedMember.activeBridge,
                 },
               },
             },
