@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useRouter } from "next/router";
-import { type ChangeEvent, useState } from "react";
 import { toast } from "react-hot-toast";
+import { api } from "~/utils/api";
 import { type CustomError } from "~/types/errorHandling";
 import { type RoutesEntity } from "~/types/network";
-import { api } from "~/utils/api";
+import { type ChangeEvent, useState } from "react";
 
 export const NettworkRoutes = () => {
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
