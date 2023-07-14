@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
-import { type CustomError } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import cn from "classnames";
 
@@ -21,8 +20,9 @@ export const NetworkIpAssignment = () => {
 
   const { mutate: updateNetworkMutation } =
     api.network.updateNetwork.useMutation({
-      onError: ({ shape }: CustomError) => {
-        void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      onError: (e) => {
+        void toast.error(e?.message);
+        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
       },
     });
 
@@ -53,7 +53,7 @@ export const NetworkIpAssignment = () => {
         <input
           type="checkbox"
           checked={network.autoAssignIp}
-          className="checkbox-primary checkbox checkbox-sm"
+          className="checkbox checkbox-primary checkbox-sm"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             submitUpdate({ autoAssignIp: e.target.checked });
           }}
@@ -73,7 +73,7 @@ export const NetworkIpAssignment = () => {
             <div
               key={cidr}
               className={cn(
-                "badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 md:text-base",
+                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
                 {
                   "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
                     network.autoAssignIp,
@@ -87,7 +87,7 @@ export const NetworkIpAssignment = () => {
               key={cidr}
               onClick={() => submitUpdate({ ipPool: cidr })}
               className={cn(
-                "badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 md:text-base",
+                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
                 { "hover:bg-primary": network.autoAssignIp }
               )}
             >

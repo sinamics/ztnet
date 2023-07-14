@@ -14,7 +14,6 @@ import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
-import { type CustomError } from "~/types/errorHandling";
 import { useModalStore } from "~/utils/store";
 import { MemberOptionsModal } from "./memberOptionsModal";
 
@@ -39,9 +38,10 @@ export const NetworkMembersTable = ({ nwid }) => {
     api.networkMember.UpdateDatabaseOnly.useMutation();
 
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
-    onError: ({ shape }: CustomError) => {
+    onError: (e) => {
       // console.log(shape?.data?.zodError.fieldErrors);
-      void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      void toast.error(e?.message);
     },
     onSuccess: () => refetchNetworkById(),
   });

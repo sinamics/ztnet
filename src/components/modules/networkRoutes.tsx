@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
-import { type CustomError } from "~/types/errorHandling";
 import { type RoutesEntity } from "~/types/network";
 import { type ChangeEvent, useState } from "react";
 
@@ -23,8 +22,9 @@ export const NettworkRoutes = () => {
 
   const { mutate: updateNetworkMutation, isLoading: isUpdating } =
     api.network.updateNetwork.useMutation({
-      onError: ({ shape }: CustomError) => {
-        void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      onError: (e) => {
+        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+        void toast.error(e?.message);
       },
     });
 
@@ -109,7 +109,7 @@ export const NettworkRoutes = () => {
             name="target"
             onChange={routeHandler}
             placeholder="Destination"
-            className="input-bordered input-primary input input-xs w-3/6 rounded-md"
+            className="input input-bordered input-primary input-xs w-3/6 rounded-md"
           />
           <div className="px-4">via</div>
           <input
@@ -117,17 +117,17 @@ export const NettworkRoutes = () => {
             name="via"
             onChange={routeHandler}
             placeholder="target"
-            className="input-bordered input-primary input input-xs w-3/6 rounded-md"
+            className="input input-bordered input-primary input-xs w-3/6 rounded-md"
           />
           <button
             type="submit"
-            className="btn-success btn-xs btn ml-4 rounded-md"
+            className="btn btn-success btn-xs ml-4 rounded-md"
           >
             Add
           </button>
           <button
             onClick={() => setShowRouteInput(!showRouteInput)}
-            className="btn-outline btn-xs btn ml-4 rounded-md"
+            className="btn btn-outline btn-xs ml-4 rounded-md"
           >
             Cancle
           </button>
