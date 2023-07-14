@@ -477,7 +477,6 @@ export const networkRouter = createTRPCRouter({
       // try {
       const err: string[] = RuleCompiler(flowRoute, rules, caps, tags);
       if (err) {
-        console.log("ERRRRRRRRRRRROR", err);
         throw new TRPCError({
           message: JSON.stringify({
             error: `ERROR parsing ${process.argv[2]} line ${err[0]} column ${err[1]}: ${err[2]}`,
