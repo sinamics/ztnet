@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast";
 export const NetworkDns = () => {
   const [state, setState] = useState({
     address: "",
-    servers: new Set(),
+    servers: new Set<string>(),
     domain: "",
   });
 
@@ -39,8 +39,9 @@ export const NetworkDns = () => {
       return;
     setState((prev) => ({
       ...prev,
-      domain: networkByIdQuery?.network?.dns.domain as string,
-      servers: [...(networkByIdQuery?.network?.dns.servers as string[])] || [],
+      domain: networkByIdQuery?.network?.dns.domain,
+      servers:
+        new Set([...networkByIdQuery?.network?.dns.servers]) || new Set(),
     }));
   }, [networkByIdQuery.network.dns]);
 
@@ -78,7 +79,7 @@ export const NetworkDns = () => {
       {
         onSuccess: () => {
           void refetchNetwork();
-          setState({ ...state, editNetworkName: false, servers: [] });
+          setState({ ...state, address: "" });
         },
       }
     );
@@ -110,12 +111,12 @@ export const NetworkDns = () => {
                   {
                     onSuccess: () => {
                       void refetchNetwork();
-                      setState({ ...state, editNetworkName: false });
+                      setState({ ...state });
                     },
                   }
                 )
               }
-              className="btn-outline btn-warning btn-xs btn"
+              className="btn btn-outline btn-warning btn-xs"
             >
               Clear DNS
             </button>
@@ -139,7 +140,7 @@ export const NetworkDns = () => {
                 value={state.domain}
                 onChange={onChangeHandler}
                 placeholder="home.arpa"
-                className="input-bordered input input-sm w-full"
+                className="input input-bordered input-sm w-full"
               />
             </div>
             <div className="form-control ">
@@ -152,7 +153,7 @@ export const NetworkDns = () => {
                 value={state.address}
                 onChange={onChangeHandler}
                 placeholder="10.147.20.190"
-                className="input-bordered input input-sm w-full"
+                className="input input-bordered input-sm w-full"
               />
             </div>
             <button type="submit" onClick={submitHandler} className="hidden" />
@@ -163,7 +164,7 @@ export const NetworkDns = () => {
           <div className="flex flex-wrap gap-3">
             {Array.from(state.servers).map((dns, idx: number) => (
               <div key={idx} className="form-control">
-                <span className="text-md badge-ghost badge label-text badge-lg  rounded-md opacity-80">
+                <span className="text-md badge badge-ghost label-text badge-lg  rounded-md opacity-80">
                   {dns}
                 </span>
               </div>
