@@ -34,7 +34,11 @@ const customConfig: Config = {
 function isValidIP(ip: string): boolean {
   return Address4.isValid(ip) || Address6.isValid(ip);
 }
-
+function isValidDomain(domain: string): boolean {
+  const domainRegex =
+    /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+  return domainRegex.test(domain);
+}
 const RouteSchema = z.object({
   target: z.string().refine(isValidCIDR, {
     message: "Destination IP must be a valid CIDR notation!",
@@ -230,10 +234,23 @@ export const networkRouter = createTRPCRouter({
       z.object({
         nwid: z.string().nonempty(),
         updateParams: z.object({
+          multicast: z
+            .object({
+              multicastLimit: z.number().optional(),
+              enableBroadcast: z.boolean().optional(),
+            })
+            .optional(),
           privateNetwork: z.boolean().optional(),
           ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
+          removeDns: z.boolean().optional(),
+          dns: z
+            .object({
+              domain: z.string().nonempty(),
+              address: z.string().nonempty(),
+            })
+            .optional(),
           routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
           autoAssignIp: z.boolean().optional().default(true),
@@ -244,12 +261,14 @@ export const networkRouter = createTRPCRouter({
       // Construct the API request payload using the provided updateParams
       const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
       const prismaUpdates: Partial<NetworkEntity> = {};
-
       try {
         const {
           privateNetwork,
           ipPool,
           name,
+          dns,
+          removeDns,
+          multicast,
           routes,
           changeCidr,
           autoAssignIp,
@@ -257,6 +276,62 @@ export const networkRouter = createTRPCRouter({
 
         if (typeof privateNetwork === "boolean") {
           ztControllerUpdates.private = privateNetwork;
+        }
+
+        if (typeof removeDns === "boolean") {
+          ztControllerUpdates.dns = {
+            domain: "",
+            servers: [],
+          };
+        }
+
+        if (typeof multicast === "object") {
+          ztControllerUpdates.multicastLimit = multicast.multicastLimit;
+          ztControllerUpdates.enableBroadcast = multicast.enableBroadcast;
+        }
+
+        if (typeof dns === "object") {
+          if (!isValidIP(dns?.address)) {
+            throw new TRPCError({
+              message: `Invalid DNS address provided ${dns?.address}`,
+              code: "BAD_REQUEST",
+            });
+          }
+
+          if (!isValidDomain(dns.domain)) {
+            throw new TRPCError({
+              message: `Invalid DNS domain provided ${dns.domain}`,
+              code: "BAD_REQUEST",
+            });
+          }
+
+          ztControllerUpdates.dns = {
+            domain: "",
+            servers: [],
+          };
+
+          // Return nw obj details
+          const ztControllerResponse = await ztController
+            .network_detail(input.nwid)
+            .catch((err: APIError) => {
+              throw new TRPCError({
+                message: `${err.cause.toString()} --- ${err.message}`,
+                code: "BAD_REQUEST",
+                cause: err.cause,
+              });
+            });
+
+          // Update domain
+          ztControllerUpdates.dns.domain = dns.domain;
+
+          if (Array.isArray(ztControllerResponse.network.dns.servers)) {
+            ztControllerUpdates.dns.servers = [
+              ...ztControllerResponse.network.dns.servers,
+              dns.address,
+            ] as string[];
+          } else {
+            (ztControllerUpdates.dns.servers as string[]).push(dns.address);
+          }
         }
 
         // If the network is set to auto-assign IP addresses, and an IP pool has been specified,
