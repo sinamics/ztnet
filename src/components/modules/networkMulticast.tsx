@@ -53,7 +53,7 @@ export const NetworkMulticast = () => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
-  const submitHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const submitHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     updateNetwork(
@@ -61,7 +61,7 @@ export const NetworkMulticast = () => {
         nwid: network.nwid,
         updateParams: {
           multicast: {
-            multicastLimit: parseInt(state.multicastLimit),
+            multicastLimit: state.multicastLimit.toString(),
           },
         },
       },
@@ -91,7 +91,7 @@ export const NetworkMulticast = () => {
               name="multicastLimit"
               value={state.multicastLimit}
               placeholder="Number"
-              className="input-bordered input input-sm w-3/6"
+              className="input input-bordered input-sm w-3/6"
               onChange={onChangeHandler}
             />
           </div>
@@ -103,7 +103,7 @@ export const NetworkMulticast = () => {
               type="checkbox"
               name="enableBroadcast"
               checked={state.enableBroadcast}
-              className="checkbox-primary checkbox checkbox-sm"
+              className="checkbox checkbox-primary checkbox-sm"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 updateNetwork(
                   {

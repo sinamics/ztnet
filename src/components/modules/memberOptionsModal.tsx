@@ -1,7 +1,6 @@
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { type CustomError } from "~/types/errorHandling";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import cn from "classnames";
 import { useState, useEffect } from "react";
@@ -39,9 +38,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
   }, [networkById?.members, memberId]);
 
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
-    onError: ({ shape }: CustomError) => {
+    onError: (e) => {
+      // zod error
       // console.log(shape?.data?.zodError.fieldErrors);
-      void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      // custom error
+      void toast.error(e?.message);
     },
     onSuccess: () => refetchNetworkById(),
   });
@@ -141,8 +142,8 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
               key={assignedIp}
               className={`${
                 subnetMatch
-                  ? "badge-primary badge badge-lg rounded-md"
-                  : "badge-ghost badge badge-lg rounded-md opacity-60"
+                  ? "badge badge-primary badge-lg rounded-md"
+                  : "badge badge-ghost badge-lg rounded-md opacity-60"
               } flex min-w-fit justify-between`}
             >
               <div className="cursor-pointer">{assignedIp}</div>
@@ -174,7 +175,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       </div>
       <div className="my-5">
         <form>
-          <label className="input-group-sm input-group">
+          <label className="input-group input-group-sm">
             <span className="bg-base-200">Address</span>
             <input
               type="text"
@@ -182,7 +183,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
               onChange={handleInputChange}
               value={state.ipInput}
               placeholder="192.168.169.x"
-              className={cn("input-bordered input input-sm", {
+              className={cn("input input-bordered input-sm", {
                 "border-error": !state.isValid && state.ipInput.length > 0,
                 "border-success": state.isValid,
               })}
@@ -212,7 +213,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         <input
           type="checkbox"
           checked={networkById?.members[0]?.activeBridge}
-          className="checkbox-primary checkbox checkbox-sm justify-self-end"
+          className="checkbox checkbox-primary checkbox-sm justify-self-end"
           onChange={(e) => {
             updateMember(
               {
@@ -242,7 +243,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         <input
           type="checkbox"
           checked={networkById?.members[0]?.noAutoAssignIps}
-          className="checkbox-primary checkbox checkbox-sm justify-self-end"
+          className="checkbox checkbox-primary checkbox-sm justify-self-end"
           onChange={(e) => {
             updateMember(
               {

@@ -31,6 +31,7 @@ const config = {
     ],
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "no-console": "error", // Add this line to warn about console.log usage
+    "@typescript-eslint/ban-ts-comment": "off",
   },
 };
 

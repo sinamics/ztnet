@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*
  * Copyright (c)2019 ZeroTier, Inc.
  *

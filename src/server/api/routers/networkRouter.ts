@@ -236,7 +236,7 @@ export const networkRouter = createTRPCRouter({
         updateParams: z.object({
           multicast: z
             .object({
-              multicastLimit: z.number().optional(),
+              multicastLimit: z.string().optional(),
               enableBroadcast: z.boolean().optional(),
             })
             .optional(),
@@ -286,7 +286,10 @@ export const networkRouter = createTRPCRouter({
         }
 
         if (typeof multicast === "object") {
-          ztControllerUpdates.multicastLimit = multicast.multicastLimit;
+          ztControllerUpdates.multicastLimit = parseInt(
+            multicast.multicastLimit,
+            10
+          );
           ztControllerUpdates.enableBroadcast = multicast.enableBroadcast;
         }
 

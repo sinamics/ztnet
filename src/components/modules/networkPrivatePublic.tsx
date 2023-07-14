@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
-import { type CustomError } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import CardComponent from "./privatePublic";
 
@@ -21,8 +20,9 @@ export const NetworkPrivatePublic = () => {
 
   const { mutate: updateNetworkMutation } =
     api.network.updateNetwork.useMutation({
-      onError: ({ shape }: CustomError) => {
-        void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
+      onError: (e) => {
+        void toast.error(e?.message);
+        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
       },
     });
 
