@@ -330,7 +330,7 @@ export const networkRouter = createTRPCRouter({
               dns.address,
             ] as string[];
           } else {
-            (ztControllerUpdates.dns.servers as string[]).push(dns.address);
+            ztControllerUpdates.dns.servers.push(dns.address);
           }
         }
 
