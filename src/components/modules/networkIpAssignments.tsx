@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { type CustomError } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import cn from "classnames";
+
 export const NetworkIpAssignment = () => {
   const { query } = useRouter();
   const {
@@ -72,7 +73,7 @@ export const NetworkIpAssignment = () => {
             <div
               key={cidr}
               className={cn(
-                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                "badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 md:text-base",
                 {
                   "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
                     network.autoAssignIp,
@@ -86,7 +87,7 @@ export const NetworkIpAssignment = () => {
               key={cidr}
               onClick={() => submitUpdate({ ipPool: cidr })}
               className={cn(
-                "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                "badge-ghost badge-outline badge badge-lg rounded-md text-xs opacity-30 md:text-base",
                 { "hover:bg-primary": network.autoAssignIp }
               )}
             >

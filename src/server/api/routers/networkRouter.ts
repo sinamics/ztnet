@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
@@ -21,6 +23,7 @@ import {
 } from "~/types/network";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
+import RuleCompiler from "~/utils/rule-compiler";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -383,4 +386,142 @@ export const networkRouter = createTRPCRouter({
       }
     }
   }),
+  setFlowRule: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        flowRoute: z.string().nonempty(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { flowRoute } = input;
+
+      const rules = [];
+      const caps = {};
+      const tags = {};
+      // try {
+      const err: string[] = RuleCompiler(flowRoute, rules, caps, tags);
+      if (err) {
+        console.log("ERRRRRRRRRRRROR", err);
+        throw new TRPCError({
+          message: JSON.stringify({
+            error: `ERROR parsing ${process.argv[2]} line ${err[0]} column ${err[1]}: ${err[2]}`,
+            line: err[0],
+          }),
+          code: "BAD_REQUEST",
+          cause: err[0],
+        });
+      }
+      const capsArray = [];
+      const capabilitiesByName = {};
+      for (const n in caps) {
+        capsArray.push(caps[n]);
+        capabilitiesByName[n] = caps[n].id;
+      }
+      const tagsArray = [];
+      for (const n in tags) {
+        const t = tags[n];
+        const dfl = t["default"];
+        tagsArray.push({
+          id: t.id,
+          default: dfl || dfl === 0 ? dfl : null,
+        });
+      }
+
+      // const res = JSON.stringify({
+      //   config: {
+      //     rules: rules,
+      //     capabilities: capsArray,
+      //     tags: tagsArray,
+      //   },
+      //   capabilitiesByName: capabilitiesByName,
+      //   tagsByName: tags,
+      // });
+      // console.log(res, null, 2);
+
+      // update zerotier network with the new flow route
+      await ztController.network_update(input.nwid, {
+        rules,
+        capabilities: capsArray,
+        tags: tagsArray,
+      });
+
+      // update network in prisma
+      await ctx.prisma.network.update({
+        where: { nwid: input.nwid },
+        data: {
+          flowRule: flowRoute,
+        },
+      });
+      // resolve(res);
+      // } catch (error) {
+      //   throw new TRPCError({
+      //     message: `FAILED! ERROR parsing: ${error}`,
+      //     code: "BAD_REQUEST",
+      //   });
+
+      //   // console.log("error", error);
+      // }
+    }),
+  getFlowRule: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        reset: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const DEFAULT_NETWORK_ROUTE_CONFIG = `#
+# This is a default rule set that allows IPv4 and IPv6 traffic but otherwise
+# behaves like a standard Ethernet switch.
+#
+# Please keep in mind that ZeroTier versions prior to 1.2.0 do NOT support advanced
+# network rules.
+#
+# Since both senders and receivers enforce rules, you will get the following
+# behavior in a network with both old and new versions:
+#
+# (old: 1.1.14 and older, new: 1.2.0 and newer)
+#
+# old <--> old: No rules are honored.
+# old <--> new: Rules work but are only enforced by new side. Tags will NOT work, and
+#               capabilities will only work if assigned to the new side.
+# new <--> new: Full rules engine support including tags and capabilities.
+#
+# We recommend upgrading all your devices to 1.2.0 as soon as convenient. Version
+# 1.2.0 also includes a significantly improved software update mechanism that is
+# turned on by default on Mac and Windows. (Linux and mobile are typically kept up
+# to date using package/app management.)
+#
+#
+# Allow only IPv4, IPv4 ARP, and IPv6 Ethernet frames.
+#
+drop
+  not ethertype ipv4
+  and not ethertype arp
+  and not ethertype ipv6
+;
+#
+# Uncomment to drop non-ZeroTier issued and managed IP addresses.
+#
+# This prevents IP spoofing but also blocks manual IP management at the OS level and
+# bridging unless special rules to exempt certain hosts or traffic are added before
+# this rule.
+#
+#drop
+#	not chr ipauth
+#;
+# Accept anything else. This is required since default is 'drop'.
+accept;`;
+
+      const flow = await ctx.prisma.network.findFirst({
+        where: { nwid: input.nwid },
+      });
+
+      if (!flow.flowRule || input.reset) {
+        return DEFAULT_NETWORK_ROUTE_CONFIG;
+      }
+
+      return flow.flowRule;
+    }),
 });
