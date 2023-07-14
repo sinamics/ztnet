@@ -1151,6 +1151,7 @@ function compile(src, rules, caps, tags) {
 
     return null;
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e.stack);
     return [0, 0, "Unexpected exception: " + e.toString()];
   }
