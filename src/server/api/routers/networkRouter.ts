@@ -502,17 +502,6 @@ export const networkRouter = createTRPCRouter({
         });
       }
 
-      // const res = JSON.stringify({
-      //   config: {
-      //     rules: rules,
-      //     capabilities: capsArray,
-      //     tags: tagsArray,
-      //   },
-      //   capabilitiesByName: capabilitiesByName,
-      //   tagsByName: tags,
-      // });
-      // console.log(res, null, 2);
-
       // update zerotier network with the new flow route
       await ztController.network_update(input.nwid, {
         rules,
@@ -527,15 +516,6 @@ export const networkRouter = createTRPCRouter({
           flowRule: flowRoute,
         },
       });
-      // resolve(res);
-      // } catch (error) {
-      //   throw new TRPCError({
-      //     message: `FAILED! ERROR parsing: ${error}`,
-      //     code: "BAD_REQUEST",
-      //   });
-
-      //   // console.log("error", error);
-      // }
     }),
   getFlowRule: protectedProcedure
     .input(

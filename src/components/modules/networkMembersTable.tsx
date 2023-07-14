@@ -271,14 +271,8 @@ export const NetworkMembersTable = ({ nwid }) => {
     }
 
     if (id === "ipAssignments") {
-      // if (!original.ipAssignments || !original.ipAssignments.length)
-      //   return (
-      //     <MemberIpInput
-      //       memberId={original.id}
-      //       nwid={nwid}
-      //       ipAssignments={original.ipAssignments}
-      //     />
-      //   );
+      if (!original.ipAssignments || !original.ipAssignments.length)
+        return <p className="text-gray-500">Not assigned</p>;
 
       return (
         <div className="space-y-1">
