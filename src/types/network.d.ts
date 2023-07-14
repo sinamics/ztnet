@@ -38,6 +38,11 @@ export interface MembersEntity {
   peers?: Peers[];
   conStatus: number;
 }
+
+export interface dns {
+  domain: string;
+  servers: string[];
+}
 export interface ZtControllerNetwork {
   nwid: string;
   nwname: string;
@@ -49,7 +54,7 @@ export interface ZtControllerNetwork {
   capabilities?: null[] | null;
   clientId: string;
   creationTime: DateTime;
-  dns?: null[] | null;
+  dns?: dns;
   enableBroadcast: boolean;
   id: string;
   ipAssignmentPools?: IpAssignmentPoolsEntity[] | null;
