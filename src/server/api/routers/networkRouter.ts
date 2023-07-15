@@ -144,8 +144,6 @@ export const networkRouter = createTRPCRouter({
       };
       const { members, network } = combined;
 
-      // console.log(JSON.stringify(members, null, 2));
-
       // Get all members that is deleted but still active in controller (zombies).
       // Due to an issue were not possible to delete user.
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
@@ -354,8 +352,9 @@ export const networkRouter = createTRPCRouter({
         }
 
         // Network name
-        if (name) {
+        if (typeof name === "string") {
           prismaUpdates.nwname = name;
+          ztControllerUpdates.name = name;
         }
 
         // Auto assign IP
