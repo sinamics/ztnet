@@ -38,7 +38,11 @@ const NetworkById = () => {
     },
     { enabled: !!query.id, refetchInterval: 10000 }
   );
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation();
+  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
+    onError: (e) => {
+      void toast.error(e?.message);
+    },
+  });
 
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
@@ -87,6 +91,7 @@ const NetworkById = () => {
       </div>
     );
   }
+
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
@@ -255,7 +260,7 @@ const NetworkById = () => {
                     viewZombieTable: !state.viewZombieTable,
                   })
                 }
-                className="btn-wide btn"
+                className="btn btn-wide"
               >
                 View stashed members ({networkById?.zombieMembers?.length})
               </button>
@@ -275,7 +280,7 @@ const NetworkById = () => {
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Actions
       </div>
-      <div className="w-5/5 mx-auto py-4 px-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+      <div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
         <div className="flex items-end md:justify-end">
           <button
             onClick={() =>
@@ -290,7 +295,7 @@ const NetworkById = () => {
                 },
               })
             }
-            className="btn-outline btn-error btn-wide btn"
+            className="btn btn-outline btn-error btn-wide"
           >
             Delete network
           </button>
