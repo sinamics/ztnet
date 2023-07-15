@@ -13,3 +13,23 @@
   overflow: auto;
   white-space: nowrap;
 }
+.overflow-auto {
+  overflow-y: auto;
+  height: calc(100vh - 70px);
+}
+
+.overflow-auto::-webkit-scrollbar {
+  width: 8px; /* width of the entire scrollbar */
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background: #bbbbbb; /* color of the tracking area */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: #2e2e2e; /* color of the scroll thumb */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: #555; /* color of the scroll thumb on hover */
+}
