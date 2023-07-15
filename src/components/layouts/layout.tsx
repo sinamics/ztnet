@@ -17,7 +17,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
       <Header />
       <div className="flex">
         <Sidebar />
-        <div className="grid w-full grid-rows-[1fr,auto]">
+        <div className="grid w-full grid-rows-[1fr,auto] overflow-auto">
           {children}
           <Footer />
         </div>
