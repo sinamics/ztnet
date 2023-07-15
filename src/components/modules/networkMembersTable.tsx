@@ -39,8 +39,6 @@ export const NetworkMembersTable = ({ nwid }) => {
 
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
     onError: (e) => {
-      // console.log(shape?.data?.zodError.fieldErrors);
-      // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
       void toast.error(e?.message);
     },
     onSuccess: () => refetchNetworkById(),
@@ -103,7 +101,7 @@ export const NetworkMembersTable = ({ nwid }) => {
                   )
                 }
                 // className="checkbox-error checkbox"
-                className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
+                className="checkbox checkbox-success checkbox-xs sm:checkbox-sm"
               />
             </label>
           );
@@ -206,13 +204,13 @@ export const NetworkMembersTable = ({ nwid }) => {
                     content: <MemberOptionsModal nwid={nwid} memberId={id} />,
                   })
                 }
-                className="btn-outline btn-xs btn rounded-sm"
+                className="btn btn-outline btn-xs rounded-sm"
               >
                 Options
               </button>
               <button
                 onClick={() => stashMember(id)}
-                className="btn-outline btn-warning btn-xs btn rounded-sm"
+                className="btn btn-outline btn-warning btn-xs rounded-sm"
               >
                 Stash
               </button>
@@ -239,7 +237,8 @@ export const NetworkMembersTable = ({ nwid }) => {
     };
 
     // We'll only update the external data when the input is blurred
-    const nameOnBlur = () => {
+    const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
       updateMemberDatabaseOnly(
         {
           nwid,
@@ -248,7 +247,12 @@ export const NetworkMembersTable = ({ nwid }) => {
             name,
           },
         },
-        { onSuccess: () => void refetchNetworkById() }
+        {
+          onSuccess: () => {
+            void refetchNetworkById();
+            toast.success("Member name updated successfully");
+          },
+        }
       );
       // updateMyData(index, id, value, original);
     };
@@ -261,12 +265,15 @@ export const NetworkMembersTable = ({ nwid }) => {
 
     if (id === "name") {
       return (
-        <input
-          className="m-0 border-0 bg-transparent p-0"
-          value={name}
-          onChange={nameOnChange}
-          onBlur={nameOnBlur}
-        />
+        <form>
+          <input
+            className="m-0 border-0 bg-transparent p-0"
+            value={name}
+            onChange={nameOnChange}
+            // onBlur={nameOnBlur}
+          />
+          <button type="submit" onClick={submitName} className="hidden" />
+        </form>
       );
     }
 
@@ -287,8 +294,8 @@ export const NetworkMembersTable = ({ nwid }) => {
                 <div
                   className={`${
                     subnetMatch
-                      ? "badge-primary badge badge-lg rounded-md"
-                      : "badge-ghost badge badge-lg rounded-md opacity-60"
+                      ? "badge badge-primary badge-lg rounded-md"
+                      : "badge badge-ghost badge-lg rounded-md opacity-60"
                   } flex min-w-fit justify-between`}
                 >
                   <CopyToClipboard
