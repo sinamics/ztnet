@@ -30,7 +30,7 @@ export interface Tag {
   flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
 }
 export interface CapabilitiesByName {
-  [key: string]: boolean;
+  [key: string]: number;
 }
 export interface MembersEntity {
   activeBridge: boolean;
@@ -52,7 +52,7 @@ export interface MembersEntity {
   remoteTraceTarget?: null;
   revision: number;
   ssoExempt: boolean;
-  tags?: Record<string, Tag>;
+  tags?: Tag;
   vMajor: number;
   vMinor: number;
   vProto: number;
@@ -91,7 +91,7 @@ export interface ZtControllerNetwork {
   rules?: RulesEntity[] | null;
   rulesSource: string;
   ssoEnabled: boolean;
-  tags?: string[];
+  tags?: Tag;
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
   cidr?: string[] | null;
