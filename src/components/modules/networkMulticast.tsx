@@ -76,56 +76,84 @@ export const NetworkMulticast = () => {
 
   const { network } = networkByIdQuery;
   return (
-    <div>
-      <p>Multicast</p>
-      <div>
-        <form className="flex justify-between">
-          <div className="form-control">
-            <label>
-              <span className="label-text text-xs">
-                Multicast Recipient Limit ( Hit Enter to submit )
-              </span>
-            </label>
-            <input
-              type="number"
-              name="multicastLimit"
-              value={state.multicastLimit}
-              placeholder="Number"
-              className="input input-bordered input-sm w-3/6"
-              onChange={onChangeHandler}
-            />
-          </div>
-          <div className="form-control">
-            <label>
-              <span className="label-text text-xs">Enable Broadcast</span>
-            </label>
-            <input
-              type="checkbox"
-              name="enableBroadcast"
-              checked={state.enableBroadcast}
-              className="checkbox checkbox-primary checkbox-sm"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                updateNetwork(
-                  {
-                    nwid: network.nwid,
-                    updateParams: {
-                      multicast: {
-                        enableBroadcast: e.target.checked,
+    <div
+      tabIndex={0}
+      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+    >
+      <input type="checkbox" />
+      <div className="collapse-title">Multicast</div>
+      <div className="collapse-content" style={{ width: "100%" }}>
+        <div>
+          <form className="flex justify-between">
+            <div className="form-control ">
+              <label className="label">
+                <span className="label-text">Multicast Recipient Limit</span>
+              </label>
+              <div className="join">
+                <input
+                  name="multicastLimit"
+                  value={state.multicastLimit}
+                  onChange={onChangeHandler}
+                  className="input join-item input-sm  w-full"
+                  placeholder="Number"
+                  type="number"
+                />
+                <button
+                  type="submit"
+                  onClick={submitHandler}
+                  className="btn join-item btn-sm bg-base-300 text-secondary-content"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+            {/* <div className="form-control">
+              <label>
+                <span className="label-text text-xs">
+                  Multicast Recipient Limit ( Hit Enter to submit )
+                </span>
+              </label>
+              <input
+                type="number"
+                name="multicastLimit"
+                value={state.multicastLimit}
+                placeholder="Number"
+                className="input input-bordered input-sm w-3/6"
+                onChange={onChangeHandler}
+              />
+            </div> */}
+            <div className="form-control">
+              <label>
+                <span className="label-text text-xs">Enable Broadcast</span>
+              </label>
+              <input
+                type="checkbox"
+                name="enableBroadcast"
+                checked={state.enableBroadcast}
+                className="checkbox-primary checkbox checkbox-sm"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateNetwork(
+                    {
+                      nwid: network.nwid,
+                      updateParams: {
+                        multicast: {
+                          enableBroadcast: e.target.checked,
+                        },
                       },
                     },
-                  },
-                  {
-                    onSuccess: () => {
-                      toast.success("Multicast updated successfully");
-                      void refetchNetwork();
-                    },
-                  }
-                )
-              }
-            />
-          </div>
-          <button type="submit" onClick={submitHandler} className="hidden" />
-        </form>
+                    {
+                      onSuccess: () => {
+                        toast.success("Multicast updated successfully");
+                        void refetchNetwork();
+                      },
+                    }
+                  )
+                }
+              />
+            </div>
+            <button type="submit" onClick={submitHandler} className="hidden" />
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -58,7 +58,12 @@ test("updateDatabaseOnly test", async () => {
     data: {
       network_members: {
         update: {
-          where: { id: input.id },
+          where: {
+            id_nwid: {
+              id: input.id,
+              nwid: input.nwid, // this should be the value of `nwid` you are looking for
+            },
+          },
           data: {
             ...input.updateParams,
           },

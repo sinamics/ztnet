@@ -140,7 +140,7 @@ export const networkRouter = createTRPCRouter({
 
       const combined: Partial<NetworkAndMembers> = {
         ...ztControllerResponse,
-        network: mergedNetwork,
+        network: mergedNetwork as ZtControllerNetwork,
       };
       const { members, network } = combined;
 
@@ -503,21 +503,42 @@ export const networkRouter = createTRPCRouter({
           default: dfl || dfl === 0 ? dfl : null,
         });
       }
-
+      // console.log(
+      //   JSON.stringify(
+      //     {
+      //       config: {
+      //         rules: rules,
+      //         capabilities: capsArray,
+      //         tags: tagsArray,
+      //       },
+      //       capabilitiesByName: capabilitiesByName,
+      //       tagsByName: tags,
+      //     },
+      //     null,
+      //     2
+      //   )
+      // );
       // update zerotier network with the new flow route
       await ztController.network_update(input.nwid, {
         rules,
         capabilities: capsArray,
         tags: tagsArray,
+        capabilitiesByName: capabilitiesByName,
+        tagsByName: tags,
       });
 
       // update network in prisma
-      await ctx.prisma.network.update({
-        where: { nwid: input.nwid },
-        data: {
-          flowRule: flowRoute,
-        },
-      });
+      // update network in prisma
+      const { prisma } = ctx;
+
+      // Start a transaction
+      await prisma.$transaction([
+        // Update network
+        prisma.network.update({
+          where: { nwid: input.nwid },
+          data: { flowRule: flowRoute, tagsByName: tags, capabilitiesByName },
+        }),
+      ]);
     }),
   getFlowRule: protectedProcedure
     .input(
