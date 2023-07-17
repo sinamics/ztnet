@@ -64,6 +64,8 @@ model network {
   ipAssignments        String          
   nw_userid            User              @relation(fields: [authorId], references: [id])
   authorId             Int
+  tagsByName           Json?
+  capabilitiesByName   Json?
   network_members network_members[]
 }
 
@@ -124,6 +126,11 @@ model VerificationToken {
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
 // npx prisma migrate dev --name init --preview-feature
+
+// reset db
+// npx prisma migrate reset
+
+// npx prisma db push --preview-feature
 
 // Deploy
 // npx prisma migrate deploy --preview-feature

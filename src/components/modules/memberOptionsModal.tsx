@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import cn from "classnames";
 import { useState, useEffect } from "react";
+import { type CapabilitiesByName, type TagsByName } from "~/types/network";
 
 interface ModalContentProps {
   nwid: string;
@@ -121,6 +122,81 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       }
     );
   };
+
+  const CapabilityCheckboxes: React.FC<CapabilitiesByName | null> = (caps) => {
+    if (!caps) return <p className="text-sm text-gray-500">None</p>;
+
+    return (
+      <div>
+        {Object.keys(caps).map((capability) => (
+          <div key={capability}>
+            <label className="flex flex-wrap items-center gap-2 p-2">
+              <input
+                type="checkbox"
+                name={capability}
+                checked={networkById?.members[0]?.activeBridge}
+                className="checkbox checkbox-primary checkbox-sm justify-self-end"
+                onChange={(e) => {
+                  updateMember(
+                    {
+                      updateParams: {
+                        activeBridge: e.target.checked,
+                      },
+                      memberId,
+                      nwid,
+                    },
+                    {
+                      onSuccess: () => {
+                        void refetchNetworkById();
+                      },
+                    }
+                  );
+                }}
+              />
+              {capability}
+            </label>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const TagDropdowns: React.FC<TagsByName> = (tagsByName) => {
+    if (!tagsByName || Object.keys(tagsByName).length === 0) {
+      return <p className="text-sm text-gray-500">None</p>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(tagsByName).map(([tagName, tagDetails]) => {
+          if (
+            !tagDetails ||
+            typeof tagDetails !== "object" ||
+            !tagDetails.enums
+          ) {
+            return null;
+          }
+
+          return (
+            <div
+              key={tagName}
+              className="form-control w-5/12 rounded-md border border-base-100 p-2"
+            >
+              <label className="label">
+                <span className="label-text">{tagName.toUpperCase()}</span>
+              </label>
+              <select className="select select-bordered select-sm">
+                {Object.keys(tagDetails.enums).map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
+              </select>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+  // console.log(networkById);
   return (
     <>
       <div className="grid grid-cols-4 items-start gap-4">
@@ -261,6 +337,18 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
             );
           }}
         />
+      </div>
+      <div className="grid grid-cols-4 items-start gap-4 py-3">
+        <div className="col-span-4">
+          <header>Capabilities:</header>
+          {CapabilityCheckboxes(networkById?.network?.capabilitiesByName)}
+        </div>
+      </div>
+      <div className="grid grid-cols-4 items-start gap-4 py-3">
+        <div className="col-span-4">
+          <header>Tags:</header>
+          {TagDropdowns(networkById?.network?.tagsByName)}
+        </div>
       </div>
     </>
   );
