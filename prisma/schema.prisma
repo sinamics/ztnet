@@ -34,7 +34,7 @@ enum Role {
 
 model network_members {
   nodeid               Int       @id @default(autoincrement())
-  id                   String    @unique
+  id                   String    
   nwid_ref             network   @relation(fields: [nwid], references: [nwid])
   nwid                 String
   lastseen             DateTime?
@@ -56,6 +56,8 @@ model network_members {
   vRev                 Int?
   ipAssignments        String[]
   noAutoAssignIps      Boolean?  @default(false)
+
+  @@unique([id, nwid])
 }
 model network {
   nwid                 String            @id
