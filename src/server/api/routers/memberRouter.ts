@@ -39,13 +39,19 @@ export const networkMemberRouter = createTRPCRouter({
       // check if user exist in db, and if so set deleted:false
       const member = await ctx.prisma.network_members.findUnique({
         where: {
-          id: input.id,
+          id_nwid: {
+            id: input.id,
+            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+          },
         },
       });
       if (member) {
         return await ctx.prisma.network_members.update({
           where: {
-            id: input.id,
+            id_nwid: {
+              id: input.id,
+              nwid: input.nwid, // this should be the value of `nwid` you are looking for
+            },
           },
           data: {
             deleted: false,
@@ -223,7 +229,12 @@ export const networkMemberRouter = createTRPCRouter({
         data: {
           network_members: {
             update: {
-              where: { id: input.id },
+              where: {
+                id_nwid: {
+                  id: input.id,
+                  nwid: input.nwid, // this should be the value of `nwid` you are looking for
+                },
+              },
               data: {
                 ...input.updateParams,
               },
@@ -305,7 +316,10 @@ export const networkMemberRouter = createTRPCRouter({
 
       await ctx.prisma.network_members.delete({
         where: {
-          id: input.id,
+          id_nwid: {
+            id: input.id,
+            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+          },
         },
       });
     }),
