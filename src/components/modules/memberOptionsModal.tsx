@@ -184,7 +184,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
     if (!caps) return <p className="text-sm text-gray-500">None</p>;
     return (
-      <div>
+      <div className="flex flex-wrap">
         {Object.entries(caps).map(([capability, capId], index) => {
           const isChecked =
             isCapabilitiesArray(memberById?.capabilities) &&
@@ -192,7 +192,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
           return (
             <div key={index}>
-              <label className="flex flex-wrap items-center gap-2 p-2">
+              <label className="flex items-center gap-2 p-2">
                 <input
                   type="checkbox"
                   name={capability}
@@ -304,7 +304,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
   // console.log(networkById);
   return (
-    <>
+    <div>
       {updateMemberLoading ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <span className="loading loading-bars loading-lg"></span>
@@ -463,6 +463,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };

@@ -11,7 +11,7 @@ import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Modal from "~/components/elements/modal";
-
+import { useEffect } from "react";
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -25,6 +25,17 @@ const App: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }: AppPropsWithLayout) => {
+  useEffect(() => {
+    // Set a CSS variable to hold the window height
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+    // Listen to the resize event and recalculate the CSS variable
+    window.addEventListener("resize", () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+  }, []);
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <ThemeProvider defaultTheme="system">
