@@ -140,7 +140,7 @@ export const networkRouter = createTRPCRouter({
 
       const combined: Partial<NetworkAndMembers> = {
         ...ztControllerResponse,
-        network: mergedNetwork,
+        network: mergedNetwork as ZtControllerNetwork,
       };
       const { members, network } = combined;
 

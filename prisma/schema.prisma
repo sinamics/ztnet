@@ -51,7 +51,8 @@ model network_members {
   lastDeauthorizedTime Int?
   objtype              String?
   revision             Int?
-  tags                 String[]
+  tags                 Json?
+  capabilities         Json?
   vRev                 Int?
   ipAssignments        String[]
   noAutoAssignIps      Boolean?  @default(false)
