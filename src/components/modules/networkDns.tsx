@@ -89,86 +89,100 @@ export const NetworkDns = () => {
   // console.log(state.servers);
   return (
     <>
-      {/* <div>IPv4 assignment</div> */}
-      <div className="flex py-3">
-        <div>
-          <p>DNS</p>
-          <p className="text-xs text-gray-300">
-            Requires ZeroTier version 1.6.
-          </p>
-        </div>
-        <div className="mx-auto flex">
-          {Array.from(state.servers).length > 0 ? (
-            <button
-              onClick={() =>
-                updateNetwork(
-                  {
-                    nwid: network.nwid,
-                    updateParams: {
-                      removeDns: true,
-                    },
-                  },
-                  {
-                    onSuccess: () => {
-                      void refetchNetwork();
-                      setState({ ...state });
-                    },
-                  }
-                )
-              }
-              className="btn btn-outline btn-warning btn-xs"
-            >
-              Clear DNS
-            </button>
-          ) : null}
-        </div>
-      </div>
       <div
-        className={cn(
-          "xs:grid-cols-2 grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-2"
-        )}
+        tabIndex={0}
+        className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
       >
-        <div>
-          <form>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Search Domain</span>
-              </label>
-              <input
-                type="text"
-                name="domain"
-                value={state.domain}
-                onChange={onChangeHandler}
-                placeholder="home.arpa"
-                className="input input-bordered input-sm w-full"
-              />
+        <input type="checkbox" />
+        <div className="collapse-title">DNS</div>
+        <div className="collapse-content" style={{ width: "100%" }}>
+          <div className="flex">
+            <div>
+              <p className="text-xs text-gray-300">
+                Requires ZeroTier version 1.6.
+              </p>
             </div>
-            <div className="form-control ">
-              <label className="label">
-                <span className="label-text">Server Address</span>
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={state.address}
-                onChange={onChangeHandler}
-                placeholder="10.147.20.190"
-                className="input input-bordered input-sm w-full"
-              />
+            <div className="mx-auto flex">
+              {Array.from(state.servers).length > 0 ? (
+                <button
+                  onClick={() =>
+                    updateNetwork(
+                      {
+                        nwid: network.nwid,
+                        updateParams: {
+                          removeDns: true,
+                        },
+                      },
+                      {
+                        onSuccess: () => {
+                          void refetchNetwork();
+                          setState({ ...state });
+                        },
+                      }
+                    )
+                  }
+                  className="btn btn-warning btn-outline btn-xs"
+                >
+                  Clear DNS
+                </button>
+              ) : null}
             </div>
-            <button type="submit" onClick={submitHandler} className="hidden" />
-          </form>
-        </div>
-        <div>
-          {Array.from(state.servers).length > 0 ? <p>Servers</p> : null}
-          <div className="flex flex-wrap gap-3">
-            {Array.from(state.servers).map((dns, idx: number) => (
-              <div key={idx} className="form-control">
-                <span className="text-md badge badge-ghost label-text badge-lg  rounded-md opacity-80">
-                  {dns}
-                </span>
+          </div>
+          <div
+            className={cn(
+              "xs:grid-cols-2 grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-2"
+            )}
+          >
+            <div>
+              <form>
+                <div className="form-control w-full">
+                  <label className="label">
+                    <span className="label-text">Search Domain</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="domain"
+                    value={state.domain}
+                    onChange={onChangeHandler}
+                    placeholder="home.arpa"
+                    className="input input-bordered input-sm w-full"
+                  />
+                </div>
+                <div className="form-control ">
+                  <label className="label">
+                    <span className="label-text">Server Address</span>
+                  </label>
+                  <div className="join">
+                    <input
+                      name="address"
+                      value={state.address}
+                      onChange={onChangeHandler}
+                      className="input join-item input-sm  w-full"
+                      placeholder="10.147.20.190"
+                    />
+                    <button
+                      type="submit"
+                      onClick={submitHandler}
+                      className="btn join-item btn-sm bg-base-300 text-secondary-content"
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div>
+              {Array.from(state.servers).length > 0 ? <p>Servers</p> : null}
+              <div className="flex flex-wrap gap-3">
+                {Array.from(state.servers).map((dns, idx: number) => (
+                  <div key={idx} className="form-control">
+                    <span className="text-md badge badge-ghost label-text badge-lg  rounded-md opacity-80">
+                      {dns}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>

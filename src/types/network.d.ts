@@ -9,7 +9,29 @@ export interface NetworkEntity {
   ipAssignments?: string;
   authorId?: number;
 }
+export interface TagEnums {
+  [key: string]: number;
+}
 
+export interface TagDetails {
+  id: number;
+  enums: TagEnums;
+  flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+  default: number | null;
+}
+
+export interface TagsByName {
+  [tagName: string]: TagDetails;
+}
+export interface Tag {
+  id: number;
+  default: number;
+  enums: Record<string, number>;
+  flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+}
+export interface CapabilitiesByName {
+  [key: string]: number;
+}
 export interface MembersEntity {
   activeBridge: boolean;
   address: string;
@@ -30,7 +52,7 @@ export interface MembersEntity {
   remoteTraceTarget?: null;
   revision: number;
   ssoExempt: boolean;
-  tags?: string[];
+  tags?: Tag;
   vMajor: number;
   vMinor: number;
   vProto: number;
@@ -69,11 +91,13 @@ export interface ZtControllerNetwork {
   rules?: RulesEntity[] | null;
   rulesSource: string;
   ssoEnabled: boolean;
-  tags?: string[];
+  tags?: Tag;
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
   cidr?: string[] | null;
   autoAssignIp: boolean;
+  capabilitiesByName?: CapabilitiesByName;
+  tagsByName?: TagsByName;
 }
 export interface RoutesEntity {
   target?: string | null;

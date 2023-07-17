@@ -13,6 +13,21 @@ export const networkMemberRouter = createTRPCRouter({
     });
     return networks;
   }),
+  getMemberById: protectedProcedure
+    .input(
+      z.object({
+        id: z.string({ required_error: "No member id provided!" }),
+        nwid: z.string({ required_error: "No network id provided!" }),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.network_members.findFirst({
+        where: {
+          id: input.id,
+          nwid: input.nwid,
+        },
+      });
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -24,13 +39,19 @@ export const networkMemberRouter = createTRPCRouter({
       // check if user exist in db, and if so set deleted:false
       const member = await ctx.prisma.network_members.findUnique({
         where: {
-          id: input.id,
+          id_nwid: {
+            id: input.id,
+            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+          },
         },
       });
       if (member) {
         return await ctx.prisma.network_members.update({
           where: {
-            id: input.id,
+            id_nwid: {
+              id: input.id,
+              nwid: input.nwid, // this should be the value of `nwid` you are looking for
+            },
           },
           data: {
             deleted: false,
@@ -67,11 +88,29 @@ export const networkMemberRouter = createTRPCRouter({
           authorized: z
             .boolean({ required_error: "No boolean value provided!" })
             .optional(),
+          capabilities: z.array(z.number()).optional(),
+          tags: z.array(z.tuple([z.number(), z.number()])).optional(),
         }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const payload: Partial<NetworkAndMembers> = {};
+
+      // update capabilities
+      if (typeof input.updateParams.capabilities === "object") {
+        // update member
+        Object.assign(
+          payload,
+          {},
+          { capabilities: input.updateParams.capabilities }
+        );
+      }
+
+      // update tags
+      if (typeof input.updateParams.tags === "object") {
+        // update member
+        Object.assign(payload, {}, { tags: input.updateParams.tags });
+      }
       // update noAutoAssignIps
       if (typeof input.updateParams.activeBridge === "boolean") {
         // update member
@@ -134,6 +173,8 @@ export const networkMemberRouter = createTRPCRouter({
                   authorized: updatedMember.authorized,
                   noAutoAssignIps: updatedMember.noAutoAssignIps,
                   activeBridge: updatedMember.activeBridge,
+                  tags: updatedMember.tags,
+                  capabilities: updatedMember.capabilities,
                 },
               },
             },
@@ -188,7 +229,12 @@ export const networkMemberRouter = createTRPCRouter({
         data: {
           network_members: {
             update: {
-              where: { id: input.id },
+              where: {
+                id_nwid: {
+                  id: input.id,
+                  nwid: input.nwid, // this should be the value of `nwid` you are looking for
+                },
+              },
               data: {
                 ...input.updateParams,
               },
@@ -270,7 +316,10 @@ export const networkMemberRouter = createTRPCRouter({
 
       await ctx.prisma.network_members.delete({
         where: {
-          id: input.id,
+          id_nwid: {
+            id: input.id,
+            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+          },
         },
       });
     }),

@@ -21,7 +21,7 @@ const Header = () => {
   }
 
   return (
-    <header className="header bg-base-300 py-1 px-4 shadow">
+    <header className="header bg-base-300 px-4 py-1 shadow">
       <div className="header-content flex flex-row items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -51,16 +51,16 @@ const Header = () => {
           {/* <a href="#" className="flex flex-row items-center"> */}
           <div className="dropdown-end dropdown">
             <label tabIndex={0} className="btn m-1">
-              {theme}
+              {theme.toUpperCase()}
             </label>
             <ul
               tabIndex={0}
-              className="dropdown-content menu rounded-box w-52 bg-primary p-2 shadow"
+              className="menu dropdown-content rounded-box z-30 w-52 bg-primary p-2 shadow"
             >
               {Themes.map((theme) => {
                 return (
                   <li key={theme} onClick={() => setTheme(theme)}>
-                    <a>{theme}</a>
+                    <a>{theme.toUpperCase()}</a>
                   </li>
                 );
               })}
