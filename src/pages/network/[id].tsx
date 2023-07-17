@@ -197,7 +197,7 @@ const NetworkById = () => {
           <NettworkRoutes />
         </div>
       </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
           <NetworkDns />
@@ -224,10 +224,10 @@ const NetworkById = () => {
           </div>
         ) : (
           <div className="alert alert-warning flex justify-center shadow-lg">
-            <div>
+            <div className="flex">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 flex-shrink-0 stroke-current"
+                className="mr-5 h-6 w-6 flex-shrink-0 stroke-current"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -295,7 +295,7 @@ const NetworkById = () => {
                 },
               })
             }
-            className="btn btn-outline btn-error btn-wide"
+            className="btn btn-error btn-outline btn-wide"
           >
             Delete network
           </button>

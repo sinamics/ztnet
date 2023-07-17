@@ -28,21 +28,21 @@ const Networks: NextPageWithLayout = () => {
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="UAV vpn Networks" />
+        <meta name="description" content="VPN Networks" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="w-full bg-base-100">
-        <div className="mt-3 mb-3 flex w-full justify-center ">
+        <div className="mb-3 mt-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>
         </div>
-        <div className="mx-auto max-w-6xl space-y-5 bg-cover bg-center bg-no-repeat py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+        <div className="mx-auto max-w-6xl space-y-5 bg-cover bg-center bg-no-repeat px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="relative bg-cover bg-center bg-no-repeat">
             <div className="container mx-auto px-4">
-              <div className="mt-3 mb-3 flex flex-col space-y-3 md:flex-row md:space-y-0 md:space-x-3">
+              <div className="mb-3 mt-3 flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0">
                 <div className="w-full justify-center">
                   <button
-                    className={`btn-success btn ${
+                    className={`btn btn-success ${
                       userNetworks && userNetworks.length > 3
                         ? "cursor-not-allowed opacity-50"
                         : ""
