@@ -21,7 +21,7 @@ export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([
     {
-      id: "id",
+      id: "nwid",
       desc: true,
     },
   ]);
