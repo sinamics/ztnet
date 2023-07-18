@@ -41,15 +41,7 @@ const Networks: NextPageWithLayout = () => {
             <div className="container mx-auto px-4">
               <div className="mb-3 mt-3 flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0">
                 <div className="w-full justify-center">
-                  <button
-                    className={`btn btn-success ${
-                      userNetworks && userNetworks.length > 3
-                        ? "cursor-not-allowed opacity-50"
-                        : ""
-                    }`}
-                    onClick={addNewNetwork}
-                    disabled={userNetworks && userNetworks.length > 3}
-                  >
+                  <button className={`btn btn-success`} onClick={addNewNetwork}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

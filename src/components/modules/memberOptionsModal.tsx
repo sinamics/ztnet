@@ -182,7 +182,8 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       );
     };
 
-    if (!caps) return <p className="text-sm text-gray-500">None</p>;
+    if (!caps || !Object.entries(caps).length)
+      return <p className="text-sm text-gray-500">None</p>;
     return (
       <div className="flex flex-wrap">
         {Object.entries(caps).map(([capability, capId], index) => {
