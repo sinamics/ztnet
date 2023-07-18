@@ -50,6 +50,10 @@ export interface MembersEntity {
   action: string;
   activeBridge: boolean;
   name: string;
+  email: string;
+  emailVerified: boolean;
+  online: boolean;
+  role: string;
   address: string;
   authenticationExpiryTime: number;
   authorized: boolean;

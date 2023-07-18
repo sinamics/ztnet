@@ -1,120 +1,114 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable react/jsx-key */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-
-import React, { useMemo } from "react";
-import { useTable, useSortBy } from "react-table";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  flexRender,
+  createColumnHelper,
+  type ColumnDef,
+} from "@tanstack/react-table";
 import { api } from "~/utils/api";
+import { type MembersEntity } from "~/types/network";
 
 export const MembersTable = () => {
   const { data: members } = api.admin.getUsers.useQuery();
-
-  const columns = useMemo(
+  const columnHelper = createColumnHelper<MembersEntity>();
+  const columns = useMemo<ColumnDef<MembersEntity>[]>(
     () => [
-      {
-        Header: "ID",
-        accessor: (d: string) => d["id"] as string,
-      },
-      {
-        Header: "Member name",
-        accessor: "name",
-        width: 300,
-      },
-      {
-        Header: "Email",
-        accessor: "email",
-        width: 300,
-      },
-      {
-        Header: "Email Verified",
-        accessor: (d: string) => {
-          if (d["emailVerified"]) {
+      columnHelper.accessor("id", {
+        header: () => <span>ID</span>,
+        id: "id",
+      }),
+      columnHelper.accessor("name", {
+        header: () => <span>Member name</span>,
+        id: "name",
+      }),
+      columnHelper.accessor("email", {
+        header: () => <span>Email</span>,
+        id: "email",
+      }),
+      columnHelper.accessor("emailVerified", {
+        header: () => <span>Email Verified</span>,
+        id: "emailVerified",
+        cell: ({ getValue }) => {
+          if (getValue()) {
             return "Yes";
           }
 
           return "No";
         },
-        width: 300,
-      },
-      {
-        Header: "Online",
-        accessor: (d: string) => {
-          if (d["online"]) {
+      }),
+      columnHelper.accessor("online", {
+        header: () => <span>Online</span>,
+        id: "online",
+        cell: ({ getValue }) => {
+          if (getValue()) {
             return "Yes";
           }
 
           return "No";
         },
-        width: 300,
-      },
-      {
-        Header: "role",
-        accessor: "role",
-      },
+      }),
+      columnHelper.accessor("role", {
+        header: () => <span>Role</span>,
+        id: "role",
+      }),
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   // Create an editable cell renderer
-  const EditableCell = ({
-    value: initialValue,
-    // row: { original },
-    column: { id },
-  }) => {
-    // We need to keep and update the state of the cell normally
-    const [value, setValue] = React.useState<string | number>(initialValue);
+  const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
+    cell: ({ getValue, row: { index }, column: { id } }) => {
+      const initialValue = getValue();
+      // We need to keep and update the state of the cell normally
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [value, setValue] = useState(initialValue);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(e.target.value);
-    };
-
-    // We'll only update the external data when the input is blurred
-    const onBlur = () => {
+      const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setValue(e.target.value);
+      };
+      const onBlur = () => {
+        table.options.meta?.updateData(index, id, value);
+      };
+      // We'll only update the external data when the input is blurred
+      // const onBlur = () => {
       // updateMyData(index, id, value, original);
-    };
+      // };
 
-    // If the initialValue is changed external, sync it up with our state
-    React.useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
+      // If the initialValue is changed external, sync it up with our state
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useEffect(() => {
+        setValue(initialValue);
+      }, [initialValue]);
 
-    if (id === "name") {
-      return (
-        <input
-          className="m-0 border-0 bg-transparent p-0"
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-        />
-      );
-    }
-    return value;
-  };
-  // Set our editable cell renderer as the default Cell renderer
-  const defaultColumn = {
-    Cell: EditableCell,
+      if (id === "name") {
+        return (
+          <input
+            className="m-0 border-0 bg-transparent p-0"
+            value={value as string}
+            onChange={onChange}
+            onBlur={onBlur}
+          />
+        );
+      }
+      return value;
+    },
   };
 
   const data = useMemo(() => members || [], [members]);
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns,
-        data,
-        defaultColumn,
-        initialState: {
-          sortBy: [
-            {
-              id: "id",
-              desc: false,
-            },
-          ],
-        },
-      },
-      useSortBy
-    );
+  const table = useReactTable({
+    data,
+    //@ts-expect-error
+    columns,
+    //@ts-expect-error
+    defaultColumn,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
+  });
 
   return (
     <div className="flex flex-col ">
@@ -174,37 +168,43 @@ export const MembersTable = () => {
 
         <div className="inline-block w-full p-1.5 text-center align-middle">
           <div className="overflow-hidden rounded-lg border">
-            <table
-              {...getTableProps()}
-              className="table-wrapper min-w-full divide-y divide-gray-400"
-            >
+            <table className="table-wrapper min-w-full divide-y divide-gray-400">
               <thead className="bg-base-100">
                 {
                   // Loop over the header rows
-                  headerGroups.map((headerGroup) => (
+                  table.getHeaderGroups().map((headerGroup) => (
                     // Apply the header row props
-                    <tr {...headerGroup.getHeaderGroupProps()}>
+                    <tr key={headerGroup.id}>
                       {
                         // Loop over the headers in each row
-                        headerGroup.headers.map((column) => (
+                        headerGroup.headers.map((header) => (
                           <th
-                            {...column.getHeaderProps(
-                              column.getSortByToggleProps()
-                            )}
+                            key={header.id}
+                            colSpan={header.colSpan}
                             scope="col"
                             className="py-3 pl-4"
                           >
-                            {
-                              // Render the header
-                              column.render("Header")
-                            }
-                            <span>
-                              {column.isSorted
-                                ? column.isSortedDesc
-                                  ? " 🔽"
-                                  : " 🔼"
-                                : ""}
-                            </span>
+                            {header.isPlaceholder ? null : (
+                              <div
+                                {...{
+                                  className: header.column.getCanSort()
+                                    ? "cursor-pointer select-none"
+                                    : "",
+                                  onClick:
+                                    header.column.getToggleSortingHandler(),
+                                }}
+                              >
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {{
+                                  asc: " 🔼",
+                                  desc: " 🔽",
+                                }[header.column.getIsSorted() as string] ??
+                                  null}
+                              </div>
+                            )}
                           </th>
                         ))
                       }
@@ -212,38 +212,29 @@ export const MembersTable = () => {
                   ))
                 }
               </thead>
-              <tbody
-                {...getTableBodyProps()}
-                className=" divide-y divide-gray-200"
-              >
+              <tbody className=" divide-y divide-gray-200">
                 {
                   // Loop over the table rows
-                  rows.map((row) => {
-                    // Prepare the row for display
-                    prepareRow(row);
-                    return (
-                      // Apply the row props
-                      <tr className={`items-center`} {...row.getRowProps()}>
-                        {
-                          // Loop over the rows cells
-                          row.cells.map((cell) => {
-                            // Apply the cell props
-                            return (
-                              <td
-                                {...cell.getCellProps()}
-                                className="py-1 pl-4"
-                              >
-                                {
-                                  // Render the cell contents
-                                  cell.render("Cell")
-                                }
-                              </td>
-                            );
-                          })
-                        }
-                      </tr>
-                    );
-                  })
+                  table.getRowModel().rows.map((row) => (
+                    <tr key={row.original.id} className={`items-center`}>
+                      {
+                        // Loop over the rows cells
+                        row.getVisibleCells().map((cell) => (
+                          // Apply the cell props
+
+                          <td key={cell.id} className="py-1 pl-4">
+                            {
+                              // Render the cell contents
+                              flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )
+                            }
+                          </td>
+                        ))
+                      }
+                    </tr>
+                  ))
                 }
               </tbody>
             </table>
