@@ -258,6 +258,14 @@ export const networkRouter = createTRPCRouter({
             })
             .optional(),
           privateNetwork: z.boolean().optional(),
+          ipAssignmentPools: z
+            .array(
+              z.object({
+                ipRangeStart: z.string(),
+                ipRangeEnd: z.string(),
+              })
+            )
+            .optional(),
           ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
@@ -278,10 +286,21 @@ export const networkRouter = createTRPCRouter({
       // Construct the API request payload using the provided updateParams
       const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
       const prismaUpdates: Partial<NetworkEntity> = {};
+      // Return nw obj details
+      const ztControllerResponse = await ztController
+        .network_detail(input.nwid)
+        .catch((err: APIError) => {
+          throw new TRPCError({
+            message: `${err.cause.toString()} --- ${err.message}`,
+            code: "BAD_REQUEST",
+            cause: err.cause,
+          });
+        });
       try {
         const {
           privateNetwork,
           ipPool,
+          ipAssignmentPools,
           name,
           dns,
           removeDns,
@@ -330,17 +349,6 @@ export const networkRouter = createTRPCRouter({
             servers: [],
           };
 
-          // Return nw obj details
-          const ztControllerResponse = await ztController
-            .network_detail(input.nwid)
-            .catch((err: APIError) => {
-              throw new TRPCError({
-                message: `${err.cause.toString()} --- ${err.message}`,
-                code: "BAD_REQUEST",
-                cause: err.cause,
-              });
-            });
-
           // Update domain
           ztControllerUpdates.dns.domain = dns.domain;
 
@@ -367,6 +375,13 @@ export const networkRouter = createTRPCRouter({
 
           if (ztControllerUpdates.routes.length > 0) {
             prismaUpdates.ipAssignments = ztControllerUpdates.routes[0].target;
+          }
+        }
+
+        if (ipAssignmentPools) {
+          if (Array.isArray(ipAssignmentPools)) {
+            ztControllerUpdates.ipAssignmentPools =
+              ipAssignmentPools as IpAssignmentPoolsEntity[];
           }
         }
 
@@ -410,11 +425,11 @@ export const networkRouter = createTRPCRouter({
           await handleAutoAssignIP(
             autoAssignIp,
             ztControllerUpdates,
-            ctx,
+            ztControllerResponse,
             input
           );
         }
-
+        // console.log(JSON.stringify(ztControllerUpdates, null, 2));
         return await ztController.network_update(
           input.nwid,
           ztControllerUpdates

@@ -321,7 +321,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
             {original?.ipAssignments.map((assignedIp) => {
               const subnetMatch = isIPInSubnet(
                 assignedIp,
-                networkById.network?.routes[0]?.target
+                networkById.network?.routes
               );
 
               return (

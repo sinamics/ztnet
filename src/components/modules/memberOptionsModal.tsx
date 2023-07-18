@@ -63,8 +63,10 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { target } = networkById?.network?.routes[0] || {};
-    const subnetMatch = isIPInSubnet(e.target.value, target);
+    const subnetMatch = isIPInSubnet(
+      e.target.value,
+      networkById?.network?.routes
+    );
     setState((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
@@ -96,12 +98,16 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     e.preventDefault();
     const { ipInput } = state;
     const { target } = networkById?.network?.routes[0] || {};
-    const subnetMatch = isIPInSubnet(ipInput, target);
+    // const subnetMatch = isIPInSubnet(ipInput, networkById?.network?.routes);
 
-    if (!subnetMatch) {
-      void toast.error(`IP needs to be within the subnet ${target}`);
-      return;
-    }
+    // if (!subnetMatch) {
+    //   void toast.error(
+    //     `IP needs to be within any of the routes subnet ${JSON.stringify(
+    //       networkById?.network?.routes.map((r) => r.target)
+    //     )}`
+    //   );
+    //   return;
+    // }
     if (!ipInput) {
       return;
     }
@@ -324,7 +330,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
           {ipAssignments.map((assignedIp) => {
             const subnetMatch = isIPInSubnet(
               assignedIp,
-              networkById?.network?.routes[0]?.target
+              networkById?.network?.routes
             );
             return (
               <div
