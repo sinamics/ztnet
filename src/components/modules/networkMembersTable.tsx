@@ -142,6 +142,17 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
       }),
+      columnHelper.accessor("peers.preferredPath.address", {
+        header: () => <span>Physical Address</span>,
+        id: "physicalAddress",
+        cell: (info) => {
+          const val = info.getValue();
+          if (!val || typeof val !== "string")
+            return <span className="text-gray-400/50">unknown</span>;
+
+          return val.split("/")[0];
+        },
+      }),
       columnHelper.accessor("conStatus", {
         header: () => <span>Conn Status</span>,
         id: "conStatus",

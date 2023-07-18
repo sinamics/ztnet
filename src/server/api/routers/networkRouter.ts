@@ -21,9 +21,10 @@ import {
   type Peers,
   type NetworkEntity,
 } from "~/types/network";
+import RuleCompiler from "~/utils/rule-compiler";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
-import RuleCompiler from "~/utils/rule-compiler";
+import { type ZTControllerGetPeer } from "~/types/ztController";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -165,20 +166,32 @@ export const networkRouter = createTRPCRouter({
           deleted: false,
         },
       });
-
       // Get peers to view client version of zt
       const updatedActiveMembers = await Promise.all(
         getActiveMembers.map(async (member: network_members) => {
           const peers = await ztController.peer(member.address).catch(() => []);
-          const memberPeer = peers.find(
+          const memberPeer: ZTControllerGetPeer = peers.find(
             (peer: Peers) => peer.address === member.id
-          ) as Peers | undefined;
+          );
+
+          if (memberPeer && memberPeer.paths) {
+            const activePreferredPath = memberPeer.paths.find(
+              (path) => path && path.active === true && path.preferred === true
+            );
+
+            if (activePreferredPath) {
+              memberPeer.preferredPath = activePreferredPath;
+            }
+          }
+
           return {
             ...member,
             peers: memberPeer,
           };
         })
       );
+
+      // console.log(JSON.stringify(updatedActiveMembers, null, 2));
       // Resolve the promises before passing them to Promise.all
       const zombieMembers = await Promise.all(getZombieMembersPromises);
       // console.log(JSON.stringify(updatedActiveMembers, null, 2));
