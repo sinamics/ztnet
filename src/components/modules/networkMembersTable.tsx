@@ -134,7 +134,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("ipAssignments", {
-        header: () => <span>IP / Latency</span>,
+        header: () => <span>Managed IP / Latency</span>,
         id: "ipAssignments",
       }),
       columnHelper.accessor("creationTime", {
@@ -143,7 +143,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
       }),
       columnHelper.accessor("peers.physicalAddress", {
-        header: () => <span>Physical Address</span>,
+        header: () => <span>Physical IP</span>,
         id: "physicalAddress",
         cell: (info) => {
           const val = info.getValue();
