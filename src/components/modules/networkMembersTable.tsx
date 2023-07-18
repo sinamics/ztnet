@@ -142,15 +142,15 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
       }),
-      columnHelper.accessor("peers.physicalAddress", {
+      columnHelper.accessor("peers", {
         header: () => <span>Physical IP</span>,
         id: "physicalAddress",
         cell: (info) => {
           const val = info.getValue();
-          if (!val || typeof val !== "string")
+          if (!val || typeof val.physicalAddress !== "string")
             return <span className="text-gray-400/50">unknown</span>;
 
-          return val.split("/")[0];
+          return val.physicalAddress.split("/")[0];
         },
       }),
       columnHelper.accessor("conStatus", {
