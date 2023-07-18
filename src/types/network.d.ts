@@ -3,6 +3,19 @@ export interface NetworkAndMembers {
   network: ZtControllerNetwork;
   members?: MembersEntity[] | null;
 }
+export interface UserNetworkTable {
+  authorId: number;
+  autoAssignIp: boolean;
+  capabilitiesByName: null;
+  flowRule: null;
+  ipAssignments: string;
+  members: number; // dummy value used in table
+  network_members: MembersEntity[];
+  nwid: string;
+  nwname: string;
+  tagsByName: null;
+}
+
 export interface NetworkEntity {
   nwname?: string;
   autoAssignIp?: boolean;
@@ -32,8 +45,11 @@ export interface Tag {
 export interface CapabilitiesByName {
   [key: string]: number;
 }
+
 export interface MembersEntity {
+  action: string;
   activeBridge: boolean;
+  name: string;
   address: string;
   authenticationExpiryTime: number;
   authorized: boolean;
@@ -41,6 +57,7 @@ export interface MembersEntity {
   id: string;
   identity: string;
   ipAssignments?: string[];
+  lastseen: DateTime;
   lastAuthorizedCredential?: null;
   lastAuthorizedCredentialType?: null;
   lastAuthorizedTime: number;
@@ -57,7 +74,7 @@ export interface MembersEntity {
   vMinor: number;
   vProto: number;
   vRev: number;
-  peers?: Peers[];
+  peers?: Peers;
   conStatus: number;
 }
 
