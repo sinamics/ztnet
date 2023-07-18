@@ -124,7 +124,7 @@ describe("NetworkById component", () => {
     expect(screen.getByText(/Network ID:/i)).toBeInTheDocument();
     expect(screen.getByText(/Network Name:/i)).toBeInTheDocument();
     expect(screen.getByText(/Test Network/i)).toBeInTheDocument();
-    expect(screen.getByText("Network is")).toBeInTheDocument();
+    expect(screen.getByText("Network Auth")).toBeInTheDocument();
   });
 
   test("renders Network Settings divider", () => {

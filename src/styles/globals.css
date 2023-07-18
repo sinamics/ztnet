@@ -35,3 +35,9 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555; /* color of the scroll thumb on hover */
 }
+/* table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+} */
