@@ -168,10 +168,20 @@ export interface Peers {
   address: string;
   isBonded: boolean;
   latency: number;
-  paths?: null[] | null;
+  preferredPath?: Paths;
   role: string;
   version: string;
   versionMajor: number;
   versionMinor: number;
   versionRev: number;
+}
+export interface Paths {
+  active: boolean;
+  address: string;
+  expired: boolean;
+  lastReceive: number;
+  lastSend: number;
+  localSocket: number;
+  preferred: boolean;
+  trustedPathId: number;
 }
