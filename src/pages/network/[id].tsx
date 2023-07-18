@@ -148,7 +148,7 @@ const NetworkById = () => {
               </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-semibold">Network is</span>
+              <span className="font-semibold">Network Auth</span>
               {network?.private ? (
                 <span className="text-success">Private</span>
               ) : (
