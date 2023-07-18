@@ -3,53 +3,64 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useRouter } from "next/router";
-import { useMemo } from "react";
-import { useTable, type Column } from "react-table";
+import { useMemo, useState } from "react";
 
-interface Network {
-  nwid: string;
-  nwname: string;
-}
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  type SortingState,
+  flexRender,
+  // type ColumnDef,
+  createColumnHelper,
+} from "@tanstack/react-table";
+import { type UserNetworkTable } from "~/types/network";
 
 export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
-  const columns: Column<Network>[] = useMemo(
+  const [sorting, setSorting] = useState<SortingState>([
+    {
+      id: "id",
+      desc: true,
+    },
+  ]);
+  const columnHelper = createColumnHelper<UserNetworkTable>();
+  const columns = useMemo(
     () => [
-      {
-        Header: "Network ID",
-        accessor: "nwid",
-      },
-      {
-        Header: "Name",
-        accessor: "nwname",
-      },
-      {
-        Header: "Members",
-        accessor: ({ network_members }) => {
-          if (!Array.isArray(network_members)) return <span>0</span>;
-          return <span>{network_members.length}</span>;
+      columnHelper.accessor("nwid", {
+        cell: (info) => info.getValue(),
+        header: () => <span>Network ID</span>,
+        // footer: (info) => info.column.id,
+      }),
+      columnHelper.accessor("nwname", {
+        cell: (info) => info.getValue(),
+        header: () => <span>Name</span>,
+      }),
+      columnHelper.accessor("members", {
+        header: () => <span>Members</span>,
+        cell: ({ row: { original } }) => {
+          if (!Array.isArray(original.network_members)) return <span>0</span>;
+          return <span>{original.network_members.length}</span>;
         },
-      },
+      }),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
   const data = useMemo(() => tableData, [tableData]);
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data,
-      initialState: {
-        sortBy: [
-          {
-            id: "nwid",
-            desc: false,
-          },
-        ],
-      },
-    });
-
+  const table = useReactTable({
+    columns,
+    data,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
+    state: {
+      sorting,
+    },
+  });
   const handleRowClick = (nwid: string) => {
     void router.push(`/network/${nwid}`);
   };
@@ -57,50 +68,66 @@ export const NetworkTable = ({ tableData = [] }) => {
   return (
     <div className="inline-block w-full p-1.5 text-center align-middle">
       <div className="overflow-hidden rounded-lg border">
-        <table
-          {...getTableProps()}
-          className="table-wrapper min-w-full divide-y "
-        >
+        <table className="min-w-full  divide-y">
           <thead className="">
-            {headerGroups.map((headerGroup, key: number) => (
-              <tr key={key} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, key: number) => (
-                  <th
-                    key={key}
-                    {...column.getHeaderProps()}
-                    scope="col"
-                    className="px-6 py-3 text-center text-xs uppercase tracking-wider"
-                  >
-                    {column.render("Header")}
-                  </th>
-                ))}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className="bg-base-300/50 p-2 "
+                    >
+                      {header.isPlaceholder ? null : (
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none"
+                              : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                      )}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()} className="divide-y ">
-            {rows.map((row, key) => {
-              prepareRow(row);
-              return (
-                <tr
-                  key={key}
-                  {...row.getRowProps()}
-                  onClick={() => handleRowClick(row.original.nwid as string)}
-                  className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
-                >
-                  {row.cells.map((cell, key) => {
-                    return (
-                      <td
-                        key={key}
-                        {...cell.getCellProps()}
-                        className="whitespace-nowrap border border-primary px-6 py-2 text-sm"
-                      >
-                        {cell.render("Cell")}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+          <tbody className="divide-y">
+            {table
+              .getRowModel()
+              .rows.slice(0, 10)
+              .map((row) => {
+                return (
+                  <tr
+                    key={row.id}
+                    onClick={() => handleRowClick(row.original.nwid as string)}
+                    className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <td key={cell.id} className="p-1">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
       </div>
