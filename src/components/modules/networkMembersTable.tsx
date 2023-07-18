@@ -142,7 +142,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
       }),
-      columnHelper.accessor("peers.preferredPath.address", {
+      columnHelper.accessor("peers.physicalAddress", {
         header: () => <span>Physical Address</span>,
         id: "physicalAddress",
         cell: (info) => {

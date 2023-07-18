@@ -20,6 +20,7 @@ import {
   type IpAssignmentPoolsEntity,
   type Peers,
   type NetworkEntity,
+  type Paths,
 } from "~/types/network";
 import RuleCompiler from "~/utils/rule-compiler";
 import { type APIError } from "~/server/helpers/errorHandler";
@@ -173,20 +174,25 @@ export const networkRouter = createTRPCRouter({
           const memberPeer: ZTControllerGetPeer = peers.find(
             (peer: Peers) => peer.address === member.id
           );
+          let activePreferredPath: Paths | undefined;
 
           if (memberPeer && memberPeer.paths) {
-            const activePreferredPath = memberPeer.paths.find(
+            activePreferredPath = memberPeer.paths.find(
               (path) => path && path.active === true && path.preferred === true
             );
-
-            if (activePreferredPath) {
-              memberPeer.preferredPath = activePreferredPath;
-            }
           }
+
+          // Renamed address field of activePreferredPath
+          const { address: physicalAddress, ...restOfActivePreferredPath } =
+            activePreferredPath || {};
 
           return {
             ...member,
-            peers: memberPeer,
+            peers: {
+              ...(memberPeer || {}),
+              physicalAddress,
+              ...restOfActivePreferredPath,
+            },
           };
         })
       );
