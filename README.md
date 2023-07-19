@@ -4,42 +4,40 @@
 
 # Next ZTnet
 
-Next ZTNet is a ZeroTier controller that provides an easy-to-use interface for managing your ZeroTier networks. Built with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, this powerful web application simplifies the process of creating, configuring, and monitoring your ZeroTier networks.
+Next ZTNet is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks. 
 
-With Next ZTNet, you can:
-
-- Create and manage multiple ZeroTier networks
-- Monitor network status and connected nodes
-- Easily add and remove nodes from your networks
-- Configure network settings such as IP ranges, routes, and access control
+With a rich palette of features, and an intuitive user interface, Next ZTNet embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
 ## Table of Contents
 
-- [Next ZTnet](#next-ztnet)
-  - [⚠️ This project is currently under development and not yet suitable for production environments.](#️-this-project-is-currently-under-development-and-not-yet-suitable-for-production-environments)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Installations](#installations)
+- [Overview](#next-ztnet)
+- [🔥 Features](#-features)
+- [⚙️ Installations](#%EF%B8%8F-installations)
     - [Using Docker Compose](#using-docker-compose)
-    - [Note! First user that register will be automatically assigned as admin.](#note-first-user-that-register-will-be-automatically-assigned-as-admin)
+    - [Note: First user to register will automatically be assigned as admin.](#%EF%B8%8F-important-the-first-registered-user-automatically-gains-admin-privileges)
     - [Environment Variables](#environment-variables)
-- [Development](#development)
-  - [vscode container development (recommended)](#vscode-container-development-recommended)
-  - [The traditional way](#the-traditional-way)
+- [👨‍💻 Development](#development)
+  - [VSCode Container Development (Recommended)](#vscode-container-development-recommended)
+  - [The Traditional Way](#the-traditional-way)
     - [Setup Environment Variables](#setup-environment-variables)
+- [⚠️ Disclaimer](#%EF%B8%8F-disclaimer)
 
-## Features
+## 🔥 Features
 
-- Create and manage multiple ZeroTier networks
-- Monitor network status and connected nodes
-- Easily add and remove nodes from your networks
-- Configure network settings such as IP ranges, routes, and access control
+- **ZeroTier Network Management**: Create, modify, and oversee multiple ZeroTier networks with ease.
+- **Node Monitoring**: Track network status and keep tabs on connected nodes effortlessly.
+- **Intuitive Node Operations**: Add or remove nodes from your networks with a few clicks.
+- **Configurable Network Settings**: Easily tweak IP ranges, routes, Flow-Rules and access control settings.
+- **DNS and Multicast Configuration**: Customize DNS and Multicast settings per network for optimized performance.
+- **IP Assignment Pool Management**: Handle IP assignment pools effectively with a user-friendly UI.
+- **Auto-Assign IP Functionality**: Benefit from the convenience of automatic IP assignment.
+- **Network Privacy Controls**: Ensure network confidentiality with private network settings.
 
-## Installations
+## ⚙️ Installations
 
 ### Using Docker Compose
 
-You don't need to clone the repository to use Next ZTNet with Docker. Instead, create a `docker-compose.yml` file in your local machine with the following content:
+Skip the hassle of cloning the repository. Simply create a `docker-compose.yml` file on your machine and populate it as follows:
 
 ```yaml
 version: "3.1"
@@ -117,15 +115,13 @@ networks:
         - subnet: 172.31.255.0/29
 ```
 
-Next, run the following command in the same directory as the `docker-compose.yml` file:
+To launch Next ZTNet, execute the following command in your `docker-compose.yml` directory:
 
 `docker-compose up -d`
 
-This will pull the required images, create the containers, and start the services.
-
-You can now access the Next ZTNet web interface at `http://localhost:3000`.
-
-### Note! First user that register will be automatically assigned as admin.
+This action pulls necessary images, initializes the containers, and activates the services.
+Visit `http://localhost:3000` to access the Next ZTNet web interface.
+### ⚠️ Important: The first registered user automatically gains admin privileges.
 
 ### Environment Variables
 
@@ -190,3 +186,11 @@ Create a `.env` file in the root of the project and set the necessary environmen
 Now start the development server:
 
 `npm run dev`
+
+## Network page layout
+![Alt Text](https://i.ibb.co/1TbNYg1/ztnet-network.jpg)
+
+### ⚠️ Disclaimer: 
+
+Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
+
