@@ -416,7 +416,7 @@ export const networkRouter = createTRPCRouter({
         }
 
         // Update network in prisma
-        await ctx.prisma.network.update({
+        const prismaUpdatePromise = ctx.prisma.network.update({
           where: { nwid: input.nwid },
           data: prismaUpdates,
         });
@@ -429,11 +429,16 @@ export const networkRouter = createTRPCRouter({
             input
           );
         }
-        // console.log(JSON.stringify(ztControllerUpdates, null, 2));
-        return await ztController.network_update(
+        const ztControllerUpdatePromise = ztController.network_update(
           input.nwid,
           ztControllerUpdates
         );
+
+        const [, ztControllerResult] = await Promise.all([
+          prismaUpdatePromise,
+          ztControllerUpdatePromise,
+        ]);
+        return ztControllerResult;
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw new TRPCError({
