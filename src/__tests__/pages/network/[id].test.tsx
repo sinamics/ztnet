@@ -124,7 +124,7 @@ describe("NetworkById component", () => {
     expect(screen.getByText(/Network ID:/i)).toBeInTheDocument();
     expect(screen.getByText(/Network Name:/i)).toBeInTheDocument();
     expect(screen.getByText(/Test Network/i)).toBeInTheDocument();
-    expect(screen.getByText("Network Auth")).toBeInTheDocument();
+    expect(screen.getByText(/Network Auth/i)).toBeInTheDocument();
   });
 
   test("renders Network Settings divider", () => {
@@ -134,7 +134,8 @@ describe("NetworkById component", () => {
 
   test("renders Network Members divider", () => {
     render(<NetworkById />);
-    expect(screen.getByText(/Network Members/i)).toBeInTheDocument();
+    const matches = screen.getAllByText(/Network Members/i);
+    expect(matches.length).toBe(2);
   });
 
   test("renders Network Start, Network End, and Network Cidr labels", () => {

@@ -166,18 +166,21 @@ function long2ip(long: number) {
 }
 
 // Function to get the next available IP from a range
+// Function to get the next available IP from a list of ranges
 export function getNextIP(
-  rangeStart: string,
-  rangeEnd: string,
+  ranges: { ipRangeStart: string; ipRangeEnd: string }[],
   allAssignedIPs: string[]
 ): string | null {
-  const start = ip2long(rangeStart);
-  const end = ip2long(rangeEnd);
+  // For each range in the list of ranges
+  for (const range of ranges) {
+    const start = ip2long(range.ipRangeStart);
+    const end = ip2long(range.ipRangeEnd);
 
-  for (let ipLong = start; ipLong <= end; ipLong++) {
-    const ip = long2ip(ipLong);
-    if (!allAssignedIPs.includes(ip)) {
-      return ip;
+    for (let ipLong = start; ipLong <= end; ipLong++) {
+      const ip = long2ip(ipLong);
+      if (!allAssignedIPs.includes(ip)) {
+        return ip;
+      }
     }
   }
 
@@ -190,7 +193,7 @@ export function getNextIP(
  *
  * The function receives a boolean `autoAssignIp`. If `autoAssignIp` is not set or false, it will
  * clear any existing IP assignment pools for network members. This is achieved by setting the
- * `ipAssignmentPools` of the payload to an empty array.
+ * `ipAssignmentPools` of the ztControllerUpdates to an empty array.
  *
  * If `autoAssignIp` is true, the function will create a new IP assignment pool, update the network
  * with the new pool, fetch network details, and assign IPs to members without an assigned IP.
@@ -201,30 +204,27 @@ export function getNextIP(
  */
 export async function handleAutoAssignIP(
   autoAssignIp: boolean | undefined,
-  payload: Partial<ZtControllerNetwork>,
-  ctx,
+  ztControllerUpdates: Partial<ZtControllerNetwork>,
+  ztControllerResponse,
   input
 ) {
+  // console.log(ztControllerResponse.network.routes.pop());
   if (autoAssignIp === false) {
     // remove ipAssignmentPools if autoAssignIp is false
-    payload.ipAssignmentPools = [];
+    ztControllerUpdates.ipAssignmentPools = [];
     return;
   }
 
-  const psqlNetworkData = await ctx.prisma.network.findFirst({
-    where: {
-      AND: [
-        {
-          authorId: { equals: ctx.session.user.id },
-          nwid: { equals: input.nwid },
-        },
-      ],
-    },
-  });
+  // get the last route from the controller response
+  const routes = ztControllerResponse.network.routes.pop();
 
+  // we cannot assign ip if no routes are found
+  if (!Array.isArray(routes)) {
+    return;
+  }
   // else update network with new ipAssignmentPools
-  const pool = IPv4gen(psqlNetworkData.ipAssignments);
-  payload.ipAssignmentPools =
+  const pool = IPv4gen(routes["target"]);
+  ztControllerUpdates.ipAssignmentPools =
     pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
 
   const controller = await ztController
@@ -249,11 +249,7 @@ export async function handleAutoAssignIP(
 
     if (member.ipAssignments.length === 0) {
       // Get next available IP from the pool
-      const nextIP = getNextIP(
-        pool.ipAssignmentPools[0].ipRangeStart,
-        pool.ipAssignmentPools[0].ipRangeEnd,
-        allAssignedIPs
-      );
+      const nextIP = getNextIP(pool.ipAssignmentPools, allAssignedIPs);
 
       if (nextIP !== null) {
         // If a next IP is available, assign it to the member

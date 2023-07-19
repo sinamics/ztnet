@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
-import cn from "classnames";
 import { toast } from "react-hot-toast";
+import { type ErrorData } from "~/types/errorHandling";
 
 export const NetworkDns = () => {
   const [state, setState] = useState({
@@ -26,8 +25,14 @@ export const NetworkDns = () => {
   );
 
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
-    onError: ({ message }) => {
-      void toast.error(message);
+    onError: (e) => {
+      if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
+        void toast.error(
+          (e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams
+        );
+      } else {
+        void toast.error(e?.message);
+      }
     },
   });
 
@@ -59,7 +64,7 @@ export const NetworkDns = () => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     // add toast notification if address or domain is empty
     if (!state.address || !state.domain) {
@@ -128,49 +133,43 @@ export const NetworkDns = () => {
               ) : null}
             </div>
           </div>
-          <div
-            className={cn(
-              "xs:grid-cols-2 grid grid-cols-2 gap-2 sm:grid-cols-2 md:grid-cols-2"
-            )}
-          >
-            <div>
-              <form>
-                <div className="form-control w-full">
-                  <label className="label">
-                    <span className="label-text">Search Domain</span>
-                  </label>
+          <div>
+            <form className="grid grid-cols-2 gap-5 pt-4">
+              <div className="form-control w-full">
+                <label className="label">
+                  <span className="label-text">Search Domain</span>
+                </label>
+                <input
+                  type="text"
+                  name="domain"
+                  value={state.domain}
+                  onChange={onChangeHandler}
+                  placeholder="home.arpa"
+                  className="input input-bordered input-sm w-full"
+                />
+              </div>
+              <div className="form-control ">
+                <label className="label">
+                  <span className="label-text">Server Address</span>
+                </label>
+                <div className="join">
                   <input
-                    type="text"
-                    name="domain"
-                    value={state.domain}
+                    name="address"
+                    value={state.address}
                     onChange={onChangeHandler}
-                    placeholder="home.arpa"
-                    className="input input-bordered input-sm w-full"
+                    className="input join-item input-sm  w-full"
+                    placeholder="10.147.20.190"
                   />
                 </div>
-                <div className="form-control ">
-                  <label className="label">
-                    <span className="label-text">Server Address</span>
-                  </label>
-                  <div className="join">
-                    <input
-                      name="address"
-                      value={state.address}
-                      onChange={onChangeHandler}
-                      className="input join-item input-sm  w-full"
-                      placeholder="10.147.20.190"
-                    />
-                    <button
-                      type="submit"
-                      onClick={submitHandler}
-                      className="btn join-item btn-sm bg-base-300 text-secondary-content"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
+              </div>
+              <button
+                type="submit"
+                onClick={submitHandler}
+                className="btn btn-sm bg-base-300 text-secondary-content"
+              >
+                Submit
+              </button>
+            </form>
             <div>
               {Array.from(state.servers).length > 0 ? <p>Servers</p> : null}
               <div className="flex flex-wrap gap-3">

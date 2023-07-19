@@ -48,7 +48,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       {
         nwid,
       },
-      { enabled: !!query.id, networkMode: "online" }
+      { enabled: !!query.id }
     );
 
   const { mutate: updateMemberDatabaseOnly } =
@@ -92,7 +92,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         nwid,
         id,
       },
-      { onSuccess: void refetchNetworkById() }
+      { onSuccess: () => void refetchNetworkById() }
     );
   };
   const columnHelper = createColumnHelper<MembersEntity>();
@@ -134,13 +134,24 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("ipAssignments", {
-        header: () => <span>IP / Latency</span>,
+        header: () => <span>Managed IP / Latency</span>,
         id: "ipAssignments",
       }),
       columnHelper.accessor("creationTime", {
         header: () => <span>Created</span>,
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
+      }),
+      columnHelper.accessor("peers", {
+        header: () => <span>Physical IP</span>,
+        id: "physicalAddress",
+        cell: (info) => {
+          const val = info.getValue();
+          if (!val || typeof val.physicalAddress !== "string")
+            return <span className="text-gray-400/50">unknown</span>;
+
+          return val.physicalAddress.split("/")[0];
+        },
       }),
       columnHelper.accessor("conStatus", {
         header: () => <span>Conn Status</span>,
@@ -242,8 +253,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         },
       }),
     ],
+    // this is needed so the ip in table is updated accordingly
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [networkById.network]
   );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
@@ -293,7 +305,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           <form>
             <input
               className="m-0 border-0 bg-transparent p-0"
-              value={value as string}
+              value={(value as string) || ""}
               onChange={(e) => setValue(e.target.value)}
               onBlur={onBlur}
             />
@@ -310,9 +322,8 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
             {original?.ipAssignments.map((assignedIp) => {
               const subnetMatch = isIPInSubnet(
                 assignedIp,
-                networkById.network?.routes[0]?.target
+                networkById.network?.routes
               );
-
               return (
                 <div
                   key={assignedIp}

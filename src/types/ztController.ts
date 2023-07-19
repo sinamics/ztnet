@@ -173,6 +173,7 @@ export interface ZTControllerGetPeer {
   isBonded: boolean;
   latency: number;
   paths: Path[];
+  preferredPath: Path;
   role: string;
   version: string;
   versionMajor: number;
