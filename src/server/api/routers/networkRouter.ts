@@ -20,10 +20,12 @@ import {
   type IpAssignmentPoolsEntity,
   type Peers,
   type NetworkEntity,
+  type Paths,
 } from "~/types/network";
+import RuleCompiler from "~/utils/rule-compiler";
 import { type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
-import RuleCompiler from "~/utils/rule-compiler";
+import { type ZTControllerGetPeer } from "~/types/ztController";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -165,20 +167,37 @@ export const networkRouter = createTRPCRouter({
           deleted: false,
         },
       });
-
       // Get peers to view client version of zt
       const updatedActiveMembers = await Promise.all(
         getActiveMembers.map(async (member: network_members) => {
           const peers = await ztController.peer(member.address).catch(() => []);
-          const memberPeer = peers.find(
+          const memberPeer: ZTControllerGetPeer = peers.find(
             (peer: Peers) => peer.address === member.id
-          ) as Peers | undefined;
+          );
+          let activePreferredPath: Paths | undefined;
+
+          if (memberPeer && memberPeer.paths) {
+            activePreferredPath = memberPeer.paths.find(
+              (path) => path && path.active === true && path.preferred === true
+            );
+          }
+
+          // Renamed address field of activePreferredPath
+          const { address: physicalAddress, ...restOfActivePreferredPath } =
+            activePreferredPath || {};
+
           return {
             ...member,
-            peers: memberPeer,
+            peers: {
+              ...(memberPeer || {}),
+              physicalAddress,
+              ...restOfActivePreferredPath,
+            },
           };
         })
       );
+
+      // console.log(JSON.stringify(updatedActiveMembers, null, 2));
       // Resolve the promises before passing them to Promise.all
       const zombieMembers = await Promise.all(getZombieMembersPromises);
       // console.log(JSON.stringify(updatedActiveMembers, null, 2));
@@ -239,6 +258,14 @@ export const networkRouter = createTRPCRouter({
             })
             .optional(),
           privateNetwork: z.boolean().optional(),
+          ipAssignmentPools: z
+            .array(
+              z.object({
+                ipRangeStart: z.string(),
+                ipRangeEnd: z.string(),
+              })
+            )
+            .optional(),
           ipPool: z.string().optional(),
           removeIpPool: z.string().optional(),
           name: z.string().optional(),
@@ -259,10 +286,21 @@ export const networkRouter = createTRPCRouter({
       // Construct the API request payload using the provided updateParams
       const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
       const prismaUpdates: Partial<NetworkEntity> = {};
+      // Return nw obj details
+      const ztControllerResponse = await ztController
+        .network_detail(input.nwid)
+        .catch((err: APIError) => {
+          throw new TRPCError({
+            message: `${err.cause.toString()} --- ${err.message}`,
+            code: "BAD_REQUEST",
+            cause: err.cause,
+          });
+        });
       try {
         const {
           privateNetwork,
           ipPool,
+          ipAssignmentPools,
           name,
           dns,
           removeDns,
@@ -311,17 +349,6 @@ export const networkRouter = createTRPCRouter({
             servers: [],
           };
 
-          // Return nw obj details
-          const ztControllerResponse = await ztController
-            .network_detail(input.nwid)
-            .catch((err: APIError) => {
-              throw new TRPCError({
-                message: `${err.cause.toString()} --- ${err.message}`,
-                code: "BAD_REQUEST",
-                cause: err.cause,
-              });
-            });
-
           // Update domain
           ztControllerUpdates.dns.domain = dns.domain;
 
@@ -348,6 +375,13 @@ export const networkRouter = createTRPCRouter({
 
           if (ztControllerUpdates.routes.length > 0) {
             prismaUpdates.ipAssignments = ztControllerUpdates.routes[0].target;
+          }
+        }
+
+        if (ipAssignmentPools) {
+          if (Array.isArray(ipAssignmentPools)) {
+            ztControllerUpdates.ipAssignmentPools =
+              ipAssignmentPools as IpAssignmentPoolsEntity[];
           }
         }
 
@@ -382,7 +416,7 @@ export const networkRouter = createTRPCRouter({
         }
 
         // Update network in prisma
-        await ctx.prisma.network.update({
+        const prismaUpdatePromise = ctx.prisma.network.update({
           where: { nwid: input.nwid },
           data: prismaUpdates,
         });
@@ -391,15 +425,20 @@ export const networkRouter = createTRPCRouter({
           await handleAutoAssignIP(
             autoAssignIp,
             ztControllerUpdates,
-            ctx,
+            ztControllerResponse,
             input
           );
         }
-
-        return await ztController.network_update(
+        const ztControllerUpdatePromise = ztController.network_update(
           input.nwid,
           ztControllerUpdates
         );
+
+        const [, ztControllerResult] = await Promise.all([
+          prismaUpdatePromise,
+          ztControllerUpdatePromise,
+        ]);
+        return ztControllerResult;
       } catch (error) {
         if (error instanceof z.ZodError) {
           throw new TRPCError({

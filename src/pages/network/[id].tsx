@@ -17,6 +17,8 @@ import { useModalStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
 import { NetworkDns } from "~/components/modules/networkDns";
 import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import cn from "classnames";
+import NetworkHelpText from "~/components/modules/networkHelp";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -163,28 +165,40 @@ const NetworkById = () => {
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
           <div>
             <span className="text-muted font-semibold">Network Start:</span>{" "}
-            <span>{network?.ipAssignmentPools[0]?.ipRangeStart}</span>
+            <span
+              className={cn("badge badge-lg rounded-md", {
+                "badge-accent": network?.ipAssignmentPools[0]?.ipRangeStart,
+              })}
+            >
+              {network?.ipAssignmentPools[0]?.ipRangeStart || "not set"}
+            </span>
           </div>
           <div>
             <span className="text-muted font-semibold">Network End:</span>{" "}
-            {network?.ipAssignmentPools[0]?.ipRangeEnd}
+            <span
+              className={cn("badge badge-lg rounded-md", {
+                "badge-accent": network?.ipAssignmentPools[0]?.ipRangeEnd,
+              })}
+            >
+              {network?.ipAssignmentPools[0]?.ipRangeEnd || "not set"}
+            </span>
           </div>
           <div>
             <span className="text-muted font-semibold">Network Cidr:</span>{" "}
-            {network?.routes[0]?.target}
+            <span
+              className={cn("badge badge-lg rounded-md", {
+                "badge-accent": network?.routes[0]?.target,
+              })}
+            >
+              {network?.routes[0]?.target || "not set"}
+            </span>
           </div>
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Settings
       </div>
-      <div className="mx-auto w-full text-center text-xs sm:w-4/5 sm:px-10">
-        <p>
-          This is used for advanced routing, and should not be changed unless
-          you absolutely have to.
-        </p>
-      </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-4 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1  px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
           <NetworkIpAssignment />
@@ -274,6 +288,10 @@ const NetworkById = () => {
           ) : null}
         </div>
       </div>
+      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <NetworkHelpText />
+      </div>
+
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <NetworkFlowRules />
       </div>

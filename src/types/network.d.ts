@@ -165,13 +165,30 @@ export interface V6AssignMode {
   zt: boolean;
 }
 export interface Peers {
+  active: boolean;
   address: string;
   isBonded: boolean;
   latency: number;
-  paths?: null[] | null;
+  lastReceive: number;
+  lastSend: number;
+  localSocket?: number;
+  paths?: Paths[];
   role: string;
   version: string;
+  physicalAddress: string;
   versionMajor: number;
   versionMinor: number;
   versionRev: number;
+  preferred: boolean;
+  trustedPathId: number;
+}
+export interface Paths {
+  active: boolean;
+  address: string;
+  expired: boolean;
+  lastReceive: number;
+  lastSend: number;
+  localSocket?: number;
+  preferred: boolean;
+  trustedPathId: number;
 }
