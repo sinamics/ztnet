@@ -92,7 +92,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         nwid,
         id,
       },
-      { onSuccess: void refetchNetworkById() }
+      { onSuccess: () => void refetchNetworkById() }
     );
   };
   const columnHelper = createColumnHelper<MembersEntity>();
