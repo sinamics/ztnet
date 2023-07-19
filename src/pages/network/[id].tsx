@@ -17,6 +17,7 @@ import { useModalStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
 import { NetworkDns } from "~/components/modules/networkDns";
 import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import cn from "classnames";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -159,7 +160,7 @@ const NetworkById = () => {
         </div>
         <NetworkPrivatePublic />
       </div>
-      {/* <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+      <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
           <div>
             <span className="text-muted font-semibold">Network Start:</span>{" "}
@@ -192,7 +193,7 @@ const NetworkById = () => {
             </span>
           </div>
         </div>
-      </div> */}
+      </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Settings
       </div>

@@ -48,7 +48,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       {
         nwid,
       },
-      { enabled: !!query.id, networkMode: "online" }
+      { enabled: !!query.id }
     );
 
   const { mutate: updateMemberDatabaseOnly } =
@@ -253,8 +253,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         },
       }),
     ],
+    // this is needed so the ip in table is updated accordingly
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [networkById.network]
   );
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
@@ -304,7 +305,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           <form>
             <input
               className="m-0 border-0 bg-transparent p-0"
-              value={value as string}
+              value={(value as string) || ""}
               onChange={(e) => setValue(e.target.value)}
               onBlur={onBlur}
             />
@@ -323,7 +324,6 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                 assignedIp,
                 networkById.network?.routes
               );
-
               return (
                 <div
                   key={assignedIp}

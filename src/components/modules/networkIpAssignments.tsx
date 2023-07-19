@@ -110,7 +110,7 @@ export const NetworkIpAssignment = () => {
   return (
     <div
       tabIndex={0}
-      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+      className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
       <div className="collapse-title">IPv4 Assignment</div>
@@ -127,10 +127,10 @@ export const NetworkIpAssignment = () => {
           />
         </div>
         {network.autoAssignIp ? (
-          <div className="tabs flex justify-center pb-5">
+          <div className="tabs tabs-boxed grid grid-cols-2 gap-5 pb-5">
             <a
-              className={cn("tab tab-active", {
-                "tab-bordered ": ipTabs.easy,
+              className={cn("tab w-full border border-gray-500", {
+                "tab-active border-none": ipTabs.easy,
               })}
               onClick={() =>
                 setIptabs((prev) => ({
@@ -143,8 +143,8 @@ export const NetworkIpAssignment = () => {
               Easy
             </a>
             <a
-              className={cn("tab tab-active", {
-                "tab-bordered ": ipTabs.advanced,
+              className={cn("tab w-full border border-gray-500", {
+                "tab-active border-none": ipTabs.advanced,
               })}
               onClick={() =>
                 setIptabs((prev) => ({
