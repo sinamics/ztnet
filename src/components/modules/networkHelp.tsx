@@ -130,8 +130,8 @@ const NetworkHelpText: React.FC = () => (
               </p>
               <p className="text-gray-400">
                 This must be enabled on each client with the allowDNS option.
-                There is a checkbox in the UI in each network's details, near
-                the Allow Managed checkbox.
+                There is a checkbox in the UI in each networks details, near the
+                Allow Managed checkbox.
               </p>
             </section>
           </section>

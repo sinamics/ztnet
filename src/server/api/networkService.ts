@@ -222,7 +222,6 @@ export async function handleAutoAssignIP(
   if (!Array.isArray(routes)) {
     return;
   }
-  console.log(routes);
   // else update network with new ipAssignmentPools
   const pool = IPv4gen(routes["target"]);
   ztControllerUpdates.ipAssignmentPools =
