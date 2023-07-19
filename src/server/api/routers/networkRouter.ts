@@ -10,7 +10,6 @@ import {
   uniqueNamesGenerator,
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import { TRPCError } from "@trpc/server";
 import { handleAutoAssignIP, updateNetworkMembers } from "../networkService";
 import { Address4, Address6 } from "ip-address";
 import {
@@ -23,7 +22,7 @@ import {
   type Paths,
 } from "~/types/network";
 import RuleCompiler from "~/utils/rule-compiler";
-import { type APIError } from "~/server/helpers/errorHandler";
+import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
 import { type ZTControllerGetPeer } from "~/types/ztController";
 
@@ -107,20 +106,13 @@ export const networkRouter = createTRPCRouter({
 
       // Only return nw details for author user!
       if (!psqlNetworkData)
-        throw new TRPCError({
-          message: "You are not the Author of this network!",
-          code: "FORBIDDEN",
-        });
+        return throwError(`You are not the Author of this network!`);
 
       // Return nw obj details
       const ztControllerResponse = await ztController
         .network_detail(psqlNetworkData.nwid)
         .catch((err: APIError) => {
-          throw new TRPCError({
-            message: `${err.cause.toString()} --- ${err.message}`,
-            code: "BAD_REQUEST",
-            cause: err.cause,
-          });
+          return throwError(`${err.message}`);
         });
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
@@ -237,10 +229,7 @@ export const networkRouter = createTRPCRouter({
         });
       } catch (error) {
         if (error instanceof z.ZodError) {
-          throw new TRPCError({
-            message: `Invalid routes provided ${error.message}`,
-            code: "BAD_REQUEST",
-          });
+          return throwError(`Invalid routes provided ${error.message}`);
         } else {
           throw error;
         }
@@ -290,12 +279,9 @@ export const networkRouter = createTRPCRouter({
       const ztControllerResponse = await ztController
         .network_detail(input.nwid)
         .catch((err: APIError) => {
-          throw new TRPCError({
-            message: `${err.cause.toString()} --- ${err.message}`,
-            code: "BAD_REQUEST",
-            cause: err.cause,
-          });
+          return throwError(`${err.message}`);
         });
+
       try {
         const {
           privateNetwork,
@@ -331,17 +317,11 @@ export const networkRouter = createTRPCRouter({
 
         if (typeof dns === "object") {
           if (!isValidIP(dns?.address)) {
-            throw new TRPCError({
-              message: `Invalid DNS address provided ${dns?.address}`,
-              code: "BAD_REQUEST",
-            });
+            return throwError(`Invalid DNS address provided ${dns?.address}`);
           }
 
           if (!isValidDomain(dns.domain)) {
-            throw new TRPCError({
-              message: `Invalid DNS domain provided ${dns.domain}`,
-              code: "BAD_REQUEST",
-            });
+            return throwError(`Invalid DNS domain provided ${dns.domain}`);
           }
 
           ztControllerUpdates.dns = {
@@ -401,10 +381,7 @@ export const networkRouter = createTRPCRouter({
             ztControllerUpdates.routes = RoutesArraySchema.parse(routes);
           } catch (error) {
             if (error instanceof z.ZodError) {
-              throw new TRPCError({
-                message: `Invalid routes provided ${error.message}`,
-                code: "BAD_REQUEST",
-              });
+              throwError(`Invalid routes provided ${error.message}`);
             } else {
               throw error;
             }
@@ -426,7 +403,7 @@ export const networkRouter = createTRPCRouter({
             autoAssignIp,
             ztControllerUpdates,
             ztControllerResponse,
-            input
+            input.nwid
           );
         }
         const ztControllerUpdatePromise = ztController.network_update(
@@ -441,10 +418,7 @@ export const networkRouter = createTRPCRouter({
         return ztControllerResult;
       } catch (error) {
         if (error instanceof z.ZodError) {
-          throw new TRPCError({
-            message: `Invalid routes provided ${error.message}`,
-            code: "BAD_REQUEST",
-          });
+          throwError(`Something went wrong during update, ${error.message}`);
         } else {
           throw error;
         }
@@ -489,16 +463,10 @@ export const networkRouter = createTRPCRouter({
         // Log the error and throw a custom error message
         // eslint-disable-next-line no-console
         console.error(err);
-        throw new TRPCError({
-          message: "Could not create network! Please try again",
-          code: "BAD_REQUEST",
-        });
+        throwError("Could not create network! Please try again");
       } else {
         // Throw a generic error for unknown error types
-        throw new TRPCError({
-          message: "An unknown error occurred",
-          code: "BAD_REQUEST",
-        });
+        throwError("An unknown error occurred");
       }
     }
   }),
@@ -518,14 +486,12 @@ export const networkRouter = createTRPCRouter({
       // try {
       const err: string[] = RuleCompiler(flowRoute, rules, caps, tags);
       if (err) {
-        throw new TRPCError({
-          message: JSON.stringify({
-            error: `ERROR parsing ${process.argv[2]} line ${err[0]} column ${err[1]}: ${err[2]}`,
+        return throwError(
+          JSON.stringify({
+            error: `ERROR parsing Flow Rules at line ${err[0]} column ${err[1]}: ${err[2]}`,
             line: err[0],
-          }),
-          code: "BAD_REQUEST",
-          cause: err[0],
-        });
+          })
+        );
       }
       const capsArray = [];
       const capabilitiesByName = {};
