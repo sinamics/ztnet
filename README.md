@@ -190,3 +190,7 @@ Create a `.env` file in the root of the project and set the necessary environmen
 Now start the development server:
 
 `npm run dev`
+
+## Network page layout
+![Alt Text](https://i.ibb.co/1TbNYg1/ztnet-network.jpg)
+
