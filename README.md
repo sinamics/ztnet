@@ -4,7 +4,7 @@
 
 # Next ZTnet
 
-Next ZTNet is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks. 
+Next ZTNet is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
 
 With a rich palette of features, and an intuitive user interface, Next ZTNet embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
@@ -13,9 +13,9 @@ With a rich palette of features, and an intuitive user interface, Next ZTNet emb
 - [Overview](#next-ztnet)
 - [🔥 Features](#-features)
 - [⚙️ Installations](#%EF%B8%8F-installations)
-    - [Using Docker Compose](#using-docker-compose)
-    - [Note: First user to register will automatically be assigned as admin.](#%EF%B8%8F-important-the-first-registered-user-automatically-gains-admin-privileges)
-    - [Environment Variables](#environment-variables)
+  - [Using Docker Compose](#using-docker-compose)
+  - [Note: First user to register will automatically be assigned as admin.](#%EF%B8%8F-important-the-first-registered-user-automatically-gains-admin-privileges)
+  - [Environment Variables](#environment-variables)
 - [👨‍💻 Development](#development)
   - [VSCode Container Development (Recommended)](#vscode-container-development-recommended)
   - [The Traditional Way](#the-traditional-way)
@@ -24,14 +24,14 @@ With a rich palette of features, and an intuitive user interface, Next ZTNet emb
 
 ## 🔥 Features
 
-- **ZeroTier Network Management**: Create, modify, and oversee multiple ZeroTier networks with ease.
-- **Node Monitoring**: Track network status and keep tabs on connected nodes effortlessly.
-- **Intuitive Node Operations**: Add or remove nodes from your networks with a few clicks.
-- **Configurable Network Settings**: Easily tweak IP ranges, routes, Flow-Rules and access control settings.
-- **DNS and Multicast Configuration**: Customize DNS and Multicast settings per network for optimized performance.
-- **IP Assignment Pool Management**: Handle IP assignment pools effectively with a user-friendly UI.
-- **Auto-Assign IP Functionality**: Benefit from the convenience of automatic IP assignment.
-- **Network Privacy Controls**: Ensure network confidentiality with private network settings.
+🌐 **ZeroTier Network Management** - Seamlessly create, modify, and oversee multiple ZeroTier networks.  
+💻 **Node Monitoring** - Effortlessly track network status and monitor connected nodes.  
+🔗 **Intuitive Node Operations** - Simply add or remove nodes from your networks with just a few clicks.  
+⚙️ **Configurable Network Settings** - Easily adjust IP ranges, routes, Flow-Rules and access control settings according to your needs.  
+📡 **DNS and Multicast Configuration** - Customize DNS and Multicast settings for each network to optimize performance.  
+📍 **IP Assignment Pool Management** - Handle IP assignment pools with a user-friendly UI for effective management.  
+🔀 **Auto-Assign IP Functionality** - Benefit from the convenience of automatic IP assignment.
+🔒 **Network Privacy Controls** - Ensure the confidentiality of your network with private network settings.
 
 ## ⚙️ Installations
 
@@ -121,6 +121,7 @@ To launch Next ZTNet, execute the following command in your `docker-compose.yml`
 
 This action pulls necessary images, initializes the containers, and activates the services.
 Visit `http://localhost:3000` to access the Next ZTNet web interface.
+
 ### ⚠️ Important: The first registered user automatically gains admin privileges.
 
 ### Environment Variables
@@ -188,9 +189,9 @@ Now start the development server:
 `npm run dev`
 
 ## Network page layout
+
 ![Alt Text](https://i.ibb.co/1TbNYg1/ztnet-network.jpg)
 
-### ⚠️ Disclaimer: 
+### ⚠️ Disclaimer:
 
 Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
-
