@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
+import { type ErrorData } from "~/types/errorHandling";
 
 export const NetworkMulticast = () => {
   const [state, setState] = useState({
@@ -22,8 +23,14 @@ export const NetworkMulticast = () => {
   );
 
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
-    onError: ({ message }) => {
-      void toast.error(message);
+    onError: (e) => {
+      if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
+        void toast.error(
+          (e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams
+        );
+      } else {
+        void toast.error(e?.message);
+      }
     },
   });
 
