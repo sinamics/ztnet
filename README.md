@@ -190,8 +190,5 @@ Now start the development server:
 ## Network page layout
 ![Alt Text](https://i.ibb.co/1TbNYg1/ztnet-network.jpg)
 
-## ⚠️ Disclaimer
+### ⚠️ Disclaimer: Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
 
-This project is currently under development and may not yet be suitable for production environments.
-
-Your journey towards seamless network management starts with Next ZTNet. Take control today!
