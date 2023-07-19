@@ -18,6 +18,7 @@ import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
 import { NetworkDns } from "~/components/modules/networkDns";
 import { NetworkMulticast } from "~/components/modules/networkMulticast";
 import cn from "classnames";
+import NetworkHelpText from "~/components/modules/networkHelp";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -287,6 +288,10 @@ const NetworkById = () => {
           ) : null}
         </div>
       </div>
+      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <NetworkHelpText />
+      </div>
+
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <NetworkFlowRules />
       </div>
