@@ -197,7 +197,8 @@ export const network_detail = async function (
       members: [...membersArr],
     };
   } catch (error) {
-    const message = "An error occurred while getting network_detail";
+    const message =
+      "An error occurred while getting data from network_details function";
     throw new APIError(message, error as AxiosError);
   }
 };

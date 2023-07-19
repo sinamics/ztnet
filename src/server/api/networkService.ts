@@ -206,7 +206,7 @@ export async function handleAutoAssignIP(
   autoAssignIp: boolean | undefined,
   ztControllerUpdates: Partial<ZtControllerNetwork>,
   ztControllerResponse,
-  input
+  nwid: string
 ) {
   // console.log(ztControllerResponse.network.routes.pop());
   if (autoAssignIp === false) {
@@ -228,7 +228,7 @@ export async function handleAutoAssignIP(
     pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
 
   const controller = await ztController
-    .network_detail(input.nwid)
+    .network_detail(nwid)
     .catch((err: APIError) => {
       throw new TRPCError({
         message: `${err.cause.toString()} --- ${err.message}`,
@@ -253,7 +253,7 @@ export async function handleAutoAssignIP(
 
       if (nextIP !== null) {
         // If a next IP is available, assign it to the member
-        await ztController.member_update(input.nwid, member.id, {
+        await ztController.member_update(nwid, member.id, {
           ipAssignments: [nextIP],
         });
         // Add this newly assigned IP to the allAssignedIPs array, to keep it up-to-date

@@ -81,7 +81,7 @@ export const NetworkFlowRules = () => {
   return (
     <div
       tabIndex={0}
-      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+      className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
       <div className="collapse-title">Flow Rules</div>
@@ -95,7 +95,7 @@ export const NetworkFlowRules = () => {
           theme={okaidia}
           extensions={[python(), errorColorTheme, classnameExt]}
           basicSetup={{
-            lineNumbers: false,
+            lineNumbers: true,
             highlightActiveLineGutter: false,
             highlightActiveLine: false,
           }}
@@ -112,7 +112,7 @@ export const NetworkFlowRules = () => {
           >
             Save Changes
           </button>
-          <button onClick={handleReset} className="btn-outline btn my-3 ">
+          <button onClick={handleReset} className="btn btn-outline my-3 ">
             Reset
           </button>
         </div>
