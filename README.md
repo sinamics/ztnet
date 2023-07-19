@@ -17,9 +17,12 @@ With a rich palette of features, and an intuitive user interface, Next ZTNet emb
   - [Note: First user to register will automatically be assigned as admin.](#%EF%B8%8F-important-the-first-registered-user-automatically-gains-admin-privileges)
   - [Environment Variables](#environment-variables)
 - [👨‍💻 Development](#development)
+
   - [VSCode Container Development (Recommended)](#vscode-container-development-recommended)
   - [The Traditional Way](#the-traditional-way)
     - [Setup Environment Variables](#setup-environment-variables)
+
+- [📷 Pictures](#network-page-layout)
 - [⚠️ Disclaimer](#%EF%B8%8F-disclaimer)
 
 ## 🔥 Features
