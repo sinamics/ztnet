@@ -3,6 +3,7 @@ import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import { type RoutesEntity } from "~/types/network";
 import { type ChangeEvent, useState } from "react";
+import { type ErrorData } from "~/types/errorHandling";
 
 export const NettworkRoutes = () => {
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
@@ -23,8 +24,13 @@ export const NettworkRoutes = () => {
   const { mutate: updateNetworkMutation, isLoading: isUpdating } =
     api.network.updateNetwork.useMutation({
       onError: (e) => {
-        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
-        void toast.error(e?.message);
+        if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
+          void toast.error(
+            (e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams
+          );
+        } else {
+          void toast.error(e?.message);
+        }
       },
     });
 
