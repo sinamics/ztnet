@@ -34,14 +34,6 @@ body:
     validations:
       required: false
 
-  - type: textarea
-    id: alternatives
-    attributes:
-      label: "🔄 Alternatives Considered"
-      description: "List any alternative solutions or features you've considered."
-    validations:
-      required: false
-
   - type: dropdown
     id: willing_to_contribute
     attributes:
