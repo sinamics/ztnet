@@ -2,33 +2,33 @@ name: General Support Request
 description: General support request for Next Ztnet
 title: "[Support]: "
 labels: ["support", "triage"]
-# assignees: []
+
 body:
   - type: textarea
     id: description
     attributes:
-      label: Describe the problem you are having
+      label: "📝 Describe the Problem You Are Having"
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Version
-      description: Use docker image tag or git commit hash
+      label: "🔖 Version"
+      description: "Please provide the docker image tag or git commit hash you're using."
     validations:
       required: true
   - type: textarea
     id: logs
     attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      label: "📋 Relevant Log Output"
+      description: "Please copy and paste any relevant log output here. This will be automatically formatted into code, so no need for backticks."
       render: shell
     validations:
       required: false
   - type: dropdown
     id: os
     attributes:
-      label: Operating system
+      label: "💻 Operating System"
       options:
         - Debian
         - Ubuntu
@@ -40,4 +40,4 @@ body:
   - type: textarea
     id: other
     attributes:
-      label: Any other information that may be helpful
+      label: "📚 Any Other Information That May Be Helpful"
