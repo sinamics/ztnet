@@ -125,6 +125,10 @@ Visit `http://localhost:3000` to access the Next ZTNet web interface.
 
 ### ⚠️ Important: The first registered user automatically gains admin privileges.
 
+As an administrator, you possess unique capabilities not available to regular users. This includes the ability to view all registered accounts on the controller.
+
+Please note that while admins have visibility over registered accounts, they **cannot** interact with or modify other users' networks directly. Each network's configuration and data remain exclusive to the respective user account, maintaining privacy and security for all users.
+
 ### Environment Variables
 
 The `docker-compose.yml` file includes several environment variables that you can customize based on your needs. Here is a description of each variable:
