@@ -42,7 +42,7 @@ body:
     validations:
       required: false
 
-  - type: checkbox
+  - type: dropdown
     id: willing_to_contribute
     attributes:
       label: "💡 Willing to Contribute"
