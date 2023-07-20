@@ -16,12 +16,12 @@ const Dashboard: NextPageWithLayout = () => {
       <main className="my-10">
         <div className="mx-auto max-w-6xl space-y-10 bg-cover bg-center bg-no-repeat">
           {/* <div className="absolute inset-0 z-0">test </div> */}
-          <div className="col-start-2 mx-0 flex justify-center text-5xl">
+          <div className="col-start-2 mx-0 flex justify-center text-2xl md:text-5xl">
             Welcome to {globalSiteTitle}
           </div>
           {/* grid with cards  */}
-          <div className="grid grid-flow-col gap-3">
-            <div className="card w-96 bg-primary shadow-xl">
+          <div className="mx-10 grid gap-5 md:grid-cols-[repeat(3,1fr)]">
+            <div className="card bg-primary shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Members</h2>
                 <p>
@@ -31,7 +31,7 @@ const Dashboard: NextPageWithLayout = () => {
                 </p>
               </div>
             </div>
-            <div className="card w-96 bg-primary shadow-xl">
+            <div className="card bg-primary shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Everywhere</h2>
                 <p>
@@ -40,7 +40,7 @@ const Dashboard: NextPageWithLayout = () => {
                 </p>
               </div>
             </div>
-            <div className="card w-96 bg-primary shadow-xl">
+            <div className="card bg-primary shadow-xl">
               <div className="card-body">
                 <h2 className="card-title">Infinite Possibilities</h2>
                 <p>Empowering Seamless Connections, Anywhere and Everywhere</p>
