@@ -1,0 +1,55 @@
+name: Feature Request
+description: Suggest an idea for Next ztnet
+title: "[Feature Request]: "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    id: instructions
+    attributes:
+      value: "## Thank you for your interest in improving Next ztnet! Please provide as much information as possible in the sections below.\n"
+
+  - type: input
+    id: feature_short_description
+    attributes:
+      label: "🚀 Feature Summary"
+      description: "Provide a brief, concise summary of the feature."
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature_detailed_description
+    attributes:
+      label: "📝 Detailed Description"
+      description: "Describe the proposed feature in detail. Include specifics about what it should do, how it should work, and what the expected benefits are."
+    validations:
+      required: false
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: "🎯 Use Case"
+      description: "Describe the specific use case(s) or problem(s) this feature would address."
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔄 Alternatives Considered"
+      description: "List any alternative solutions or features you've considered."
+    validations:
+      required: false
+
+  - type: checkbox
+    id: willing_to_contribute
+    attributes:
+      label: "💡 Willing to Contribute"
+      description: "Would you be willing to contribute to the implementation or testing of this feature?"
+      options:
+        - "Yes, I could help with coding"
+        - "Yes, I could help with testing"
+        - "No, I can only suggest the feature but cannot help in development or testing"
+    validations:
+      required: false
