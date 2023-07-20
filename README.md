@@ -147,6 +147,13 @@ To change any of these values, update the corresponding environment variable in 
 
 # Development
 
+This project welcomes contributions. To ensure smooth collaboration, please follow the steps below:
+
+1. Please direct all Pull Requests to the `dev` branch, not `main`.
+
+2. Before submitting a PR, make sure to run the linter and tests to check for any errors. You can do this by running the following commands in your terminal:
+   `npm run lint` and `npm run test`
+
 ## vscode container development (recommended)
 
 1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack).
