@@ -78,12 +78,13 @@ export const adminRouter = createTRPCRouter({
       z.object({
         smtpHost: z.string().optional(),
         smtpPort: z.string().optional(),
-        secure: z.boolean().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        useSSL: z.boolean().optional(),
-        ignoreTLS: z.boolean().optional(),
-        requireTLS: z.boolean().optional(),
+        smtpSecure: z.boolean().optional(),
+        smtpEmail: z.string().optional(),
+        smtpPassword: z.string().optional(),
+        smtpUsername: z.string().optional(),
+        smtpUseSSL: z.boolean().optional(),
+        smtpIgnoreTLS: z.boolean().optional(),
+        smtpRequireTLS: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {

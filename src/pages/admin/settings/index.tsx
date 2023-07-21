@@ -36,134 +36,130 @@ const Settings = () => {
       </div>
     );
   }
+  console.log(options);
   return (
-    <main className="w-full bg-base-100 md:flex">
-      <div className="px-4 md:w-4/12">
-        <div className="mt-6 overflow-hidden rounded-lg bg-base-300 px-4">
-          <h2 className="px-4 pt-5 text-lg font-medium ">Site</h2>
-          <div className="divider" />
-          <div className="px-4 py-5 sm:py-4">
-            <div className="flex items-center justify-between">
-              <p>Enable user registration?</p>
-              <input
-                type="checkbox"
-                checked={options?.enableRegistration}
-                className="checkbox-primary checkbox"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setRegistration(
-                    { enableRegistration: e.target.checked },
-                    { onSuccess: () => void refetchOptions() }
-                  );
-                }}
-              />
-            </div>
-          </div>
+    <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+      <div className="pb-10">
+        <div className="divider text-gray-500">Authentication</div>
+        <div className="flex items-center justify-between">
+          <p>Enable user registration?</p>
+          <input
+            type="checkbox"
+            checked={options?.enableRegistration}
+            className="checkbox-primary checkbox checkbox-sm"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setRegistration(
+                { enableRegistration: e.target.checked },
+                { onSuccess: () => void refetchOptions() }
+              );
+            }}
+          />
         </div>
       </div>
-
-      {/* Column 2  */}
-      <div className="px-4 md:w-4/12">
-        <div className="mt-6 overflow-hidden rounded-lg bg-base-300 px-4">
-          <h2 className="px-4 pt-5 text-lg font-medium ">Mail</h2>
-          <div className="divider" />
-          <div className="space-y-2 px-4 py-5 sm:py-4">
-            <div className="flex items-center justify-between">
-              <EditableField
-                isLoading={false}
-                label="SMTP Host"
-                buttonClassName="hidden"
-                size="xs"
-                fields={[
-                  {
-                    name: "smtpHost",
-                    type: "text",
-                    placeholder: options?.smtpHost || "host.smtp.com",
-                    defaultValue: options?.smtpHost,
-                  },
-                ]}
-                submitHandler={async (params) => await inputHandler(params)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <EditableField
-                isLoading={false}
-                label="SMTP Port"
-                buttonClassName="hidden"
-                size="xs"
-                fields={[
-                  {
-                    name: "smtpPort",
-                    type: "number",
-                    placeholder: options?.smtpPort || "587",
-                    defaultValue: options?.smtpPort,
-                  },
-                ]}
-                submitHandler={(params) => inputHandler(params)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <EditableField
-                isLoading={false}
-                label="Sender Email"
-                buttonClassName="hidden"
-                size="xs"
-                fields={[
-                  {
-                    name: "email",
-                    type: "text",
-                    placeholder: options?.email || "mail@example.com",
-                    defaultValue: options?.email,
-                  },
-                ]}
-                submitHandler={(params) => inputHandler(params)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <EditableField
-                isLoading={false}
-                label="Username"
-                buttonClassName="hidden"
-                size="xs"
-                fields={[
-                  {
-                    name: "username",
-                    type: "text",
-                    placeholder: options?.username || "username",
-                    defaultValue: options?.username,
-                  },
-                ]}
-                submitHandler={(params) => inputHandler(params)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <EditableField
-                isLoading={false}
-                label="Password"
-                buttonClassName="hidden"
-                size="xs"
-                fields={[
-                  {
-                    name: "email",
-                    type: "password",
-                    placeholder: "******",
-                    defaultValue: options?.password,
-                  },
-                ]}
-                submitHandler={(params) => inputHandler(params)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">Use SSL</p>
-              <input
-                type="checkbox"
-                checked={options?.useSSL}
-                className="checkbox-primary checkbox checkbox-sm"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  void inputHandler({ useSSL: e.target.checked });
-                }}
-              />
-            </div>
-          </div>
+      <div className="divider text-gray-500">Mail</div>
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <EditableField
+            isLoading={false}
+            label="SMTP Host"
+            buttonClassName="hidden"
+            size="xs"
+            fields={[
+              {
+                name: "smtpHost",
+                type: "text",
+                placeholder: options?.smtpHost || "host.smtp.com",
+                defaultValue: options?.smtpHost,
+              },
+            ]}
+            submitHandler={async (params) => await inputHandler(params)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <EditableField
+            isLoading={false}
+            label="SMTP Port"
+            buttonClassName="hidden"
+            size="xs"
+            fields={[
+              {
+                name: "smtpPort",
+                type: "number",
+                placeholder: options?.smtpPort || "587",
+                defaultValue: options?.smtpPort,
+              },
+            ]}
+            submitHandler={(params) => inputHandler(params)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <EditableField
+            isLoading={false}
+            label="Sender Email"
+            buttonClassName="hidden"
+            size="xs"
+            fields={[
+              {
+                name: "smtpEmail",
+                type: "text",
+                placeholder: options?.smtpEmail || "mail@example.com",
+                defaultValue: options?.smtpEmail,
+              },
+            ]}
+            submitHandler={(params) => inputHandler(params)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <EditableField
+            isLoading={false}
+            label="Username"
+            buttonClassName="hidden"
+            size="xs"
+            fields={[
+              {
+                name: "smtpUsername",
+                type: "text",
+                placeholder: options?.smtpUsername || "username",
+                defaultValue: options?.smtpUsername,
+              },
+            ]}
+            submitHandler={(params) => inputHandler(params)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <EditableField
+            isLoading={false}
+            label="Password"
+            buttonClassName="hidden"
+            size="xs"
+            fields={[
+              {
+                name: "smtpPassword",
+                type: "password",
+                placeholder: "******",
+                defaultValue: options?.smtpPassword,
+              },
+            ]}
+            submitHandler={(params) => inputHandler(params)}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <p className="font-medium">Use SSL</p>
+          <input
+            type="checkbox"
+            checked={options?.smtpUseSSL}
+            className="checkbox-primary checkbox checkbox-sm"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              void inputHandler({ smtpUseSSL: e.target.checked });
+            }}
+          />
+        </div>
+        <div className="p-5">
+          <p className="font-medium">Invite user template</p>
+          <textarea
+            className="textarea textarea-bordered textarea-sm w-full font-medium"
+            placeholder="Mail Template"
+          ></textarea>
         </div>
       </div>
     </main>

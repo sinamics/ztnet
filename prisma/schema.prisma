@@ -28,15 +28,15 @@ model GlobalOptions {
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
-  smtpHost              String?
-  smtpPort              String  @default("587")
-  email                 String?
-  username              String?
-  password              String? 
-  useSSL                Boolean @default(false)
-  secure                Boolean @default(false)
-  ignoreTLS             Boolean @default(false)
-  requireTLS            Boolean @default(false)
+  smtpHost                  String?
+  smtpPort                  String  @default("587")
+  smtpEmail                 String?
+  smtpUsername              String?
+  smtpPassword              String? 
+  smtpUseSSL                Boolean @default(false)
+  smtpSecure                Boolean @default(false)
+  smtpIgnoreTLS             Boolean @default(false)
+  smtpRequireTLS            Boolean @default(false)
 }
 
 enum Role {
