@@ -18,6 +18,7 @@ interface FormProps {
   size?: "xs" | "sm" | "md" | "lg";
   buttonClassName?: string;
   rootClassName?: string;
+  labelStyle?: string;
   submitHandler: (formValues: {
     [key: string]: string;
   }) => Promise<unknown> | string | void;
@@ -37,6 +38,7 @@ const InputField = ({
   size = "sm",
   buttonClassName,
   rootClassName,
+  labelStyle,
 }: FormProps) => {
   const [showInputs, setShowInputs] = useState(false);
   const [formValues, setFormValues] = useState<Record<string, string>>(
@@ -57,7 +59,6 @@ const InputField = ({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const response = await submitHandler(formValues);
-    console.log("response", response);
     if (response) {
       setShowInputs(false);
     }
@@ -111,7 +112,7 @@ const InputField = ({
     <>
       <dt
         onClick={handleEditClick}
-        className="flex cursor-pointer items-center gap-2 text-sm font-medium"
+        className={`flex cursor-pointer items-center gap-2 font-medium ${labelStyle}`}
       >
         {label}
         <EditIcon data-testid="edit-icon" />
@@ -123,7 +124,7 @@ const InputField = ({
           renderInputs()
         )
       ) : (
-        <dd className="mt-1 flex items-center gap-2 text-sm">
+        <dd className={`mt-1 flex items-center gap-2 ${labelStyle}`}>
           {placeholder ?? fields[0].placeholder}
           {badge ? (
             <div className={`badge badge-${badge.color}`}>{badge.text}</div>

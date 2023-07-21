@@ -11,8 +11,8 @@ const AdminSettings = () => {
 
   const tabs = [
     {
-      name: "Site",
-      value: "site",
+      name: "Site Settings",
+      value: "site-setting",
       component: <Settings />,
     },
     {
@@ -36,8 +36,8 @@ const AdminSettings = () => {
     });
   };
   return (
-    <div>
-      <div className="tabs flex justify-center p-3">
+    <div className="py-5">
+      <div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
         {tabs.map((t) => (
           <a
             key={t.value}

@@ -21,7 +21,7 @@ const Header = () => {
   }
 
   return (
-    <header className="header bg-base-300 px-4 py-1 shadow">
+    <header className="header bg-base-200 px-4 py-1 shadow">
       <div className="header-content flex flex-row items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ const Header = () => {
 
           {/* <a href="#" className="flex flex-row items-center"> */}
           <div className="dropdown-end dropdown">
-            <label tabIndex={0} className="btn m-1">
+            <label tabIndex={0} className="btn btn-primary m-1">
               {theme.toUpperCase()}
             </label>
             <ul
