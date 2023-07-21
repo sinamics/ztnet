@@ -1,4 +1,5 @@
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
+import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
 
 export const adminRouter = createTRPCRouter({
@@ -46,4 +47,53 @@ export const adminRouter = createTRPCRouter({
       controllerStatus,
     };
   }),
+
+  // Set global options
+  getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
+    return await ctx.prisma.globalOptions.findFirst({
+      where: {
+        id: 1,
+      },
+    });
+  }),
+  registration: adminRoleProtectedRoute
+    .input(
+      z.object({
+        enableRegistration: z.boolean().optional(),
+        firstUserRegistration: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.globalOptions.update({
+        where: {
+          id: 1,
+        },
+        data: {
+          ...input,
+        },
+      });
+    }),
+  setMail: adminRoleProtectedRoute
+    .input(
+      z.object({
+        smtpHost: z.string().optional(),
+        smtpPort: z.string().optional(),
+        secure: z.boolean().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        useSSL: z.boolean().optional(),
+        ignoreTLS: z.boolean().optional(),
+        requireTLS: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.globalOptions.update({
+        where: {
+          id: 1,
+        },
+        data: {
+          ...input,
+        },
+      });
+    }),
 });
