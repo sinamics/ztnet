@@ -19,11 +19,4 @@ export const globalOptionsRouter = createTRPCRouter({
         },
       });
     }),
-  getAll: adminRoleProtectedRoute.query(async ({ ctx }) => {
-    return await ctx.prisma.globalOptions.findFirst({
-      where: {
-        id: 1,
-      },
-    });
-  }),
 });
