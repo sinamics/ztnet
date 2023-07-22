@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Members from "./members";
@@ -11,7 +11,7 @@ const AdminSettings = () => {
 
   const tabs = [
     {
-      name: "Site Settings",
+      name: "Settings",
       value: "site-setting",
       component: <Settings />,
     },
