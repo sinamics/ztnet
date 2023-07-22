@@ -24,7 +24,7 @@ const AdminSettings = () => {
     },
     {
       name: "Mail",
-      value: "mail",
+      value: "mail-setting",
       component: <Mail />,
     },
     {
