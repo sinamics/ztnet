@@ -1,8 +1,12 @@
 import { signIn } from "next-auth/react";
 import router from "next/router";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
+
+interface IProps {
+  setViewForgotForm: Dispatch<SetStateAction<boolean>>;
+}
 interface FormData {
   email: string;
   password: string;
@@ -14,7 +18,7 @@ type NextAuthError = {
   statusCode?: number;
 };
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<IProps> = ({ setViewForgotForm }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     email: "",
@@ -88,7 +92,10 @@ const LoginForm: React.FC = () => {
           </div>
           <div className="flex items-center justify-between">
             <div className="text-sm">
-              <a href="#" className="text-gray-400 hover:text-green-500">
+              <a
+                onClick={() => void setViewForgotForm((prev: boolean) => !prev)}
+                className="cursor-pointer text-gray-400 hover:text-base-200"
+              >
                 Forgot your password?
               </a>
             </div>
@@ -97,27 +104,18 @@ const LoginForm: React.FC = () => {
             <button
               type="submit"
               className={cn(
-                "btn-block btn cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
-                { loading: loading }
+                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg"
               )}
             >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : null}
               Sign in
             </button>
           </div>
         </form>
         <div className="pt-5 text-center text-xs text-gray-400">
-          <span>
-            Copyright © 2021-2022
-            <a
-              href="https://uavmatrix.com"
-              rel=""
-              target="_blank"
-              title="Bernt Christian Egeland"
-              className="text-green hover:text-slate-900 "
-            >
-              @UAVMATRIX
-            </a>
-          </span>
+          <span>Copyright © {new Date().getFullYear()} Kodea Solutions</span>
         </div>
       </div>
     </div>

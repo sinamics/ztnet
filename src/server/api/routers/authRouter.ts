@@ -7,6 +7,14 @@ import {
   //   protectedProcedure,
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { throwError } from "~/server/helpers/errorHandler";
+import jwt from "jsonwebtoken";
+import {
+  createTransporter,
+  sendEmail,
+  forgotPasswordTemplate,
+} from "~/utils/mail";
+import ejs from "ejs";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -220,5 +228,121 @@ export const authRouter = createTRPCRouter({
             : user.hash,
         },
       });
+    }),
+  passwordResetLink: publicProcedure
+    .input(
+      z.object({
+        email: z
+          .string({ required_error: "Email is required!" })
+          .email()
+          .transform((val) => val.trim()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { email } = input;
+      if (!email) throwError("Email is required!");
+
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          email: email.toLowerCase(),
+        },
+      });
+
+      if (!user) return "Mail sent if email exist!";
+
+      const validationToken = jwt.sign(
+        {
+          id: user.id,
+          email: user.email,
+        },
+        user.hash,
+        {
+          expiresIn: "15m",
+        }
+      );
+
+      const forgotLink = `${process.env.NEXTAUTH_URL}/login/forgotpassword?token=${validationToken}`;
+      const globalOptions = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      const defaultTemplate = forgotPasswordTemplate();
+      const template = globalOptions?.forgotPasswordTemplate ?? defaultTemplate;
+
+      const renderedTemplate = await ejs.render(
+        JSON.stringify(template),
+        {
+          toEmail: email,
+          forgotLink,
+        },
+        { async: true }
+      );
+
+      // create transporter
+      const transporter = createTransporter(globalOptions);
+      const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+        string,
+        string
+      >;
+
+      // define mail options
+      const mailOptions = {
+        from: globalOptions.smtpEmail,
+        to: email,
+        subject: parsedTemplate.subject,
+        html: parsedTemplate.body,
+      };
+
+      // send test mail to user
+      await sendEmail(transporter, mailOptions);
+    }),
+
+  changePasswordFromJwt: publicProcedure
+    .input(
+      z.object({
+        token: z.string({ required_error: "Token is required!" }),
+        password: passwordSchema("password does not meet the requirements!"),
+        newPassword: passwordSchema("password does not meet the requirements!"),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { token, password, newPassword } = input;
+      if (!token) throwError("token is required!");
+
+      if (password !== newPassword) throwError(`Passwords does not match!`);
+
+      try {
+        interface IJwt {
+          id: number;
+          token: string;
+        }
+        const { id } = jwt.decode(token) as IJwt;
+
+        if (!id) throwError(`This link is not valid!`);
+
+        const user = await ctx.prisma.user.findFirst({
+          where: {
+            id,
+          },
+        });
+
+        if (!user || !user.hash) throwError(`Something went wrong!`);
+
+        jwt.verify(token, user.hash);
+
+        // hash password
+        return await ctx.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            hash: bcrypt.hashSync(password, 10),
+          },
+        });
+      } catch (error) {
+        throwError(`token is not valid, please try again!`);
+      }
     }),
 });

@@ -13,11 +13,11 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
   return (
-    <div className="main-content grid h-screen grid-rows-[auto,1fr]">
+    <div className="main-content">
       <Header />
-      <div className="grid grid-rows-[1fr,auto] md:grid-cols-[1fr,auto]">
+      <div className="grid md:grid-cols-[255px,minmax(0,1fr)]">
         <Sidebar />
-        <div className="custom-overflow custom-scrollbar grid-rows-[1fr,auto] overflow-auto">
+        <div className="custom-overflow custom-scrollbar overflow-auto">
           {children}
           <Footer />
         </div>

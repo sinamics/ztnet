@@ -14,9 +14,11 @@ import Link from "next/link";
 import RegisterForm from "~/components/modules/registerForm";
 import { useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
+import ForgotPasswordForm from "../components/modules/forgotPasswordForm";
 
 const Home: NextPage<{ auth: User }> = ({ auth }) => {
   const [viewRegisterForm, setViewRegisterForm] = useState<boolean>(false);
+  const [viewForgotForm, setViewForgotForm] = useState<boolean>(false);
   const title = `${globalSiteTitle} - Dashboard`;
   return (
     <>
@@ -69,13 +71,20 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
               {auth && (
                 <div className="mt-10">
                   <Link href="/dashboard">
-                    <button className="btn-block btn">Goto Dashboard</button>
+                    <button className="btn btn-block">Goto Dashboard</button>
                   </Link>
                 </div>
               )}
             </div>
             {/* show register form or login form based on the auth props  */}
-            {!auth ? viewRegisterForm ? <RegisterForm /> : <LoginForm /> : null}
+            {!auth &&
+              (viewRegisterForm ? (
+                <RegisterForm />
+              ) : viewForgotForm ? (
+                <ForgotPasswordForm />
+              ) : (
+                <LoginForm setViewForgotForm={setViewForgotForm} />
+              ))}
           </div>
         </div>
       </main>
