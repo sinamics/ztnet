@@ -36,7 +36,7 @@ const Networks: NextPageWithLayout = () => {
         <div className="mb-3 mt-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>
         </div>
-        <div className="mx-auto max-w-6xl space-y-5 bg-cover bg-center bg-no-repeat px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
           <div className="relative bg-cover bg-center bg-no-repeat">
             <div className="container mx-auto px-4">
               <div className="mb-3 mt-3 flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0">

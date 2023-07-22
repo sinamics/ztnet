@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
-import nodemailer from "nodemailer";
 import ejs from "ejs";
-import { inviteUserTemplate } from "~/utils/mailTemplates";
-import { throwError } from "~/server/helpers/errorHandler";
+import { forgotPasswordTemplate, inviteUserTemplate } from "~/utils/mail";
+import { createTransporter, sendEmail } from "~/utils/mail";
+import type nodemailer from "nodemailer";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -80,13 +77,31 @@ export const adminRouter = createTRPCRouter({
         },
       });
     }),
-  getMailTemplates: adminRoleProtectedRoute.query(async ({ ctx }) => {
-    return await ctx.prisma.globalOptions.findFirst({
-      where: {
-        id: 1,
-      },
-    });
-  }),
+  getMailTemplates: adminRoleProtectedRoute
+    .input(
+      z.object({
+        template: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const templates = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      switch (input.template) {
+        case "inviteUserTemplate":
+          return templates?.inviteUserTemplate ?? inviteUserTemplate();
+          break;
+        case "forgotPasswordTemplate":
+          return templates?.forgotPasswordTemplate ?? forgotPasswordTemplate();
+          break;
+        default:
+          return {};
+          break;
+      }
+    }),
 
   setMail: adminRoleProtectedRoute
     .input(
@@ -116,19 +131,35 @@ export const adminRouter = createTRPCRouter({
     .input(
       z.object({
         template: z.string(),
+        type: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const templateObj = JSON.parse(input.template);
-
-      return await ctx.prisma.globalOptions.update({
-        where: {
-          id: 1,
-        },
-        data: {
-          inviteUserTemplate: templateObj,
-        },
-      });
+      const templateObj = JSON.parse(input.template) as string;
+      switch (input.type) {
+        case "inviteUserTemplate":
+          return await ctx.prisma.globalOptions.update({
+            where: {
+              id: 1,
+            },
+            data: {
+              inviteUserTemplate: templateObj,
+            },
+          });
+          break;
+        case "forgotPasswordTemplate":
+          return await ctx.prisma.globalOptions.update({
+            where: {
+              id: 1,
+            },
+            data: {
+              forgotPasswordTemplate: templateObj,
+            },
+          });
+          break;
+        default:
+          break;
+      }
     }),
   getDefaultMailTemplate: adminRoleProtectedRoute
     .input(
@@ -136,12 +167,14 @@ export const adminRouter = createTRPCRouter({
         template: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(({ input }) => {
       switch (input.template) {
         case "inviteUserTemplate":
           return inviteUserTemplate();
           break;
-
+        case "forgotPasswordTemplate":
+          return forgotPasswordTemplate();
+          break;
         default:
           break;
       }
@@ -149,55 +182,69 @@ export const adminRouter = createTRPCRouter({
   sendTestMail: adminRoleProtectedRoute
     .input(
       z.object({
-        template: z.string(),
+        type: z.string(),
       })
     )
-    .mutation(async ({ ctx }) => {
+    .mutation(async ({ ctx, input }) => {
       const globalOptions = await ctx.prisma.globalOptions.findFirst({
         where: {
           id: 1,
         },
       });
 
-      const renderedTemplate = await ejs.render(
-        JSON.stringify(globalOptions.inviteUserTemplate),
-        {
-          toEmail: "toEmail@example.com",
-          fromName: ctx.session.user.name, // assuming locals contains a 'username'
-          nwid: "123456789", // assuming locals contains a 'username'
-        },
-        { async: true }
-      );
-
-      const parsedTemplate = JSON.parse(renderedTemplate as string);
-      try {
-        // configure transport settings
-        const transporter = nodemailer.createTransport({
-          host: globalOptions.smtpHost,
-          port: globalOptions.smtpPort,
-          secure: globalOptions.smtpSecure,
-          auth: {
-            user: globalOptions.smtpEmail,
-            pass: globalOptions.smtpPassword,
+      async function sendTemplateEmail(templateName, template) {
+        const renderedTemplate = await ejs.render(
+          JSON.stringify(template),
+          {
+            toEmail: ctx.session.user.email,
+            fromName: ctx.session.user.name,
+            forgotLink: "https://example.com",
+            nwid: "123456789",
           },
-          tls: {
-            rejectUnauthorized: false,
-          },
-        });
+          { async: true }
+        );
 
-        // send test mail to user
-        const info = await transporter.sendMail({
-          from: globalOptions.smtpEmail,
-          to: ctx.session.user.email,
-          subject: parsedTemplate.inviteUserSubject,
-          html: parsedTemplate.inviteUserBody,
-        });
-        // Check if email was accepted
-        if (!info.accepted.includes(ctx.session.user.email)) {
-          throwError("Test email could not be sent!, check your credentials");
+        const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+          string,
+          string
+        >;
+
+        try {
+          const transporter: nodemailer.Transporter =
+            createTransporter(globalOptions);
+
+          // Define mail options
+          const mailOptions = {
+            from: globalOptions.smtpEmail,
+            to: ctx.session.user.email,
+            subject: parsedTemplate.subject,
+            html: parsedTemplate.body,
+          };
+
+          // Send test mail to user
+          await sendEmail(transporter, mailOptions);
+        } catch (error) {
+          throw error;
         }
-      } catch (error) {
-        throwError(error);
+      }
+
+      switch (input.type) {
+        case "inviteUserTemplate":
+          const defaultInviteTemplate = inviteUserTemplate();
+          const inviteTemplate =
+            globalOptions?.inviteUserTemplate ?? defaultInviteTemplate;
+          await sendTemplateEmail("inviteUser", inviteTemplate);
+          break;
+
+        case "forgotPasswordTemplate":
+          const defaultForgotTemplate = forgotPasswordTemplate();
+          const forgotTemplate =
+            globalOptions?.forgotPasswordTemplate ?? defaultForgotTemplate;
+          await sendTemplateEmail("forgotPassword", forgotTemplate);
+          break;
+
+        default:
+          break;
       }
     }),
 });

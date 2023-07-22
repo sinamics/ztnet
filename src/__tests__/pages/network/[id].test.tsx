@@ -54,6 +54,11 @@ jest.mock("../../../utils/api", () => ({
           mutate: jest.fn(),
         }),
       },
+      inviteUserByMail: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
     },
     networkMember: {
       UpdateDatabaseOnly: {

@@ -1,19 +1,31 @@
-import React, { ReactElement, useState } from "react";
+import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Members from "./members";
 import Controller from "./controller";
 import Settings from "./settings";
+import Mail from "./mail";
 
 const AdminSettings = () => {
   const router = useRouter();
   const { tab = "members" } = router.query;
 
-  const tabs = [
+  interface ITab {
+    name: string;
+    value: string;
+    component: ReactElement;
+  }
+
+  const tabs: ITab[] = [
     {
       name: "Settings",
       value: "site-setting",
       component: <Settings />,
+    },
+    {
+      name: "Mail",
+      value: "mail-setting",
+      component: <Mail />,
     },
     {
       name: "Members",
@@ -21,15 +33,9 @@ const AdminSettings = () => {
       component: <Members />,
     },
     { name: "Controller", value: "controller", component: <Controller /> },
-    // { name: "Mail", value: "mail", component: <MailSettings /> },
-    // {
-    //   name: "Notification",
-    //   value: "notification",
-    //   component: <NotificationSettings />,
-    // },
   ];
 
-  const changeTab = async (tab) => {
+  const changeTab = async (tab: ITab) => {
     await router.push({
       pathname: "/admin",
       query: { tab: tab.value },
@@ -41,8 +47,8 @@ const AdminSettings = () => {
         {tabs.map((t) => (
           <a
             key={t.value}
-            onClick={() => changeTab(t)}
-            className={`tab tab-bordered text-lg ${
+            onClick={() => void changeTab(t)}
+            className={`text-md tab tab-bordered ${
               t.value === tab ? "tab-active" : ""
             }`}
           >

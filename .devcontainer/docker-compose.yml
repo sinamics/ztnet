@@ -4,13 +4,7 @@ services:
     ports:
       - 5432:5432
 
-  # Update this to the name of the service you want to work with in your docker-compose.yml file
   next_ztnet:
-    # Uncomment if you want to override the service's Dockerfile to one in the .devcontainer
-    # folder. Note that the path of the Dockerfile and context is relative to the *primary*
-    # docker-compose.yml file (the first in the devcontainer.json "dockerComposeFile"
-    # array). The sample below assumes your primary file is in the root of your project.
-    #
     build:
       context: .
       dockerfile: .devcontainer/Dockerfile.dev
@@ -19,7 +13,6 @@ services:
 
     working_dir: /workspaces
     volumes:
-      # Update this to wherever you want VS Code to mount the folder of your project
       - .:/workspaces:cached
       - zerotier:/var/lib/zerotier-one:ro
     container_name: ztnet
@@ -30,7 +23,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
-      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
       NEXTAUTH_SECRET: "random_secret"
       NEXT_PUBLIC_SITE_NAME: "Next ZTnet"
     networks:
@@ -38,11 +31,3 @@ services:
     depends_on:
       - postgres
       - zerotier
-    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
-    # cap_add:
-    #   - SYS_PTRACE
-    # security_opt:
-    #   - seccomp:unconfined
-
-    # Overrides default command so things don't shut down after the process ends.
-    # command: "chmod +x /workspaces/.devcontainer/init-cmd.sh && /bin/sh -c /workspaces/.devcontainer/init-cmd.sh"
