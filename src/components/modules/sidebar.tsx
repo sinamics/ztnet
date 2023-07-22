@@ -288,7 +288,7 @@ const Sidebar = (): JSX.Element => {
           <li className="my-px">
             <a
               href="#"
-              onClick={() => void signOut()}
+              onClick={() => void signOut({ callbackUrl: "/" })}
               className="flex h-10 flex-row items-center rounded-lg px-3 text-gray-300 hover:bg-gray-100 hover:text-gray-700"
             >
               <span className="flex items-center justify-center text-lg text-red-400">

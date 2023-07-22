@@ -5,7 +5,7 @@ interface FieldConfig {
   name: string;
   initialValue?: string;
   type: string;
-  placeholder: string | number;
+  placeholder: string;
   displayValue?: string;
   defaultValue?: string | number;
 }

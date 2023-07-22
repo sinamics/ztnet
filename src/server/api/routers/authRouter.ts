@@ -9,6 +9,12 @@ import {
 import { TRPCError } from "@trpc/server";
 import { throwError } from "~/server/helpers/errorHandler";
 import jwt from "jsonwebtoken";
+import {
+  createTransporter,
+  sendEmail,
+  forgotPasswordTemplate,
+} from "~/utils/mail";
+import ejs from "ejs";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -255,11 +261,44 @@ export const authRouter = createTRPCRouter({
         }
       );
 
-      const weblink = `${process.env.NEXTAUTH_URL}/login/forgotpassword?token=${validationToken}`;
-      // console.log("weblink", weblink);
-      // send mail
-      return weblink;
+      const forgotLink = `${process.env.NEXTAUTH_URL}/login/forgotpassword?token=${validationToken}`;
+      const globalOptions = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      const defaultTemplate = forgotPasswordTemplate();
+      const template = globalOptions?.forgotPasswordTemplate ?? defaultTemplate;
+
+      const renderedTemplate = await ejs.render(
+        JSON.stringify(template),
+        {
+          toEmail: email,
+          forgotLink,
+        },
+        { async: true }
+      );
+
+      // create transporter
+      const transporter = createTransporter(globalOptions);
+      const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+        string,
+        string
+      >;
+
+      // define mail options
+      const mailOptions = {
+        from: globalOptions.smtpEmail,
+        to: email,
+        subject: parsedTemplate.subject,
+        html: parsedTemplate.body,
+      };
+
+      // send test mail to user
+      await sendEmail(transporter, mailOptions);
     }),
+
   changePasswordFromJwt: publicProcedure
     .input(
       z.object({
