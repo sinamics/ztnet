@@ -4,6 +4,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Members from "./members";
 import Controller from "./controller";
 import Settings from "./settings";
+import Mail from "./mail";
 
 const AdminSettings = () => {
   const router = useRouter();
@@ -16,17 +17,16 @@ const AdminSettings = () => {
       component: <Settings />,
     },
     {
+      name: "Mail",
+      value: "mail",
+      component: <Mail />,
+    },
+    {
       name: "Members",
       value: "members",
       component: <Members />,
     },
     { name: "Controller", value: "controller", component: <Controller /> },
-    // { name: "Mail", value: "mail", component: <MailSettings /> },
-    // {
-    //   name: "Notification",
-    //   value: "notification",
-    //   component: <NotificationSettings />,
-    // },
   ];
 
   const changeTab = async (tab) => {
@@ -42,7 +42,7 @@ const AdminSettings = () => {
           <a
             key={t.value}
             onClick={() => changeTab(t)}
-            className={`tab tab-bordered text-lg ${
+            className={`text-md tab tab-bordered ${
               t.value === tab ? "tab-active" : ""
             }`}
           >
