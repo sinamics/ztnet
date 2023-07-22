@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
-import nodemailer from "nodemailer";
 import ejs from "ejs";
-import { inviteUserTemplate } from "~/utils/mailTemplates";
-import { throwError } from "~/server/helpers/errorHandler";
+import { inviteUserTemplate } from "~/utils/mail";
+import { createTransporter, sendEmail } from "~/utils/mail";
+import type nodemailer from "nodemailer";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -119,7 +116,7 @@ export const adminRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const templateObj = JSON.parse(input.template);
+      const templateObj = JSON.parse(input.template) as string;
 
       return await ctx.prisma.globalOptions.update({
         where: {
@@ -136,7 +133,7 @@ export const adminRouter = createTRPCRouter({
         template: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(({ input }) => {
       switch (input.template) {
         case "inviteUserTemplate":
           return inviteUserTemplate();
@@ -159,45 +156,39 @@ export const adminRouter = createTRPCRouter({
         },
       });
 
+      const defaultTemplate = inviteUserTemplate();
+      const template = globalOptions?.inviteUserTemplate ?? defaultTemplate;
+
       const renderedTemplate = await ejs.render(
-        JSON.stringify(globalOptions.inviteUserTemplate),
+        JSON.stringify(template),
         {
-          toEmail: "toEmail@example.com",
+          toEmail: ctx.session.user.email,
           fromName: ctx.session.user.name, // assuming locals contains a 'username'
           nwid: "123456789", // assuming locals contains a 'username'
         },
         { async: true }
       );
 
-      const parsedTemplate = JSON.parse(renderedTemplate as string);
+      const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+        string,
+        string
+      >;
       try {
-        // configure transport settings
-        const transporter = nodemailer.createTransport({
-          host: globalOptions.smtpHost,
-          port: globalOptions.smtpPort,
-          secure: globalOptions.smtpSecure,
-          auth: {
-            user: globalOptions.smtpEmail,
-            pass: globalOptions.smtpPassword,
-          },
-          tls: {
-            rejectUnauthorized: false,
-          },
-        });
+        const transporter: nodemailer.Transporter =
+          createTransporter(globalOptions);
 
-        // send test mail to user
-        const info = await transporter.sendMail({
+        // define mail options
+        const mailOptions = {
           from: globalOptions.smtpEmail,
           to: ctx.session.user.email,
-          subject: parsedTemplate.inviteUserSubject,
-          html: parsedTemplate.inviteUserBody,
-        });
-        // Check if email was accepted
-        if (!info.accepted.includes(ctx.session.user.email)) {
-          throwError("Test email could not be sent!, check your credentials");
-        }
+          subject: parsedTemplate?.inviteUserSubject,
+          html: parsedTemplate?.inviteUserBody,
+        };
+
+        // send test mail to user
+        await sendEmail(transporter, mailOptions);
       } catch (error) {
-        throwError(error);
+        throw error;
       }
     }),
 });

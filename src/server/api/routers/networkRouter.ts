@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
@@ -20,11 +18,14 @@ import {
   type Peers,
   type NetworkEntity,
   type Paths,
+  type CapabilitiesByName,
+  type TagsByName,
 } from "~/types/network";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
-import { type ZTControllerGetPeer } from "~/types/ztController";
+import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
+import ejs from "ejs";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -162,8 +163,11 @@ export const networkRouter = createTRPCRouter({
       // Get peers to view client version of zt
       const updatedActiveMembers = await Promise.all(
         getActiveMembers.map(async (member: network_members) => {
-          const peers = await ztController.peer(member.address).catch(() => []);
-          const memberPeer: ZTControllerGetPeer = peers.find(
+          const peers = (await ztController
+            .peer(member.address)
+            .catch(() => [])) as Peers[];
+
+          const memberPeer = peers.find(
             (peer: Peers) => peer.address === member.id
           );
           let activePreferredPath: Paths | undefined;
@@ -481,10 +485,10 @@ export const networkRouter = createTRPCRouter({
       const { flowRoute } = input;
 
       const rules = [];
-      const caps = {};
-      const tags = {};
+      const caps: Record<string, CapabilitiesByName> = {};
+      const tags: TagsByName = {};
       // try {
-      const err: string[] = RuleCompiler(flowRoute, rules, caps, tags);
+      const err = RuleCompiler(flowRoute, rules, caps, tags) as string[];
       if (err) {
         return throwError(
           JSON.stringify({
@@ -496,13 +500,15 @@ export const networkRouter = createTRPCRouter({
       const capsArray = [];
       const capabilitiesByName = {};
       for (const n in caps) {
-        capsArray.push(caps[n]);
-        capabilitiesByName[n] = caps[n].id;
+        const cap = caps[n];
+        capsArray.push(cap);
+        capabilitiesByName[n] = cap.id;
       }
+
       const tagsArray = [];
       for (const n in tags) {
         const t = tags[n];
-        const dfl = t["default"];
+        const dfl = t["default"] as unknown;
         tagsArray.push({
           id: t.id,
           default: dfl || dfl === 0 ? dfl : null,
@@ -541,7 +547,12 @@ export const networkRouter = createTRPCRouter({
         // Update network
         prisma.network.update({
           where: { nwid: input.nwid },
-          data: { flowRule: flowRoute, tagsByName: tags, capabilitiesByName },
+          data: {
+            flowRule: flowRoute,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+            tagsByName: tags as any,
+            capabilitiesByName,
+          },
         }),
       ]);
     }),
@@ -605,5 +616,50 @@ accept;`;
       }
 
       return flow.flowRule;
+    }),
+  inviteUserByMail: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        email: z.string().email(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { nwid, email } = input;
+      const globalOptions = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      const defaultTemplate = inviteUserTemplate();
+      const template = globalOptions?.inviteUserTemplate ?? defaultTemplate;
+
+      const renderedTemplate = await ejs.render(
+        JSON.stringify(template),
+        {
+          toEmail: email,
+          fromName: ctx.session.user.name, // assuming locals contains a 'username'
+          nwid, // assuming locals contains a 'username'
+        },
+        { async: true }
+      );
+      // create transporter
+      const transporter = createTransporter(globalOptions);
+      const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+        string,
+        string
+      >;
+
+      // define mail options
+      const mailOptions = {
+        from: globalOptions.smtpEmail,
+        to: ctx.session.user.email,
+        subject: parsedTemplate.inviteUserSubject,
+        html: parsedTemplate.inviteUserBody,
+      };
+
+      // send test mail to user
+      await sendEmail(transporter, mailOptions);
     }),
 });
