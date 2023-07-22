@@ -72,7 +72,10 @@ export const InviteMemberByMail = () => {
                 {
                   onSuccess: () => {
                     setUser({ email: "" });
-                    toast.success("User has been invited");
+                    toast.success(
+                      `Success! An invitation email has been sent to ${user.email}`,
+                      { duration: 10000 }
+                    );
                   },
                 }
               );

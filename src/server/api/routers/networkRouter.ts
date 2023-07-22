@@ -655,8 +655,8 @@ accept;`;
       const mailOptions = {
         from: globalOptions.smtpEmail,
         to: ctx.session.user.email,
-        subject: parsedTemplate.inviteUserSubject,
-        html: parsedTemplate.inviteUserBody,
+        subject: parsedTemplate.subject,
+        html: parsedTemplate.body,
       };
 
       // send test mail to user
