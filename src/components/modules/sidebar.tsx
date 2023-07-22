@@ -39,7 +39,7 @@ const Sidebar = (): JSX.Element => {
   return (
     <aside
       ref={sidebarRef}
-      className={`fixed h-full w-64 -translate-x-full transform flex-row bg-base-300 transition-transform duration-150 ease-in md:relative md:shadow
+      className={`fixed h-full w-64 -translate-x-full transform flex-row bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
     ${open ? "z-10  translate-x-0" : "md:translate-x-0"}`}
     >
       <div className="sidebar-content px-4 py-3">
@@ -111,68 +111,10 @@ const Sidebar = (): JSX.Element => {
               </li>
               <li className="my-px">
                 <Link
-                  href="/admin/members"
+                  href="/admin?tab=site-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin/members"
-                  ? "bg-gray-100 text-gray-700"
-                  : "hover:bg-slate-700"
-              }`}
-                >
-                  <span className="flex items-center justify-center text-lg text-gray-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="h-6 w-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                      />
-                    </svg>
-                  </span>
-                  <span className="ml-3">Members</span>
-                </Link>
-              </li>
-              <li className="my-px">
-                <Link
-                  href="/admin/controller"
-                  className={`flex h-10 flex-row items-center rounded-lg px-3 
-              ${
-                router.pathname === "/admin/controller"
-                  ? "bg-gray-100 text-gray-700"
-                  : "hover:bg-slate-700"
-              }`}
-                >
-                  <span className="flex items-center justify-center text-lg text-gray-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="h-6 w-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z"
-                      />
-                    </svg>
-                  </span>
-                  <span className="ml-3">ZT Controller</span>
-                </Link>
-              </li>
-              <li className="my-px">
-                <Link
-                  href="/admin/settings"
-                  className={`flex h-10 flex-row items-center rounded-lg px-3 
-              ${
-                router.pathname === "/admin/settings"
+                router.pathname === "/admin?tab=site-setting"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -199,6 +141,64 @@ const Sidebar = (): JSX.Element => {
                     </svg>
                   </span>
                   <span className="ml-3">Settings</span>
+                </Link>
+              </li>
+              <li className="my-px">
+                <Link
+                  href="/admin?tab=members"
+                  className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname === "/admin?tab=members"
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
+                >
+                  <span className="flex items-center justify-center text-lg text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+                      />
+                    </svg>
+                  </span>
+                  <span className="ml-3">Members</span>
+                </Link>
+              </li>
+              <li className="my-px">
+                <Link
+                  href="/admin?tab=controller"
+                  className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname === "/admin?tab=controller"
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
+                >
+                  <span className="flex items-center justify-center text-lg text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5.25 14.25h13.5m-13.5 0a3 3 0 01-3-3m3 3a3 3 0 100 6h13.5a3 3 0 100-6m-16.5-3a3 3 0 013-3h13.5a3 3 0 013 3m-19.5 0a4.5 4.5 0 01.9-2.7L5.737 5.1a3.375 3.375 0 012.7-1.35h7.126c1.062 0 2.062.5 2.7 1.35l2.587 3.45a4.5 4.5 0 01.9 2.7m0 0a3 3 0 01-3 3m0 3h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008zm-3 6h.008v.008h-.008v-.008zm0-6h.008v.008h-.008v-.008z"
+                      />
+                    </svg>
+                  </span>
+                  <span className="ml-3">ZT Controller</span>
                 </Link>
               </li>
             </>

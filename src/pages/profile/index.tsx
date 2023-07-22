@@ -26,6 +26,7 @@ const Profile = () => {
                 <EditableField
                   label="Name"
                   isLoading={!session?.user}
+                  rootClassName="my-2 space-y-3"
                   fields={[
                     {
                       name: "name",
@@ -43,6 +44,7 @@ const Profile = () => {
                 <EditableField
                   isLoading={!session?.user}
                   label="Email"
+                  rootClassName="my-2 space-y-3"
                   badge={
                     session?.user?.emailVerified
                       ? { text: "Verified", color: "success" }
@@ -66,6 +68,7 @@ const Profile = () => {
                   isLoading={!session?.user}
                   label="Password"
                   placeholder="******"
+                  rootClassName="my-2 space-y-3"
                   fields={[
                     {
                       name: "password",

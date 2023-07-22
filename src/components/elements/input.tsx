@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
 
 interface PasswordInputProps {
-  placeholder: string;
-  value?: string;
+  placeholder: string | number;
+  value?: string | number;
   name: string;
   type: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   focus?: boolean;
   className?: string;
-  defaultValue?: string;
+  defaultValue?: string | number;
 }
 
 const Input = ({
