@@ -1,14 +1,13 @@
 import { useState } from "react";
 import Input from "~/components/elements/input";
 import EditIcon from "~/icons/edit";
-
 interface FieldConfig {
   name: string;
   initialValue?: string;
   type: string;
-  placeholder: string;
+  placeholder: string | number;
   displayValue?: string;
-  defaultValue?: string;
+  defaultValue?: string | number;
 }
 
 interface FormProps {
@@ -16,7 +15,10 @@ interface FormProps {
   isLoading?: boolean;
   placeholder?: string;
   fields: FieldConfig[];
-
+  size?: "xs" | "sm" | "md" | "lg";
+  buttonClassName?: string;
+  rootClassName?: string;
+  labelStyle?: string;
   submitHandler: (formValues: {
     [key: string]: string;
   }) => Promise<unknown> | string | void;
@@ -33,6 +35,10 @@ const InputField = ({
   submitHandler,
   badge,
   isLoading,
+  size = "sm",
+  buttonClassName,
+  rootClassName,
+  labelStyle,
 }: FormProps) => {
   const [showInputs, setShowInputs] = useState(false);
   const [formValues, setFormValues] = useState<Record<string, string>>(
@@ -57,12 +63,13 @@ const InputField = ({
       setShowInputs(false);
     }
   };
+
   const renderInputs = () => (
     <form
       onSubmit={(event) => {
         void handleSubmit(event);
       }}
-      className="my-3 space-y-3"
+      className={rootClassName}
     >
       {fields.map((field, i) => (
         <Input
@@ -74,14 +81,18 @@ const InputField = ({
           onChange={handleChange}
           name={field.name}
           defaultValue={field.defaultValue}
+          className={`input-${size}`}
         />
       ))}
       <div className="flex gap-3">
-        <button className="btn-primary btn" type="submit">
+        <button
+          className={`btn btn-primary btn-${size} ${buttonClassName}`}
+          type="submit"
+        >
           Submit
         </button>
         <button
-          className="btn"
+          className={`btn btn-${size} ${buttonClassName}`}
           onClick={(e) => {
             e.preventDefault();
             handleEditClick();
@@ -99,9 +110,12 @@ const InputField = ({
   );
   return (
     <>
-      <dt className="flex items-center gap-2 text-sm font-medium">
+      <dt
+        onClick={handleEditClick}
+        className={`flex cursor-pointer items-center gap-2 font-medium ${labelStyle}`}
+      >
         {label}
-        <EditIcon data-testid="edit-icon" onClick={handleEditClick} />
+        <EditIcon data-testid="edit-icon" />
       </dt>
       {showInputs ? (
         isLoading ? (
@@ -110,7 +124,7 @@ const InputField = ({
           renderInputs()
         )
       ) : (
-        <dd className="mt-1 flex items-center gap-2 text-sm">
+        <dd className={`mt-1 flex items-center gap-2 ${labelStyle}`}>
           {placeholder ?? fields[0].placeholder}
           {badge ? (
             <div className={`badge badge-${badge.color}`}>{badge.text}</div>

@@ -22,8 +22,25 @@ datasource db {
 
 model GlobalOptions {
   id                    Int     @id @default(autoincrement())
+
+  // Registration
   enableRegistration    Boolean @default(true)
-  firstUserRegistration Boolean @default(true)
+  firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
+
+  // Email configuration
+  smtpHost                  String?
+  smtpPort                  String  @default("587")
+  smtpEmail                 String?
+  smtpUsername              String?
+  smtpPassword              String? 
+  smtpUseSSL                Boolean @default(false)
+  smtpSecure                Boolean @default(false)
+  smtpIgnoreTLS             Boolean @default(false)
+  smtpRequireTLS            Boolean @default(false)
+  inviteUserTemplate        Json?
+  inviteAdminTemplate       Json?
+  forgotPasswordTemplate    Json?
+  verifyEmailTemplate       Json?
 }
 
 enum Role {
