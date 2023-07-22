@@ -23,7 +23,8 @@ export const forgotPasswordTemplate = () => {
     body:
       "Hi <b><%= toEmail %></b>,<br /><br />" +
       "We received a request to reset your password. <br />" +
-      "Click here to create a new password. <br /><%= forgotLink %><br /><br />" +
+      "Click here to create a new password: <br /><%= forgotLink %><br /><br />" +
+      "Please note, this link is valid for 15 minutes. If it expires, you will need to request a new one. <br />" +
       "If you did not request a password reset, please ignore this message. <br /><br />" +
       "Sincerely,<br />--<br />Next Ztnet",
     subject: "Password Reset Request",

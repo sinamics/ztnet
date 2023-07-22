@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 interface PasswordInputProps {
-  placeholder: string | number;
+  placeholder: string;
   value?: string | number;
   name: string;
   type: string;

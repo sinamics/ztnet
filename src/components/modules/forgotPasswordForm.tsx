@@ -2,6 +2,7 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
+import { type ErrorData } from "~/types/errorHandling";
 
 interface FormData {
   email: string;
@@ -40,7 +41,17 @@ const ForgotPasswordForm: React.FC = () => {
       },
       onError: (error) => {
         setLoading(false);
-        toast.error(error.message, { duration: 10000 });
+        if ((error.data as ErrorData)?.zodError) {
+          const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+          for (const field in fieldErrors) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+            toast.error(`${fieldErrors[field].join(", ")}`);
+          }
+        } else if (error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("An unknown error occurred");
+        }
       },
     });
   };
@@ -71,10 +82,12 @@ const ForgotPasswordForm: React.FC = () => {
             <button
               type="submit"
               className={cn(
-                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
-                { loading: loading }
+                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100 shadow-lg"
               )}
             >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : null}
               Send Email
             </button>
           </div>

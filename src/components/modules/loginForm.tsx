@@ -104,10 +104,12 @@ const LoginForm: React.FC<IProps> = ({ setViewForgotForm }) => {
             <button
               type="submit"
               className={cn(
-                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
-                { loading: loading }
+                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg"
               )}
             >
+              {loading ? (
+                <span className="loading loading-spinner"></span>
+              ) : null}
               Sign in
             </button>
           </div>
