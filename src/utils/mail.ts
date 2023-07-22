@@ -4,9 +4,29 @@ import { throwError } from "~/server/helpers/errorHandler";
 
 export const inviteUserTemplate = () => {
   return {
-    inviteUserBody:
-      "Hi <b><%= toEmail %></b><br /><%= fromName %> wants you to join the ztnet network: <%= nwid %><br />If you do not know Bernt Christian Egeland, please ignore this message!<br /><br />Use the ZeroTier One GUI or command line on your device to join the network: <%= nwid %><br />For Example:<br />zerotier-cli join <%= nwid %><br /><br />Make sure to let <%= fromName %> know your device ID so that they can authorize it.<br /><br />For detailed instructions and download links, visit:<br />https://www.zerotier.com/download.shtml<br /><br />Sincerely,<br />--<br />Next Ztnet",
-    inviteUserSubject: "Next Ztnet -- Invitation to join network: <%= nwid %>",
+    subject: "Next Ztnet -- Invitation to join network: <%= nwid %>",
+    body:
+      "Hi <b><%= toEmail %></b>,<br />" +
+      "<%= fromName %> wants you to join the ztnet network: <%= nwid %>.<br />" +
+      "If you do not know <%= fromName %>, please ignore this message!<br /><br />" +
+      "Use the ZeroTier One GUI or command line on your device to join the network: <%= nwid %>.<br />" +
+      "For Example:<br />zerotier-cli join <%= nwid %><br /><br />" +
+      "Make sure to let <%= fromName %> know your device ID so that they can authorize it.<br /><br />" +
+      "For detailed instructions and download links, visit:<br />" +
+      "<a href='https://www.zerotier.com/download.shtml' style='color: blue; text-decoration: underline;'>https://www.zerotier.com/download.shtml</a><br /><br />" +
+      "Sincerely,<br />--<br />Next Ztnet",
+  };
+};
+
+export const forgotPasswordTemplate = () => {
+  return {
+    body:
+      "Hi <b><%= toEmail %></b>,<br /><br />" +
+      "We received a request to reset your password. <br />" +
+      "Click here to create a new password. <br /><%= forgotLink %><br /><br />" +
+      "If you did not request a password reset, please ignore this message. <br /><br />" +
+      "Sincerely,<br />--<br />Next Ztnet",
+    subject: "Password Reset Request",
   };
 };
 
