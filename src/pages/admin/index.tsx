@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Members from "./members";
@@ -10,7 +10,13 @@ const AdminSettings = () => {
   const router = useRouter();
   const { tab = "members" } = router.query;
 
-  const tabs = [
+  interface ITab {
+    name: string;
+    value: string;
+    component: ReactElement;
+  }
+
+  const tabs: ITab[] = [
     {
       name: "Settings",
       value: "site-setting",
@@ -29,7 +35,7 @@ const AdminSettings = () => {
     { name: "Controller", value: "controller", component: <Controller /> },
   ];
 
-  const changeTab = async (tab) => {
+  const changeTab = async (tab: ITab) => {
     await router.push({
       pathname: "/admin",
       query: { tab: tab.value },
@@ -41,7 +47,7 @@ const AdminSettings = () => {
         {tabs.map((t) => (
           <a
             key={t.value}
-            onClick={() => changeTab(t)}
+            onClick={() => void changeTab(t)}
             className={`text-md tab tab-bordered ${
               t.value === tab ? "tab-active" : ""
             }`}
