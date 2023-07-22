@@ -68,8 +68,8 @@ const Mail = () => {
 
     const newChanges = keysToCompare.reduce(
       (acc, key) => {
-        const val1 = inviteUserTemplate?.[key];
-        const val2 = emailTemplate[key];
+        const val1 = inviteUserTemplate?.[key] as string;
+        const val2 = emailTemplate[key] as string;
 
         // Here we just compare strings directly, you could add more complex comparison logic if needed
         acc[key] = val1 !== val2;
@@ -105,7 +105,7 @@ const Mail = () => {
     if (!emailTemplate.inviteUserSubject || !emailTemplate.inviteUserBody) {
       return toast.error("Please fill all fields");
     }
-    console.log(emailTemplate);
+
     setMailTemplates(
       {
         template: JSON.stringify(emailTemplate),
@@ -251,14 +251,15 @@ const Mail = () => {
             <input
               type="text"
               placeholder="Subject"
-              name="inviteUserSubject"
-              className={cn("input input-bordered w-full focus:outline-none", {
-                "border-2 border-red-500": changes?.inviteUserSubject,
-              })}
+              value={emailTemplate?.inviteUserSubject}
               defaultValue={
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 inviteUserTemplate?.inviteUserSubject
               }
+              name="inviteUserSubject"
+              className={cn("input input-bordered w-full focus:outline-none", {
+                "border-2 border-red-500": changes?.inviteUserSubject,
+              })}
               onChange={changeTemplateHandler}
             />
           </div>

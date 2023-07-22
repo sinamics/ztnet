@@ -19,6 +19,7 @@ import { NetworkDns } from "~/components/modules/networkDns";
 import { NetworkMulticast } from "~/components/modules/networkMulticast";
 import cn from "classnames";
 import NetworkHelpText from "~/components/modules/networkHelp";
+import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 
 const NetworkById = () => {
   const [state, setState] = useState({
@@ -260,7 +261,8 @@ const NetworkById = () => {
           </div>
         )}
       </div>
-      <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+      <div className="w-5/5 mx-auto flex space-x-5 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+        <InviteMemberByMail />
         <AddMemberById />
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">

@@ -47,8 +47,7 @@ export const AddMemberById = () => {
       <div className="form-control">
         <label className="label">
           <span className="label-text">
-            Adds a node to this network before it joins. Can be used to undelete
-            a member.
+            Manually Add Member. Can be used to undelete a member.
           </span>
         </label>
         <label className="input-group">
@@ -59,7 +58,7 @@ export const AddMemberById = () => {
             value={user.memberid}
             type="text"
             placeholder="10-digit hex number"
-            className="input-bordered input"
+            className="input input-bordered"
           />
           <button
             onClick={() =>
@@ -71,7 +70,7 @@ export const AddMemberById = () => {
                 { onSuccess: () => setUser({ memberid: "" }) }
               )
             }
-            className="btn-square btn"
+            className="btn btn-square"
           >
             Add
           </button>
