@@ -37,6 +37,10 @@ model GlobalOptions {
   smtpSecure                Boolean @default(false)
   smtpIgnoreTLS             Boolean @default(false)
   smtpRequireTLS            Boolean @default(false)
+  inviteUserTemplate        Json?
+  inviteAdminTemplate       Json?
+  forgotPasswordTemplate    Json?
+  verifyEmailTemplate       Json?
 }
 
 enum Role {

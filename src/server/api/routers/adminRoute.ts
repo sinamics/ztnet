@@ -1,6 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
+import nodemailer from "nodemailer";
+import ejs from "ejs";
+import { inviteUserTemplate } from "~/utils/mailTemplates";
+import { throwError } from "~/server/helpers/errorHandler";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -73,6 +80,14 @@ export const adminRouter = createTRPCRouter({
         },
       });
     }),
+  getMailTemplates: adminRoleProtectedRoute.query(async ({ ctx }) => {
+    return await ctx.prisma.globalOptions.findFirst({
+      where: {
+        id: 1,
+      },
+    });
+  }),
+
   setMail: adminRoleProtectedRoute
     .input(
       z.object({
@@ -96,5 +111,93 @@ export const adminRouter = createTRPCRouter({
           ...input,
         },
       });
+    }),
+  setMailTemplates: adminRoleProtectedRoute
+    .input(
+      z.object({
+        template: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const templateObj = JSON.parse(input.template);
+
+      return await ctx.prisma.globalOptions.update({
+        where: {
+          id: 1,
+        },
+        data: {
+          inviteUserTemplate: templateObj,
+        },
+      });
+    }),
+  getDefaultMailTemplate: adminRoleProtectedRoute
+    .input(
+      z.object({
+        template: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      switch (input.template) {
+        case "inviteUserTemplate":
+          return inviteUserTemplate();
+          break;
+
+        default:
+          break;
+      }
+    }),
+  sendTestMail: adminRoleProtectedRoute
+    .input(
+      z.object({
+        template: z.string(),
+      })
+    )
+    .mutation(async ({ ctx }) => {
+      const globalOptions = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      const renderedTemplate = await ejs.render(
+        JSON.stringify(globalOptions.inviteUserTemplate),
+        {
+          toEmail: "toEmail@example.com",
+          fromName: ctx.session.user.name, // assuming locals contains a 'username'
+          nwid: "123456789", // assuming locals contains a 'username'
+        },
+        { async: true }
+      );
+
+      const parsedTemplate = JSON.parse(renderedTemplate as string);
+      try {
+        // configure transport settings
+        const transporter = nodemailer.createTransport({
+          host: globalOptions.smtpHost,
+          port: globalOptions.smtpPort,
+          secure: globalOptions.smtpSecure,
+          auth: {
+            user: globalOptions.smtpEmail,
+            pass: globalOptions.smtpPassword,
+          },
+          tls: {
+            rejectUnauthorized: false,
+          },
+        });
+
+        // send test mail to user
+        const info = await transporter.sendMail({
+          from: globalOptions.smtpEmail,
+          to: ctx.session.user.email,
+          subject: parsedTemplate.inviteUserSubject,
+          html: parsedTemplate.inviteUserBody,
+        });
+        // Check if email was accepted
+        if (!info.accepted.includes(ctx.session.user.email)) {
+          throwError("Test email could not be sent!, check your credentials");
+        }
+      } catch (error) {
+        throwError(error);
+      }
     }),
 });

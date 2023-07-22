@@ -32,7 +32,7 @@
     "bcryptjs": "^2.4.3",
     "classnames": "^2.3.2",
     "daisyui": "^3.2.1",
-    "email-templates": "^11.1.1",
+    "ejs": "^3.1.9",
     "ip-address": "^8.1.0",
     "next": "^13.2.1",
     "next-auth": "^4.21.1",
