@@ -104,7 +104,7 @@ const RegisterForm: React.FC = () => {
             <button
               type="submit"
               className={cn(
-                "btn-block btn cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
+                "btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
                 { loading: loading }
               )}
             >
@@ -113,18 +113,7 @@ const RegisterForm: React.FC = () => {
           </div>
         </form>
         <div className="pt-5 text-center text-xs text-gray-400">
-          <span>
-            Copyright © 2021-2022
-            <a
-              href="https://uavmatrix.com"
-              rel=""
-              target="_blank"
-              title="Bernt Christian Egeland"
-              className="text-green hover:text-slate-900 "
-            >
-              @UAVMATRIX
-            </a>
-          </span>
+          <span>Copyright © {new Date().getFullYear()} Kodea Solutions</span>
         </div>
       </div>
     </div>

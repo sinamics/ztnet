@@ -1,86 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import EditableField from "~/components/elements/inputField";
-import { useState, type ReactElement, useEffect } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { type GlobalOptions } from "@prisma/client";
-import { toast } from "react-hot-toast";
-import cn from "classnames";
-
-type InviteUserTemplate = {
-  inviteUserSubject: string;
-  inviteUserBody: string;
-  // other properties...
-};
+import MailUserInviteTemplate from "~/components/modules/mailUserInviteTemplate";
+import ForgotPasswordMailTemplate from "~/components/modules/mailForgotPasswordTemplate";
 
 const Mail = () => {
-  const [emailTemplate, setEmailTemplate] = useState({
-    inviteUserSubject: "",
-    inviteUserBody: "",
-  });
-  const [changes, setChanges] = useState({
-    inviteUserSubject: false,
-    inviteUserBody: false,
-  });
-
   const { mutate: setMailOptions } = api.admin.setMail.useMutation();
-  const { mutate: sendTestMail, isLoading: sendingMailLoading } =
-    api.admin.sendTestMail.useMutation({
-      onError: (err) => {
-        toast.error(err.message);
-      },
-      onSuccess: () => {
-        toast.success("Mail sent");
-      },
-    });
-  const { mutate: setMailTemplates } = api.admin.setMailTemplates.useMutation();
-  const { data: mailTemplates, refetch: refetchMailTemplates } =
-    api.admin.getMailTemplates.useQuery();
-
-  const { mutate: getDefaultMailTemplate, data: defaultTemplates } =
-    api.admin.getDefaultMailTemplate.useMutation();
 
   const {
     data: options,
     refetch: refetchOptions,
     isLoading: loadingOptions,
   } = api.admin.getAllOptions.useQuery();
-
-  useEffect(() => {
-    if (!defaultTemplates) return;
-    setEmailTemplate(defaultTemplates);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultTemplates]);
-
-  useEffect(() => {
-    const inviteUserTemplate =
-      mailTemplates?.inviteUserTemplate as InviteUserTemplate;
-    setEmailTemplate(inviteUserTemplate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mailTemplates]);
-
-  useEffect(() => {
-    const keysToCompare = ["inviteUserSubject", "inviteUserBody"]; // Add more keys as needed
-
-    const inviteUserTemplate =
-      mailTemplates?.inviteUserTemplate as InviteUserTemplate;
-    if (!inviteUserTemplate || !emailTemplate) return;
-
-    const newChanges = keysToCompare.reduce(
-      (acc, key) => {
-        const val1 = inviteUserTemplate?.[key] as string;
-        const val2 = emailTemplate[key] as string;
-
-        // Here we just compare strings directly, you could add more complex comparison logic if needed
-        acc[key] = val1 !== val2;
-
-        return acc;
-      },
-      { inviteUserSubject: false, inviteUserBody: false }
-    );
-
-    setChanges(newChanges);
-  }, [mailTemplates?.inviteUserTemplate, emailTemplate]);
 
   const inputHandler = (e: Partial<GlobalOptions>) => {
     return new Promise((resolve, reject) => {
@@ -92,32 +26,6 @@ const Mail = () => {
       });
     });
   };
-  const changeTemplateHandler = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const modifiedValue = e.target.value.replace(/\n/g, "<br />");
-    setEmailTemplate({
-      ...emailTemplate,
-      [e.target.name]: modifiedValue,
-    });
-  };
-  const submitTemplateHandler = () => {
-    if (!emailTemplate.inviteUserSubject || !emailTemplate.inviteUserBody) {
-      return toast.error("Please fill all fields");
-    }
-
-    setMailTemplates(
-      {
-        template: JSON.stringify(emailTemplate),
-      },
-      {
-        onSuccess: () => {
-          toast.success("Template saved");
-          void refetchMailTemplates();
-        },
-      }
-    );
-  };
 
   if (loadingOptions) {
     return (
@@ -128,13 +36,11 @@ const Mail = () => {
       </div>
     );
   }
-  const inviteUserTemplate =
-    mailTemplates?.inviteUserTemplate as InviteUserTemplate;
 
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div>
-        <p className="text-sm text-base-300">Mail SMTP</p>
+        <p className="text-sm text-gray-400">Mail SMTP</p>
         <div className="divider mt-0 text-gray-500"></div>
       </div>
 
@@ -224,7 +130,7 @@ const Mail = () => {
             submitHandler={(params) => inputHandler(params)}
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pb-10">
           <p className="font-medium">Use SSL</p>
           <input
             type="checkbox"
@@ -235,86 +141,24 @@ const Mail = () => {
             }}
           />
         </div>
-        <div className="pt-10">
-          <p className="text-sm text-base-300 ">Invite user template</p>
-          <div className="divider mt-0 text-gray-500"></div>
-        </div>
-        <div className="space-y-3">
-          <p className="font-medium">
-            Available tags:
-            <span className="text-primary"> toEmail, nwid, fromName</span>
-          </p>
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text">Subject</span>
-            </label>
-            <input
-              type="text"
-              placeholder="Subject"
-              value={emailTemplate?.inviteUserSubject}
-              defaultValue={
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                inviteUserTemplate?.inviteUserSubject
-              }
-              name="inviteUserSubject"
-              className={cn("input input-bordered w-full focus:outline-none", {
-                "border-2 border-red-500": changes?.inviteUserSubject,
-              })}
-              onChange={changeTemplateHandler}
-            />
-          </div>
-          <div className="form-control w-full">
-            <label className="label">
-              <span className="label-text">HTML Body</span>
-            </label>
-            <textarea
-              value={emailTemplate?.inviteUserBody?.replace(/<br \/>/g, "\n")}
-              defaultValue={inviteUserTemplate?.inviteUserBody?.replace(
-                /<br \/>/g,
-                "\n"
-              )}
-              className={cn(
-                "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
-                { "border-2 border-red-500": changes.inviteUserBody }
-              )}
-              placeholder="Mail Template"
-              rows={10}
-              name="inviteUserBody"
-              onChange={changeTemplateHandler}
-            ></textarea>
+        <div
+          tabIndex={0}
+          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+        >
+          <input type="checkbox" />
+          <div className="collapse-title">Invite user template</div>
+          <div className="collapse-content" style={{ width: "100%" }}>
+            <MailUserInviteTemplate />
           </div>
         </div>
-        <div className="flex justify-between p-5">
-          <div className="space-x-2">
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => submitTemplateHandler()}
-            >
-              Save Template
-            </button>
-            <button
-              className="btn btn-sm"
-              onClick={() =>
-                getDefaultMailTemplate({
-                  template: "inviteUserTemplate",
-                })
-              }
-            >
-              Reset
-            </button>
-          </div>
-          <div className="flex justify-end">
-            <button
-              className="btn btn-sm"
-              disabled={
-                changes.inviteUserSubject ||
-                changes.inviteUserBody ||
-                sendingMailLoading
-              }
-              onClick={() => sendTestMail({ template: "inviteUser" })}
-            >
-              {sendingMailLoading ? "Working..." : "Send Test Mail"}
-            </button>
+        <div
+          tabIndex={0}
+          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+        >
+          <input type="checkbox" />
+          <div className="collapse-title">Forgot Password template</div>
+          <div className="collapse-content" style={{ width: "100%" }}>
+            <ForgotPasswordMailTemplate />
           </div>
         </div>
       </div>
