@@ -5,6 +5,7 @@ import Members from "./members";
 import Controller from "./controller";
 import Settings from "./settings";
 import Mail from "./mail";
+import Notification from "./notification";
 
 const AdminSettings = () => {
   const router = useRouter();
@@ -28,9 +29,14 @@ const AdminSettings = () => {
       component: <Mail />,
     },
     {
-      name: "Members",
-      value: "members",
+      name: "Users",
+      value: "users",
       component: <Members />,
+    },
+    {
+      name: "Notification",
+      value: "notification",
+      component: <Notification />,
     },
     { name: "Controller", value: "controller", component: <Controller /> },
   ];

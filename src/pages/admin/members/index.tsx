@@ -1,16 +1,16 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { MembersTable } from "~/components/modules/membersTable";
+import { Accounts } from "~/components/modules/accountTable";
 
-const Members = () => {
+const Users = () => {
   return (
     <div className="p-10">
-      <MembersTable />
+      <Accounts />
     </div>
   );
 };
-Members.getLayout = function getLayout(page: ReactElement) {
+Users.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export default Members;
+export default Users;

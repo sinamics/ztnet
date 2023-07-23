@@ -23,52 +23,61 @@ const Controller = () => {
   const { online, tcpFallbackActive, version } = controllerStatus;
 
   return (
-    <div>
-      <div className="flex items-center justify-center ">
-        <div className="grid grid-cols-1 gap-5 space-y-4 pt-10 md:space-y-0 lg:grid-cols-2 xl:grid-cols-3">
-          <div className="card-normal card w-60 bg-base-300 sm:w-96">
-            <div className="card-body flex-grow-0">
-              <h2 className="card-title flex justify-center">Networks</h2>
-              <p className="">Network Count: {networkCount}</p>
-              <p className="">Total Members: {totalMembers}</p>
-            </div>
+    <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+      <div className="pb-10">
+        <p className="text-sm text-gray-400">Networks & Members</p>
+        <div className="divider mt-0 p-0 text-gray-500"></div>
+        <div className="flex items-center justify-between">
+          <p>Total Network`s:</p>
+          <p>{networkCount}</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <p>Total Members:</p>
+          <p>{totalMembers}</p>
+        </div>
+      </div>
+      <div className="pb-10">
+        <p className="text-sm text-gray-400">Management</p>
+        <div className="divider mt-0 p-0 text-gray-500"></div>
+        <div className="flex items-center justify-between">
+          <p>Allow Management From:</p>
+          <div className="list-inside list-disc">
+            {allowManagementFrom.map((address, index) => (
+              <span key={index}>{address}</span>
+            ))}
           </div>
-          <div className="card-normal card w-60 bg-base-300 sm:w-96">
-            <div className="card-body">
-              <h2 className="card-title flex justify-center">Controller TCP</h2>
-              <p className="">Allow Management From:</p>
-              <ul className="list-inside list-disc">
-                {allowManagementFrom.map((address, index) => (
-                  <li key={index}>{address}</li>
-                ))}
-              </ul>
-              <p className="">
-                Allow TCP Fallback Relay: {allowTcpFallbackRelay ? "Yes" : "No"}
-              </p>
-              <p className="">Listening On:</p>
-              <ul className="list-inside list-disc">
-                {listeningOn.map((address, index) => (
-                  <li key={index}>{address}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="card-normal card w-60 bg-base-300 sm:w-96">
-            <div className="card-body flex-grow-0">
-              <h2 className="card-title flex justify-center">
-                Controller Stats
-              </h2>
-              <p className="">Online: {online ? "Yes" : "No"}</p>
-              <p className="">
-                TCP Fallback Active: {tcpFallbackActive ? "Yes" : "No"}
-              </p>
-              <p className="">Version: {version}</p>
-            </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <p>Allow TCP Fallback Relay:</p>
+          <p>{allowTcpFallbackRelay ? "Yes" : "No"}</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <p>Listening On:</p>
+          <div className="list-inside list-disc space-x-2">
+            {listeningOn.map((address, index) => (
+              <span key={index}>{address}</span>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+      <div className="pb-10">
+        <p className="text-sm text-gray-400">Controller Status</p>
+        <div className="divider mt-0 p-0 text-gray-500"></div>
+
+        <div className="flex items-center justify-between">
+          <p>Online:</p>
+          <p>{online ? "Yes" : "No"}</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <p>TCP Fallback Active:</p>
+          <p>{tcpFallbackActive ? "Yes" : "No"}</p>
+        </div>
+        <div className="flex items-center justify-between">
+          <p>Version:</p>
+          <p>{version}</p>
+        </div>
+      </div>
+    </main>
   );
 };
 Controller.getLayout = function getLayout(page: ReactElement) {
