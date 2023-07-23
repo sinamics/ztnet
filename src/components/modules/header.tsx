@@ -53,7 +53,7 @@ const Header = () => {
 
           {/* <a href="#" className="flex flex-row items-center"> */}
           <div className="dropdown-end dropdown">
-            <label tabIndex={0} className="btn btn-primary m-1">
+            <label tabIndex={0} className="btn btn-primary btn-sm m-1">
               {theme.toUpperCase()}
             </label>
             <ul
