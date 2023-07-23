@@ -28,8 +28,8 @@ const AdminSettings = () => {
       component: <Mail />,
     },
     {
-      name: "Members",
-      value: "members",
+      name: "Users",
+      value: "users",
       component: <Members />,
     },
     { name: "Controller", value: "controller", component: <Controller /> },

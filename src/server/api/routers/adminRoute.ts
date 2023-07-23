@@ -5,6 +5,8 @@ import ejs from "ejs";
 import { forgotPasswordTemplate, inviteUserTemplate } from "~/utils/mail";
 import { createTransporter, sendEmail } from "~/utils/mail";
 import type nodemailer from "nodemailer";
+import { Role } from "@prisma/client";
+import { throwError } from "~/server/helpers/errorHandler";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -60,6 +62,34 @@ export const adminRouter = createTRPCRouter({
       },
     });
   }),
+  // Set global options
+  changeRole: adminRoleProtectedRoute
+    .input(
+      z.object({
+        role: z
+          .string()
+          .refine((value) => Object.values(Role).includes(value as Role), {
+            message: "Role is not valid",
+            path: ["role"],
+          }),
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, role } = input;
+
+      if (ctx.session.user.id === id) {
+        throwError("You can't change your own role");
+      }
+      return await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          role: role as Role,
+        },
+      });
+    }),
   registration: adminRoleProtectedRoute
     .input(
       z.object({
