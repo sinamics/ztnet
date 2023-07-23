@@ -1,8 +1,10 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
+import ZtnetLogo from "docs/images/ztnet_logo_100x100.png";
 
 const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
@@ -40,6 +42,7 @@ const Header = () => {
         </svg>
         <div className="hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
+            <Image width={30} height={50} alt="ztnet logo" src={ZtnetLogo} />
             <span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
               {globalSiteTitle}
             </span>
