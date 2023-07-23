@@ -2,6 +2,7 @@
 ALTER TABLE "GlobalOptions" ADD COLUMN     "forgotPasswordTemplate" JSONB,
 ADD COLUMN     "inviteAdminTemplate" JSONB,
 ADD COLUMN     "inviteUserTemplate" JSONB,
+ADD COLUMN     "notificationTemplate" JSONB,
 ADD COLUMN     "smtpEmail" TEXT,
 ADD COLUMN     "smtpHost" TEXT,
 ADD COLUMN     "smtpIgnoreTLS" BOOLEAN NOT NULL DEFAULT false,
@@ -11,4 +12,5 @@ ADD COLUMN     "smtpRequireTLS" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "smtpSecure" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "smtpUseSSL" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "smtpUsername" TEXT,
+ADD COLUMN     "userRegistrationNotification" BOOLEAN NOT NULL DEFAULT false,
 ADD COLUMN     "verifyEmailTemplate" JSONB;
