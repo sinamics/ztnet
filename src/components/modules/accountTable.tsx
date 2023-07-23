@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, type ReactNode } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,9 +10,13 @@ import {
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
 import { type MembersEntity } from "~/types/network";
+import { type ErrorData } from "~/types/errorHandling";
+import toast from "react-hot-toast";
+import { useModalStore } from "~/utils/store";
 
-export const MembersTable = () => {
-  const { data: members } = api.admin.getUsers.useQuery();
+export const Accounts = () => {
+  const { data: members, refetch: refetchUsers } =
+    api.admin.getUsers.useQuery();
   const columnHelper = createColumnHelper<MembersEntity>();
   const columns = useMemo<ColumnDef<MembersEntity>[]>(
     () => [
@@ -61,24 +65,73 @@ export const MembersTable = () => {
 
   // Create an editable cell renderer
   const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
-    cell: ({ getValue, row: { index }, column: { id } }) => {
+    cell: ({
+      getValue,
+      row: {
+        index,
+        original: { id: userid, name },
+      },
+      column: { id },
+    }) => {
       const initialValue = getValue();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { callModal } = useModalStore((state) => state);
+
       // We need to keep and update the state of the cell normally
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const [value, setValue] = useState(initialValue);
-
+      const { mutate: changeRole } = api.admin.changeRole.useMutation({
+        onSuccess: () => {
+          void refetchUsers();
+          toast.success("Role changed successfully");
+        },
+        onError: (error) => {
+          if ((error.data as ErrorData)?.zodError) {
+            const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+            for (const field in fieldErrors) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+              toast.error(`${fieldErrors[field].join(", ")}`);
+            }
+          } else if (error.message) {
+            toast.error(error.message);
+          } else {
+            toast.error("An unknown error occurred");
+          }
+          void refetchUsers();
+        },
+      });
       const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setValue(e.target.value);
       };
       const onBlur = () => {
         table.options.meta?.updateData(index, id, value);
       };
-      // We'll only update the external data when the input is blurred
-      // const onBlur = () => {
-      // updateMyData(index, id, value, original);
-      // };
+      const dropDownHandler = (
+        e: React.ChangeEvent<HTMLSelectElement>,
+        id: number
+      ) => {
+        let description = "";
 
-      // If the initialValue is changed external, sync it up with our state
+        if (e.target.value === "ADMIN") {
+          description =
+            "As an admin, this user will have full permissions, including access to the admin panel.";
+        } else if (e.target.value === "USER") {
+          description =
+            "If set to User, this user will have limited permissions and will not be able to access the admin panel.";
+        }
+
+        callModal({
+          title: `Change role for ${name}`,
+          description,
+          yesAction: () => {
+            changeRole({
+              id,
+              role: e.target.value,
+            });
+          },
+        });
+      };
+
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useEffect(() => {
         setValue(initialValue);
@@ -92,6 +145,19 @@ export const MembersTable = () => {
             onChange={onChange}
             onBlur={onBlur}
           />
+        );
+      }
+      if (id === "role") {
+        return (
+          <select
+            onChange={(e) => dropDownHandler(e, parseInt(userid))}
+            className="select select-ghost max-w-xs"
+          >
+            {value as ReactNode}
+
+            <option>ADMIN</option>
+            <option>USER</option>
+          </select>
         );
       }
       return value;
@@ -111,10 +177,10 @@ export const MembersTable = () => {
   });
 
   return (
-    <div className="flex flex-col ">
+    <div className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-8/12">
       <div className="overflow-x-auto">
-        <div className="flex justify-between py-3 pl-2">
-          <div className="relative max-w-xs">
+        {/* <div className="flex justify-between py-3 pl-2"> */}
+        {/* <div className="relative max-w-xs">
             <label htmlFor="hs-table-search" className="sr-only">
               Search
             </label>
@@ -137,9 +203,9 @@ export const MembersTable = () => {
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
               </svg>
             </div>
-          </div>
+          </div> */}
 
-          <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
             <div className="relative">
               <button className="focus:ring-accent-500 focus:border-accent-500 relative z-0 inline-flex rounded-md text-sm shadow-sm hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1">
                 <span className="relative inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-600 sm:py-2">
@@ -164,7 +230,7 @@ export const MembersTable = () => {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="inline-block w-full p-1.5 text-center align-middle">
           <div className="overflow-hidden rounded-lg border">
@@ -182,7 +248,7 @@ export const MembersTable = () => {
                             key={header.id}
                             colSpan={header.colSpan}
                             scope="col"
-                            className="py-3 pl-4"
+                            className="bg-base-300/50 py-3 pl-4"
                           >
                             {header.isPlaceholder ? null : (
                               <div
