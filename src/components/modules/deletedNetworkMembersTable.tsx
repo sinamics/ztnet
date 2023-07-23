@@ -6,7 +6,7 @@ import { useModalStore } from "~/utils/store";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
+  // getPaginationRowModel,
   getSortedRowModel,
   flexRender,
   createColumnHelper,
@@ -136,7 +136,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
     state: {
       sorting,

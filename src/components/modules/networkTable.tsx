@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
+  // getPaginationRowModel,
   getSortedRowModel,
   type SortingState,
   flexRender,
@@ -55,7 +55,7 @@ export const NetworkTable = ({ tableData = [] }) => {
     data,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
     state: {
       sorting,
