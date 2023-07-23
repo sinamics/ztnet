@@ -5,15 +5,6 @@ generator client {
     provider = "prisma-client-js"
 }
 
-// datasource db {
-//     provider = "sqlite"
-//     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-//     // Further reading:
-//     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-//     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-//     url      = env("DATABASE_URL")
-// }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -28,19 +19,24 @@ model GlobalOptions {
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
-  smtpHost                  String?
-  smtpPort                  String  @default("587")
-  smtpEmail                 String?
-  smtpUsername              String?
-  smtpPassword              String? 
-  smtpUseSSL                Boolean @default(false)
-  smtpSecure                Boolean @default(false)
-  smtpIgnoreTLS             Boolean @default(false)
-  smtpRequireTLS            Boolean @default(false)
-  inviteUserTemplate        Json?
-  inviteAdminTemplate       Json?
-  forgotPasswordTemplate    Json?
-  verifyEmailTemplate       Json?
+  smtpHost                              String?
+  smtpPort                              String  @default("587")
+  smtpEmail                             String?
+  smtpUsername                          String?
+  smtpPassword                          String? 
+  smtpUseSSL                            Boolean @default(false)
+  smtpSecure                            Boolean @default(false)
+  smtpIgnoreTLS                         Boolean @default(false)
+  smtpRequireTLS                        Boolean @default(false)
+  inviteUserTemplate                    Json?
+  inviteAdminTemplate                   Json?
+  forgotPasswordTemplate                Json?
+  verifyEmailTemplate                   Json?
+  notificationTemplate                  Json?
+
+  // Notifications
+  userRegistrationNotification          Boolean @default(false)
+
 }
 
 enum Role {

@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 import { type GlobalOptions } from "@prisma/client";
 import MailUserInviteTemplate from "~/components/modules/mailUserInviteTemplate";
 import ForgotPasswordMailTemplate from "~/components/modules/mailForgotPasswordTemplate";
+import NotificationTemplate from "~/components/modules/mailNotificationTemplate";
 
 const Mail = () => {
   const { mutate: setMailOptions } = api.admin.setMail.useMutation();
@@ -143,7 +144,7 @@ const Mail = () => {
         </div>
         <div
           tabIndex={0}
-          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+          className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
           <div className="collapse-title">Invite user template</div>
@@ -159,6 +160,16 @@ const Mail = () => {
           <div className="collapse-title">Forgot Password template</div>
           <div className="collapse-content" style={{ width: "100%" }}>
             <ForgotPasswordMailTemplate />
+          </div>
+        </div>
+        <div
+          tabIndex={0}
+          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+        >
+          <input type="checkbox" />
+          <div className="collapse-title">Notification template</div>
+          <div className="collapse-content" style={{ width: "100%" }}>
+            <NotificationTemplate />
           </div>
         </div>
       </div>

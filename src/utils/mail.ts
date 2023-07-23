@@ -31,6 +31,18 @@ export const forgotPasswordTemplate = () => {
   };
 };
 
+export const notificationTemplate = () => {
+  return {
+    body:
+      "Hi <b><%= toName %></b>,<br /><br />" +
+      "You have a new notification from Next Ztnet. <br /><br />" +
+      "<%= notificationMessage %><br /><br />" +
+      "If this notification does not concern you, please ignore this message. <br /><br />" +
+      "Sincerely,<br />--<br />Next Ztnet",
+    subject: "New Notification from Next Ztnet",
+  };
+};
+
 export function createTransporter(globalOptions: GlobalOptions) {
   if (
     !globalOptions.smtpHost ||
