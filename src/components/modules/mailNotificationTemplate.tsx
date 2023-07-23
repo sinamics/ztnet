@@ -1,21 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import cn from "classnames";
 
-type InviteUserTemplate = {
+type IMailTemplate = {
   subject: string;
   body: string;
 };
 
-const ForgotPasswordMailTemplate = () => {
+const NotificationTemplate = () => {
   const [changes, setChanges] = useState({
     subject: false,
     body: false,
   });
 
-  const [emailTemplate, setEmailTemplate] = useState({
+  const [stateTemplate, setEmailTemplate] = useState({
     subject: "",
     body: "",
   });
@@ -25,7 +24,7 @@ const ForgotPasswordMailTemplate = () => {
   ) => {
     const modifiedValue = e.target.value.replace(/\n/g, "<br />");
     setEmailTemplate({
-      ...emailTemplate,
+      ...stateTemplate,
       [e.target.name]: modifiedValue,
     });
   };
@@ -45,7 +44,7 @@ const ForgotPasswordMailTemplate = () => {
   // get default mail template
   const { data: mailTemplates, refetch: refetchMailTemplates } =
     api.admin.getMailTemplates.useQuery({
-      template: "forgotPasswordTemplate",
+      template: "notificationTemplate",
     });
 
   const { mutate: getDefaultMailTemplate, data: defaultTemplates } =
@@ -53,29 +52,28 @@ const ForgotPasswordMailTemplate = () => {
 
   useEffect(() => {
     if (!defaultTemplates) return;
-
     setEmailTemplate(defaultTemplates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultTemplates]);
 
   useEffect(() => {
-    const forgotPasswordTemplate = mailTemplates as InviteUserTemplate;
-    setEmailTemplate(forgotPasswordTemplate);
+    const notificationTemplate = mailTemplates as IMailTemplate;
+    setEmailTemplate(notificationTemplate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mailTemplates]);
 
   useEffect(() => {
-    const keysToCompare = ["subject", "body"]; // Add more keys as needed
+    const keysToCompare = ["subject", "body"];
 
-    const inviteUserTemplate = mailTemplates as InviteUserTemplate;
-    if (!inviteUserTemplate || !emailTemplate) return;
+    const _mailTemplate = mailTemplates as IMailTemplate;
+    if (!_mailTemplate || !stateTemplate) return;
 
     const newChanges = keysToCompare.reduce(
       (acc, key) => {
-        const val1 = inviteUserTemplate?.[key] as string;
-        const val2 = emailTemplate[key] as string;
+        const val1 = _mailTemplate?.[key] as string;
+        const val2 = stateTemplate[key] as string;
 
-        // Here we just compare strings directly, you could add more complex comparison logic if needed
+        // Here we just compare strings directly
         acc[key] = val1 !== val2;
 
         return acc;
@@ -84,17 +82,17 @@ const ForgotPasswordMailTemplate = () => {
     );
 
     setChanges(newChanges);
-  }, [mailTemplates, emailTemplate]);
+  }, [mailTemplates, stateTemplate]);
 
   const submitTemplateHandler = () => {
-    if (!emailTemplate.subject || !emailTemplate.body) {
+    if (!stateTemplate.subject || !stateTemplate.body) {
       return toast.error("Please fill all fields");
     }
 
     setMailTemplates(
       {
-        template: JSON.stringify(emailTemplate),
-        type: "forgotPasswordTemplate",
+        template: JSON.stringify(stateTemplate),
+        type: "notificationTemplate",
       },
       {
         onSuccess: () => {
@@ -105,14 +103,12 @@ const ForgotPasswordMailTemplate = () => {
     );
   };
 
-  const mailTemplate = mailTemplates as InviteUserTemplate;
-
   return (
     <div>
       <div className="space-y-3">
         <p className="font-medium">
           Available tags:
-          <span className="text-primary"> toEmail forgotLink</span>
+          <span className="text-primary"> toName notificationMessage</span>
         </p>
         <div className="form-control w-full">
           <label className="label">
@@ -121,10 +117,10 @@ const ForgotPasswordMailTemplate = () => {
           <input
             type="text"
             placeholder="Subject"
-            value={emailTemplate?.subject}
+            value={stateTemplate?.subject}
             defaultValue={
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              mailTemplate?.subject
+              (mailTemplates as IMailTemplate)?.subject
             }
             name="subject"
             className={cn("input input-bordered w-full focus:outline-none", {
@@ -138,7 +134,7 @@ const ForgotPasswordMailTemplate = () => {
             <span className="label-text">HTML Body</span>
           </label>
           <textarea
-            value={emailTemplate?.body?.replace(/<br \/>/g, "\n")}
+            value={stateTemplate?.body?.replace(/<br \/>/g, "\n")}
             className={cn(
               "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
               { "border-2 border-red-500": changes.body }
@@ -162,7 +158,7 @@ const ForgotPasswordMailTemplate = () => {
             className="btn btn-sm"
             onClick={() =>
               getDefaultMailTemplate({
-                template: "forgotPasswordTemplate",
+                template: "notificationTemplate",
               })
             }
           >
@@ -173,7 +169,7 @@ const ForgotPasswordMailTemplate = () => {
           <button
             className="btn btn-sm"
             disabled={changes.subject || changes.body || sendingMailLoading}
-            onClick={() => sendTestMail({ type: "forgotPasswordTemplate" })}
+            onClick={() => sendTestMail({ type: "notificationTemplate" })}
           >
             {sendingMailLoading ? "Working..." : "Send Test Mail"}
           </button>
@@ -183,4 +179,4 @@ const ForgotPasswordMailTemplate = () => {
   );
 };
 
-export default ForgotPasswordMailTemplate;
+export default NotificationTemplate;

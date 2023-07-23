@@ -4,7 +4,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
+  // getPaginationRowModel,
   getSortedRowModel,
   flexRender,
   createColumnHelper,
@@ -398,7 +398,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
     defaultColumn,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
     state: {
       sorting,

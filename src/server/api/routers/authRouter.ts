@@ -13,6 +13,7 @@ import {
   createTransporter,
   sendEmail,
   forgotPasswordTemplate,
+  notificationTemplate,
 } from "~/utils/mail";
 import ejs from "ejs";
 
@@ -122,6 +123,55 @@ export const authRouter = createTRPCRouter({
           hash,
         },
       });
+
+      // Send admin notification
+      const globalOptions = await ctx.prisma.globalOptions.findFirst({
+        where: {
+          id: 1,
+        },
+      });
+
+      if (globalOptions?.userRegistrationNotification) {
+        const defaultTemplate = notificationTemplate();
+        const template = globalOptions?.notificationTemplate ?? defaultTemplate;
+
+        const adminUsers = await ctx.prisma.user.findMany({
+          where: {
+            role: "ADMIN",
+          },
+        });
+
+        // create transporter
+        const transporter = createTransporter(globalOptions);
+
+        for (const adminEmail of adminUsers) {
+          const renderedTemplate = await ejs.render(
+            JSON.stringify(template),
+            {
+              toName: adminEmail.name,
+              notificationMessage: `A new user with the name ${name} and email ${email} has just registered!`,
+            },
+            { async: true }
+          );
+
+          const parsedTemplate = JSON.parse(renderedTemplate) as Record<
+            string,
+            string
+          >;
+
+          // define mail options
+          const mailOptions = {
+            from: globalOptions.smtpEmail,
+            to: adminEmail.email,
+            subject: parsedTemplate.subject,
+            html: parsedTemplate.body,
+          };
+          // we dont want to show any error related to sending emails when user signs up
+          try {
+            await sendEmail(transporter, mailOptions);
+          } catch (error) {}
+        }
+      }
 
       return {
         user: newUser,

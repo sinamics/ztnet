@@ -2,9 +2,15 @@ import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
 import ejs from "ejs";
-import { forgotPasswordTemplate, inviteUserTemplate } from "~/utils/mail";
+import {
+  forgotPasswordTemplate,
+  inviteUserTemplate,
+  notificationTemplate,
+} from "~/utils/mail";
 import { createTransporter, sendEmail } from "~/utils/mail";
 import type nodemailer from "nodemailer";
+import { Role } from "@prisma/client";
+import { throwError } from "~/server/helpers/errorHandler";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -60,11 +66,40 @@ export const adminRouter = createTRPCRouter({
       },
     });
   }),
-  registration: adminRoleProtectedRoute
+  // Set global options
+  changeRole: adminRoleProtectedRoute
+    .input(
+      z.object({
+        role: z
+          .string()
+          .refine((value) => Object.values(Role).includes(value as Role), {
+            message: "Role is not valid",
+            path: ["role"],
+          }),
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, role } = input;
+
+      if (ctx.session.user.id === id) {
+        throwError("You can't change your own role");
+      }
+      return await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          role: role as Role,
+        },
+      });
+    }),
+  updateGlobalOptions: adminRoleProtectedRoute
     .input(
       z.object({
         enableRegistration: z.boolean().optional(),
         firstUserRegistration: z.boolean().optional(),
+        userRegistrationNotification: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -96,6 +131,9 @@ export const adminRouter = createTRPCRouter({
           break;
         case "forgotPasswordTemplate":
           return templates?.forgotPasswordTemplate ?? forgotPasswordTemplate();
+          break;
+        case "notificationTemplate":
+          return templates?.notificationTemplate ?? notificationTemplate();
           break;
         default:
           return {};
@@ -157,6 +195,16 @@ export const adminRouter = createTRPCRouter({
             },
           });
           break;
+        case "notificationTemplate":
+          return await ctx.prisma.globalOptions.update({
+            where: {
+              id: 1,
+            },
+            data: {
+              notificationTemplate: templateObj,
+            },
+          });
+          break;
         default:
           break;
       }
@@ -174,6 +222,9 @@ export const adminRouter = createTRPCRouter({
           break;
         case "forgotPasswordTemplate":
           return forgotPasswordTemplate();
+          break;
+        case "notificationTemplate":
+          return notificationTemplate();
           break;
         default:
           break;
@@ -197,8 +248,10 @@ export const adminRouter = createTRPCRouter({
           JSON.stringify(template),
           {
             toEmail: ctx.session.user.email,
+            toName: ctx.session.user.name,
             fromName: ctx.session.user.name,
             forgotLink: "https://example.com",
+            notificationMessage: "Test notification message",
             nwid: "123456789",
           },
           { async: true }
@@ -242,7 +295,12 @@ export const adminRouter = createTRPCRouter({
             globalOptions?.forgotPasswordTemplate ?? defaultForgotTemplate;
           await sendTemplateEmail("forgotPassword", forgotTemplate);
           break;
-
+        case "notificationTemplate":
+          const defaultNotificationTemplate = notificationTemplate();
+          const notifiyTemplate =
+            globalOptions?.notificationTemplate ?? defaultNotificationTemplate;
+          await sendTemplateEmail("notificationTemplate", notifiyTemplate);
+          break;
         default:
           break;
       }
