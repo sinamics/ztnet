@@ -131,7 +131,6 @@ const MailUserInviteTemplate = () => {
           </label>
           <textarea
             value={emailTemplate?.body?.replace(/<br \/>/g, "\n")}
-            defaultValue={mailTemplate?.body?.replace(/<br \/>/g, "\n")}
             className={cn(
               "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
               { "border-2 border-red-500": changes.body }

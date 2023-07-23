@@ -248,6 +248,7 @@ export const adminRouter = createTRPCRouter({
           JSON.stringify(template),
           {
             toEmail: ctx.session.user.email,
+            toName: ctx.session.user.name,
             fromName: ctx.session.user.name,
             forgotLink: "https://example.com",
             notificationMessage: "Test notification message",

@@ -135,10 +135,6 @@ const NotificationTemplate = () => {
           </label>
           <textarea
             value={stateTemplate?.body?.replace(/<br \/>/g, "\n")}
-            defaultValue={(mailTemplates as IMailTemplate)?.body?.replace(
-              /<br \/>/g,
-              "\n"
-            )}
             className={cn(
               "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
               { "border-2 border-red-500": changes.body }
