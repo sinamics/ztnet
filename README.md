@@ -222,7 +222,7 @@ Now start the development server:
 
 ## Network page layout
 
-![Alt Text](https://i.ibb.co/1TbNYg1/ztnet-network.jpg)
+![Networks](docs/images/ztnet_network.jpg)
 
 ### ⚠️ Disclaimer:
 
