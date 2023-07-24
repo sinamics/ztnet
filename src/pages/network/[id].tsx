@@ -300,7 +300,7 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
-          <div className="membersTable-wrapper text-center">
+          <div className="membersTable-wrapper">
             <NetworkMembersTable
               nwid={network.nwid}
               // setEditing={(e: boolean) => setEditing(e)}
