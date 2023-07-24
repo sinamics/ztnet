@@ -75,6 +75,9 @@ model network_members {
 model network {
   nwid                 String            @id
   nwname               String
+  description          String?
+  creationTime         DateTime?
+  lastModifiedTime     DateTime?
   flowRule             String?
   autoAssignIp         Boolean?          @default(true)
   ipAssignments        String          
