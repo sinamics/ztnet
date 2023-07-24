@@ -28,7 +28,7 @@ services:
     networks:
       - app-network
     ports:
-      - "9993:9993/udp"
+      - "9993:9993"
     environment:
       - ZT_OVERRIDE_LOCAL_CONF=true
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
@@ -61,18 +61,19 @@ services:
     image: sinamics/zeronsd:latest
     container_name: zeronsd
     restart: unless-stopped
-    networks:
-      - app-network
-    command: "start 5394f094cac10bd3"
+    network_mode: host
+    # networks:
+    #   - app-network
+    command: "start e863ce852ff091d8 && cat /var/lib/zerotier-one/authtoken.secret"
     volumes:
       - zerotier:/var/lib/zerotier-one:ro
     # depends_on:
     #   - zerotier
     #   - next_ztnet
     environment:
-      ZEROTIER_CENTRAL_INSTANCE: "http://ztnet/api/zeronsd"
-      ZEROTIER_CENTRAL_TOKEN: "ztnet"
-      ZEROTIER_LOCAL_URL: http://zerotier
+      ZEROTIER_CENTRAL_INSTANCE: "http://127.0.0.1:3000/api/zeronsd"
+      ZEROTIER_CENTRAL_TOKEN: "2p8v8twvfnqe90bke7vk70py"
+      ZEROTIER_LOCAL_URL: http://127.0.0.1:9993
 
 volumes:
   zerotier:
