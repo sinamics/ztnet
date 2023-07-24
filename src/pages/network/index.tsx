@@ -36,51 +36,55 @@ const Networks: NextPageWithLayout = () => {
         <div className="mb-3 mt-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>
         </div>
-        <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
-          <div className="relative bg-cover bg-center bg-no-repeat">
-            <div className="container mx-auto px-4">
-              <div className="mb-3 mt-3 flex flex-col space-y-3 md:flex-row md:space-x-3 md:space-y-0">
-                <div className="w-full justify-center">
-                  <button className={`btn btn-success`} onClick={addNewNetwork}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      className="mr-2 h-6 w-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                    Add Network
-                  </button>
+        <div className="grid grid-cols-1 space-y-3 px-3 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
+          <div className="flex justify-center">
+            <button
+              className={`btn btn-primary btn-outline`}
+              onClick={addNewNetwork}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="mr-2 h-6 w-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+              Create a network
+            </button>
+          </div>
+          <div className="col-span-2">
+            {userNetworks && userNetworks.length > 0 && (
+              <NetworkTable tableData={userNetworks} />
+            )}
+            {!userNetworks ||
+              (userNetworks.length === 0 && (
+                <div className="alert alert-warning">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 shrink-0 stroke-current"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <span>
+                    No networks have been created yet. Start by creating one and
+                    it will appear here.
+                  </span>
                 </div>
-                <div className="w-full overflow-auto text-center ">
-                  <p className="mb-3 text-sm">
-                    Connect team members from anywhere in the world on any
-                    device. ZeroTier creates secure networks between on-premise,
-                    cloud, desktop, and mobile devices. Zerotier It&apos;s an
-                    encrypted Peer-to-Peer technology, meaning that unlike
-                    traditional VPN solutions, communications don&apos;t need to
-                    pass through a central server or router — messages are sent
-                    directly peer to peer.
-                  </p>
-                  <div className="text-center">
-                    {userNetworks && userNetworks.length > 0 && (
-                      <NetworkTable tableData={userNetworks} />
-                    )}
-                    {!userNetworks ||
-                      (userNetworks.length === 0 && (
-                        <div>No network found!</div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+              ))}
           </div>
         </div>
       </main>
