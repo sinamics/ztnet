@@ -1,11 +1,12 @@
-import React, { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import TimeAgo from "react-timeago";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
   useReactTable,
   getCoreRowModel,
-  // getPaginationRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   flexRender,
   createColumnHelper,
   type ColumnDef,
@@ -19,6 +20,10 @@ import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { useModalStore } from "~/utils/store";
 import { MemberOptionsModal } from "./memberOptionsModal";
 import { type MembersEntity } from "~/types/network";
+import { DebouncedInput } from "../elements/debouncedInput";
+import { useSkipper } from "../elements/useSkipper";
+import TableFooter from "./tableFooter";
+// import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,7 +40,8 @@ enum ConnectionStatus {
 }
 export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
   const { query } = useRouter();
-  const [sorting, setSorting] = React.useState<SortingState>([
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([
     {
       id: "id",
       desc: true,
@@ -389,7 +395,12 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
     setData(networkById.members);
   }, [networkById.members]);
 
-  const [data, setData] = React.useState(networkById.members);
+  // makeNetworkMemberData
+  const [data, setData] = useState(networkById.members);
+
+  // const [data, setData] = useState(() => makeNetworkMemberData(100));
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
+
   const table = useReactTable({
     data,
     //@ts-expect-error
@@ -398,15 +409,13 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
     defaultColumn,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
-    state: {
-      sorting,
-    },
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex,
     meta: {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
-        // skipAutoResetPageIndex()
+        skipAutoResetPageIndex();
         setData((old) =>
           old.map((row, index) => {
             if (index === rowIndex) {
@@ -421,10 +430,25 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         );
       },
     },
+    state: {
+      sorting,
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
+    debugTable: false,
   });
   return (
     <span className="rounded-xl pt-2">
-      <table className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500 ">
+      <div className="py-1">
+        <DebouncedInput
+          value={globalFilter ?? ""}
+          onChange={(value) => setGlobalFilter(String(value))}
+          className="font-lg border-block border p-2 shadow"
+          placeholder="Search anything..."
+        />
+      </div>
+      <table className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500 text-center">
         <thead className="bg-base-100 ">
           {
             // Loop over the header rows
@@ -498,6 +522,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           }
         </tbody>
       </table>
+      <div className="flex flex-col items-center justify-between py-3 sm:flex-row">
+        <TableFooter table={table} />
+      </div>
     </span>
   );
 };
