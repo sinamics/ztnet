@@ -97,7 +97,6 @@ services:
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
   next_ztnet:
-    # image: sinamics/next_ztnet:latest-dev   # Use this for testing latest development build
     image: sinamics/next_ztnet:latest
     container_name: ztnet
     platform: "linux/amd64"
