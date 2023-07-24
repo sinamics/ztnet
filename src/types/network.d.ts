@@ -13,6 +13,7 @@ export interface UserNetworkTable {
   network_members: MembersEntity[];
   nwid: string;
   nwname: string;
+  description: string;
   tagsByName: null;
 }
 
@@ -21,6 +22,7 @@ export interface NetworkEntity {
   autoAssignIp?: boolean;
   ipAssignments?: string;
   authorId?: number;
+  description?: string;
 }
 export interface TagEnums {
   [key: string]: number;
@@ -119,6 +121,7 @@ export interface ZtControllerNetwork {
   autoAssignIp: boolean;
   capabilitiesByName?: CapabilitiesByName;
   tagsByName?: TagsByName;
+  description?: string;
 }
 export interface RoutesEntity {
   target?: string | null;

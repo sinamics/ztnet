@@ -52,7 +52,7 @@ const Settings = () => {
             className="link text-primary"
             href="https://github.com/sinamics/next_ztnet/releases"
           >
-            {globalSiteVersion ?? "Dev Mode"}
+            {globalSiteVersion ?? "developer mode"}
           </a>
         </div>
       </div>
