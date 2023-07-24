@@ -1,24 +1,39 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
-
+import { useMemo, useState, useEffect } from "react";
+import { DebouncedInput } from "~/components/elements/debouncedInput";
 import {
   useReactTable,
   getCoreRowModel,
-  // getPaginationRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
-  type SortingState,
+  getFilteredRowModel,
   flexRender,
-  // type ColumnDef,
   createColumnHelper,
+  type SortingState,
 } from "@tanstack/react-table";
 import { type UserNetworkTable } from "~/types/network";
+import { useSkipper } from "../elements/useSkipper";
+import TableFooter from "./tableFooter";
 
+// import { makeNetworkData } from "../../utils/fakeData";
+const TruncateText = ({ text }: { text: string }) => {
+  if (!text) return null;
+  const shouldTruncate = text?.length > 100;
+  return (
+    <div
+      className={`text-left ${
+        shouldTruncate
+          ? "max-w-[150px] truncate sm:max-w-xs md:overflow-auto md:whitespace-normal"
+          : ""
+      }`}
+    >
+      {text}
+    </div>
+  );
+};
 export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
+  const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "nwid",
@@ -28,14 +43,19 @@ export const NetworkTable = ({ tableData = [] }) => {
   const columnHelper = createColumnHelper<UserNetworkTable>();
   const columns = useMemo(
     () => [
+      columnHelper.accessor("nwname", {
+        cell: (info) => info.getValue(),
+        header: () => <span>Name</span>,
+      }),
+      columnHelper.accessor("description", {
+        size: 300,
+        cell: (info) => <TruncateText text={info.getValue()} />,
+        header: () => <span>Description</span>,
+      }),
       columnHelper.accessor("nwid", {
         cell: (info) => info.getValue(),
         header: () => <span>Network ID</span>,
         // footer: (info) => info.column.id,
-      }),
-      columnHelper.accessor("nwname", {
-        cell: (info) => info.getValue(),
-        header: () => <span>Name</span>,
       }),
       columnHelper.accessor("members", {
         header: () => <span>Members</span>,
@@ -49,26 +69,62 @@ export const NetworkTable = ({ tableData = [] }) => {
     []
   );
 
-  const data = useMemo(() => tableData, [tableData]);
+  useEffect(() => {
+    setData(tableData);
+  }, [tableData]);
+
+  const [data, setData] = useState(tableData);
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
   const table = useReactTable({
     columns,
     data,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex,
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex();
+        setData((old: UserNetworkTable[]) =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                ...old[rowIndex]!,
+                [columnId]: value,
+              };
+            }
+            return row;
+          })
+        );
+      },
+    },
     state: {
       sorting,
+      globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
+    getFilteredRowModel: getFilteredRowModel(),
+    debugTable: false,
   });
   const handleRowClick = (nwid: string) => {
     void router.push(`/network/${nwid}`);
   };
 
   return (
-    <div className="inline-block w-full p-1.5 text-center align-middle">
-      <div className="overflow-hidden rounded-lg border">
-        <table className="min-w-full  divide-y">
+    <div className="inline-block w-full p-1.5 align-middle">
+      <div>
+        <DebouncedInput
+          value={globalFilter ?? ""}
+          onChange={(value) => setGlobalFilter(String(value))}
+          className="font-lg border-block border p-2 shadow"
+          placeholder="Search anything..."
+        />
+      </div>
+      <div className="overflow-auto rounded-lg border border-base-200/50">
+        <table className="min-w-full divide-y text-center">
           <thead className="">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -78,6 +134,12 @@ export const NetworkTable = ({ tableData = [] }) => {
                       key={header.id}
                       colSpan={header.colSpan}
                       className="bg-base-300/50 p-2 "
+                      style={{
+                        width:
+                          header.getSize() !== 150
+                            ? header.getSize()
+                            : undefined,
+                      }}
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -105,31 +167,32 @@ export const NetworkTable = ({ tableData = [] }) => {
             ))}
           </thead>
           <tbody className="divide-y">
-            {table
-              .getRowModel()
-              .rows.slice(0, 10)
-              .map((row) => {
-                return (
-                  <tr
-                    key={row.id}
-                    onClick={() => handleRowClick(row.original.nwid as string)}
-                    className="cursor-pointer hover:bg-secondary hover:bg-opacity-25"
-                  >
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <td key={cell.id} className="p-1">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr
+                  key={row.id}
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                  onClick={() => handleRowClick(row?.original?.nwid as string)}
+                  className="cursor-pointer border-base-300/50 hover:bg-secondary hover:bg-opacity-25"
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td key={cell.id} className="p-2">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+        <div className="flex flex-col items-center justify-between py-3 sm:flex-row">
+          <TableFooter table={table} />
+        </div>
       </div>
     </div>
   );

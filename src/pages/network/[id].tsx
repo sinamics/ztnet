@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, type ReactElement } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/modules/networkRoutes";
 import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
@@ -25,6 +25,8 @@ const NetworkById = () => {
   const [state, setState] = useState({
     viewZombieTable: false,
     editNetworkName: false,
+    toggleDescriptionInput: false,
+    description: "",
     networkName: "",
   });
   const { callModal } = useModalStore((state) => state);
@@ -47,6 +49,20 @@ const NetworkById = () => {
     },
   });
 
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      description: networkById?.network?.description,
+      networkName: networkById?.network?.name,
+    }));
+  }, [networkById?.network?.description, networkById?.network?.name]);
+
+  const toggleDescriptionInput = () => {
+    setState({
+      ...state,
+      toggleDescriptionInput: !state.toggleDescriptionInput,
+    });
+  };
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
     return (
@@ -64,7 +80,7 @@ const NetworkById = () => {
     updateNetwork(
       {
         nwid: network.nwid,
-        updateParams: { name: state.networkName },
+        updateParams: { name: state?.networkName },
       },
       {
         onSuccess: () => {
@@ -74,7 +90,9 @@ const NetworkById = () => {
       }
     );
   };
-  const eventHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const eventHandler = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
@@ -120,7 +138,7 @@ const NetworkById = () => {
               </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-semibold">Network Name:</span>
+              <span className="font-medium">Network Name:</span>
               <span className="relative left-7 flex items-center gap-2">
                 {state.editNetworkName ? (
                   <form onSubmit={changeNameHandler}>
@@ -150,12 +168,64 @@ const NetworkById = () => {
                 />
               </span>
             </div>
-            <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-semibold">Network Auth</span>
-              {network?.private ? (
-                <span className="text-success">Private</span>
+            <div className="py-3 font-light">
+              {!state.toggleDescriptionInput ? (
+                network?.description ? (
+                  <div
+                    onClick={toggleDescriptionInput}
+                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
+                    style={{ caretColor: "transparent" }}
+                  >
+                    {network?.description}
+                  </div>
+                ) : (
+                  <div
+                    onClick={toggleDescriptionInput}
+                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
+                    style={{ caretColor: "transparent" }}
+                  >
+                    Add description
+                  </div>
+                )
               ) : (
-                <span className="text-error">Public</span>
+                <form>
+                  <textarea
+                    autoFocus
+                    rows={3}
+                    value={state?.description}
+                    name="description"
+                    onChange={eventHandler}
+                    maxLength={255}
+                    style={{ maxHeight: "100px" }}
+                    className="custom-scrollbar textarea textarea-primary w-full leading-snug "
+                    placeholder="Description"
+                    onKeyDown={(
+                      e: React.KeyboardEvent<HTMLTextAreaElement>
+                    ) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        // submit form when Enter key is pressed and Shift key is not held down.
+                        const target = e.target as HTMLTextAreaElement;
+                        updateNetwork(
+                          {
+                            nwid: network.nwid,
+                            updateParams: { description: target.value },
+                          },
+                          {
+                            onSuccess: () => {
+                              void refetchNetwork();
+                              setState({
+                                ...state,
+                                toggleDescriptionInput:
+                                  !state.toggleDescriptionInput,
+                              });
+                            },
+                          }
+                        );
+                      }
+                    }}
+                  ></textarea>
+                </form>
               )}
             </div>
           </div>
@@ -165,7 +235,7 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
           <div>
-            <span className="text-muted font-semibold">Network Start:</span>{" "}
+            <span className="text-muted font-medium">Network Start:</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.ipAssignmentPools[0]?.ipRangeStart,
@@ -175,7 +245,7 @@ const NetworkById = () => {
             </span>
           </div>
           <div>
-            <span className="text-muted font-semibold">Network End:</span>{" "}
+            <span className="text-muted font-medium">Network End:</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.ipAssignmentPools[0]?.ipRangeEnd,
@@ -185,7 +255,7 @@ const NetworkById = () => {
             </span>
           </div>
           <div>
-            <span className="text-muted font-semibold">Network Cidr:</span>{" "}
+            <span className="text-muted font-medium">Network Cidr:</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.routes[0]?.target,
@@ -230,10 +300,9 @@ const NetworkById = () => {
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
-          <div className="membersTable-wrapper text-center">
+          <div className="membersTable-wrapper">
             <NetworkMembersTable
               nwid={network.nwid}
-
               // setEditing={(e: boolean) => setEditing(e)}
             />
           </div>
