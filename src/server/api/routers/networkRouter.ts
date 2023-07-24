@@ -272,6 +272,7 @@ export const networkRouter = createTRPCRouter({
           routes: RoutesArraySchema.optional(),
           changeCidr: z.string().optional(),
           autoAssignIp: z.boolean().optional().default(true),
+          description: z.string().optional(),
         }),
       })
     )
@@ -298,6 +299,7 @@ export const networkRouter = createTRPCRouter({
           routes,
           changeCidr,
           autoAssignIp,
+          description,
         } = input.updateParams;
 
         if (typeof privateNetwork === "boolean") {
@@ -374,7 +376,9 @@ export const networkRouter = createTRPCRouter({
           prismaUpdates.nwname = name;
           ztControllerUpdates.name = name;
         }
-
+        if (typeof description === "string") {
+          prismaUpdates.description = description;
+        }
         // Auto assign IP
         if (typeof autoAssignIp === "boolean") {
           prismaUpdates.autoAssignIp = autoAssignIp;

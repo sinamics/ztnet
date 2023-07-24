@@ -15,7 +15,20 @@ import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 // import { makeNetworkData } from "../../utils/fakeData";
-
+const TruncateText = ({ text }) => {
+  const shouldTruncate = text.length > 100;
+  return (
+    <div
+      className={`text-left ${
+        shouldTruncate
+          ? "max-w-[150px] truncate sm:max-w-xs md:overflow-auto md:whitespace-normal"
+          : ""
+      }`}
+    >
+      {text}
+    </div>
+  );
+};
 export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");
@@ -33,7 +46,8 @@ export const NetworkTable = ({ tableData = [] }) => {
         header: () => <span>Name</span>,
       }),
       columnHelper.accessor("description", {
-        cell: (info) => info.getValue(),
+        size: 300,
+        cell: (info) => <TruncateText text={info.getValue()} />,
         header: () => <span>Description</span>,
       }),
       columnHelper.accessor("nwid", {
@@ -107,8 +121,8 @@ export const NetworkTable = ({ tableData = [] }) => {
           placeholder="Search anything..."
         />
       </div>
-      <div className="overflow-auto rounded-lg border border-base-200/50 text-center">
-        <table className="min-w-full divide-y ">
+      <div className="overflow-auto rounded-lg border border-base-200/50">
+        <table className="min-w-full divide-y text-center">
           <thead className="">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -118,6 +132,12 @@ export const NetworkTable = ({ tableData = [] }) => {
                       key={header.id}
                       colSpan={header.colSpan}
                       className="bg-base-300/50 p-2 "
+                      style={{
+                        width:
+                          header.getSize() !== 150
+                            ? header.getSize()
+                            : undefined,
+                      }}
                     >
                       {header.isPlaceholder ? null : (
                         <div
