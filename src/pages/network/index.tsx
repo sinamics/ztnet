@@ -36,7 +36,7 @@ const Networks: NextPageWithLayout = () => {
         <div className="mb-3 mt-3 flex w-full justify-center ">
           <h5 className="w-full text-center text-2xl">Networks</h5>
         </div>
-        <div className="grid grid-cols-1 space-y-3 px-3 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
+        <div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
           <div className="flex justify-center">
             <button
               className={`btn btn-primary btn-outline`}

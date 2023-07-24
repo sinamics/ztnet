@@ -13,6 +13,7 @@ export interface UserNetworkTable {
   network_members: MembersEntity[];
   nwid: string;
   nwname: string;
+  description: string;
   tagsByName: null;
 }
 
