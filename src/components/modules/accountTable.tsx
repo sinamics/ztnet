@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, type ReactNode } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -157,13 +157,10 @@ export const Accounts = () => {
       if (id === "role") {
         return (
           <select
+            defaultValue={initialValue as string}
             onChange={(e) => dropDownHandler(e, parseInt(userid))}
             className="select select-ghost max-w-xs"
           >
-            <option selected disabled>
-              {initialValue as ReactNode}
-            </option>
-
             <option>ADMIN</option>
             <option>USER</option>
           </select>
