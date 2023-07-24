@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Header from "../modules/header";
-import Sidebar from "../modules/sidebar";
+import Header from "./header";
+import Sidebar from "./sidebar";
 import Footer from "../modules/footer";
 
 interface Props {
