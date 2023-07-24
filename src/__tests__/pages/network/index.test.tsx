@@ -70,7 +70,7 @@ describe("Networks page", () => {
     expect(screen.getByText("Network 1")).toBeInTheDocument();
     expect(screen.getByText("Network 2")).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText("Add Network"));
+    await userEvent.click(screen.getByText("Create a network"));
 
     // await waitFor(() => {
     //   expect(mockCreateNetwork).toHaveBeenCalledTimes(1);

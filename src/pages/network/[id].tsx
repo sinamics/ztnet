@@ -50,11 +50,11 @@ const NetworkById = () => {
   });
 
   useEffect(() => {
-    setState({
-      ...state,
+    setState((prev) => ({
+      ...prev,
       description: networkById?.network?.description,
       networkName: networkById?.network?.name,
-    });
+    }));
   }, [networkById?.network?.description, networkById?.network?.name]);
 
   const toggleDescriptionInput = () => {
@@ -80,7 +80,7 @@ const NetworkById = () => {
     updateNetwork(
       {
         nwid: network.nwid,
-        updateParams: { name: state.networkName },
+        updateParams: { name: state?.networkName },
       },
       {
         onSuccess: () => {
@@ -170,16 +170,27 @@ const NetworkById = () => {
             </div>
             <div className="py-3 font-light">
               {!state.toggleDescriptionInput ? (
-                <div
-                  onClick={toggleDescriptionInput}
-                  className="border-l-4 border-primary p-2 leading-snug"
-                  style={{ caretColor: "transparent" }}
-                >
-                  {network?.description}
-                </div>
+                network?.description ? (
+                  <div
+                    onClick={toggleDescriptionInput}
+                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
+                    style={{ caretColor: "transparent" }}
+                  >
+                    {network?.description}
+                  </div>
+                ) : (
+                  <div
+                    onClick={toggleDescriptionInput}
+                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
+                    style={{ caretColor: "transparent" }}
+                  >
+                    Add description
+                  </div>
+                )
               ) : (
                 <form>
                   <textarea
+                    autoFocus
                     rows={3}
                     value={state?.description}
                     name="description"

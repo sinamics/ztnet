@@ -78,7 +78,7 @@ export function makeNetworkMemberData(...lens: number[]) {
     return range(len).map((): Partial<MembersEntity> => {
       return {
         ...newMembers(),
-        subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
+        // subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
       };
     });
   };

@@ -14,9 +14,11 @@ import {
 import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
+
 // import { makeNetworkData } from "../../utils/fakeData";
-const TruncateText = ({ text }) => {
-  const shouldTruncate = text.length > 100;
+const TruncateText = ({ text }: { text: string }) => {
+  if (!text) return null;
+  const shouldTruncate = text?.length > 100;
   return (
     <div
       className={`text-left ${
