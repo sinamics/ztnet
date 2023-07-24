@@ -1,7 +1,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/sinamics/next_ztnet">
-    <img src="docs/images/ztnet_logo_200x200.png" alt="Logo" width="150" height="150">
+    <img src="docs/images/ztnet_logo_v2_100x100.png" alt="Logo" width="150" height="150">
   </a>
 
   <p align="center">
@@ -97,6 +97,7 @@ services:
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
   next_ztnet:
+    # image: sinamics/next_ztnet:latest-dev   # Use this for testing latest development build
     image: sinamics/next_ztnet:latest
     container_name: ztnet
     platform: "linux/amd64"

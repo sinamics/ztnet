@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
-import ZtnetLogo from "docs/images/ztnet_logo_100x100.png";
+import ZtnetLogo from "docs/images/ztnet_logo_v2_50x50.png";
 
 const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
