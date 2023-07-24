@@ -42,7 +42,11 @@ const Header = () => {
         </svg>
         <div className="hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
-            <Image width={30} height={50} alt="ztnet logo" src={ZtnetLogo} />
+            <Image
+              style={{ width: 30, height: 30 }}
+              alt="ztnet logo"
+              src={ZtnetLogo}
+            />
             <span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
               {globalSiteTitle}
             </span>
