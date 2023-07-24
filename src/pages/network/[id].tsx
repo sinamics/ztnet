@@ -233,7 +233,6 @@ const NetworkById = () => {
           <div className="membersTable-wrapper text-center">
             <NetworkMembersTable
               nwid={network.nwid}
-
               // setEditing={(e: boolean) => setEditing(e)}
             />
           </div>

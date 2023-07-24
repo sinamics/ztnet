@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
 import {
   useReactTable,
@@ -12,23 +12,9 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { type UserNetworkTable } from "~/types/network";
+import { useSkipper } from "../elements/useSkipper";
+import TableFooter from "./tableFooter";
 // import { makeNetworkData } from "../../utils/fakeData";
-
-function useSkipper() {
-  const shouldSkipRef = useRef(true);
-  const shouldSkip = shouldSkipRef.current;
-
-  // Wrap a function with this to skip a pagination reset temporarily
-  const skip = useCallback(() => {
-    shouldSkipRef.current = false;
-  }, []);
-
-  useEffect(() => {
-    shouldSkipRef.current = true;
-  });
-
-  return [shouldSkip, skip] as const;
-}
 
 export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
@@ -105,7 +91,7 @@ export const NetworkTable = ({ tableData = [] }) => {
     },
     onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
-    debugTable: true,
+    debugTable: false,
   });
   const handleRowClick = (nwid: string) => {
     void router.push(`/network/${nwid}`);
@@ -182,62 +168,8 @@ export const NetworkTable = ({ tableData = [] }) => {
             })}
           </tbody>
         </table>
-
         <div className="flex flex-col items-center justify-between py-3 sm:flex-row">
-          <div className="space-x-3 p-2">
-            <button
-              className="btn btn-primary btn-outline btn-sm"
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<<"}
-            </button>
-            <button
-              className="btn btn-primary btn-outline btn-sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </button>
-            <button
-              className="btn btn-primary btn-outline btn-sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </button>
-            <button
-              className="btn btn-primary btn-outline btn-sm"
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              {">>"}
-            </button>
-          </div>
-          <div className="space-x-3 p-2">
-            <select
-              className="select select-bordered select-sm"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="space-x-3 p-2">
-            <span className="flex items-center gap-1 text-xs">
-              <div>Page</div>
-              <strong>
-                {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
-              </strong>
-            </span>
-          </div>
+          <TableFooter table={table} />
         </div>
       </div>
     </div>
