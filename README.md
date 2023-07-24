@@ -1,7 +1,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/sinamics/next_ztnet">
-    <img src="docs/images/ztnet_logo_v2_100x100.png" alt="Logo" width="150" height="150">
+    <img src="docs/images/ztnet_logo_v2_100x100.png" alt="Logo" width="80" height="80">
   </a>
 
   <p align="center">
