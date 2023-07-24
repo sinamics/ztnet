@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
-import ZtnetLogo from "docs/images/ztnet_logo_v2_50x50.png";
+import ZtnetLogo from "docs/images/ztnet_v3_100x100.png";
 
 const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
@@ -43,7 +43,7 @@ const Header = () => {
         <div className="hidden md:inline-flex">
           <a href="#" className="inline-flex flex-row items-center">
             <Image
-              style={{ width: 30, height: 30 }}
+              style={{ width: 25, height: 25 }}
               alt="ztnet logo"
               src={ZtnetLogo}
             />
