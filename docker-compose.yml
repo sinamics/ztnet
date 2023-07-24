@@ -57,6 +57,22 @@ services:
     depends_on:
       - postgres
       - zerotier
+  zeronsd:
+    image: sinamics/zeronsd:latest
+    container_name: zeronsd
+    restart: unless-stopped
+    networks:
+      - app-network
+    command: "start 5394f094cac10bd3"
+    volumes:
+      - zerotier:/var/lib/zerotier-one:ro
+    # depends_on:
+    #   - zerotier
+    #   - next_ztnet
+    environment:
+      ZEROTIER_CENTRAL_INSTANCE: "http://ztnet/api/zeronsd"
+      ZEROTIER_CENTRAL_TOKEN: "ztnet"
+      ZEROTIER_LOCAL_URL: http://zerotier
 
 volumes:
   zerotier:
