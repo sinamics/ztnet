@@ -135,7 +135,7 @@ const Mail = () => {
           <p className="font-medium">Use SSL</p>
           <input
             type="checkbox"
-            checked={options?.smtpUseSSL}
+            checked={options?.smtpUseSSL || false}
             className="checkbox-primary checkbox checkbox-sm"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               void inputHandler({ smtpUseSSL: e.target.checked });
@@ -144,7 +144,7 @@ const Mail = () => {
         </div>
         <div
           tabIndex={0}
-          className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
+          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
           <div className="collapse-title">Invite user template</div>

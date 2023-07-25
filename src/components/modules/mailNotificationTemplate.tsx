@@ -19,6 +19,15 @@ const NotificationTemplate = () => {
     body: "",
   });
 
+  // get default mail template
+  const {
+    data: mailTemplates,
+    refetch: refetchMailTemplates,
+    isLoading: loadingTemplates,
+  } = api.admin.getMailTemplates.useQuery({
+    template: "notificationTemplate",
+  });
+
   const changeTemplateHandler = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
@@ -40,12 +49,6 @@ const NotificationTemplate = () => {
     });
 
   const { mutate: setMailTemplates } = api.admin.setMailTemplates.useMutation();
-
-  // get default mail template
-  const { data: mailTemplates, refetch: refetchMailTemplates } =
-    api.admin.getMailTemplates.useQuery({
-      template: "notificationTemplate",
-    });
 
   const { mutate: getDefaultMailTemplate, data: defaultTemplates } =
     api.admin.getDefaultMailTemplate.useMutation();
@@ -102,7 +105,15 @@ const NotificationTemplate = () => {
       }
     );
   };
-
+  if (loadingTemplates) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
   return (
     <div>
       <div className="space-y-3">
@@ -117,11 +128,7 @@ const NotificationTemplate = () => {
           <input
             type="text"
             placeholder="Subject"
-            value={stateTemplate?.subject}
-            defaultValue={
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              (mailTemplates as IMailTemplate)?.subject
-            }
+            value={stateTemplate?.subject || ""}
             name="subject"
             className={cn("input input-bordered w-full focus:outline-none", {
               "border-2 border-red-500": changes?.subject,
@@ -134,7 +141,7 @@ const NotificationTemplate = () => {
             <span className="label-text">HTML Body</span>
           </label>
           <textarea
-            value={stateTemplate?.body?.replace(/<br \/>/g, "\n")}
+            value={stateTemplate?.body?.replace(/<br \/>/g, "\n") || ""}
             className={cn(
               "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
               { "border-2 border-red-500": changes.body }
