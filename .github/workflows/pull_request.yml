@@ -31,7 +31,6 @@ jobs:
 
   test_build:
     runs-on: ubuntu-latest
-    needs: web_lint_test
     steps:
       - uses: actions/checkout@v2
         # checkout dev branch
