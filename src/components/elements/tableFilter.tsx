@@ -27,7 +27,7 @@ export const TableFilter = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [column.getFacetedUniqueValues()]
   );
-  console.log(columnFilterValue);
+
   return typeof firstValue === "number" ? (
     <div>
       <div className="flex space-x-2">
