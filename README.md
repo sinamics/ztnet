@@ -1,7 +1,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/sinamics/next_ztnet">
-    <img src="docs/images/ztnet_v3_original.png" alt="Logo" width="120" height="120">
+    <img src="docs/images/logo/ztnet_original.png" alt="Logo" width="120" height="120">
   </a>
 
   <p align="center">
@@ -222,7 +222,7 @@ Now start the development server:
 
 ## Network page layout
 
-![Networks](docs/images/ztnet_network.jpg)
+![Networks](docs/images/showcase/ztnet_network.jpg)
 
 ### ⚠️ Disclaimer:
 
