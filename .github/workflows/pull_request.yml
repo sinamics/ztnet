@@ -65,8 +65,7 @@ jobs:
           context: .
           push: false
           build-args: |
-            "NEXT_PUBLIC_APP_VERSION=${{ github.ref_name }}-${{ env.SHORT_SHA }}"
+            "NEXT_PUBLIC_APP_VERSION=test"
           # platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest-dev
