@@ -30,6 +30,7 @@ jobs:
         run: npm run test
 
   test_build:
+    name: Test Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
