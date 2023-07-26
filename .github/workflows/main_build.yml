@@ -1,0 +1,80 @@
+# create github action that will build nextjs application and push it to docker hub and tag with commit hash
+# apply this to every push to dev and pull request
+
+name: Build on every push to main
+on:
+  push:
+    branches:
+      - main
+  # pull_request:
+  #   branches:
+  #     - dev
+jobs:
+  web_lint_test:
+    name: Web - Lint - Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@master
+        with:
+          node-version: 18.x
+      # write local env file .env with secrets
+      # add dummy keys to get the required markers for next-auth and postgres
+      - name: Write local dummy env file ( lint )
+        run: |
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
+          echo "NEXTAUTH_SECRET=dummy_key" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+          echo "NEXT_PUBLIC_SITE_NAME=Next ZTnet" >> .env
+          echo "NEXT_PUBLIC_APP_VERSION=" >> .env
+          echo "IS_GITHUB_ACTION=true" >> .env
+
+      - run: npm install
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: web_lint_test
+    steps:
+      - uses: actions/checkout@v2
+        # checkout dev branch
+        with:
+          ref: dev
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - id: lowercaseRepo
+        uses: ASzc/change-string-case-action@v5
+        with:
+          string: ${{ github.repository }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create short sha
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          build-args: |
+            "NEXT_PUBLIC_APP_VERSION=${{ github.ref_name }}-${{ env.SHORT_SHA }}"
+          # platforms: linux/amd64,linux/arm64,linux/arm/v7
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.ref_name }}-${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest-dev
