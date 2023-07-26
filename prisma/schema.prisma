@@ -69,6 +69,7 @@ model network_members {
   vRev                 Int?
   ipAssignments        String[]
   noAutoAssignIps      Boolean?  @default(false)
+  notations            NetworkMemberNotation[]
 
   @@unique([id, nwid])
 }
@@ -86,6 +87,32 @@ model network {
   tagsByName           Json?
   capabilitiesByName   Json?
   network_members network_members[]
+  notations            Notation[]
+}
+
+model Notation {
+  id                      Int           @id @default(autoincrement())
+  name                    String
+  color                   String?
+  useTableBackground      Boolean?      @default(false)
+  description             String?
+  creation_time           DateTime      @default(now())
+  updated_time            DateTime      @updatedAt
+  is_active               Boolean       @default(true)
+  network_id              String
+  network                 network       @relation(fields: [network_id], references: [nwid])
+  network_members         NetworkMemberNotation[]
+  icon                    String?   
+  order_index             Int?    
+  visibility              String?  
+}
+
+model NetworkMemberNotation {
+  notationId  Int
+  nodeId      Int
+  label       Notation       @relation(fields: [notationId], references: [id])
+  member      network_members   @relation(fields: [nodeId], references: [nodeid])
+  @@id([notationId, nodeId])
 }
 
 // Necessary for Next auth
