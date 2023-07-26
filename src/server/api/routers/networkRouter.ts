@@ -42,14 +42,20 @@ function isValidDomain(domain: string): boolean {
   return domainRegex.test(domain);
 }
 const RouteSchema = z.object({
-  target: z.string().refine(isValidCIDR, {
-    message: "Destination IP must be a valid CIDR notation!",
-  }),
+  target: z
+    .string()
+    .optional()
+    .refine((val) => val !== undefined && isValidCIDR(val), {
+      message: "Destination IP must be a valid CIDR notation!",
+    }),
   via: z
     .union([
-      z.string().refine(isValidIP, {
-        message: "Via IP must be a valid IP address!",
-      }),
+      z
+        .string()
+        .optional()
+        .refine((val) => !val || isValidIP(val), {
+          message: "Via IP must be a valid IP address!",
+        }),
       z.null(),
     ])
     .optional(),
