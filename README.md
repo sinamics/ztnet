@@ -1,8 +1,8 @@
 <br />
 <p align="center">
-  <!-- <a href="https://github.com/sinamics/next_ztnet">
-    <img src="docs/images/logo/ztnet_original.png" alt="Logo" width="120" height="120">
-  </a> -->
+  <a href="https://github.com/sinamics/next_ztnet">
+    <img src="docs/images/logo/ztnet_original.png" alt="Logo" width="100" height="80">
+  </a>
 
   <p align="center">
     Next Ztnet - Self-Hosted ZeroTier network controller.
