@@ -91,28 +91,28 @@ model network {
 }
 
 model Notation {
-  id                      Int           @id @default(autoincrement())
-  name                    String
-  color                   String?
-  useTableBackground      Boolean?      @default(false)
-  description             String?
-  creation_time           DateTime      @default(now())
-  updated_time            DateTime      @updatedAt
-  is_active               Boolean       @default(true)
-  network_id              String
-  network                 network       @relation(fields: [network_id], references: [nwid])
-  network_members         NetworkMemberNotation[]
-  icon                    String?   
-  order_index             Int?    
-  visibility              String?  
+  id                        Int           @id @default(autoincrement())
+  name                      String
+  color                     String?
+  useTableBackground        Boolean?      @default(false)
+  description               String?
+  creationTime              DateTime      @default(now())
+  updatedTime               DateTime      @updatedAt
+  isActive                  Boolean       @default(true)
+  nwid                      String
+  network                   network       @relation(fields: [nwid], references: [nwid])
+  network_members           NetworkMemberNotation[]
+  icon                      String?   
+  orderIndex                Int?    
+  visibility                String?  
 }
 
 model NetworkMemberNotation {
-  notationId  Int
-  nodeId      Int
-  label       Notation       @relation(fields: [notationId], references: [id])
-  member      network_members   @relation(fields: [nodeId], references: [nodeid])
-  @@id([notationId, nodeId])
+  notationId    Int
+  memberId      Int
+  label         Notation          @relation(fields: [notationId], references: [id])
+  member        network_members   @relation(fields: [memberId], references: [nodeid])
+  @@id([notationId, memberId])
 }
 
 // Necessary for Next auth

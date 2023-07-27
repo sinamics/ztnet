@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 
-interface PasswordInputProps {
+interface InputProps {
   placeholder: string;
   value?: string | number;
   name: string;
   type: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   focus?: boolean;
   className?: string;
   defaultValue?: string | number;
@@ -21,7 +21,7 @@ const Input = ({
   defaultValue,
   focus = false,
   ...rest
-}: PasswordInputProps) => {
+}: InputProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

@@ -26,6 +26,7 @@ import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
+import { input } from "@testing-library/user-event/dist/types/event";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -671,5 +672,39 @@ accept;`;
 
       // send test mail to user
       await sendEmail(transporter, mailOptions);
+    }),
+  addAnotation: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        color: z.string().optional(),
+        useTableBackground: z.boolean().optional(),
+        description: z.string().optional(),
+        nwid: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.notation.create({
+        data: {
+          name: input.name,
+          color: input.color,
+          useTableBackground: input.useTableBackground,
+          description: input.description,
+          nwid: input.nwid,
+        },
+      });
+    }),
+  getAnotation: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.notation.findMany({
+        where: {
+          nwid: input.nwid,
+        },
+      });
     }),
 });
