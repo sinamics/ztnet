@@ -10,6 +10,7 @@ import {
   type CapabilitiesByName,
   type TagsByName,
 } from "~/types/network";
+import Anotation from "./anotation";
 
 interface ModalContentProps {
   nwid: string;
@@ -467,6 +468,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
           <div className="col-span-4">
             <header>Tags:</header>
             {TagDropdowns(networkById?.network?.tagsByName)}
+          </div>
+        </div>
+        <div className="grid grid-cols-4 items-start gap-4 py-3">
+          <div className="col-span-4">
+            <Anotation nwid={nwid} />
           </div>
         </div>
       </div>
