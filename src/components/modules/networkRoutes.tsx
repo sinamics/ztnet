@@ -5,9 +5,14 @@ import { type RoutesEntity } from "~/types/network";
 import { type ChangeEvent, useState } from "react";
 import { type ErrorData } from "~/types/errorHandling";
 
+const initialRouteInput = {
+  target: "",
+  via: "",
+};
+
 export const NettworkRoutes = () => {
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
-  const [routeInput, setRouteInput] = useState<RoutesEntity>();
+  const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
   const { query } = useRouter();
   const {
@@ -64,6 +69,7 @@ export const NettworkRoutes = () => {
         onSuccess: () => {
           void refecthNetworkById();
           setShowRouteInput(false);
+          setRouteInput(initialRouteInput);
         },
       }
     );

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
-import ZtnetLogo from "docs/images/ztnet_v3_100x100.png";
+import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
 
 const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
@@ -41,7 +41,7 @@ const Header = () => {
           />
         </svg>
         <div className="hidden md:inline-flex">
-          <a href="#" className="inline-flex flex-row items-center">
+          <a href="#" className="inline-flex flex-row items-center gap-2">
             <Image
               style={{ width: 25, height: 25 }}
               alt="ztnet logo"
@@ -56,7 +56,7 @@ const Header = () => {
           {/* <div className="sidebar-header flex items-center justify-center py-4"> */}
 
           {/* <a href="#" className="flex flex-row items-center"> */}
-          <div className="dropdown-end dropdown">
+          <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-primary btn-sm m-1">
               {theme.toUpperCase()}
             </label>
