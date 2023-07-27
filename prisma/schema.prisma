@@ -104,15 +104,17 @@ model Notation {
   network_members           NetworkMemberNotation[]
   icon                      String?   
   orderIndex                Int?    
-  visibility                String?  
+  visibility                String?
+
+  @@unique([name, nwid])
 }
 
 model NetworkMemberNotation {
   notationId    Int
-  memberId      Int
+  nodeid        Int
   label         Notation          @relation(fields: [notationId], references: [id])
-  member        network_members   @relation(fields: [memberId], references: [nodeid])
-  @@id([notationId, memberId])
+  member        network_members   @relation(fields: [nodeid], references: [nodeid])
+  @@id([notationId, nodeid])
 }
 
 // Necessary for Next auth

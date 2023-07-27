@@ -681,16 +681,32 @@ accept;`;
         useTableBackground: z.boolean().optional(),
         description: z.string().optional(),
         nwid: z.string(),
+        nodeid: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.notation.create({
-        data: {
+      const notation = await ctx.prisma.notation.upsert({
+        where: {
+          name_nwid: {
+            name: input.name,
+            nwid: input.nwid,
+          },
+        },
+        update: {},
+        create: {
           name: input.name,
           color: input.color,
           useTableBackground: input.useTableBackground,
           description: input.description,
           nwid: input.nwid,
+        },
+      });
+
+      // Then, link the notation to the network member.
+      return await ctx.prisma.networkMemberNotation.create({
+        data: {
+          notationId: notation.id,
+          nodeid: input.nodeid,
         },
       });
     }),

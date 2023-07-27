@@ -19,10 +19,13 @@ CREATE TABLE "Notation" (
 -- CreateTable
 CREATE TABLE "NetworkMemberNotation" (
     "notationId" INTEGER NOT NULL,
-    "memberId" INTEGER NOT NULL,
+    "nodeid" INTEGER NOT NULL,
 
-    CONSTRAINT "NetworkMemberNotation_pkey" PRIMARY KEY ("notationId","memberId")
+    CONSTRAINT "NetworkMemberNotation_pkey" PRIMARY KEY ("notationId","nodeid")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Notation_name_nwid_key" ON "Notation"("name", "nwid");
 
 -- AddForeignKey
 ALTER TABLE "Notation" ADD CONSTRAINT "Notation_nwid_fkey" FOREIGN KEY ("nwid") REFERENCES "network"("nwid") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -31,4 +34,4 @@ ALTER TABLE "Notation" ADD CONSTRAINT "Notation_nwid_fkey" FOREIGN KEY ("nwid") 
 ALTER TABLE "NetworkMemberNotation" ADD CONSTRAINT "NetworkMemberNotation_notationId_fkey" FOREIGN KEY ("notationId") REFERENCES "Notation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "NetworkMemberNotation" ADD CONSTRAINT "NetworkMemberNotation_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "network_members"("nodeid") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "NetworkMemberNotation" ADD CONSTRAINT "NetworkMemberNotation_nodeid_fkey" FOREIGN KEY ("nodeid") REFERENCES "network_members"("nodeid") ON DELETE RESTRICT ON UPDATE CASCADE;

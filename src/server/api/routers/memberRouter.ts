@@ -323,4 +323,38 @@ export const networkMemberRouter = createTRPCRouter({
         },
       });
     }),
+  getMemberAnotations: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+        nodeid: z.number(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.networkMemberNotation.findMany({
+        where: {
+          nodeid: input.nodeid,
+        },
+        include: {
+          label: true,
+        },
+      });
+    }),
+  removeMemberAnotations: protectedProcedure
+    .input(
+      z.object({
+        notationId: z.number(),
+        nodeid: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.networkMemberNotation.delete({
+        where: {
+          notationId_nodeid: {
+            notationId: input.notationId,
+            nodeid: input.nodeid,
+          },
+        },
+      });
+    }),
 });
