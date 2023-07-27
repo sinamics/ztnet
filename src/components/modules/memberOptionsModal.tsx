@@ -472,7 +472,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         </div>
         <div className="grid grid-cols-4 items-start gap-4 py-3">
           <div className="col-span-4">
-            <Anotation nwid={nwid} />
+            <Anotation nwid={nwid} nodeid={memberById?.nodeid} />
           </div>
         </div>
       </div>

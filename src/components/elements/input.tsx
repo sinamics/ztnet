@@ -6,6 +6,7 @@ interface InputProps {
   name: string;
   type: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   focus?: boolean;
   className?: string;
   defaultValue?: string | number;
@@ -16,6 +17,7 @@ const Input = ({
   value,
   name,
   onChange,
+  onBlur,
   type,
   className = "",
   defaultValue,
@@ -51,6 +53,7 @@ const Input = ({
       defaultValue={defaultValue}
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       className={`input w-full max-w-xs ${className}`}
       ref={inputRef}
       {...rest}
