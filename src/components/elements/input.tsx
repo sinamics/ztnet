@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react";
+import { forwardRef, useEffect } from "react";
 
 interface InputProps {
   placeholder: string;
@@ -28,7 +28,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     }: InputProps,
     forwardedRef
   ) => {
-    // const inputRef = useRef<HTMLInputElement>(null);
     const handleRef = (instance: HTMLInputElement | null) => {
       if (typeof forwardedRef === "function") {
         forwardedRef(instance);
