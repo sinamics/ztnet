@@ -1,6 +1,6 @@
 <br />
 <p align="center">
-  <a href="https://github.com/sinamics/next_ztnet">
+  <a href="https://github.com/sinamics/ztnet">
     <img src="docs/images/logo/ztnet_original.png" alt="Logo" width="100" height="80">
   </a>
 
@@ -8,19 +8,19 @@
     ZTNET - Self-Hosted ZeroTier network controller.
     <br />
     <br />
-    <a href="https://github.com/sinamics/next_ztnet/issues/new?assignees=&labels=support%2Ctriage&projects=&template=general_support_request.yml&title=%5BSupport%5D%3A+">Bug Report</a>
+    <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=support%2Ctriage&projects=&template=general_support_request.yml&title=%5BSupport%5D%3A+">Bug Report</a>
     ·
-    <a href="https://github.com/sinamics/next_ztnet/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature+Request%5D%3A+">Feature Request</a>
+    <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature+Request%5D%3A+">Feature Request</a>
     ·
-    <a href="https://github.com/sinamics/next_ztnet/discussions">Ask a Question</a>
+    <a href="https://github.com/sinamics/ztnet/discussions">Ask a Question</a>
   </p>
 
 </p>
 <br />
 
-[![GithubCI](https://github.com/sinamics/next_ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/next_ztnet/actions)
-[![Release](https://img.shields.io/github/v/release/sinamics/next_ztnet.svg)](https://github.com/sinamics/next_ztnet/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/next_ztnet.svg)](https://hub.docker.com/r/sinamics/next_ztnet/)
+[![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
+[![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
+[![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/)
 
 # ZTNET
 
@@ -97,7 +97,7 @@ services:
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
   ztnet:
-    # image: sinamics/next_ztnet:latest-main   # Use this for testing latest main branch
+    # image: sinamics/ztnet:latest-main   # Use this for testing latest main branch
     image: sinamics/ztnet:latest
     container_name: ztnet
     platform: "linux/amd64"
@@ -196,8 +196,8 @@ This project welcomes contributions. To ensure smooth collaboration, please foll
 
 To start development, first, clone the repository:
 
-`git clone https://github.com/yourusername/next_ztnet.git
-cd next_ztnet`
+`git clone https://github.com/yourusername/ztnet.git
+cd ztnet`
 
 ### Setup Environment Variables
 

@@ -1,6 +1,6 @@
-# Contributing to the next_ztnet Repository
+# Contributing to the ztnet Repository
 
-Thank you for considering contributing to the next_ztnet repository! This document outlines the guidelines and procedures for contributing code, reporting issues, and submitting pull requests.
+Thank you for considering contributing to the ztnet repository! This document outlines the guidelines and procedures for contributing code, reporting issues, and submitting pull requests.
 
 ## Code of Conduct
 
@@ -8,11 +8,11 @@ We encourage all contributors to follow our [Code of Conduct](CODE_OF_CONDUCT.md
 
 ## Reporting Issues
 
-If you encounter any issues or bugs with the next_ztnet repository, please report them on our [GitHub issue tracker](https://github.com/next_ztnet/issues). Please include as much detail as possible, including steps to reproduce the issue and any relevant error messages.
+If you encounter any issues or bugs with the ztnet repository, please report them on our [GitHub issue tracker](https://github.com/ztnet/issues). Please include as much detail as possible, including steps to reproduce the issue and any relevant error messages.
 
 ## Contributing Code
 
-If you would like to contribute code to the next_ztnet repository, please follow these guidelines:
+If you would like to contribute code to the ztnet repository, please follow these guidelines:
 
 1. Fork the repository and clone it to your local machine.
 2. Create a new branch for your changes. The branch should be named in the following format: `feature/<description>` for new features, or `bugfix/<description>` for bug fixes.
@@ -34,4 +34,4 @@ Please note that all pull requests will be reviewed by the project maintainers b
 
 ## Conclusion
 
-Thank you for considering contributing to the next_ztnet repository. We appreciate your help in making this project better! If you have any questions, please don't hesitate to reach out to the project maintainers.
+Thank you for considering contributing to the ztnet repository. We appreciate your help in making this project better! If you have any questions, please don't hesitate to reach out to the project maintainers.
