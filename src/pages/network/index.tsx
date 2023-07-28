@@ -5,36 +5,37 @@ import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/modules/networkTable";
 import { globalSiteTitle } from "~/utils/global";
+import { useTranslation } from "react-i18next";
 
 const Networks: NextPageWithLayout = () => {
+  const { t } = useTranslation();
   const {
     data: userNetworks,
     isLoading,
     refetch,
   } = api.network.getUserNetworks.useQuery();
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
-  //   const network = api.networkRouter.message.useQuery();
   const addNewNetwork = () => {
-    // New network
     createNetwork(null, { onSuccess: () => void refetch() });
   };
 
   if (isLoading) {
-    return <div>loading</div>;
+    return <div>{t("networks.loading")}</div>;
   }
-  const title = `${globalSiteTitle} - Networks`;
+
+  const title = `${globalSiteTitle} - ${t("networks.title")}`;
 
   return (
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content="VPN Networks" />
+        <meta name="description" content={t("networks.description")} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="w-full bg-base-100">
         <div className="mb-3 mt-3 flex w-full justify-center ">
-          <h5 className="w-full text-center text-2xl">Networks</h5>
+          <h5 className="w-full text-center text-2xl">{t("networks.title")}</h5>
         </div>
         <div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
           <div className="flex justify-center">
@@ -56,7 +57,7 @@ const Networks: NextPageWithLayout = () => {
                   d="M12 4.5v15m7.5-7.5h-15"
                 />
               </svg>
-              Create a network
+              {t("networks.addNetworkButton")}
             </button>
           </div>
           <div className="col-span-2">
@@ -79,10 +80,7 @@ const Networks: NextPageWithLayout = () => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>
-                    No networks have been created yet. Start by creating one and
-                    it will appear here.
-                  </span>
+                  <span>{t("networks.noNetworksMessage")}</span>
                 </div>
               ))}
           </div>

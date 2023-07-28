@@ -1,0 +1,31 @@
+{
+  "sidebar": {
+    "navigation": "Navigasjon",
+    "dashboard": "Dashbord",
+    "networks": "Nettverk",
+    "admin": "Admin",
+    "settings": "Innstillinger",
+    "mail": "Post",
+    "users": "Brukere",
+    "controller": "Kontroller"
+  },
+  "networks": {
+    "loading": "Laster",
+    "title": "Nettverk",
+    "description": "VPN-nettverk",
+    "addNetworkButton": "Opprett et nettverk",
+    "noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her.",
+    "networkSearchPlaceholder": "Søk etter nettverk"
+  },
+  "networksTable": {
+    "name": "Navn",
+    "description": "Beskrivelse",
+    "networkId": "Nettverk ID",
+    "members": "Medlemmer"
+  },
+  "tableFooter": {
+    "show": "Vis",
+    "page": "Side",
+    "of": "av"
+  }
+}

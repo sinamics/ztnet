@@ -1,0 +1,30 @@
+{
+  "sidebar": {
+    "navigation": "Navegación",
+    "dashboard": "Tablero",
+    "networks": "Redes",
+    "admin": "Admin",
+    "settings": "Configuraciones",
+    "mail": "Correo",
+    "users": "Usuarios",
+    "controller": "Controlador"
+  },
+  "networks": {
+    "loading": "Cargando",
+    "title": "Redes",
+    "description": "Redes VPN",
+    "addNetworkButton": "Crear una red",
+    "noNetworksMessage": "Aún no se han creado redes. Comience creando una y aparecerá aquí."
+  },
+  "networksTable": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "networkId": "ID de red",
+    "members": "Miembros"
+  },
+  "tableFooter": {
+    "show": "Mostrar",
+    "page": "Página",
+    "of": "de"
+  }
+}
