@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import TimeAgo from "react-timeago";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
@@ -19,10 +19,15 @@ import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { useModalStore } from "~/utils/store";
 import { MemberOptionsModal } from "./memberOptionsModal";
-import { type MembersEntity } from "~/types/network";
+import {
+  type NetworkMemberNotation,
+  type MembersEntity,
+} from "~/types/network";
 import { DebouncedInput } from "../elements/debouncedInput";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
+import { convertRGBtoRGBA } from "~/utils/randomColor";
+import Input from "../elements/input";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
@@ -56,7 +61,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       },
       { enabled: !!query.id }
     );
-
+  const { data: options } = api.admin.getAllOptions.useQuery();
   const { mutate: updateMemberDatabaseOnly } =
     api.networkMember.UpdateDatabaseOnly.useMutation();
 
@@ -91,7 +96,6 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       }
     );
   };
-
   const stashMember = (id: string) => {
     stashUser(
       {
@@ -104,6 +108,22 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
   const columnHelper = createColumnHelper<MembersEntity>();
   const columns = useMemo<ColumnDef<MembersEntity>[]>(
     () => [
+      columnHelper.accessor(
+        (row) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+          const notations = (row as any)?.notations as NetworkMemberNotation[];
+          const output: string[] = [];
+          notations?.map((tag) => {
+            return output.push(tag?.label?.name);
+          });
+
+          return output.join(", ");
+        },
+        {
+          header: () => "Notations",
+          id: "notations",
+        }
+      ),
       columnHelper.accessor("authorized", {
         header: () => <span>Authorized</span>,
         id: "authorized",
@@ -267,6 +287,8 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
   const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
     cell: ({ getValue, row: { index, original }, column: { id }, table }) => {
       const initialValue = getValue();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const inputRef = useRef<HTMLInputElement>(null);
 
       // We need to keep and update the state of the cell normally
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -298,6 +320,8 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
             },
           }
         );
+
+        inputRef.current?.blur();
         // updateMyData(index, id, value, original);
       };
       // If the initialValue is changed external, sync it up with our state
@@ -307,14 +331,37 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       }, [initialValue]);
 
       if (id === "name") {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        const notations = (original as any)
+          ?.notations as NetworkMemberNotation[];
         return (
           <form>
-            <input
-              className="m-0 border-0 bg-transparent p-0"
-              value={(value as string) || ""}
-              onChange={(e) => setValue(e.target.value)}
-              onBlur={onBlur}
-            />
+            <span className="flex items-center space-x-2">
+              {options?.showNotationMarkerInTableRow &&
+                notations.map((notation, idx) => (
+                  <div
+                    key={idx}
+                    className="inline-block h-5 w-5 rounded-full"
+                    title={notation.label?.name}
+                    style={{
+                      backgroundColor: convertRGBtoRGBA(
+                        notation.label?.color,
+                        1
+                      ),
+                    }}
+                  ></div>
+                ))}
+              <Input
+                ref={inputRef}
+                placeholder="Click to change name"
+                name="networkName"
+                onChange={(e) => setValue(e.target.value)}
+                onBlur={onBlur}
+                value={(value as string) || ""}
+                type="text"
+                className="input-primary input-sm m-0 border-0 bg-transparent p-0"
+              />
+            </span>
             <button type="submit" onClick={submitName} className="hidden" />
           </form>
         );
@@ -394,7 +441,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
   useEffect(() => {
     setData(networkById.members);
   }, [networkById.members]);
-
+  // console.log(networkById.members);
   // makeNetworkMemberData
   const [data, setData] = useState(networkById.members);
 
@@ -412,6 +459,11 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex,
+    initialState: {
+      columnVisibility: {
+        notations: false,
+      },
+    },
     meta: {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
@@ -431,6 +483,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       },
     },
     state: {
+      // columnVisibility: { notations: false },
       sorting,
       globalFilter,
     },
@@ -492,33 +545,49 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         <tbody className=" divide-y divide-gray-500">
           {
             // Loop over the table rows
-            table.getRowModel().rows.map((row) => (
-              <tr
-                key={row.original.id}
-                className={`items-center ${
-                  !row.original.authorized
-                    ? "border-dotted bg-error bg-opacity-20"
-                    : ""
-                }`}
-              >
-                {
-                  // Loop over the rows cells
-                  row.getVisibleCells().map((cell) => (
-                    // Apply the cell props
+            table.getRowModel().rows.map((row) => {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+              const notation = (row.original as any)
+                ?.notations as NetworkMemberNotation[];
+              return (
+                <tr
+                  key={row.original.id}
+                  className={`items-center ${
+                    !row.original.authorized
+                      ? "border-dotted bg-error bg-opacity-20"
+                      : ""
+                  }`}
+                  style={
+                    options?.useNotationColorAsBg && notation.length > 0
+                      ? {
+                          backgroundColor: convertRGBtoRGBA(
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+                            (notation[0] as any)?.label?.color as string,
+                            0.3
+                          ),
+                        }
+                      : {}
+                  }
+                >
+                  {
+                    // Loop over the rows cells
+                    row.getVisibleCells().map((cell) => (
+                      // Apply the cell props
 
-                    <td key={cell.id} className="py-1 pl-4">
-                      {
-                        // Render the cell contents
-                        flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )
-                      }
-                    </td>
-                  ))
-                }
-              </tr>
-            ))
+                      <td key={cell.id} className="py-1 pl-4">
+                        {
+                          // Render the cell contents
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )
+                        }
+                      </td>
+                    ))
+                  }
+                </tr>
+              );
+            })
           }
         </tbody>
       </table>

@@ -108,6 +108,7 @@ export const networkRouter = createTRPCRouter({
         },
         include: {
           network_members: false,
+          // notations: true,
         },
       });
 
@@ -164,6 +165,13 @@ export const networkRouter = createTRPCRouter({
         where: {
           nwid: input.nwid,
           deleted: false,
+        },
+        include: {
+          notations: {
+            include: {
+              label: true,
+            },
+          },
         },
       });
       // Get peers to view client version of zt
@@ -671,5 +679,62 @@ accept;`;
 
       // send test mail to user
       await sendEmail(transporter, mailOptions);
+    }),
+  addAnotation: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        nwid: z.string(),
+        nodeid: z.number(),
+        color: z.string().optional(),
+        description: z.string().optional(),
+        showMarkerInTable: z.boolean().optional(),
+        useAsTableBackground: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const notation = await ctx.prisma.notation.upsert({
+        where: {
+          name_nwid: {
+            name: input.name,
+            nwid: input.nwid,
+          },
+        },
+        update: {},
+        create: {
+          name: input.name,
+          color: input.color,
+          description: input.description,
+          nwid: input.nwid,
+        },
+      });
+
+      // link the notation to the network member.
+      return await ctx.prisma.networkMemberNotation.upsert({
+        where: {
+          notationId_nodeid: {
+            notationId: notation.id,
+            nodeid: input.nodeid,
+          },
+        },
+        update: {},
+        create: {
+          notationId: notation.id,
+          nodeid: input.nodeid,
+        },
+      });
+    }),
+  getAnotation: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return await ctx.prisma.notation.findMany({
+        where: {
+          nwid: input.nwid,
+        },
+      });
     }),
 });

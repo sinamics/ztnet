@@ -37,6 +37,9 @@ model GlobalOptions {
   // Notifications
   userRegistrationNotification          Boolean @default(false)
 
+  // networks
+  useNotationColorAsBg                  Boolean?          @default(false)
+  showNotationMarkerInTableRow          Boolean?          @default(true)
 }
 
 enum Role {
@@ -69,23 +72,52 @@ model network_members {
   vRev                 Int?
   ipAssignments        String[]
   noAutoAssignIps      Boolean?  @default(false)
+  notations            NetworkMemberNotation[]
 
   @@unique([id, nwid])
 }
 model network {
-  nwid                 String            @id
-  nwname               String
-  description          String?
-  creationTime         DateTime?
-  lastModifiedTime     DateTime?
-  flowRule             String?
-  autoAssignIp         Boolean?          @default(true)
-  ipAssignments        String          
-  nw_userid            User              @relation(fields: [authorId], references: [id])
-  authorId             Int
-  tagsByName           Json?
-  capabilitiesByName   Json?
+  nwid                        String            @id
+  nwname                      String
+  description                 String?
+  creationTime                DateTime?
+  lastModifiedTime            DateTime?
+  flowRule                    String?
+  autoAssignIp                Boolean?          @default(true)
+  ipAssignments               String          
+  nw_userid                   User              @relation(fields: [authorId], references: [id])
+  authorId                    Int
+  tagsByName                  Json?
+  capabilitiesByName          Json?
+
   network_members network_members[]
+  notations            Notation[]
+}
+
+model Notation {
+  id                        Int           @id @default(autoincrement())
+  name                      String
+  color                     String?
+  description               String?
+  creationTime              DateTime      @default(now())
+  updatedTime               DateTime      @updatedAt
+  isActive                  Boolean       @default(true)
+  nwid                      String
+  network                   network       @relation(fields: [nwid], references: [nwid])
+  network_members           NetworkMemberNotation[]
+  icon                      String?   
+  orderIndex                Int?    
+  visibility                String?
+
+  @@unique([name, nwid])
+}
+
+model NetworkMemberNotation {
+  notationId            Int
+  nodeid                Int
+  label                 Notation          @relation(fields: [notationId], references: [id])
+  member                network_members   @relation(fields: [nodeid], references: [nodeid])
+  @@id([notationId, nodeid])
 }
 
 // Necessary for Next auth
@@ -160,18 +192,3 @@ model VerificationToken {
 // generate local draft
 // npx prisma migrate dev --create-only --preview-feature
 
-// Update postgres from cmd line
-// su auvnet
-// UPDATE users SET role = 'ADMIN' WHERE email = 'bernt.christian.egeland@gmail.com';
-// INSERT INTO settings VALUES(1, false);
-// SELECT * FROM settings;
-
-// ----------- Deploy proccess --------------
-// git pull
-// npm run prisma-gen
-// npx prisma migrate deploy --preview-feature
-// pm2 restart ztnet
-
-
-// Seeding prisma
-// npx prisma db seed --preview-feature --schema=./prisma/schema.prisma

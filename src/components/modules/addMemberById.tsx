@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import { type ChangeEvent, useState } from "react";
+import toast from "react-hot-toast";
+import { type ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 
 type User = {
@@ -18,6 +20,19 @@ export const AddMemberById = () => {
 
   const { mutate: createUser } = api.networkMember.create.useMutation({
     onSuccess: () => refecthNetworkById(),
+    onError: (error) => {
+      if ((error.data as ErrorData)?.zodError) {
+        const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+        for (const field in fieldErrors) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
+          toast.error(`${fieldErrors[field].join(", ")}`);
+        }
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
+    },
   });
 
   const inputHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -28,23 +43,8 @@ export const AddMemberById = () => {
   };
 
   return (
-    <div>
-      {/* <input
-        // action={{
-        //   color: 'teal',
-        //   labelPosition: 'left',
-        //   icon: 'add',
-        //   content: 'Add member manually',
-        //   onClick: () => addMember(network.nwid),
-        // }}
-        value={handler.memberId}
-        onChange={handleChange}
-        actionPosition="left"
-        placeholder="Device ID"
-        name="memberId"
-      /> */}
-
-      <div className="form-control">
+    <div className="form-control">
+      <form>
         <label className="label">
           <span className="label-text">
             Manually Add Member. Can be used to undelete a member.
@@ -61,27 +61,23 @@ export const AddMemberById = () => {
             className="input input-bordered"
           />
           <button
-            onClick={() =>
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
               createUser(
                 {
                   id: user.memberid,
                   nwid: query.id as string,
                 },
                 { onSuccess: () => setUser({ memberid: "" }) }
-              )
-            }
+              );
+            }}
             className="btn btn-square"
           >
             Add
           </button>
         </label>
-      </div>
-      {/* <div>
-        <Label pointing>
-          Adds a node to this network before it joins.
-          <br /> Can be used to undelete a member.
-        </Label>
-      </div> */}
+      </form>
     </div>
   );
 };
