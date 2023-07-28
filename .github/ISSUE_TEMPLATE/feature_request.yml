@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for Next ztnet
+description: Suggest an idea for ztnet
 title: "[Feature Request]: "
 labels: ["enhancement"]
 assignees: []
@@ -8,7 +8,7 @@ body:
   - type: markdown
     id: instructions
     attributes:
-      value: "## Thank you for your interest in improving Next ztnet! Please provide as much information as possible in the sections below.\n"
+      value: "## Thank you for your interest in improving ztnet! Please provide as much information as possible in the sections below.\n"
 
   - type: input
     id: feature_short_description
