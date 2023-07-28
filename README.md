@@ -96,9 +96,9 @@ services:
       - ZT_OVERRIDE_LOCAL_CONF=true
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
-  next_ztnet:
+  ztnet:
     # image: sinamics/next_ztnet:latest-main   # Use this for testing latest main branch
-    image: sinamics/next_ztnet:latest
+    image: sinamics/ztnet:latest
     container_name: ztnet
     platform: "linux/amd64"
     working_dir: /app

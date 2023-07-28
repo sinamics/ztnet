@@ -4,7 +4,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 
 export const inviteUserTemplate = () => {
   return {
-    subject: "Next Ztnet -- Invitation to join network: <%= nwid %>",
+    subject: "ZTNET -- Invitation to join network: <%= nwid %>",
     body:
       "Hi <b><%= toEmail %></b>,<br />" +
       "<%= fromName %> wants you to join the ztnet network: <%= nwid %>.<br />" +
@@ -14,7 +14,7 @@ export const inviteUserTemplate = () => {
       "Make sure to let <%= fromName %> know your device ID so that they can authorize it.<br /><br />" +
       "For detailed instructions and download links, visit:<br />" +
       "<a href='https://www.zerotier.com/download.shtml' style='color: blue; text-decoration: underline;'>https://www.zerotier.com/download.shtml</a><br /><br />" +
-      "Sincerely,<br />--<br />Next Ztnet",
+      "Sincerely,<br />--<br />ZTNET",
   };
 };
 
@@ -26,7 +26,7 @@ export const forgotPasswordTemplate = () => {
       "Click here to create a new password: <br /><%= forgotLink %><br /><br />" +
       "Please note, this link is valid for 15 minutes. If it expires, you will need to request a new one. <br />" +
       "If you did not request a password reset, please ignore this message. <br /><br />" +
-      "Sincerely,<br />--<br />Next Ztnet",
+      "Sincerely,<br />--<br />ZTNET",
     subject: "Password Reset Request",
   };
 };
@@ -35,11 +35,11 @@ export const notificationTemplate = () => {
   return {
     body:
       "Hi <b><%= toName %></b>,<br /><br />" +
-      "You have a new notification from Next Ztnet. <br /><br />" +
+      "You have a new notification from ZTNET. <br /><br />" +
       "<%= notificationMessage %><br /><br />" +
       "If this notification does not concern you, please ignore this message. <br /><br />" +
-      "Sincerely,<br />--<br />Next Ztnet",
-    subject: "New Notification from Next Ztnet",
+      "Sincerely,<br />--<br />ZTNET",
+    subject: "New Notification from ZTNET",
   };
 };
 
