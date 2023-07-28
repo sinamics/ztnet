@@ -5,7 +5,7 @@
   </a>
 
   <p align="center">
-    Next Ztnet - Self-Hosted ZeroTier network controller.
+    ZTNET - Self-Hosted ZeroTier network controller.
     <br />
     <br />
     <a href="https://github.com/sinamics/next_ztnet/issues/new?assignees=&labels=support%2Ctriage&projects=&template=general_support_request.yml&title=%5BSupport%5D%3A+">Bug Report</a>
@@ -22,11 +22,11 @@
 [![Release](https://img.shields.io/github/v/release/sinamics/next_ztnet.svg)](https://github.com/sinamics/next_ztnet/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/next_ztnet.svg)](https://hub.docker.com/r/sinamics/next_ztnet/)
 
-# Next Ztnet
+# ZTNET
 
-Next Ztnet is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
+ZTNET is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
 
-With a rich palette of features, and an intuitive user interface, Next Ztnet embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
+With a rich palette of features, and an intuitive user interface, ZTNET embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
 ## Table of Contents
 
@@ -136,12 +136,12 @@ networks:
         - subnet: 172.31.255.0/29
 ```
 
-To launch Next ZTNet, execute the following command in your `docker-compose.yml` directory:
+To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 
 `docker-compose up -d`
 
 This action pulls necessary images, initializes the containers, and activates the services.
-Visit `http://localhost:3000` to access the Next ZTNet web interface.
+Visit `http://localhost:3000` to access the ZTNET web interface.
 
 ### ⚠️ Important: The first registered user automatically gains admin privileges.
 
