@@ -262,13 +262,16 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const caller = networkMemberRouter.createCaller(ctx);
-
       //user needs to be de-authorized before deleted.
-      await caller.Update({
-        memberId: input.id,
-        nwid: input.nwid,
-        updateParams: { authorized: false },
-      });
+
+      // adding try catch to prevent error if user is not part of the network but still in the database.
+      try {
+        await caller.Update({
+          memberId: input.id,
+          nwid: input.nwid,
+          updateParams: { authorized: false },
+        });
+      } catch (error) {}
 
       // Set member with deleted status in database.
       await ctx.prisma.network
