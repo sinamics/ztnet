@@ -4,6 +4,11 @@ import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import { type NetworkAndMembers } from "~/types/network";
 
+const isValidZeroTierNetworkId = (id: string) => {
+  const hexRegex = /^[0-9a-fA-F]{10}$/;
+  return hexRegex.test(id);
+};
+
 export const networkMemberRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const networks = await ctx.prisma.network.findMany({
@@ -31,7 +36,12 @@ export const networkMemberRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        id: z.string({ required_error: "No member id provided!" }),
+        id: z
+          .string({ required_error: "No member id provided!" })
+          .refine(isValidZeroTierNetworkId, {
+            message:
+              "Invalid ZeroTier network id provided. It should be a 10-digit hexadecimal number.",
+          }),
         nwid: z.string({ required_error: "No network id provided!" }),
       })
     )
