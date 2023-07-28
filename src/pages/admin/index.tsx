@@ -7,11 +7,12 @@ import Settings from "./settings";
 import Mail from "./mail";
 import Notification from "./notification";
 import NetworkSettings from "./network";
+import { useTranslation } from "react-i18next";
 
 const AdminSettings = () => {
   const router = useRouter();
   const { tab = "members" } = router.query;
-
+  const { t } = useTranslation();
   interface ITab {
     name: string;
     value: string;
@@ -20,31 +21,35 @@ const AdminSettings = () => {
 
   const tabs: ITab[] = [
     {
-      name: "Settings",
+      name: t("admin.tabs.settings"),
       value: "site-setting",
       component: <Settings />,
     },
     {
-      name: "Network",
+      name: t("admin.tabs.network"),
       value: "network-setting",
       component: <NetworkSettings />,
     },
     {
-      name: "Mail",
+      name: t("admin.tabs.mail"),
       value: "mail-setting",
       component: <Mail />,
     },
     {
-      name: "Users",
+      name: t("admin.tabs.users"),
       value: "users",
       component: <Members />,
     },
     {
-      name: "Notification",
+      name: t("admin.tabs.notification"),
       value: "notification",
       component: <Notification />,
     },
-    { name: "Controller", value: "controller", component: <Controller /> },
+    {
+      name: t("admin.tabs.controller"),
+      value: "controller",
+      component: <Controller />,
+    },
   ];
 
   const changeTab = async (tab: ITab) => {

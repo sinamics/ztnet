@@ -74,7 +74,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </span>
-              <span className="ml-3">Dashboard</span>
+              <span className="ml-3"> {t("sidebar.dashboard")}</span>
             </Link>
           </li>
 
@@ -101,14 +101,14 @@ const Sidebar = (): JSX.Element => {
                   <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                 </svg>
               </span>
-              <span className="ml-3">Networks</span>
+              <span className="ml-3">{t("sidebar.networks")}</span>
             </Link>
           </li>
           {session?.user.role === "ADMIN" ? (
             <>
               <li className="my-px">
                 <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">
-                  Admin
+                  {t("sidebar.admin")}
                 </span>
               </li>
               <li className="my-px">
@@ -142,7 +142,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">Settings</span>
+                  <span className="ml-3">{t("sidebar.settings")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -179,7 +179,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">Mail</span>
+                  <span className="ml-3">{t("sidebar.mail")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -208,7 +208,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">Users</span>
+                  <span className="ml-3">{t("sidebar.users")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -237,14 +237,14 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">ZT Controller</span>
+                  <span className="ml-3">{t("sidebar.controller")}</span>
                 </Link>
               </li>
             </>
           ) : null}
           <li className="my-px">
             <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
-              Account
+              {t("sidebar.account")}
             </span>
           </li>
           <li className="my-px">
@@ -270,7 +270,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </span>
-              <span className="ml-3">Profile</span>
+              <span className="ml-3">{t("sidebar.profile")}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -292,7 +292,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                 </svg>
               </span>
-              <span className="ml-3">Logout</span>
+              <span className="ml-3">{t("sidebar.logout")}</span>
             </a>
           </li>
         </ul>
