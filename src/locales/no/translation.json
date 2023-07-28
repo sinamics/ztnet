@@ -7,7 +7,10 @@
     "settings": "Innstillinger",
     "mail": "Post",
     "users": "Brukere",
-    "controller": "Kontroller"
+    "controller": "ZT Kontroller",
+    "account": "Konto",
+    "profile": "Profil",
+    "logout": "Logg ut"
   },
   "networks": {
     "loading": "Laster",
@@ -27,5 +30,15 @@
     "show": "Vis",
     "page": "Side",
     "of": "av"
+  },
+  "admin": {
+    "tabs": {
+      "settings": "Innstillinger",
+      "network": "Nettverk",
+      "mail": "Post",
+      "users": "Brukere",
+      "notification": "Varsling",
+      "controller": "Kontroller"
+    }
   }
 }

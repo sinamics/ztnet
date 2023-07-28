@@ -7,7 +7,10 @@
     "settings": "Configuraciones",
     "mail": "Correo",
     "users": "Usuarios",
-    "controller": "Controlador"
+    "controller": "Controlador",
+    "account": "Cuenta",
+    "profile": "Perfil",
+    "logout": "Cerrar sesión"
   },
   "networks": {
     "loading": "Cargando",
@@ -26,5 +29,15 @@
     "show": "Mostrar",
     "page": "Página",
     "of": "de"
+  },
+  "admin": {
+    "tabs": {
+      "settings": "Configuraciones",
+      "network": "Red",
+      "mail": "Correo",
+      "users": "Usuarios",
+      "notification": "Notificación",
+      "controller": "Controlador"
+    }
   }
 }

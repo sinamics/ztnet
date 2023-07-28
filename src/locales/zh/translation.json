@@ -7,7 +7,10 @@
     "settings": "设置",
     "mail": "邮件",
     "users": "用户",
-    "controller": "控制器"
+    "controller": "控制器",
+    "account": "账户",
+    "profile": "个人资料",
+    "logout": "登出"
   },
   "networks": {
     "loading": "加载中",
@@ -27,5 +30,15 @@
     "show": "展示",
     "page": "页面",
     "of": "的"
+  },
+  "admin": {
+    "tabs": {
+      "settings": "设置",
+      "network": "网络",
+      "mail": "邮件",
+      "users": "用户",
+      "notification": "通知",
+      "controller": "控制器"
+    }
   }
 }

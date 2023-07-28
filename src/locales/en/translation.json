@@ -7,7 +7,10 @@
     "settings": "Settings",
     "mail": "Mail",
     "users": "Users",
-    "controller": "Controller"
+    "controller": "ZT Controller",
+    "account": "Account",
+    "profile": "Profile",
+    "logout": "Logout"
   },
   "networks": {
     "loading": "Loading",
@@ -27,5 +30,15 @@
     "show": "Show",
     "page": "Page",
     "of": "of"
+  },
+  "admin": {
+    "tabs": {
+      "settings": "Settings",
+      "network": "Network",
+      "mail": "Mail",
+      "users": "Users",
+      "notification": "Notification",
+      "controller": "Controller"
+    }
   }
 }
