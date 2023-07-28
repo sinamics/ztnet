@@ -204,7 +204,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                 <input
                   type="checkbox"
                   name={capability}
-                  checked={isChecked}
+                  checked={isChecked || false}
                   className="checkbox-primary checkbox checkbox-sm justify-self-end"
                   onChange={(e) => handleCheckboxChange(e, capId)}
                 />
@@ -377,7 +377,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                 type="text"
                 name="ipInput"
                 onChange={handleInputChange}
-                value={state.ipInput}
+                value={state.ipInput || ""}
                 placeholder="192.168.169.x"
                 className={cn("input input-bordered input-sm", {
                   "border-error": !state.isValid && state.ipInput.length > 0,
@@ -408,7 +408,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
           </div>
           <input
             type="checkbox"
-            checked={memberById?.activeBridge}
+            checked={memberById?.activeBridge || false}
             className="checkbox-primary checkbox checkbox-sm justify-self-end"
             onChange={(e) => {
               updateMember(
@@ -438,7 +438,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
           </div>
           <input
             type="checkbox"
-            checked={memberById?.noAutoAssignIps}
+            checked={memberById?.noAutoAssignIps || false}
             className="checkbox-primary checkbox checkbox-sm justify-self-end"
             onChange={(e) => {
               updateMember(

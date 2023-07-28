@@ -26,7 +26,6 @@ import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
-import { input } from "@testing-library/user-event/dist/types/event";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -109,6 +108,7 @@ export const networkRouter = createTRPCRouter({
         },
         include: {
           network_members: false,
+          // notations: true,
         },
       });
 
@@ -165,6 +165,13 @@ export const networkRouter = createTRPCRouter({
         where: {
           nwid: input.nwid,
           deleted: false,
+        },
+        include: {
+          notations: {
+            include: {
+              label: true,
+            },
+          },
         },
       });
       // Get peers to view client version of zt
@@ -677,11 +684,12 @@ accept;`;
     .input(
       z.object({
         name: z.string(),
-        color: z.string().optional(),
-        useTableBackground: z.boolean().optional(),
-        description: z.string().optional(),
         nwid: z.string(),
         nodeid: z.number(),
+        color: z.string().optional(),
+        description: z.string().optional(),
+        showMarkerInTable: z.boolean().optional(),
+        useAsTableBackground: z.boolean().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -696,15 +704,21 @@ accept;`;
         create: {
           name: input.name,
           color: input.color,
-          useTableBackground: input.useTableBackground,
           description: input.description,
           nwid: input.nwid,
         },
       });
 
-      // Then, link the notation to the network member.
-      return await ctx.prisma.networkMemberNotation.create({
-        data: {
+      // link the notation to the network member.
+      return await ctx.prisma.networkMemberNotation.upsert({
+        where: {
+          notationId_nodeid: {
+            notationId: notation.id,
+            nodeid: input.nodeid,
+          },
+        },
+        update: {},
+        create: {
           notationId: notation.id,
           nodeid: input.nodeid,
         },

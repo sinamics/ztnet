@@ -2,11 +2,12 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
   "name": "Next ZTNet dev",
-
   // Update the 'dockerComposeFile' list if you have more compose files or use different names.
   // The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
-  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
-
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "docker-compose.yml"
+  ],
   // The 'service' property is the name of the service for the container that VS Code should
   // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
   "service": "next_ztnet",
@@ -19,7 +20,10 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "git.path": ["/usr/bin/git", "C:/Program Files/Git/bin/git.exe"]
+        "git.path": [
+          "/usr/bin/git",
+          "C:/Program Files/Git/bin/git.exe"
+        ]
       },
       "extensions": [
         "esbenp.prettier-vscode",
@@ -30,29 +34,23 @@
         "bradlc.vscode-tailwindcss",
         "austenc.tailwind-docs",
         "bourhaouta.tailwindshades",
-        "Gruntfuggly.todo-tree"
+        "Gruntfuggly.todo-tree",
+        "yoavbls.pretty-ts-errors"
       ]
     }
   }
-
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
-
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": []
-
   // Uncomment the next line if you want start specific services in your Docker Compose config.
   // "runServices": [],
-
   // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
   // "shutdownAction": "none",
-
   // Uncomment the next line to run commands after the container is created.
   // "postCreateCommand": "chmod +x .devcontainer/init-cmd.sh"
-
   // Configure tool-specific properties.
   // "customizations": {},
-
   // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
   // "remoteUser": "devcontainer"
 }

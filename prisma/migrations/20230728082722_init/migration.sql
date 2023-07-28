@@ -1,9 +1,12 @@
+-- AlterTable
+ALTER TABLE "GlobalOptions" ADD COLUMN     "showNotationMarkerInTableRow" BOOLEAN DEFAULT false,
+ADD COLUMN     "useNotationColorAsBg" BOOLEAN DEFAULT false;
+
 -- CreateTable
 CREATE TABLE "Notation" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "color" TEXT,
-    "useTableBackground" BOOLEAN DEFAULT false,
     "description" TEXT,
     "creationTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedTime" TIMESTAMP(3) NOT NULL,
