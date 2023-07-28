@@ -22,8 +22,11 @@ export const Accounts = () => {
       desc: false,
     },
   ]);
-  const { data: members, refetch: refetchUsers } =
-    api.admin.getUsers.useQuery();
+  const {
+    data: members,
+    refetch: refetchUsers,
+    isLoading: loadingUsers,
+  } = api.admin.getUsers.useQuery();
   const columnHelper = createColumnHelper<MembersEntity>();
   const columns = useMemo<ColumnDef<MembersEntity>[]>(
     () => [
@@ -186,6 +189,15 @@ export const Accounts = () => {
     },
   });
 
+  if (loadingUsers) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-8/12">
       <div className="overflow-x-auto">

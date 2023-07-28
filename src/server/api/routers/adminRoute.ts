@@ -305,4 +305,37 @@ export const adminRouter = createTRPCRouter({
           break;
       }
     }),
+
+  /**
+   * Update the specified NetworkMemberNotation instance.
+   *
+   * This protectedProcedure takes an input of object type with properties: notationId, nodeid,
+   * useAsTableBackground, and showMarkerInTable. It updates the fields showMarkerInTable and
+   * useAsTableBackground in the NetworkMemberNotation model for the specified notationId and nodeid.
+   *
+   * @input An object with properties:
+   * - notationId: a number representing the unique ID of the notation
+   * - nodeid: a number representing the ID of the node to which the notation is linked
+   * - useAsTableBackground: an optional boolean that determines whether the notation is used as a background in the table
+   * - showMarkerInTable: an optional boolean that determines whether to show a marker in the table for the notation
+   * @returns A Promise that resolves with the updated NetworkMemberNotation instance.
+   */
+  updateGlobalNotation: adminRoleProtectedRoute
+    .input(
+      z.object({
+        useNotationColorAsBg: z.boolean().optional(),
+        showNotationMarkerInTableRow: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.globalOptions.update({
+        where: {
+          id: 1,
+        },
+        data: {
+          useNotationColorAsBg: input.useNotationColorAsBg,
+          showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
+        },
+      });
+    }),
 });

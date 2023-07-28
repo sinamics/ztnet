@@ -1,61 +1,77 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect } from "react";
 
-interface PasswordInputProps {
+interface InputProps {
   placeholder: string;
   value?: string | number;
   name: string;
   type: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  ref?: React.RefObject<HTMLInputElement>;
   focus?: boolean;
   className?: string;
   defaultValue?: string | number;
+  list?: string;
 }
 
-const Input = ({
-  placeholder,
-  value,
-  name,
-  onChange,
-  type,
-  className = "",
-  defaultValue,
-  focus = false,
-  ...rest
-}: PasswordInputProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  (
+    {
+      value,
+      name,
+      onChange,
+      onBlur,
+      className = "",
+      defaultValue,
+      focus = false,
+      ...rest
+    }: InputProps,
+    forwardedRef
+  ) => {
+    const handleRef = (instance: HTMLInputElement | null) => {
+      if (typeof forwardedRef === "function") {
+        forwardedRef(instance);
+      } else if (forwardedRef) {
+        forwardedRef.current = instance;
+      }
+    };
 
-  useEffect(() => {
-    if (focus && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [focus]);
+    useEffect(() => {
+      if (focus && forwardedRef && "current" in forwardedRef) {
+        forwardedRef.current?.focus();
+      }
+    }, [focus, forwardedRef]);
 
-  useEffect(() => {
-    if (defaultValue && inputRef.current && onChange) {
-      const event = {
-        target: {
-          name: inputRef.current.name,
-          value: defaultValue,
-        },
-      };
-      onChange(event as React.ChangeEvent<HTMLInputElement>);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+      if (
+        defaultValue &&
+        forwardedRef &&
+        "current" in forwardedRef &&
+        onChange
+      ) {
+        const event = {
+          target: {
+            name: forwardedRef.current?.name || "",
+            value: defaultValue,
+          },
+        };
+        onChange(event as React.ChangeEvent<HTMLInputElement>);
+      }
+    }, [defaultValue, onChange, forwardedRef]);
 
-  return (
-    <input
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      defaultValue={defaultValue}
-      value={value}
-      onChange={onChange}
-      className={`input w-full max-w-xs ${className}`}
-      ref={inputRef}
-      {...rest}
-    />
-  );
-};
-
+    return (
+      <input
+        name={name}
+        defaultValue={defaultValue}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        className={`input w-full max-w-xs ${className}`}
+        ref={handleRef}
+        {...rest}
+      />
+    );
+  }
+);
+Input.displayName = "Input";
 export default Input;

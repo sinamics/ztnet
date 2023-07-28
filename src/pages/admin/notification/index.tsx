@@ -5,11 +5,22 @@ import { api } from "~/utils/api";
 const Notification = () => {
   const { mutate: setRegistration } =
     api.admin.updateGlobalOptions.useMutation();
+
   const {
     data: options,
     refetch: refetchOptions,
     isLoading: loadingOptions,
   } = api.admin.getAllOptions.useQuery();
+
+  if (loadingOptions) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
 
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">

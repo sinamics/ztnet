@@ -6,6 +6,7 @@ import Controller from "./controller";
 import Settings from "./settings";
 import Mail from "./mail";
 import Notification from "./notification";
+import NetworkSettings from "./network";
 
 const AdminSettings = () => {
   const router = useRouter();
@@ -22,6 +23,11 @@ const AdminSettings = () => {
       name: "Settings",
       value: "site-setting",
       component: <Settings />,
+    },
+    {
+      name: "Network",
+      value: "network-setting",
+      component: <NetworkSettings />,
     },
     {
       name: "Mail",
