@@ -353,7 +353,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                 ))}
               <Input
                 ref={inputRef}
-                placeholder="Member name"
+                placeholder="Click to change name"
                 name="networkName"
                 onChange={(e) => setValue(e.target.value)}
                 onBlur={onBlur}
