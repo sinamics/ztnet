@@ -39,7 +39,7 @@ const Modal = () => {
       {/* we want any content for this modal layout so we just pass the children */}
       <div
         className={cn(
-          "custom-scrollbar modal-box relative bg-base-300",
+          "custom-scrollbar modal-box relative bg-base-100",
           rootStyle
         )}
         ref={ref}
