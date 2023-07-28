@@ -88,6 +88,7 @@ export interface dns {
   domain: string;
   servers: string[];
 }
+
 export interface ZtControllerNetwork {
   nwid: string;
   nwname: string;
@@ -194,4 +195,28 @@ export interface Paths {
   localSocket?: number;
   preferred: boolean;
   trustedPathId: number;
+}
+
+// notations
+export interface NetworkMemberNotation {
+  notationId: number;
+  nodeid: number;
+  label: Notation;
+  member: NetworkMembersEntity;
+}
+
+export interface Notation {
+  id: number;
+  name: string;
+  color?: string;
+  description?: string;
+  creationTime: Date;
+  updatedTime: Date;
+  isActive: boolean;
+  nwid: string;
+  network: Network;
+  network_members: NetworkMemberNotation[];
+  icon?: string;
+  orderIndex?: number;
+  visibility?: string;
 }

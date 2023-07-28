@@ -348,7 +348,7 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return await ctx.prisma.networkMemberNotation.delete({
+      await ctx.prisma.networkMemberNotation.delete({
         where: {
           notationId_nodeid: {
             notationId: input.notationId,
@@ -356,5 +356,21 @@ export const networkMemberRouter = createTRPCRouter({
           },
         },
       });
+
+      // Check if the notation is still used by any other member
+      const otherNotations = await ctx.prisma.networkMemberNotation.findMany({
+        where: {
+          notationId: input.notationId,
+        },
+      });
+
+      // If the notation is not used by any other member, delete it
+      if (otherNotations.length === 0) {
+        await ctx.prisma.notation.delete({
+          where: {
+            id: input.notationId,
+          },
+        });
+      }
     }),
 });

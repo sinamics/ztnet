@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Input from "~/components/elements/input";
 import { api } from "~/utils/api";
+import { getRandomColor } from "~/utils/randomColor";
 
 type IAnotationProps = {
   name: string;
@@ -9,50 +10,77 @@ type IProps = {
   nwid: string;
   nodeid: number;
 };
+const initalState: IAnotationProps = {
+  name: "",
+};
 
 const Anotation = ({ nwid, nodeid }: IProps) => {
-  const [input, setInput] = useState<IAnotationProps>();
-
-  const { data: anotationArray } = api.network.getAnotation.useQuery({
-    nwid,
-  });
+  const [input, setInput] = useState<IAnotationProps>(initalState);
+  const { refetch: refetchNetworkById } = api.network.getNetworkById.useQuery(
+    {
+      nwid,
+    },
+    { enabled: !!nwid, networkMode: "online" }
+  );
+  const { data: anotationArray, refetch: refetchAnotation } =
+    api.network.getAnotation.useQuery(
+      {
+        nwid,
+      },
+      {
+        enabled: !!nwid,
+      }
+    );
   const { mutate: removeAnotation } =
     api.networkMember.removeMemberAnotations.useMutation();
 
   const { data: memberAnotationArray, refetch: refetchMemberAnotation } =
-    api.networkMember.getMemberAnotations.useQuery({
-      nwid,
-      nodeid,
-    });
+    api.networkMember.getMemberAnotations.useQuery(
+      {
+        nwid,
+        nodeid,
+      },
+      {
+        enabled: !!nodeid && !!nwid,
+      }
+    );
 
   const { mutate: setAnotation } = api.network.addAnotation.useMutation();
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInput((prev) => ({ ...prev, [name]: value }));
+
+    // Check if the value is in the datalist
+    const isInList = filteredAnotations.some(
+      (anotation) => anotation.name === value
+    );
+    if (isInList) {
+      setAnotation(
+        {
+          name: value,
+          color: getRandomColor(),
+          nwid,
+          nodeid,
+        },
+        {
+          onSuccess: () => {
+            void refetchMemberAnotation();
+            void refetchAnotation();
+            void refetchNetworkById();
+            setInput({ name: "" });
+          },
+        }
+      );
+    } else {
+      setInput((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Filtering the notations based on the input text
   const filteredAnotations = anotationArray?.filter((anotation) =>
     anotation.name.toLowerCase().includes(input?.name.toLowerCase())
   );
-  const handleBlur = () => {
-    // if (input?.name) {
-    //   setAnotation(
-    //     {
-    //       name: input.name,
-    //       nwid,
-    //       nodeid,
-    //     },
-    //     {
-    //       onSuccess: () => {
-    //         void refetchMemberAnotation();
-    //         setInput({ name: "" });
-    //       },
-    //     }
-    //   );
-    // }
-  };
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -68,9 +96,8 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
             className="input-bordered input-sm"
             name="name"
             placeholder="Add Notation"
-            value={input?.name}
+            value={input?.name || ""}
             onChange={inputHandler}
-            onBlur={handleBlur}
             list="anotation-list"
           />
           <datalist id="anotation-list">
@@ -84,12 +111,15 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
               setAnotation(
                 {
                   name: input?.name,
+                  color: getRandomColor(),
                   nwid,
                   nodeid,
                 },
                 {
                   onSuccess: () => {
                     void refetchMemberAnotation();
+                    void refetchAnotation();
+                    void refetchNetworkById();
                     setInput({ name: "" });
                   },
                 }
@@ -100,9 +130,14 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
           />
         </form>
       </div>
+
       <div className="flex gap-2">
         {memberAnotationArray?.map((anotation, idx) => (
-          <div key={idx} className="badge badge-primary badge-lg rounded-md">
+          <div
+            key={idx}
+            className={`badge badge-lg rounded-md`}
+            style={{ backgroundColor: `${anotation.label.color}` }}
+          >
             <p>{anotation?.label?.name}</p>
             <div title="delete ip assignment">
               <svg
@@ -121,6 +156,8 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
                     {
                       onSuccess: () => {
                         void refetchMemberAnotation();
+                        void refetchAnotation();
+                        void refetchNetworkById();
                       },
                     }
                   )
