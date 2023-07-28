@@ -1,0 +1,31 @@
+{
+  "sidebar": {
+    "navigation": "Navigation",
+    "dashboard": "Dashboard",
+    "networks": "Networks",
+    "admin": "Admin",
+    "settings": "Settings",
+    "mail": "Mail",
+    "users": "Users",
+    "controller": "Controller"
+  },
+  "networks": {
+    "loading": "Loading",
+    "title": "Networks",
+    "description": "VPN Networks",
+    "addNetworkButton": "Create a network",
+    "noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
+    "networkSearchPlaceholder": "Search for a network"
+  },
+  "networksTable": {
+    "name": "Name",
+    "description": "Description",
+    "networkId": "Network ID",
+    "members": "Members"
+  },
+  "tableFooter": {
+    "show": "Show",
+    "page": "Page",
+    "of": "of"
+  }
+}

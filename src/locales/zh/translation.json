@@ -1,0 +1,31 @@
+{
+  "sidebar": {
+    "navigation": "导航",
+    "dashboard": "仪表盘",
+    "networks": "网络",
+    "admin": "管理员",
+    "settings": "设置",
+    "mail": "邮件",
+    "users": "用户",
+    "controller": "控制器"
+  },
+  "networks": {
+    "loading": "加载中",
+    "title": "网络",
+    "description": "VPN网络",
+    "addNetworkButton": "创建网络",
+    "noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。",
+    "networkSearchPlaceholder": "搜索网络"
+  },
+  "networksTable": {
+    "name": "名称",
+    "description": "描述",
+    "networkId": "网络ID",
+    "members": "成员"
+  },
+  "tableFooter": {
+    "show": "展示",
+    "page": "页面",
+    "of": "的"
+  }
+}
