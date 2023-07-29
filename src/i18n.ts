@@ -33,7 +33,7 @@ export const initI18n = async () => {
       debug: true,
     });
 
-  await i18n.changeLanguage("en");
+  // await i18n.changeLanguage("en");
 };
 
 // eslint-disable-next-line no-console
