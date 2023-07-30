@@ -522,7 +522,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           value={globalFilter ?? ""}
           onChange={(value) => setGlobalFilter(String(value))}
           className="font-lg border-block border p-2 shadow"
-          placeholder="Search anything..."
+          placeholder={t("networkMembersTable.search.placeholder")}
         />
       </div>
       <table className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500 text-center">
