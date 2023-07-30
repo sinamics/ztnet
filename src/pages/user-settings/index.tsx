@@ -2,7 +2,7 @@ import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Account from "./account";
-import { type GetStaticPropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 import { useTranslations } from "next-intl";
 
 const UserSettings = () => {
@@ -54,7 +54,7 @@ UserSettings.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getStaticProps(context: GetStaticPropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended

@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { globalSiteTitle } from "~/utils/global";
-import { type GetStaticPropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 
 const Dashboard: NextPageWithLayout = () => {
   const title = `${globalSiteTitle} - Dashboard`;
@@ -58,7 +58,7 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getStaticProps(context: GetStaticPropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
