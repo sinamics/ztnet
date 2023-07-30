@@ -29,7 +29,7 @@ describe("InputField", () => {
     );
 
     // Click the edit icon to render the inputs
-    fireEvent.click(screen.getByTestId("edit-icon"));
+    fireEvent.click(screen.getByTestId("view-form"));
 
     // Check if the form is rendered
     const formElement = container.querySelector("form");

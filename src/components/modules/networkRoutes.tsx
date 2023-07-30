@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import { type RoutesEntity } from "~/types/network";
 import { type ChangeEvent, useState } from "react";
 import { type ErrorData } from "~/types/errorHandling";
+import { useTranslations } from "next-intl";
 
 const initialRouteInput = {
   target: "",
@@ -11,6 +12,7 @@ const initialRouteInput = {
 };
 
 export const NettworkRoutes = () => {
+  const t = useTranslations("networkById");
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
   const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
@@ -82,7 +84,9 @@ export const NettworkRoutes = () => {
       className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
-      <div className="collapse-title">Managed Routes</div>
+      <div className="collapse-title">
+        {t("nettworkRoutes.managedRoutesTitle")}
+      </div>
       <div className="collapse-content" style={{ width: "100%" }}>
         {network?.routes.length === 0 ? (
           <div className="alert alert-warning p-2">
@@ -100,15 +104,12 @@ export const NettworkRoutes = () => {
               />
             </svg>
             <div>
-              <h3 className="font-bold">No managed routes defined.</h3>
+              <h3 className="font-bold">
+                {t("nettworkRoutes.noManagedRoutesTitle")}
+              </h3>
               <div className="text-xs">
-                <p>
-                  Devices will not get an IP address without a matching route.
-                </p>
-                <p>
-                  If you do not have specific requirements, try the IPv4
-                  Auto-Assign Easy mode.
-                </p>
+                <p>{t("nettworkRoutes.noManagedRoutesDescription1")}</p>
+                <p>{t("nettworkRoutes.noManagedRoutesDescription2")}</p>
               </div>
             </div>
           </div>
@@ -153,7 +154,7 @@ export const NettworkRoutes = () => {
               type="text"
               name="target"
               onChange={routeHandler}
-              placeholder="Destination"
+              placeholder={t("nettworkRoutes.destinationPlaceholder")}
               className="input input-bordered input-primary input-xs w-3/6 rounded-md"
             />
             <div className="px-4">via</div>
@@ -161,20 +162,20 @@ export const NettworkRoutes = () => {
               type="text"
               name="via"
               onChange={routeHandler}
-              placeholder="target"
+              placeholder={t("nettworkRoutes.viaPlaceholder")}
               className="input input-bordered input-primary input-xs w-3/6 rounded-md"
             />
             <button
               type="submit"
               className="btn btn-success btn-xs ml-4 rounded-md"
             >
-              Add
+              {t("nettworkRoutes.addButtonText")}
             </button>
             <button
               onClick={() => setShowRouteInput(!showRouteInput)}
               className="btn btn-outline btn-xs ml-4 rounded-md"
             >
-              Cancle
+              {t("nettworkRoutes.cancelButtonText")}
             </button>
           </form>
         ) : null}
