@@ -39,6 +39,14 @@
       "users": "用户",
       "notification": "通知",
       "controller": "控制器"
+    },
+    "settings": {
+      "loading": "加载中...",
+      "authentication": "身份验证",
+      "enableUserRegistration": "启用用户注册？",
+      "application": "应用",
+      "version": "版本",
+      "developerMode": "开发者模式"
     }
   },
   "userSettings": {

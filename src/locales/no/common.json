@@ -39,6 +39,14 @@
       "users": "Brukere",
       "notification": "Varsling",
       "controller": "Kontroller"
+    },
+    "settings": {
+      "loading": "Laster...",
+      "authentication": "Autentisering",
+      "enableUserRegistration": "Aktiver brukerregistrering?",
+      "application": "Applikasjon",
+      "version": "Versjon",
+      "developerMode": "utviklermodus"
     }
   },
   "userSettings": {

@@ -37,7 +37,7 @@ const InputField = ({
   submitHandler,
   badge,
   isLoading,
-  size = "sm",
+  size = "md",
   buttonClassName,
   rootClassName,
   rootFormClassName,

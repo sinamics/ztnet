@@ -39,6 +39,47 @@
       "users": "Users",
       "notification": "Notification",
       "controller": "Controller"
+    },
+    "settings": {
+      "authentication": "Authentication",
+      "enableUserRegistration": "Enable user registration?",
+      "application": "Application",
+      "version": "Version",
+      "developerMode": "developer mode"
+    },
+    "networkSetting": {
+      "memberAnotations": "Member Anotations",
+      "showMarkerInTable": "Show marker in Table",
+      "showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
+      "addBackgroundColorInTable": "Add background color in table",
+      "addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
+    },
+    "mail": {
+      "mailSMTP": "Mail SMTP",
+      "smtpHost": "SMTP Host",
+      "smtpPort": "SMTP Port",
+      "senderEmail": "Sender Email",
+      "mailPlaceholder": "mail@example.com",
+      "username": "Username",
+      "password": "Password",
+      "useSSL": "Use SSL",
+      "inviteUserTemplate": "Invite user template",
+      "forgotPasswordTemplate": "Forgot Password template",
+      "notificationTemplate": "Notification template",
+      "templates": {
+        "availableTags": "Available tags:",
+        "subject": "Subject",
+        "inputPlaceholderSubject": "Subject",
+        "htmlBody": "HTML Body",
+        "textareaPlaceholderBody": "Mail Template",
+        "saveTemplateButton": "Save Template",
+        "resetButton": "Reset",
+        "sendTestMailButton": "Send Test Mail",
+        "sendTestMailButtonLoading": "Working...",
+        "errorFields": "Please fill all fields",
+        "successToastMailSent": "Mail sent",
+        "successToastTemplateSaved": "Template saved"
+      }
     }
   },
   "userSettings": {
