@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import cn from "classnames";
+import { useTranslations } from "use-intl";
 
 type IMailTemplate = {
   subject: string;
@@ -9,6 +10,7 @@ type IMailTemplate = {
 };
 
 const NotificationTemplate = () => {
+  const t = useTranslations("admin");
   const [changes, setChanges] = useState({
     subject: false,
     body: false,
@@ -44,7 +46,7 @@ const NotificationTemplate = () => {
         toast.error(err.message);
       },
       onSuccess: () => {
-        toast.success("Mail sent");
+        toast.success(t("mail.templates.successToastMailSent"));
       },
     });
 
@@ -89,7 +91,7 @@ const NotificationTemplate = () => {
 
   const submitTemplateHandler = () => {
     if (!stateTemplate.subject || !stateTemplate.body) {
-      return toast.error("Please fill all fields");
+      return toast.error(t("mail.templates.errorFields"));
     }
 
     setMailTemplates(
@@ -99,7 +101,7 @@ const NotificationTemplate = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Template saved");
+          toast.success(t("mail.templates.successToastTemplateSaved"));
           void refetchMailTemplates();
         },
       }
@@ -118,16 +120,16 @@ const NotificationTemplate = () => {
     <div>
       <div className="space-y-3">
         <p className="font-medium">
-          Available tags:
+          {t("mail.templates.availableTags")}
           <span className="text-primary"> toName notificationMessage</span>
         </p>
         <div className="form-control w-full">
           <label className="label">
-            <span className="label-text">Subject</span>
+            <span className="label-text">{t("mail.templates.subject")}</span>
           </label>
           <input
             type="text"
-            placeholder="Subject"
+            placeholder={t("mail.templates.inputPlaceholderSubject")}
             value={stateTemplate?.subject || ""}
             name="subject"
             className={cn("input input-bordered w-full focus:outline-none", {
@@ -138,7 +140,7 @@ const NotificationTemplate = () => {
         </div>
         <div className="form-control w-full">
           <label className="label">
-            <span className="label-text">HTML Body</span>
+            <span className="label-text">{t("mail.templates.htmlBody")}</span>
           </label>
           <textarea
             value={stateTemplate?.body?.replace(/<br \/>/g, "\n") || ""}
@@ -146,7 +148,7 @@ const NotificationTemplate = () => {
               "custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
               { "border-2 border-red-500": changes.body }
             )}
-            placeholder="Mail Template"
+            placeholder={t("mail.templates.textareaPlaceholderBody")}
             rows={10}
             name="body"
             onChange={changeTemplateHandler}
@@ -159,7 +161,7 @@ const NotificationTemplate = () => {
             className="btn btn-primary btn-sm"
             onClick={() => submitTemplateHandler()}
           >
-            Save Template
+            {t("mail.templates.saveTemplateButton")}
           </button>
           <button
             className="btn btn-sm"
@@ -169,7 +171,7 @@ const NotificationTemplate = () => {
               })
             }
           >
-            Reset
+            {t("mail.templates.resetButton")}
           </button>
         </div>
         <div className="flex justify-end">
@@ -178,7 +180,9 @@ const NotificationTemplate = () => {
             disabled={changes.subject || changes.body || sendingMailLoading}
             onClick={() => sendTestMail({ type: "notificationTemplate" })}
           >
-            {sendingMailLoading ? "Working..." : "Send Test Mail"}
+            {sendingMailLoading
+              ? t("mail.templates.sendTestMailButtonLoading")
+              : t("mail.templates.sendTestMailButton")}
           </button>
         </div>
       </div>

@@ -38,6 +38,14 @@
       "users": "Usuarios",
       "notification": "Notificación",
       "controller": "Controlador"
+    },
+    "settings": {
+      "loading": "Cargando...",
+      "authentication": "Autenticación",
+      "enableUserRegistration": "¿Habilitar registro de usuario?",
+      "application": "Aplicación",
+      "version": "Versión",
+      "developerMode": "modo de desarrollador"
     }
   },
   "userSettings": {
