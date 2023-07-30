@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
+import { useTranslations } from "use-intl";
 
 export const NetworkMulticast = () => {
+  const t = useTranslations("networkById");
   const [state, setState] = useState({
     multicastLimit: 0,
     enableBroadcast: false,
@@ -74,7 +76,7 @@ export const NetworkMulticast = () => {
       },
       {
         onSuccess: () => {
-          toast.success("Multicast updated successfully");
+          toast.success(t("networkMulticast.MulticastUpdatedSuccessfully"));
           void refetchNetwork();
         },
       }
@@ -88,13 +90,15 @@ export const NetworkMulticast = () => {
       className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
-      <div className="collapse-title">Multicast</div>
+      <div className="collapse-title">{t("networkMulticast.Multicast")}</div>
       <div className="collapse-content" style={{ width: "100%" }}>
         <div>
           <form className="flex justify-between">
             <div className="form-control ">
               <label className="label">
-                <span className="label-text">Multicast Recipient Limit</span>
+                <span className="label-text">
+                  {t("networkMulticast.MulticastRecipientLimit")}
+                </span>
               </label>
               <div className="join">
                 <input
@@ -102,7 +106,7 @@ export const NetworkMulticast = () => {
                   value={state.multicastLimit}
                   onChange={onChangeHandler}
                   className="input join-item input-sm  w-full"
-                  placeholder="Number"
+                  placeholder={t("networkMulticast.NumberPlaceholder")}
                   type="number"
                 />
                 <button
@@ -110,7 +114,7 @@ export const NetworkMulticast = () => {
                   onClick={submitHandler}
                   className="btn join-item btn-sm bg-base-300 text-secondary-content"
                 >
-                  Submit
+                  {t("networkMulticast.Submit")}
                 </button>
               </div>
             </div>
@@ -131,7 +135,9 @@ export const NetworkMulticast = () => {
             </div> */}
             <div className="form-control">
               <label>
-                <span className="label-text text-xs">Enable Broadcast</span>
+                <span className="label-text text-xs">
+                  {t("networkMulticast.EnableBroadcast")}
+                </span>
               </label>
               <input
                 type="checkbox"
@@ -150,7 +156,9 @@ export const NetworkMulticast = () => {
                     },
                     {
                       onSuccess: () => {
-                        toast.success("Multicast updated successfully");
+                        toast.success(
+                          t("networkMulticast.MulticastUpdatedSuccessfully")
+                        );
                         void refetchNetwork();
                       },
                     }
