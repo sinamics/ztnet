@@ -110,7 +110,11 @@ const InputField = ({
             </div>
           </div>
           <div>
-            <button onClick={handleEditClick} className={`btn btn-${size}`}>
+            <button
+              data-testid="view-form"
+              onClick={handleEditClick}
+              className={`btn btn-${size}`}
+            >
               Change
             </button>
           </div>

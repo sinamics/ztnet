@@ -136,12 +136,10 @@ const Account = () => {
             </span>
           </label>
           <select
+            defaultValue={locale} // use `defaultValue` here
             onChange={(e) => void ChangeLanguage(e.target.value)}
             className="select select-bordered"
           >
-            <option disabled selected>
-              {languageNames[locale]}
-            </option>
             {locales.map((language) => (
               <option key={language} value={language}>
                 {languageNames[language]}

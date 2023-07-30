@@ -103,7 +103,7 @@ export const NetworkMulticast = () => {
               <div className="join">
                 <input
                   name="multicastLimit"
-                  value={state.multicastLimit}
+                  value={state.multicastLimit || 0}
                   onChange={onChangeHandler}
                   className="input join-item input-sm  w-full"
                   placeholder={t("networkMulticast.NumberPlaceholder")}
@@ -142,7 +142,7 @@ export const NetworkMulticast = () => {
               <input
                 type="checkbox"
                 name="enableBroadcast"
-                checked={state.enableBroadcast}
+                checked={state.enableBroadcast || false}
                 className="checkbox-primary checkbox checkbox-sm"
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   updateNetwork(
