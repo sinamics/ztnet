@@ -31,6 +31,11 @@
     "page": "页面",
     "of": "的"
   },
+  "modalLayout": {
+    "yesButton": "是",
+    "cancelButton": "取消",
+    "closeButton": "关闭"
+  },
   "networkById": {
     "loading": "加载中...",
     "errorSteps": {
@@ -134,7 +139,7 @@
           "directLan": "已建立直接 LAN 连接",
           "directWan": "已建立直接 WAN 连接",
           "direct": "直接{version}",
-          "offline": "离线"
+          "offline": "离线 "
         },
         "email": "电子邮件",
         "status": "状态",
@@ -144,6 +149,7 @@
           "stashBtn": "存储"
         }
       },
+      "optionModalTitle": "成员选项",
       "tableRow": {
         "updateName": "点击更改名称"
       },
@@ -177,6 +183,47 @@
       "submitButton": "添加",
       "error": {
         "unknown": "发生未知错误"
+      }
+    },
+    "memberOptionModal": {
+      "loading": {
+        "text": "加载中..."
+      },
+      "handleSumbit": {
+        "errorAssigned": "IP {target} 已分配",
+        "errorNotValidIp": "IP {target} 不是有效的IP地址"
+      },
+      "ipAssignment": {
+        "header": "IP分配",
+        "description": "为此成员添加或删除IP地址。"
+      },
+      "deleteIpAssignment": {
+        "title": "删除IP分配"
+      },
+      "addressInput": {
+        "label": "地址"
+      },
+      "addButton": {
+        "text": "添加"
+      },
+      "allowEthernetBridging": {
+        "header": "允许以太网桥接",
+        "description": "桥接在设备上需要额外的设置。请参阅手册和知识库以获取更多信息。移动设备不能成为桥。"
+      },
+      "doNotAutoAssignIPs": {
+        "header": "不自动分配IPs",
+        "description": "这将禁止自动分配IP地址给这个成员。"
+      },
+      "capabilities": {
+        "header": "能力:"
+      },
+      "tags": {
+        "header": "标签:"
+      },
+      "anotation": {
+        "header": "注解",
+        "description": "通过添加注解来增强您的成员组织",
+        "placeholder": "添加注解"
       }
     }
   },

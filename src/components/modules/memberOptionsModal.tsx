@@ -11,6 +11,7 @@ import {
   type TagsByName,
 } from "~/types/network";
 import Anotation from "./anotation";
+import { useTranslations } from "next-intl";
 
 interface ModalContentProps {
   nwid: string;
@@ -23,6 +24,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
   nwid,
   memberId,
 }) => {
+  const t = useTranslations("networkById");
   const [state, setState] = useState(initialIpState);
   const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 
@@ -113,7 +115,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       return;
     }
     if (ipAssignments.includes(ipInput)) {
-      void toast.error(`IP ${target} already assigned`);
+      void toast.error(
+        t("memberOptionModal.handleSumbit.errorAssigned", { target })
+      );
       return;
     }
 
@@ -125,7 +129,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     );
 
     if (!regex.test(ipInput)) {
-      void toast.error(`IP ${target} is not a valid IP address`);
+      void toast.error(
+        t("memberOptionModal.handleSumbit.errorNotValidIp", { target })
+      );
       return;
     }
 
@@ -321,9 +327,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       <div className={cn({ "opacity-30": updateMemberLoading })}>
         <div className="grid grid-cols-4 items-start gap-4">
           <div className="col-span-3">
-            <header>Ip Assignment</header>
+            <header>{t("memberOptionModal.ipAssignment.header")}</header>
             <p className="text-sm text-gray-500">
-              Add or remove an IP address for this member.
+              {t("memberOptionModal.ipAssignment.description")}
             </p>
           </div>
         </div>
@@ -345,7 +351,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                 <div className="cursor-pointer">{assignedIp}</div>
 
                 {ipAssignments.length > 0 && (
-                  <div title="delete ip assignment">
+                  <div title={t("memberOptionModal.deleteIpAssignment.title")}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -372,7 +378,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         <div className="my-5">
           <form>
             <label className="input-group input-group-sm">
-              <span className="bg-base-200">Address</span>
+              <span className="bg-base-200">
+                {t("memberOptionModal.addressInput.label")}
+              </span>
               <input
                 type="text"
                 name="ipInput"
@@ -390,7 +398,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                 // disabled={!state.isValid}
                 className="btn-square btn-sm w-12 bg-base-200"
               >
-                Add
+                {t("memberOptionModal.addButton.text")}
               </button>
             </label>
           </form>
@@ -399,11 +407,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
         <div className="grid grid-cols-4 items-start gap-4 py-3">
           <div className="col-span-3">
-            <header>Allow Ethernet Bridging</header>
+            <header>
+              {t("memberOptionModal.allowEthernetBridging.header")}
+            </header>
             <p className="text-sm text-gray-500">
-              Bridging requires additional setup on the device. See manual and
-              knowledgebase for more information. Mobile devices cannot be
-              bridges.
+              {t("memberOptionModal.allowEthernetBridging.description")}
             </p>
           </div>
           <input
@@ -430,10 +438,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         </div>
         <div className="grid grid-cols-4 items-start gap-4 py-3">
           <div className="col-span-3">
-            <header>Do Not Auto-Assign IPs</header>
+            <header>{t("memberOptionModal.doNotAutoAssignIPs.header")}</header>
             <p className="text-sm text-gray-500">
-              This will disable the ability to automatically assign IP addresses
-              to this member.
+              {t("memberOptionModal.doNotAutoAssignIPs.description")}
             </p>
           </div>
           <input
@@ -460,13 +467,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         </div>
         <div className="grid grid-cols-4 items-start gap-4 py-3">
           <div className="col-span-4">
-            <header>Capabilities:</header>
+            <header>{t("memberOptionModal.capabilities.header")}</header>
             {CapabilityCheckboxes(networkById?.network?.capabilitiesByName)}
           </div>
         </div>
         <div className="grid grid-cols-4 items-start gap-4 py-3">
           <div className="col-span-4">
-            <header>Tags:</header>
+            <header>{t("memberOptionModal.tags.header")}</header>
             {TagDropdowns(networkById?.network?.tagsByName)}
           </div>
         </div>

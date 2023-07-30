@@ -31,6 +31,11 @@
     "page": "Side",
     "of": "av"
   },
+  "modalLayout": {
+    "yesButton": "Ja",
+    "cancelButton": "Avbryt",
+    "closeButton": "Lukk"
+  },
   "networkById": {
     "loading": "Laster...",
     "errorSteps": {
@@ -134,7 +139,7 @@
           "directLan": "Direkte LAN-tilkobling opprettet",
           "directWan": "Direkte WAN-tilkobling opprettet",
           "direct": "DIREKTE{versjon}",
-          "offline": "offline"
+          "offline": "offline "
         },
         "email": "E-post",
         "status": "Status",
@@ -144,6 +149,7 @@
           "stashBtn": "Stash"
         }
       },
+      "optionModalTitle": "Alternativer for medlem",
       "tableRow": {
         "updateName": "Klikk for å endre navn"
       },
@@ -177,6 +183,47 @@
       "submitButton": "Legg til",
       "error": {
         "unknown": "En ukjent feil oppsto"
+      }
+    },
+    "memberOptionModal": {
+      "loading": {
+        "text": "Laster..."
+      },
+      "handleSumbit": {
+        "errorAssigned": "IP {target} er allerede tildelt",
+        "errorNotValidIp": "IP {target} er ikke en gyldig IP-adresse"
+      },
+      "ipAssignment": {
+        "header": "IP-tildeling",
+        "description": "Legg til eller fjern en IP-adresse for dette medlemmet."
+      },
+      "deleteIpAssignment": {
+        "title": "Slett IP-tildeling"
+      },
+      "addressInput": {
+        "label": "Adresse"
+      },
+      "addButton": {
+        "text": "Legg til"
+      },
+      "allowEthernetBridging": {
+        "header": "Tillat Ethernet-bro",
+        "description": "Bro krever ytterligere oppsett på enheten. Se manualen og kunnskapsbasen for mer informasjon. Mobile enheter kan ikke være broer."
+      },
+      "doNotAutoAssignIPs": {
+        "header": "Ikke tildel IPs automatisk",
+        "description": "Dette vil deaktivere muligheten til å tildele IP-adresser automatisk til dette medlemmet."
+      },
+      "capabilities": {
+        "header": "Egenskaper:"
+      },
+      "tags": {
+        "header": "Tags:"
+      },
+      "anotation": {
+        "header": "Anotasjon",
+        "description": "Forbedre din medlemsorganisasjon ved å legge til notater",
+        "placeholder": "Legg til Notat"
       }
     }
   },
