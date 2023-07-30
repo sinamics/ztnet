@@ -154,6 +154,29 @@
       "tableFooter": {
         "RowsPerPage": "Rows per page",
         "Of": "of"
+      },
+      "search": {
+        "placeholder": "Search anything..."
+      }
+    },
+    "inviteMemberByMail": {
+      "title": "Mail",
+      "labelText": "E-Mail Join Instructions",
+      "placeholder": "ztnet@example.com",
+      "buttonText": "Invite",
+      "loadingText": "Loading...",
+      "successMessage": "Success! An invitation email has been sent to {email}",
+      "errorMessage": {
+        "unknownError": "An unknown error occurred"
+      }
+    },
+    "addMemberById": {
+      "labelText": "Manually Add Member. Can be used to undelete a member.",
+      "memberIdInput": "Member ID",
+      "placeholder": "10-digit hex number",
+      "submitButton": "Add",
+      "error": {
+        "unknown": "An unknown error occurred"
       }
     }
   },

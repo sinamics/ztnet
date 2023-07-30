@@ -154,6 +154,29 @@
       "tableFooter": {
         "RowsPerPage": "Rader per side",
         "Of": "av"
+      },
+      "search": {
+        "placeholder": "Søk etter noe..."
+      }
+    },
+    "inviteMemberByMail": {
+      "title": "Epost",
+      "labelText": "E-postinvitasjonsinstruksjoner",
+      "placeholder": "ztnet@example.com",
+      "buttonText": "Inviter",
+      "loadingText": "Laster...",
+      "successMessage": "Suksess! En invitasjonsmail har blitt sendt til {email}",
+      "errorMessage": {
+        "unknownError": "En ukjent feil oppstod"
+      }
+    },
+    "addMemberById": {
+      "labelText": "Legg til medlem manuelt. Kan brukes til å gjenopprette et medlem.",
+      "memberIdInput": "Medlems ID",
+      "placeholder": "10-sifret heksadesimalt nummer",
+      "submitButton": "Legg til",
+      "error": {
+        "unknown": "En ukjent feil oppsto"
       }
     }
   },

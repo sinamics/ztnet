@@ -3,11 +3,13 @@ import { type ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
+import { useTranslations } from "next-intl";
 
 type User = {
   memberid: string;
 };
 export const AddMemberById = () => {
+  const t = useTranslations("networkById");
   const [user, setUser] = useState<User>({ memberid: "" });
   const { query } = useRouter();
 
@@ -30,7 +32,7 @@ export const AddMemberById = () => {
       } else if (error.message) {
         toast.error(error.message);
       } else {
-        toast.error("An unknown error occurred");
+        toast.error(t("addMemberById.error.unknown"));
       }
     },
   });
@@ -46,18 +48,18 @@ export const AddMemberById = () => {
     <div className="form-control">
       <form>
         <label className="label">
-          <span className="label-text">
-            Manually Add Member. Can be used to undelete a member.
-          </span>
+          <span className="label-text">{t("addMemberById.labelText")}</span>
         </label>
         <label className="input-group">
-          <span className="bg-base-300">Member ID</span>
+          <span className="bg-base-300">
+            {t("addMemberById.memberIdInput")}
+          </span>
           <input
             onChange={inputHandler}
             name="memberid"
             value={user.memberid}
             type="text"
-            placeholder="10-digit hex number"
+            placeholder={t("addMemberById.placeholder")}
             className="input input-bordered"
           />
           <button
@@ -74,7 +76,7 @@ export const AddMemberById = () => {
             }}
             className="btn btn-square"
           >
-            Add
+            {t("addMemberById.submitButton")}
           </button>
         </label>
       </form>

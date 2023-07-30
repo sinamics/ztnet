@@ -153,6 +153,29 @@
       "tableFooter": {
         "RowsPerPage": "Filas por página",
         "Of": "de"
+      },
+      "search": {
+        "placeholder": "Buscar cualquier cosa..."
+      }
+    },
+    "inviteMemberByMail": {
+      "title": "Correo",
+      "labelText": "Instrucciones para unirse por correo electrónico",
+      "placeholder": "ztnet@example.com",
+      "buttonText": "Invitar",
+      "loadingText": "Cargando...",
+      "successMessage": "¡Éxito! Se ha enviado un correo electrónico de invitación a {email}",
+      "errorMessage": {
+        "unknownError": "Ocurrió un error desconocido"
+      }
+    },
+    "addMemberById": {
+      "labelText": "Agregar miembro manualmente. Se puede usar para deshacer la eliminación de un miembro.",
+      "memberIdInput": "ID del miembro",
+      "placeholder": "Número hexadecimal de 10 dígitos",
+      "submitButton": "Añadir",
+      "error": {
+        "unknown": "Ocurrió un error desconocido"
       }
     }
   },

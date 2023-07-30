@@ -3,6 +3,7 @@ import { type ChangeEvent, useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import { type ErrorData } from "~/types/errorHandling";
+import { useTranslations } from "next-intl";
 
 type User = {
   email: string;
@@ -16,6 +17,7 @@ interface ZodErrorFieldErrors {
 }
 
 export const InviteMemberByMail = () => {
+  const t = useTranslations("networkById");
   const [user, setUser] = useState<User>({ email: "" });
   const { query } = useRouter();
 
@@ -31,7 +33,7 @@ export const InviteMemberByMail = () => {
         } else if (error.message) {
           toast.error(error.message);
         } else {
-          toast.error("An unknown error occurred");
+          toast.error(t("inviteMemberByMail.errorMessage.unknownError"));
         }
       },
     });
@@ -47,16 +49,18 @@ export const InviteMemberByMail = () => {
     <form>
       <div className="form-control">
         <label className="label">
-          <span className="label-text">E-Mail Join Instructions</span>
+          <span className="label-text">
+            {t("inviteMemberByMail.labelText")}
+          </span>
         </label>
         <label className="input-group">
-          <span>Mail</span>
+          <span>{t("inviteMemberByMail.title")}</span>
           <input
             onChange={inputHandler}
             name="email"
             value={user.email}
             type="email"
-            placeholder="ztnet@example.com"
+            placeholder={t("inviteMemberByMail.placeholder")}
             className="input join-item input-bordered"
           />
           <button
@@ -73,7 +77,9 @@ export const InviteMemberByMail = () => {
                   onSuccess: () => {
                     setUser({ email: "" });
                     toast.success(
-                      `Success! An invitation email has been sent to ${user.email}`,
+                      t("inviteMemberByMail.successMessage", {
+                        email: user.email,
+                      }),
                       { duration: 10000 }
                     );
                   },
@@ -84,7 +90,7 @@ export const InviteMemberByMail = () => {
             {loadingInvite ? (
               <span className="loading loading-spinner"></span>
             ) : (
-              "Invite"
+              <span>{t("inviteMemberByMail.buttonText")}</span>
             )}
           </button>
         </label>

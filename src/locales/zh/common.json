@@ -95,7 +95,7 @@
       "cancelButtonText": "取消"
     },
     "networkDns": {
-      "DNS": "DNS",
+      "DNS": "域名系统",
       "requiresZeroTierVersion": "需要 ZeroTier 版本 1.6。",
       "clearDNS": "清除 DNS",
       "searchDomain": "搜索域",
@@ -154,6 +154,29 @@
       "tableFooter": {
         "RowsPerPage": "每页行数",
         "Of": "的"
+      },
+      "search": {
+        "placeholder": "搜索任何东西..."
+      }
+    },
+    "inviteMemberByMail": {
+      "title": "邮件",
+      "labelText": "电子邮件邀请说明",
+      "placeholder": "ztnet@example.com",
+      "buttonText": "邀请",
+      "loadingText": "加载中...",
+      "successMessage": "成功！邀请邮件已发送至 {email}",
+      "errorMessage": {
+        "unknownError": "发生未知错误"
+      }
+    },
+    "addMemberById": {
+      "labelText": "手动添加成员。可用于取消删除成员。",
+      "memberIdInput": "成员 ID",
+      "placeholder": "10位十六进制数",
+      "submitButton": "添加",
+      "error": {
+        "unknown": "发生未知错误"
       }
     }
   },
