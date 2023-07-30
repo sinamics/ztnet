@@ -9,7 +9,7 @@
     "users": "Users",
     "controller": "ZT Controller",
     "account": "Account",
-    "profile": "Profile",
+    "user-settings": "User Settings",
     "logout": "Logout"
   },
   "networks": {
@@ -17,14 +17,14 @@
     "title": "Networks",
     "description": "VPN Networks",
     "addNetworkButton": "Create a network",
-    "noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
-    "networkSearchPlaceholder": "Search for a network"
+    "noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here."
   },
   "networksTable": {
     "name": "Name",
     "description": "Description",
     "networkId": "Network ID",
-    "members": "Members"
+    "members": "Members",
+    "networkSearchPlaceholder": "Search for a network"
   },
   "tableFooter": {
     "show": "Show",
@@ -39,6 +39,26 @@
       "users": "Users",
       "notification": "Notification",
       "controller": "Controller"
+    }
+  },
+  "userSettings": {
+    "tabs": {
+      "account": "Account",
+      "user": "User"
+    },
+    "account": {
+      "accountSettings": "ACCOUNT SETTINGS",
+      "nameLabel": "Name",
+      "emailLabel": "Email",
+      "verifiedBadge": "Verified",
+      "notVerifiedBadge": "Not Verified!",
+      "passwordLabel": "Password",
+      "currentPasswordPlaceholder": "Current Password",
+      "newPasswordPlaceholder": "New Password",
+      "repeatNewPasswordPlaceholder": "Repeat New Password",
+      "role": "Role",
+      "accountPreferences": "ACCOUNT PREFERENCES",
+      "languageLabel": "Language"
     }
   }
 }

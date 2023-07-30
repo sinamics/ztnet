@@ -9,7 +9,7 @@
     "users": "用户",
     "controller": "控制器",
     "account": "账户",
-    "profile": "个人资料",
+    "user-settings": "用户设置",
     "logout": "登出"
   },
   "networks": {
@@ -17,14 +17,14 @@
     "title": "网络",
     "description": "VPN网络",
     "addNetworkButton": "创建网络",
-    "noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。",
-    "networkSearchPlaceholder": "搜索网络"
+    "noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。"
   },
   "networksTable": {
     "name": "名称",
     "description": "描述",
     "networkId": "网络ID",
-    "members": "成员"
+    "members": "成员",
+    "networkSearchPlaceholder": "搜索网络"
   },
   "tableFooter": {
     "show": "展示",
@@ -39,6 +39,26 @@
       "users": "用户",
       "notification": "通知",
       "controller": "控制器"
+    }
+  },
+  "userSettings": {
+    "tabs": {
+      "account": "帐户",
+      "user": "用户"
+    },
+    "account": {
+      "accountSettings": "帐户设置",
+      "nameLabel": "名称",
+      "emailLabel": "电子邮件",
+      "verifiedBadge": "已验证",
+      "notVerifiedBadge": "未验证!",
+      "passwordLabel": "密码",
+      "currentPasswordPlaceholder": "当前密码",
+      "newPasswordPlaceholder": "新密码",
+      "repeatNewPasswordPlaceholder": "重复新密码",
+      "role": "角色",
+      "accountPreferences": "帐户首选项",
+      "languageLabel": "语言"
     }
   }
 }
