@@ -1,19 +1,19 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import Members from "./members";
+import Users from "./users";
 import Controller from "./controller";
 import Settings from "./settings";
 import Mail from "./mail";
 import Notification from "./notification";
 import NetworkSettings from "./network";
-import {useTranslations} from 'next-intl';
+import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next";
 
 const AdminSettings = () => {
   const router = useRouter();
   const { tab = "members" } = router.query;
-  const  t  = useTranslations("admin");
+  const t = useTranslations("admin");
   interface ITab {
     name: string;
     value: string;
@@ -39,7 +39,7 @@ const AdminSettings = () => {
     {
       name: t("tabs.users"),
       value: "users",
-      component: <Members />,
+      component: <Users />,
     },
     {
       name: t("tabs.notification"),
