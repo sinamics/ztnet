@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "~/components/elements/input";
 import { api } from "~/utils/api";
 import { getRandomColor } from "~/utils/randomColor";
+import { useTranslations } from "next-intl";
 
 type IAnotationProps = {
   name: string;
@@ -15,6 +16,7 @@ const initalState: IAnotationProps = {
 };
 
 const Anotation = ({ nwid, nodeid }: IProps) => {
+  const t = useTranslations("networkById");
   const [input, setInput] = useState<IAnotationProps>(initalState);
   const { refetch: refetchNetworkById } = api.network.getNetworkById.useQuery(
     {
@@ -85,9 +87,9 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <p>Notation</p>
+          <p>{t("memberOptionModal.anotation.header")}</p>
           <p className="text-sm text-gray-500">
-            Enhance your member organization by adding notations
+            {t("memberOptionModal.anotation.description")}
           </p>
         </div>
         <form>
@@ -95,7 +97,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
             type="text"
             className="input-bordered input-sm"
             name="name"
-            placeholder="Add Notation"
+            placeholder={t("memberOptionModal.anotation.placeholder")}
             value={input?.name || ""}
             onChange={inputHandler}
             list="anotation-list"
