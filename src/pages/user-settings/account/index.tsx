@@ -42,6 +42,7 @@ const Account = () => {
               label={t("account.nameLabel")}
               isLoading={!session?.user}
               rootClassName=""
+              size="sm"
               fields={[
                 {
                   name: "name",
@@ -60,6 +61,7 @@ const Account = () => {
               label={t("account.emailLabel")}
               isLoading={!session?.user}
               rootClassName=""
+              size="sm"
               badge={
                 session?.user?.emailVerified
                   ? { text: t("account.verifiedBadge"), color: "success" }
@@ -83,6 +85,7 @@ const Account = () => {
               isLoading={!session?.user}
               label={t("account.passwordLabel")}
               placeholder="******"
+              size="sm"
               rootFormClassName="space-y-3 pt-2"
               fields={[
                 {

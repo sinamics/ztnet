@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/modules/networkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next";
+import { type GetServerSidePropsContext } from "next";
 
 const Networks: NextPageWithLayout = () => {
   const t = useTranslations("networks");
@@ -94,7 +94,7 @@ const Networks: NextPageWithLayout = () => {
 Networks.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getStaticProps(context: GetStaticPropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
