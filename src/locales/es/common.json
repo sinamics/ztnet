@@ -46,6 +46,67 @@
       "application": "Aplicación",
       "version": "Versión",
       "developerMode": "modo de desarrollador"
+    },
+    "networkSetting": {
+      "memberAnotations": "Anotaciones de miembro",
+      "showMarkerInTable": "Mostrar marcador en la tabla",
+      "showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+      "addBackgroundColorInTable": "Agregar color de fondo en la tabla",
+      "addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
+    },
+    "mail": {
+      "mailSMTP": "Mail SMTP",
+      "smtpHost": "Host SMTP",
+      "smtpPort": "Puerto SMTP",
+      "senderEmail": "Correo electrónico del remitente",
+      "mailPlaceholder": "correo@ejemplo.com",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "useSSL": "Usar SSL",
+      "inviteUserTemplate": "Plantilla de invitación de usuario",
+      "forgotPasswordTemplate": "Plantilla de contraseña olvidada",
+      "notificationTemplate": "Plantilla de notificación",
+      "templates": {
+        "availableTags": "Etiquetas disponibles:",
+        "subject": "Asunto",
+        "inputPlaceholderSubject": "Asunto",
+        "htmlBody": "Cuerpo HTML",
+        "textareaPlaceholderBody": "Plantilla de correo",
+        "saveTemplateButton": "Guardar plantilla",
+        "resetButton": "Restablecer",
+        "sendTestMailButton": "Enviar correo de prueba",
+        "sendTestMailButtonLoading": "Trabajando...",
+        "errorFields": "Por favor rellena todos los campos",
+        "successToastMailSent": "Correo enviado",
+        "successToastTemplateSaved": "Plantilla guardada"
+      }
+    },
+    "users": {
+      "table": {
+        "id": "ID",
+        "memberName": "Nombre del miembro",
+        "email": "Correo electrónico",
+        "emailVerified": "Correo electrónico verificado",
+        "role": "Rol",
+        "emailVerifiedYes": "Sí",
+        "emailVerifiedNo": "No"
+      },
+      "roleDescriptions": {
+        "admin": "Como administrador, este usuario tendrá todos los permisos, incluido el acceso al panel de administración.",
+        "user": "Si se configura como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
+      },
+      "changeRoleModal": {
+        "title": "Cambiar rol para {name}"
+      },
+      "toastMessages": {
+        "roleChangeSuccess": "Rol cambiado con éxito",
+        "errorOccurred": "Ocurrió un error desconocido"
+      }
+    },
+    "notification": {
+      "authentication": "Autenticación",
+      "whenUserRegister": "Cuando un usuario se registre",
+      "allAdminsNotification": "Todos los administradores recibirán notificaciones"
     }
   },
   "userSettings": {

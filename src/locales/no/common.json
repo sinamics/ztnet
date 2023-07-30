@@ -47,6 +47,67 @@
       "application": "Applikasjon",
       "version": "Versjon",
       "developerMode": "utviklermodus"
+    },
+    "networkSetting": {
+      "memberAnotations": "Medlemsanmerkninger",
+      "showMarkerInTable": "Vis markør i tabellen",
+      "showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+      "addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
+      "addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
+    },
+    "mail": {
+      "mailSMTP": "Mail SMTP",
+      "smtpHost": "SMTP-vert",
+      "smtpPort": "SMTP-port",
+      "senderEmail": "Avsenders e-post",
+      "mailPlaceholder": "post@eksempel.com",
+      "username": "Brukernavn",
+      "password": "Passord",
+      "useSSL": "Bruk SSL",
+      "inviteUserTemplate": "Inviter bruker mal",
+      "forgotPasswordTemplate": "Glemt passord mal",
+      "notificationTemplate": "Varslings mal",
+      "templates": {
+        "availableTags": "Tilgjengelige merker:",
+        "subject": "Emne",
+        "inputPlaceholderSubject": "Emne",
+        "htmlBody": "HTML Kropp",
+        "textareaPlaceholderBody": "Postmal",
+        "saveTemplateButton": "Lagre mal",
+        "resetButton": "Tilbakestill",
+        "sendTestMailButton": "Send testmail",
+        "sendTestMailButtonLoading": "Arbeider...",
+        "errorFields": "Vennligst fyll ut alle feltene",
+        "successToastMailSent": "E-post sendt",
+        "successToastTemplateSaved": "Mal lagret"
+      }
+    },
+    "users": {
+      "table": {
+        "id": "ID",
+        "memberName": "Medlemsnavn",
+        "email": "E-post",
+        "emailVerified": "E-post verifisert",
+        "role": "Rolle",
+        "emailVerifiedYes": "Ja",
+        "emailVerifiedNo": "Nei"
+      },
+      "roleDescriptions": {
+        "admin": "Som administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
+        "user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
+      },
+      "changeRoleModal": {
+        "title": "Endre rolle for {name}"
+      },
+      "toastMessages": {
+        "roleChangeSuccess": "Rollen er endret",
+        "errorOccurred": "En ukjent feil oppsto"
+      }
+    },
+    "notification": {
+      "authentication": "Autentisering",
+      "whenUserRegister": "Når en bruker registrerer seg",
+      "allAdminsNotification": "Alle administratorer vil få varsler"
     }
   },
   "userSettings": {

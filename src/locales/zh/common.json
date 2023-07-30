@@ -47,6 +47,67 @@
       "application": "应用",
       "version": "版本",
       "developerMode": "开发者模式"
+    },
+    "networkSetting": {
+      "memberAnotations": "成员注释",
+      "showMarkerInTable": "在表格中显示标记",
+      "showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
+      "addBackgroundColorInTable": "在表格中添加背景颜色",
+      "addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。"
+    },
+    "mail": {
+      "mailSMTP": "邮件SMTP",
+      "smtpHost": "SMTP主机",
+      "smtpPort": "SMTP端口",
+      "senderEmail": "发件人电子邮件",
+      "mailPlaceholder": "mail@example.com",
+      "username": "用户名",
+      "password": "密码",
+      "useSSL": "使用SSL",
+      "inviteUserTemplate": "邀请用户模板",
+      "forgotPasswordTemplate": "忘记密码模板",
+      "notificationTemplate": "通知模板",
+      "templates": {
+        "availableTags": "可用的标签：",
+        "subject": "主题",
+        "inputPlaceholderSubject": "主题",
+        "htmlBody": "HTML正文",
+        "textareaPlaceholderBody": "邮件模板",
+        "saveTemplateButton": "保存模板",
+        "resetButton": "重置",
+        "sendTestMailButton": "发送测试邮件",
+        "sendTestMailButtonLoading": "正在工作...",
+        "errorFields": "请填写所有字段",
+        "successToastMailSent": "邮件已发送",
+        "successToastTemplateSaved": "模板已保存"
+      }
+    },
+    "users": {
+      "table": {
+        "id": "ID",
+        "memberName": "成员名",
+        "email": "电子邮件",
+        "emailVerified": "电子邮件已验证",
+        "role": "角色",
+        "emailVerifiedYes": "是",
+        "emailVerifiedNo": "否"
+      },
+      "roleDescriptions": {
+        "admin": "作为管理员，此用户将具有全部权限，包括访问管理面板。",
+        "user": "如果设为用户，此用户将具有有限的权限，无法访问管理面板。"
+      },
+      "changeRoleModal": {
+        "title": "更改{name}的角色"
+      },
+      "toastMessages": {
+        "roleChangeSuccess": "角色更改成功",
+        "errorOccurred": "发生未知错误"
+      }
+    },
+    "notification": {
+      "authentication": "身份验证",
+      "whenUserRegister": "当用户注册时",
+      "allAdminsNotification": "所有管理员将收到通知"
     }
   },
   "userSettings": {

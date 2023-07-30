@@ -80,6 +80,33 @@
         "successToastMailSent": "Mail sent",
         "successToastTemplateSaved": "Template saved"
       }
+    },
+    "users": {
+      "table": {
+        "id": "ID",
+        "memberName": "Member name",
+        "email": "Email",
+        "emailVerified": "Email Verified",
+        "role": "Role",
+        "emailVerifiedYes": "Yes",
+        "emailVerifiedNo": "No"
+      },
+      "roleDescriptions": {
+        "admin": "As an admin, this user will have full permissions, including access to the admin panel.",
+        "user": "If set to User, this user will have limited permissions and will not be able to access the admin panel."
+      },
+      "changeRoleModal": {
+        "title": "Change role for {name}"
+      },
+      "toastMessages": {
+        "roleChangeSuccess": "Role changed successfully",
+        "errorOccurred": "An unknown error occurred"
+      }
+    },
+    "notification": {
+      "authentication": "Authentication",
+      "whenUserRegister": "When a user register",
+      "allAdminsNotification": "All Admins will get notifications"
     }
   },
   "userSettings": {

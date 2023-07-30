@@ -1,8 +1,10 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
+import { useTranslations } from "next-intl";
 
 const Notification = () => {
+  const t = useTranslations("admin");
   const { mutate: setRegistration } =
     api.admin.updateGlobalOptions.useMutation();
 
@@ -25,13 +27,15 @@ const Notification = () => {
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Authentication</p>
+        <p className="text-sm text-gray-400">
+          {t("notification.authentication")}
+        </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="flex items-center justify-between">
           <div>
-            <p>When a user register</p>
+            <p>{t("notification.whenUserRegister")}</p>
             <p className="text-xs text-gray-500">
-              All Admins will get notifications
+              {t("notification.allAdminsNotification")}
             </p>
           </div>
           <input
