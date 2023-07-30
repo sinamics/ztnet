@@ -31,6 +31,132 @@
     "page": "页面",
     "of": "的"
   },
+  "networkById": {
+    "loading": "加载中...",
+    "errorSteps": {
+      "step1": "请确认 ZeroTier 容器是否运行正常",
+      "step2": "如果其他 ZeroTier 实例在本地处于活动状态，请关闭它们，因为可能会造成冲突。"
+    },
+    "networkId": "网络 ID:",
+    "networkName": "网络名称:",
+    "addDescription": "添加描述",
+    "descriptionPlaceholder": "描述",
+    "networkStart": "网络开始:",
+    "notSet": "未设定",
+    "networkEnd": "网络结束:",
+    "networkCidr": "网络 CIDR:",
+    "networkSettings": "网络设置",
+    "networkMembers": "网络成员",
+    "networkMembersAlert": {
+      "message": "加入这个网络 ID，设备会自动显示"
+    },
+    "viewStashedMembers": "查看储存的成员",
+    "networkActions": "网络操作",
+    "deleteNetwork": {
+      "title": "删除网络",
+      "description": "你确定要删除这个网络吗？这个操作无法撤销，所有成员将从这个网络中删除",
+      "yesAction": "是的，删除它",
+      "noAction": "不，保留它"
+    },
+    "copyToClipboard": {
+      "title": "复制到剪贴板",
+      "success": "{element} 已复制到剪贴板"
+    },
+    "privatePublicSwitch": {
+      "accessControllMessage": "你的网络现在是 {authType}",
+      "privateCardTitle": "私人",
+      "privateCardContent": "每个用户都需要网络管理员的授权。",
+      "publicCardTitle": "公开",
+      "publicCardContent": "所有用户都可以无需授权就可以连接到这个网络",
+      "loading": "加载中"
+    },
+    "networkIpAssignments": {
+      "please_enter_valid_ip_range": "请输入有效的 IP 范围",
+      "ip_range_already_exists": "IP 范围已存在",
+      "ipv4_assignment": "IPv4 分配",
+      "auto_assign_from_range": "自动从范围分配",
+      "easy": "简单",
+      "advanced": "高级",
+      "delete_ip_assignment": "删除 IP 分配",
+      "range_start": "范围起始",
+      "range_start_placeholder": "192.168.168.1",
+      "range_end": "范围结束",
+      "range_end_placeholder": "192.168.168.254",
+      "submit": "提交"
+    },
+    "nettworkRoutes": {
+      "managedRoutesTitle": "管理路由",
+      "noManagedRoutesTitle": "没有定义管理路由。",
+      "noManagedRoutesDescription1": "没有匹配路由的设备将无法获得 IP 地址。",
+      "noManagedRoutesDescription2": "如果您没有特殊要求，尝试 IPv4 自动分配简单模式。",
+      "destinationPlaceholder": "目的地",
+      "viaPlaceholder": "目标",
+      "addButtonText": "添加",
+      "cancelButtonText": "取消"
+    },
+    "networkDns": {
+      "DNS": "DNS",
+      "requiresZeroTierVersion": "需要 ZeroTier 版本 1.6。",
+      "clearDNS": "清除 DNS",
+      "searchDomain": "搜索域",
+      "serverAddress": "服务器地址",
+      "submit": "提交",
+      "servers": "服务器",
+      "addressAndDomainRequired": "需要地址和域名"
+    },
+    "networkMulticast": {
+      "Multicast": "多播",
+      "MulticastRecipientLimit": "多播接收者限制",
+      "Submit": "提交",
+      "EnableBroadcast": "启用广播",
+      "NumberPlaceholder": "数字",
+      "MulticastUpdatedSuccessfully": "多播更新成功"
+    },
+    "networkMembersTable": {
+      "searchPlaceholder": "搜索任何东西...",
+      "column": {
+        "authorized": "已授权",
+        "name": "名字",
+        "id": "ID",
+        "ipAssignments": {
+          "header": "管理 IP / 延迟",
+          "notAssigned": "未分配"
+        },
+        "created": "已创建",
+        "physicalIp": {
+          "header": "物理 IP",
+          "unknownValue": "未知"
+        },
+        "conStatus": {
+          "header": "连接状态",
+          "toolTip": "无法建立直接连接，当前通过 zerotier 服务器中继，延迟较高",
+          "relayed": "中继",
+          "directLan": "已建立直接 LAN 连接",
+          "directWan": "已建立直接 WAN 连接",
+          "direct": "直接{version}",
+          "offline": "离线"
+        },
+        "email": "电子邮件",
+        "status": "状态",
+        "actions": {
+          "header": "操作",
+          "optionBtn": "选项",
+          "stashBtn": "存储"
+        }
+      },
+      "tableRow": {
+        "updateName": "点击更改名称"
+      },
+      "toastMessages": {
+        "memberNameUpdated": "成员名称更新成功"
+      },
+      "unauthorizedRowMessage": "未经授权的访问",
+      "tableFooter": {
+        "RowsPerPage": "每页行数",
+        "Of": "的"
+      }
+    }
+  },
   "admin": {
     "tabs": {
       "settings": "设置",
@@ -41,7 +167,6 @@
       "controller": "控制器"
     },
     "settings": {
-      "loading": "加载中...",
       "authentication": "身份验证",
       "enableUserRegistration": "启用用户注册？",
       "application": "应用",
@@ -110,7 +235,6 @@
       "allAdminsNotification": "所有管理员将收到通知"
     },
     "controller": {
-      "loading": "加载中...",
       "networkMembers": {
         "title": "网络和成员",
         "totalNetworks": "总网络数：",

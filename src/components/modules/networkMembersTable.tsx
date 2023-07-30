@@ -28,6 +28,7 @@ import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import Input from "../elements/input";
+import { useTranslations } from "next-intl";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
@@ -44,6 +45,7 @@ enum ConnectionStatus {
   DirectWAN = 3,
 }
 export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
+  const t = useTranslations("networkById");
   const { query } = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([
@@ -125,7 +127,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         }
       ),
       columnHelper.accessor("authorized", {
-        header: () => <span>Authorized</span>,
+        header: () => <span>{t("networkMembersTable.column.authorized")}</span>,
         id: "authorized",
         cell: ({ getValue, row: { original } }) => {
           return (
@@ -151,36 +153,46 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         },
       }),
       columnHelper.accessor("name", {
-        header: () => <span>Member name</span>,
+        header: () => <span>{t("networkMembersTable.column.name")}</span>,
         id: "name",
       }),
       columnHelper.accessor("id", {
-        header: () => <span>ID</span>,
+        header: () => <span>{t("networkMembersTable.column.id")}</span>,
         id: "id",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("ipAssignments", {
-        header: () => <span>Managed IP / Latency</span>,
+        header: () => (
+          <span>{t("networkMembersTable.column.ipAssignments.header")}</span>
+        ),
         id: "ipAssignments",
       }),
       columnHelper.accessor("creationTime", {
-        header: () => <span>Created</span>,
+        header: () => <span>{t("networkMembersTable.column.created")}</span>,
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue() as number} />,
       }),
       columnHelper.accessor("peers", {
-        header: () => <span>Physical IP</span>,
+        header: () => (
+          <span>{t("networkMembersTable.column.physicalIp.header")}</span>
+        ),
         id: "physicalAddress",
         cell: (info) => {
           const val = info.getValue();
           if (!val || typeof val.physicalAddress !== "string")
-            return <span className="text-gray-400/50">unknown</span>;
+            return (
+              <span className="text-gray-400/50">
+                {t("networkMembersTable.column.physicalIp.unknownValue")}
+              </span>
+            );
 
           return val.physicalAddress.split("/")[0];
         },
       }),
       columnHelper.accessor("conStatus", {
-        header: () => <span>Conn Status</span>,
+        header: () => (
+          <span>{t("networkMembersTable.column.conStatus.header")}</span>
+        ),
         id: "conStatus",
         cell: ({ row: { original } }) => {
           const formatTime = (value: string, unit: string) =>
@@ -192,9 +204,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
               <span
                 style={cursorStyle}
                 className="cursor-pointer text-warning"
-                title="Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency"
+                title={t("networkMembersTable.column.conStatus.toolTip")}
               >
-                RELAYED
+                {t("networkMembersTable.column.conStatus.relayed")}
               </span>
             );
           }
@@ -205,8 +217,8 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           ) {
             const directTitle =
               original.conStatus === ConnectionStatus.DirectLAN
-                ? "Direct LAN connection established"
-                : "Direct WAN connection established";
+                ? t("networkMembersTable.column.conStatus.directLan")
+                : t("networkMembersTable.column.conStatus.directWan");
             const versionInfo =
               original.peers && original.peers?.version !== "-1.-1.-1"
                 ? ` (v${original.peers?.version})`
@@ -218,7 +230,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                 className="text-success"
                 title={directTitle}
               >
-                DIRECT{versionInfo}
+                {t("networkMembersTable.column.conStatus.direct", {
+                  version: versionInfo,
+                })}
               </span>
             );
           }
@@ -229,7 +243,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
               className="text-error"
               title="User is offline"
             >
-              offline{" "}
+              {t("networkMembersTable.column.conStatus.offline")}
               <TimeAgo
                 date={original?.lastseen as number}
                 formatter={formatTime}
@@ -239,7 +253,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
         },
       }),
       columnHelper.accessor("action", {
-        header: () => <span>Action</span>,
+        header: () => (
+          <span>{t("networkMembersTable.column.actions.header")}</span>
+        ),
         id: "action",
         cell: ({ row: { original } }) => {
           return (
@@ -266,13 +282,13 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                 }
                 className="btn btn-outline btn-xs rounded-sm"
               >
-                Options
+                {t("networkMembersTable.column.actions.optionBtn")}
               </button>
               <button
                 onClick={() => stashMember(original.id)}
                 className="btn btn-warning btn-outline btn-xs rounded-sm"
               >
-                Stash
+                {t("networkMembersTable.column.actions.stashBtn")}
               </button>
             </div>
           );
@@ -316,7 +332,9 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
           {
             onSuccess: () => {
               void refetchNetworkById();
-              toast.success("Member name updated successfully");
+              toast.success(
+                t("networkMembersTable.toastMessages.memberNameUpdated")
+              );
             },
           }
         );
@@ -353,7 +371,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                 ))}
               <Input
                 ref={inputRef}
-                placeholder="Click to change name"
+                placeholder={t("networkMembersTable.tableRow.updateName")}
                 name="networkName"
                 onChange={(e) => setValue(e.target.value)}
                 onBlur={onBlur}
@@ -368,7 +386,11 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
       }
       if (id === "ipAssignments") {
         if (!original.ipAssignments || !original.ipAssignments.length)
-          return <p className="text-gray-500">Not assigned</p>;
+          return (
+            <p className="text-gray-500">
+              {t("networkMembersTable.column.ipAssignments.notAssigned")}
+            </p>
+          );
 
         return (
           <div className="space-y-1">
@@ -392,9 +414,11 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                     <CopyToClipboard
                       text={assignedIp}
                       onCopy={() =>
-                        toast.success(`${assignedIp} copied to clipboard`)
+                        toast.success(
+                          t("copyToClipboard.success", { element: assignedIp })
+                        )
                       }
-                      title="copy to clipboard"
+                      title={t("copyToClipboard.title")}
                     >
                       <div className="cursor-pointer">{assignedIp}</div>
                     </CopyToClipboard>
