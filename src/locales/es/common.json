@@ -9,7 +9,7 @@
     "users": "Usuarios",
     "controller": "Controlador",
     "account": "Cuenta",
-    "user-settings": "Configuraciones de usuario",
+    "user-settings": "Ajustes de usuario",
     "logout": "Cerrar sesión"
   },
   "networks": {
@@ -23,12 +23,17 @@
     "description": "Descripción",
     "networkId": "ID de red",
     "members": "Miembros",
-    "noNetworksMessage": "Aún no se han creado redes. Comience creando una y aparecerá aquí."
+    "networkSearchPlaceholder": "Buscar una red"
   },
   "tableFooter": {
     "show": "Mostrar",
     "page": "Página",
     "of": "de"
+  },
+  "modalLayout": {
+    "yesButton": "Sí",
+    "cancelButton": "Cancelar",
+    "closeButton": "Cerrar"
   },
   "networkById": {
     "loading": "Cargando...",
@@ -133,7 +138,7 @@
           "directLan": "Conexión directa LAN establecida",
           "directWan": "Conexión directa WAN establecida",
           "direct": "DIRECTO{version}",
-          "offline": "fuera de línea"
+          "offline": "fuera de línea "
         },
         "email": "Correo electrónico",
         "status": "Estado",
@@ -143,6 +148,7 @@
           "stashBtn": "Almacenar"
         }
       },
+      "optionModalTitle": "Opciones para miembro",
       "tableRow": {
         "updateName": "Haz clic para cambiar el nombre"
       },
@@ -176,6 +182,47 @@
       "submitButton": "Añadir",
       "error": {
         "unknown": "Ocurrió un error desconocido"
+      }
+    },
+    "memberOptionModal": {
+      "loading": {
+        "text": "Cargando..."
+      },
+      "handleSumbit": {
+        "errorAssigned": "IP {target} ya asignada",
+        "errorNotValidIp": "IP {target} no es una dirección IP válida"
+      },
+      "ipAssignment": {
+        "header": "Asignación de IP",
+        "description": "Agregar o quitar una dirección IP para este miembro."
+      },
+      "deleteIpAssignment": {
+        "title": "Eliminar asignación de IP"
+      },
+      "addressInput": {
+        "label": "Dirección"
+      },
+      "addButton": {
+        "text": "Añadir"
+      },
+      "allowEthernetBridging": {
+        "header": "Permitir Puente Ethernet",
+        "description": "El puente requiere una configuración adicional en el dispositivo. Consulte el manual y la base de conocimientos para obtener más información. Los dispositivos móviles no pueden ser puentes."
+      },
+      "doNotAutoAssignIPs": {
+        "header": "No Asignar IPs Automáticamente",
+        "description": "Esto desactivará la capacidad de asignar automáticamente direcciones IP a este miembro."
+      },
+      "capabilities": {
+        "header": "Capacidades:"
+      },
+      "tags": {
+        "header": "Etiquetas:"
+      },
+      "anotation": {
+        "header": "Anotación",
+        "description": "Mejore la organización de su miembro añadiendo anotaciones",
+        "placeholder": "Agregar Anotación"
       }
     }
   },

@@ -31,6 +31,11 @@
     "page": "Page",
     "of": "of"
   },
+  "modalLayout": {
+    "yesButton": "Yes",
+    "cancelButton": "Cancel",
+    "closeButton": "Close"
+  },
   "networkById": {
     "loading": "Loading...",
     "errorSteps": {
@@ -134,7 +139,7 @@
           "directLan": "Direct LAN connection established",
           "directWan": "Direct WAN connection established",
           "direct": "DIRECT{version}",
-          "offline": "offline"
+          "offline": "offline "
         },
         "email": "Email",
         "status": "Status",
@@ -144,6 +149,7 @@
           "stashBtn": "Stash"
         }
       },
+      "optionModalTitle": "Options for member",
       "tableRow": {
         "updateName": "Click to change name"
       },
@@ -177,6 +183,47 @@
       "submitButton": "Add",
       "error": {
         "unknown": "An unknown error occurred"
+      }
+    },
+    "memberOptionModal": {
+      "loading": {
+        "text": "Loading..."
+      },
+      "handleSumbit": {
+        "errorAssigned": "IP {target} already assigned",
+        "errorNotValidIp": "IP {target} is not a valid IP address"
+      },
+      "ipAssignment": {
+        "header": "IP Assignment",
+        "description": "Add or remove an IP address for this member."
+      },
+      "deleteIpAssignment": {
+        "title": "Delete IP assignment"
+      },
+      "addressInput": {
+        "label": "Address"
+      },
+      "addButton": {
+        "text": "Add"
+      },
+      "allowEthernetBridging": {
+        "header": "Allow Ethernet Bridging",
+        "description": "Bridging requires additional setup on the device. See manual and knowledgebase for more information. Mobile devices cannot be bridges."
+      },
+      "doNotAutoAssignIPs": {
+        "header": "Do Not Auto-Assign IPs",
+        "description": "This will disable the ability to automatically assign IP addresses to this member."
+      },
+      "capabilities": {
+        "header": "Capabilities:"
+      },
+      "tags": {
+        "header": "Tags:"
+      },
+      "anotation": {
+        "header": "Anotation",
+        "description": "Enhance your member organization by adding notations",
+        "placeholder": "Add Notation"
       }
     }
   },

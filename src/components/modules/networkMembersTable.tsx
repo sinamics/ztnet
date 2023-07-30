@@ -265,7 +265,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
                   callModal({
                     title: (
                       <p>
-                        Options for member{" "}
+                        {t("networkMembersTable.optionModalTitle")}{" "}
                         <span className="text-primary">{`${
                           original.name ? original.name : original.id
                         }`}</span>
