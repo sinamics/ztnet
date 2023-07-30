@@ -108,6 +108,28 @@
       "authentication": "身份验证",
       "whenUserRegister": "当用户注册时",
       "allAdminsNotification": "所有管理员将收到通知"
+    },
+    "controller": {
+      "loading": "加载中...",
+      "networkMembers": {
+        "title": "网络和成员",
+        "totalNetworks": "总网络数：",
+        "totalMembers": "总成员数："
+      },
+      "management": {
+        "title": "管理",
+        "allowManagementFrom": "允许从以下位置管理：",
+        "allowTcpFallbackRelay": "允许 TCP Fallback Relay：",
+        "listeningOn": "正在监听："
+      },
+      "controllerStatus": {
+        "title": "控制器状态",
+        "online": "在线：",
+        "tcpFallbackActive": "TCP Fallback 激活：",
+        "version": "版本："
+      },
+      "yes": "是",
+      "no": "否"
     }
   },
   "userSettings": {

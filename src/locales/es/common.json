@@ -107,6 +107,28 @@
       "authentication": "Autenticación",
       "whenUserRegister": "Cuando un usuario se registre",
       "allAdminsNotification": "Todos los administradores recibirán notificaciones"
+    },
+    "controller": {
+      "loading": "Cargando...",
+      "networkMembers": {
+        "title": "Redes & Miembros",
+        "totalNetworks": "Total de redes:",
+        "totalMembers": "Total de miembros:"
+      },
+      "management": {
+        "title": "Gestión",
+        "allowManagementFrom": "Permitir gestión desde:",
+        "allowTcpFallbackRelay": "Permitir TCP Fallback Relay:",
+        "listeningOn": "Escuchando en:"
+      },
+      "controllerStatus": {
+        "title": "Estado del controlador",
+        "online": "En línea:",
+        "tcpFallbackActive": "TCP Fallback activo:",
+        "version": "Versión:"
+      },
+      "yes": "Sí",
+      "no": "No"
     }
   },
   "userSettings": {

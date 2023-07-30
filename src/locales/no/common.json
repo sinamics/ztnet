@@ -26,6 +26,14 @@
     "members": "Medlemmer",
     "networkSearchPlaceholder": "Søk etter nettverk"
   },
+  "networkById": {
+    "loading": "Loading...",
+    "errorSteps": {
+      "step1": "Verify that the ZeroTier container is operational",
+      "step2": "If other instances of ZeroTier are active locally, please deactivate them as it might cause conflicts."
+    },
+    "networkId": "Nettverks ID:"
+  },
   "tableFooter": {
     "show": "Vis",
     "page": "Side",
@@ -108,6 +116,28 @@
       "authentication": "Autentisering",
       "whenUserRegister": "Når en bruker registrerer seg",
       "allAdminsNotification": "Alle administratorer vil få varsler"
+    },
+    "controller": {
+      "loading": "Laster...",
+      "networkMembers": {
+        "title": "Nettverk & Medlemmer",
+        "totalNetworks": "Totalt nettverk:",
+        "totalMembers": "Totalt medlemmer:"
+      },
+      "management": {
+        "title": "Styring",
+        "allowManagementFrom": "Tillat styring fra:",
+        "allowTcpFallbackRelay": "Tillat TCP Fallback Relay:",
+        "listeningOn": "Lytter på:"
+      },
+      "controllerStatus": {
+        "title": "Kontrollerstatus",
+        "online": "Online:",
+        "tcpFallbackActive": "TCP Fallback er aktiv:",
+        "version": "Versjon:"
+      },
+      "yes": "Ja",
+      "no": "Nei"
     }
   },
   "userSettings": {

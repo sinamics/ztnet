@@ -26,6 +26,88 @@
     "members": "Members",
     "networkSearchPlaceholder": "Search for a network"
   },
+  "networkById": {
+    "loading": "Loading...",
+    "errorSteps": {
+      "step1": "Verify that the ZeroTier container is operational",
+      "step2": "If other instances of ZeroTier are active locally, please deactivate them as it might cause conflicts."
+    },
+    "networkId": "Network ID:",
+    "networkName": "Network Name:",
+    "addDescription": "Add description",
+    "descriptionPlaceholder": "Description",
+    "networkStart": "Network Start:",
+    "notSet": "not set",
+    "networkEnd": "Network End:",
+    "networkCidr": "Network Cidr:",
+    "networkSettings": "Network Settings",
+    "networkMembers": "Network Members",
+    "networkMembersAlert": {
+      "message": "Join this network ID and the device will automatically be displayed"
+    },
+    "viewStashedMembers": "View stashed members",
+    "networkActions": "Network Actions",
+    "deleteNetwork": {
+      "title": "Delete network",
+      "description": "Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+      "yesAction": "Yes, delete it",
+      "noAction": "No, keep it"
+    },
+    "copyToClipboard": {
+      "title": "copy to clipboard",
+      "success": "{element} copied to clipboard"
+    },
+    "privatePublicSwitch": {
+      "accessControllMessage": "Your network is now {authType}",
+      "privateCardTitle": "Private",
+      "privateCardContent": "Each user needs to be Autorization by network administrator.",
+      "publicCardTitle": "Public",
+      "publicCardContent": "All users can connect to this network without Autorization",
+      "loading": "Loading"
+    },
+    "networkIpAssignments": {
+      "please_enter_valid_ip_range": "Please enter a valid IP range",
+      "ip_range_already_exists": "The IP range already exists",
+      "ipv4_assignment": "IPv4 Assignment",
+      "auto_assign_from_range": "Auto-Assign from Range",
+      "easy": "Easy",
+      "advanced": "Advanced",
+      "delete_ip_assignment": "Delete IP assignment",
+      "range_start": "Range Start",
+      "range_start_placeholder": "192.168.168.1",
+      "range_end": "Range End",
+      "range_end_placeholder": "192.168.168.254",
+      "submit": "Submit"
+    },
+    "nettworkRoutes": {
+      "managedRoutesTitle": "Managed Routes",
+      "noManagedRoutesTitle": "No managed routes defined.",
+      "noManagedRoutesDescription1": "Devices will not get an IP address without a matching route.",
+      "noManagedRoutesDescription2": "If you do not have specific requirements, try the IPv4 Auto-Assign Easy mode.",
+      "destinationPlaceholder": "Destination",
+      "viaPlaceholder": "target",
+      "addButtonText": "Add",
+      "cancelButtonText": "Cancel"
+    },
+    "networkDns": {
+      "DNS": "DNS",
+      "requiresZeroTierVersion": "Requires ZeroTier version 1.6.",
+      "clearDNS": "Clear DNS",
+      "searchDomain": "Search Domain",
+      "serverAddress": "Server Address",
+      "submit": "Submit",
+      "servers": "Servers",
+      "addressAndDomainRequired": "Address and Domain is required"
+    },
+    "networkMulticast": {
+      "Multicast": "Multicast",
+      "MulticastRecipientLimit": "Multicast Recipient Limit",
+      "Submit": "Submit",
+      "EnableBroadcast": "Enable Broadcast",
+      "NumberPlaceholder": "Number",
+      "MulticastUpdatedSuccessfully": "Multicast updated successfully"
+    }
+  },
   "tableFooter": {
     "show": "Show",
     "page": "Page",
@@ -107,6 +189,27 @@
       "authentication": "Authentication",
       "whenUserRegister": "When a user register",
       "allAdminsNotification": "All Admins will get notifications"
+    },
+    "controller": {
+      "networkMembers": {
+        "title": "Networks & Members",
+        "totalNetworks": "Total Networks:",
+        "totalMembers": "Total Members:"
+      },
+      "management": {
+        "title": "Management",
+        "allowManagementFrom": "Allow Management From:",
+        "allowTcpFallbackRelay": "Allow TCP Fallback Relay:",
+        "listeningOn": "Listening On:"
+      },
+      "controllerStatus": {
+        "title": "Controller Status",
+        "online": "Online:",
+        "tcpFallbackActive": "TCP Fallback Active:",
+        "version": "Version:"
+      },
+      "yes": "Yes",
+      "no": "No"
     }
   },
   "userSettings": {
