@@ -26,6 +26,11 @@
     "members": "Members",
     "networkSearchPlaceholder": "Search for a network"
   },
+  "tableFooter": {
+    "show": "Show",
+    "page": "Page",
+    "of": "of"
+  },
   "networkById": {
     "loading": "Loading...",
     "errorSteps": {
@@ -106,12 +111,51 @@
       "EnableBroadcast": "Enable Broadcast",
       "NumberPlaceholder": "Number",
       "MulticastUpdatedSuccessfully": "Multicast updated successfully"
+    },
+    "networkMembersTable": {
+      "searchPlaceholder": "Search anything...",
+      "column": {
+        "authorized": "Authorized",
+        "name": "Name",
+        "id": "ID",
+        "ipAssignments": {
+          "header": "Managed IP / Latency",
+          "notAssigned": "Not Assigned"
+        },
+        "created": "Created",
+        "physicalIp": {
+          "header": "Physical IP",
+          "unknownValue": "Unknown"
+        },
+        "conStatus": {
+          "header": "Conn Status",
+          "toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
+          "relayed": "RELAYED",
+          "directLan": "Direct LAN connection established",
+          "directWan": "Direct WAN connection established",
+          "direct": "DIRECT{version}",
+          "offline": "offline"
+        },
+        "email": "Email",
+        "status": "Status",
+        "actions": {
+          "header": "Actions",
+          "optionBtn": "options",
+          "stashBtn": "Stash"
+        }
+      },
+      "tableRow": {
+        "updateName": "Click to change name"
+      },
+      "toastMessages": {
+        "memberNameUpdated": "Member name updated successfully"
+      },
+      "unauthorizedRowMessage": "Unauthorized Access",
+      "tableFooter": {
+        "RowsPerPage": "Rows per page",
+        "Of": "of"
+      }
     }
-  },
-  "tableFooter": {
-    "show": "Show",
-    "page": "Page",
-    "of": "of"
   },
   "admin": {
     "tabs": {

@@ -26,18 +26,136 @@
     "members": "Medlemmer",
     "networkSearchPlaceholder": "Søk etter nettverk"
   },
-  "networkById": {
-    "loading": "Loading...",
-    "errorSteps": {
-      "step1": "Verify that the ZeroTier container is operational",
-      "step2": "If other instances of ZeroTier are active locally, please deactivate them as it might cause conflicts."
-    },
-    "networkId": "Nettverks ID:"
-  },
   "tableFooter": {
     "show": "Vis",
     "page": "Side",
     "of": "av"
+  },
+  "networkById": {
+    "loading": "Laster...",
+    "errorSteps": {
+      "step1": "Bekreft at ZeroTier-beholderen er operativ",
+      "step2": "Hvis andre instanser av ZeroTier er aktive lokalt, vennligst deaktiver dem da det kan forårsake konflikter."
+    },
+    "networkId": "Nettverks-ID:",
+    "networkName": "Nettverksnavn:",
+    "addDescription": "Legg til beskrivelse",
+    "descriptionPlaceholder": "Beskrivelse",
+    "networkStart": "Nettverksstart:",
+    "notSet": "ikke satt",
+    "networkEnd": "Nettverksslutt:",
+    "networkCidr": "Nettverk Cidr:",
+    "networkSettings": "Nettverksinnstillinger",
+    "networkMembers": "Nettverksmedlemmer",
+    "networkMembersAlert": {
+      "message": "Bli med på dette nettverks-ID og enheten vil automatisk bli vist"
+    },
+    "viewStashedMembers": "Se stashed medlemmer",
+    "networkActions": "Nettverksaksjoner",
+    "deleteNetwork": {
+      "title": "Slett nettverk",
+      "description": "Er du sikker på at du vil slette dette nettverket? Dette kan ikke angres og alle medlemmer vil bli slettet fra dette nettverket",
+      "yesAction": "Ja, slett det",
+      "noAction": "Nei, behold det"
+    },
+    "copyToClipboard": {
+      "title": "kopier til utklippstavlen",
+      "success": "{element} kopiert til utklippstavlen"
+    },
+    "privatePublicSwitch": {
+      "accessControllMessage": "Nettverket ditt er nå {authType}",
+      "privateCardTitle": "Privat",
+      "privateCardContent": "Hver bruker må bli autorisert av nettverksadministratoren.",
+      "publicCardTitle": "Offentlig",
+      "publicCardContent": "Alle brukere kan koble seg til dette nettverket uten autorisasjon",
+      "loading": "Laster"
+    },
+    "networkIpAssignments": {
+      "please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
+      "ip_range_already_exists": "IP-rangen eksisterer allerede",
+      "ipv4_assignment": "IPv4-tildeling",
+      "auto_assign_from_range": "Auto-Tildel fra Range",
+      "easy": "Enkel",
+      "advanced": "Avansert",
+      "delete_ip_assignment": "Slett IP-tildeling",
+      "range_start": "Range Start",
+      "range_start_placeholder": "192.168.168.1",
+      "range_end": "Range Slutt",
+      "range_end_placeholder": "192.168.168.254",
+      "submit": "Send inn"
+    },
+    "nettworkRoutes": {
+      "managedRoutesTitle": "Administrerte Ruter",
+      "noManagedRoutesTitle": "Ingen administrerte ruter definert.",
+      "noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
+      "noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
+      "destinationPlaceholder": "Destinasjon",
+      "viaPlaceholder": "mål",
+      "addButtonText": "Legg til",
+      "cancelButtonText": "Avbryt"
+    },
+    "networkDns": {
+      "DNS": "DNS",
+      "requiresZeroTierVersion": "Krever ZeroTier versjon 1.6.",
+      "clearDNS": "Tøm DNS",
+      "searchDomain": "Søk Domene",
+      "serverAddress": "Serveradresse",
+      "submit": "Send inn",
+      "servers": "Servere",
+      "addressAndDomainRequired": "Adresse og domene er påkrevd"
+    },
+    "networkMulticast": {
+      "Multicast": "Multicast",
+      "MulticastRecipientLimit": "Multicast Mottaker Limit",
+      "Submit": "Send inn",
+      "EnableBroadcast": "Aktiver Broadcast",
+      "NumberPlaceholder": "Nummer",
+      "MulticastUpdatedSuccessfully": "Multicast oppdatert vellykket"
+    },
+    "networkMembersTable": {
+      "searchPlaceholder": "Søk etter noe...",
+      "column": {
+        "authorized": "Autorisert",
+        "name": "Navn",
+        "id": "ID",
+        "ipAssignments": {
+          "header": "Administrert IP / Latency",
+          "notAssigned": "Ikke tildelt"
+        },
+        "created": "Opprettet",
+        "physicalIp": {
+          "header": "Fysisk IP",
+          "unknownValue": "Ukjent"
+        },
+        "conStatus": {
+          "header": "Tilkoblingsstatus",
+          "toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
+          "relayed": "VIDEREFORMIDLET",
+          "directLan": "Direkte LAN-tilkobling opprettet",
+          "directWan": "Direkte WAN-tilkobling opprettet",
+          "direct": "DIREKTE{versjon}",
+          "offline": "offline"
+        },
+        "email": "E-post",
+        "status": "Status",
+        "actions": {
+          "header": "Handlinger",
+          "optionBtn": "alternativer",
+          "stashBtn": "Stash"
+        }
+      },
+      "tableRow": {
+        "updateName": "Klikk for å endre navn"
+      },
+      "toastMessages": {
+        "memberNameUpdated": "Medlemnavnet oppdatert vellykket"
+      },
+      "unauthorizedRowMessage": "Uautorisert tilgang",
+      "tableFooter": {
+        "RowsPerPage": "Rader per side",
+        "Of": "av"
+      }
+    }
   },
   "admin": {
     "tabs": {
@@ -49,7 +167,6 @@
       "controller": "Kontroller"
     },
     "settings": {
-      "loading": "Laster...",
       "authentication": "Autentisering",
       "enableUserRegistration": "Aktiver brukerregistrering?",
       "application": "Applikasjon",
@@ -118,7 +235,6 @@
       "allAdminsNotification": "Alle administratorer vil få varsler"
     },
     "controller": {
-      "loading": "Laster...",
       "networkMembers": {
         "title": "Nettverk & Medlemmer",
         "totalNetworks": "Totalt nettverk:",
