@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
-import EditIcon from "~/icons/edit";
+
 interface FieldConfig {
   name: string;
   initialValue?: string;
@@ -8,6 +8,7 @@ interface FieldConfig {
   placeholder: string;
   displayValue?: string;
   defaultValue?: string | number;
+  value?: string | number;
 }
 
 interface FormProps {
@@ -18,6 +19,7 @@ interface FormProps {
   size?: "xs" | "sm" | "md" | "lg";
   buttonClassName?: string;
   rootClassName?: string;
+  rootFormClassName?: string;
   labelStyle?: string;
   submitHandler: (formValues: {
     [key: string]: string;
@@ -35,25 +37,40 @@ const InputField = ({
   submitHandler,
   badge,
   isLoading,
-  size = "sm",
+  size = "md",
   buttonClassName,
   rootClassName,
+  rootFormClassName,
   labelStyle,
 }: FormProps) => {
   const [showInputs, setShowInputs] = useState(false);
-  const [formValues, setFormValues] = useState<Record<string, string>>(
-    fields.reduce((acc, field) => {
-      acc[field.name] = field.initialValue || "";
-      return acc;
-    }, {})
-  );
 
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  // Create a new ref
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFormValues(
+      fields.reduce((acc, field) => {
+        acc[field.name] = field.value || field.initialValue || "";
+        return acc;
+      }, {})
+    );
+  }, [fields]);
+
+  useEffect(() => {
+    // When showInputs is true, focus the input field
+    if (showInputs) {
+      inputRef.current?.focus();
+    }
+  }, [showInputs]);
   const handleEditClick = () => setShowInputs(!showInputs);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const targetName = e.target.name;
-    const targetValue = e.target.value;
-    setFormValues({ ...formValues, [targetName]: targetValue });
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,72 +81,92 @@ const InputField = ({
     }
   };
 
-  const renderInputs = () => (
-    <form
-      onSubmit={(event) => {
-        void handleSubmit(event);
-      }}
-      className={rootClassName}
-    >
-      {fields.map((field, i) => (
-        <Input
-          focus={i === 0}
-          type={field.type}
-          key={i}
-          placeholder={field.placeholder}
-          value={formValues[field.name]}
-          onChange={handleChange}
-          name={field.name}
-          defaultValue={field.defaultValue}
-          className={`input-${size}`}
-        />
-      ))}
-      <div className="flex gap-3">
-        <button
-          className={`btn btn-primary btn-${size} ${buttonClassName}`}
-          type="submit"
-        >
-          Submit
-        </button>
-        <button
-          className={`btn btn-${size} ${buttonClassName}`}
-          onClick={(e) => {
-            e.preventDefault();
-            handleEditClick();
-          }}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
   const renderLoading = () => (
     <div className="mt-1 text-sm">
       <progress className="progress w-56"></progress>
     </div>
   );
+
   return (
     <>
-      <dt
-        onClick={handleEditClick}
-        className={`flex cursor-pointer items-center gap-2 font-medium ${labelStyle}`}
-      >
-        {label}
-        <EditIcon data-testid="edit-icon" />
-      </dt>
-      {showInputs ? (
-        isLoading ? (
-          renderLoading()
-        ) : (
-          renderInputs()
-        )
+      {!showInputs ? (
+        <div className="flex w-full justify-between">
+          <div
+            onClick={handleEditClick}
+            className={`cursor-pointer  ${labelStyle}`}
+          >
+            <div>
+              <span className="font-medium">{label}</span>
+            </div>
+            <div className="text-gray-500">
+              {placeholder ?? fields[0].placeholder}
+              {badge && (
+                <span
+                  className={`badge badge-outline badge-${badge.color} ml-2`}
+                >
+                  {badge.text}
+                </span>
+              )}
+            </div>
+          </div>
+          <div>
+            <button
+              data-testid="view-form"
+              onClick={handleEditClick}
+              className={`btn btn-${size}`}
+            >
+              Change
+            </button>
+          </div>
+        </div>
       ) : (
-        <dd className={`mt-1 flex items-center gap-2 ${labelStyle}`}>
-          {placeholder ?? fields[0].placeholder}
-          {badge ? (
-            <div className={`badge badge-${badge.color}`}>{badge.text}</div>
-          ) : null}
-        </dd>
+        <form
+          onSubmit={(event) => {
+            void handleSubmit(event);
+          }}
+          className={`flex w-full justify-between ${rootClassName}`}
+        >
+          <div>
+            <div className="font-medium">{label}</div>
+            <div className={rootFormClassName}>
+              {fields.map((field, i) => (
+                <Input
+                  ref={i === 0 ? inputRef : undefined}
+                  type={field.type}
+                  key={i}
+                  placeholder={field.placeholder}
+                  value={formValues[field.name]}
+                  onChange={handleChange}
+                  name={field.name}
+                  className={`input-bordered input-${size}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex gap-3">
+            {isLoading ? (
+              renderLoading()
+            ) : (
+              <>
+                <button
+                  className={`btn btn-primary btn-${size} ${buttonClassName}`}
+                  type="submit"
+                >
+                  Submit
+                </button>
+                <button
+                  className={`btn btn-${size} ${buttonClassName}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleEditClick();
+                  }}
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
+        </form>
       )}
     </>
   );

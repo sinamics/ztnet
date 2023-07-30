@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import userEvent from "@testing-library/user-event";
 import { api } from "../../../utils/api";
 import Networks from "~/pages/network";
+import { NextIntlProvider } from "next-intl";
+import enTranslation from "~/locales/en/common.json";
 
 jest.mock("../../../utils/api", () => ({
   api: {
@@ -39,8 +41,12 @@ describe("Networks page", () => {
       isLoading: true,
       refetch: jest.fn(),
     });
-    render(<Networks />);
-    expect(screen.getByText("loading")).toBeInTheDocument();
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <Networks />
+      </NextIntlProvider>
+    );
+    expect(screen.getByText("Loading")).toBeInTheDocument();
   });
 
   it("displays networks and handles add network button", async () => {
@@ -65,7 +71,11 @@ describe("Networks page", () => {
     //   },
     // });
 
-    render(<Networks />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <Networks />
+      </NextIntlProvider>
+    );
 
     expect(screen.getByText("Network 1")).toBeInTheDocument();
     expect(screen.getByText("Network 2")).toBeInTheDocument();

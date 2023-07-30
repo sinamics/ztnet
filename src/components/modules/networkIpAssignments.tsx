@@ -4,8 +4,11 @@ import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
 import { type IpAssignmentPoolsEntity } from "~/types/network";
+import { useTranslations } from "next-intl";
 
 export const NetworkIpAssignment = () => {
+  const t = useTranslations("networkById");
+
   const { query } = useRouter();
   const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
   const [ipTabs, setIptabs] = useState({ easy: true, advanced: false });
@@ -71,9 +74,10 @@ export const NetworkIpAssignment = () => {
   const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!ipRange.rangeStart || !ipRange.rangeEnd) {
-      void toast.error(`Please enter a valid IP range`);
+      void toast.error(t("networkIpAssignments.please_enter_valid_ip_range"));
       return;
     }
+
     const { network } = networkByIdQuery;
 
     // Check if the IP range already exists in the network's ipAssignmentPools
@@ -82,7 +86,7 @@ export const NetworkIpAssignment = () => {
         existingRange.ipRangeStart === ipRange.rangeStart &&
         existingRange.ipRangeEnd === ipRange.rangeEnd
       ) {
-        void toast.error(`The IP range already exists`);
+        void toast.error(t("networkIpAssignments.ip_range_already_exists"));
         return;
       }
     }
@@ -110,13 +114,15 @@ export const NetworkIpAssignment = () => {
   return (
     <div
       tabIndex={0}
-      className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
+      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
-      <div className="collapse-title">IPv4 Assignment</div>
+      <div className="collapse-title">
+        {t("networkIpAssignments.ipv4_assignment")}
+      </div>
       <div className="w-100 collapse-content">
         <div className="flex items-center gap-4">
-          <p>Auto-Assign from Range</p>
+          <p>{t("networkIpAssignments.auto_assign_from_range")}</p>
           <input
             type="checkbox"
             checked={network.autoAssignIp}
@@ -140,7 +146,7 @@ export const NetworkIpAssignment = () => {
                 }))
               }
             >
-              Easy
+              {t("networkIpAssignments.easy")}
             </a>
             <a
               className={cn("tab w-full border border-gray-500", {
@@ -154,7 +160,7 @@ export const NetworkIpAssignment = () => {
                 }))
               }
             >
-              Advanced
+              {t("networkIpAssignments.advanced")}
             </a>
           </div>
         ) : null}
@@ -213,7 +219,7 @@ export const NetworkIpAssignment = () => {
                     {pool.ipRangeStart} - {pool.ipRangeEnd}
                   </div>
 
-                  <div title="delete ip assignment">
+                  <div title={t("networkIpAssignments.delete_ip_assignment")}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -236,20 +242,26 @@ export const NetworkIpAssignment = () => {
             <form className="grid grid-cols-2 gap-5 pt-4">
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text">Range Start</span>
+                  <span className="label-text">
+                    {t("networkIpAssignments.range_start")}
+                  </span>
                 </label>
                 <input
                   type="text"
                   name="rangeStart"
                   value={ipRange.rangeStart}
                   onChange={rangeChangeHandler}
-                  placeholder="192.168.168.1"
+                  placeholder={t(
+                    "networkIpAssignments.range_start_placeholder"
+                  )}
                   className="input input-bordered input-sm w-full"
                 />
               </div>
               <div className="form-control ">
                 <label className="label">
-                  <span className="label-text">Range End</span>
+                  <span className="label-text">
+                    {t("networkIpAssignments.range_end")}
+                  </span>
                 </label>
                 <div className="join">
                   <input
@@ -258,7 +270,9 @@ export const NetworkIpAssignment = () => {
                     value={ipRange.rangeEnd}
                     onChange={rangeChangeHandler}
                     className="input join-item input-sm  w-full"
-                    placeholder="192.168.168.254"
+                    placeholder={t(
+                      "networkIpAssignments.range_end_placeholder"
+                    )}
                   />
                 </div>
               </div>
@@ -267,7 +281,7 @@ export const NetworkIpAssignment = () => {
                 onClick={submitIpRange}
                 className="btn btn-sm bg-base-300 text-secondary-content"
               >
-                Submit
+                {t("networkIpAssignments.submit")}
               </button>
             </form>
           </div>
