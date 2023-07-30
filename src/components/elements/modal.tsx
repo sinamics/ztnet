@@ -2,8 +2,10 @@ import cn from "classnames";
 import { useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
 
 const Modal = () => {
+  const t = useTranslations("modalLayout");
   const ref = useRef(null);
   const {
     isOpen,
@@ -39,7 +41,7 @@ const Modal = () => {
       {/* we want any content for this modal layout so we just pass the children */}
       <div
         className={cn(
-          "custom-scrollbar modal-box relative bg-base-300",
+          "custom-scrollbar modal-box relative bg-base-100",
           rootStyle
         )}
         ref={ref}
@@ -52,15 +54,15 @@ const Modal = () => {
             <>
               {/* closes the modal */}
               <button className="btn" onClick={actionHandler}>
-                Yes
+                {t("yesButton")}
               </button>
               <button className="btn" onClick={closeModal}>
-                Cancle
+                {t("cancelButton")}
               </button>
             </>
           ) : (
             <button className="btn" onClick={closeModal}>
-              Close
+              {t("closeButton")}
             </button>
           )}
         </div>

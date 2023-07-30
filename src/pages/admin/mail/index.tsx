@@ -7,8 +7,10 @@ import { type GlobalOptions } from "@prisma/client";
 import MailUserInviteTemplate from "~/components/modules/mailUserInviteTemplate";
 import ForgotPasswordMailTemplate from "~/components/modules/mailForgotPasswordTemplate";
 import NotificationTemplate from "~/components/modules/mailNotificationTemplate";
+import { useTranslations } from "use-intl";
 
 const Mail = () => {
+  const t = useTranslations("admin");
   const { mutate: setMailOptions } = api.admin.setMail.useMutation();
 
   const {
@@ -41,17 +43,17 @@ const Mail = () => {
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div>
-        <p className="text-sm text-gray-400">Mail SMTP</p>
+        <p className="text-sm text-gray-400">{t("mail.mailSMTP")}</p>
         <div className="divider mt-0 text-gray-500"></div>
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-5">
         <div className="flex items-center justify-between">
           <EditableField
             isLoading={false}
-            label="SMTP Host"
+            label={t("mail.smtpHost")}
             buttonClassName="hidden"
-            size="xs"
+            size="sm"
             fields={[
               {
                 name: "smtpHost",
@@ -66,9 +68,9 @@ const Mail = () => {
         <div className="flex items-center justify-between">
           <EditableField
             isLoading={false}
-            label="SMTP Port"
+            label={t("mail.smtpPort")}
             buttonClassName="hidden"
-            size="xs"
+            size="sm"
             fields={[
               {
                 name: "smtpPort",
@@ -83,14 +85,14 @@ const Mail = () => {
         <div className="flex items-center justify-between">
           <EditableField
             isLoading={false}
-            label="Sender Email"
+            label={t("mail.senderEmail")}
             buttonClassName="hidden"
-            size="xs"
+            size="sm"
             fields={[
               {
                 name: "smtpEmail",
                 type: "text",
-                placeholder: options?.smtpEmail || "mail@example.com",
+                placeholder: options?.smtpEmail || t("mail.mailPlaceholder"),
                 defaultValue: options?.smtpEmail,
               },
             ]}
@@ -100,14 +102,14 @@ const Mail = () => {
         <div className="flex items-center justify-between">
           <EditableField
             isLoading={false}
-            label="Username"
+            label={t("mail.username")}
             buttonClassName="hidden"
-            size="xs"
+            size="sm"
             fields={[
               {
                 name: "smtpUsername",
                 type: "text",
-                placeholder: options?.smtpUsername || "username",
+                placeholder: options?.smtpUsername || t("mail.username"),
                 defaultValue: options?.smtpUsername,
               },
             ]}
@@ -117,9 +119,9 @@ const Mail = () => {
         <div className="flex items-center justify-between">
           <EditableField
             isLoading={false}
-            label="Password"
+            label={t("mail.password")}
             buttonClassName="hidden"
-            size="xs"
+            size="sm"
             fields={[
               {
                 name: "smtpPassword",
@@ -132,7 +134,7 @@ const Mail = () => {
           />
         </div>
         <div className="flex items-center justify-between pb-10">
-          <p className="font-medium">Use SSL</p>
+          <p className="font-medium">{t("mail.useSSL")}</p>
           <input
             type="checkbox"
             checked={options?.smtpUseSSL || false}
@@ -147,7 +149,7 @@ const Mail = () => {
           className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
-          <div className="collapse-title">Invite user template</div>
+          <div className="collapse-title">{t("mail.inviteUserTemplate")}</div>
           <div className="collapse-content" style={{ width: "100%" }}>
             <MailUserInviteTemplate />
           </div>
@@ -157,7 +159,9 @@ const Mail = () => {
           className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
-          <div className="collapse-title">Forgot Password template</div>
+          <div className="collapse-title">
+            {t("mail.forgotPasswordTemplate")}
+          </div>
           <div className="collapse-content" style={{ width: "100%" }}>
             <ForgotPasswordMailTemplate />
           </div>
@@ -167,7 +171,7 @@ const Mail = () => {
           className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
-          <div className="collapse-title">Notification template</div>
+          <div className="collapse-title">{t("mail.notificationTemplate")}</div>
           <div className="collapse-content" style={{ width: "100%" }}>
             <NotificationTemplate />
           </div>

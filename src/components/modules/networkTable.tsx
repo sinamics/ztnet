@@ -14,6 +14,7 @@ import {
 import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
+import { useTranslations } from "next-intl";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -33,6 +34,7 @@ const TruncateText = ({ text }: { text: string }) => {
 };
 export const NetworkTable = ({ tableData = [] }) => {
   const router = useRouter();
+  const t = useTranslations("networksTable");
   const [globalFilter, setGlobalFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([
     {
@@ -45,20 +47,20 @@ export const NetworkTable = ({ tableData = [] }) => {
     () => [
       columnHelper.accessor("nwname", {
         cell: (info) => info.getValue(),
-        header: () => <span>Name</span>,
+        header: () => <span>{t("name")}</span>,
       }),
       columnHelper.accessor("description", {
         size: 300,
         cell: (info) => <TruncateText text={info.getValue()} />,
-        header: () => <span>Description</span>,
+        header: () => <span>{t("description")}</span>,
       }),
       columnHelper.accessor("nwid", {
         cell: (info) => info.getValue(),
-        header: () => <span>Network ID</span>,
+        header: () => <span>{t("networkId")}</span>,
         // footer: (info) => info.column.id,
       }),
       columnHelper.accessor("members", {
-        header: () => <span>Members</span>,
+        header: () => <span>{t("members")}</span>,
         cell: ({ row: { original } }) => {
           if (!Array.isArray(original.network_members)) return <span>0</span>;
           return <span>{original.network_members.length}</span>;
@@ -120,7 +122,7 @@ export const NetworkTable = ({ tableData = [] }) => {
           value={globalFilter ?? ""}
           onChange={(value) => setGlobalFilter(String(value))}
           className="font-lg border-block border p-2 shadow"
-          placeholder="Search anything..."
+          placeholder={t("networkSearchPlaceholder")}
         />
       </div>
       <div className="overflow-auto rounded-lg border border-base-200/50">

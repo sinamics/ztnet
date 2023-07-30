@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { globalSiteTitle } from "~/utils/global";
+import { type GetServerSidePropsContext } from "next";
 
 const Dashboard: NextPageWithLayout = () => {
   const title = `${globalSiteTitle} - Dashboard`;
@@ -57,12 +58,16 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  return {
+    props: {
+      // You can get the messages from anywhere you like. The recommended
+      // pattern is to put them in JSON files separated by locale and read
+      // the desired one based on the `locale` received from Next.js.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      messages: (await import(`../../locales/${context.locale}/common.json`))
+        .default,
+    },
+  };
+}
 export default Dashboard;
-
-// export const getServerSideProps = (context) =>
-//   ProtectedPageRoute(context, null, async () => {
-//     // fetch props
-//     return {
-//       props: {},
-//     };
-//   });

@@ -5,7 +5,8 @@ import NetworkById from "~/pages/network/[id]";
 import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-
+import { NextIntlProvider } from "next-intl";
+import enTranslation from "~/locales/en/common.json";
 // function createTestContext(network?: Network) {
 //   return {
 //     db: prisma,
@@ -27,8 +28,29 @@ jest.mock("../../../utils/api", () => ({
                 { ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
               ],
               routes: [{ target: "10.0.0.0/24" }],
+              dns: {
+                domain: "",
+                servers: [],
+              },
+              tags: [],
+              multicastLimit: 32,
+              enableBroadcast: true,
+              rutes: [
+                {
+                  target: "172.25.28.0/24",
+                  via: null,
+                },
+              ],
+              rules: [
+                {
+                  not: false,
+                  or: false,
+                  type: "ACTION_ACCEPT",
+                },
+              ],
             },
             members: [],
+            zombieMembers: [],
           },
           isLoading: false,
           refetch: jest.fn(),
@@ -98,8 +120,11 @@ describe("NetworkById component", () => {
     });
     api.network.getNetworkById.useQuery = useQueryMock;
 
-    render(<NetworkById />);
-
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     // expect(screen.getByText(/loading/i)).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
@@ -123,7 +148,11 @@ describe("NetworkById component", () => {
     });
     api.network.getNetworkById.useQuery = useQueryMock;
 
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     // await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 
     expect(screen.getByText(/Network ID:/i)).toBeInTheDocument();
@@ -133,25 +162,41 @@ describe("NetworkById component", () => {
   });
 
   test("renders Network Settings divider", () => {
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     expect(screen.getByText(/Network Settings/i)).toBeInTheDocument();
   });
 
   test("renders Network Members divider", () => {
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     const matches = screen.getAllByText(/Network Members/i);
     expect(matches.length).toBe(2);
   });
 
   test("renders Network Start, Network End, and Network Cidr labels", () => {
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     expect(screen.getByText(/Network Start:/i)).toBeInTheDocument();
     expect(screen.getByText(/Network End:/i)).toBeInTheDocument();
     expect(screen.getByText(/Network Cidr:/i)).toBeInTheDocument();
   });
 
   test("renders warning message", () => {
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     expect(
       screen.getByText(
         /Join this network ID and the device will automatically be displayed/
@@ -161,7 +206,11 @@ describe("NetworkById component", () => {
 
   test("edit network name", async () => {
     // screen.debug();
-    render(<NetworkById />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <NetworkById />
+      </NextIntlProvider>
+    );
     const editIcon = screen.getByTestId("changeNetworkName");
     await userEvent.click(editIcon);
 
