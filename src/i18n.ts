@@ -6,6 +6,28 @@ import global_zh from "~/locales/zh/translation.json";
 import global_no from "~/locales/no/translation.json";
 import global_es from "~/locales/es/translation.json";
 
+export const languages = [
+  {
+    code: "en",
+    name: "English",
+    country_code: "gb",
+  },
+  {
+    code: "zh",
+    name: "中文",
+    country_code: "cn",
+  },
+  {
+    code: "no",
+    name: "Norsk",
+    country_code: "no",
+  },
+  {
+    code: "es",
+    name: "Español",
+    country_code: "es",
+  },
+];
 export const initI18n = async () => {
   await i18n
     .use(initReactI18next)
@@ -30,10 +52,14 @@ export const initI18n = async () => {
       interpolation: {
         escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
       },
-      debug: true,
+      debug: false,
     });
 
   // await i18n.changeLanguage("en");
+};
+
+export const changeLanguage = async (lng: string) => {
+  await i18n.changeLanguage(lng);
 };
 
 // eslint-disable-next-line no-console

@@ -1,6 +1,6 @@
 import { type Table } from "@tanstack/react-table";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const BackForwardBtn = ({ table }: { table: Table<any> }) => (
@@ -39,7 +39,7 @@ const BackForwardBtn = ({ table }: { table: Table<any> }) => (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TableFooter = ({ table }: { table: Table<any> }) => {
   // In your component...
-  const { t } = useTranslation(); // use the 'footer' namespace
+  const t = useTranslations("tableFooter"); // use the 'footer' namespace
   return (
     <>
       <div className="space-x-3 p-2">
@@ -55,16 +55,16 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
         >
           {[10, 20, 30, 40, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
-              {t("tableFooter.show")} {pageSize}
+              {t("show")} {pageSize}
             </option>
           ))}
         </select>
       </div>
       <div className="space-x-3 p-2">
         <span className="flex items-center gap-1 text-xs">
-          <div>{t("tableFooter.page")}</div>
+          <div>{t("page")}</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} {t("tableFooter.of")}{" "}
+            {table.getState().pagination.pageIndex + 1} {t("of")}{" "}
             {table.getPageCount()}
           </strong>
         </span>

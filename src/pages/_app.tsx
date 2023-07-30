@@ -12,7 +12,8 @@ import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Modal from "~/components/elements/modal";
 import { useEffect } from "react";
-import "~/i18n";
+import { NextIntlClientProvider } from "next-intl";
+import { useRouter } from "next/router";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -25,8 +26,19 @@ type AppPropsWithLayout = AppProps & {
 
 const App: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
+  const { asPath, locale, push } = useRouter();
+
+  useEffect(() => {
+    // On component initialization, retrieve the preferred language from local storage
+    const storedLocale = localStorage.getItem("ztnet-language");
+    if (storedLocale && storedLocale !== locale) {
+      void push(asPath, asPath, { locale: storedLocale });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     // Set a CSS variable to hold the window height
     const vh = window.innerHeight * 0.01;
@@ -41,22 +53,24 @@ const App: AppType<{ session: Session | null }> = ({
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
     <ThemeProvider defaultTheme="system">
-      <Modal />
-      <ReactQueryDevtools initialIsOpen={false} />
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          className: "bg-primary-500",
-          style: {
-            border: "1px solid #191919",
-            color: "#fff",
-            background: "#404040",
-          },
-        }}
-      />
-      <SessionProvider session={session}>
-        {getLayout(<Component {...pageProps} />)}
-      </SessionProvider>
+      <NextIntlClientProvider messages={messages}>
+        <Modal />
+        <ReactQueryDevtools initialIsOpen={false} />
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            className: "bg-primary-500",
+            style: {
+              border: "1px solid #191919",
+              color: "#fff",
+              background: "#404040",
+            },
+          }}
+        />
+        <SessionProvider session={session}>
+          {getLayout(<Component {...pageProps} />)}
+        </SessionProvider>
+      </NextIntlClientProvider>
     </ThemeProvider>
   );
 };

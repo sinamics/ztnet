@@ -2,7 +2,7 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
 import { useSidebarStore } from "~/utils/store";
 // import type { ReactNode } from "react";
 // import Header from "./header";
@@ -14,7 +14,7 @@ import { useSidebarStore } from "~/utils/store";
 const Sidebar = (): JSX.Element => {
   const { open, toggle } = useSidebarStore();
   const { data: session } = useSession();
-  const { t } = useTranslation();
+  const t = useTranslations("sidebar");
 
   const sidebarRef = useRef<HTMLDivElement>();
   const router = useRouter();
@@ -37,7 +37,6 @@ const Sidebar = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open, toggle, sidebarRef]);
-
   return (
     <aside
       ref={sidebarRef}
@@ -48,7 +47,7 @@ const Sidebar = (): JSX.Element => {
         <ul className="flex w-full flex-col">
           <li className="my-px">
             <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
-              {t("sidebar.navigation")}
+              {t("navigation")}
             </span>
           </li>
           <li className="my-px">
@@ -74,7 +73,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </span>
-              <span className="ml-3"> {t("sidebar.dashboard")}</span>
+              <span className="ml-3"> {t("dashboard")}</span>
             </Link>
           </li>
 
@@ -101,14 +100,14 @@ const Sidebar = (): JSX.Element => {
                   <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                 </svg>
               </span>
-              <span className="ml-3">{t("sidebar.networks")}</span>
+              <span className="ml-3">{t("networks")}</span>
             </Link>
           </li>
           {session?.user.role === "ADMIN" ? (
             <>
               <li className="my-px">
                 <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">
-                  {t("sidebar.admin")}
+                  {t("admin")}
                 </span>
               </li>
               <li className="my-px">
@@ -116,7 +115,7 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=site-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=site-setting"
+                router.pathname.includes("/admin")
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -142,7 +141,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">{t("sidebar.settings")}</span>
+                  <span className="ml-3">{t("settings")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -179,7 +178,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">{t("sidebar.mail")}</span>
+                  <span className="ml-3">{t("mail")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -208,7 +207,7 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">{t("sidebar.users")}</span>
+                  <span className="ml-3">{t("users")}</span>
                 </Link>
               </li>
               <li className="my-px">
@@ -237,22 +236,22 @@ const Sidebar = (): JSX.Element => {
                       />
                     </svg>
                   </span>
-                  <span className="ml-3">{t("sidebar.controller")}</span>
+                  <span className="ml-3">{t("controller")}</span>
                 </Link>
               </li>
             </>
           ) : null}
           <li className="my-px">
             <span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
-              {t("sidebar.account")}
+              {t("account")}
             </span>
           </li>
           <li className="my-px">
             <Link
-              href="/profile"
+              href="/user-settings?tab=account"
               className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/profile"
+                router.pathname.includes("/user-settings")
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -270,7 +269,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </span>
-              <span className="ml-3">{t("sidebar.profile")}</span>
+              <span className="ml-3">{t("user-settings")}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -292,7 +291,7 @@ const Sidebar = (): JSX.Element => {
                   <path d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                 </svg>
               </span>
-              <span className="ml-3">{t("sidebar.logout")}</span>
+              <span className="ml-3">{t("logout")}</span>
             </a>
           </li>
         </ul>

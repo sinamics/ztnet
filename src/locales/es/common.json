@@ -1,0 +1,63 @@
+{
+  "sidebar": {
+    "navigation": "Navegación",
+    "dashboard": "Tablero",
+    "networks": "Redes",
+    "admin": "Admin",
+    "settings": "Configuraciones",
+    "mail": "Correo",
+    "users": "Usuarios",
+    "controller": "Controlador",
+    "account": "Cuenta",
+    "user-settings": "Configuraciones de usuario",
+    "logout": "Cerrar sesión"
+  },
+  "networks": {
+    "loading": "Cargando",
+    "title": "Redes",
+    "description": "Redes VPN",
+    "addNetworkButton": "Crear una red"
+  },
+  "networksTable": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "networkId": "ID de red",
+    "members": "Miembros",
+    "noNetworksMessage": "Aún no se han creado redes. Comience creando una y aparecerá aquí."
+  },
+  "tableFooter": {
+    "show": "Mostrar",
+    "page": "Página",
+    "of": "de"
+  },
+  "admin": {
+    "tabs": {
+      "settings": "Configuraciones",
+      "network": "Red",
+      "mail": "Correo",
+      "users": "Usuarios",
+      "notification": "Notificación",
+      "controller": "Controlador"
+    }
+  },
+  "userSettings": {
+    "tabs": {
+      "account": "Cuenta",
+      "user": "Usuario"
+    },
+    "account": {
+      "accountSettings": "CONFIGURACIÓN DE LA CUENTA",
+      "nameLabel": "Nombre",
+      "emailLabel": "Correo electrónico",
+      "verifiedBadge": "Verificado",
+      "notVerifiedBadge": "¡No verificado!",
+      "passwordLabel": "Contraseña",
+      "currentPasswordPlaceholder": "Contraseña actual",
+      "newPasswordPlaceholder": "Nueva contraseña",
+      "repeatNewPasswordPlaceholder": "Repetir nueva contraseña",
+      "role": "Rol",
+      "accountPreferences": "PREFERENCIAS DE LA CUENTA",
+      "languageLabel": "Idioma"
+    }
+  }
+}

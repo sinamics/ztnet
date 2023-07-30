@@ -9,7 +9,7 @@
     "users": "Brukere",
     "controller": "ZT Kontroller",
     "account": "Konto",
-    "profile": "Profil",
+    "user-settings": "Brukerinnstillinger",
     "logout": "Logg ut"
   },
   "networks": {
@@ -17,14 +17,14 @@
     "title": "Nettverk",
     "description": "VPN-nettverk",
     "addNetworkButton": "Opprett et nettverk",
-    "noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her.",
-    "networkSearchPlaceholder": "Søk etter nettverk"
+    "noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
   },
   "networksTable": {
     "name": "Navn",
     "description": "Beskrivelse",
     "networkId": "Nettverk ID",
-    "members": "Medlemmer"
+    "members": "Medlemmer",
+    "networkSearchPlaceholder": "Søk etter nettverk"
   },
   "tableFooter": {
     "show": "Vis",
@@ -39,6 +39,26 @@
       "users": "Brukere",
       "notification": "Varsling",
       "controller": "Kontroller"
+    }
+  },
+  "userSettings": {
+    "tabs": {
+      "account": "Konto",
+      "user": "Bruker"
+    },
+    "account": {
+      "accountSettings": "KONTOINNSTILLINGER",
+      "nameLabel": "Navn",
+      "emailLabel": "E-post",
+      "verifiedBadge": "Bekreftet",
+      "notVerifiedBadge": "Ikke bekreftet!",
+      "passwordLabel": "Passord",
+      "currentPasswordPlaceholder": "Nåværende passord",
+      "newPasswordPlaceholder": "Nytt passord",
+      "repeatNewPasswordPlaceholder": "Gjenta nytt passord",
+      "role": "Rolle",
+      "accountPreferences": "KONTOINNSTILLINGER",
+      "languageLabel": "Språk"
     }
   }
 }

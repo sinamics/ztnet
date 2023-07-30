@@ -5,10 +5,11 @@ import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/modules/networkTable";
 import { globalSiteTitle } from "~/utils/global";
-import { useTranslation } from "react-i18next";
+import { useTranslations } from "next-intl";
+import { type GetStaticPropsContext } from "next";
 
 const Networks: NextPageWithLayout = () => {
-  const { t } = useTranslation();
+  const t = useTranslations("networks");
   const {
     data: userNetworks,
     isLoading,
@@ -20,22 +21,22 @@ const Networks: NextPageWithLayout = () => {
   };
 
   if (isLoading) {
-    return <div>{t("networks.loading")}</div>;
+    return <div>{t("loading")}</div>;
   }
 
-  const title = `${globalSiteTitle} - ${t("networks.title")}`;
+  const title = `${globalSiteTitle} - ${t("title")}`;
 
   return (
     <>
       <Head>
         <title>{title}</title>
-        <meta name="description" content={t("networks.description")} />
+        <meta name="description" content={t("description")} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className="w-full bg-base-100">
         <div className="mb-3 mt-3 flex w-full justify-center ">
-          <h5 className="w-full text-center text-2xl">{t("networks.title")}</h5>
+          <h5 className="w-full text-center text-2xl">{t("title")}</h5>
         </div>
         <div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
           <div className="flex justify-center">
@@ -57,7 +58,7 @@ const Networks: NextPageWithLayout = () => {
                   d="M12 4.5v15m7.5-7.5h-15"
                 />
               </svg>
-              {t("networks.addNetworkButton")}
+              {t("addNetworkButton")}
             </button>
           </div>
           <div className="col-span-2">
@@ -80,7 +81,7 @@ const Networks: NextPageWithLayout = () => {
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                     />
                   </svg>
-                  <span>{t("networks.noNetworksMessage")}</span>
+                  <span>{t("noNetworksMessage")}</span>
                 </div>
               ))}
           </div>
@@ -93,5 +94,16 @@ const Networks: NextPageWithLayout = () => {
 Networks.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-
+export async function getStaticProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      // You can get the messages from anywhere you like. The recommended
+      // pattern is to put them in JSON files separated by locale and read
+      // the desired one based on the `locale` received from Next.js.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      messages: (await import(`../../locales/${context.locale}/common.json`))
+        .default,
+    },
+  };
+}
 export default Networks;
