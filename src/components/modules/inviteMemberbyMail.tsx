@@ -90,7 +90,7 @@ export const InviteMemberByMail = () => {
             {loadingInvite ? (
               <span className="loading loading-spinner"></span>
             ) : (
-              <span>{t("inviteMemberByMail.buttonText")}</span>
+              <>{t("inviteMemberByMail.buttonText")}</>
             )}
           </button>
         </label>

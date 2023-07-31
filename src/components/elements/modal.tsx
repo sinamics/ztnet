@@ -30,15 +30,12 @@ const Modal = () => {
     toggleModal();
   };
   const modalClass = cn({
-    "modal modal-bottom sm:modal-middle z-20 ": true,
+    "modal transition-none z-20": true,
     "modal-open": isOpen,
   });
 
   return (
-    // we add modal-bottom and modal-middle classes to make it responsive
-    //add modal-open for now to test the modal
-    <div className={modalClass}>
-      {/* we want any content for this modal layout so we just pass the children */}
+    <dialog className={modalClass}>
       <div
         className={cn(
           "custom-scrollbar modal-box relative bg-base-100",
@@ -67,7 +64,7 @@ const Modal = () => {
           )}
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };
 
