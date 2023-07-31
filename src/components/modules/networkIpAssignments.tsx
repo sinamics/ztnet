@@ -167,13 +167,10 @@ export const NetworkIpAssignment = () => {
         {network.autoAssignIp && ipTabs.easy ? (
           <div>
             <div
-              className={cn(
-                "xs:grid-cols-4 grid cursor-pointer grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-4",
-                {
-                  "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-                    !network.autoAssignIp,
-                }
-              )}
+              className={cn("flex cursor-pointer flex-wrap", {
+                "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
+                  !network.autoAssignIp,
+              })}
             >
               {network.cidr?.map((cidr: string) => {
                 return network?.routes?.some(
@@ -182,7 +179,7 @@ export const NetworkIpAssignment = () => {
                   <div
                     key={cidr}
                     className={cn(
-                      "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                      "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
                       {
                         "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
                           network.autoAssignIp,
@@ -196,7 +193,7 @@ export const NetworkIpAssignment = () => {
                     key={cidr}
                     onClick={() => submitUpdate({ ipPool: cidr })}
                     className={cn(
-                      "badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+                      "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
                       { "hover:bg-primary": network.autoAssignIp }
                     )}
                   >
@@ -206,7 +203,41 @@ export const NetworkIpAssignment = () => {
               })}
             </div>
           </div>
-        ) : null}
+        ) : //    <div
+        //    className={cn("flex cursor-pointer flex-wrap", {
+        //      "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
+        //        !network.autoAssignIp,
+        //    })}
+        //  >
+        //    {network.cidr?.map((cidr: string) => {
+        //      return network?.routes?.some((route) => route.target === cidr) ? (
+        //        <div
+        //          key={cidr}
+        //          className={cn(
+        //            "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs sm:m-2 md:text-base",
+        //            {
+        //              "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
+        //                network.autoAssignIp,
+        //            }
+        //          )}
+        //        >
+        //          {cidr}
+        //        </div>
+        //      ) : (
+        //        <div
+        //          key={cidr}
+        //          onClick={() => submitUpdate({ ipPool: cidr })}
+        //          className={cn(
+        //            "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs sm:m-2 md:text-base",
+        //            { "hover:bg-primary": network.autoAssignIp }
+        //          )}
+        //        >
+        //          {cidr}
+        //        </div>
+        //      );
+        //    })}
+        //  </div>
+        null}
         {network.autoAssignIp && ipTabs.advanced ? (
           <div className="mt-4 space-y-2">
             {network?.ipAssignmentPools.map((pool) => {
