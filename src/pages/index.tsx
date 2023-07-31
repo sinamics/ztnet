@@ -100,14 +100,20 @@ interface Props {
 
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<Props>> => {
+) => {
   const session = await getSession(context);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+  const messages = (await import(`~/locales/${context.locale}/common.json`))
+    .default;
 
   if (!session || !("user" in session)) {
-    return { props: {} };
+    // eslint-disable-next-line
+    return { props: { messages } };
   }
 
   return {
     props: { auth: session.user },
+    // eslint-disable-next-line
+    messages,
   };
 };
