@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import fs from "fs";
 import axios, { type AxiosError, type AxiosResponse } from "axios";
 import { type NetworkAndMembers } from "~/types/network";
