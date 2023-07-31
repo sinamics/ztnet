@@ -79,6 +79,9 @@ const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
   getUserNetworks: protectedProcedure.query(async ({ ctx }) => {
+    // const test = await centralApi.get_controller_networks();
+    // const create = await centralApi.network_detail("83048a0632c0443d");
+    // console.log(create)
     const networks = await ctx.prisma.network.findMany({
       where: {
         authorId: ctx.session.user.id,
