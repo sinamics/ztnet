@@ -1,7 +1,6 @@
 import {
   type NextPage,
   type GetServerSideProps,
-  type GetServerSidePropsResult,
   type GetServerSidePropsContext,
 } from "next";
 import Head from "next/head";
@@ -112,8 +111,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   }
 
   return {
-    props: { auth: session.user },
-    // eslint-disable-next-line
-    messages,
+        // eslint-disable-next-line
+    props: { auth: session.user, messages },
+
   };
 };

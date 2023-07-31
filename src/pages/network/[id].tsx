@@ -235,7 +235,7 @@ const NetworkById = () => {
         <NetworkPrivatePublic />
       </div>
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
+        <div className="flex flex-col justify-between lg:flex-row space-y-3 lg:space-y-0 lg:space-x-3 whitespace-nowrap">
           <div>
             <span className="text-muted font-medium">{t("networkStart")}</span>{" "}
             <span
@@ -271,7 +271,7 @@ const NetworkById = () => {
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {t("networkSettings")}
       </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1  px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
           <NetworkIpAssignment />
@@ -284,7 +284,7 @@ const NetworkById = () => {
           <NettworkRoutes />
         </div>
       </div>
-      <div className="w-5/5 mx-auto grid grid-cols-1 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
           <NetworkDns />
@@ -329,9 +329,12 @@ const NetworkById = () => {
           </div>
         )}
       </div>
-      <div className="w-5/5 mx-auto flex space-x-5 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <InviteMemberByMail />
-        <AddMemberById />
+      <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
+        {/* Ipv4 assignment  */}
+        <div className="flex w-full flex-wrap space-x-0 space-y-5 xl:space-x-5 xl:space-y-0">
+          <InviteMemberByMail />
+          <AddMemberById />
+        </div>
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="mb-4 md:mb-0">
