@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
+import { useTranslations } from "next-intl";
 
 export const NetworkDns = () => {
+  const t = useTranslations("networkById");
   const [state, setState] = useState({
     address: "",
     servers: new Set<string>(),
@@ -68,7 +70,7 @@ export const NetworkDns = () => {
     e.preventDefault();
     // add toast notification if address or domain is empty
     if (!state.address || !state.domain) {
-      return toast.error("Address and Domain is required");
+      return toast.error(t("networkDns.addressAndDomainRequired"));
     }
 
     updateNetwork(
@@ -99,12 +101,12 @@ export const NetworkDns = () => {
         className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
       >
         <input type="checkbox" />
-        <div className="collapse-title">DNS</div>
+        <div className="collapse-title">{t("networkDns.DNS")}</div>
         <div className="collapse-content" style={{ width: "100%" }}>
           <div className="flex">
             <div>
               <p className="text-xs text-gray-300">
-                Requires ZeroTier version 1.6.
+                {t("networkDns.requiresZeroTierVersion")}
               </p>
             </div>
             <div className="mx-auto flex">
@@ -128,7 +130,7 @@ export const NetworkDns = () => {
                   }
                   className="btn btn-warning btn-outline btn-xs"
                 >
-                  Clear DNS
+                  {t("networkDns.clearDNS")}
                 </button>
               ) : null}
             </div>
@@ -137,7 +139,9 @@ export const NetworkDns = () => {
             <form className="grid grid-cols-2 gap-5 pt-4">
               <div className="form-control w-full">
                 <label className="label">
-                  <span className="label-text">Search Domain</span>
+                  <span className="label-text">
+                    {t("networkDns.searchDomain")}
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -150,7 +154,9 @@ export const NetworkDns = () => {
               </div>
               <div className="form-control ">
                 <label className="label">
-                  <span className="label-text">Server Address</span>
+                  <span className="label-text">
+                    {t("networkDns.serverAddress")}
+                  </span>
                 </label>
                 <div className="join">
                   <input
@@ -167,11 +173,13 @@ export const NetworkDns = () => {
                 onClick={submitHandler}
                 className="btn btn-sm bg-base-300 text-secondary-content"
               >
-                Submit
+                {t("networkDns.submit")}
               </button>
             </form>
             <div>
-              {Array.from(state.servers).length > 0 ? <p>Servers</p> : null}
+              {Array.from(state.servers).length > 0 ? (
+                <p>{t("networkDns.servers")}</p>
+              ) : null}
               <div className="flex flex-wrap gap-3">
                 {Array.from(state.servers).map((dns, idx: number) => (
                   <div key={idx} className="form-control">

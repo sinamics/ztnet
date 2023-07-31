@@ -1,19 +1,15 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import Users from "./users";
-import Controller from "./controller";
-import Settings from "./settings";
-import Mail from "./mail";
-import Notification from "./notification";
-import NetworkSettings from "./network";
+import Account from "./account";
+import { type GetServerSidePropsContext } from "next";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next";
 
-const AdminSettings = () => {
+const UserSettings = () => {
   const router = useRouter();
+  const t = useTranslations("userSettings");
   const { tab = "members" } = router.query;
-  const t = useTranslations("admin");
+  //   const { t } = useTranslation();
   interface ITab {
     name: string;
     value: string;
@@ -22,40 +18,15 @@ const AdminSettings = () => {
 
   const tabs: ITab[] = [
     {
-      name: t("tabs.settings"),
-      value: "site-setting",
-      component: <Settings />,
-    },
-    {
-      name: t("tabs.network"),
-      value: "network-setting",
-      component: <NetworkSettings />,
-    },
-    {
-      name: t("tabs.mail"),
-      value: "mail-setting",
-      component: <Mail />,
-    },
-    {
-      name: t("tabs.users"),
-      value: "users",
-      component: <Users />,
-    },
-    {
-      name: t("tabs.notification"),
-      value: "notification",
-      component: <Notification />,
-    },
-    {
-      name: t("tabs.controller"),
-      value: "controller",
-      component: <Controller />,
+      name: t("tabs.account"),
+      value: "account",
+      component: <Account />,
     },
   ];
 
   const changeTab = async (tab: ITab) => {
     await router.push({
-      pathname: "/admin",
+      pathname: "/user-settings",
       query: { tab: tab.value },
     });
   };
@@ -79,10 +50,11 @@ const AdminSettings = () => {
   );
 };
 
-AdminSettings.getLayout = function getLayout(page: ReactElement) {
+UserSettings.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getStaticProps(context: GetStaticPropsContext) {
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       // You can get the messages from anywhere you like. The recommended
@@ -94,4 +66,4 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     },
   };
 }
-export default AdminSettings;
+export default UserSettings;

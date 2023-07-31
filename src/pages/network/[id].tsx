@@ -20,8 +20,11 @@ import { NetworkMulticast } from "~/components/modules/networkMulticast";
 import cn from "classnames";
 import NetworkHelpText from "~/components/modules/networkHelp";
 import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
+import { useTranslations } from "next-intl";
+import { type GetStaticPropsContext } from "next/types";
 
 const NetworkById = () => {
+  const t = useTranslations("networkById");
   const [state, setState] = useState({
     viewZombieTable: false,
     editNetworkName: false,
@@ -103,11 +106,8 @@ const NetworkById = () => {
           {errorNetwork.message}
         </h1>
         <ul className="list-disc">
-          <li>Verify that the ZeroTier container is operational</li>
-          <li>
-            If other instances of ZeroTier are active locally, please deactivate
-            them as it might cause conflicts.
-          </li>
+          <li>{t("errorSteps.step1")}</li>
+          <li>{t("errorSteps.step2")}</li>
         </ul>
       </div>
     );
@@ -119,16 +119,19 @@ const NetworkById = () => {
         <div className="w-5/5 h-fit w-full xl:w-2/6 ">
           <div className="flex flex-col space-y-3 sm:space-y-0">
             <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-semibold">Network ID:</span>
+              <span className="font-semibold">{t("networkId")}</span>
               <span className="relative left-7 flex items-center gap-2">
                 <CopyToClipboard
                   text={network?.nwid}
                   onCopy={() =>
-                    toast.success(`${network?.nwid} copied to clipboard`, {
-                      id: "copyNwid",
-                    })
+                    toast.success(
+                      t("copyToClipboard.success", { element: network?.nwid }),
+                      {
+                        id: "copyNwid",
+                      }
+                    )
                   }
-                  title="copy to clipboard"
+                  title={t("copyToClipboard.title")}
                 >
                   <div className="flex cursor-pointer items-center gap-2">
                     {network?.nwid}
@@ -138,7 +141,7 @@ const NetworkById = () => {
               </span>
             </div>
             <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-medium">Network Name:</span>
+              <span className="font-medium">{t("networkName")}</span>
               <span className="relative left-7 flex items-center gap-2">
                 {state.editNetworkName ? (
                   <form onSubmit={changeNameHandler}>
@@ -146,7 +149,6 @@ const NetworkById = () => {
                       focus
                       name="networkName"
                       onChange={eventHandler}
-                      // value={state.networkName}
                       defaultValue={network?.name}
                       type="text"
                       placeholder={network?.name}
@@ -184,7 +186,7 @@ const NetworkById = () => {
                     className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
                     style={{ caretColor: "transparent" }}
                   >
-                    Add description
+                    {t("addDescription")}
                   </div>
                 )
               ) : (
@@ -198,7 +200,7 @@ const NetworkById = () => {
                     maxLength={255}
                     style={{ maxHeight: "100px" }}
                     className="custom-scrollbar textarea textarea-primary w-full leading-snug "
-                    placeholder="Description"
+                    placeholder={t("descriptionPlaceholder")}
                     onKeyDown={(
                       e: React.KeyboardEvent<HTMLTextAreaElement>
                     ) => {
@@ -235,39 +237,39 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="flex flex-col justify-between sm:flex-row sm:space-x-3">
           <div>
-            <span className="text-muted font-medium">Network Start:</span>{" "}
+            <span className="text-muted font-medium">{t("networkStart")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.ipAssignmentPools[0]?.ipRangeStart,
               })}
             >
-              {network?.ipAssignmentPools[0]?.ipRangeStart || "not set"}
+              {network?.ipAssignmentPools[0]?.ipRangeStart || t("notSet")}
             </span>
           </div>
           <div>
-            <span className="text-muted font-medium">Network End:</span>{" "}
+            <span className="text-muted font-medium">{t("networkEnd")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.ipAssignmentPools[0]?.ipRangeEnd,
               })}
             >
-              {network?.ipAssignmentPools[0]?.ipRangeEnd || "not set"}
+              {network?.ipAssignmentPools[0]?.ipRangeEnd || t("notSet")}
             </span>
           </div>
           <div>
-            <span className="text-muted font-medium">Network Cidr:</span>{" "}
+            <span className="text-muted font-medium">{t("networkCidr")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
                 "badge-accent": network?.routes[0]?.target,
               })}
             >
-              {network?.routes[0]?.target || "not set"}
+              {network?.routes[0]?.target || t("notSet")}
             </span>
           </div>
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        Network Settings
+        {t("networkSettings")}
       </div>
       <div className="w-5/5 mx-auto grid grid-cols-1  px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex">
         {/* Ipv4 assignment  */}
@@ -296,7 +298,7 @@ const NetworkById = () => {
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        Network Members
+        {t("networkMembers")}
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
@@ -322,10 +324,7 @@ const NetworkById = () => {
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                 />
               </svg>
-              <span>
-                Join this network ID and the device will automatically be
-                displayed
-              </span>
+              <span>{t("networkMembersAlert.message")}</span>
             </div>
           </div>
         )}
@@ -398,4 +397,16 @@ NetworkById.getLayout = function getLayout(page: ReactElement) {
   return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
+export async function getServerSideProps(context: GetStaticPropsContext) {
+  return {
+    props: {
+      // You can get the messages from anywhere you like. The recommended
+      // pattern is to put them in JSON files separated by locale and read
+      // the desired one based on the `locale` received from Next.js.
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      messages: (await import(`../../locales/${context.locale}/common.json`))
+        .default,
+    },
+  };
+}
 export default NetworkById;

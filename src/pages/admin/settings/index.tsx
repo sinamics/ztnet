@@ -2,8 +2,10 @@ import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { globalSiteVersion } from "~/utils/global";
+import { useTranslations } from "next-intl";
 
 const Settings = () => {
+  const t = useTranslations("admin");
   const { mutate: setRegistration } =
     api.admin.updateGlobalOptions.useMutation();
 
@@ -26,10 +28,10 @@ const Settings = () => {
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Authentication</p>
+        <p className="text-sm text-gray-400">{t("settings.authentication")}</p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="flex items-center justify-between">
-          <p>Enable user registration?</p>
+          <p>{t("settings.enableUserRegistration")}</p>
           <input
             type="checkbox"
             checked={options?.enableRegistration}
@@ -44,15 +46,15 @@ const Settings = () => {
         </div>
       </div>
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Application</p>
+        <p className="text-sm text-gray-400">{t("settings.application")}</p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="flex items-center justify-between">
-          <p>Version</p>
+          <p>{t("settings.version")}</p>
           <a
             className="link text-primary"
             href="https://github.com/sinamics/ztnet/releases"
           >
-            {globalSiteVersion ?? "developer mode"}
+            {globalSiteVersion ?? t("settings.developerMode")}
           </a>
         </div>
       </div>
