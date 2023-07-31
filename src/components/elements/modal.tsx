@@ -2,8 +2,10 @@ import cn from "classnames";
 import { useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
 
 const Modal = () => {
+  const t = useTranslations("modalLayout");
   const ref = useRef(null);
   const {
     isOpen,
@@ -49,15 +51,15 @@ const Modal = () => {
             <>
               {/* closes the modal */}
               <button className="btn" onClick={actionHandler}>
-                Yes
+                {t("yesButton")}
               </button>
               <button className="btn" onClick={closeModal}>
-                Cancle
+                {t("cancelButton")}
               </button>
             </>
           ) : (
             <button className="btn" onClick={closeModal}>
-              Close
+              {t("closeButton")}
             </button>
           )}
         </div>

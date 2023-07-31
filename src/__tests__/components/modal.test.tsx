@@ -1,6 +1,8 @@
 import { render, fireEvent, screen } from "@testing-library/react";
 import Modal from "~/components/elements/modal";
 import { useModalStore } from "~/utils/store";
+import enTranslation from "~/locales/en/common.json";
+import { NextIntlProvider } from "next-intl";
 
 jest.mock("../../utils/store", () => ({
   useModalStore: jest.fn(),
@@ -27,18 +29,26 @@ describe("Modal", () => {
   });
 
   test("renders modal with title and description", () => {
-    render(<Modal />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <Modal />
+      </NextIntlProvider>
+    );
     expect(screen.getByText("Test title")).toBeInTheDocument();
     expect(screen.getByText("Test description")).toBeInTheDocument();
   });
 
   test("handles yes and cancel actions", () => {
-    render(<Modal />);
+    render(
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <Modal />
+      </NextIntlProvider>
+    );
     fireEvent.click(screen.getByText("Yes"));
     expect(yesAction).toHaveBeenCalledTimes(1);
     expect(toggleModal).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(screen.getByText("Cancle"));
+    fireEvent.click(screen.getByText("Cancel"));
     expect(closeModal).toHaveBeenCalledTimes(1);
   });
 });

@@ -20,8 +20,7 @@
 
 [![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
 [![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
-
-<!-- [![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/) -->
+[![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/)
 
 # 📝 Important: Repository Renaming Notice
 
@@ -72,14 +71,35 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 
 ## 🔥 Features
 
-🌐 **ZeroTier Network Management** - Seamlessly create, modify, and oversee multiple ZeroTier networks.  
-💻 **Node Monitoring** - Effortlessly track network status and monitor connected nodes.  
-🔗 **Intuitive Node Operations** - Simply add or remove nodes from your networks with just a few clicks.  
-⚙️ **Configurable Network Settings** - Easily adjust IP ranges, routes, Flow-Rules and access control settings according to your needs.  
-📡 **DNS and Multicast Configuration** - Customize DNS and Multicast settings for each network to optimize performance.  
-📍 **IP Assignment Pool Management** - Handle IP assignment pools with a user-friendly UI for effective management.  
-🔀 **Auto-Assign IP Functionality** - Benefit from the convenience of automatic IP assignment.
-🔒 **Network Privacy Controls** - Ensure the confidentiality of your network with private network settings.
+🌍 Multi-Language Support  
+The app supports English, Spanish (ES), Norwegian (NO), and Chinese (ZH) languages for user convenience and inclusivity.
+
+🌐 **ZeroTier Network Management**  
+Seamlessly create, modify, and oversee multiple ZeroTier networks.
+
+💻 **Node Monitoring**  
+Effortlessly track network status and monitor connected nodes.
+
+🔗 **Intuitive Node Operations**  
+Simply add or remove nodes from your networks with just a few clicks.
+
+⚙️ **Configurable Network Settings**  
+Easily adjust IP ranges, routes, Flow-Rules and access control settings according to your needs.
+
+📡 **DNS and Multicast Configuration**  
+Customize DNS and Multicast settings for each network to optimize performance.
+
+📍 **IP Assignment Pool Management**  
+Handle IP assignment pools with a user-friendly UI for effective management.
+
+🔀 **Auto-Assign IP Functionality**  
+Benefit from the convenience of automatic IP assignment.
+
+🔒 **Network Privacy Controls**  
+Ensure the confidentiality of your network with private network settings.
+
+📧 **Email Invitations**  
+Easily invite members to your network with the integrated email feature.
 
 ## ⚙️ Installations
 

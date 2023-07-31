@@ -28,6 +28,7 @@
     }
   },
   "include": [
+    "./src/global.d.ts",
     ".eslintrc.cjs",
     "next-env.d.ts",
     "**/*.ts",

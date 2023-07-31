@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import CardComponent from "./privatePublic";
+import { useTranslations } from "next-intl";
 
 export const NetworkPrivatePublic = () => {
+  const t = useTranslations();
   const { query } = useRouter();
   const {
     data: networkByIdQuery,
@@ -22,7 +22,6 @@ export const NetworkPrivatePublic = () => {
     api.network.updateNetwork.useMutation({
       onError: (e) => {
         void toast.error(e?.message);
-        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
       },
     });
 
@@ -35,10 +34,14 @@ export const NetworkPrivatePublic = () => {
       {
         onSuccess: () => {
           void refecthNetworkById();
+          const secure = privateNetwork
+            ? "private"
+            : "public, please use with caution!";
+
           toast.success(
-            `Your network is now ${
-              privateNetwork ? "private" : "public, please use with caution!"
-            }`,
+            t("networkById.privatePublicSwitch.accessControllMessage", {
+              authType: secure,
+            }),
             { icon: "⚠️" }
           );
         },
@@ -54,18 +57,18 @@ export const NetworkPrivatePublic = () => {
         <CardComponent
           onClick={() => privateHandler(true)}
           faded={!network.private}
-          title="Private"
+          title={t("networkById.privatePublicSwitch.privateCardTitle")}
           rootClassName="min-w-full sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit flex-1 "
           iconClassName="text-green-500"
-          content="Each user needs to be Autorization by network administrator."
+          content={t("networkById.privatePublicSwitch.privateCardContent")}
         />
         <CardComponent
           onClick={() => privateHandler(false)}
           faded={network.private}
-          title="Public"
+          title={t("networkById.privatePublicSwitch.publicCardTitle")}
           rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit flex-1"
           iconClassName="text-warning"
-          content="All users can connect to this network without Autorization"
+          content={t("networkById.privatePublicSwitch.publicCardContent")}
         />
       </div>
     </div>

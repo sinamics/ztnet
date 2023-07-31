@@ -14,8 +14,11 @@ import { type MembersEntity } from "~/types/network";
 import { type ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
 
 export const Accounts = () => {
+  const t = useTranslations("admin");
+
   const [sorting, setSorting] = useState<SortingState>([
     {
       id: "id",
@@ -31,26 +34,26 @@ export const Accounts = () => {
   const columns = useMemo<ColumnDef<MembersEntity>[]>(
     () => [
       columnHelper.accessor("id", {
-        header: () => <span>ID</span>,
+        header: () => <span>{t("users.table.id")}</span>,
         id: "id",
       }),
       columnHelper.accessor("name", {
-        header: () => <span>Member name</span>,
+        header: () => <span>{t("users.table.memberName")}</span>,
         id: "name",
       }),
       columnHelper.accessor("email", {
-        header: () => <span>Email</span>,
+        header: () => <span>{t("users.table.email")}</span>,
         id: "email",
       }),
       columnHelper.accessor("emailVerified", {
-        header: () => <span>Email Verified</span>,
+        header: () => <span>{t("users.table.emailVerified")}</span>,
         id: "emailVerified",
         cell: ({ getValue }) => {
           if (getValue()) {
-            return "Yes";
+            return t("users.table.emailVerifiedYes");
           }
 
-          return "No";
+          return t("users.table.emailVerifiedNo");
         },
       }),
       // columnHelper.accessor("online", {
@@ -65,7 +68,7 @@ export const Accounts = () => {
       //   },
       // }),
       columnHelper.accessor("role", {
-        header: () => <span>Role</span>,
+        header: () => <span>{t("users.table.role")}</span>,
         id: "role",
       }),
     ],
@@ -93,7 +96,7 @@ export const Accounts = () => {
       const { mutate: changeRole } = api.admin.changeRole.useMutation({
         onSuccess: () => {
           void refetchUsers();
-          toast.success("Role changed successfully");
+          toast.success(t("users.toastMessages.roleChangeSuccess"));
         },
         onError: (error) => {
           if ((error.data as ErrorData)?.zodError) {
@@ -105,7 +108,7 @@ export const Accounts = () => {
           } else if (error.message) {
             toast.error(error.message);
           } else {
-            toast.error("An unknown error occurred");
+            toast.error(t("users.toastMessages.errorOccurred"));
           }
           void refetchUsers();
         },
@@ -123,15 +126,13 @@ export const Accounts = () => {
         let description = "";
 
         if (e.target.value === "ADMIN") {
-          description =
-            "As an admin, this user will have full permissions, including access to the admin panel.";
+          description = t("users.roleDescriptions.admin");
         } else if (e.target.value === "USER") {
-          description =
-            "If set to User, this user will have limited permissions and will not be able to access the admin panel.";
+          description = t("users.roleDescriptions.user");
         }
 
         callModal({
-          title: `Change role for ${name}`,
+          title: t("users.changeRoleModal.title", { name }),
           description,
           yesAction: () => {
             changeRole({

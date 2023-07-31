@@ -1,46 +1,52 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { clearConfigCache } from "prettier";
+import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 
 const Controller = () => {
+  const t = useTranslations("admin");
   const { data: controllerData, isLoading } =
     api.admin.getControllerStats.useQuery();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  const { networkCount, totalMembers, controllerStatus } = controllerData;
+  const { networkCount, totalMembers, controllerStatus } = controllerData || {};
 
   const { allowManagementFrom, allowTcpFallbackRelay, listeningOn } =
-    controllerStatus?.config?.settings;
+    controllerStatus?.config?.settings || {};
 
-  const { online, tcpFallbackActive, version } = controllerStatus;
+  const { online, tcpFallbackActive, version } = controllerStatus || {};
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
   return (
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Networks & Members</p>
+        <p className="text-sm text-gray-400">
+          {t("controller.networkMembers.title")}
+        </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="flex items-center justify-between">
-          <p>Total Network`s:</p>
+          <p>{t("controller.networkMembers.totalNetworks")}</p>
           <p>{networkCount}</p>
         </div>
         <div className="flex items-center justify-between">
-          <p>Total Members:</p>
+          <p>{t("controller.networkMembers.totalMembers")}</p>
           <p>{totalMembers}</p>
         </div>
       </div>
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Management</p>
+        <p className="text-sm text-gray-400">
+          {t("controller.management.title")}
+        </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="flex items-center justify-between">
-          <p>Allow Management From:</p>
+          <p>{t("controller.management.allowManagementFrom")}</p>
           <div className="list-inside list-disc">
             {allowManagementFrom.map((address, index) => (
               <span key={index}>{address}</span>
@@ -48,11 +54,11 @@ const Controller = () => {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <p>Allow TCP Fallback Relay:</p>
+          <p>{t("controller.management.allowTcpFallbackRelay")}</p>
           <p>{allowTcpFallbackRelay ? "Yes" : "No"}</p>
         </div>
         <div className="flex items-center justify-between">
-          <p>Listening On:</p>
+          <p>{t("controller.management.listeningOn")}</p>
           <div className="list-inside list-disc space-x-2">
             {listeningOn.map((address, index) => (
               <span key={index}>{address}</span>
@@ -61,19 +67,21 @@ const Controller = () => {
         </div>
       </div>
       <div className="pb-10">
-        <p className="text-sm text-gray-400">Controller Status</p>
+        <p className="text-sm text-gray-400">
+          {t("controller.controllerStatus.title")}
+        </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
 
         <div className="flex items-center justify-between">
-          <p>Online:</p>
+          <p>{t("controller.controllerStatus.online")}</p>
           <p>{online ? "Yes" : "No"}</p>
         </div>
         <div className="flex items-center justify-between">
-          <p>TCP Fallback Active:</p>
+          <p>{t("controller.controllerStatus.tcpFallbackActive")}</p>
           <p>{tcpFallbackActive ? "Yes" : "No"}</p>
         </div>
         <div className="flex items-center justify-between">
-          <p>Version:</p>
+          <p>{t("controller.controllerStatus.version")}</p>
           <p>{version}</p>
         </div>
       </div>
