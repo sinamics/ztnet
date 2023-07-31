@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore } from "~/utils/store";
+import { api } from "~/utils/api";
 // import type { ReactNode } from "react";
 // import Header from "./header";
 
@@ -18,6 +19,9 @@ const Sidebar = (): JSX.Element => {
 
   const sidebarRef = useRef<HTMLDivElement>();
   const router = useRouter();
+
+  const { data: globalOption } = api.admin.getAllOptions.useQuery();
+
   useEffect(() => {
     const handleClickOutside = (_event: MouseEvent) => {
       if (open) {
@@ -103,6 +107,34 @@ const Sidebar = (): JSX.Element => {
               <span className="ml-3">{t("networks")}</span>
             </Link>
           </li>
+          {globalOption?.ztCentralApiKey ? (
+            <li className="my-px">
+              <Link
+                href="/central"
+                className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname === "/central"
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
+              >
+                <span className="flex items-center justify-center text-lg text-gray-400">
+                  <svg
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  </svg>
+                </span>
+                <span className="ml-3">ZT Central</span>
+              </Link>
+            </li>
+          ) : null}
           {session?.user.role === "ADMIN" ? (
             <>
               <li className="my-px">

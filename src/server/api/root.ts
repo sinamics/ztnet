@@ -3,6 +3,7 @@ import { authRouter } from "./routers/authRouter";
 import { networkMemberRouter } from "./routers/memberRouter";
 import { networkRouter } from "./routers/networkRouter";
 import { adminRouter } from "./routers/adminRoute";
+import { ztCentralRouter } from "./routers/ztCentral";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ import { adminRouter } from "./routers/adminRoute";
 export const appRouter = createTRPCRouter({
   network: networkRouter,
   networkMember: networkMemberRouter,
+  central: ztCentralRouter,
   auth: authRouter,
   admin: adminRouter,
 });

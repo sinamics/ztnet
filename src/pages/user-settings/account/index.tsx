@@ -22,6 +22,9 @@ const Account = () => {
   const { mutate: userUpdate, error: userError } =
     api.auth.update.useMutation();
 
+  const { mutate: updateZtCentral } = api.central.update.useMutation();
+  const { data: globalOption } = api.admin.getAllOptions.useQuery();
+
   const ChangeLanguage = async (locale: string) => {
     await push(asPath, asPath, { locale });
     localStorage.setItem("ztnet-language", locale);
@@ -126,6 +129,86 @@ const Account = () => {
               <p className="font-medium">{t("account.role")}</p>
               <p className="text-gray-500">{session?.user.role}</p>
             </div>
+          </div>
+        </div>
+
+        <p className="pt-10 text-[0.7rem] text-gray-400">ZEROTIER CENTRAL</p>
+        <div className="divider m-0 p-0 text-gray-500"></div>
+        <div className="form-control w-full">
+          <p className="text-sm text-gray-500">
+            Incorporating your ZeroTier Central API will enable you to manage
+            your central networks directly from ZTNET. Upon integrating the key,
+            a new menu will appear in the sidebar for enhanced accessibility and
+            control.
+            <br />
+            You can obtain a key from the ZeroTier Central portal.{" "}
+            <a href="https://my.zerotier.com/account">
+              https://my.zerotier.com/account
+            </a>
+          </p>
+          <div className="pt-3">
+            <InputField
+              label="Zerotier Central API Key"
+              placeholder="******"
+              size="sm"
+              rootFormClassName="space-y-3 pt-2"
+              fields={[
+                {
+                  name: "apiKey",
+                  type: "text",
+                  placeholder: "api key",
+                  value: globalOption?.ztCentralApiKey as string,
+                },
+              ]}
+              submitHandler={(params) => {
+                return new Promise((resolve, reject) => {
+                  updateZtCentral(
+                    { ...params },
+                    {
+                      onSuccess: () => {
+                        resolve(true);
+                      },
+                      onError: () => {
+                        reject(false);
+                      },
+                    }
+                  );
+                });
+              }}
+            />
+          </div>
+        </div>
+        <div className="form-control w-full">
+          <div className="pt-3">
+            <InputField
+              label="Zerotier API Url"
+              placeholder="https://api.zerotier.com/api"
+              size="sm"
+              rootFormClassName="space-y-3 pt-2"
+              fields={[
+                {
+                  name: "apiUrl",
+                  type: "text",
+                  placeholder: "api url",
+                  value: globalOption?.ztCentralApiUrl as string,
+                },
+              ]}
+              submitHandler={(params) => {
+                return new Promise((resolve, reject) => {
+                  updateZtCentral(
+                    { ...params },
+                    {
+                      onSuccess: () => {
+                        resolve(true);
+                      },
+                      onError: () => {
+                        reject(false);
+                      },
+                    }
+                  );
+                });
+              }}
+            />
           </div>
         </div>
         <p className="pt-10 text-[0.7rem] text-gray-400">

@@ -12,22 +12,22 @@ datasource db {
 }
 
 model GlobalOptions {
-  id                    Int     @id @default(autoincrement())
+  id                    Int                               @id @default(autoincrement())
 
   // Registration
-  enableRegistration    Boolean @default(true)
-  firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
+  enableRegistration    Boolean                           @default(true)
+  firstUserRegistration Boolean                           @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
   smtpHost                              String?
-  smtpPort                              String  @default("587")
+  smtpPort                              String            @default("587")
   smtpEmail                             String?
   smtpUsername                          String?
   smtpPassword                          String? 
-  smtpUseSSL                            Boolean @default(false)
-  smtpSecure                            Boolean @default(false)
-  smtpIgnoreTLS                         Boolean @default(false)
-  smtpRequireTLS                        Boolean @default(false)
+  smtpUseSSL                            Boolean           @default(false)
+  smtpSecure                            Boolean           @default(false)
+  smtpRequireTLS                        Boolean           @default(false)
+  smtpIgnoreTLS                         Boolean           @default(false)
   inviteUserTemplate                    Json?
   inviteAdminTemplate                   Json?
   forgotPasswordTemplate                Json?
@@ -35,11 +35,15 @@ model GlobalOptions {
   notificationTemplate                  Json?
 
   // Notifications
-  userRegistrationNotification          Boolean @default(false)
+  userRegistrationNotification          Boolean           @default(false)
 
   // networks
   useNotationColorAsBg                  Boolean?          @default(false)
   showNotationMarkerInTableRow          Boolean?          @default(true)
+
+  //zt central
+  ztCentralApiKey                       String?           @default("")
+  ztCentralApiUrl                       String?           @default("https://api.zerotier.com/api")
 }
 
 enum Role {
