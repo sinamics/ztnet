@@ -60,6 +60,7 @@ export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
     api.network.getNetworkById.useQuery(
       {
         nwid,
+        central: true,
       },
       { enabled: !!query.id }
     );

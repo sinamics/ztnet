@@ -16,6 +16,7 @@ export const AddMemberById = () => {
   const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central: true,
     },
     { enabled: !!query.id }
   );

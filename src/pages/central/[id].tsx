@@ -40,12 +40,14 @@ const CentralNetworkById = () => {
     isLoading: loadingNetwork,
     error: errorNetwork,
     refetch: refetchNetwork,
-  } = api.central.getCentralNetworkById.useQuery(
+  } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-    },
-    { enabled: !!query.id, refetchInterval: 10000 }
+      central: true,
+    }
+    // { enabled: !!query.id, refetchInterval: 10000 }
   );
+  console.log(networkById);
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
     onError: (e) => {
       void toast.error(e?.message);
@@ -336,7 +338,7 @@ const CentralNetworkById = () => {
           <AddMemberById />
         </div>
       </div>
-      <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+      {/* <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="mb-4 md:mb-0">
           {networkById?.zombieMembers?.length > 0 ? (
             <>
@@ -360,13 +362,13 @@ const CentralNetworkById = () => {
             </>
           ) : null}
         </div>
-      </div>
+      </div> */}
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <NetworkHelpText />
+        {/* <NetworkHelpText /> */}
       </div>
 
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <NetworkFlowRules />
+        {/* <NetworkFlowRules /> */}
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Actions
