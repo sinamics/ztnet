@@ -12,7 +12,7 @@ interface IProp {
 export const NetworkMulticast = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
-    multicastLimit: 0,
+    multicastLimit: "",
     enableBroadcast: false,
   });
 
@@ -73,10 +73,9 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
     updateNetwork(
       {
         nwid: network.nwid,
+        central,
         updateParams: {
-          multicast: {
-            multicastLimit: state.multicastLimit.toString(),
-          },
+          multicastLimit: parseInt(state.multicastLimit),
         },
       },
       {
@@ -153,10 +152,9 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
                   updateNetwork(
                     {
                       nwid: network.nwid,
+                      central,
                       updateParams: {
-                        multicast: {
-                          enableBroadcast: e.target.checked,
-                        },
+                        enableBroadcast: e.target.checked,
                       },
                     },
                     {

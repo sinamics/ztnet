@@ -8,7 +8,10 @@ import { useTranslations } from "next-intl";
 type User = {
   memberid: string;
 };
-export const AddMemberById = () => {
+interface IProp {
+  central?: boolean;
+}
+export const AddMemberById = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [user, setUser] = useState<User>({ memberid: "" });
   const { query } = useRouter();
@@ -16,7 +19,7 @@ export const AddMemberById = () => {
   const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true,
+      central,
     },
     { enabled: !!query.id }
   );

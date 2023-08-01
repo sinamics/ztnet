@@ -11,7 +11,7 @@ import { type MembersEntity } from "~/types/network";
 
 export type Network = {
   nwid: string;
-  nwname: string;
+  name: string;
   members: string[];
 };
 
@@ -27,7 +27,7 @@ const range = (len: number) => {
 const newNetwork = (): Network => {
   return {
     nwid: faker.string.uuid(),
-    nwname: faker.person.lastName(),
+    name: faker.person.lastName(),
     members: [],
     // age: faker.datatype.number(40),
     // visits: faker.datatype.number(1000),
