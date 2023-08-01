@@ -51,7 +51,6 @@ const NetworkById = () => {
       void toast.error(e?.message);
     },
   });
-
   useEffect(() => {
     setState((prev) => ({
       ...prev,
@@ -235,7 +234,7 @@ const NetworkById = () => {
         <NetworkPrivatePublic />
       </div>
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <div className="flex flex-col justify-between lg:flex-row space-y-3 lg:space-y-0 lg:space-x-3 whitespace-nowrap">
+        <div className="flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
           <div>
             <span className="text-muted font-medium">{t("networkStart")}</span>{" "}
             <span

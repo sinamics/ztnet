@@ -47,7 +47,7 @@ const CentralNetworkById = () => {
     }
     // { enabled: !!query.id, refetchInterval: 10000 }
   );
-  console.log(networkById);
+
   const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
     onError: (e) => {
       void toast.error(e?.message);
@@ -85,6 +85,7 @@ const CentralNetworkById = () => {
     updateNetwork(
       {
         nwid: network.nwid,
+        central: true,
         updateParams: { name: state?.networkName },
       },
       {
@@ -234,7 +235,7 @@ const CentralNetworkById = () => {
             </div>
           </div>
         </div>
-        <NetworkPrivatePublic />
+        <NetworkPrivatePublic central />
       </div>
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         <div className="flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
@@ -276,27 +277,27 @@ const CentralNetworkById = () => {
       <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
-          <NetworkIpAssignment />
+          <NetworkIpAssignment central />
         </div>
 
         <div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex"></div>
 
         {/* Manged routes section */}
         <div className="w-6/6 xl:w-3/6 ">
-          <NettworkRoutes />
+          <NettworkRoutes central />
         </div>
       </div>
       <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
-          <NetworkDns />
+          <NetworkDns central />
         </div>
 
         <div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex"></div>
 
         {/* Manged broadcast section */}
         <div className="w-6/6 xl:w-3/6">
-          <NetworkMulticast />
+          <NetworkMulticast central />
         </div>
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
@@ -307,6 +308,7 @@ const CentralNetworkById = () => {
           <div className="membersTable-wrapper">
             <NetworkMembersTable
               nwid={network.nwid}
+              central
               // setEditing={(e: boolean) => setEditing(e)}
             />
           </div>

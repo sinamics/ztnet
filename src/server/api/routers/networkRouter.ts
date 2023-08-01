@@ -107,7 +107,6 @@ export const networkRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       if (input.central) {
-        // console.log('running', input.nwid)
         const zt = await centralApi.network_detail(input.nwid);
         // console.log(JSON.stringify(zt,null,2))
         return { ...zt };
@@ -138,7 +137,7 @@ export const networkRouter = createTRPCRouter({
           return throwError(`${err.message}`);
         });
 
-      console.log(JSON.stringify(ztControllerResponse, null, 2));
+      // console.log(JSON.stringify(ztControllerResponse, null, 2));
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist
@@ -272,6 +271,7 @@ export const networkRouter = createTRPCRouter({
     .input(
       z.object({
         nwid: z.string().nonempty(),
+        central: z.boolean().optional().default(false),
         updateParams: z.object({
           multicast: z
             .object({
@@ -306,6 +306,13 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.central) {
+        const zt = await centralApi.network_update(
+          input.nwid,
+          input.updateParams
+        );
+        return zt;
+      }
       // Construct the API request payload using the provided updateParams
       const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
       const prismaUpdates: Partial<NetworkEntity> = {};

@@ -4,7 +4,11 @@ import { api } from "~/utils/api";
 import CardComponent from "./privatePublic";
 import { useTranslations } from "next-intl";
 
-export const NetworkPrivatePublic = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkPrivatePublic = ({ central = false }: IProp) => {
   const t = useTranslations();
   const { query } = useRouter();
   const {
@@ -14,7 +18,7 @@ export const NetworkPrivatePublic = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true
+      central,
     },
     { enabled: !!query.id }
   );
@@ -49,7 +53,7 @@ export const NetworkPrivatePublic = () => {
       }
     );
   };
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   if (isLoading) return <div>Loading</div>;
 
   return (

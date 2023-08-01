@@ -25,7 +25,7 @@ const Networks: NextPageWithLayout = () => {
   }
 
   const title = `${globalSiteTitle} - ${t("title")}`;
-
+  console.log(userNetworks);
   return (
     <>
       <Head>

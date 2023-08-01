@@ -5,7 +5,11 @@ import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "use-intl";
 
-export const NetworkMulticast = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkMulticast = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
     multicastLimit: 0,
@@ -20,7 +24,7 @@ export const NetworkMulticast = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true,
+      central,
     },
     { enabled: !!query.id }
   );
@@ -44,7 +48,7 @@ export const NetworkMulticast = () => {
       enableBroadcast: networkByIdQuery?.network?.enableBroadcast,
     }));
   }, [
-    networkByIdQuery.network.multicastLimit,
+    networkByIdQuery?.network.multicastLimit,
     networkByIdQuery?.network?.enableBroadcast,
   ]);
 
@@ -84,7 +88,7 @@ export const NetworkMulticast = () => {
     );
   };
 
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   return (
     <div
       tabIndex={0}

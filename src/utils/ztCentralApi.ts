@@ -47,6 +47,19 @@ const options = {
     "Content-Type": "application/json",
   },
 };
+
+const flattenNetworks = (networks) => {
+  return networks.map((network) => {
+    // Destructure the network object into config and other properties
+    const { id: nwid, config, ...otherProps } = network;
+
+    // Merge the config object into the main network object
+    const flattenedNetwork = { nwid, ...config, ...otherProps };
+
+    return flattenedNetwork;
+  });
+};
+
 /* 
   Controller API for Admin
 */
@@ -76,7 +89,8 @@ export const get_controller_networks =
   async function (): Promise<ZTControllerListNetworks> {
     try {
       const { data } = await axios.get(ZT_ADDR + "/network", options);
-      return data as ZTControllerListNetworks;
+      const flattenedNetworks = flattenNetworks(data);
+      return flattenedNetworks as ZTControllerListNetworks;
     } catch (error) {
       const message = "An error occurred while getting get_controller_networks";
       throw new APIError(
@@ -188,7 +202,7 @@ export const network_update = async function (
   try {
     const updated = await axios.post(
       `${ZT_ADDR}/network/${nwid}`,
-      data,
+      { config: { ...data } },
       options
     );
     return { network: { ...updated.data } };

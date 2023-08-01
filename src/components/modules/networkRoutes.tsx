@@ -11,7 +11,11 @@ const initialRouteInput = {
   via: "",
 };
 
-export const NettworkRoutes = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NettworkRoutes = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
   const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
@@ -24,7 +28,7 @@ export const NettworkRoutes = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true,
+      central,
     },
     { enabled: !!query.id, networkMode: "always" }
   );
@@ -77,7 +81,7 @@ export const NettworkRoutes = () => {
       }
     );
   };
-  const { network } = networkById;
+  const { network } = networkById || {};
   if (isLoading) return <div>Loading</div>;
   return (
     <div
