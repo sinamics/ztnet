@@ -19,7 +19,7 @@ test("getUserNetworks", async () => {
 
   interface Network {
     nwid: string;
-    nwname: string;
+    name: string;
     authorId: number;
     network_members: NetworkMember[];
   }
@@ -31,7 +31,7 @@ test("getUserNetworks", async () => {
   const mockOutput: Network[] = [
     {
       nwid: "1",
-      nwname: "test",
+      name: "test",
       authorId: 10,
       network_members: [
         {

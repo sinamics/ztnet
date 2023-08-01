@@ -33,8 +33,9 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
   const privateHandler = (privateNetwork: boolean) => {
     updateNetworkMutation(
       {
-        updateParams: { privateNetwork },
+        updateParams: { private: privateNetwork },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {

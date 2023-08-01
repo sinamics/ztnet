@@ -163,7 +163,7 @@ export const network_members = async function (
 
     return members.data as MemberRevisionCounters;
   } catch (error) {
-    const message = "An error occurred while getting network_members";
+    const message = `An error occurred while getting network_members ${error}`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -196,8 +196,7 @@ export const network_detail = async function (
       members: [...membersArr],
     };
   } catch (error) {
-    const message =
-      "An error occurred while getting data from network_details function";
+    const message = `An error occurred while getting data from network_details function ${error}`;
     throw new APIError(message, error as AxiosError);
   }
 };

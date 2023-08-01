@@ -132,7 +132,10 @@ const Account = () => {
           </div>
         </div>
 
-        <p className="pt-10 text-[0.7rem] text-gray-400">ZEROTIER CENTRAL</p>
+        <p className="pt-10 text-[0.7rem] text-gray-400">
+          ZEROTIER CENTRAL{" "}
+          <div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
+        </p>
         <div className="divider m-0 p-0 text-gray-500"></div>
         <div className="form-control w-full">
           <p className="text-sm text-gray-500">

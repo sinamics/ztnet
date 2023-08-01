@@ -45,7 +45,7 @@ export const NetworkTable = ({ tableData = [] }) => {
   const columnHelper = createColumnHelper<UserNetworkTable>();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("nwname", {
+      columnHelper.accessor("name", {
         cell: (info) => info.getValue(),
         header: () => <span>{t("name")}</span>,
       }),

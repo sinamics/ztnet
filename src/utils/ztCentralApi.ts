@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import fs from "fs";
+
 import axios, { type AxiosError, type AxiosResponse } from "axios";
 import { type NetworkAndMembers } from "~/types/network";
 import { APIError } from "~/server/helpers/errorHandler";
@@ -20,35 +21,29 @@ import {
   type ZTControllerMemberUpdate,
   type ZTControllerGetPeer,
 } from "~/types/ztController";
+import { prisma } from "~/server/db";
 
 const ZT_ADDR = "https://api.zerotier.com/api/v1";
-let ZT_SECRET = process.env.ZT_SECRET;
 
-const ZT_FILE =
-  process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
+const getTokenFromDb = async () => {
+  const globalOptions = await prisma.globalOptions.findFirst({
+    where: {
+      id: 1,
+    },
+  });
+  return globalOptions?.ztCentralApiKey;
+};
 
-if (!ZT_SECRET) {
-  if (process.env.IS_GITHUB_ACTION !== "true") {
-    try {
-      ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("an error occurred while reading the ZT_SECRET");
-    }
-  } else {
-    // GitHub Actions
-    ZT_SECRET = "dummy_text_to_skip_gh";
-  }
-}
-const options = {
+const headers = {
   json: true,
   headers: {
-    Authorization: `token gsUzga5GyuCe40paU2Pa8VZwgji29f8u`,
+    Authorization: `token ${await getTokenFromDb()}`,
     "Content-Type": "application/json",
   },
 };
 
-const flattenNetworks = (networks) => {
+const flattenNetworks = (networks: string[]) => {
+  if (!networks) return [];
   return networks.map((network) => {
     // Destructure the network object into config and other properties
     const { id: nwid, config, ...otherProps } = network;
@@ -70,11 +65,12 @@ const flattenNetworks = (networks) => {
 //Get Version
 export const get_controller_version = async function () {
   try {
-    const { data } = await axios.get(ZT_ADDR + "", options);
+    const { data } = await axios.get(ZT_ADDR + "", headers);
 
     return data as ZTControllerStatus;
   } catch (error) {
-    const message = "An error occurred while getting get_controller_version";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting get_controller_version";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -88,11 +84,12 @@ type ZTControllerListNetworks = Array<string>;
 export const get_controller_networks =
   async function (): Promise<ZTControllerListNetworks> {
     try {
-      const { data } = await axios.get(ZT_ADDR + "/network", options);
+      const { data } = await axios.get(ZT_ADDR + "/network", headers);
       const flattenedNetworks = flattenNetworks(data);
       return flattenedNetworks as ZTControllerListNetworks;
     } catch (error) {
-      const message = "An error occurred while getting get_controller_networks";
+      const message =
+        "[ZT CENTRAL] An error occurred while getting get_controller_networks";
       throw new APIError(
         message,
         axios.isAxiosError(error) ? error : undefined
@@ -113,7 +110,8 @@ export const network_create = async (): Promise<ZTControllerCreateNetwork> => {
     );
     return response.data as ZTControllerCreateNetwork;
   } catch (error) {
-    const message = "An error occurred while getting network_create";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting network_create";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -122,11 +120,12 @@ export const network_create = async (): Promise<ZTControllerCreateNetwork> => {
 
 export async function network_delete(nwid: string): Promise<HttpResponse> {
   try {
-    const response = await axios.delete(`${ZT_ADDR}/network/${nwid}`, options);
+    const response = await axios.delete(`${ZT_ADDR}/network/${nwid}`, headers);
 
     return { status: response.status, data: undefined };
   } catch (error) {
-    const message = "An error occurred while getting network_delete";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting network_delete";
     throw new APIError(message, error as AxiosError);
   }
 }
@@ -140,12 +139,13 @@ export const network_members = async function (
   try {
     const members: AxiosResponse = await axios.get(
       `${ZT_ADDR}/network/${nwid}/member`,
-      options
+      headers
     );
 
     return members.data as MemberRevisionCounters;
   } catch (error) {
-    const message = "An error occurred while getting network_members";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting network_members";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -162,14 +162,14 @@ export const network_detail = async function (
 
     const network: AxiosResponse = await axios.get(
       `${ZT_ADDR}/network/${nwid}`,
-      options
+      headers
     );
 
     const membersArr = await Promise.all(
       members?.map(async (member) => {
         const memberDetails: AxiosResponse = await axios.get(
           `${ZT_ADDR}/network/${nwid}/member/${member.nodeId}`,
-          options
+          headers
         );
 
         const { id: memberId, config, ...restMember } = memberDetails.data;
@@ -188,7 +188,7 @@ export const network_detail = async function (
       members: [...membersArr],
     };
   } catch (error) {
-    const message = `An error occurred while getting data from network_details function ${error}`;
+    const message = `[ZT CENTRAL] An error occurred while getting data from network_details function ${error}`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -203,11 +203,12 @@ export const network_update = async function (
     const updated = await axios.post(
       `${ZT_ADDR}/network/${nwid}`,
       { config: { ...data } },
-      options
+      headers
     );
     return { network: { ...updated.data } };
   } catch (error) {
-    const message = "An error occurred while getting network_update";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting network_update";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -222,12 +223,13 @@ export const member_detail = async function (
   try {
     const response = await axios.get(
       `${ZT_ADDR}/network/${nwid}/member/${id}`,
-      options
+      headers
     );
 
     return response.data as ZTControllerMemberDetails;
   } catch (error) {
-    const message = "An error occurred while getting member_detail";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting member_detail";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -242,11 +244,12 @@ export const member_delete = async ({
   try {
     const response: AxiosResponse = await axios.delete(
       `${ZT_ADDR}/network/${nwid}/member/${memberId}`,
-      options
+      headers
     );
     return response.status as MemberDeleteResponse;
   } catch (error) {
-    const message = "An error occurred while getting member_delete";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting member_delete";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -262,11 +265,12 @@ export const member_update = async (
     const response: AxiosResponse = await axios.post(
       `${ZT_ADDR}/network/${nwid}/member/${memberId}`,
       data,
-      options
+      headers
     );
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
-    const message = "An error occurred while getting member_update";
+    const message =
+      "[ZT CENTRAL] An error occurred while getting member_update";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -275,10 +279,10 @@ export const member_update = async (
 // https://docs.zerotier.com/service/v1/#operation/getPeers
 export const peers = async (): Promise<ZTControllerGetPeer> => {
   try {
-    const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, options);
+    const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, headers);
     return response.data as ZTControllerGetPeer;
   } catch (error) {
-    const message = "An error occurred while getting peers";
+    const message = "[ZT CENTRAL] An error occurred while getting peers";
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -291,7 +295,7 @@ export const peer = async (
   try {
     const response: AxiosResponse = await axios.get(
       `${ZT_ADDR}/peer/${userZtAddress}`,
-      options
+      headers
     );
 
     if (!response.data) return null as ZTControllerGetPeer[];

@@ -54,6 +54,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
       {
         updateParams: { routes: [...newRouteArr] },
         nwid: query.id as string,
+        central,
       },
       { onSuccess: () => void refecthNetworkById() }
     );
@@ -71,6 +72,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
       {
         updateParams: { routes: [...network?.routes, { ...routeInput }] },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {

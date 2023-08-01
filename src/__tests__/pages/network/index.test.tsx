@@ -54,8 +54,8 @@ describe("Networks page", () => {
     // const mockCreateNetwork = jest.fn().mockResolvedValue({});
     const mockReturn = jest.fn().mockReturnValue({
       data: [
-        { nwid: "1", nwname: "Network 1" },
-        { nwid: "2", nwname: "Network 2" },
+        { nwid: "1", name: "Network 1" },
+        { nwid: "2", name: "Network 2" },
       ],
       isLoading: false,
       refetch: mockRefetch,

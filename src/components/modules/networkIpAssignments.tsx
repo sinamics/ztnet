@@ -46,6 +46,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
       {
         updateParams,
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {
@@ -68,6 +69,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
           ipAssignmentPools: newIpAssignmentPools,
         },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {
@@ -105,6 +107,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
           ],
         },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {

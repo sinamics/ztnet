@@ -12,13 +12,13 @@ export interface UserNetworkTable {
   members: number; // dummy value used in table
   network_members: MembersEntity[];
   nwid: string;
-  nwname: string;
+  name: string;
   description: string;
   tagsByName: null;
 }
 
 export interface NetworkEntity {
-  nwname?: string;
+  name?: string;
   autoAssignIp?: boolean;
   ipAssignments?: string;
   authorId?: number;
@@ -91,7 +91,7 @@ export interface dns {
 
 export interface ZtControllerNetwork {
   nwid: string;
-  nwname: string;
+  name: string;
   authorId: number;
   routes?: RoutesEntity[] | null;
   network_members?: NetworkMembersEntity[] | null;
