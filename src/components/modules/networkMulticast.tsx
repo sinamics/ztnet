@@ -20,6 +20,7 @@ export const NetworkMulticast = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central: true,
     },
     { enabled: !!query.id }
   );

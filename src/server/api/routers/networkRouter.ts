@@ -25,6 +25,7 @@ import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type network_members } from "@prisma/client";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
+import * as centralApi from "~/utils/ztCentralApi";
 import ejs from "ejs";
 
 const customConfig: Config = {
@@ -98,8 +99,20 @@ export const networkRouter = createTRPCRouter({
   }),
 
   getNetworkById: protectedProcedure
-    .input(z.object({ nwid: z.string() }))
+    .input(
+      z.object({
+        nwid: z.string(),
+        central: z.boolean().optional().default(false),
+      })
+    )
     .query(async ({ ctx, input }) => {
+      if (input.central) {
+        // console.log('running', input.nwid)
+        const zt = await centralApi.network_detail(input.nwid);
+        // console.log(JSON.stringify(zt,null,2))
+        return { ...zt };
+      }
+
       const psqlNetworkData = await ctx.prisma.network.findFirst({
         where: {
           AND: [
@@ -111,7 +124,6 @@ export const networkRouter = createTRPCRouter({
         },
         include: {
           network_members: false,
-          // notations: true,
         },
       });
 
@@ -126,7 +138,7 @@ export const networkRouter = createTRPCRouter({
           return throwError(`${err.message}`);
         });
 
-      // console.log(JSON.stringify(ztControllerResponse, null, 2));
+      console.log(JSON.stringify(ztControllerResponse, null, 2));
 
       // console.log(JSON.stringify(ztControllerResponse, null, 2));
       // upate db with new memebers if they not exsist

@@ -113,7 +113,7 @@ const Sidebar = (): JSX.Element => {
                 href="/central"
                 className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/central"
+                router.pathname.includes("/central")
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}

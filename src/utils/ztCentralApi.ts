@@ -157,17 +157,24 @@ export const network_detail = async function (
           `${ZT_ADDR}/network/${nwid}/member/${member.nodeId}`,
           options
         );
-        return memberDetails.data;
+
+        const { id: memberId, config, ...restMember } = memberDetails.data;
+        return {
+          ...restMember,
+          ...config,
+          memberId,
+        };
       })
     );
+    // console.log(JSON.stringify(network.data,null,2))
+    const { id: networkId, config: networkConfig, ...restData } = network.data;
 
     return {
-      network: { ...network.data },
+      network: { nwid: networkId, ...restData, ...networkConfig },
       members: [...membersArr],
     };
   } catch (error) {
-    const message =
-      "An error occurred while getting data from network_details function";
+    const message = `An error occurred while getting data from network_details function ${error}`;
     throw new APIError(message, error as AxiosError);
   }
 };
