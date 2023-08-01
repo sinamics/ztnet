@@ -36,8 +36,8 @@ export const ztCentralRouter = createTRPCRouter({
     )
     .query(async ({ input }) => {
       const zt = await centralApi.network_detail(input.nwid);
-      console.log(JSON.stringify(zt,null,2))
-      return {...zt}
+      // console.log(JSON.stringify(zt,null,2))
+      return { ...zt };
     }),
 });
 
@@ -101,32 +101,32 @@ export const ztCentralRouter = createTRPCRouter({
 // CENTRAL
 
 // {
-  // network: {
-  //   id: 'e5cd7a9e1c122ef7',
-  //   type: 'Network',
-  //   clock: 1690866910383,
-  //   config: {
-  //     authTokens: null,
-  //     creationTime: 1689164970409,
-  //     capabilities: [Array],
-  //     enableBroadcast: false,
-  //     id: 'e5cd7a9e1c122ef7',
-  //     ipAssignmentPools: [Array],
-  //     lastModified: 0,
-  //     mtu: 2800,
-  //     multicastLimit: 32,
-  //     name: 'high_kahn',
-  //     private: true,
-  //     remoteTraceLevel: 0,
-  //     remoteTraceTarget: null,
-  //     routes: [Array],
-  //     rules: [Array],
-  //     tags: [Array],
-  //     v4AssignMode: [Object],
-  //     v6AssignMode: [Object],
-  //     dns: [Object],
-  //     ssoConfig: [Object]
-  //   },
+// network: {
+//   id: 'e5cd7a9e1c122ef7',
+//   type: 'Network',
+//   clock: 1690866910383,
+//   config: {
+//     authTokens: null,
+//     creationTime: 1689164970409,
+//     capabilities: [Array],
+//     enableBroadcast: false,
+//     id: 'e5cd7a9e1c122ef7',
+//     ipAssignmentPools: [Array],
+//     lastModified: 0,
+//     mtu: 2800,
+//     multicastLimit: 32,
+//     name: 'high_kahn',
+//     private: true,
+//     remoteTraceLevel: 0,
+//     remoteTraceTarget: null,
+//     routes: [Array],
+//     rules: [Array],
+//     tags: [Array],
+//     v4AssignMode: [Object],
+//     v6AssignMode: [Object],
+//     dns: [Object],
+//     ssoConfig: [Object]
+//   },
 //     description: '',
 //     rulesSource: '# Allow only IPv4, IPv4 ARP, and IPv6 Ethernet frames. Typical default\n' +
 //       'drop\n' +

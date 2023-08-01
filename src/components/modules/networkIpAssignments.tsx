@@ -6,7 +6,11 @@ import { useState } from "react";
 import { type IpAssignmentPoolsEntity } from "~/types/network";
 import { useTranslations } from "next-intl";
 
-export const NetworkIpAssignment = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkIpAssignment = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
 
   const { query } = useRouter();
@@ -19,7 +23,7 @@ export const NetworkIpAssignment = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true
+      central,
     },
     { enabled: !!query.id }
   );
@@ -79,7 +83,7 @@ export const NetworkIpAssignment = () => {
       return;
     }
 
-    const { network } = networkByIdQuery;
+    const { network } = networkByIdQuery || {};
 
     // Check if the IP range already exists in the network's ipAssignmentPools
     for (const existingRange of network.ipAssignmentPools) {
@@ -109,7 +113,7 @@ export const NetworkIpAssignment = () => {
       }
     );
   };
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   if (isLoading) return <div>Loading</div>;
 
   return (
@@ -126,14 +130,14 @@ export const NetworkIpAssignment = () => {
           <p>{t("networkIpAssignments.auto_assign_from_range")}</p>
           <input
             type="checkbox"
-            checked={network.autoAssignIp}
+            checked={network?.autoAssignIp || false}
             className="checkbox-primary checkbox checkbox-sm"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               submitUpdate({ autoAssignIp: e.target.checked });
             }}
           />
         </div>
-        {network.autoAssignIp ? (
+        {network?.autoAssignIp ? (
           <div className="tabs tabs-boxed grid grid-cols-2 gap-5 pb-5">
             <a
               className={cn("tab w-full border border-gray-500", {
@@ -165,15 +169,15 @@ export const NetworkIpAssignment = () => {
             </a>
           </div>
         ) : null}
-        {network.autoAssignIp && ipTabs.easy ? (
+        {network?.autoAssignIp && ipTabs.easy ? (
           <div>
             <div
               className={cn("flex cursor-pointer flex-wrap", {
                 "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-                  !network.autoAssignIp,
+                  !network?.autoAssignIp,
               })}
             >
-              {network.cidr?.map((cidr: string) => {
+              {network?.cidr?.map((cidr: string) => {
                 return network?.routes?.some(
                   (route) => route.target === cidr
                 ) ? (
@@ -183,7 +187,7 @@ export const NetworkIpAssignment = () => {
                       "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
                       {
                         "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
-                          network.autoAssignIp,
+                          network?.autoAssignIp,
                       }
                     )}
                   >
@@ -195,7 +199,7 @@ export const NetworkIpAssignment = () => {
                     onClick={() => submitUpdate({ ipPool: cidr })}
                     className={cn(
                       "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
-                      { "hover:bg-primary": network.autoAssignIp }
+                      { "hover:bg-primary": network?.autoAssignIp }
                     )}
                   >
                     {cidr}
@@ -239,7 +243,7 @@ export const NetworkIpAssignment = () => {
         //    })}
         //  </div>
         null}
-        {network.autoAssignIp && ipTabs.advanced ? (
+        {network?.autoAssignIp && ipTabs.advanced ? (
           <div className="mt-4 space-y-2">
             {network?.ipAssignmentPools.map((pool) => {
               return (

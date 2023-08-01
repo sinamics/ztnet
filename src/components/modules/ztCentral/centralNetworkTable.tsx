@@ -33,6 +33,7 @@ const TruncateText = ({ text }: { text: string }) => {
   );
 };
 export const CentralNetworkTable = ({ tableData = [] }) => {
+  console.log(tableData);
   const router = useRouter();
   const t = useTranslations("networksTable");
   const [globalFilter, setGlobalFilter] = useState("");
@@ -45,7 +46,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
   const columnHelper = createColumnHelper<UserNetworkTable>();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("config.name", {
+      columnHelper.accessor("name", {
         cell: (info) => info.getValue(),
         header: () => <span>{t("name")}</span>,
       }),
@@ -54,7 +55,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
         cell: (info) => <TruncateText text={info.getValue()} />,
         header: () => <span>{t("description")}</span>,
       }),
-      columnHelper.accessor("id", {
+      columnHelper.accessor("nwid", {
         cell: (info) => info.getValue(),
         header: () => <span>{t("networkId")}</span>,
         // footer: (info) => info.column.id,

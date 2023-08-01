@@ -38,13 +38,18 @@ declare module "@tanstack/react-table" {
   }
 }
 
+interface IProp {
+  nwid: string;
+  central?: boolean;
+}
+
 enum ConnectionStatus {
   Offline = 0,
   Relayed = 1,
   DirectLAN = 2,
   DirectWAN = 3,
 }
-export const NetworkMembersTable = ({ nwid }: { nwid: string }) => {
+export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   const t = useTranslations("networkById");
   const { query } = useRouter();
   const [globalFilter, setGlobalFilter] = useState("");

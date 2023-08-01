@@ -6,7 +6,11 @@ import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
 
-export const NetworkDns = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkDns = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
     address: "",
@@ -22,7 +26,7 @@ export const NetworkDns = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
-      central: true,
+      central,
     },
     { enabled: !!query.id }
   );
@@ -41,7 +45,7 @@ export const NetworkDns = () => {
 
   useEffect(() => {
     if (
-      !networkByIdQuery.network?.dns ||
+      !networkByIdQuery?.network?.dns ||
       !Array.isArray(networkByIdQuery?.network?.dns.servers)
     )
       return;
@@ -51,7 +55,7 @@ export const NetworkDns = () => {
       servers:
         new Set([...networkByIdQuery?.network?.dns.servers]) || new Set(),
     }));
-  }, [networkByIdQuery.network.dns]);
+  }, [networkByIdQuery?.network.dns]);
 
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
@@ -93,7 +97,7 @@ export const NetworkDns = () => {
     );
   };
 
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   // console.log(state.servers);
   return (
     <>
