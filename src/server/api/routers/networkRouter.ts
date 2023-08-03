@@ -25,7 +25,6 @@ import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { type networkMembers } from "@prisma/client";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
-import * as centralApi from "~/utils/ztCentralApi";
 import ejs from "ejs";
 
 const customConfig: Config = {
@@ -80,8 +79,8 @@ const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
   getUserNetworks: protectedProcedure.query(async ({ ctx }) => {
-    // const test = await centralApi.get_controller_networks();
-    // const create = await centralApi.network_detail("83048a0632c0443d");
+    // const test = await ztController.get_controller_networks();
+    // const create = await ztController.network_detail("83048a0632c0443d");
     // console.log(create)
     const networks = await ctx.prisma.network.findMany({
       where: {
@@ -283,7 +282,10 @@ export const networkRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       // if central is true, send the request to the central API and return the response
       if (input.central) {
-        return await centralApi.network_update(input.nwid, input.updateParams);
+        return await ztController.network_update(
+          input.nwid,
+          input.updateParams
+        );
       }
 
       // update local network
