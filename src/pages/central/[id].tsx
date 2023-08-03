@@ -22,14 +22,13 @@ import NetworkHelpText from "~/components/modules/networkHelp";
 import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next/types";
+import NetworkDescription from "../../components/modules/networkDescription";
 
 const CentralNetworkById = () => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
     viewZombieTable: false,
     editNetworkName: false,
-    toggleDescriptionInput: false,
-    description: "",
     networkName: "",
   });
   const { callModal } = useModalStore((state) => state);
@@ -62,12 +61,6 @@ const CentralNetworkById = () => {
     }));
   }, [networkById?.network?.description, networkById?.network?.name]);
 
-  const toggleDescriptionInput = () => {
-    setState({
-      ...state,
-      toggleDescriptionInput: !state.toggleDescriptionInput,
-    });
-  };
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
     return (
@@ -84,7 +77,7 @@ const CentralNetworkById = () => {
     e.preventDefault();
     updateNetwork(
       {
-        nwid: network.nwid,
+        nwid: network.id,
         central: true,
         updateParams: { name: state?.networkName },
       },
@@ -173,66 +166,7 @@ const CentralNetworkById = () => {
                 />
               </span>
             </div>
-            <div className="py-3 font-light">
-              {!state.toggleDescriptionInput ? (
-                network?.description ? (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {network?.description}
-                  </div>
-                ) : (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {t("addDescription")}
-                  </div>
-                )
-              ) : (
-                <form>
-                  <textarea
-                    autoFocus
-                    rows={3}
-                    value={state?.description}
-                    name="description"
-                    onChange={eventHandler}
-                    maxLength={255}
-                    style={{ maxHeight: "100px" }}
-                    className="custom-scrollbar textarea textarea-primary w-full leading-snug "
-                    placeholder={t("descriptionPlaceholder")}
-                    onKeyDown={(
-                      e: React.KeyboardEvent<HTMLTextAreaElement>
-                    ) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        // submit form when Enter key is pressed and Shift key is not held down.
-                        const target = e.target as HTMLTextAreaElement;
-                        updateNetwork(
-                          {
-                            nwid: network.nwid,
-                            updateParams: { description: target.value },
-                          },
-                          {
-                            onSuccess: () => {
-                              void refetchNetwork();
-                              setState({
-                                ...state,
-                                toggleDescriptionInput:
-                                  !state.toggleDescriptionInput,
-                              });
-                            },
-                          }
-                        );
-                      }
-                    }}
-                  ></textarea>
-                </form>
-              )}
-            </div>
+            <NetworkDescription central />
           </div>
         </div>
         <NetworkPrivatePublic central />
@@ -243,30 +177,30 @@ const CentralNetworkById = () => {
             <span className="text-muted font-medium">{t("networkStart")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
-                "badge-accent": network?.ipAssignmentPools[0]?.ipRangeStart,
+                "badge-accent": network?.ipAssignmentPools?.[0]?.ipRangeStart,
               })}
             >
-              {network?.ipAssignmentPools[0]?.ipRangeStart || t("notSet")}
+              {network?.ipAssignmentPools?.[0]?.ipRangeStart || t("notSet")}
             </span>
           </div>
           <div>
             <span className="text-muted font-medium">{t("networkEnd")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
-                "badge-accent": network?.ipAssignmentPools[0]?.ipRangeEnd,
+                "badge-accent": network?.ipAssignmentPools?.[0]?.ipRangeEnd,
               })}
             >
-              {network?.ipAssignmentPools[0]?.ipRangeEnd || t("notSet")}
+              {network?.ipAssignmentPools?.[0]?.ipRangeEnd || t("notSet")}
             </span>
           </div>
           <div>
             <span className="text-muted font-medium">{t("networkCidr")}</span>{" "}
             <span
               className={cn("badge badge-lg rounded-md", {
-                "badge-accent": network?.routes[0]?.target,
+                "badge-accent": network?.routes?.[0]?.target,
               })}
             >
-              {network?.routes[0]?.target || t("notSet")}
+              {network?.routes?.[0]?.target || t("notSet")}
             </span>
           </div>
         </div>
@@ -290,7 +224,8 @@ const CentralNetworkById = () => {
       <div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
         {/* Ipv4 assignment  */}
         <div className="w-6/6 xl:w-3/6">
-          <NetworkDns central />
+          {" "}
+          <NetworkDns central />{" "}
         </div>
 
         <div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex"></div>
@@ -304,10 +239,10 @@ const CentralNetworkById = () => {
         {t("networkMembers")}
       </div>
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        {members.length ? (
+        {members?.length ? (
           <div className="membersTable-wrapper">
             <NetworkMembersTable
-              nwid={network.nwid}
+              nwid={network.id}
               central
               // setEditing={(e: boolean) => setEditing(e)}
             />
@@ -358,7 +293,7 @@ const CentralNetworkById = () => {
 
               {state.viewZombieTable ? (
                 <div className="membersTable-wrapper text-center">
-                  <DeletedNetworkMembersTable nwid={network.nwid} />
+                  <DeletedNetworkMembersTable nwid={network.id} />
                 </div>
               ) : null}
             </>
@@ -370,7 +305,7 @@ const CentralNetworkById = () => {
       </div>
 
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        {/* <NetworkFlowRules /> */}
+        <NetworkFlowRules />
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Actions
@@ -384,7 +319,7 @@ const CentralNetworkById = () => {
                 description: `Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network`,
                 yesAction: () => {
                   deleteNetwork(
-                    { nwid: network.nwid },
+                    { nwid: network.id },
                     { onSuccess: () => void router("/network") }
                   );
                 },

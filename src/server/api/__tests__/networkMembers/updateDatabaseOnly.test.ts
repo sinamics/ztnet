@@ -26,7 +26,7 @@ test("updateDatabaseOnly test", async () => {
     id: "member-id",
     name: "updated name",
     nwid: "nwid-123",
-    network_members: [],
+    networkMembers: [],
   };
 
   type Input = inferProcedureInput<
@@ -56,7 +56,7 @@ test("updateDatabaseOnly test", async () => {
       nwid: input.nwid,
     },
     data: {
-      network_members: {
+      networkMembers: {
         update: {
           where: {
             id_nwid: {
@@ -71,7 +71,7 @@ test("updateDatabaseOnly test", async () => {
       },
     },
     include: {
-      network_members: {
+      networkMembers: {
         where: {
           id: input.id,
         },
@@ -79,5 +79,5 @@ test("updateDatabaseOnly test", async () => {
     },
   });
 
-  expect(result).toEqual({ member: mockOutput.network_members[0] });
+  expect(result).toEqual({ member: mockOutput.networkMembers[0] });
 });

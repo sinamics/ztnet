@@ -46,7 +46,7 @@ export const adminRouter = createTRPCRouter({
     const networkCount = networks.length;
     let totalMembers = 0;
     for (const network of networks) {
-      const members = await ztController.network_members(network);
+      const members = await ztController.networkMembers(network);
       totalMembers += Object.keys(members).length;
     }
 

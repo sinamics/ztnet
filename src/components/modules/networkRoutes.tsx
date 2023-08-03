@@ -47,7 +47,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
     });
 
   const deleteRoute = (route: RoutesEntity) => {
-    const _routes = [...network?.routes];
+    const _routes = [...network?.config?.routes];
     const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
     updateNetworkMutation(
@@ -70,7 +70,9 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
     e.preventDefault();
     updateNetworkMutation(
       {
-        updateParams: { routes: [...network?.routes, { ...routeInput }] },
+        updateParams: {
+          routes: [...network?.config?.routes, { ...routeInput }],
+        },
         nwid: query.id as string,
         central,
       },
@@ -85,6 +87,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
   };
   const { network } = networkById || {};
   if (isLoading) return <div>Loading</div>;
+
   return (
     <div
       tabIndex={0}
@@ -95,7 +98,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
         {t("nettworkRoutes.managedRoutesTitle")}
       </div>
       <div className="collapse-content" style={{ width: "100%" }}>
-        {network?.routes.length === 0 ? (
+        {network?.config?.routes.length === 0 ? (
           <div className="alert alert-warning p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -122,7 +125,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
           </div>
         ) : null}
         <div className="grid grid-cols-1 pt-3">
-          {network?.routes.map((route) => {
+          {network?.config?.routes.map((route) => {
             return (
               <div
                 key={route.target}

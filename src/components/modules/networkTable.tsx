@@ -62,8 +62,8 @@ export const NetworkTable = ({ tableData = [] }) => {
       columnHelper.accessor("members", {
         header: () => <span>{t("members")}</span>,
         cell: ({ row: { original } }) => {
-          if (!Array.isArray(original.network_members)) return <span>0</span>;
-          return <span>{original.network_members.length}</span>;
+          if (!Array.isArray(original.networkMembers)) return <span>0</span>;
+          return <span>{original.networkMembers.length}</span>;
         },
       }),
     ],

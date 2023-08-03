@@ -107,7 +107,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
       Object.assign(storeValues, { lastseen: new Date() });
 
     // update members
-    const updateMember = await prisma.network_members.updateMany({
+    const updateMember = await prisma.networkMembers.updateMany({
       where: {
         nwid: member.nwid,
         id: member.id,
@@ -131,7 +131,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
 };
 
 const psql_addMember = async (member: MemberI) => {
-  return await prisma.network_members.create({
+  return await prisma.networkMembers.create({
     data: {
       id: member.id,
       identity: member.identity,
@@ -203,18 +203,10 @@ export function getNextIP(
  *
  */
 export async function handleAutoAssignIP(
-  autoAssignIp: boolean | undefined,
   ztControllerUpdates: Partial<ZtControllerNetwork>,
   ztControllerResponse,
   nwid: string
 ) {
-  // console.log(ztControllerResponse.network.routes.pop());
-  if (autoAssignIp === false) {
-    // remove ipAssignmentPools if autoAssignIp is false
-    ztControllerUpdates.ipAssignmentPools = [];
-    return;
-  }
-
   // get the last route from the controller response
   const routes = ztControllerResponse.network.routes.pop();
 

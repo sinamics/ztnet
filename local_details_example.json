@@ -1,0 +1,52 @@
+{
+  "network": {
+    "authTokens": [null],
+    "authorizationEndpoint": "",
+    "capabilities": [],
+    "clientId": "",
+    "creationTime": 1691077486693,
+    "dns": [],
+    "enableBroadcast": true,
+    "id": "58682d0d93e3aa21",
+    "ipAssignmentPools": [
+      {
+        "ipRangeEnd": "10.121.15.254",
+        "ipRangeStart": "10.121.15.1"
+      }
+    ],
+    "mtu": 2800,
+    "multicastLimit": 32,
+    "name": "similar-turtle",
+    "nwid": "58682d0d93e3aa21",
+    "objtype": "network",
+    "private": true,
+    "remoteTraceLevel": 0,
+    "remoteTraceTarget": null,
+    "revision": 1,
+    "routes": [
+      {
+        "target": "10.121.15.0/24",
+        "via": null
+      }
+    ],
+    "rules": [
+      {
+        "not": false,
+        "or": false,
+        "type": "ACTION_ACCEPT"
+      }
+    ],
+    "rulesSource": "",
+    "ssoEnabled": false,
+    "tags": [],
+    "v4AssignMode": {
+      "zt": true
+    },
+    "v6AssignMode": {
+      "6plane": false,
+      "rfc4193": false,
+      "zt": false
+    }
+  },
+  "members": []
+}
