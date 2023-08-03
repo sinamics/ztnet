@@ -143,6 +143,7 @@ export type MemberDeleteResponse = 200 | 401 | 403 | 404;
 export interface MemberDeleteInput {
   nwid: string;
   memberId: string;
+  central: boolean;
 }
 
 // Update Network Member by ID

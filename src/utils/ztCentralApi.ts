@@ -22,6 +22,7 @@ import {
   type ZTControllerGetPeer,
 } from "~/types/ztController";
 import { prisma } from "~/server/db";
+import { IPv4gen } from "~/utils/IPv4gen";
 
 const ZT_ADDR = "https://api.zerotier.com/api/v1";
 
@@ -171,20 +172,24 @@ export const network_detail = async function (
           `${ZT_ADDR}/network/${nwid}/member/${member.nodeId}`,
           headers
         );
-
-        const { id: memberId, config, ...restMember } = memberDetails.data;
         return {
-          ...restMember,
-          ...config,
-          memberId,
+          ...memberDetails.data,
         };
       })
     );
+    // Get available cidr options.
+    const ipAssignmentPools = IPv4gen(null);
+    const { cidrOptions } = ipAssignmentPools;
     // console.log(JSON.stringify(network.data,null,2))
     const { id: networkId, config: networkConfig, ...restData } = network.data;
 
     return {
-      network: { nwid: networkId, ...restData, ...networkConfig },
+      network: {
+        cidr: cidrOptions,
+        nwid: networkId,
+        ...restData,
+        ...networkConfig,
+      },
       members: [...membersArr],
     };
   } catch (error) {

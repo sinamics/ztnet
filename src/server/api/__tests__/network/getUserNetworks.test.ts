@@ -21,7 +21,7 @@ test("getUserNetworks", async () => {
     nwid: string;
     name: string;
     authorId: number;
-    network_members: NetworkMember[];
+    networkMembers: NetworkMember[];
   }
 
   interface NetworkMember {
@@ -33,7 +33,7 @@ test("getUserNetworks", async () => {
       nwid: "1",
       name: "test",
       authorId: 10,
-      network_members: [
+      networkMembers: [
         {
           id: "4ef7287f63",
         },

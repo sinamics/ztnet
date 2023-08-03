@@ -26,7 +26,7 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.network_members.findFirst({
+      return await ctx.prisma.networkMembers.findFirst({
         where: {
           id: input.id,
           nwid: input.nwid,
@@ -47,7 +47,7 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // check if user exist in db, and if so set deleted:false
-      const member = await ctx.prisma.network_members.findUnique({
+      const member = await ctx.prisma.networkMembers.findUnique({
         where: {
           id_nwid: {
             id: input.id,
@@ -56,7 +56,7 @@ export const networkMemberRouter = createTRPCRouter({
         },
       });
       if (member) {
-        return await ctx.prisma.network_members.update({
+        return await ctx.prisma.networkMembers.update({
           where: {
             id_nwid: {
               id: input.id,
@@ -70,7 +70,7 @@ export const networkMemberRouter = createTRPCRouter({
       }
 
       // if not, create new member
-      await ctx.prisma.network_members.create({
+      await ctx.prisma.networkMembers.create({
         data: {
           id: input.id,
           authorized: false,
@@ -175,7 +175,7 @@ export const networkMemberRouter = createTRPCRouter({
             nwid: input.nwid,
           },
           data: {
-            network_members: {
+            networkMembers: {
               updateMany: {
                 where: { id: input.memberId, nwid: input.nwid },
                 data: {
@@ -190,7 +190,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
           include: {
-            network_members: {
+            networkMembers: {
               where: {
                 id: input.memberId,
                 nwid: input.nwid,
@@ -207,8 +207,8 @@ export const networkMemberRouter = createTRPCRouter({
         });
       }
 
-      if ("network_members" in response) {
-        return { member: response.network_members[0] };
+      if ("networkMembers" in response) {
+        return { member: response.networkMembers[0] };
       } else {
         throw new TRPCError({
           message: "Response does not have network members.",
@@ -237,7 +237,7 @@ export const networkMemberRouter = createTRPCRouter({
           nwid: input.nwid,
         },
         data: {
-          network_members: {
+          networkMembers: {
             update: {
               where: {
                 id_nwid: {
@@ -252,14 +252,14 @@ export const networkMemberRouter = createTRPCRouter({
           },
         },
         include: {
-          network_members: {
+          networkMembers: {
             where: {
               id: input.id,
             },
           },
         },
       });
-      return { member: response.network_members[0] };
+      return { member: response.networkMembers[0] };
     }),
   stash: protectedProcedure
     .input(
@@ -290,7 +290,7 @@ export const networkMemberRouter = createTRPCRouter({
             nwid: input.nwid,
           },
           data: {
-            network_members: {
+            networkMembers: {
               updateMany: {
                 where: { id: input.id, nwid: input.nwid },
                 data: {
@@ -300,7 +300,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
           include: {
-            network_members: {
+            networkMembers: {
               where: {
                 id: input.id,
                 deleted: false,
@@ -327,7 +327,7 @@ export const networkMemberRouter = createTRPCRouter({
         memberId: input.id,
       });
 
-      await ctx.prisma.network_members.delete({
+      await ctx.prisma.networkMembers.delete({
         where: {
           id_nwid: {
             id: input.id,

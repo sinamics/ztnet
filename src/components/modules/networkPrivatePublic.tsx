@@ -23,15 +23,15 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetworkMutation } =
-    api.network.updateNetwork.useMutation({
+  const { mutate: privatePublicNetwork } =
+    api.network.privatePublicNetwork.useMutation({
       onError: (e) => {
         void toast.error(e?.message);
       },
     });
 
   const privateHandler = (privateNetwork: boolean) => {
-    updateNetworkMutation(
+    privatePublicNetwork(
       {
         updateParams: { private: privateNetwork },
         nwid: query.id as string,

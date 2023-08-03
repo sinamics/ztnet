@@ -61,18 +61,21 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   ]);
   const { callModal } = useModalStore((state) => state);
 
-  const { data: networkById, refetch: refetchNetworkById } =
-    api.network.getNetworkById.useQuery(
-      {
-        nwid,
-        central: true,
-      },
-      { enabled: !!query.id }
-    );
+  const {
+    data: networkById,
+    refetch: refetchNetworkById,
+    isLoading: loadingNetworks,
+  } = api.network.getNetworkById.useQuery(
+    {
+      nwid,
+      central,
+    },
+    { enabled: !!query.id }
+  );
+
   const { data: options } = api.admin.getAllOptions.useQuery();
   const { mutate: updateMemberDatabaseOnly } =
     api.networkMember.UpdateDatabaseOnly.useMutation();
-
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
     onError: (e) => {
       void toast.error(e?.message);
@@ -251,7 +254,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
             >
               {t("networkMembersTable.column.conStatus.offline")}
               <TimeAgo
-                date={original?.lastseen as number}
+                date={original?.lastSeen as number}
                 formatter={formatTime}
               />
             </span>
@@ -303,8 +306,9 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
     ],
     // this is needed so the ip in table is updated accordingly
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [networkById.network]
+    [networkById?.network]
   );
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
     cell: ({ getValue, row: { index, original }, column: { id }, table }) => {
@@ -469,12 +473,12 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   };
 
   useEffect(() => {
-    setData(networkById.members);
-  }, [networkById.members]);
-  // console.log(networkById.members);
-  // makeNetworkMemberData
-  const [data, setData] = useState(networkById.members);
+    setData(networkById?.members);
+  }, [networkById?.members]);
 
+  // makeNetworkMemberData
+  const [data, setData] = useState(networkById?.members ?? []);
+  console.log(networkById);
   // const [data, setData] = useState(() => makeNetworkMemberData(100));
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 
@@ -521,6 +525,8 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
     getFilteredRowModel: getFilteredRowModel(),
     debugTable: false,
   });
+
+  if (loadingNetworks) return <div>Loading</div>;
   return (
     <span className="rounded-xl pt-2">
       <div className="py-1">

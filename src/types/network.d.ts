@@ -10,7 +10,7 @@ export interface UserNetworkTable {
   flowRule: null;
   ipAssignments: string;
   members: number; // dummy value used in table
-  network_members: MembersEntity[];
+  networkMembers: MembersEntity[];
   nwid: string;
   name: string;
   description: string;
@@ -94,7 +94,7 @@ export interface ZtControllerNetwork {
   name: string;
   authorId: number;
   routes?: RoutesEntity[] | null;
-  network_members?: NetworkMembersEntity[] | null;
+  networkMembers?: NetworkMembersEntity[] | null;
   authTokens?: null[] | null;
   authorizationEndpoint: string;
   capabilities?: null[] | null;
@@ -215,7 +215,7 @@ export interface Notation {
   isActive: boolean;
   nwid: string;
   network: Network;
-  network_members: NetworkMemberNotation[];
+  networkMembers: NetworkMemberNotation[];
   icon?: string;
   orderIndex?: number;
   visibility?: string;
