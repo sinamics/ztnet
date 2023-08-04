@@ -15,14 +15,16 @@ import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
-import { type NetworkEntity } from "~/types/local/network";
+import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
 import {
+  type CapabilitiesByName,
   type MemberEntity,
   type Paths,
   type Peers,
 } from "~/types/local/member";
 import { type FlattenCentralMembers } from "~/types/central/members";
+import { type CentralNetwork } from "~/types/central/network";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -402,10 +404,13 @@ export const networkRouter = createTRPCRouter({
         central: input.central,
         updateParams,
       });
-      // console.log(updated);
 
-      const { config, ...otherProps } = updated?.network || {};
-      return { ...config, ...otherProps };
+      if (input.central) {
+        const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
+        return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
+      } else {
+        return updated as NetworkEntity;
+      }
     }),
   networkName: protectedProcedure
     .input(
@@ -423,11 +428,18 @@ export const networkRouter = createTRPCRouter({
         : { ...input.updateParams };
 
       // if central is true, send the request to the central API and return the response
-      return ztController.network_update({
+      const updated = await ztController.network_update({
         nwid: input.nwid,
         central: input.central,
         updateParams,
       });
+
+      if (input.central) {
+        const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
+        return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
+      } else {
+        return updated as NetworkEntity;
+      }
     }),
   networkDescription: protectedProcedure
     .input(
@@ -442,20 +454,29 @@ export const networkRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // if central is true, send the request to the central API and return the response
       if (input.central) {
-        return ztController.network_update({
+        const updated = await ztController.network_update({
           nwid: input.nwid,
           central: input.central,
           updateParams: input.updateParams,
         });
+
+        const { description } = updated as CentralNetwork;
+        return {
+          description,
+        };
       }
 
       // Update network in prisma as description is not part of the local controller network object.
-      return await ctx.prisma.network.update({
+      const updated = await ctx.prisma.network.update({
         where: { nwid: input.nwid },
         data: {
           ...input.updateParams,
         },
       });
+
+      return {
+        description: updated.description,
+      };
     }),
   dns: protectedProcedure
     .input(
@@ -586,15 +607,19 @@ export const networkRouter = createTRPCRouter({
     .input(
       z.object({
         nwid: z.string().nonempty(),
-        flowRoute: z.string().nonempty(),
+        central: z.boolean().default(false),
+        updateParams: z.object({
+          flowRoute: z.string().nonempty(),
+        }),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { flowRoute } = input;
+      const { flowRoute } = input.updateParams;
 
       const rules = [];
+
       const caps: Record<string, CapabilitiesByName> = {};
-      const tags: TagsByName = {};
+      const tags: Record<string, TagsByName> = {};
       // try {
       const err = RuleCompiler(flowRoute, rules, caps, tags) as string[];
       if (err) {
@@ -637,21 +662,36 @@ export const networkRouter = createTRPCRouter({
       //     2
       //   )
       // );
-      // update zerotier network with the new flow route
-      await ztController.network_update(input.nwid, {
+
+      const updateObj = {
         rules,
         capabilities: capsArray,
         tags: tagsArray,
-        capabilitiesByName: capabilitiesByName,
-        tagsByName: tags,
+      };
+
+      const updateParams = input.central
+        ? {
+            config: { ...updateObj },
+            capabilitiesByName,
+            tagsByName: tags,
+            rulesSource: flowRoute,
+          }
+        : { ...updateObj, capabilitiesByName, tagsByName: tags };
+
+      // update zerotier network with the new flow route
+      const updatedRules = await ztController.network_update({
+        nwid: input.nwid,
+        central: input.central,
+        updateParams,
       });
 
-      // update network in prisma
+      if (input.central) return updatedRules;
+
       // update network in prisma
       const { prisma } = ctx;
 
       // Start a transaction
-      await prisma.$transaction([
+      return await prisma.$transaction([
         // Update network
         prisma.network.update({
           where: { nwid: input.nwid },
@@ -668,7 +708,8 @@ export const networkRouter = createTRPCRouter({
     .input(
       z.object({
         nwid: z.string().nonempty(),
-        reset: z.boolean().optional(),
+        central: z.boolean().default(false),
+        reset: z.boolean().default(false).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -715,11 +756,15 @@ drop
 # Accept anything else. This is required since default is 'drop'.
 accept;`;
 
+      if (input.central || input.reset) {
+        return DEFAULT_NETWORK_ROUTE_CONFIG;
+      }
+
       const flow = await ctx.prisma.network.findFirst({
         where: { nwid: input.nwid },
       });
 
-      if (!flow.flowRule || input.reset) {
+      if (!flow.flowRule) {
         return DEFAULT_NETWORK_ROUTE_CONFIG;
       }
 

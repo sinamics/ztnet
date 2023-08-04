@@ -23,12 +23,17 @@ const CentralNetworks: NextPageWithLayout = () => {
     createNetwork(null, { onSuccess: () => void refetch() });
   };
 
-  if (isLoading) {
-    return <div>{t("loading")}</div>;
-  }
-
   const title = `${globalSiteTitle} - ${t("title")}`;
-
+  if (isLoading) {
+    // add loading progress bar to center of page, vertially and horizontally
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
   return (
     <>
       <Head>

@@ -1,15 +1,53 @@
 import { useState, useEffect } from "react";
 import React from "react";
-import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
+import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
+import {
+  type QueryClient,
+  useQueryClient,
+  type Query,
+} from "@tanstack/react-query";
+import { type CentralNetwork } from "~/types/central/network";
+import { type NetworkEntity } from "~/types/local/network";
 
 interface IProp {
   central?: boolean;
 }
-
+const updateCache = ({
+  client,
+  data,
+  input,
+}: {
+  client: QueryClient;
+  input: RouterInputs["network"]["getNetworkById"];
+  data: NetworkEntity | Partial<CentralNetwork>;
+}) => {
+  client.setQueryData(
+    [
+      ["network", "getNetworkById"],
+      {
+        input,
+        type: "query",
+      },
+    ],
+    (oldData) => {
+      const newData = oldData as Query<
+        RouterOutputs["network"]["getNetworkById"]
+      >;
+      if ("network" in newData && newData.network && typeof data === "object") {
+        return {
+          ...newData,
+          network: { ...(newData.network as object), ...(data as object) },
+        };
+      }
+      return newData;
+    }
+  );
+};
 const NetworkDescription = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
+  const client = useQueryClient();
   const { query } = useRouter();
   const [state, setState] = useState({
     toggleDescriptionInput: false,
@@ -34,7 +72,16 @@ const NetworkDescription = ({ central = false }: IProp) => {
   }, [networkById?.network?.description]);
 
   const { mutate: networkDescription } =
-    api.network.networkDescription.useMutation();
+    api.network.networkDescription.useMutation({
+      onSuccess: (data) => {
+        const input = {
+          nwid: query.id as string,
+          central,
+        };
+        // void refecthNetworkById();
+        updateCache({ client, data, input });
+      },
+    });
 
   const toggleDescriptionInput = () => {
     setState({

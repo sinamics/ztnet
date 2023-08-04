@@ -9,6 +9,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { type NetworkEntity } from "~/types/local/network";
+import { type CentralNetwork } from "~/types/central/network";
 
 interface IProp {
   central?: boolean;
@@ -21,7 +22,7 @@ const updateCache = ({
 }: {
   client: QueryClient;
   input: RouterInputs["network"]["getNetworkById"];
-  data: NetworkEntity;
+  data: NetworkEntity | Partial<CentralNetwork>;
 }) => {
   client.setQueryData(
     [
@@ -61,7 +62,6 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
         void toast.error(e?.message);
       },
     });
-
   const privateHandler = (privateNetwork: boolean) => {
     privatePublicNetwork(
       {
@@ -70,7 +70,7 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
         central,
       },
       {
-        onSuccess: (data: NetworkEntity) => {
+        onSuccess: (data) => {
           const input = {
             nwid: query.id as string,
             central,
