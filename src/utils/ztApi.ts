@@ -20,7 +20,12 @@ import {
 } from "~/types/ztController";
 
 import { type CentralControllerStatus } from "~/types/central/controllerStatus";
-import { type CentralMembers } from "~/types/central/members";
+import {
+  FlattenCentralMembers,
+  type CentralMembers,
+  FlattenCentralMembers,
+  CentralMembers,
+} from "~/types/central/members";
 import {
   type CentralNetwork,
   type FlattenCentralNetwork,
@@ -81,17 +86,19 @@ const getOptions = async (isCentral = false) => {
   };
 };
 
-const flattenCentralMembers = (members: CentralMembers[]) => {
+export const flattenCentralMember = (
+  member: CentralMembers
+): FlattenCentralMembers => {
+  const { id: nodeId, config, ...otherProps } = member;
+  const flattenedMember = { nodeId, ...config, ...otherProps };
+  return flattenedMember;
+};
+
+export const flattenCentralMembers = (
+  members: CentralMembers[]
+): FlattenCentralMembers[] => {
   if (!members) return [];
-  return members.map((member) => {
-    // Destructure the network object into config and other properties
-    const { id: nodeId, config, ...otherProps } = member;
-
-    // Merge the config object into the main network object
-    const flattenedMembers = { nodeId, ...config, ...otherProps };
-
-    return flattenedMembers;
-  });
+  return members.map((member) => flattenCentralMember(member));
 };
 
 export const flattenNetwork = (
@@ -463,14 +470,21 @@ export const member_delete = async ({
   }
 };
 
+type memberUpdate = {
+  nwid: string;
+  memberId: string;
+  updateParams: Partial<MemberEntity | FlattenCentralMembers>;
+  central?: boolean;
+};
+
 // Update Network Member by ID
 // https://docs.zerotier.com/service/v1/#operation/updateControllerNetworkMember
-export const member_update = async (
-  nwid: string,
-  memberId: string,
-  data,
-  central = false
-): Promise<ZTControllerMemberUpdate> => {
+export const member_update = async ({
+  nwid,
+  memberId,
+  updateParams: payload,
+  central = false,
+}: memberUpdate): Promise<MemberEntity | FlattenCentralMembers> => {
   const addr = central
     ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member/${memberId}`
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
@@ -478,11 +492,37 @@ export const member_update = async (
   // get headers based on local or central api
   const headers = await getOptions(central);
   try {
-    const response: AxiosResponse = await axios.post(addr, data, headers);
-    return response.data as ZTControllerMemberUpdate;
+    return await postData<MemberEntity | FlattenCentralMembers>(
+      addr,
+      headers,
+      payload
+    );
   } catch (error) {
     const prefix = central ? "[CENTRAL] " : "";
     const message = `${prefix}An error occurred while getting member_update`;
+    throw new APIError(message, error as AxiosError);
+  }
+};
+
+// Get Network Member Details by ID
+// https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
+
+export const member_details = async function (
+  nwid: string,
+  memberId: string,
+  central = false
+): Promise<MemberEntity | FlattenCentralMembers> {
+  // get headers based on local or central api
+  const headers = await getOptions(central);
+
+  try {
+    const addr = central
+      ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member/${memberId}`
+      : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
+
+    return await getData<MemberEntity | FlattenCentralMembers>(addr, headers);
+  } catch (error) {
+    const message = "An error occurred while getting member_detail";
     throw new APIError(message, error as AxiosError);
   }
 };

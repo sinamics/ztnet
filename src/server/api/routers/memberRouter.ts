@@ -2,7 +2,8 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import { type NetworkAndMembers } from "~/types/network";
+import { type MemberEntity } from "~/types/local/member";
+import { type CentralMembers } from "~/types/central/members";
 
 const isValidZeroTierNetworkId = (id: string) => {
   const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -21,11 +22,22 @@ export const networkMemberRouter = createTRPCRouter({
   getMemberById: protectedProcedure
     .input(
       z.object({
+        central: z.boolean().default(false),
         id: z.string({ required_error: "No member id provided!" }),
         nwid: z.string({ required_error: "No network id provided!" }),
       })
     )
     .query(async ({ ctx, input }) => {
+      if (input.central) {
+        const memberDetails = await ztController.member_details(
+          input.nwid,
+          input.id,
+          input.central
+        );
+        return ztController.flattenCentralMember(
+          memberDetails as CentralMembers
+        );
+      }
       return await ctx.prisma.networkMembers.findFirst({
         where: {
           id: input.id,
@@ -75,7 +87,7 @@ export const networkMemberRouter = createTRPCRouter({
           id: input.id,
           authorized: false,
           ipAssignments: [],
-          lastseen: new Date(),
+          lastSeen: new Date(),
           creationTime: new Date(),
           nwid_ref: {
             connect: { nwid: input.nwid },
@@ -89,6 +101,7 @@ export const networkMemberRouter = createTRPCRouter({
       z.object({
         nwid: z.string({ required_error: "No network id provided!" }),
         memberId: z.string({ required_error: "No member id provided!" }),
+        central: z.boolean().default(false),
         updateParams: z.object({
           activeBridge: z.boolean().optional(),
           noAutoAssignIps: z.boolean().optional(),
@@ -104,7 +117,7 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const payload: Partial<NetworkAndMembers> = {};
+      const payload: Partial<MemberEntity> = {};
 
       // update capabilities
       if (typeof input.updateParams.capabilities === "object") {
@@ -159,8 +172,18 @@ export const networkMemberRouter = createTRPCRouter({
         );
       }
 
+      const updateParams = input.central
+        ? { config: { ...payload } }
+        : { ...payload };
+      console.log(input);
+      // if central is true, send the request to the central API and return the response
       const updatedMember = await ztController
-        .member_update(input.nwid, input.memberId, payload)
+        .member_update({
+          nwid: input.nwid,
+          memberId: input.memberId,
+          central: input.central,
+          updateParams,
+        })
         .catch(() => {
           throw new TRPCError({
             message:
@@ -168,6 +191,8 @@ export const networkMemberRouter = createTRPCRouter({
             code: "FORBIDDEN",
           });
         });
+
+      if (input.central) return updatedMember;
 
       const response = await ctx.prisma.network
         .update({
@@ -221,6 +246,7 @@ export const networkMemberRouter = createTRPCRouter({
       z.object({
         nwid: z.string(),
         id: z.string(),
+        central: z.boolean().default(false),
         updateParams: z.object({
           // ipAssignments: z
           //   .array(z.string({ required_error: "No Ip assignment provided!" }))
@@ -231,6 +257,24 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // if central is true, send the request to the central API and return the response
+      if (input.central && input?.updateParams?.name) {
+        return await ztController
+          .member_update({
+            nwid: input.nwid,
+            memberId: input.id,
+            central: input.central,
+            updateParams: input.updateParams,
+          })
+          .catch(() => {
+            throw new TRPCError({
+              message:
+                "Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
+              code: "FORBIDDEN",
+            });
+          });
+      }
+
       // if users click the re-generate icon on IP address
       const response = await ctx.prisma.network.update({
         where: {

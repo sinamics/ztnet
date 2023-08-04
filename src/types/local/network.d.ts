@@ -29,8 +29,12 @@ export interface NetworkEntity {
   ssoEnabled?: boolean;
   cidr?: string[];
   tagsByName?: TagsByName;
+  capabilitiesByName?: CapabilitiesByName;
 }
 
+interface CapabilitiesByName {
+  [key: string]: number;
+}
 interface TagsByName {
   [tagName: string]: TagDetails;
   id?: number;

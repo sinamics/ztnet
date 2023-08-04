@@ -35,7 +35,7 @@ export interface CentralMembers {
   description: string;
   config?: CentralMemberConfig;
   lastOnline: number;
-  lastSeen: number;
+  lastSeen?: number;
   physicalAddress: string;
   physicalLocation: null | string; // Assuming this can be string in some cases
   clientVersion: string;
