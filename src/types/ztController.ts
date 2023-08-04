@@ -1,5 +1,3 @@
-import { type MembersEntity, type ZtControllerNetwork } from "./network";
-
 /* 
   Node status and addressing info
   https://docs.zerotier.com/service/v1/#operation/getStatus
@@ -101,21 +99,6 @@ export interface V6AssignMode {
 export interface HttpResponse {
   status: number;
   data: string;
-}
-
-// Get Network Member Details by ID
-// https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
-
-export interface MemberRevisionCounters {
-  [memberId: string]: number;
-}
-
-// Get network details
-// https://docs.zerotier.com/service/v1/#operation/getNetwork
-
-export interface ZTControllerResponse {
-  network: ZtControllerNetwork;
-  members: MembersEntity[];
 }
 
 // Get Network Member Details by ID

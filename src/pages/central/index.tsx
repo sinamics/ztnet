@@ -14,7 +14,9 @@ const CentralNetworks: NextPageWithLayout = () => {
     data: centralNetworks,
     isLoading,
     refetch,
-  } = api.central.getCentralNetworks.useQuery();
+  } = api.network.getUserNetworks.useQuery({
+    central: true,
+  });
 
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
   const addNewNetwork = () => {

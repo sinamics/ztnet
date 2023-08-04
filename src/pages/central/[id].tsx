@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/modules/networkRoutes";
 import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
@@ -9,10 +9,8 @@ import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic"
 import { AddMemberById } from "~/components/modules/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
-import EditIcon from "~/icons/edit";
-import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
-import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
+// import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
 import { NetworkDns } from "~/components/modules/networkDns";
@@ -23,14 +21,13 @@ import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next/types";
 import NetworkDescription from "../../components/modules/networkDescription";
+import NetworkName from "~/components/modules/networkName";
 
 const CentralNetworkById = () => {
   const t = useTranslations("networkById");
-  const [state, setState] = useState({
-    viewZombieTable: false,
-    editNetworkName: false,
-    networkName: "",
-  });
+  // const [state, setState] = useState({
+  //   viewZombieTable: false,
+  // });
   const { callModal } = useModalStore((state) => state);
   const { query, push: router } = useRouter();
   const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
@@ -38,7 +35,6 @@ const CentralNetworkById = () => {
     data: networkById,
     isLoading: loadingNetwork,
     error: errorNetwork,
-    refetch: refetchNetwork,
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
@@ -46,20 +42,6 @@ const CentralNetworkById = () => {
     }
     // { enabled: !!query.id, refetchInterval: 10000 }
   );
-
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
-    onError: (e) => {
-      void toast.error(e?.message);
-    },
-  });
-
-  useEffect(() => {
-    setState((prev) => ({
-      ...prev,
-      description: networkById?.network?.description,
-      networkName: networkById?.network?.name,
-    }));
-  }, [networkById?.network?.description, networkById?.network?.name]);
 
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
@@ -73,27 +55,6 @@ const CentralNetworkById = () => {
   }
 
   const { network, members = [] } = networkById || {};
-  const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    updateNetwork(
-      {
-        nwid: network.id,
-        central: true,
-        updateParams: { name: state?.networkName },
-      },
-      {
-        onSuccess: () => {
-          void refetchNetwork();
-          setState({ ...state, editNetworkName: false });
-        },
-      }
-    );
-  };
-  const eventHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
 
   if (errorNetwork) {
     return (
@@ -136,36 +97,7 @@ const CentralNetworkById = () => {
                 </CopyToClipboard>
               </span>
             </div>
-            <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-medium">{t("networkName")}</span>
-              <span className="relative left-7 flex items-center gap-2">
-                {state.editNetworkName ? (
-                  <form onSubmit={changeNameHandler}>
-                    <Input
-                      focus
-                      name="networkName"
-                      onChange={eventHandler}
-                      defaultValue={network?.name}
-                      type="text"
-                      placeholder={network?.name}
-                      className="input-bordered input-primary input-xs"
-                    />
-                  </form>
-                ) : (
-                  network?.name
-                )}
-                <EditIcon
-                  data-testid="changeNetworkName"
-                  className="hover:text-opacity-50"
-                  onClick={() =>
-                    setState({
-                      ...state,
-                      editNetworkName: !state.editNetworkName,
-                    })
-                  }
-                />
-              </span>
-            </div>
+            <NetworkName central />
             <NetworkDescription central />
           </div>
         </div>

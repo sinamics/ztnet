@@ -22,6 +22,8 @@ import NetworkHelpText from "~/components/modules/networkHelp";
 import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next/types";
+import NetworkName from "~/components/modules/networkName";
+import NetworkDescription from "~/components/modules/networkDescription";
 
 const NetworkById = () => {
   const t = useTranslations("networkById");
@@ -139,96 +141,8 @@ const NetworkById = () => {
                 </CopyToClipboard>
               </span>
             </div>
-            <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-medium">{t("networkName")}</span>
-              <span className="relative left-7 flex items-center gap-2">
-                {state.editNetworkName ? (
-                  <form onSubmit={changeNameHandler}>
-                    <Input
-                      focus
-                      name="networkName"
-                      onChange={eventHandler}
-                      defaultValue={network?.name}
-                      type="text"
-                      placeholder={network?.name}
-                      className="input-bordered input-primary input-xs"
-                    />
-                  </form>
-                ) : (
-                  network?.name
-                )}
-                <EditIcon
-                  data-testid="changeNetworkName"
-                  className="hover:text-opacity-50"
-                  onClick={() =>
-                    setState({
-                      ...state,
-                      editNetworkName: !state.editNetworkName,
-                    })
-                  }
-                />
-              </span>
-            </div>
-            <div className="py-3 font-light">
-              {!state.toggleDescriptionInput ? (
-                network?.description ? (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {network?.description}
-                  </div>
-                ) : (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {t("addDescription")}
-                  </div>
-                )
-              ) : (
-                <form>
-                  <textarea
-                    autoFocus
-                    rows={3}
-                    value={state?.description}
-                    name="description"
-                    onChange={eventHandler}
-                    maxLength={255}
-                    style={{ maxHeight: "100px" }}
-                    className="custom-scrollbar textarea textarea-primary w-full leading-snug "
-                    placeholder={t("descriptionPlaceholder")}
-                    onKeyDown={(
-                      e: React.KeyboardEvent<HTMLTextAreaElement>
-                    ) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        // submit form when Enter key is pressed and Shift key is not held down.
-                        const target = e.target as HTMLTextAreaElement;
-                        updateNetwork(
-                          {
-                            nwid: network.nwid,
-                            updateParams: { description: target.value },
-                          },
-                          {
-                            onSuccess: () => {
-                              void refetchNetwork();
-                              setState({
-                                ...state,
-                                toggleDescriptionInput:
-                                  !state.toggleDescriptionInput,
-                              });
-                            },
-                          }
-                        );
-                      }
-                    }}
-                  ></textarea>
-                </form>
-              )}
-            </div>
+            <NetworkName />
+            <NetworkDescription />
           </div>
         </div>
         <NetworkPrivatePublic />

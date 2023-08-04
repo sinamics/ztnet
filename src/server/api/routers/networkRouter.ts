@@ -10,22 +10,19 @@ import {
 import * as ztController from "~/utils/ztApi";
 import { handleAutoAssignIP, updateNetworkMembers } from "../networkService";
 import { Address4, Address6 } from "ip-address";
-import {
-  type NetworkAndMembers,
-  type MembersEntity,
-  type ZtControllerNetwork,
-  type IpAssignmentPoolsEntity,
-  type Peers,
-  type NetworkEntity,
-  type Paths,
-  type CapabilitiesByName,
-  type TagsByName,
-} from "~/types/network";
+
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
-import { type networkMembers } from "@prisma/client";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
+import { type NetworkEntity } from "~/types/local/network";
+import { type NetworkAndMemberResponse } from "~/types/network";
+import {
+  type MemberEntity,
+  type Paths,
+  type Peers,
+} from "~/types/local/member";
+import { type FlattenCentralMembers } from "~/types/central/members";
 
 const customConfig: Config = {
   dictionaries: [adjectives, animals],
@@ -78,24 +75,30 @@ function isValidCIDR(cidr: string): boolean {
 const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
-  getUserNetworks: protectedProcedure.query(async ({ ctx }) => {
-    // const test = await ztController.get_controller_networks();
-    // const create = await ztController.network_detail("83048a0632c0443d");
-    // console.log(create)
-    const networks = await ctx.prisma.network.findMany({
-      where: {
-        authorId: ctx.session.user.id,
-      },
-      include: {
-        networkMembers: {
-          select: {
-            id: true,
+  getUserNetworks: protectedProcedure
+    .input(
+      z.object({
+        central: z.boolean().optional().default(false),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (input.central) {
+        return await ztController.get_controller_networks(input.central);
+      }
+      const networks = await ctx.prisma.network.findMany({
+        where: {
+          authorId: ctx.session.user.id,
+        },
+        include: {
+          networkMembers: {
+            select: {
+              id: true,
+            },
           },
         },
-      },
-    });
-    return networks;
-  }),
+      });
+      return networks;
+    }),
 
   getNetworkById: protectedProcedure
     .input(
@@ -110,6 +113,8 @@ export const networkRouter = createTRPCRouter({
       const { cidrOptions } = ipAssignmentPools;
 
       if (input.central) {
+        // const status = await ztController.get_controller_status(input.central);
+        // console.log(JSON.stringify(status, null, 2));
         const t = await ztController.central_network_detail(
           input.nwid,
           input.central
@@ -153,9 +158,9 @@ export const networkRouter = createTRPCRouter({
         cidr: cidrOptions,
       };
 
-      const combined: Partial<NetworkAndMembers> = {
+      const combined: Partial<NetworkAndMemberResponse> = {
         ...ztControllerResponse,
-        network: mergedNetwork as ZtControllerNetwork,
+        network: mergedNetwork as NetworkEntity,
       };
       const { members, network } = combined;
 
@@ -163,7 +168,7 @@ export const networkRouter = createTRPCRouter({
       // Due to an issue were not possible to delete user.
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
       const getZombieMembersPromises = members.map(
-        async (member: MembersEntity) => {
+        async (member: MemberEntity | FlattenCentralMembers) => {
           return await ctx.prisma.networkMembers.findFirst({
             where: {
               nwid: input.nwid,
@@ -187,9 +192,10 @@ export const networkRouter = createTRPCRouter({
           },
         },
       });
+
       // Get peers to view client version of zt
       const updatedActiveMembers = await Promise.all(
-        getActiveMembers.map(async (member: networkMembers) => {
+        getActiveMembers.map(async (member) => {
           const peers = (await ztController
             .peer(member?.address)
             .catch(() => [])) as Peers[];
@@ -281,21 +287,46 @@ export const networkRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       // if central is true, send the request to the central API and return the response
-      if (input.central) {
-        return await ztController.network_update(
-          input.nwid,
-          input.updateParams
-        );
-      }
+      const { v4AssignMode } = input.updateParams;
+      // prepare update params
+      const updateParams = input.central
+        ? { config: { v4AssignMode } }
+        : { v4AssignMode };
 
-      // update local network
-      return ztController.network_update(input.nwid, input.updateParams);
+      // update network
+      return ztController.network_update({
+        nwid: input.nwid,
+        central: input.central,
+        updateParams,
+      });
+    }),
+  managedRoutes: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+        central: z.boolean().default(false),
+        updateParams: z.object({
+          routes: RoutesArraySchema.optional(),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { routes } = input.updateParams;
+      // prepare update params
+      const updateParams = input.central ? { config: { routes } } : { routes };
+
+      // update network
+      return ztController.network_update({
+        nwid: input.nwid,
+        central: input.central,
+        updateParams,
+      });
     }),
   easyIpAssignment: protectedProcedure
     .input(
       z.object({
         nwid: z.string().nonempty(),
-        central: z.boolean().optional().default(false),
+        central: z.boolean().default(false),
         updateParams: z.object({
           routes: RoutesArraySchema.optional(),
         }),
@@ -361,10 +392,35 @@ export const networkRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      console.log(input);
       const updateParams = input.central
         ? { config: { private: input.updateParams.private } }
         : { private: input.updateParams.private };
+
+      // if central is true, send the request to the central API and return the response
+      const updated = await ztController.network_update({
+        nwid: input.nwid,
+        central: input.central,
+        updateParams,
+      });
+      // console.log(updated);
+
+      const { config, ...otherProps } = updated?.network || {};
+      return { ...config, ...otherProps };
+    }),
+  networkName: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string().nonempty(),
+        central: z.boolean().default(false),
+        updateParams: z.object({
+          name: z.string().nonempty(),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updateParams = input.central
+        ? { config: { ...input.updateParams } }
+        : { ...input.updateParams };
 
       // if central is true, send the request to the central API and return the response
       return ztController.network_update({
@@ -373,22 +429,74 @@ export const networkRouter = createTRPCRouter({
         updateParams,
       });
     }),
-
   networkDescription: protectedProcedure
     .input(
       z.object({
-        nwid: z.string().nonempty(),
-        central: z.boolean().optional().default(false),
+        nwid: z.string(),
+        central: z.boolean().default(false),
         updateParams: z.object({
-          description: z.string().optional(),
+          description: z.string(),
+        }),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // if central is true, send the request to the central API and return the response
+      if (input.central) {
+        return ztController.network_update({
+          nwid: input.nwid,
+          central: input.central,
+          updateParams: input.updateParams,
+        });
+      }
+
+      // Update network in prisma as description is not part of the local controller network object.
+      return await ctx.prisma.network.update({
+        where: { nwid: input.nwid },
+        data: {
+          ...input.updateParams,
+        },
+      });
+    }),
+  dns: protectedProcedure
+    .input(
+      z.object({
+        nwid: z.string(),
+        central: z.boolean().default(false),
+        updateParams: z.object({
+          dns: z
+            .object({
+              domain: z.string().refine(isValidDomain, {
+                message: `Invalid DNS domain provided`,
+              }),
+              servers: z.array(
+                z.string().refine(isValidIP, {
+                  message: `Invalid DNS server provided`,
+                })
+              ),
+            })
+            .refine(
+              (dns) => dns === undefined || (dns && dns.domain && dns.servers),
+              {
+                message:
+                  "Both domain and servers must be provided if dns is defined",
+              }
+            ),
         }),
       })
     )
     .mutation(async ({ input }) => {
-      // update either central or local network
-      return ztController.network_update({ ...input });
+      const updateParams = input.central
+        ? { config: { ...input.updateParams } }
+        : { ...input.updateParams };
+
+      // if central is true, send the request to the central API and return the response
+      await ztController.network_update({
+        nwid: input.nwid,
+        central: input.central,
+        updateParams,
+      });
     }),
-  updateNetwork: protectedProcedure
+  multiCast: protectedProcedure
     .input(
       z.object({
         nwid: z.string().nonempty(),
@@ -396,59 +504,16 @@ export const networkRouter = createTRPCRouter({
         updateParams: z.object({
           multicastLimit: z.number().optional(),
           enableBroadcast: z.boolean().optional(),
-          name: z.string().optional(),
-          dns: z
-            .object({
-              domain: z.string().nonempty().refine(isValidDomain, {
-                message: `Invalid DNS domain provided`,
-              }),
-              servers: z
-                .array(
-                  z.string().nonempty().refine(isValidIP, {
-                    message: `Invalid DNS server provided`,
-                  })
-                )
-                .optional(),
-            })
-            .optional(),
-          changeCidr: z.string().optional(),
+          // changeCidr: z.string().optional(),
         }),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      // Construct the API request payload using the provided updateParams
-      const ztControllerUpdates: Partial<ZtControllerNetwork> = {};
+    .mutation(async ({ input }) => {
+      const updateParams = input.central
+        ? { config: { ...input.updateParams } }
+        : { ...input.updateParams };
+
       try {
-        const { changeCidr } = input.updateParams;
-
-        if (changeCidr) {
-          ztControllerUpdates.cidr = IPv4gen(changeCidr).cidrOptions;
-        }
-
-        // if central is true, send the request to the central API and return the response
-        if (input.central) {
-          return await ztController.network_update(
-            input.nwid,
-            { config: { ...input.updateParams } },
-            input.central
-          );
-        }
-
-        // Update network in prisma
-        const prismaUpdatePromise = ctx.prisma.network.update({
-          where: { nwid: input.nwid },
-          data: {
-            ...input.updateParams,
-          },
-        });
-
-        // Return nw obj details
-        // const ztControllerResponse = await ztController
-        //   .network_detail(input.nwid)
-        //   .catch((err: APIError) => {
-        //     return throwError(`${err.message}`);
-        //   });
-
         // if (typeof autoAssignIp === "boolean") {
         //   await handleAutoAssignIP(
         //     autoAssignIp,
@@ -457,16 +522,12 @@ export const networkRouter = createTRPCRouter({
         //     input.nwid
         //   );
         // }
-        const ztControllerUpdatePromise = ztController.network_update(
-          input.nwid,
-          input.updateParams
-        );
 
-        const [, ztControllerResult] = await Promise.all([
-          prismaUpdatePromise,
-          ztControllerUpdatePromise,
-        ]);
-        return ztControllerResult;
+        return await ztController.network_update({
+          nwid: input.nwid,
+          central: input.central,
+          updateParams,
+        });
       } catch (error) {
         if (error instanceof z.ZodError) {
           throwError(`Something went wrong during update, ${error.message}`);

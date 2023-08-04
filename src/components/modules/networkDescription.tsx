@@ -30,9 +30,8 @@ const NetworkDescription = ({ central = false }: IProp) => {
     setState((prev) => ({
       ...prev,
       description: networkById?.network?.description,
-      networkName: networkById?.network?.name,
     }));
-  }, [networkById?.network?.description, networkById?.network?.name]);
+  }, [networkById?.network?.description]);
 
   const { mutate: networkDescription } =
     api.network.networkDescription.useMutation();
@@ -114,7 +113,7 @@ const NetworkDescription = ({ central = false }: IProp) => {
                 networkDescription(
                   {
                     nwid: network.id,
-                    central: true,
+                    central,
                     updateParams: { description: target.value },
                   },
                   {

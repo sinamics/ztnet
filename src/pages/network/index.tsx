@@ -14,7 +14,9 @@ const Networks: NextPageWithLayout = () => {
     data: userNetworks,
     isLoading,
     refetch,
-  } = api.network.getUserNetworks.useQuery();
+  } = api.network.getUserNetworks.useQuery({
+    central: false,
+  });
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
   const addNewNetwork = () => {
     createNetwork(null, { onSuccess: () => void refetch() });

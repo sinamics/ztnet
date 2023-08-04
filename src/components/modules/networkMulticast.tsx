@@ -29,7 +29,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
+  const { mutate: updateNetwork } = api.network.multiCast.useMutation({
     onError: (e) => {
       if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
         void toast.error(

@@ -325,10 +325,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
         table.options.meta?.updateData(index, id, value);
       };
 
-      // const nameOnChange = (e) => {
-      //   setName(e.target.value);
-      // };
-
       const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         updateMemberDatabaseOnly(
@@ -473,20 +469,17 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   };
 
   useEffect(() => {
-    setData(networkById?.members);
+    setData(networkById?.members ?? []);
   }, [networkById?.members]);
 
   // makeNetworkMemberData
   const [data, setData] = useState(networkById?.members ?? []);
-  console.log(networkById);
+
   // const [data, setData] = useState(() => makeNetworkMemberData(100));
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
-
   const table = useReactTable({
     data,
-    //@ts-expect-error
     columns,
-    //@ts-expect-error
     defaultColumn,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -503,14 +496,17 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
         // Skip page index reset until after next rerender
         skipAutoResetPageIndex();
         setData((old) =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           old.map((row, index) => {
             if (index === rowIndex) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
               return {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 ...old[rowIndex]!,
                 [columnId]: value,
               };
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return row;
           })
         );
@@ -582,13 +578,15 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           {
             // Loop over the table rows
             table.getRowModel().rows.map((row) => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-              const notation = (row.original as any)
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              const notation = row.original
                 ?.notations as NetworkMemberNotation[];
               return (
                 <tr
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
                   key={row.original.id}
                   className={`items-center ${
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
                     !row.original.authorized
                       ? "border-dotted bg-error bg-opacity-20"
                       : ""

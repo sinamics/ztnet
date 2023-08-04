@@ -104,7 +104,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
     // check if we should update lasteseen
     member.peers &&
       member.conStatus !== 0 &&
-      Object.assign(storeValues, { lastseen: new Date() });
+      Object.assign(storeValues, { lastSeen: new Date() });
 
     // update members
     const updateMember = await prisma.networkMembers.updateMany({
@@ -137,7 +137,7 @@ const psql_addMember = async (member: MemberI) => {
       identity: member.identity,
       authorized: member.authorized,
       ipAssignments: member.ipAssignments,
-      lastseen: new Date(),
+      lastSeen: new Date(),
       creationTime: new Date(),
       nwid_ref: {
         connect: { nwid: member.nwid },
