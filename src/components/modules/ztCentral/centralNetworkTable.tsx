@@ -33,7 +33,6 @@ const TruncateText = ({ text }: { text: string }) => {
   );
 };
 export const CentralNetworkTable = ({ tableData = [] }) => {
-  console.log(tableData);
   const router = useRouter();
   const t = useTranslations("networksTable");
   const [globalFilter, setGlobalFilter] = useState("");

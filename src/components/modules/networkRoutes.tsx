@@ -33,8 +33,8 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
     { enabled: !!query.id, networkMode: "always" }
   );
 
-  const { mutate: updateNetworkMutation, isLoading: isUpdating } =
-    api.network.updateNetwork.useMutation({
+  const { mutate: updateManageRoutes, isLoading: isUpdating } =
+    api.network.managedRoutes.useMutation({
       onError: (e) => {
         if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
           void toast.error(
@@ -47,10 +47,10 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
     });
 
   const deleteRoute = (route: RoutesEntity) => {
-    const _routes = [...network?.config?.routes];
+    const _routes = [...network?.routes];
     const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
-    updateNetworkMutation(
+    updateManageRoutes(
       {
         updateParams: { routes: [...newRouteArr] },
         nwid: query.id as string,
@@ -68,10 +68,10 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateNetworkMutation(
+    updateManageRoutes(
       {
         updateParams: {
-          routes: [...network?.config?.routes, { ...routeInput }],
+          routes: [...network?.routes, { ...routeInput }],
         },
         nwid: query.id as string,
         central,
@@ -98,7 +98,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
         {t("nettworkRoutes.managedRoutesTitle")}
       </div>
       <div className="collapse-content" style={{ width: "100%" }}>
-        {network?.config?.routes.length === 0 ? (
+        {network?.routes.length === 0 ? (
           <div className="alert alert-warning p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -125,7 +125,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
           </div>
         ) : null}
         <div className="grid grid-cols-1 pt-3">
-          {network?.config?.routes.map((route) => {
+          {network?.routes.map((route) => {
             return (
               <div
                 key={route.target}

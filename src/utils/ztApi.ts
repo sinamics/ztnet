@@ -1,28 +1,33 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import fs from "fs";
-import axios, { type AxiosError, type AxiosResponse } from "axios";
-import { type NetworkAndMembers } from "~/types/network";
+import { prisma } from "~/server/db";
+import { IPv4gen } from "./IPv4gen";
+import axios, {
+  type AxiosRequestConfig,
+  type AxiosError,
+  type AxiosResponse,
+} from "axios";
 import { APIError } from "~/server/helpers/errorHandler";
 import {
-  type ZTControllerResponse,
   type HttpResponse,
-  type MemberRevisionCounters,
   type ZTControllerCreateNetwork,
   type ZTControllerNodeStatus,
   type ZTControllerStatus,
-  type ZTControllerMemberDetails,
+  // type ZTControllerMemberDetails,
   type MemberDeleteInput,
   type MemberDeleteResponse,
   type ZTControllerMemberUpdate,
   type ZTControllerGetPeer,
 } from "~/types/ztController";
-import { prisma } from "~/server/db";
-import { IPv4gen } from "./IPv4gen";
+
+import { type CentralControllerStatus } from "~/types/central/controllerStatus";
+import { type CentralMembers } from "~/types/central/members";
+import {
+  type CentralNetwork,
+  type FlattenCentralNetwork,
+} from "~/types/central/network";
+import { type MemberEntity } from "~/types/local/member";
+import { type NetworkEntity } from "~/types/local/network";
+import { type NetworkAndMemberResponse } from "~/types/network";
 
 const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
@@ -76,6 +81,82 @@ const getOptions = async (isCentral = false) => {
   };
 };
 
+const flattenCentralMembers = (members: CentralMembers[]) => {
+  if (!members) return [];
+  return members.map((member) => {
+    // Destructure the network object into config and other properties
+    const { id: nodeId, config, ...otherProps } = member;
+
+    // Merge the config object into the main network object
+    const flattenedMembers = { nodeId, ...config, ...otherProps };
+
+    return flattenedMembers;
+  });
+};
+
+export const flattenNetworks = (
+  networks: CentralNetwork[] | CentralNetwork
+): Partial<FlattenCentralNetwork[]> | Partial<FlattenCentralNetwork> => {
+  // Single object input
+  if (!Array.isArray(networks)) {
+    const { id: nwid, config, ...otherProps } = networks;
+    const flattenedNetwork = { nwid, ...config, ...otherProps };
+    return flattenedNetwork;
+  }
+
+  // Array input
+  if (!networks) return [];
+  return networks.map((network) => {
+    const { id: nwid, config, ...otherProps } = network;
+    const flattenedNetwork = { nwid, ...config, ...otherProps };
+    return flattenedNetwork;
+  });
+};
+
+/*
+ *    Axios Helper functions
+ *
+ */
+const getData = async <T>(
+  addr: string,
+  headers: AxiosRequestConfig
+): Promise<T> => {
+  try {
+    const { data } = await axios.get<T>(addr, headers);
+    return data;
+  } catch (error) {
+    const message = `An error occurred fetching data from ${addr}`;
+    throw new APIError(message, error as AxiosError);
+  }
+};
+const postData = async <T, P = unknown>(
+  addr: string,
+  headers: AxiosRequestConfig,
+  payload: P
+): Promise<T> => {
+  try {
+    const { data } = await axios.post<T>(addr, payload, headers);
+    return data;
+  } catch (error) {
+    const message = `An error occurred while posting data to ${addr}`;
+    throw new APIError(message, error as AxiosError);
+  }
+};
+
+// const deleteData = async <T>(
+//   addr: string,
+//   headers: AxiosRequestConfig
+// ): Promise<T> => {
+//   try {
+//     const { data } = await axios.delete<T>(addr, headers);
+//     return data;
+//   } catch (error) {
+//     const prefix = isCentral ? "[CENTRAL] " : "";
+// const message = `${prefix}An error occurred while deleting data`;
+//     throw new APIError(message, error as AxiosError);
+//   }
+// };
+
 /* 
   Controller API for Admin
 */
@@ -90,11 +171,9 @@ export const get_controller_version = async function () {
   // get headers based on local or central api
   const headers = await getOptions(false);
   try {
-    const { data } = await axios.get(addr, headers);
-
-    return data as ZTControllerStatus;
+    return await getData<ZTControllerStatus>(addr, headers);
   } catch (error) {
-    const message = "An error occurred while getting get_controller_version";
+    const message = `An error occurred while getting get_controller_version`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -107,7 +186,7 @@ type ZTControllerListNetworks = Array<string>;
 // Get all networks
 export const get_controller_networks = async function (
   isCentral = false
-): Promise<ZTControllerListNetworks> {
+): Promise<ZTControllerListNetworks | FlattenCentralNetwork[]> {
   const addr = isCentral
     ? `${CENTRAL_ZT_ADDR}/network`
     : `${LOCAL_ZT_ADDR}/controller/network`;
@@ -115,10 +194,15 @@ export const get_controller_networks = async function (
   // get headers based on local or central api
   const headers = await getOptions(isCentral);
   try {
-    const { data } = await axios.get(addr, headers);
-    return data as ZTControllerListNetworks;
+    if (isCentral) {
+      const data = await getData<CentralNetwork[]>(addr, headers);
+      return flattenNetworks(data);
+    } else {
+      return await getData<ZTControllerListNetworks>(addr, headers);
+    }
   } catch (error) {
-    const message = "An error occurred while getting get_controller_networks";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting get_controller_networks`;
     throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
   }
 };
@@ -136,10 +220,14 @@ export const get_controller_status = async function (isCentral: boolean) {
   // get headers based on local or central api
   const headers = await getOptions(isCentral);
   try {
-    const { data } = await axios.get(addr, headers);
-    return data as ZTControllerNodeStatus;
+    if (isCentral) {
+      return await getData<CentralControllerStatus>(addr, headers);
+    } else {
+      return await getData<ZTControllerNodeStatus>(addr, headers);
+    }
   } catch (error) {
-    const message = "An error occurred while getting get_controller_status";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting get_controller_status`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -149,32 +237,45 @@ export const get_controller_status = async function (isCentral: boolean) {
   https://docs.zerotier.com/service/v1/#operation/createNetwork
 */
 export const network_create = async (
-  name,
+  name: string,
   ipAssignment,
   isCentral = false
-): Promise<ZTControllerCreateNetwork> => {
-  const controllerStatus = await get_controller_status(isCentral);
-  const addr = isCentral
-    ? `${CENTRAL_ZT_ADDR}/network/${controllerStatus.address}______`
-    : `${LOCAL_ZT_ADDR}/controller/network/${controllerStatus.address}______`;
-
+): Promise<ZTControllerCreateNetwork | FlattenCentralNetwork> => {
   // get headers based on local or central api
   const headers = await getOptions(isCentral);
 
-  const config = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const payload = {
     name,
     ...ipAssignment,
   };
 
   try {
-    const response: AxiosResponse = await axios.post(addr, config, headers);
+    if (isCentral) {
+      const data = await postData<CentralNetwork>(
+        `${CENTRAL_ZT_ADDR}/network`,
+        headers,
+        {}
+      );
+      return flattenNetworks([data]);
+    } else {
+      const controllerStatus = (await get_controller_status(
+        isCentral
+      )) as ZTControllerNodeStatus;
 
-    return response.data as ZTControllerCreateNetwork;
+      return await postData<ZTControllerCreateNetwork>(
+        `${LOCAL_ZT_ADDR}/controller/network/${controllerStatus.address}______`,
+        headers,
+        payload
+      );
+    }
   } catch (error) {
-    const message = "An error occurred while getting network_create";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting network_create`;
     throw new APIError(message, error as AxiosError);
   }
 };
+
 // delete network
 // https://docs.zerotier.com/service/v1/#operation/deleteNetwork
 
@@ -193,7 +294,8 @@ export async function network_delete(
 
     return { status: response.status, data: undefined };
   } catch (error) {
-    const message = "An error occurred while getting network_delete";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting network_delete`;
     throw new APIError(message, error as AxiosError);
   }
 }
@@ -204,7 +306,7 @@ export async function network_delete(
 export const network_members = async function (
   nwid: string,
   isCentral = false
-): Promise<MemberRevisionCounters> {
+) {
   try {
     const addr = isCentral
       ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member`
@@ -212,12 +314,12 @@ export const network_members = async function (
 
     // get headers based on local or central api
     const headers = await getOptions(isCentral);
-    // fetch members
-    const members: AxiosResponse = await axios.get(addr, headers);
 
-    return members.data as MemberRevisionCounters;
-  } catch (error) {
-    const message = `An error occurred while getting network_members ${error}`;
+    // fetch members
+    return await getData<MemberEntity[]>(addr, headers);
+  } catch (error: unknown) {
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting network_members`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -225,7 +327,7 @@ export const network_members = async function (
 export const local_network_detail = async function (
   nwid: string,
   isCentral = false
-): Promise<NetworkAndMembers> {
+): Promise<NetworkAndMemberResponse> {
   try {
     // get all members for a specific network
     const members = await network_members(nwid);
@@ -233,21 +335,23 @@ export const local_network_detail = async function (
     // get headers based on local or central api
     const headers = await getOptions(isCentral);
 
-    const network: AxiosResponse = await axios.get(
+    const network = await getData<NetworkEntity>(
       `${LOCAL_ZT_ADDR}/controller/network/${nwid}`,
       headers
     );
 
-    const membersArr: any = [];
-    for (const member in members) {
-      const memberDetails: AxiosResponse = await axios.get(
-        `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${member}`,
+    const membersArr: MemberEntity[] = [];
+    for (const [memberId] of Object.entries(members)) {
+      const memberDetails = await getData<MemberEntity>(
+        `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`,
         headers
       );
-      membersArr.push(memberDetails.data);
+
+      membersArr.push(memberDetails);
     }
+
     return {
-      network: { ...network.data },
+      network: { ...network },
       members: [...membersArr],
     };
   } catch (error) {
@@ -262,7 +366,7 @@ export const local_network_detail = async function (
 export const central_network_detail = async function (
   nwid: string,
   isCentral = false
-): Promise<NetworkAndMembers> {
+): Promise<NetworkAndMemberResponse> {
   try {
     const addr = isCentral
       ? `${CENTRAL_ZT_ADDR}/network/${nwid}`
@@ -273,18 +377,14 @@ export const central_network_detail = async function (
 
     // get all members for a specific network
     const members = await network_members(nwid, isCentral);
-
-    const network: AxiosResponse = await axios.get(addr, headers);
+    const network = await getData<CentralNetwork>(addr, headers);
 
     const membersArr = await Promise.all(
       members?.map(async (member) => {
-        const memberDetails: AxiosResponse = await axios.get(
-          `${addr}/member/${member.nodeId}`,
+        return await getData<CentralMembers>(
+          `${addr}/member/${member?.nodeId}`,
           headers
         );
-        return {
-          ...memberDetails.data,
-        };
       })
     );
 
@@ -292,7 +392,7 @@ export const central_network_detail = async function (
     const ipAssignmentPools = IPv4gen(null);
     const { cidrOptions } = ipAssignmentPools;
 
-    const { id: networkId, config: networkConfig, ...restData } = network.data;
+    const { id: networkId, config: networkConfig, ...restData } = network;
 
     return {
       network: {
@@ -301,22 +401,28 @@ export const central_network_detail = async function (
         ...restData,
         ...networkConfig,
       },
-      members: [...membersArr],
+      members: [...flattenCentralMembers(membersArr)],
     };
   } catch (error) {
     const source = isCentral ? "[ZT CENTRAL]" : "";
-    const message = `${source} An error occurred while getting data from network_details function ${error}`;
+    const message = `${source} An error occurred while getting data from network_details function`;
     throw new APIError(message, error as AxiosError);
   }
+};
+
+type networkUpdate = {
+  nwid: string;
+  updateParams: Partial<NetworkEntity | CentralNetwork>;
+  central?: boolean;
 };
 
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 export const network_update = async function ({
   nwid,
-  updateParams: data,
+  updateParams: payload,
   central = false,
-}): Promise<Partial<ZTControllerResponse>> {
+}: networkUpdate): Promise<Partial<NetworkEntity | CentralNetwork>> {
   const addr = central
     ? `${CENTRAL_ZT_ADDR}/network/${nwid}`
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
@@ -324,10 +430,16 @@ export const network_update = async function ({
   // get headers based on local or central api
   const headers = await getOptions(central);
   try {
-    const updated = await axios.post(addr, data, headers);
-    return { network: { ...updated.data } };
+    const updated = await postData<NetworkEntity | CentralNetwork>(
+      addr,
+      headers,
+      payload
+    );
+
+    return { network: { ...updated } };
   } catch (error) {
-    const message = "An error occurred while getting network_update";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting network_update`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -350,7 +462,8 @@ export const member_delete = async ({
     const response: AxiosResponse = await axios.delete(addr, headers);
     return response.status as MemberDeleteResponse;
   } catch (error) {
-    const message = "An error occurred while getting member_delete";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting member_delete`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -373,7 +486,8 @@ export const member_update = async (
     const response: AxiosResponse = await axios.post(addr, data, headers);
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
-    const message = "An error occurred while getting member_update";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting member_update`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -381,11 +495,17 @@ export const member_update = async (
 // Get all peers
 // https://docs.zerotier.com/service/v1/#operation/getPeers
 export const peers = async (): Promise<ZTControllerGetPeer> => {
+  const addr = `${LOCAL_ZT_ADDR}/peer`;
+
+  // get headers based on local or central api
+  const headers = await getOptions(false);
+
   try {
-    const response: AxiosResponse = await axios.get(`${ZT_ADDR}/peer`, options);
+    const response: AxiosResponse = await axios.get(addr, headers);
     return response.data as ZTControllerGetPeer;
   } catch (error) {
-    const message = "An error occurred while getting peers";
+    const prefix = isCentral ? "[CENTRAL] " : "";
+    const message = `${prefix}An error occurred while getting peers`;
     throw new APIError(message, error as AxiosError);
   }
 };
@@ -395,11 +515,13 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 export const peer = async (
   userZtAddress: string
 ): Promise<ZTControllerGetPeer[]> => {
+  const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
+
+  // get headers based on local or central api
+  const headers = await getOptions(false);
+
   try {
-    const response: AxiosResponse = await axios.get(
-      `${ZT_ADDR}/peer/${userZtAddress}`,
-      options
-    );
+    const response: AxiosResponse = await axios.get(addr, headers);
 
     if (!response.data) return null as ZTControllerGetPeer[];
     return response.data as ZTControllerGetPeer[];

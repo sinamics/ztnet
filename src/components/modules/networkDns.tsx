@@ -31,7 +31,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
+  const { mutate: updateNetwork } = api.network.dns.useMutation({
     onError: (e) => {
       if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
         void toast.error(
@@ -121,7 +121,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
     <>
       <div
         tabIndex={0}
-        className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+        className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
       >
         <input type="checkbox" />
         <div className="collapse-title">{t("networkDns.DNS")}</div>
