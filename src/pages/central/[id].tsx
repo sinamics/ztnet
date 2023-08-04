@@ -173,11 +173,7 @@ const CentralNetworkById = () => {
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members?.length ? (
           <div className="membersTable-wrapper">
-            <NetworkMembersTable
-              nwid={network.id}
-              central
-              // setEditing={(e: boolean) => setEditing(e)}
-            />
+            <NetworkMembersTable nwid={network.id} central={true} />
           </div>
         ) : (
           <div className="alert alert-warning flex justify-center shadow-lg">

@@ -19,16 +19,16 @@ import { useRouter } from "next/router";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { useModalStore } from "~/utils/store";
 import { MemberOptionsModal } from "./memberOptionsModal";
-import {
-  type NetworkMemberNotation,
-  type MembersEntity,
-} from "~/types/network";
 import { DebouncedInput } from "../elements/debouncedInput";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import Input from "../elements/input";
 import { useTranslations } from "next-intl";
+import {
+  type MemberEntity,
+  type NetworkMemberNotation,
+} from "~/types/local/member";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
@@ -40,7 +40,7 @@ declare module "@tanstack/react-table" {
 
 interface IProp {
   nwid: string;
-  central?: boolean;
+  central: boolean;
 }
 
 enum ConnectionStatus {
@@ -99,6 +99,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
         updateParams: { ipAssignments: [...newIpPool] },
         memberId: id,
         nwid,
+        central,
       },
       {
         onSuccess: () => {
@@ -116,8 +117,8 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
       { onSuccess: () => void refetchNetworkById() }
     );
   };
-  const columnHelper = createColumnHelper<MembersEntity>();
-  const columns = useMemo<ColumnDef<MembersEntity>[]>(
+  const columnHelper = createColumnHelper<MemberEntity>();
+  const columns = useMemo<ColumnDef<MemberEntity>[]>(
     () => [
       columnHelper.accessor(
         (row) => {
@@ -149,6 +150,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
                     {
                       nwid,
                       memberId: original.id,
+                      central,
                       updateParams: { authorized: event.target.checked },
                     },
                     { onSuccess: () => void refetchNetworkById() }
@@ -179,15 +181,26 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
       columnHelper.accessor("creationTime", {
         header: () => <span>{t("networkMembersTable.column.created")}</span>,
         id: "creationTime",
-        cell: (info) => <TimeAgo date={info.getValue() as number} />,
+        cell: (info) => <TimeAgo date={info.getValue()} />,
       }),
       columnHelper.accessor("peers", {
         header: () => (
           <span>{t("networkMembersTable.column.physicalIp.header")}</span>
         ),
         id: "physicalAddress",
-        cell: (info) => {
-          const val = info.getValue();
+        cell: ({ getValue, row: { original } }) => {
+          if (central) {
+            const val = original;
+            if (!val || typeof val.physicalAddress !== "string")
+              return (
+                <span className="text-gray-400/50">
+                  {t("networkMembersTable.column.physicalIp.unknownValue")}
+                </span>
+              );
+
+            return val.physicalAddress.split("/")[0];
+          }
+          const val = getValue();
           if (!val || typeof val.physicalAddress !== "string")
             return (
               <span className="text-gray-400/50">
@@ -207,7 +220,37 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           const formatTime = (value: string, unit: string) =>
             `${value} ${unit}`;
           const cursorStyle = { cursor: "pointer" };
+          if (central) {
+            const now = Date.now(); // current timestamp in milliseconds
+            const lastSeen = original?.lastSeen; // assuming lastSeen is a timestamp in milliseconds
+            const fiveMinutesAgo = now - 5 * 60 * 1000; // timestamp 5 minutes ago
 
+            // Check if lastSeen is within the last 5 minutes
+            if (lastSeen >= fiveMinutesAgo) {
+              // The user is considered online
+              return (
+                <span
+                  style={cursorStyle}
+                  className="text-success" // Change the className to whatever you use for positive/online statuses
+                  title="User is online"
+                >
+                  ONLINE
+                </span>
+              );
+            } else {
+              // The user is considered offline
+              return (
+                <span
+                  style={cursorStyle}
+                  className="text-error"
+                  title="User is offline"
+                >
+                  {t("networkMembersTable.column.conStatus.offline")}
+                  <TimeAgo date={lastSeen} formatter={formatTime} />
+                </span>
+              );
+            }
+          }
           if (original.conStatus === ConnectionStatus.Relayed) {
             return (
               <span
@@ -229,7 +272,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
                 ? t("networkMembersTable.column.conStatus.directLan")
                 : t("networkMembersTable.column.conStatus.directWan");
             const versionInfo =
-              original.peers && original.peers?.version !== "-1.-1.-1"
+              original.peers && original?.peers?.version !== "-1.-1.-1"
                 ? ` (v${original.peers?.version})`
                 : "";
 
@@ -253,10 +296,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
               title="User is offline"
             >
               {t("networkMembersTable.column.conStatus.offline")}
-              <TimeAgo
-                date={original?.lastSeen as number}
-                formatter={formatTime}
-              />
+              <TimeAgo date={original?.lastSeen} formatter={formatTime} />
             </span>
           );
         },
@@ -285,6 +325,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
                       <MemberOptionsModal
                         nwid={original.nwid}
                         memberId={original.id}
+                        central={central}
                       />
                     ),
                   })
@@ -310,7 +351,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
+  const defaultColumn: Partial<ColumnDef<MemberEntity>> = {
     cell: ({ getValue, row: { index, original }, column: { id }, table }) => {
       const initialValue = getValue();
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -331,6 +372,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           {
             nwid,
             id: original.id,
+            central,
             updateParams: {
               name: value as string,
             },
@@ -478,8 +520,11 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
   // const [data, setData] = useState(() => makeNetworkMemberData(100));
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
   const table = useReactTable({
+    // @ts-expect-error known error
     data,
+    // @ts-expect-error known error
     columns,
+    // @ts-expect-error known error
     defaultColumn,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -499,7 +544,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           old.map((row, index) => {
             if (index === rowIndex) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-return
               return {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 ...old[rowIndex]!,

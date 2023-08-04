@@ -1,5 +1,7 @@
 // Member Related Types
 export interface MemberEntity {
+  id: string;
+  name: string;
   activeBridge: boolean;
   address: string;
   nodeId?: string;
@@ -22,10 +24,16 @@ export interface MemberEntity {
   revision: number;
   ssoExempt: boolean;
   tags: Tag[];
+  peers: Peers;
+  lastSeen?: number;
+  conStatus?: number;
   vMajor: number;
   vMinor: number;
   vProto: number;
   vRev: number;
+  action: null;
+  notations?: Notation[];
+  physicalAddress?: string;
 }
 
 export interface Peers {
