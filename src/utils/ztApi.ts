@@ -94,23 +94,18 @@ const flattenCentralMembers = (members: CentralMembers[]) => {
   });
 };
 
-export const flattenNetworks = (
-  networks: CentralNetwork[] | CentralNetwork
-): Partial<FlattenCentralNetwork[]> | Partial<FlattenCentralNetwork> => {
-  // Single object input
-  if (!Array.isArray(networks)) {
-    const { id: nwid, config, ...otherProps } = networks;
-    const flattenedNetwork = { nwid, ...config, ...otherProps };
-    return flattenedNetwork;
-  }
+export const flattenNetwork = (
+  network: CentralNetwork
+): FlattenCentralNetwork => {
+  const { id: nwid, config, ...otherProps } = network;
+  const flattenedNetwork = { nwid, ...config, ...otherProps };
+  return flattenedNetwork;
+};
 
-  // Array input
-  if (!networks) return [];
-  return networks.map((network) => {
-    const { id: nwid, config, ...otherProps } = network;
-    const flattenedNetwork = { nwid, ...config, ...otherProps };
-    return flattenedNetwork;
-  });
+export const flattenNetworks = (
+  networks: CentralNetwork[]
+): FlattenCentralNetwork[] => {
+  return networks.map((network) => flattenNetwork(network));
 };
 
 /*
@@ -136,6 +131,7 @@ const postData = async <T, P = unknown>(
 ): Promise<T> => {
   try {
     const { data } = await axios.post<T>(addr, payload, headers);
+
     return data;
   } catch (error) {
     const message = `An error occurred while posting data to ${addr}`;
@@ -257,7 +253,7 @@ export const network_create = async (
         headers,
         {}
       );
-      return flattenNetworks([data]);
+      return flattenNetwork(data);
     } else {
       const controllerStatus = (await get_controller_status(
         isCentral
@@ -429,16 +425,15 @@ export const network_update = async function ({
 
   // get headers based on local or central api
   const headers = await getOptions(central);
+
   try {
-    const updated = await postData<NetworkEntity | CentralNetwork>(
+    return await postData<NetworkEntity | CentralNetwork>(
       addr,
       headers,
       payload
     );
-
-    return { network: { ...updated } };
   } catch (error) {
-    const prefix = isCentral ? "[CENTRAL] " : "";
+    const prefix = central ? "[CENTRAL] " : "";
     const message = `${prefix}An error occurred while getting network_update`;
     throw new APIError(message, error as AxiosError);
   }
@@ -462,7 +457,7 @@ export const member_delete = async ({
     const response: AxiosResponse = await axios.delete(addr, headers);
     return response.status as MemberDeleteResponse;
   } catch (error) {
-    const prefix = isCentral ? "[CENTRAL] " : "";
+    const prefix = central ? "[CENTRAL] " : "";
     const message = `${prefix}An error occurred while getting member_delete`;
     throw new APIError(message, error as AxiosError);
   }
@@ -486,7 +481,7 @@ export const member_update = async (
     const response: AxiosResponse = await axios.post(addr, data, headers);
     return response.data as ZTControllerMemberUpdate;
   } catch (error) {
-    const prefix = isCentral ? "[CENTRAL] " : "";
+    const prefix = central ? "[CENTRAL] " : "";
     const message = `${prefix}An error occurred while getting member_update`;
     throw new APIError(message, error as AxiosError);
   }
@@ -504,8 +499,7 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
     const response: AxiosResponse = await axios.get(addr, headers);
     return response.data as ZTControllerGetPeer;
   } catch (error) {
-    const prefix = isCentral ? "[CENTRAL] " : "";
-    const message = `${prefix}An error occurred while getting peers`;
+    const message = `An error occurred while getting peers`;
     throw new APIError(message, error as AxiosError);
   }
 };

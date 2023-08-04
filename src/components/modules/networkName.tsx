@@ -1,17 +1,54 @@
 import { useEffect, useState } from "react";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
-import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
+import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
+import {
+  type QueryClient,
+  type InfiniteData,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { type CentralNetwork } from "~/types/central/network";
+import { type NetworkEntity } from "~/types/local/network";
 
 interface IProp {
   central?: boolean;
 }
 
+const updateCache = ({
+  client,
+  data,
+  input,
+}: {
+  client: QueryClient;
+  input: RouterInputs["network"]["getNetworkById"];
+  data: NetworkEntity | Partial<CentralNetwork>;
+}) => {
+  client.setQueryData(
+    [
+      ["network", "getNetworkById"],
+      {
+        input,
+        type: "query",
+      },
+    ],
+    (oldData) => {
+      const newData = oldData as InfiniteData<
+        RouterOutputs["network"]["getNetworkById"]
+      >;
+      return {
+        ...newData,
+        network: { ...data },
+      };
+    }
+  );
+};
+
 const NetworkName = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
+  const client = useQueryClient();
   const [state, setState] = useState({
     editNetworkName: false,
     networkName: "",
@@ -36,6 +73,14 @@ const NetworkName = ({ central = false }: IProp) => {
   }, [networkById?.network?.name]);
 
   const { mutate: updateNetworkName } = api.network.networkName.useMutation({
+    onSuccess: (data) => {
+      const input = {
+        nwid: query.id as string,
+        central,
+      };
+      // void refecthNetworkById();
+      updateCache({ client, data, input });
+    },
     onError: (e) => {
       void toast.error(e?.message);
     },

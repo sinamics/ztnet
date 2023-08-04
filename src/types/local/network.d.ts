@@ -28,8 +28,13 @@ export interface NetworkEntity {
   rulesSource?: string;
   ssoEnabled?: boolean;
   cidr?: string[];
+  tagsByName?: TagsByName;
 }
 
+interface TagsByName {
+  [tagName: string]: TagDetails;
+  id?: number;
+}
 export interface RoutesEntity {
   target?: string | null;
   via?: string | null;

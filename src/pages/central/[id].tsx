@@ -12,7 +12,7 @@ import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
 // import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
-import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
+import { CentralFlowRules } from "~/components/modules/ztCentral/centralFlowRules";
 import { NetworkDns } from "~/components/modules/networkDns";
 import { NetworkMulticast } from "~/components/modules/networkMulticast";
 import cn from "classnames";
@@ -237,7 +237,7 @@ const CentralNetworkById = () => {
       </div>
 
       <div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <NetworkFlowRules />
+        <CentralFlowRules />
       </div>
       <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         Network Actions

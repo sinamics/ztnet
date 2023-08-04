@@ -8,11 +8,12 @@ interface NetworkBase {
   authorizedMemberCount: number;
   totalMemberCount: number;
   capabilitiesByName: CapabilitiesByName;
+  tagsByName?: TagsByName;
 }
 
 interface NetworkConfig {
-  authTokens: null;
-  creationTime: number;
+  authTokens?: null;
+  creationTime?: number;
   capabilities: Capability[];
   enableBroadcast: boolean;
   id: string;
@@ -29,7 +30,7 @@ interface NetworkConfig {
   tags: Tag[];
   v4AssignMode: { zt: boolean };
   v6AssignMode: { "6plane": boolean; rfc4193: boolean; zt: boolean };
-  dns: { domain: string; servers: string[] };
+  dns: { domain?: string; servers?: string[] };
   ssoConfig: { enabled: boolean; mode: string };
 }
 
@@ -80,7 +81,9 @@ export interface CentralNetwork extends NetworkBase {
   config: Partial<NetworkConfig>;
 }
 
-export interface FlattenCentralNetwork extends NetworkBase, NetworkConfig {
+export interface FlattenCentralNetwork
+  extends NetworkBase,
+    Partial<NetworkConfig> {
   cidr?: string[];
-  nwid: string;
+  nwid?: string;
 }
