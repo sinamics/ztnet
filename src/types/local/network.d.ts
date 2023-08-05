@@ -12,7 +12,7 @@ export interface NetworkEntity {
   tags?: Tag[];
   v4AssignMode: V4AssignMode;
   v6AssignMode: V6AssignMode;
-  authTokens?: null[];
+  authTokens?: null;
   authorizationEndpoint?: string;
   capabilities?: null[] | null;
   clientId?: string;
@@ -45,8 +45,8 @@ export interface RoutesEntity {
 }
 
 export interface dns {
-  domain: string;
-  servers: string[];
+  domain?: string;
+  servers?: string[];
 }
 
 export interface IpAssignmentPoolsEntity {

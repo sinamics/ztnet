@@ -8,7 +8,7 @@ import {
   uniqueNamesGenerator,
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import { handleAutoAssignIP, updateNetworkMembers } from "../networkService";
+import { updateNetworkMembers } from "../networkService";
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
@@ -488,38 +488,52 @@ export const networkRouter = createTRPCRouter({
       z.object({
         nwid: z.string(),
         central: z.boolean().default(false),
-        updateParams: z.object({
-          dns: z
-            .object({
-              domain: z.string().refine(isValidDomain, {
-                message: `Invalid DNS domain provided`,
-              }),
-              servers: z.array(
-                z.string().refine(isValidIP, {
-                  message: `Invalid DNS server provided`,
-                })
+        clearDns: z.boolean().optional(),
+        updateParams: z
+          .object({
+            dns: z
+              .object({
+                domain: z.string().refine(isValidDomain, {
+                  message: `Invalid DNS domain provided`,
+                }),
+                servers: z.array(
+                  z.string().refine(isValidIP, {
+                    message: `Invalid DNS server provided`,
+                  })
+                ),
+              })
+              .refine(
+                (dns) =>
+                  dns === undefined || (dns && dns.domain && dns.servers),
+                {
+                  message:
+                    "Both domain and servers must be provided if dns is defined",
+                }
               ),
-            })
-            .refine(
-              (dns) => dns === undefined || (dns && dns.domain && dns.servers),
-              {
-                message:
-                  "Both domain and servers must be provided if dns is defined",
-              }
-            ),
-        }),
+          })
+          .optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const updateParams = input.central
-        ? { config: { ...input.updateParams } }
-        : { ...input.updateParams };
+      let ztControllerUpdates = {};
 
-      // if central is true, send the request to the central API and return the response
-      await ztController.network_update({
+      // If clearDns is true, set DNS to an empty object
+      if (input.clearDns) {
+        ztControllerUpdates = { dns: { domain: "", servers: [] } };
+      } else {
+        ztControllerUpdates = { ...input.updateParams };
+      }
+
+      // If central is true, wrap everything inside a config object
+      if (input.central) {
+        ztControllerUpdates = { config: { ...ztControllerUpdates } };
+      }
+
+      // Send the request to update the network
+      return await ztController.network_update({
         nwid: input.nwid,
         central: input.central,
-        updateParams,
+        updateParams: ztControllerUpdates,
       });
     }),
   multiCast: protectedProcedure
@@ -540,15 +554,6 @@ export const networkRouter = createTRPCRouter({
         : { ...input.updateParams };
 
       try {
-        // if (typeof autoAssignIp === "boolean") {
-        //   await handleAutoAssignIP(
-        //     autoAssignIp,
-        //     ztControllerUpdates,
-        //     ztControllerResponse,
-        //     input.nwid
-        //   );
-        // }
-
         return await ztController.network_update({
           nwid: input.nwid,
           central: input.central,

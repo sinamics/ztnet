@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,13 +6,6 @@
 
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
-import { IPv4gen } from "~/utils/IPv4gen";
-import { TRPCError } from "@trpc/server";
-import { type APIError } from "../helpers/errorHandler";
-import {
-  type IpAssignmentPoolsEntity,
-  type ZtControllerNetwork,
-} from "~/types/network";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -202,55 +193,55 @@ export function getNextIP(
  * it tries to assign an available IP from the pool.
  *
  */
-export async function handleAutoAssignIP(
-  ztControllerUpdates: Partial<ZtControllerNetwork>,
-  ztControllerResponse,
-  nwid: string
-) {
-  // get the last route from the controller response
-  const routes = ztControllerResponse.network.routes.pop();
+// export async function handleAutoAssignIP(
+//   ztControllerUpdates: Partial<ZtControllerNetwork>,
+//   ztControllerResponse,
+//   nwid: string
+// ) {
+//   // get the last route from the controller response
+//   const routes = ztControllerResponse.network.routes.pop();
 
-  // we cannot assign ip if no routes are found
-  if (!Array.isArray(routes)) {
-    return;
-  }
-  // else update network with new ipAssignmentPools
-  const pool = IPv4gen(routes["target"]);
-  ztControllerUpdates.ipAssignmentPools =
-    pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
+//   // we cannot assign ip if no routes are found
+//   if (!Array.isArray(routes)) {
+//     return;
+//   }
+//   // else update network with new ipAssignmentPools
+//   const pool = IPv4gen(routes["target"]);
+//   ztControllerUpdates.ipAssignmentPools =
+//     pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
 
-  const controller = await ztController
-    .network_detail(nwid)
-    .catch((err: APIError) => {
-      throw new TRPCError({
-        message: `${err.cause.toString()} --- ${err.message}`,
-        code: "BAD_REQUEST",
-        cause: err.cause,
-      });
-    });
+//   const controller = await ztController
+//     .network_detail(nwid)
+//     .catch((err: APIError) => {
+//       throw new TRPCError({
+//         message: `${err.cause.toString()} --- ${err.message}`,
+//         code: "BAD_REQUEST",
+//         cause: err.cause,
+//       });
+//     });
 
-  // First, gather all assigned IPs in the network
-  let allAssignedIPs: string[] = [];
-  for (const member of controller?.members) {
-    allAssignedIPs = [...allAssignedIPs, ...member.ipAssignments];
-  }
+//   // First, gather all assigned IPs in the network
+//   let allAssignedIPs: string[] = [];
+//   for (const member of controller?.members) {
+//     allAssignedIPs = [...allAssignedIPs, ...member.ipAssignments];
+//   }
 
-  // Then, for each member without an IP, try to assign one
-  for (const member of controller?.members) {
-    if (member.noAutoAssignIps) continue;
+//   // Then, for each member without an IP, try to assign one
+//   for (const member of controller?.members) {
+//     if (member.noAutoAssignIps) continue;
 
-    if (member.ipAssignments.length === 0) {
-      // Get next available IP from the pool
-      const nextIP = getNextIP(pool.ipAssignmentPools, allAssignedIPs);
+//     if (member.ipAssignments.length === 0) {
+//       // Get next available IP from the pool
+//       const nextIP = getNextIP(pool.ipAssignmentPools, allAssignedIPs);
 
-      if (nextIP !== null) {
-        // If a next IP is available, assign it to the member
-        await ztController.member_update(nwid, member.id, {
-          ipAssignments: [nextIP],
-        });
-        // Add this newly assigned IP to the allAssignedIPs array, to keep it up-to-date
-        allAssignedIPs.push(nextIP);
-      }
-    }
-  }
-}
+//       if (nextIP !== null) {
+//         // If a next IP is available, assign it to the member
+//         await ztController.member_update(nwid, member.id, {
+//           ipAssignments: [nextIP],
+//         });
+//         // Add this newly assigned IP to the allAssignedIPs array, to keep it up-to-date
+//         allAssignedIPs.push(nextIP);
+//       }
+//     }
+//   }
+// }
