@@ -1,4 +1,9 @@
 {
+  "changeButton": {
+    "change": "Endre",
+    "submit": "Send inn",
+    "cancel": "Avbryt"
+  },
   "sidebar": {
     "navigation": "Navigasjon",
     "dashboard": "Dashbord",
@@ -333,18 +338,29 @@
       "user": "Bruker"
     },
     "account": {
-      "accountSettings": "KONTOINNSTILLINGER",
-      "nameLabel": "Navn",
-      "emailLabel": "E-post",
-      "verifiedBadge": "Bekreftet",
-      "notVerifiedBadge": "Ikke bekreftet!",
-      "passwordLabel": "Passord",
-      "currentPasswordPlaceholder": "Nåværende passord",
-      "newPasswordPlaceholder": "Nytt passord",
-      "repeatNewPasswordPlaceholder": "Gjenta nytt passord",
-      "role": "Rolle",
-      "accountPreferences": "KONTOINNSTILLINGER",
-      "languageLabel": "Språk"
+      "accountSettings": {
+        "title": "Konto Innstillinger",
+        "nameLabel": "Navn",
+        "emailLabel": "E-post",
+        "verifiedBadge": "Bekreftet",
+        "notVerifiedBadge": "Ikke Bekreftet",
+        "passwordLabel": "Passord",
+        "currentPasswordPlaceholder": "Nåværende Passord",
+        "newPasswordPlaceholder": "Nytt Passord",
+        "repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
+        "role": "Rolle"
+      },
+      "zerotierCentral": {
+        "title": "Zerotier Central",
+        "description": "Ved å integrere din ZeroTier Central API vil du kunne administrere dine sentrale nettverk direkte fra ZTNET. Når du integrerer nøkkelen, vil en ny meny dukke opp i sidemenyen for økt tilgjengelighet og kontroll.<br></br>Du kan skaffe en nøkkel fra ZeroTier Central portal. https://my.zerotier.com/account",
+        "apiKeyLabel": "Zerotier Central API-nøkkel",
+        "apiUrlLabel": "Zerotier API-URL",
+        "apiUrlLabelDescription": "URL-en til ZeroTier Central API, standard er https://api.zerotier.com/api/v1"
+      },
+      "accountPreferences": {
+        "title": "Kontoinnstillinger",
+        "languageLabel": "Språk"
+      }
     }
   }
 }

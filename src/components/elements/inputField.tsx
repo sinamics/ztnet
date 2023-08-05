@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 
@@ -50,6 +51,7 @@ const InputField = ({
   rootFormClassName,
   labelStyle,
 }: FormProps) => {
+  const t = useTranslations("changeButton");
   const [showInputs, setShowInputs] = useState(false);
 
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -135,7 +137,7 @@ const InputField = ({
               onClick={handleEditClick}
               className={`btn btn-${size}`}
             >
-              Change
+              {t("change")}
             </button>
           </div>
         </div>
@@ -187,7 +189,7 @@ const InputField = ({
                   className={`btn btn-primary btn-${size} ${buttonClassName}`}
                   type="submit"
                 >
-                  Submit
+                  {t("submit")}
                 </button>
                 <button
                   className={`btn btn-${size} ${buttonClassName}`}
@@ -196,7 +198,7 @@ const InputField = ({
                     handleEditClick();
                   }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
               </>
             )}
