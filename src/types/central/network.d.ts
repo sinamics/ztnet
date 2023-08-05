@@ -60,7 +60,8 @@ interface IpAssignmentPool {
 }
 
 interface Route {
-  target: string;
+  target?: string | null;
+  via?: string | null;
 }
 interface TagsByName {
   [tagName: string]: TagDetails;

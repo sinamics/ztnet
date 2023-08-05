@@ -44,7 +44,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      multicastLimit: networkByIdQuery?.network?.multicastLimit,
+      multicastLimit: networkByIdQuery?.network?.multicastLimit.toString(),
       enableBroadcast: networkByIdQuery?.network?.enableBroadcast,
     }));
   }, [

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
-import { type RoutesEntity } from "~/types/network";
+import { type RoutesEntity } from "~/types/local/network";
 import { type ChangeEvent, useState } from "react";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";

@@ -11,10 +11,10 @@ import {
   createColumnHelper,
   type SortingState,
 } from "@tanstack/react-table";
-import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../../elements/useSkipper";
 import TableFooter from "../tableFooter";
 import { useTranslations } from "next-intl";
+import { type FlattenCentralMembers } from "~/types/central/members";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -42,7 +42,8 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
       desc: true,
     },
   ]);
-  const columnHelper = createColumnHelper<UserNetworkTable>();
+
+  const columnHelper = createColumnHelper<FlattenCentralMembers>();
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", {
@@ -86,7 +87,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
         skipAutoResetPageIndex();
-        setData((old: UserNetworkTable[]) =>
+        setData((old: FlattenCentralMembers[]) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               return {

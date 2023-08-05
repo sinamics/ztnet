@@ -19,6 +19,7 @@ export interface CentralMembers {
   protocolVersion: number;
   supportsRulesEngine: boolean;
   notations?: Notation[];
+  totalMemberCount: number;
 }
 
 interface CentralMemberConfig {

@@ -18,8 +18,10 @@ import { type CentralControllerStatus } from "~/types/central/controllerStatus";
 import {
   type FlattenCentralMembers,
   type CentralMembers,
+  type CentralMemberConfig,
 } from "~/types/central/members";
 import {
+  type NetworkBase,
   type CentralNetwork,
   type FlattenCentralNetwork,
 } from "~/types/central/network";
@@ -192,7 +194,7 @@ type ZTControllerListNetworks = Array<string>;
 // Get all networks
 export const get_controller_networks = async function (
   isCentral = false
-): Promise<ZTControllerListNetworks | FlattenCentralNetwork[]> {
+): Promise<NetworkBase[] | string[]> {
   // get headers based on local or central api
   const { headers, ztCentralApiUrl } = await getOptions(isCentral);
 
@@ -219,7 +221,9 @@ export const get_controller_networks = async function (
   https://docs.zerotier.com/service/v1/#operation/getStatus
 */
 
-export const get_controller_status = async function (isCentral: boolean) {
+export const get_controller_status = async function (
+  isCentral: boolean
+): Promise<ZTControllerNodeStatus | CentralControllerStatus> {
   const { headers, ztCentralApiUrl } = await getOptions(isCentral);
 
   const addr = isCentral
@@ -417,7 +421,7 @@ export const central_network_detail = async function (
 
 type networkUpdate = {
   nwid: string;
-  updateParams: Partial<NetworkEntity | CentralNetwork>;
+  updateParams: Partial<NetworkEntity | CentralMembers>;
   central?: boolean;
 };
 
@@ -427,7 +431,7 @@ export const network_update = async function ({
   nwid,
   updateParams: payload,
   central = false,
-}: networkUpdate): Promise<Partial<NetworkEntity | CentralNetwork>> {
+}: networkUpdate): Promise<Partial<NetworkEntity | CentralMembers>> {
   // get headers based on local or central api
   const { headers, ztCentralApiUrl } = await getOptions(central);
   const addr = central
@@ -435,7 +439,7 @@ export const network_update = async function ({
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
 
   try {
-    return await postData<NetworkEntity | CentralNetwork>(
+    return await postData<NetworkEntity | CentralMembers>(
       addr,
       headers,
       payload
@@ -474,7 +478,7 @@ export const member_delete = async ({
 type memberUpdate = {
   nwid: string;
   memberId: string;
-  updateParams: Partial<MemberEntity | FlattenCentralMembers>;
+  updateParams: Partial<MemberEntity> | Partial<CentralMemberConfig>;
   central?: boolean;
 };
 
@@ -485,7 +489,7 @@ export const member_update = async ({
   memberId,
   updateParams: payload,
   central = false,
-}: memberUpdate): Promise<MemberEntity | FlattenCentralMembers> => {
+}: memberUpdate) => {
   // get headers based on local or central api
   const { headers, ztCentralApiUrl } = await getOptions(central);
   const addr = central
@@ -493,11 +497,7 @@ export const member_update = async ({
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
 
   try {
-    return await postData<MemberEntity | FlattenCentralMembers>(
-      addr,
-      headers,
-      payload
-    );
+    return await postData<MemberEntity>(addr, headers, payload);
   } catch (error) {
     const prefix = central ? "[CENTRAL] " : "";
     const message = `${prefix}An error occurred while getting member_update`;
