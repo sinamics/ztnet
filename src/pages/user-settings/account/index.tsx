@@ -22,8 +22,13 @@ const Account = () => {
   const { mutate: userUpdate, error: userError } =
     api.auth.update.useMutation();
 
-  const { mutate: updateZtCentral } = api.central.update.useMutation();
-  const { data: globalOption } = api.admin.getAllOptions.useQuery();
+  const { mutate: updateZtApi } = api.settings.setZtApi.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const { data: globalOption, refetch: refetchOptions } =
+    api.admin.getAllOptions.useQuery();
 
   const ChangeLanguage = async (locale: string) => {
     await push(asPath, asPath, { locale });
@@ -132,10 +137,10 @@ const Account = () => {
           </div>
         </div>
 
-        <p className="pt-10 text-[0.7rem] text-gray-400">
+        <div className="pt-10 text-[0.7rem] text-gray-400">
           ZEROTIER CENTRAL{" "}
           <div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
-        </p>
+        </div>
         <div className="divider m-0 p-0 text-gray-500"></div>
         <div className="form-control w-full">
           <p className="text-sm text-gray-500">
@@ -157,21 +162,23 @@ const Account = () => {
               rootFormClassName="space-y-3 pt-2"
               fields={[
                 {
-                  name: "apiKey",
+                  name: "ztCentralApiKey",
                   type: "text",
                   placeholder: "api key",
-                  value: globalOption?.ztCentralApiKey as string,
+                  value: globalOption?.ztCentralApiKey,
                 },
               ]}
               submitHandler={(params) => {
                 return new Promise((resolve, reject) => {
-                  updateZtCentral(
+                  updateZtApi(
                     { ...params },
                     {
                       onSuccess: () => {
+                        void refetchOptions();
                         resolve(true);
                       },
                       onError: () => {
+                        void refetchOptions();
                         reject(false);
                       },
                     }
@@ -185,26 +192,31 @@ const Account = () => {
           <div className="pt-3">
             <InputField
               label="Zerotier API Url"
-              placeholder="https://api.zerotier.com/api"
+              description="The url of the ZeroTier Central API, Default is https://api.zerotier.com/api/v1"
               size="sm"
               rootFormClassName="space-y-3 pt-2"
+              rootClassName="py-2"
               fields={[
                 {
-                  name: "apiUrl",
+                  name: "ztCentralApiUrl",
                   type: "text",
-                  placeholder: "api url",
-                  value: globalOption?.ztCentralApiUrl as string,
+                  placeholder:
+                    globalOption?.ztCentralApiUrl ||
+                    "https://api.zerotier.com/api/v1",
+                  value: globalOption?.ztCentralApiUrl,
                 },
               ]}
               submitHandler={(params) => {
                 return new Promise((resolve, reject) => {
-                  updateZtCentral(
+                  updateZtApi(
                     { ...params },
                     {
                       onSuccess: () => {
+                        void refetchOptions();
                         resolve(true);
                       },
                       onError: () => {
+                        void refetchOptions();
                         reject(false);
                       },
                     }

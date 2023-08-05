@@ -1,11 +1,7 @@
 import fs from "fs";
 import { prisma } from "~/server/db";
 import { IPv4gen } from "./IPv4gen";
-import axios, {
-  type AxiosRequestConfig,
-  type AxiosError,
-  type AxiosResponse,
-} from "axios";
+import axios, { type AxiosError, type AxiosResponse } from "axios";
 import { APIError } from "~/server/helpers/errorHandler";
 import {
   type HttpResponse,
@@ -53,29 +49,36 @@ if (!ZT_SECRET) {
   }
 }
 
-const getTokenFromDb = async () => {
-  const globalOptions = await prisma.globalOptions.findFirst({
+const getApiCredentials = async () => {
+  return await prisma.globalOptions.findFirst({
     where: {
       id: 1,
     },
   });
-  return globalOptions?.ztCentralApiKey;
 };
+interface GetOptionsResponse {
+  ztCentralApiUrl: string | null;
+  headers: {
+    Authorization?: string;
+    "X-ZT1-Auth"?: string;
+    "Content-Type": string;
+  };
+}
 
-const getOptions = async (isCentral = false) => {
+const getOptions = async (isCentral = false): Promise<GetOptionsResponse> => {
   if (isCentral) {
-    const token = await getTokenFromDb();
+    const { ztCentralApiKey, ztCentralApiUrl } = await getApiCredentials();
     return {
-      json: true,
+      ztCentralApiUrl: ztCentralApiUrl || CENTRAL_ZT_ADDR,
       headers: {
-        Authorization: `token ${token}`,
+        Authorization: `token ${ztCentralApiKey}`,
         "Content-Type": "application/json",
       },
     };
   }
 
   return {
-    json: true,
+    ztCentralApiUrl: null,
     headers: {
       "X-ZT1-Auth": ZT_SECRET,
       "Content-Type": "application/json",
@@ -118,23 +121,31 @@ export const flattenNetworks = (
  */
 const getData = async <T>(
   addr: string,
-  headers: AxiosRequestConfig
+  headers: GetOptionsResponse["headers"]
 ): Promise<T> => {
   try {
-    const { data } = await axios.get<T>(addr, headers);
+    const { data } = await axios.get<T>(addr, { headers });
     return data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const statusCode = error.response?.status;
+      if (statusCode === 401) {
+        throw new APIError("Invalid API Key", error);
+      } else if (statusCode === 404) {
+        throw new APIError("Endpoint Not Found", error);
+      } // Add more status code checks here if needed
+    }
     const message = `An error occurred fetching data from ${addr}`;
     throw new APIError(message, error as AxiosError);
   }
 };
 const postData = async <T, P = unknown>(
   addr: string,
-  headers: AxiosRequestConfig,
+  headers: GetOptionsResponse["headers"],
   payload: P
 ): Promise<T> => {
   try {
-    const { data } = await axios.post<T>(addr, payload, headers);
+    const { data } = await axios.post<T>(addr, payload, { headers });
 
     return data;
   } catch (error) {
@@ -143,23 +154,18 @@ const postData = async <T, P = unknown>(
   }
 };
 
-// const deleteData = async <T>(
-//   addr: string,
-//   headers: AxiosRequestConfig
-// ): Promise<T> => {
-//   try {
-//     const { data } = await axios.delete<T>(addr, headers);
-//     return data;
-//   } catch (error) {
-//     const prefix = isCentral ? "[CENTRAL] " : "";
-// const message = `${prefix}An error occurred while deleting data`;
-//     throw new APIError(message, error as AxiosError);
-//   }
-// };
-
 /* 
   Controller API for Admin
 */
+
+//Test API
+export const ping_api = async function () {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(true);
+  const addr = `${ztCentralApiUrl}/network`;
+
+  return await getData<ZTControllerStatus>(addr, headers);
+};
 
 // Check for controller function and return controller status.
 // https://docs.zerotier.com/service/v1/#operation/getControllerStatus
@@ -169,7 +175,7 @@ export const get_controller_version = async function () {
   const addr = `${LOCAL_ZT_ADDR}/controller`;
 
   // get headers based on local or central api
-  const headers = await getOptions(false);
+  const { headers } = await getOptions(false);
   try {
     return await getData<ZTControllerStatus>(addr, headers);
   } catch (error) {
@@ -187,12 +193,13 @@ type ZTControllerListNetworks = Array<string>;
 export const get_controller_networks = async function (
   isCentral = false
 ): Promise<ZTControllerListNetworks | FlattenCentralNetwork[]> {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+
   const addr = isCentral
-    ? `${CENTRAL_ZT_ADDR}/network`
+    ? `${ztCentralApiUrl}/network`
     : `${LOCAL_ZT_ADDR}/controller/network`;
 
-  // get headers based on local or central api
-  const headers = await getOptions(isCentral);
   try {
     if (isCentral) {
       const data = await getData<CentralNetwork[]>(addr, headers);
@@ -213,12 +220,12 @@ export const get_controller_networks = async function (
 */
 
 export const get_controller_status = async function (isCentral: boolean) {
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+
   const addr = isCentral
-    ? `${CENTRAL_ZT_ADDR}/status`
+    ? `${ztCentralApiUrl}/status`
     : `${LOCAL_ZT_ADDR}/status`;
 
-  // get headers based on local or central api
-  const headers = await getOptions(isCentral);
   try {
     if (isCentral) {
       return await getData<CentralControllerStatus>(addr, headers);
@@ -242,7 +249,7 @@ export const network_create = async (
   isCentral = false
 ): Promise<ZTControllerCreateNetwork | FlattenCentralNetwork> => {
   // get headers based on local or central api
-  const headers = await getOptions(isCentral);
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const payload: Partial<CentralNetwork> = {
@@ -254,7 +261,7 @@ export const network_create = async (
   try {
     if (isCentral) {
       const data = await postData<CentralNetwork>(
-        `${CENTRAL_ZT_ADDR}/network`,
+        `${ztCentralApiUrl}/network`,
         headers,
         { config: { ...payload }, description: "created with ztnet" }
       );
@@ -284,14 +291,14 @@ export async function network_delete(
   nwid: string,
   isCentral = false
 ): Promise<HttpResponse> {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
   const addr = isCentral
-    ? `${CENTRAL_ZT_ADDR}/network/${nwid}`
+    ? `${ztCentralApiUrl}/network/${nwid}`
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
 
-  // get headers based on local or central api
-  const headers = await getOptions(isCentral);
   try {
-    const response = await axios.delete(addr, headers);
+    const response = await axios.delete(addr, { headers });
 
     return { status: response.status, data: undefined };
   } catch (error) {
@@ -308,13 +315,12 @@ export const network_members = async function (
   nwid: string,
   isCentral = false
 ) {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
   try {
     const addr = isCentral
-      ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member`
+      ? `${ztCentralApiUrl}/network/${nwid}/member`
       : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member`;
-
-    // get headers based on local or central api
-    const headers = await getOptions(isCentral);
 
     // fetch members
     return await getData<MemberEntity[]>(addr, headers);
@@ -329,12 +335,11 @@ export const local_network_detail = async function (
   nwid: string,
   isCentral = false
 ): Promise<NetworkAndMemberResponse> {
+  // get headers based on local or central api
+  const { headers } = await getOptions(isCentral);
   try {
     // get all members for a specific network
     const members = await network_members(nwid);
-
-    // get headers based on local or central api
-    const headers = await getOptions(isCentral);
 
     const network = await getData<NetworkEntity>(
       `${LOCAL_ZT_ADDR}/controller/network/${nwid}`,
@@ -368,13 +373,12 @@ export const central_network_detail = async function (
   nwid: string,
   isCentral = false
 ): Promise<NetworkAndMemberResponse> {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(isCentral);
   try {
     const addr = isCentral
-      ? `${CENTRAL_ZT_ADDR}/network/${nwid}`
+      ? `${ztCentralApiUrl}/network/${nwid}`
       : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
-
-    // get headers based on local or central api
-    const headers = await getOptions(isCentral);
 
     // get all members for a specific network
     const members = await network_members(nwid, isCentral);
@@ -424,12 +428,11 @@ export const network_update = async function ({
   updateParams: payload,
   central = false,
 }: networkUpdate): Promise<Partial<NetworkEntity | CentralNetwork>> {
-  const addr = central
-    ? `${CENTRAL_ZT_ADDR}/network/${nwid}`
-    : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
-
   // get headers based on local or central api
-  const headers = await getOptions(central);
+  const { headers, ztCentralApiUrl } = await getOptions(central);
+  const addr = central
+    ? `${ztCentralApiUrl}/network/${nwid}`
+    : `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
 
   try {
     return await postData<NetworkEntity | CentralNetwork>(
@@ -452,14 +455,14 @@ export const member_delete = async ({
   memberId,
   central = false,
 }: MemberDeleteInput): Promise<Partial<MemberDeleteResponse>> => {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(central);
   const addr = central
-    ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member/${memberId}`
+    ? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
 
-  // get headers based on local or central api
-  const headers = await getOptions(central);
   try {
-    const response: AxiosResponse = await axios.delete(addr, headers);
+    const response: AxiosResponse = await axios.delete(addr, { headers });
     return response.status as MemberDeleteResponse;
   } catch (error) {
     const prefix = central ? "[CENTRAL] " : "";
@@ -483,12 +486,12 @@ export const member_update = async ({
   updateParams: payload,
   central = false,
 }: memberUpdate): Promise<MemberEntity | FlattenCentralMembers> => {
+  // get headers based on local or central api
+  const { headers, ztCentralApiUrl } = await getOptions(central);
   const addr = central
-    ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member/${memberId}`
+    ? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
     : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
 
-  // get headers based on local or central api
-  const headers = await getOptions(central);
   try {
     return await postData<MemberEntity | FlattenCentralMembers>(
       addr,
@@ -511,11 +514,11 @@ export const member_details = async function (
   central = false
 ): Promise<MemberEntity | FlattenCentralMembers> {
   // get headers based on local or central api
-  const headers = await getOptions(central);
+  const { headers, ztCentralApiUrl } = await getOptions(central);
 
   try {
     const addr = central
-      ? `${CENTRAL_ZT_ADDR}/network/${nwid}/member/${memberId}`
+      ? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
       : `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
 
     return await getData<MemberEntity | FlattenCentralMembers>(addr, headers);
@@ -531,10 +534,10 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
   const addr = `${LOCAL_ZT_ADDR}/peer`;
 
   // get headers based on local or central api
-  const headers = await getOptions(false);
+  const { headers } = await getOptions(false);
 
   try {
-    const response: AxiosResponse = await axios.get(addr, headers);
+    const response: AxiosResponse = await axios.get(addr, { headers });
     return response.data as ZTControllerGetPeer;
   } catch (error) {
     const message = `An error occurred while getting peers`;
@@ -550,10 +553,10 @@ export const peer = async (
   const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
 
   // get headers based on local or central api
-  const headers = await getOptions(false);
+  const { headers } = await getOptions(false);
 
   try {
-    const response: AxiosResponse = await axios.get(addr, headers);
+    const response: AxiosResponse = await axios.get(addr, { headers });
 
     if (!response.data) return null as ZTControllerGetPeer[];
     return response.data as ZTControllerGetPeer[];

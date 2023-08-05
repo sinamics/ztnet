@@ -15,6 +15,7 @@ interface FormProps {
   label: string;
   isLoading?: boolean;
   placeholder?: string;
+  description?: string;
   fields: FieldConfig[];
   size?: "xs" | "sm" | "md" | "lg";
   buttonClassName?: string;
@@ -28,14 +29,20 @@ interface FormProps {
     text: string;
     color: string;
   };
+  headerBadge?: {
+    text: string;
+    color: string;
+  };
 }
 
 const InputField = ({
   label,
   placeholder,
+  description,
   fields,
   submitHandler,
   badge,
+  headerBadge,
   isLoading,
   size = "md",
   buttonClassName,
@@ -95,8 +102,21 @@ const InputField = ({
             onClick={handleEditClick}
             className={`cursor-pointer  ${labelStyle}`}
           >
+            <div className="flex font-medium">
+              <span>{label}</span>
+
+              {headerBadge && (
+                <span
+                  className={`badge badge-outline badge-${headerBadge.color} ml-2`}
+                >
+                  {headerBadge.text}
+                </span>
+              )}
+            </div>
             <div>
-              <span className="font-medium">{label}</span>
+              {description ? (
+                <p className="m-0 p-0 text-xs text-gray-500">{description}</p>
+              ) : null}
             </div>
             <div className="text-gray-500">
               {placeholder ?? fields[0].placeholder}
@@ -127,7 +147,22 @@ const InputField = ({
           className={`flex w-full justify-between ${rootClassName}`}
         >
           <div>
-            <div className="font-medium">{label}</div>
+            <div className="flex font-medium">
+              <span>{label}</span>
+
+              {headerBadge && (
+                <span
+                  className={`badge badge-outline badge-${headerBadge.color} ml-2`}
+                >
+                  {headerBadge.text}
+                </span>
+              )}
+            </div>
+            <div>
+              {description ? (
+                <p className="m-0 p-0 text-xs text-gray-500">{description}</p>
+              ) : null}
+            </div>
             <div className={rootFormClassName}>
               {fields.map((field, i) => (
                 <Input
