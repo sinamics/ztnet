@@ -1,3 +1,26 @@
+import { type Notation } from "../local/member";
+
+export interface CentralMembers {
+  id: string;
+  type: string;
+  clock: number;
+  networkId: string;
+  nodeId: string;
+  controllerId: string;
+  hidden: boolean;
+  name: string;
+  description: string;
+  config?: CentralMemberConfig;
+  lastOnline: number;
+  lastSeen?: number;
+  physicalAddress: string;
+  physicalLocation: null | string; // Assuming this can be string in some cases
+  clientVersion: string;
+  protocolVersion: number;
+  supportsRulesEngine: boolean;
+  notations?: Notation[];
+}
+
 interface CentralMemberConfig {
   activeBridge: boolean;
   address: string;
@@ -21,26 +44,6 @@ interface CentralMemberConfig {
   vRev: number;
   vProto: number;
   ssoExempt: boolean;
-}
-
-export interface CentralMembers {
-  id: string;
-  type: string;
-  clock: number;
-  networkId: string;
-  nodeId: string;
-  controllerId: string;
-  hidden: boolean;
-  name: string;
-  description: string;
-  config?: CentralMemberConfig;
-  lastOnline: number;
-  lastSeen?: number;
-  physicalAddress: string;
-  physicalLocation: null | string; // Assuming this can be string in some cases
-  clientVersion: string;
-  protocolVersion: number;
-  supportsRulesEngine: boolean;
 }
 
 export interface FlattenCentralMembers
