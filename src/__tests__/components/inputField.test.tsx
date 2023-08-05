@@ -4,6 +4,8 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
 import InputField from "~/components/elements/inputField";
+import { NextIntlProvider } from "next-intl";
+import enTranslation from "~/locales/en/common.json";
 
 describe("InputField", () => {
   // ...existing code...
@@ -21,11 +23,13 @@ describe("InputField", () => {
     const submitHandler = jest.fn();
 
     const { container } = render(
-      <InputField
-        label="Test Label"
-        fields={fields}
-        submitHandler={submitHandler}
-      />
+      <NextIntlProvider locale="en" messages={enTranslation}>
+        <InputField
+          label="Test Label"
+          fields={fields}
+          submitHandler={submitHandler}
+        />
+      </NextIntlProvider>
     );
 
     // Click the edit icon to render the inputs

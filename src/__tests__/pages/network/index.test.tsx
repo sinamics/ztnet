@@ -6,6 +6,7 @@ import { api } from "../../../utils/api";
 import Networks from "~/pages/network";
 import { NextIntlProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../../../utils/api", () => ({
   api: {
@@ -27,7 +28,9 @@ jest.mock("next/router", () => ({
 }));
 
 describe("Networks page", () => {
+  let queryClient: QueryClient;
   beforeEach(() => {
+    queryClient = new QueryClient();
     (useRouter as jest.Mock).mockImplementation(() => ({
       query: {
         id: "test-id",
@@ -42,11 +45,13 @@ describe("Networks page", () => {
       refetch: jest.fn(),
     });
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <Networks />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <Networks />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
-    expect(screen.getByText("Loading")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
   it("displays networks and handles add network button", async () => {
