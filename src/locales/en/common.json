@@ -2,7 +2,8 @@
   "sidebar": {
     "navigation": "Navigation",
     "dashboard": "Dashboard",
-    "networks": "Networks",
+    "networks": "Local Controller",
+    "ztCentral": "ZT Central",
     "admin": "Admin",
     "settings": "Settings",
     "mail": "Mail",

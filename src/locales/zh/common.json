@@ -2,7 +2,8 @@
   "sidebar": {
     "navigation": "导航",
     "dashboard": "仪表盘",
-    "networks": "网络",
+    "networks": "本地控制器",
+    "ztCentral": "ZT 中心",
     "admin": "管理员",
     "settings": "设置",
     "mail": "邮件",
