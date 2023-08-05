@@ -182,6 +182,7 @@ export const networkMemberRouter = createTRPCRouter({
           nwid: input.nwid,
           memberId: input.memberId,
           central: input.central,
+          // @ts-expect-error
           updateParams,
         })
         .catch(() => {
@@ -208,6 +209,7 @@ export const networkMemberRouter = createTRPCRouter({
                   authorized: updatedMember.authorized,
                   noAutoAssignIps: updatedMember.noAutoAssignIps,
                   activeBridge: updatedMember.activeBridge,
+                  // @ts-expect-error
                   tags: updatedMember.tags,
                   capabilities: updatedMember.capabilities,
                 },
@@ -233,6 +235,7 @@ export const networkMemberRouter = createTRPCRouter({
       }
 
       if ("networkMembers" in response) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         return { member: response.networkMembers[0] };
       } else {
         throw new TRPCError({
@@ -366,6 +369,7 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // remove member from controller
+      // @ts-expect-error
       await ztController.member_delete({
         nwid: input.nwid,
         memberId: input.id,

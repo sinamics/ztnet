@@ -11,10 +11,10 @@ import {
   createColumnHelper,
   type SortingState,
 } from "@tanstack/react-table";
-import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { useTranslations } from "next-intl";
+import { type NetworkMembers } from "@prisma/client";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -42,7 +42,15 @@ export const NetworkTable = ({ tableData = [] }) => {
       desc: true,
     },
   ]);
-  const columnHelper = createColumnHelper<UserNetworkTable>();
+
+  type ColumnsType = {
+    name: string;
+    description: string;
+    nwid: string;
+    members: NetworkMembers[];
+    networkMembers: NetworkMembers[];
+  };
+  const columnHelper = createColumnHelper<ColumnsType>();
   const columns = useMemo(
     () => [
       columnHelper.accessor("name", {
@@ -89,7 +97,7 @@ export const NetworkTable = ({ tableData = [] }) => {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
         skipAutoResetPageIndex();
-        setData((old: UserNetworkTable[]) =>
+        setData((old: ColumnsType[]) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               return {

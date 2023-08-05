@@ -13,7 +13,7 @@ import {
   type SortingState,
   type ColumnDef,
 } from "@tanstack/react-table";
-import { type MembersEntity } from "~/types/network";
+import { type MemberEntity } from "~/types/local/member";
 
 export const DeletedNetworkMembersTable = ({ nwid }) => {
   const { query } = useRouter();
@@ -43,8 +43,8 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
       void refetchNetworkById();
     },
   });
-  const columnHelper = createColumnHelper<MembersEntity>();
-  const columns = useMemo<ColumnDef<MembersEntity>[]>(
+  const columnHelper = createColumnHelper<MemberEntity>();
+  const columns = useMemo<ColumnDef<MemberEntity>[]>(
     () => [
       columnHelper.accessor("authorized", {
         header: () => <span>Authorized</span>,
@@ -131,8 +131,8 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
   );
   const [data, setData] = useState(networkById.zombieMembers);
   const table = useReactTable({
-    data,
     //@ts-expect-error
+    data,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -145,7 +145,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
         // skipAutoResetPageIndex()
-        setData((old) =>
+        setData((old: MemberEntity[]) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               return {

@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
-import { type IpAssignmentPoolsEntity } from "~/types/network";
+import { type IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
 
 interface IProp {
@@ -119,11 +119,10 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
   };
   const { network } = networkByIdQuery || {};
   if (isLoading) return <div>Loading</div>;
-
   return (
     <div
       tabIndex={0}
-      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+      className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
       <div className="collapse-title">
@@ -155,7 +154,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
           />
         </div>
         {network?.v4AssignMode?.zt ? (
-          <div className="tabs tabs-boxed grid grid-cols-2 gap-5 pb-5">
+          <div className="tabs-boxed tabs grid grid-cols-2 gap-5 pb-5">
             <a
               className={cn("tab w-full border border-gray-500", {
                 "tab-active border-none": ipTabs.easy,

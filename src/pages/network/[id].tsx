@@ -9,8 +9,6 @@ import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic"
 import { AddMemberById } from "~/components/modules/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
-import EditIcon from "~/icons/edit";
-import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
@@ -41,18 +39,13 @@ const NetworkById = () => {
     data: networkById,
     isLoading: loadingNetwork,
     error: errorNetwork,
-    refetch: refetchNetwork,
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
     },
     { enabled: !!query.id, refetchInterval: 10000 }
   );
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
-    onError: (e) => {
-      void toast.error(e?.message);
-    },
-  });
+
   useEffect(() => {
     setState((prev) => ({
       ...prev,
@@ -61,12 +54,7 @@ const NetworkById = () => {
     }));
   }, [networkById?.network?.description, networkById?.network?.name]);
 
-  const toggleDescriptionInput = () => {
-    setState({
-      ...state,
-      toggleDescriptionInput: !state.toggleDescriptionInput,
-    });
-  };
+  const { network, members = [] } = networkById || {};
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
     return (
@@ -77,29 +65,6 @@ const NetworkById = () => {
       </div>
     );
   }
-
-  const { network, members = [] } = networkById || {};
-  const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    updateNetwork(
-      {
-        nwid: network.nwid,
-        updateParams: { name: state?.networkName },
-      },
-      {
-        onSuccess: () => {
-          void refetchNetwork();
-          setState({ ...state, editNetworkName: false });
-        },
-      }
-    );
-  };
-  const eventHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
-
   if (errorNetwork) {
     return (
       <div className="flex flex-col items-center justify-center">
@@ -113,7 +78,6 @@ const NetworkById = () => {
       </div>
     );
   }
-
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">

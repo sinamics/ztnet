@@ -1,5 +1,4 @@
 // Network Related Types
-
 export interface NetworkEntity {
   name?: string;
   nwid: string;
@@ -23,7 +22,7 @@ export interface NetworkEntity {
   ipAssignmentPools?: IpAssignmentPoolsEntity[];
   mtu?: number;
   multicastLimit?: number;
-  routes?: RoutesEntity[];
+  routes: RoutesEntity[];
   rules?: RulesEntity[];
   rulesSource?: string;
   ssoEnabled?: boolean;
@@ -38,6 +37,15 @@ interface CapabilitiesByName {
 interface TagsByName {
   [tagName: string]: TagDetails;
   id?: number;
+}
+interface TagDetails {
+  id: number;
+  enums: TagEnums;
+  flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+  default: number | null;
+}
+interface TagEnums {
+  [key: string]: number;
 }
 export interface RoutesEntity {
   target?: string | null;

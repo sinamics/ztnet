@@ -436,6 +436,7 @@ export const networkRouter = createTRPCRouter({
       const updated = await ztController.network_update({
         nwid: input.nwid,
         central: input.central,
+        // @ts-expect-error
         updateParams,
       });
 
@@ -557,6 +558,7 @@ export const networkRouter = createTRPCRouter({
         return await ztController.network_update({
           nwid: input.nwid,
           central: input.central,
+          // @ts-expect-error
           updateParams,
         });
       } catch (error) {
@@ -700,6 +702,7 @@ export const networkRouter = createTRPCRouter({
       const updatedRules = await ztController.network_update({
         nwid: input.nwid,
         central: input.central,
+        // @ts-expect-error
         updateParams,
       });
 

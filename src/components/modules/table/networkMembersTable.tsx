@@ -169,7 +169,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           {
             // Loop over the table rows
             table.getRowModel().rows.map((row) => {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
               const notation = row.original
                 ?.notations as NetworkMemberNotation[];
               return (

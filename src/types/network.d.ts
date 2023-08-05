@@ -5,4 +5,5 @@ import { type FlattenCentralNetwork } from "./central/network";
 export interface NetworkAndMemberResponse {
   network: NetworkEntity | FlattenCentralNetwork;
   members: Partial<MemberEntity[]> | Partial<FlattenCentralMembers[]>;
+  zombieMembers?: MemberEntity[];
 }

@@ -5,9 +5,16 @@ import { type PrismaClient } from "@prisma/client";
 import { type AppRouter, appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
 import { type Session } from "next-auth";
-import { type ZtControllerNetwork } from "~/types/network";
 import { type inferProcedureInput } from "@trpc/server";
 import { type DeepMockProxy, mockDeep } from "jest-mock-extended";
+import { type MemberEntity } from "~/types/local/member";
+
+type TestTypes = {
+  id: string;
+  name: string;
+  nwid: string;
+  networkMembers: MemberEntity[];
+};
 
 test("updateDatabaseOnly test", async () => {
   // const prismaMock = new PrismaClient();
@@ -22,7 +29,7 @@ test("updateDatabaseOnly test", async () => {
     },
   };
 
-  const mockOutput: PartialDeep<ZtControllerNetwork> = {
+  const mockOutput: PartialDeep<TestTypes> = {
     id: "member-id",
     name: "updated name",
     nwid: "nwid-123",

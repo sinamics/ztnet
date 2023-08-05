@@ -8,7 +8,11 @@ import { useState, useEffect } from "react";
 import { type Prisma } from "@prisma/client";
 import Anotation from "./anotation";
 import { useTranslations } from "next-intl";
-import { type CapabilitiesByName, type TagDetails } from "~/types/local/member";
+import {
+  type MemberEntity,
+  type CapabilitiesByName,
+  type TagDetails,
+} from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
 
 interface ModalContentProps {
@@ -48,14 +52,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     );
 
   useEffect(() => {
-    // find member by id
-    const member = networkById?.members.find(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      (member) => member.id === memberId
-    );
+    if (networkById?.members && "id" in networkById.members[0]) {
+      const member = (networkById.members as MemberEntity[]).find(
+        (member) => member.id === memberId
+      );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    seIpAssignments(member?.ipAssignments || []);
+      seIpAssignments(member?.ipAssignments || []);
+    }
   }, [networkById?.members, memberId]);
 
   const { mutate: updateMember, isLoading: updateMemberLoading } =
@@ -230,7 +233,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     );
   };
 
-  const TagDropdowns: React.FC<TagsByName> = (tagsByName) => {
+  const TagDropdowns: React.FC = (tagsByName: TagsByName) => {
     const handleDropdownChange = (
       e: React.ChangeEvent<HTMLSelectElement>,
       tagName: string,
@@ -490,6 +493,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
         {!central ? (
           <div className="grid grid-cols-4 items-start gap-4 py-3">
             <div className="col-span-4">
+              {/* @ts-expect-error as nodeid is not part of central api */}
               <Anotation nwid={nwid} nodeid={memberById?.nodeid} />
             </div>
           </div>
