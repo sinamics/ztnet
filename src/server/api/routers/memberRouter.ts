@@ -175,7 +175,7 @@ export const networkMemberRouter = createTRPCRouter({
       const updateParams = input.central
         ? { config: { ...payload } }
         : { ...payload };
-      console.log(input);
+
       // if central is true, send the request to the central API and return the response
       const updatedMember = await ztController
         .member_update({

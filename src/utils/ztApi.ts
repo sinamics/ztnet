@@ -15,16 +15,13 @@ import {
   // type ZTControllerMemberDetails,
   type MemberDeleteInput,
   type MemberDeleteResponse,
-  type ZTControllerMemberUpdate,
   type ZTControllerGetPeer,
 } from "~/types/ztController";
 
 import { type CentralControllerStatus } from "~/types/central/controllerStatus";
 import {
-  FlattenCentralMembers,
+  type FlattenCentralMembers,
   type CentralMembers,
-  FlattenCentralMembers,
-  CentralMembers,
 } from "~/types/central/members";
 import {
   type CentralNetwork,
@@ -218,7 +215,7 @@ export const get_controller_networks = async function (
 export const get_controller_status = async function (isCentral: boolean) {
   const addr = isCentral
     ? `${CENTRAL_ZT_ADDR}/status`
-    : `${LOCAL_ZT_ADDR}/controller/status`;
+    : `${LOCAL_ZT_ADDR}/status`;
 
   // get headers based on local or central api
   const headers = await getOptions(isCentral);
@@ -248,8 +245,9 @@ export const network_create = async (
   const headers = await getOptions(isCentral);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const payload = {
+  const payload: Partial<CentralNetwork> = {
     name,
+    private: true,
     ...ipAssignment,
   };
 
@@ -258,14 +256,14 @@ export const network_create = async (
       const data = await postData<CentralNetwork>(
         `${CENTRAL_ZT_ADDR}/network`,
         headers,
-        {}
+        { config: { ...payload }, description: "created with ztnet" }
       );
+
       return flattenNetwork(data);
     } else {
       const controllerStatus = (await get_controller_status(
         isCentral
       )) as ZTControllerNodeStatus;
-
       return await postData<ZTControllerCreateNetwork>(
         `${LOCAL_ZT_ADDR}/controller/network/${controllerStatus.address}______`,
         headers,

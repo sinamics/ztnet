@@ -18,8 +18,9 @@ const Networks: NextPageWithLayout = () => {
     central: false,
   });
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
+
   const addNewNetwork = () => {
-    createNetwork(null, { onSuccess: () => void refetch() });
+    createNetwork({ central: false }, { onSuccess: () => void refetch() });
   };
 
   if (isLoading) {
