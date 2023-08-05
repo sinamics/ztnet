@@ -20,7 +20,7 @@ const CentralNetworks: NextPageWithLayout = () => {
 
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
   const addNewNetwork = () => {
-    createNetwork(null, { onSuccess: () => void refetch() });
+    createNetwork({ central: true }, { onSuccess: () => void refetch() });
   };
 
   const title = `${globalSiteTitle} - ${t("title")}`;

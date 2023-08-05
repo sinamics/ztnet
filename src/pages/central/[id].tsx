@@ -247,8 +247,8 @@ const CentralNetworkById = () => {
                 description: `Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network`,
                 yesAction: () => {
                   deleteNetwork(
-                    { nwid: network.id },
-                    { onSuccess: () => void router("/network") }
+                    { nwid: network.id, central: true },
+                    { onSuccess: () => void router("/central") }
                   );
                 },
               })

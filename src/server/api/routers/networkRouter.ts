@@ -246,13 +246,18 @@ export const networkRouter = createTRPCRouter({
     .input(
       z.object({
         nwid: z.string().nonempty(),
+        central: z.boolean().default(false),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
         // Delete ZT network
-        await ztController.network_delete(input.nwid);
+        const createCentralNw = await ztController.network_delete(
+          input.nwid,
+          input.central
+        );
 
+        if (input.central) return createCentralNw;
         // Delete networkMembers
         await ctx.prisma.networkMembers.deleteMany({
           where: {
@@ -557,52 +562,60 @@ export const networkRouter = createTRPCRouter({
         }
       }
     }),
-  createNetwork: protectedProcedure.mutation(async ({ ctx }) => {
-    try {
-      // Generate ipv4 address, cidr, start & end
-      const ipAssignmentPools = IPv4gen(null);
+  createNetwork: protectedProcedure
+    .input(
+      z.object({
+        central: z.boolean().optional().default(false),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        // Generate ipv4 address, cidr, start & end
+        const ipAssignmentPools = IPv4gen(null);
 
-      // Generate adjective and noun word
-      const networkName: string = uniqueNamesGenerator(customConfig);
+        // Generate adjective and noun word
+        const networkName: string = uniqueNamesGenerator(customConfig);
 
-      // Create ZT network
-      const newNw = await ztController.network_create(
-        networkName,
-        ipAssignmentPools,
-        false
-      );
+        // Create ZT network
+        const newNw = await ztController.network_create(
+          networkName,
+          ipAssignmentPools,
+          input.central
+        );
 
-      // Store the created network in the database
-      const updatedUser = await ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          network: {
-            create: {
-              name: newNw.name,
-              nwid: newNw.nwid,
-              ipAssignments: newNw.routes[0].target,
+        if (input.central) return newNw;
+
+        // Store the created network in the database
+        const updatedUser = await ctx.prisma.user.update({
+          where: {
+            id: ctx.session.user.id,
+          },
+          data: {
+            network: {
+              create: {
+                name: newNw.name,
+                nwid: newNw.nwid,
+                ipAssignments: newNw.routes[0].target,
+              },
             },
           },
-        },
-        select: {
-          network: true,
-        },
-      });
-      return updatedUser;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        // Log the error and throw a custom error message
-        // eslint-disable-next-line no-console
-        console.error(err);
-        throwError("Could not create network! Please try again");
-      } else {
-        // Throw a generic error for unknown error types
-        throwError("An unknown error occurred");
+          select: {
+            network: true,
+          },
+        });
+        return updatedUser;
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          // Log the error and throw a custom error message
+          // eslint-disable-next-line no-console
+          console.error(err);
+          throwError("Could not create network! Please try again");
+        } else {
+          // Throw a generic error for unknown error types
+          throwError("An unknown error occurred");
+        }
       }
-    }
-  }),
+    }),
   setFlowRule: protectedProcedure
     .input(
       z.object({
