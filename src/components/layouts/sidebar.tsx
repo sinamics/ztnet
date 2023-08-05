@@ -132,7 +132,7 @@ const Sidebar = (): JSX.Element => {
                   </svg>
                 </span>
                 <span className="ml-3">
-                  ZT Central{" "}
+                  {t("ztCentral") + " "}
                   <div className="badge badge-primary p-1 text-[0.6rem]">
                     BETA
                   </div>

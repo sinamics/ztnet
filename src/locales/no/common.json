@@ -2,7 +2,8 @@
   "sidebar": {
     "navigation": "Navigasjon",
     "dashboard": "Dashbord",
-    "networks": "Nettverk",
+    "networks": "Lokal Kontroller",
+    "ztCentral": "ZT Sentral",
     "admin": "Admin",
     "settings": "Innstillinger",
     "mail": "Post",
