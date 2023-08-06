@@ -41,7 +41,6 @@ const Sidebar = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open, toggle, sidebarRef]);
-  console.log(router);
   return (
     <aside
       ref={sidebarRef}
