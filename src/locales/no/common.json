@@ -145,7 +145,7 @@
           "relayed": "VIDEREFORMIDLET",
           "directLan": "Direkte LAN-tilkobling opprettet",
           "directWan": "Direkte WAN-tilkobling opprettet",
-          "direct": "DIREKTE{versjon}",
+          "direct": "DIREKTE{version}",
           "offline": "offline "
         },
         "email": "E-post",
