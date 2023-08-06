@@ -33,7 +33,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
         nwid,
         central,
       },
-      { enabled: !!nwid }
+      { enabled: !!nwid, networkMode:"online" }
     );
 
   const { mutate: stashUser } = api.networkMember.stash.useMutation({
