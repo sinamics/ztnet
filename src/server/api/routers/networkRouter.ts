@@ -171,7 +171,7 @@ export const networkRouter = createTRPCRouter({
       // Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
       const getZombieMembersPromises = members.map(
         async (member: MemberEntity | FlattenCentralMembers) => {
-          return await ctx.prisma.networkMembers.findFirst({
+          return await ctx.prisma.network_members.findFirst({
             where: {
               nwid: input.nwid,
               id: member.id,
@@ -181,7 +181,7 @@ export const networkRouter = createTRPCRouter({
         }
       );
 
-      const getActiveMembers = await ctx.prisma.networkMembers.findMany({
+      const getActiveMembers = await ctx.prisma.network_members.findMany({
         where: {
           nwid: input.nwid,
           deleted: false,
@@ -259,7 +259,7 @@ export const networkRouter = createTRPCRouter({
 
         if (input.central) return createCentralNw;
         // Delete networkMembers
-        await ctx.prisma.networkMembers.deleteMany({
+        await ctx.prisma.network_members.deleteMany({
           where: {
             nwid: input.nwid,
           },
