@@ -427,7 +427,7 @@ export const networkRouter = createTRPCRouter({
         }),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const updateParams = input.central
         ? { config: { ...input.updateParams } }
         : { ...input.updateParams };
@@ -444,7 +444,15 @@ export const networkRouter = createTRPCRouter({
         const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
         return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
       } else {
-        return updated as NetworkEntity;
+        // Update network in prisma as description is not part of the local controller network object.
+        await ctx.prisma.network.update({
+          where: { nwid: input.nwid },
+          data: {
+            ...input.updateParams,
+          },
+        });
+
+        return updated;
       }
     }),
   networkDescription: protectedProcedure

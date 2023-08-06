@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, useState, type ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/modules/networkRoutes";
 import { NetworkMembersTable } from "~/components/modules/table/networkMembersTable";
@@ -27,10 +27,6 @@ const NetworkById = () => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
     viewZombieTable: false,
-    editNetworkName: false,
-    toggleDescriptionInput: false,
-    description: "",
-    networkName: "",
   });
   const { callModal } = useModalStore((state) => state);
   const { query, push: router } = useRouter();
@@ -45,14 +41,6 @@ const NetworkById = () => {
     },
     { enabled: !!query.id, refetchInterval: 10000 }
   );
-
-  useEffect(() => {
-    setState((prev) => ({
-      ...prev,
-      description: networkById?.network?.description,
-      networkName: networkById?.network?.name,
-    }));
-  }, [networkById?.network?.description, networkById?.network?.name]);
 
   const { network, members = [] } = networkById || {};
   if (loadingNetwork) {

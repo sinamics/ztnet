@@ -24,7 +24,7 @@ const updateCache = ({
 }: {
   client: QueryClient;
   input: RouterInputs["network"]["getNetworkById"];
-  data: NetworkEntity | Partial<CentralNetwork>;
+  data: Partial<NetworkEntity> | Partial<CentralNetwork>;
 }) => {
   client.setQueryData(
     [
