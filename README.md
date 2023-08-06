@@ -144,7 +144,6 @@ services:
       - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
 
   ztnet:
-    # image: sinamics/ztnet:latest-main   # Use this for testing latest main branch
     image: sinamics/ztnet:latest
     container_name: ztnet
     working_dir: /app
