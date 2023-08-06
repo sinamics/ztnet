@@ -98,7 +98,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
       Object.assign(storeValues, { lastSeen: new Date() });
 
     // update members
-    const updateMember = await prisma.networkMembers.updateMany({
+    const updateMember = await prisma.network_members.updateMany({
       where: {
         nwid: member.nwid,
         id: member.id,
@@ -122,7 +122,7 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
 };
 
 const psql_addMember = async (member: MemberI) => {
-  return await prisma.networkMembers.create({
+  return await prisma.network_members.create({
     data: {
       id: member.id,
       identity: member.identity,
