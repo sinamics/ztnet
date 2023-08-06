@@ -35,6 +35,7 @@ export interface MemberEntity {
   action: null;
   notations?: Notation[];
   physicalAddress?: string;
+  accessorFn: () => void;
 }
 
 export interface Peers {
