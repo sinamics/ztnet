@@ -10,7 +10,7 @@ on:
       - "src/**"
       - "prisma/**"
       - "public/**"
-
+  workflow_dispatch:
 jobs:
   web_lint_test:
     name: Web - Lint - Test
