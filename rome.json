@@ -1,0 +1,27 @@
+{
+  "$schema": "https://docs.rome.tools/schemas/12.1.3/schema.json",
+  "organizeImports": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "style": {
+        "useSelfClosingElements": "off",
+        "noNonNullAssertion": "off"
+      },
+      "a11y": {
+        "useButtonType": "off",
+        "noSvgWithoutTitle": "off",
+        "useValidAnchor": "off",
+        "useKeyWithMouseEvents": "off",
+        "useKeyWithClickEvents": "off"
+      },
+      "recommended": true,
+      "suspicious": {
+        "noCommentText": "warn",
+        "noExplicitAny": "off"
+      }
+    }
+  }
+}

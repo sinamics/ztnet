@@ -1,367 +1,367 @@
 {
-  "changeButton": {
-    "change": "Cambiar",
-    "submit": "Enviar",
-    "cancel": "Cancelar",
-    "delete": "Eliminar"
-  },
-  "sidebar": {
-    "navigation": "Navegación",
-    "dashboard": "Tablero",
-    "networks": "Controlador Local",
-    "ztCentral": "ZT Central",
-    "admin": "Admin",
-    "settings": "Configuraciones",
-    "mail": "Correo",
-    "users": "Usuarios",
-    "controller": "Controlador",
-    "account": "Cuenta",
-    "user-settings": "Ajustes de usuario",
-    "logout": "Cerrar sesión"
-  },
-  "networks": {
-    "loading": "Cargando",
-    "title": "Redes",
-    "description": "Redes VPN",
-    "addNetworkButton": "Crear una red"
-  },
-  "networksTable": {
-    "name": "Nombre",
-    "description": "Descripción",
-    "networkId": "ID de red",
-    "members": "Miembros",
-    "networkSearchPlaceholder": "Buscar una red"
-  },
-  "tableFooter": {
-    "show": "Mostrar",
-    "page": "Página",
-    "of": "de"
-  },
-  "modalLayout": {
-    "yesButton": "Sí",
-    "cancelButton": "Cancelar",
-    "closeButton": "Cerrar"
-  },
-  "networkById": {
-    "loading": "Cargando...",
-    "errorSteps": {
-      "step1": "Verifique que el contenedor ZeroTier esté operativo",
-      "step2": "Si hay otras instancias de ZeroTier activas localmente, por favor desactívelas ya que podrían causar conflictos."
-    },
-    "networkId": "ID de red:",
-    "networkName": "Nombre de red:",
-    "addDescription": "Añadir descripción",
-    "descriptionPlaceholder": "Descripción",
-    "networkStart": "Inicio de la red:",
-    "notSet": "no establecido",
-    "networkEnd": "Fin de la red:",
-    "networkCidr": "Cidr de red:",
-    "networkSettings": "Configuraciones de la red",
-    "networkMembers": "Miembros de la red",
-    "networkMembersAlert": {
-      "message": "Únete a este ID de red y el dispositivo se mostrará automáticamente"
-    },
-    "viewStashedMembers": "Ver miembros guardados",
-    "networkActions": "Acciones de red",
-    "deleteNetwork": {
-      "title": "Eliminar red",
-      "description": "¿Estás seguro de que quieres eliminar esta red? Esto no se puede deshacer y todos los miembros serán eliminados de esta red",
-      "yesAction": "Sí, eliminar",
-      "noAction": "No, conservarlo"
-    },
-    "copyToClipboard": {
-      "title": "copiar al portapapeles",
-      "success": "{element} copiado al portapapeles"
-    },
-    "privatePublicSwitch": {
-      "accessControllMessage": "Tu red es ahora {authType}",
-      "privateCardTitle": "Privado",
-      "privateCardContent": "Cada usuario necesita ser Autorizado por el administrador de la red.",
-      "publicCardTitle": "Público",
-      "publicCardContent": "Todos los usuarios pueden conectarse a esta red sin Autorización",
-      "loading": "Cargando"
-    },
-    "networkIpAssignments": {
-      "please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
-      "ip_range_already_exists": "El rango de IP ya existe",
-      "ipv4_assignment": "Asignación de IPv4",
-      "auto_assign_from_range": "Asignar automáticamente desde el rango",
-      "easy": "Fácil",
-      "advanced": "Avanzado",
-      "delete_ip_assignment": "Eliminar asignación de IP",
-      "range_start": "Inicio del rango",
-      "range_start_placeholder": "192.168.168.1",
-      "range_end": "Fin del rango",
-      "range_end_placeholder": "192.168.168.254",
-      "submit": "Enviar"
-    },
-    "nettworkRoutes": {
-      "managedRoutesTitle": "Rutas administradas",
-      "noManagedRoutesTitle": "No hay rutas administradas definidas.",
-      "noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta correspondiente.",
-      "noManagedRoutesDescription2": "Si no tienes requerimientos específicos, prueba el modo Fácil de Auto-Asignación IPv4.",
-      "destinationPlaceholder": "Destino",
-      "viaPlaceholder": "objetivo",
-      "addButtonText": "Añadir",
-      "cancelButtonText": "Cancelar"
-    },
-    "networkDns": {
-      "DNS": "DNS",
-      "requiresZeroTierVersion": "Requiere la versión 1.6 de ZeroTier.",
-      "clearDNS": "Borrar DNS",
-      "searchDomain": "Buscar dominio",
-      "serverAddress": "Dirección del servidor",
-      "submit": "Enviar",
-      "servers": "Servidores",
-      "addressAndDomainRequired": "Se requiere dirección y dominio"
-    },
-    "networkMulticast": {
-      "Multicast": "Multicast",
-      "MulticastRecipientLimit": "Límite de receptores Multicast",
-      "Submit": "Enviar",
-      "EnableBroadcast": "Habilitar difusión",
-      "NumberPlaceholder": "Número",
-      "MulticastUpdatedSuccessfully": "Multicast actualizado con éxito"
-    },
-    "networkMembersTable": {
-      "searchPlaceholder": "Buscar cualquier cosa...",
-      "column": {
-        "authorized": "Autorizado",
-        "name": "Nombre",
-        "id": "ID",
-        "ipAssignments": {
-          "header": "IP administrada / Latencia",
-          "notAssigned": "No asignado"
-        },
-        "created": "Creado",
-        "physicalIp": {
-          "header": "IP física",
-          "unknownValue": "Desconocido"
-        },
-        "conStatus": {
-          "header": "Estado de la conexión",
-          "toolTip": "No se pudo establecer una conexión directa y actualmente se está retransmitiendo a través de los servidores zerotier con mayor latencia",
-          "relayed": "REENVIADO",
-          "directLan": "Conexión directa LAN establecida",
-          "directWan": "Conexión directa WAN establecida",
-          "direct": "DIRECTO{version}",
-          "offline": "fuera de línea "
-        },
-        "email": "Correo electrónico",
-        "status": "Estado",
-        "actions": {
-          "header": "Acciones",
-          "optionBtn": "opciones",
-          "stashBtn": "Almacenar"
-        }
-      },
-      "optionModalTitle": "Opciones para miembro",
-      "tableRow": {
-        "updateName": "Haz clic para cambiar el nombre"
-      },
-      "toastMessages": {
-        "memberNameUpdated": "El nombre del miembro se ha actualizado correctamente"
-      },
-      "unauthorizedRowMessage": "Acceso no autorizado",
-      "tableFooter": {
-        "RowsPerPage": "Filas por página",
-        "Of": "de"
-      },
-      "search": {
-        "placeholder": "Buscar cualquier cosa..."
-      }
-    },
-    "inviteMemberByMail": {
-      "title": "Correo",
-      "labelText": "Instrucciones para unirse por correo electrónico",
-      "placeholder": "ztnet@example.com",
-      "buttonText": "Invitar",
-      "loadingText": "Cargando...",
-      "successMessage": "¡Éxito! Se ha enviado un correo electrónico de invitación a {email}",
-      "errorMessage": {
-        "unknownError": "Ocurrió un error desconocido"
-      }
-    },
-    "addMemberById": {
-      "labelText": "Agregar miembro manualmente. Se puede usar para deshacer la eliminación de un miembro.",
-      "memberIdInput": "ID del miembro",
-      "placeholder": "Número hexadecimal de 10 dígitos",
-      "submitButton": "Añadir",
-      "error": {
-        "unknown": "Ocurrió un error desconocido"
-      }
-    },
-    "memberOptionModal": {
-      "loading": {
-        "text": "Cargando..."
-      },
-      "handleSumbit": {
-        "errorAssigned": "IP {target} ya asignada",
-        "errorNotValidIp": "IP {target} no es una dirección IP válida"
-      },
-      "ipAssignment": {
-        "header": "Asignación de IP",
-        "description": "Agregar o quitar una dirección IP para este miembro."
-      },
-      "deleteIpAssignment": {
-        "title": "Eliminar asignación de IP"
-      },
-      "addressInput": {
-        "label": "Dirección"
-      },
-      "addButton": {
-        "text": "Añadir"
-      },
-      "allowEthernetBridging": {
-        "header": "Permitir Puente Ethernet",
-        "description": "El puente requiere una configuración adicional en el dispositivo. Consulte el manual y la base de conocimientos para obtener más información. Los dispositivos móviles no pueden ser puentes."
-      },
-      "doNotAutoAssignIPs": {
-        "header": "No Asignar IPs Automáticamente",
-        "description": "Esto desactivará la capacidad de asignar automáticamente direcciones IP a este miembro."
-      },
-      "capabilities": {
-        "header": "Capacidades:"
-      },
-      "tags": {
-        "header": "Etiquetas:"
-      },
-      "anotation": {
-        "header": "Anotación",
-        "description": "Mejore la organización de su miembro añadiendo anotaciones",
-        "placeholder": "Agregar Anotación"
-      }
-    }
-  },
-  "admin": {
-    "tabs": {
-      "settings": "Configuraciones",
-      "network": "Red",
-      "mail": "Correo",
-      "users": "Usuarios",
-      "notification": "Notificación",
-      "controller": "Controlador"
-    },
-    "settings": {
-      "authentication": "Autenticación",
-      "enableUserRegistration": "¿Habilitar registro de usuario?",
-      "application": "Aplicación",
-      "version": "Versión",
-      "developerMode": "modo de desarrollador"
-    },
-    "networkSetting": {
-      "memberAnotations": "Anotaciones de miembro",
-      "showMarkerInTable": "Mostrar marcador en la tabla",
-      "showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
-      "addBackgroundColorInTable": "Agregar color de fondo en la tabla",
-      "addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
-    },
-    "mail": {
-      "mailSMTP": "Mail SMTP",
-      "smtpHost": "Host SMTP",
-      "smtpPort": "Puerto SMTP",
-      "senderEmail": "Correo electrónico del remitente",
-      "mailPlaceholder": "correo@ejemplo.com",
-      "username": "Nombre de usuario",
-      "password": "Contraseña",
-      "useSSL": "Usar SSL",
-      "inviteUserTemplate": "Plantilla de invitación de usuario",
-      "forgotPasswordTemplate": "Plantilla de contraseña olvidada",
-      "notificationTemplate": "Plantilla de notificación",
-      "templates": {
-        "availableTags": "Etiquetas disponibles:",
-        "subject": "Asunto",
-        "inputPlaceholderSubject": "Asunto",
-        "htmlBody": "Cuerpo HTML",
-        "textareaPlaceholderBody": "Plantilla de correo",
-        "saveTemplateButton": "Guardar plantilla",
-        "resetButton": "Restablecer",
-        "sendTestMailButton": "Enviar correo de prueba",
-        "sendTestMailButtonLoading": "Trabajando...",
-        "errorFields": "Por favor rellena todos los campos",
-        "successToastMailSent": "Correo enviado",
-        "successToastTemplateSaved": "Plantilla guardada"
-      }
-    },
-    "users": {
-      "table": {
-        "id": "ID",
-        "memberName": "Nombre del miembro",
-        "email": "Correo electrónico",
-        "emailVerified": "Correo electrónico verificado",
-        "role": "Rol",
-        "emailVerifiedYes": "Sí",
-        "emailVerifiedNo": "No"
-      },
-      "roleDescriptions": {
-        "admin": "Como administrador, este usuario tendrá todos los permisos, incluido el acceso al panel de administración.",
-        "user": "Si se configura como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
-      },
-      "changeRoleModal": {
-        "title": "Cambiar rol para {name}"
-      },
-      "toastMessages": {
-        "roleChangeSuccess": "Rol cambiado con éxito",
-        "errorOccurred": "Ocurrió un error desconocido"
-      }
-    },
-    "notification": {
-      "authentication": "Autenticación",
-      "whenUserRegister": "Cuando un usuario se registre",
-      "allAdminsNotification": "Todos los administradores recibirán notificaciones"
-    },
-    "controller": {
-      "loading": "Cargando...",
-      "networkMembers": {
-        "title": "Redes & Miembros",
-        "totalNetworks": "Total de redes:",
-        "totalMembers": "Total de miembros:"
-      },
-      "management": {
-        "title": "Gestión",
-        "allowManagementFrom": "Permitir gestión desde:",
-        "allowTcpFallbackRelay": "Permitir TCP Fallback Relay:",
-        "listeningOn": "Escuchando en:"
-      },
-      "controllerStatus": {
-        "title": "Estado del controlador",
-        "online": "En línea:",
-        "tcpFallbackActive": "TCP Fallback activo:",
-        "version": "Versión:"
-      },
-      "yes": "Sí",
-      "no": "No"
-    }
-  },
-  "userSettings": {
-    "tabs": {
-      "account": "Cuenta",
-      "user": "Usuario"
-    },
-    "account": {
-      "accountSettings": {
-        "title": "Configuración de la Cuenta",
-        "nameLabel": "Nombre",
-        "emailLabel": "Correo Electrónico",
-        "verifiedBadge": "Verificado",
-        "notVerifiedBadge": "No Verificado",
-        "passwordLabel": "Contraseña",
-        "currentPasswordPlaceholder": "Contraseña Actual",
-        "newPasswordPlaceholder": "Nueva Contraseña",
-        "repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
-        "role": "Rol"
-      },
-      "zerotierCentral": {
-        "title": "Zerotier Central",
-        "description": "Incorporar su API central de ZeroTier le permitirá gestionar sus redes centrales directamente desde ZTNET. Al integrar la clave, aparecerá un nuevo menú en la barra lateral para mejorar la accesibilidad y el control.<br></br>Puede obtener una clave desde el portal central de ZeroTier. https://my.zerotier.com/account",
-        "apiKeyLabel": "Clave de API central de Zerotier",
-        "apiUrlLabel": "URL de la API de Zerotier",
-        "apiUrlLabelDescription": "La URL de la API central de ZeroTier, la predeterminada es https://api.zerotier.com/api/v1"
-      },
-      "accountPreferences": {
-        "title": "Preferencias de la cuenta",
-        "languageLabel": "Idioma"
-      }
-    }
-  }
+	"changeButton": {
+		"change": "Cambiar",
+		"submit": "Enviar",
+		"cancel": "Cancelar",
+		"delete": "Eliminar"
+	},
+	"sidebar": {
+		"navigation": "Navegación",
+		"dashboard": "Tablero",
+		"networks": "Controlador Local",
+		"ztCentral": "ZT Central",
+		"admin": "Admin",
+		"settings": "Configuraciones",
+		"mail": "Correo",
+		"users": "Usuarios",
+		"controller": "Controlador",
+		"account": "Cuenta",
+		"user-settings": "Ajustes de usuario",
+		"logout": "Cerrar sesión"
+	},
+	"networks": {
+		"loading": "Cargando",
+		"title": "Redes",
+		"description": "Redes VPN",
+		"addNetworkButton": "Crear una red"
+	},
+	"networksTable": {
+		"name": "Nombre",
+		"description": "Descripción",
+		"networkId": "ID de red",
+		"members": "Miembros",
+		"networkSearchPlaceholder": "Buscar una red"
+	},
+	"tableFooter": {
+		"show": "Mostrar",
+		"page": "Página",
+		"of": "de"
+	},
+	"modalLayout": {
+		"yesButton": "Sí",
+		"cancelButton": "Cancelar",
+		"closeButton": "Cerrar"
+	},
+	"networkById": {
+		"loading": "Cargando...",
+		"errorSteps": {
+			"step1": "Verifique que el contenedor ZeroTier esté operativo",
+			"step2": "Si hay otras instancias de ZeroTier activas localmente, por favor desactívelas ya que podrían causar conflictos."
+		},
+		"networkId": "ID de red:",
+		"networkName": "Nombre de red:",
+		"addDescription": "Añadir descripción",
+		"descriptionPlaceholder": "Descripción",
+		"networkStart": "Inicio de la red:",
+		"notSet": "no establecido",
+		"networkEnd": "Fin de la red:",
+		"networkCidr": "Cidr de red:",
+		"networkSettings": "Configuraciones de la red",
+		"networkMembers": "Miembros de la red",
+		"networkMembersAlert": {
+			"message": "Únete a este ID de red y el dispositivo se mostrará automáticamente"
+		},
+		"viewStashedMembers": "Ver miembros guardados",
+		"networkActions": "Acciones de red",
+		"deleteNetwork": {
+			"title": "Eliminar red",
+			"description": "¿Estás seguro de que quieres eliminar esta red? Esto no se puede deshacer y todos los miembros serán eliminados de esta red",
+			"yesAction": "Sí, eliminar",
+			"noAction": "No, conservarlo"
+		},
+		"copyToClipboard": {
+			"title": "copiar al portapapeles",
+			"success": "{element} copiado al portapapeles"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Tu red es ahora {authType}",
+			"privateCardTitle": "Privado",
+			"privateCardContent": "Cada usuario necesita ser Autorizado por el administrador de la red.",
+			"publicCardTitle": "Público",
+			"publicCardContent": "Todos los usuarios pueden conectarse a esta red sin Autorización",
+			"loading": "Cargando"
+		},
+		"networkIpAssignments": {
+			"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
+			"ip_range_already_exists": "El rango de IP ya existe",
+			"ipv4_assignment": "Asignación de IPv4",
+			"auto_assign_from_range": "Asignar automáticamente desde el rango",
+			"easy": "Fácil",
+			"advanced": "Avanzado",
+			"delete_ip_assignment": "Eliminar asignación de IP",
+			"range_start": "Inicio del rango",
+			"range_start_placeholder": "192.168.168.1",
+			"range_end": "Fin del rango",
+			"range_end_placeholder": "192.168.168.254",
+			"submit": "Enviar"
+		},
+		"nettworkRoutes": {
+			"managedRoutesTitle": "Rutas administradas",
+			"noManagedRoutesTitle": "No hay rutas administradas definidas.",
+			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta correspondiente.",
+			"noManagedRoutesDescription2": "Si no tienes requerimientos específicos, prueba el modo Fácil de Auto-Asignación IPv4.",
+			"destinationPlaceholder": "Destino",
+			"viaPlaceholder": "objetivo",
+			"addButtonText": "Añadir",
+			"cancelButtonText": "Cancelar"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Requiere la versión 1.6 de ZeroTier.",
+			"clearDNS": "Borrar DNS",
+			"searchDomain": "Buscar dominio",
+			"serverAddress": "Dirección del servidor",
+			"submit": "Enviar",
+			"servers": "Servidores",
+			"addressAndDomainRequired": "Se requiere dirección y dominio"
+		},
+		"networkMulticast": {
+			"Multicast": "Multicast",
+			"MulticastRecipientLimit": "Límite de receptores Multicast",
+			"Submit": "Enviar",
+			"EnableBroadcast": "Habilitar difusión",
+			"NumberPlaceholder": "Número",
+			"MulticastUpdatedSuccessfully": "Multicast actualizado con éxito"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Buscar cualquier cosa...",
+			"column": {
+				"authorized": "Autorizado",
+				"name": "Nombre",
+				"id": "ID",
+				"ipAssignments": {
+					"header": "IP administrada / Latencia",
+					"notAssigned": "No asignado"
+				},
+				"created": "Creado",
+				"physicalIp": {
+					"header": "IP física",
+					"unknownValue": "Desconocido"
+				},
+				"conStatus": {
+					"header": "Estado de la conexión",
+					"toolTip": "No se pudo establecer una conexión directa y actualmente se está retransmitiendo a través de los servidores zerotier con mayor latencia",
+					"relayed": "REENVIADO",
+					"directLan": "Conexión directa LAN establecida",
+					"directWan": "Conexión directa WAN establecida",
+					"direct": "DIRECTO{version}",
+					"offline": "fuera de línea "
+				},
+				"email": "Correo electrónico",
+				"status": "Estado",
+				"actions": {
+					"header": "Acciones",
+					"optionBtn": "opciones",
+					"stashBtn": "Almacenar"
+				}
+			},
+			"optionModalTitle": "Opciones para miembro",
+			"tableRow": {
+				"updateName": "Haz clic para cambiar el nombre"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "El nombre del miembro se ha actualizado correctamente"
+			},
+			"unauthorizedRowMessage": "Acceso no autorizado",
+			"tableFooter": {
+				"RowsPerPage": "Filas por página",
+				"Of": "de"
+			},
+			"search": {
+				"placeholder": "Buscar cualquier cosa..."
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Correo",
+			"labelText": "Instrucciones para unirse por correo electrónico",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Invitar",
+			"loadingText": "Cargando...",
+			"successMessage": "¡Éxito! Se ha enviado un correo electrónico de invitación a {email}",
+			"errorMessage": {
+				"unknownError": "Ocurrió un error desconocido"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Agregar miembro manualmente. Se puede usar para deshacer la eliminación de un miembro.",
+			"memberIdInput": "ID del miembro",
+			"placeholder": "Número hexadecimal de 10 dígitos",
+			"submitButton": "Añadir",
+			"error": {
+				"unknown": "Ocurrió un error desconocido"
+			}
+		},
+		"memberOptionModal": {
+			"loading": {
+				"text": "Cargando..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} ya asignada",
+				"errorNotValidIp": "IP {target} no es una dirección IP válida"
+			},
+			"ipAssignment": {
+				"header": "Asignación de IP",
+				"description": "Agregar o quitar una dirección IP para este miembro."
+			},
+			"deleteIpAssignment": {
+				"title": "Eliminar asignación de IP"
+			},
+			"addressInput": {
+				"label": "Dirección"
+			},
+			"addButton": {
+				"text": "Añadir"
+			},
+			"allowEthernetBridging": {
+				"header": "Permitir Puente Ethernet",
+				"description": "El puente requiere una configuración adicional en el dispositivo. Consulte el manual y la base de conocimientos para obtener más información. Los dispositivos móviles no pueden ser puentes."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "No Asignar IPs Automáticamente",
+				"description": "Esto desactivará la capacidad de asignar automáticamente direcciones IP a este miembro."
+			},
+			"capabilities": {
+				"header": "Capacidades:"
+			},
+			"tags": {
+				"header": "Etiquetas:"
+			},
+			"anotation": {
+				"header": "Anotación",
+				"description": "Mejore la organización de su miembro añadiendo anotaciones",
+				"placeholder": "Agregar Anotación"
+			}
+		}
+	},
+	"admin": {
+		"tabs": {
+			"settings": "Configuraciones",
+			"network": "Red",
+			"mail": "Correo",
+			"users": "Usuarios",
+			"notification": "Notificación",
+			"controller": "Controlador"
+		},
+		"settings": {
+			"authentication": "Autenticación",
+			"enableUserRegistration": "¿Habilitar registro de usuario?",
+			"application": "Aplicación",
+			"version": "Versión",
+			"developerMode": "modo de desarrollador"
+		},
+		"networkSetting": {
+			"memberAnotations": "Anotaciones de miembro",
+			"showMarkerInTable": "Mostrar marcador en la tabla",
+			"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+			"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
+			"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
+		},
+		"mail": {
+			"mailSMTP": "Mail SMTP",
+			"smtpHost": "Host SMTP",
+			"smtpPort": "Puerto SMTP",
+			"senderEmail": "Correo electrónico del remitente",
+			"mailPlaceholder": "correo@ejemplo.com",
+			"username": "Nombre de usuario",
+			"password": "Contraseña",
+			"useSSL": "Usar SSL",
+			"inviteUserTemplate": "Plantilla de invitación de usuario",
+			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
+			"notificationTemplate": "Plantilla de notificación",
+			"templates": {
+				"availableTags": "Etiquetas disponibles:",
+				"subject": "Asunto",
+				"inputPlaceholderSubject": "Asunto",
+				"htmlBody": "Cuerpo HTML",
+				"textareaPlaceholderBody": "Plantilla de correo",
+				"saveTemplateButton": "Guardar plantilla",
+				"resetButton": "Restablecer",
+				"sendTestMailButton": "Enviar correo de prueba",
+				"sendTestMailButtonLoading": "Trabajando...",
+				"errorFields": "Por favor rellena todos los campos",
+				"successToastMailSent": "Correo enviado",
+				"successToastTemplateSaved": "Plantilla guardada"
+			}
+		},
+		"users": {
+			"table": {
+				"id": "ID",
+				"memberName": "Nombre del miembro",
+				"email": "Correo electrónico",
+				"emailVerified": "Correo electrónico verificado",
+				"role": "Rol",
+				"emailVerifiedYes": "Sí",
+				"emailVerifiedNo": "No"
+			},
+			"roleDescriptions": {
+				"admin": "Como administrador, este usuario tendrá todos los permisos, incluido el acceso al panel de administración.",
+				"user": "Si se configura como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
+			},
+			"changeRoleModal": {
+				"title": "Cambiar rol para {name}"
+			},
+			"toastMessages": {
+				"roleChangeSuccess": "Rol cambiado con éxito",
+				"errorOccurred": "Ocurrió un error desconocido"
+			}
+		},
+		"notification": {
+			"authentication": "Autenticación",
+			"whenUserRegister": "Cuando un usuario se registre",
+			"allAdminsNotification": "Todos los administradores recibirán notificaciones"
+		},
+		"controller": {
+			"loading": "Cargando...",
+			"networkMembers": {
+				"title": "Redes & Miembros",
+				"totalNetworks": "Total de redes:",
+				"totalMembers": "Total de miembros:"
+			},
+			"management": {
+				"title": "Gestión",
+				"allowManagementFrom": "Permitir gestión desde:",
+				"allowTcpFallbackRelay": "Permitir TCP Fallback Relay:",
+				"listeningOn": "Escuchando en:"
+			},
+			"controllerStatus": {
+				"title": "Estado del controlador",
+				"online": "En línea:",
+				"tcpFallbackActive": "TCP Fallback activo:",
+				"version": "Versión:"
+			},
+			"yes": "Sí",
+			"no": "No"
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Cuenta",
+			"user": "Usuario"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Configuración de la Cuenta",
+				"nameLabel": "Nombre",
+				"emailLabel": "Correo Electrónico",
+				"verifiedBadge": "Verificado",
+				"notVerifiedBadge": "No Verificado",
+				"passwordLabel": "Contraseña",
+				"currentPasswordPlaceholder": "Contraseña Actual",
+				"newPasswordPlaceholder": "Nueva Contraseña",
+				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
+				"role": "Rol"
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Incorporar su API central de ZeroTier le permitirá gestionar sus redes centrales directamente desde ZTNET. Al integrar la clave, aparecerá un nuevo menú en la barra lateral para mejorar la accesibilidad y el control.<br></br>Puede obtener una clave desde el portal central de ZeroTier. https://my.zerotier.com/account",
+				"apiKeyLabel": "Clave de API central de Zerotier",
+				"apiUrlLabel": "URL de la API de Zerotier",
+				"apiUrlLabelDescription": "La URL de la API central de ZeroTier, la predeterminada es https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Preferencias de la cuenta",
+				"languageLabel": "Idioma"
+			}
+		}
+	}
 }
