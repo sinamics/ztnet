@@ -147,7 +147,6 @@ services:
     # image: sinamics/ztnet:latest-main   # Use this for testing latest main branch
     image: sinamics/ztnet:latest
     container_name: ztnet
-    platform: "linux/amd64"
     working_dir: /app
     volumes:
       - zerotier:/var/lib/zerotier-one:ro
