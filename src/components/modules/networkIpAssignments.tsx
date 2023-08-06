@@ -3,10 +3,14 @@ import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
-import { type IpAssignmentPoolsEntity } from "~/types/network";
+import { type IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
 
-export const NetworkIpAssignment = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkIpAssignment = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
 
   const { query } = useRouter();
@@ -19,35 +23,35 @@ export const NetworkIpAssignment = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central,
     },
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetworkMutation } =
-    api.network.updateNetwork.useMutation({
+  const { mutate: enableIpv4AutoAssign } =
+    api.network.enableIpv4AutoAssign.useMutation({
       onError: (e) => {
         void toast.error(e?.message);
-        // void toast.error(shape?.data?.zodError?.fieldErrors?.updateParams);
       },
     });
+  const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation(
+    {
+      onError: (e) => {
+        void toast.error(e?.message);
+      },
+    }
+  );
+  const { mutate: advancedIpAssignment } =
+    api.network.advancedIpAssignment.useMutation({
+      onError: (e) => {
+        void toast.error(e?.message);
+      },
+    });
+
   const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIpRange({ ...ipRange, [e.target.name]: e.target.value });
   };
-  const submitUpdate = (updateParams: {
-    ipPool?: string;
-    autoAssignIp?: boolean;
-  }) =>
-    updateNetworkMutation(
-      {
-        updateParams,
-        nwid: query.id as string,
-      },
-      {
-        onSuccess: () => {
-          void refecthNetworkById();
-        },
-      }
-    );
+
   const deleteIpRange = (poolToDelete: IpAssignmentPoolsEntity) => {
     const { network } = networkByIdQuery;
     const newIpAssignmentPools = network.ipAssignmentPools.filter(
@@ -56,13 +60,13 @@ export const NetworkIpAssignment = () => {
         pool.ipRangeEnd !== poolToDelete?.ipRangeEnd
     );
 
-    updateNetworkMutation(
+    advancedIpAssignment(
       {
         updateParams: {
-          autoAssignIp: network.autoAssignIp,
           ipAssignmentPools: newIpAssignmentPools,
         },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {
@@ -71,6 +75,7 @@ export const NetworkIpAssignment = () => {
       }
     );
   };
+
   const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!ipRange.rangeStart || !ipRange.rangeEnd) {
@@ -78,43 +83,46 @@ export const NetworkIpAssignment = () => {
       return;
     }
 
-    const { network } = networkByIdQuery;
+    const { network } = networkByIdQuery || {};
 
     // Check if the IP range already exists in the network's ipAssignmentPools
-    for (const existingRange of network.ipAssignmentPools) {
-      if (
-        existingRange.ipRangeStart === ipRange.rangeStart &&
-        existingRange.ipRangeEnd === ipRange.rangeEnd
-      ) {
-        void toast.error(t("networkIpAssignments.ip_range_already_exists"));
-        return;
+    if (network?.ipAssignmentPools && network?.ipAssignmentPools.length > 0) {
+      for (const existingRange of network?.ipAssignmentPools) {
+        if (
+          existingRange?.ipRangeStart === ipRange.rangeStart &&
+          existingRange?.ipRangeEnd === ipRange.rangeEnd
+        ) {
+          void toast.error(t("networkIpAssignments.ip_range_already_exists"));
+          return;
+        }
       }
     }
-    updateNetworkMutation(
+
+    advancedIpAssignment(
       {
         updateParams: {
-          autoAssignIp: network.autoAssignIp,
           ipAssignmentPools: [
-            ...network.ipAssignmentPools,
+            ...(network?.ipAssignmentPools ? network.ipAssignmentPools : []),
             { ipRangeStart: ipRange.rangeStart, ipRangeEnd: ipRange.rangeEnd },
           ],
         },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {
           void refecthNetworkById();
+          setIpRange({ rangeStart: "", rangeEnd: "" });
         },
       }
     );
   };
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   if (isLoading) return <div>Loading</div>;
-
   return (
     <div
       tabIndex={0}
-      className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+      className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
     >
       <input type="checkbox" />
       <div className="collapse-title">
@@ -125,15 +133,28 @@ export const NetworkIpAssignment = () => {
           <p>{t("networkIpAssignments.auto_assign_from_range")}</p>
           <input
             type="checkbox"
-            checked={network.autoAssignIp}
+            checked={network?.v4AssignMode?.zt || false}
             className="checkbox-primary checkbox checkbox-sm"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              submitUpdate({ autoAssignIp: e.target.checked });
+              enableIpv4AutoAssign(
+                {
+                  nwid: query.id as string,
+                  central,
+                  updateParams: {
+                    v4AssignMode: { zt: e.target.checked },
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    void refecthNetworkById();
+                  },
+                }
+              );
             }}
           />
         </div>
-        {network.autoAssignIp ? (
-          <div className="tabs tabs-boxed grid grid-cols-2 gap-5 pb-5">
+        {network?.v4AssignMode?.zt ? (
+          <div className="tabs-boxed tabs grid grid-cols-2 gap-5 pb-5">
             <a
               className={cn("tab w-full border border-gray-500", {
                 "tab-active border-none": ipTabs.easy,
@@ -164,15 +185,15 @@ export const NetworkIpAssignment = () => {
             </a>
           </div>
         ) : null}
-        {network.autoAssignIp && ipTabs.easy ? (
+        {network?.v4AssignMode?.zt && ipTabs.easy ? (
           <div>
             <div
               className={cn("flex cursor-pointer flex-wrap", {
                 "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-                  !network.autoAssignIp,
+                  !network?.v4AssignMode?.zt,
               })}
             >
-              {network.cidr?.map((cidr: string) => {
+              {network?.cidr?.map((cidr: string) => {
                 return network?.routes?.some(
                   (route) => route.target === cidr
                 ) ? (
@@ -182,7 +203,7 @@ export const NetworkIpAssignment = () => {
                       "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
                       {
                         "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
-                          network.autoAssignIp,
+                          network?.v4AssignMode?.zt,
                       }
                     )}
                   >
@@ -191,10 +212,25 @@ export const NetworkIpAssignment = () => {
                 ) : (
                   <div
                     key={cidr}
-                    onClick={() => submitUpdate({ ipPool: cidr })}
+                    onClick={() =>
+                      easyIpAssignment(
+                        {
+                          updateParams: {
+                            routes: [{ target: cidr, via: "" }],
+                          },
+                          nwid: query.id as string,
+                          central,
+                        },
+                        {
+                          onSuccess: () => {
+                            void refecthNetworkById();
+                          },
+                        }
+                      )
+                    }
                     className={cn(
                       "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
-                      { "hover:bg-primary": network.autoAssignIp }
+                      { "hover:bg-primary": network?.v4AssignMode?.zt }
                     )}
                   >
                     {cidr}
@@ -203,44 +239,10 @@ export const NetworkIpAssignment = () => {
               })}
             </div>
           </div>
-        ) : //    <div
-        //    className={cn("flex cursor-pointer flex-wrap", {
-        //      "pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-        //        !network.autoAssignIp,
-        //    })}
-        //  >
-        //    {network.cidr?.map((cidr: string) => {
-        //      return network?.routes?.some((route) => route.target === cidr) ? (
-        //        <div
-        //          key={cidr}
-        //          className={cn(
-        //            "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs sm:m-2 md:text-base",
-        //            {
-        //              "badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
-        //                network.autoAssignIp,
-        //            }
-        //          )}
-        //        >
-        //          {cidr}
-        //        </div>
-        //      ) : (
-        //        <div
-        //          key={cidr}
-        //          onClick={() => submitUpdate({ ipPool: cidr })}
-        //          className={cn(
-        //            "badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs sm:m-2 md:text-base",
-        //            { "hover:bg-primary": network.autoAssignIp }
-        //          )}
-        //        >
-        //          {cidr}
-        //        </div>
-        //      );
-        //    })}
-        //  </div>
-        null}
-        {network.autoAssignIp && ipTabs.advanced ? (
+        ) : null}
+        {network?.v4AssignMode?.zt && ipTabs.advanced ? (
           <div className="mt-4 space-y-2">
-            {network?.ipAssignmentPools.map((pool) => {
+            {network?.ipAssignmentPools?.map((pool) => {
               return (
                 <div
                   key={pool.ipRangeStart}

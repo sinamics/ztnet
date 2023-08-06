@@ -1,39 +1,82 @@
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
-import { api } from "~/utils/api";
+import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
 import CardComponent from "./privatePublic";
 import { useTranslations } from "next-intl";
+import {
+  type InfiniteData,
+  type QueryClient,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { type NetworkEntity } from "~/types/local/network";
+import { type CentralNetwork } from "~/types/central/network";
 
-export const NetworkPrivatePublic = () => {
+interface IProp {
+  central?: boolean;
+}
+
+const updateCache = ({
+  client,
+  data,
+  input,
+}: {
+  client: QueryClient;
+  input: RouterInputs["network"]["getNetworkById"];
+  data: NetworkEntity | Partial<CentralNetwork>;
+}) => {
+  client.setQueryData(
+    [
+      ["network", "getNetworkById"],
+      {
+        input,
+        type: "query",
+      },
+    ],
+    (oldData) => {
+      const newData = oldData as InfiniteData<
+        RouterOutputs["network"]["getNetworkById"]
+      >;
+      return {
+        ...newData,
+        network: { ...data },
+      };
+    }
+  );
+};
+
+export const NetworkPrivatePublic = ({ central = false }: IProp) => {
   const t = useTranslations();
   const { query } = useRouter();
-  const {
-    data: networkByIdQuery,
-    isLoading,
-    refetch: refecthNetworkById,
-  } = api.network.getNetworkById.useQuery(
-    {
-      nwid: query.id as string,
-    },
-    { enabled: !!query.id }
-  );
-
-  const { mutate: updateNetworkMutation } =
-    api.network.updateNetwork.useMutation({
+  const client = useQueryClient();
+  const { data: networkByIdQuery, isLoading } =
+    api.network.getNetworkById.useQuery(
+      {
+        nwid: query.id as string,
+        central,
+      },
+      { enabled: !!query.id }
+    );
+  const { mutate: privatePublicNetwork } =
+    api.network.privatePublicNetwork.useMutation({
       onError: (e) => {
         void toast.error(e?.message);
       },
     });
-
   const privateHandler = (privateNetwork: boolean) => {
-    updateNetworkMutation(
+    privatePublicNetwork(
       {
-        updateParams: { privateNetwork },
+        updateParams: { private: privateNetwork },
         nwid: query.id as string,
+        central,
       },
       {
-        onSuccess: () => {
-          void refecthNetworkById();
+        onSuccess: (data) => {
+          const input = {
+            nwid: query.id as string,
+            central,
+          };
+          // void refecthNetworkById();
+          updateCache({ client, data, input });
           const secure = privateNetwork
             ? "private"
             : "public, please use with caution!";
@@ -48,7 +91,7 @@ export const NetworkPrivatePublic = () => {
       }
     );
   };
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   if (isLoading) return <div>Loading</div>;
 
   return (

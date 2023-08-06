@@ -11,6 +11,7 @@ import { createTransporter, sendEmail } from "~/utils/mail";
 import type nodemailer from "nodemailer";
 import { Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
+import { type ZTControllerNodeStatus } from "~/types/ztController";
 
 export const adminRouter = createTRPCRouter({
   getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
@@ -41,16 +42,19 @@ export const adminRouter = createTRPCRouter({
   }),
 
   getControllerStats: adminRoleProtectedRoute.query(async () => {
-    const networks = await ztController.get_controller_networks();
+    const isCentral = false;
+    const networks = await ztController.get_controller_networks(isCentral);
 
     const networkCount = networks.length;
     let totalMembers = 0;
     for (const network of networks) {
-      const members = await ztController.network_members(network);
+      const members = await ztController.network_members(network as string);
       totalMembers += Object.keys(members).length;
     }
 
-    const controllerStatus = await ztController.get_controller_status();
+    const controllerStatus = (await ztController.get_controller_status(
+      isCentral
+    )) as ZTControllerNodeStatus;
     return {
       networkCount,
       totalMembers,

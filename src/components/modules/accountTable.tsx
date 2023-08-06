@@ -10,11 +10,12 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
-import { type MembersEntity } from "~/types/network";
+
 import { type ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
+import { type User } from "@prisma/client";
 
 export const Accounts = () => {
   const t = useTranslations("admin");
@@ -30,8 +31,8 @@ export const Accounts = () => {
     refetch: refetchUsers,
     isLoading: loadingUsers,
   } = api.admin.getUsers.useQuery();
-  const columnHelper = createColumnHelper<MembersEntity>();
-  const columns = useMemo<ColumnDef<MembersEntity>[]>(
+  const columnHelper = createColumnHelper<User>();
+  const columns = useMemo<ColumnDef<User>[]>(
     () => [
       columnHelper.accessor("id", {
         header: () => <span>{t("users.table.id")}</span>,
@@ -77,7 +78,7 @@ export const Accounts = () => {
   );
 
   // Create an editable cell renderer
-  const defaultColumn: Partial<ColumnDef<MembersEntity>> = {
+  const defaultColumn: Partial<ColumnDef<User>> = {
     cell: ({
       getValue,
       row: {
@@ -162,7 +163,7 @@ export const Accounts = () => {
         return (
           <select
             defaultValue={initialValue as string}
-            onChange={(e) => dropDownHandler(e, parseInt(userid))}
+            onChange={(e) => dropDownHandler(e, userid)}
             className="select select-ghost max-w-xs"
           >
             <option>ADMIN</option>

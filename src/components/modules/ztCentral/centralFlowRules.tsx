@@ -10,23 +10,38 @@ import { EditorView } from "@codemirror/view";
 import { type CustomBackendError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
 
+interface IProp {
+  central?: boolean;
+}
+
 const initialErrorState = { error: null, line: null };
-export const NetworkFlowRules = () => {
+export const CentralFlowRules = ({ central = true }: IProp) => {
   const { query } = useRouter();
-  // Local state to store changes to the flow route
+
   const {
     data: defaultFlowRoute,
     // isLoading,
     mutate: fetchFlowRoute,
   } = api.network.getFlowRule.useMutation();
 
-  const [flowRoute, setFlowRoute] = useState(defaultFlowRoute);
+  // Local state to store changes to the flow route
+  const {
+    data: networkById,
+    isLoading: loadingNetwork,
+    error: errorNetwork,
+    refetch: refetchNetworkById,
+  } = api.network.getNetworkById.useQuery({
+    nwid: query.id as string,
+    central,
+  });
+
+  const [flowRoute, setFlowRoute] = useState(networkById?.network?.rulesSource);
   const [ruleError, setRuleError] = useState(initialErrorState);
   // const debouncedFlowRoute = useDebounce(flowRoute, 500);
 
   const { mutate: updateFlowRoute } = api.network.setFlowRule.useMutation({
     onSuccess: () => {
-      void fetchFlowRoute({ nwid: query.id as string, reset: false });
+      void refetchNetworkById();
       void toast.success("Flow rules updated successfully");
     },
     onError: ({ message }) => {
@@ -41,20 +56,14 @@ export const NetworkFlowRules = () => {
     },
   });
 
-  // const debouncedUpdateFlowRoute = useCallback(() => {
-  //   void updateFlowRoute({ flowRoute });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [debouncedFlowRoute]);
   useEffect(() => {
     setFlowRoute(defaultFlowRoute);
   }, [defaultFlowRoute]);
+
   useEffect(() => {
-    fetchFlowRoute({
-      nwid: query.id as string,
-      reset: false,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    setFlowRoute(networkById?.network?.rulesSource);
+  }, [networkById?.network?.rulesSource]);
+
   // Handle changes in CodeMirror
   const handleFlowRouteChange = (value: string) => {
     setFlowRoute(value);
@@ -63,8 +72,10 @@ export const NetworkFlowRules = () => {
   };
   // Reset the flow route to the default value
   const handleReset = () => {
-    setFlowRoute(defaultFlowRoute);
-    void fetchFlowRoute({ nwid: query.id as string, reset: true });
+    fetchFlowRoute({
+      nwid: query.id as string,
+      central,
+    });
     setRuleError(initialErrorState);
   };
   const classnameExt = classname({
@@ -79,6 +90,25 @@ export const NetworkFlowRules = () => {
     "&light .first-line": { backgroundColor: "#AB2204" },
   });
 
+  if (loadingNetwork) {
+    // add loading progress bar to center of page, vertially and horizontally
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
+  }
+  if (errorNetwork) {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          {errorNetwork.message}
+        </h1>
+      </div>
+    );
+  }
   return (
     <div
       tabIndex={0}
@@ -105,6 +135,7 @@ export const NetworkFlowRules = () => {
           <button
             onClick={() =>
               void updateFlowRoute({
+                central,
                 nwid: query.id as string,
                 updateParams: {
                   flowRoute: flowRoute || "#",
@@ -115,7 +146,10 @@ export const NetworkFlowRules = () => {
           >
             Save Changes
           </button>
-          <button onClick={handleReset} className="btn btn-outline my-3 ">
+          <button
+            onClick={() => handleReset()}
+            className="btn btn-outline my-3 "
+          >
             Reset
           </button>
         </div>

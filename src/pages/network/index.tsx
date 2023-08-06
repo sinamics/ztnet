@@ -14,18 +14,27 @@ const Networks: NextPageWithLayout = () => {
     data: userNetworks,
     isLoading,
     refetch,
-  } = api.network.getUserNetworks.useQuery();
+  } = api.network.getUserNetworks.useQuery({
+    central: false,
+  });
   const { mutate: createNetwork } = api.network.createNetwork.useMutation();
+
   const addNewNetwork = () => {
-    createNetwork(null, { onSuccess: () => void refetch() });
+    createNetwork({ central: false }, { onSuccess: () => void refetch() });
   };
 
   if (isLoading) {
-    return <div>{t("loading")}</div>;
+    // add loading progress bar to center of page, vertially and horizontally
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <h1 className="text-center text-2xl font-semibold">
+          <progress className="progress progress-primary w-56"></progress>
+        </h1>
+      </div>
+    );
   }
 
   const title = `${globalSiteTitle} - ${t("title")}`;
-
   return (
     <>
       <Head>

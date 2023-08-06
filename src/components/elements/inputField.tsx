@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 
@@ -15,6 +16,7 @@ interface FormProps {
   label: string;
   isLoading?: boolean;
   placeholder?: string;
+  description?: string;
   fields: FieldConfig[];
   size?: "xs" | "sm" | "md" | "lg";
   buttonClassName?: string;
@@ -28,14 +30,20 @@ interface FormProps {
     text: string;
     color: string;
   };
+  headerBadge?: {
+    text: string;
+    color: string;
+  };
 }
 
 const InputField = ({
   label,
   placeholder,
+  description,
   fields,
   submitHandler,
   badge,
+  headerBadge,
   isLoading,
   size = "md",
   buttonClassName,
@@ -43,6 +51,7 @@ const InputField = ({
   rootFormClassName,
   labelStyle,
 }: FormProps) => {
+  const t = useTranslations("changeButton");
   const [showInputs, setShowInputs] = useState(false);
 
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -95,8 +104,21 @@ const InputField = ({
             onClick={handleEditClick}
             className={`cursor-pointer  ${labelStyle}`}
           >
+            <div className="flex font-medium">
+              <span>{label}</span>
+
+              {headerBadge && (
+                <span
+                  className={`badge badge-outline badge-${headerBadge.color} ml-2`}
+                >
+                  {headerBadge.text}
+                </span>
+              )}
+            </div>
             <div>
-              <span className="font-medium">{label}</span>
+              {description ? (
+                <p className="m-0 p-0 text-xs text-gray-500">{description}</p>
+              ) : null}
             </div>
             <div className="text-gray-500">
               {placeholder ?? fields[0].placeholder}
@@ -115,7 +137,7 @@ const InputField = ({
               onClick={handleEditClick}
               className={`btn btn-${size}`}
             >
-              Change
+              {t("change")}
             </button>
           </div>
         </div>
@@ -127,7 +149,22 @@ const InputField = ({
           className={`flex w-full justify-between ${rootClassName}`}
         >
           <div>
-            <div className="font-medium">{label}</div>
+            <div className="flex font-medium">
+              <span>{label}</span>
+
+              {headerBadge && (
+                <span
+                  className={`badge badge-outline badge-${headerBadge.color} ml-2`}
+                >
+                  {headerBadge.text}
+                </span>
+              )}
+            </div>
+            <div>
+              {description ? (
+                <p className="m-0 p-0 text-xs text-gray-500">{description}</p>
+              ) : null}
+            </div>
             <div className={rootFormClassName}>
               {fields.map((field, i) => (
                 <Input
@@ -152,7 +189,7 @@ const InputField = ({
                   className={`btn btn-primary btn-${size} ${buttonClassName}`}
                   type="submit"
                 >
-                  Submit
+                  {t("submit")}
                 </button>
                 <button
                   className={`btn btn-${size} ${buttonClassName}`}
@@ -161,7 +198,7 @@ const InputField = ({
                     handleEditClick();
                   }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </button>
               </>
             )}

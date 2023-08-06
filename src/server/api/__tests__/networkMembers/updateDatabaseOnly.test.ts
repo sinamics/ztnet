@@ -5,9 +5,16 @@ import { type PrismaClient } from "@prisma/client";
 import { type AppRouter, appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
 import { type Session } from "next-auth";
-import { type ZtControllerNetwork } from "~/types/network";
 import { type inferProcedureInput } from "@trpc/server";
 import { type DeepMockProxy, mockDeep } from "jest-mock-extended";
+import { type MemberEntity } from "~/types/local/member";
+
+type TestTypes = {
+  id: string;
+  name: string;
+  nwid: string;
+  networkMembers: MemberEntity[];
+};
 
 test("updateDatabaseOnly test", async () => {
   // const prismaMock = new PrismaClient();
@@ -22,11 +29,11 @@ test("updateDatabaseOnly test", async () => {
     },
   };
 
-  const mockOutput: PartialDeep<ZtControllerNetwork> = {
+  const mockOutput: PartialDeep<TestTypes> = {
     id: "member-id",
     name: "updated name",
     nwid: "nwid-123",
-    network_members: [],
+    networkMembers: [],
   };
 
   type Input = inferProcedureInput<
@@ -56,7 +63,7 @@ test("updateDatabaseOnly test", async () => {
       nwid: input.nwid,
     },
     data: {
-      network_members: {
+      networkMembers: {
         update: {
           where: {
             id_nwid: {
@@ -71,7 +78,7 @@ test("updateDatabaseOnly test", async () => {
       },
     },
     include: {
-      network_members: {
+      networkMembers: {
         where: {
           id: input.id,
         },
@@ -79,5 +86,5 @@ test("updateDatabaseOnly test", async () => {
     },
   });
 
-  expect(result).toEqual({ member: mockOutput.network_members[0] });
+  expect(result).toEqual({ member: mockOutput.networkMembers[0] });
 });

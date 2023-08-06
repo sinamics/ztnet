@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
 import { NextIntlProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // function createTestContext(network?: Network) {
 //   return {
 //     db: prisma,
@@ -14,6 +15,7 @@ import enTranslation from "~/locales/en/common.json";
 //     network: network || null,
 //   };
 // }
+
 jest.mock("../../../utils/api", () => ({
   api: {
     network: {
@@ -81,6 +83,51 @@ jest.mock("../../../utils/api", () => ({
           mutate: jest.fn(),
         }),
       },
+      networkName: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      networkDescription: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      privatePublicNetwork: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      enableIpv4AutoAssign: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      easyIpAssignment: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      advancedIpAssignment: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      managedRoutes: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      dns: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
+      multiCast: {
+        useMutation: () => ({
+          mutate: jest.fn(),
+        }),
+      },
     },
     networkMember: {
       UpdateDatabaseOnly: {
@@ -104,8 +151,9 @@ describe("NetworkById component", () => {
   beforeAll(() => {
     process.env.NEXT_PUBLIC_NODE_ENV = "test";
   });
-
+  let queryClient: QueryClient;
   beforeEach(() => {
+    queryClient = new QueryClient();
     (useRouter as jest.Mock).mockImplementation(() => ({
       query: {
         id: "test-id",
@@ -140,6 +188,8 @@ describe("NetworkById component", () => {
             { ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
           ],
           routes: [{ target: "10.0.0.0/24" }],
+          multicastLimit: 32,
+          enableBroadcast: true,
         },
         members: [],
       },
@@ -149,9 +199,11 @@ describe("NetworkById component", () => {
     api.network.getNetworkById.useQuery = useQueryMock;
 
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     // await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 
@@ -163,18 +215,22 @@ describe("NetworkById component", () => {
 
   test("renders Network Settings divider", () => {
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     expect(screen.getByText(/Network Settings/i)).toBeInTheDocument();
   });
 
   test("renders Network Members divider", () => {
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     const matches = screen.getAllByText(/Network Members/i);
     expect(matches.length).toBe(2);
@@ -182,9 +238,11 @@ describe("NetworkById component", () => {
 
   test("renders Network Start, Network End, and Network Cidr labels", () => {
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     expect(screen.getByText(/Network Start:/i)).toBeInTheDocument();
     expect(screen.getByText(/Network End:/i)).toBeInTheDocument();
@@ -193,9 +251,11 @@ describe("NetworkById component", () => {
 
   test("renders warning message", () => {
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     expect(
       screen.getByText(
@@ -207,9 +267,11 @@ describe("NetworkById component", () => {
   test("edit network name", async () => {
     // screen.debug();
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     const editIcon = screen.getByTestId("changeNetworkName");
     await userEvent.click(editIcon);

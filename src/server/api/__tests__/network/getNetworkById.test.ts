@@ -40,8 +40,8 @@ it("should throw an error if the user is not the author of the network", async (
 // test("getNetworkById returns network and member data", async () => {
 // const prismaSpies = {
 //   findFirst: jest.spyOn(prisma.network, "findFirst"),
-//   findMany: jest.spyOn(prisma.network_members, "findMany"),
-//     deleteMany: jest.spyOn(prisma.network_members, "deleteMany"),
+//   findMany: jest.spyOn(prisma.networkMembers, "findMany"),
+//     deleteMany: jest.spyOn(prisma.networkMembers, "deleteMany"),
 //     network_delete: jest.spyOn(ztController, "network_delete"),
 //     network_detail: jest.spyOn(ztController, "network_detail"),
 // };

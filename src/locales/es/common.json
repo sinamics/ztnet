@@ -1,8 +1,15 @@
 {
+  "changeButton": {
+    "change": "Cambiar",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
+  },
   "sidebar": {
     "navigation": "Navegación",
     "dashboard": "Tablero",
-    "networks": "Redes",
+    "networks": "Controlador Local",
+    "ztCentral": "ZT Central",
     "admin": "Admin",
     "settings": "Configuraciones",
     "mail": "Correo",
@@ -332,18 +339,29 @@
       "user": "Usuario"
     },
     "account": {
-      "accountSettings": "CONFIGURACIÓN DE LA CUENTA",
-      "nameLabel": "Nombre",
-      "emailLabel": "Correo electrónico",
-      "verifiedBadge": "Verificado",
-      "notVerifiedBadge": "¡No verificado!",
-      "passwordLabel": "Contraseña",
-      "currentPasswordPlaceholder": "Contraseña actual",
-      "newPasswordPlaceholder": "Nueva contraseña",
-      "repeatNewPasswordPlaceholder": "Repetir nueva contraseña",
-      "role": "Rol",
-      "accountPreferences": "PREFERENCIAS DE LA CUENTA",
-      "languageLabel": "Idioma"
+      "accountSettings": {
+        "title": "Configuración de la Cuenta",
+        "nameLabel": "Nombre",
+        "emailLabel": "Correo Electrónico",
+        "verifiedBadge": "Verificado",
+        "notVerifiedBadge": "No Verificado",
+        "passwordLabel": "Contraseña",
+        "currentPasswordPlaceholder": "Contraseña Actual",
+        "newPasswordPlaceholder": "Nueva Contraseña",
+        "repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
+        "role": "Rol"
+      },
+      "zerotierCentral": {
+        "title": "Zerotier Central",
+        "description": "Incorporar su API central de ZeroTier le permitirá gestionar sus redes centrales directamente desde ZTNET. Al integrar la clave, aparecerá un nuevo menú en la barra lateral para mejorar la accesibilidad y el control.<br></br>Puede obtener una clave desde el portal central de ZeroTier. https://my.zerotier.com/account",
+        "apiKeyLabel": "Clave de API central de Zerotier",
+        "apiUrlLabel": "URL de la API de Zerotier",
+        "apiUrlLabelDescription": "La URL de la API central de ZeroTier, la predeterminada es https://api.zerotier.com/api/v1"
+      },
+      "accountPreferences": {
+        "title": "Preferencias de la cuenta",
+        "languageLabel": "Idioma"
+      }
     }
   }
 }

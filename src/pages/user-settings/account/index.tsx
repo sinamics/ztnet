@@ -22,6 +22,14 @@ const Account = () => {
   const { mutate: userUpdate, error: userError } =
     api.auth.update.useMutation();
 
+  const { mutate: updateZtApi } = api.settings.setZtApi.useMutation({
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+  const { data: globalOption, refetch: refetchOptions } =
+    api.admin.getAllOptions.useQuery();
+
   const ChangeLanguage = async (locale: string) => {
     await push(asPath, asPath, { locale });
     localStorage.setItem("ztnet-language", locale);
@@ -33,13 +41,13 @@ const Account = () => {
     <main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
       <div className="pb-10">
         <p className="text-[0.7rem] text-gray-400">
-          {t("account.accountSettings")}
+          {t("account.accountSettings.title").toUpperCase()}
         </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="space-y-10">
           <div>
             <InputField
-              label={t("account.nameLabel")}
+              label={t("account.accountSettings.nameLabel")}
               isLoading={!session?.user}
               rootClassName=""
               size="sm"
@@ -58,14 +66,20 @@ const Account = () => {
           </div>
           <div>
             <InputField
-              label={t("account.emailLabel")}
+              label={t("account.accountSettings.emailLabel")}
               isLoading={!session?.user}
               rootClassName=""
               size="sm"
               badge={
                 session?.user?.emailVerified
-                  ? { text: t("account.verifiedBadge"), color: "success" }
-                  : { text: t("account.notVerifiedBadge"), color: "warning" }
+                  ? {
+                      text: t("account.accountSettings.verifiedBadge"),
+                      color: "success",
+                    }
+                  : {
+                      text: t("account.accountSettings.notVerifiedBadge"),
+                      color: "warning",
+                    }
               }
               fields={[
                 {
@@ -83,7 +97,7 @@ const Account = () => {
           <div>
             <InputField
               isLoading={!session?.user}
-              label={t("account.passwordLabel")}
+              label={t("account.accountSettings.passwordLabel")}
               placeholder="******"
               size="sm"
               rootFormClassName="space-y-3 pt-2"
@@ -91,17 +105,23 @@ const Account = () => {
                 {
                   name: "password",
                   type: "password",
-                  placeholder: t("account.currentPasswordPlaceholder"),
+                  placeholder: t(
+                    "account.accountSettings.currentPasswordPlaceholder"
+                  ),
                 },
                 {
                   name: "newPassword",
                   type: "password",
-                  placeholder: t("account.newPasswordPlaceholder"),
+                  placeholder: t(
+                    "account.accountSettings.newPasswordPlaceholder"
+                  ),
                 },
                 {
                   name: "repeatNewPassword",
                   type: "password",
-                  placeholder: t("account.repeatNewPasswordPlaceholder"),
+                  placeholder: t(
+                    "account.accountSettings.repeatNewPasswordPlaceholder"
+                  ),
                 },
               ]}
               submitHandler={(params) => {
@@ -123,19 +143,103 @@ const Account = () => {
           </div>
           <div className="flex justify-between">
             <div>
-              <p className="font-medium">{t("account.role")}</p>
+              <p className="font-medium">{t("account.accountSettings.role")}</p>
               <p className="text-gray-500">{session?.user.role}</p>
             </div>
           </div>
         </div>
+
+        <div className="pt-10 text-[0.7rem] text-gray-400">
+          {t("account.zerotierCentral.title").toUpperCase()}{" "}
+          <div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
+        </div>
+        <div className="divider m-0 p-0 text-gray-500"></div>
+        <div className="form-control w-full">
+          <p className="text-sm text-gray-500">
+            {t.rich("account.zerotierCentral.description", {
+              br: () => <br />,
+            })}
+          </p>
+          <div className="pt-3">
+            <InputField
+              label="Zerotier Central API Key"
+              placeholder="******"
+              size="sm"
+              rootFormClassName="space-y-3 pt-2"
+              fields={[
+                {
+                  name: "ztCentralApiKey",
+                  type: "text",
+                  placeholder: "api key",
+                  value: globalOption?.ztCentralApiKey,
+                },
+              ]}
+              submitHandler={(params) => {
+                return new Promise((resolve, reject) => {
+                  updateZtApi(
+                    { ...params },
+                    {
+                      onSuccess: () => {
+                        void refetchOptions();
+                        resolve(true);
+                      },
+                      onError: () => {
+                        void refetchOptions();
+                        reject(false);
+                      },
+                    }
+                  );
+                });
+              }}
+            />
+          </div>
+        </div>
+        <div className="form-control w-full">
+          <div className="pt-3">
+            <InputField
+              label={t("account.zerotierCentral.apiUrlLabel")}
+              description={t("account.zerotierCentral.apiUrlLabelDescription")}
+              size="sm"
+              rootFormClassName="space-y-3 pt-2"
+              rootClassName="py-2"
+              fields={[
+                {
+                  name: "ztCentralApiUrl",
+                  type: "text",
+                  placeholder:
+                    globalOption?.ztCentralApiUrl ||
+                    "https://api.zerotier.com/api/v1",
+                  value: globalOption?.ztCentralApiUrl,
+                },
+              ]}
+              submitHandler={(params) => {
+                return new Promise((resolve, reject) => {
+                  updateZtApi(
+                    { ...params },
+                    {
+                      onSuccess: () => {
+                        void refetchOptions();
+                        resolve(true);
+                      },
+                      onError: () => {
+                        void refetchOptions();
+                        reject(false);
+                      },
+                    }
+                  );
+                });
+              }}
+            />
+          </div>
+        </div>
         <p className="pt-10 text-[0.7rem] text-gray-400">
-          {t("account.accountPreferences")}
+          {t("account.acccountPreferences.title")}
         </p>
         <div className="divider mt-0 p-0 text-gray-500"></div>
         <div className="form-control w-full max-w-xs">
           <label className="label">
             <span className="label-text font-medium">
-              {t("account.languageLabel")}
+              {t("account.acccountPreferences.languageLabel")}
             </span>
           </label>
           <select
