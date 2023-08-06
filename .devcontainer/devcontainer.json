@@ -35,7 +35,8 @@
         "austenc.tailwind-docs",
         "bourhaouta.tailwindshades",
         "Gruntfuggly.todo-tree",
-        "yoavbls.pretty-ts-errors"
+        "yoavbls.pretty-ts-errors",
+        "rome.rome"
       ]
     }
   }
