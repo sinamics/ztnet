@@ -38,7 +38,7 @@ export const networkMemberRouter = createTRPCRouter({
           memberDetails as CentralMembers
         );
       }
-      return await ctx.prisma.networkMembers.findFirst({
+      return await ctx.prisma.network_members.findFirst({
         where: {
           id: input.id,
           nwid: input.nwid,
@@ -70,7 +70,7 @@ export const networkMemberRouter = createTRPCRouter({
         });
       }
       // check if user exist in db, and if so set deleted:false
-      const member = await ctx.prisma.networkMembers.findUnique({
+      const member = await ctx.prisma.network_members.findUnique({
         where: {
           id_nwid: {
             id: input.id,
@@ -79,7 +79,7 @@ export const networkMemberRouter = createTRPCRouter({
         },
       });
       if (member) {
-        return await ctx.prisma.networkMembers.update({
+        return await ctx.prisma.network_members.update({
           where: {
             id_nwid: {
               id: input.id,
@@ -93,7 +93,7 @@ export const networkMemberRouter = createTRPCRouter({
       }
 
       // if not, create new member
-      await ctx.prisma.networkMembers.create({
+      await ctx.prisma.network_members.create({
         data: {
           id: input.id,
           authorized: false,
@@ -389,7 +389,7 @@ export const networkMemberRouter = createTRPCRouter({
 
       if (input.central) return deleted;
 
-      await ctx.prisma.networkMembers.delete({
+      await ctx.prisma.network_members.delete({
         where: {
           id_nwid: {
             id: input.id,

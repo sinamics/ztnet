@@ -55,7 +55,7 @@ enum Role {
 model network_members {
   nodeid               Int       @id @default(autoincrement())
   id                   String    
-  nwid_ref             Network   @relation(fields: [nwid], references: [nwid])
+  nwid_ref             network   @relation(fields: [nwid], references: [nwid])
   nwid                 String
   lastSeen             DateTime?
   online               Boolean?  @default(false)
@@ -80,7 +80,7 @@ model network_members {
 
   @@unique([id, nwid])
 }
-model Network {
+model network {
   nwid                        String            @id
   name                        String
   description                 String?
@@ -107,7 +107,7 @@ model Notation {
   updatedTime               DateTime      @updatedAt
   isActive                  Boolean       @default(true)
   nwid                      String
-  network                   Network       @relation(fields: [nwid], references: [nwid])
+  network                   network       @relation(fields: [nwid], references: [nwid])
   networkMembers            NetworkMemberNotation[]
   icon                      String?   
   orderIndex                Int?    
@@ -168,7 +168,7 @@ model User {
     firstTime       Boolean     @default(true)
     accounts        Account[]
     sessions        Session[]
-    network         Network[]
+    network         network[]
 }
 
 model VerificationToken {
