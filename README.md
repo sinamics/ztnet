@@ -71,7 +71,10 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 
 ## 🔥 Features
 
-🌍 Multi-Language Support  
+🔗 **ZeroTier Central API Support**  
+ZTNET integrates seamlessly with the ZeroTier Central API, allowing for enhanced management and configuration capabilities directly from our interface.
+
+🌍 **Multi-Language Support**  
 The app supports English, Spanish (ES), Norwegian (NO), and Chinese (ZH) languages for user convenience and inclusivity.
 
 🌐 **ZeroTier Network Management**  
