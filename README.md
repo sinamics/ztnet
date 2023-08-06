@@ -77,6 +77,9 @@ ZTNET integrates seamlessly with the ZeroTier Central API, allowing for enhanced
 🌍 **Multi-Language Support**  
 The app supports English, Spanish (ES), Norwegian (NO), and Chinese (ZH) languages for user convenience and inclusivity.
 
+🛠️ **Multi-Architecture Support**  
+Designed for versatility, ZTNET supports multiple architectures - ARM64 and AMD64. This ensures compatibility across a wide range of devices and systems.
+
 🌐 **ZeroTier Network Management**  
 Seamlessly create, modify, and oversee multiple ZeroTier networks.
 
