@@ -41,6 +41,7 @@ const Sidebar = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open, toggle, sidebarRef]);
+  console.log(router);
   return (
     <aside
       ref={sidebarRef}
@@ -152,7 +153,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=site-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname.includes("/admin")
+                router.pathname === "/admin" &&
+                router.query.tab === "site-setting"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -186,7 +188,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=mail-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=mail-setting"
+                router.pathname === "/admin" &&
+                router.query.tab === "mail-setting"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -223,7 +226,7 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=users"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=users"
+                router.pathname === "/admin" && router.query.tab === "users"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -252,7 +255,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=controller"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=controller"
+                router.pathname === "/admin" &&
+                router.query.tab === "controller"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -288,7 +292,8 @@ const Sidebar = (): JSX.Element => {
               href="/user-settings?tab=account"
               className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname.includes("/user-settings")
+                router.pathname === "/user-settings" &&
+                router.query.tab === "account"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}

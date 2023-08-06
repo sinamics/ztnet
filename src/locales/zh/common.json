@@ -2,7 +2,8 @@
   "changeButton": {
     "change": "更改",
     "submit": "提交",
-    "cancel": "取消"
+    "cancel": "取消",
+    "delete": "删除"
   },
   "sidebar": {
     "navigation": "导航",
