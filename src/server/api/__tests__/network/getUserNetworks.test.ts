@@ -56,7 +56,9 @@ test("getUserNetworks", async () => {
     prisma: prismaMock,
   });
 
-  const result = await caller.network.getUserNetworks();
+  const result = await caller.network.getUserNetworks({
+    central: false,
+  });
 
   expect(result).toHaveLength(mockOutput.length);
   expect(result).toStrictEqual(mockOutput);

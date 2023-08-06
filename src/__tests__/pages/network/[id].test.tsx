@@ -15,7 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 //     network: network || null,
 //   };
 // }
-const queryClient = new QueryClient();
+
 jest.mock("../../../utils/api", () => ({
   api: {
     network: {
@@ -151,8 +151,9 @@ describe("NetworkById component", () => {
   beforeAll(() => {
     process.env.NEXT_PUBLIC_NODE_ENV = "test";
   });
-
+  let queryClient: QueryClient;
   beforeEach(() => {
+    queryClient = new QueryClient();
     (useRouter as jest.Mock).mockImplementation(() => ({
       query: {
         id: "test-id",
@@ -187,6 +188,8 @@ describe("NetworkById component", () => {
             { ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
           ],
           routes: [{ target: "10.0.0.0/24" }],
+          multicastLimit: 32,
+          enableBroadcast: true,
         },
         members: [],
       },
@@ -212,9 +215,11 @@ describe("NetworkById component", () => {
 
   test("renders Network Settings divider", () => {
     render(
-      <NextIntlProvider locale="en" messages={enTranslation}>
-        <NetworkById />
-      </NextIntlProvider>
+      <QueryClientProvider client={queryClient}>
+        <NextIntlProvider locale="en" messages={enTranslation}>
+          <NetworkById />
+        </NextIntlProvider>
+      </QueryClientProvider>
     );
     expect(screen.getByText(/Network Settings/i)).toBeInTheDocument();
   });
