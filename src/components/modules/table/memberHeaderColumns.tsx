@@ -24,7 +24,7 @@ interface IProp {
 }
 
 export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
-  const t = useTranslations("networkById");
+  const t = useTranslations();
   const { callModal } = useModalStore((state) => state);
 
   const { data: networkById, refetch: refetchNetworkById } =
@@ -78,7 +78,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
         }
       ),
       columnHelper.accessor("authorized", {
-        header: () => <span>{t("networkMembersTable.column.authorized")}</span>,
+        header: () => (
+          <span>{t("networkById.networkMembersTable.column.authorized")}</span>
+        ),
         id: "authorized",
         cell: ({ getValue, row: { original } }) => {
           return (
@@ -105,28 +107,38 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
         },
       }),
       columnHelper.accessor("name", {
-        header: () => <span>{t("networkMembersTable.column.name")}</span>,
+        header: () => (
+          <span>{t("networkById.networkMembersTable.column.name")}</span>
+        ),
         id: "name",
       }),
       columnHelper.accessor("id", {
-        header: () => <span>{t("networkMembersTable.column.id")}</span>,
+        header: () => (
+          <span>{t("networkById.networkMembersTable.column.id")}</span>
+        ),
         id: "id",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("ipAssignments", {
         header: () => (
-          <span>{t("networkMembersTable.column.ipAssignments.header")}</span>
+          <span>
+            {t("networkById.networkMembersTable.column.ipAssignments.header")}
+          </span>
         ),
         id: "ipAssignments",
       }),
       columnHelper.accessor("creationTime", {
-        header: () => <span>{t("networkMembersTable.column.created")}</span>,
+        header: () => (
+          <span>{t("networkById.networkMembersTable.column.created")}</span>
+        ),
         id: "creationTime",
         cell: (info) => <TimeAgo date={info.getValue()} />,
       }),
       columnHelper.accessor("peers", {
         header: () => (
-          <span>{t("networkMembersTable.column.physicalIp.header")}</span>
+          <span>
+            {t("networkById.networkMembersTable.column.physicalIp.header")}
+          </span>
         ),
         id: "physicalAddress",
         cell: ({ getValue, row: { original } }) => {
@@ -135,7 +147,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
             if (!val || typeof val.physicalAddress !== "string")
               return (
                 <span className="text-gray-400/50">
-                  {t("networkMembersTable.column.physicalIp.unknownValue")}
+                  {t(
+                    "networkById.networkMembersTable.column.physicalIp.unknownValue"
+                  )}
                 </span>
               );
 
@@ -145,7 +159,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
           if (!val || typeof val.physicalAddress !== "string")
             return (
               <span className="text-gray-400/50">
-                {t("networkMembersTable.column.physicalIp.unknownValue")}
+                {t(
+                  "networkById.networkMembersTable.column.physicalIp.unknownValue"
+                )}
               </span>
             );
 
@@ -154,7 +170,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
       }),
       columnHelper.accessor("conStatus", {
         header: () => (
-          <span>{t("networkMembersTable.column.conStatus.header")}</span>
+          <span>
+            {t("networkById.networkMembersTable.column.conStatus.header")}
+          </span>
         ),
         id: "conStatus",
         cell: ({ row: { original } }) => {
@@ -186,7 +204,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
                   className="text-error"
                   title="User is offline"
                 >
-                  {t("networkMembersTable.column.conStatus.offline")}
+                  {t(
+                    "networkById.networkMembersTable.column.conStatus.offline"
+                  )}
                   <TimeAgo date={lastSeen} formatter={formatTime} />
                 </span>
               );
@@ -197,9 +217,11 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
               <span
                 style={cursorStyle}
                 className="cursor-pointer text-warning"
-                title={t("networkMembersTable.column.conStatus.toolTip")}
+                title={t(
+                  "networkById.networkMembersTable.column.conStatus.toolTip"
+                )}
               >
-                {t("networkMembersTable.column.conStatus.relayed")}
+                {t("networkById.networkMembersTable.column.conStatus.relayed")}
               </span>
             );
           }
@@ -210,8 +232,12 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
           ) {
             const directTitle =
               original.conStatus === ConnectionStatus.DirectLAN
-                ? t("networkMembersTable.column.conStatus.directLan")
-                : t("networkMembersTable.column.conStatus.directWan");
+                ? t(
+                    "networkById.networkMembersTable.column.conStatus.directLan"
+                  )
+                : t(
+                    "networkById.networkMembersTable.column.conStatus.directWan"
+                  );
             const versionInfo =
               original.peers && original?.peers?.version !== "-1.-1.-1"
                 ? ` (v${original.peers?.version})`
@@ -223,7 +249,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
                 className="text-success"
                 title={directTitle}
               >
-                {t("networkMembersTable.column.conStatus.direct", {
+                {t("networkById.networkMembersTable.column.conStatus.direct", {
                   version: versionInfo,
                 })}
               </span>
@@ -236,7 +262,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
               className="text-error"
               title="User is offline"
             >
-              {t("networkMembersTable.column.conStatus.offline")}
+              {t("networkById.networkMembersTable.column.conStatus.offline")}
               <TimeAgo date={original?.lastSeen} formatter={formatTime} />
             </span>
           );
@@ -244,7 +270,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
       }),
       columnHelper.accessor("action", {
         header: () => (
-          <span>{t("networkMembersTable.column.actions.header")}</span>
+          <span>
+            {t("networkById.networkMembersTable.column.actions.header")}
+          </span>
         ),
         id: "action",
         cell: ({ row: { original } }) => {
@@ -255,7 +283,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
                   callModal({
                     title: (
                       <p>
-                        {t("networkMembersTable.optionModalTitle")}{" "}
+                        {t("networkById.networkMembersTable.optionModalTitle")}{" "}
                         <span className="text-primary">{`${
                           original.name ? original.name : original.id
                         }`}</span>
@@ -273,7 +301,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
                 }
                 className="btn btn-outline btn-xs rounded-sm"
               >
-                {t("networkMembersTable.column.actions.optionBtn")}
+                {t("networkById.networkMembersTable.column.actions.optionBtn")}
               </button>
 
               {central ? (
@@ -287,14 +315,14 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
                   }
                   className="btn btn-error btn-outline btn-xs rounded-sm"
                 >
-                  Delete
+                  {t("changeButton.delete")}
                 </button>
               ) : (
                 <button
                   onClick={() => stashMember(original.id)}
                   className="btn btn-warning btn-outline btn-xs rounded-sm"
                 >
-                  {t("networkMembersTable.column.actions.stashBtn")}
+                  {t("networkById.networkMembersTable.column.actions.stashBtn")}
                 </button>
               )}
             </div>

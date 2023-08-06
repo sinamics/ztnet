@@ -2,7 +2,8 @@
   "changeButton": {
     "change": "Cambiar",
     "submit": "Enviar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
   },
   "sidebar": {
     "navigation": "Navegación",

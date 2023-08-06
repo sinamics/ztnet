@@ -2,7 +2,8 @@
   "changeButton": {
     "change": "Endre",
     "submit": "Send inn",
-    "cancel": "Avbryt"
+    "cancel": "Avbryt",
+    "delete": "Slett"
   },
   "sidebar": {
     "navigation": "Navigasjon",
