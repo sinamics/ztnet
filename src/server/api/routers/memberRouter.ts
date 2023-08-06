@@ -55,9 +55,20 @@ export const networkMemberRouter = createTRPCRouter({
               "Invalid ZeroTier network id provided. It should be a 10-digit hexadecimal number.",
           }),
         nwid: z.string({ required_error: "No network id provided!" }),
+        central: z.boolean().default(false),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.central) {
+        return await ztController.member_update({
+          nwid: input.nwid,
+          memberId: input.id,
+          central: input.central,
+          updateParams: {
+            hidden: false,
+          },
+        });
+      }
       // check if user exist in db, and if so set deleted:false
       const member = await ctx.prisma.networkMembers.findUnique({
         where: {
@@ -362,6 +373,7 @@ export const networkMemberRouter = createTRPCRouter({
     .input(
       z
         .object({
+          central: z.boolean().default(false),
           nwid: z.string({ required_error: "network ID not provided!" }),
           id: z.string({ required_error: "memberId not provided!" }),
         })
@@ -369,17 +381,19 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // remove member from controller
-      // @ts-expect-error
-      await ztController.member_delete({
+      const deleted = await ztController.member_delete({
+        central: input.central,
         nwid: input.nwid,
         memberId: input.id,
       });
+
+      if (input.central) return deleted;
 
       await ctx.prisma.networkMembers.delete({
         where: {
           id_nwid: {
             id: input.id,
-            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+            nwid: input.nwid,
           },
         },
       });

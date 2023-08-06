@@ -2,6 +2,7 @@
 export interface MemberEntity {
   id: string;
   name: string;
+  hidden: boolean;
   activeBridge: boolean;
   address: string;
   nodeId?: string;

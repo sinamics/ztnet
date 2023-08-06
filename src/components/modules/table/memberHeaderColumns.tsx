@@ -39,6 +39,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
   const { mutate: stashUser } = api.networkMember.stash.useMutation({
     onSuccess: () => refetchNetworkById(),
   });
+  const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+    onSuccess: () => refetchNetworkById(),
+  });
   const { mutate: updateMember } = api.networkMember.Update.useMutation({
     onError: (e) => {
       void toast.error(e?.message);
@@ -272,12 +275,28 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
               >
                 {t("networkMembersTable.column.actions.optionBtn")}
               </button>
-              <button
-                onClick={() => stashMember(original.id)}
-                className="btn btn-warning btn-outline btn-xs rounded-sm"
-              >
-                {t("networkMembersTable.column.actions.stashBtn")}
-              </button>
+
+              {central ? (
+                <button
+                  onClick={() =>
+                    deleteMember({
+                      central,
+                      id: original.id,
+                      nwid: original.nwid,
+                    })
+                  }
+                  className="btn btn-error btn-outline btn-xs rounded-sm"
+                >
+                  Delete
+                </button>
+              ) : (
+                <button
+                  onClick={() => stashMember(original.id)}
+                  className="btn btn-warning btn-outline btn-xs rounded-sm"
+                >
+                  {t("networkMembersTable.column.actions.stashBtn")}
+                </button>
+              )}
             </div>
           );
         },
