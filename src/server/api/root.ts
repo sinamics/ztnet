@@ -11,11 +11,11 @@ import { settingsRouter } from "./routers/settingsRouter";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  network: networkRouter,
-  networkMember: networkMemberRouter,
-  auth: authRouter,
-  admin: adminRouter,
-  settings: settingsRouter,
+	network: networkRouter,
+	networkMember: networkMemberRouter,
+	auth: authRouter,
+	admin: adminRouter,
+	settings: settingsRouter,
 });
 
 // export type definition of API

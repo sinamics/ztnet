@@ -91,7 +91,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           old.map((row, index) => {
             if (index === rowIndex) {
               return {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 ...old[rowIndex]!,
                 [columnId]: value,
               };
@@ -183,7 +182,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
                     options?.useNotationColorAsBg && notation.length > 0
                       ? {
                           backgroundColor: convertRGBtoRGBA(
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
                             (notation[0] as any)?.label?.color as string,
                             0.3
                           ),

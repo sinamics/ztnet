@@ -17,62 +17,62 @@ import { useRouter } from "next/router";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+	getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
+	Component: NextPageWithLayout;
 };
 
 const App: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, messages, ...pageProps },
+	Component,
+	pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
-  const { asPath, locale, push } = useRouter();
+	const { asPath, locale, push } = useRouter();
 
-  useEffect(() => {
-    // On component initialization, retrieve the preferred language from local storage
-    const storedLocale = localStorage.getItem("ztnet-language");
-    if (storedLocale && storedLocale !== locale) {
-      void push(asPath, asPath, { locale: storedLocale });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+	useEffect(() => {
+		// On component initialization, retrieve the preferred language from local storage
+		const storedLocale = localStorage.getItem("ztnet-language");
+		if (storedLocale && storedLocale !== locale) {
+			void push(asPath, asPath, { locale: storedLocale });
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-  useEffect(() => {
-    // Set a CSS variable to hold the window height
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
+	useEffect(() => {
+		// Set a CSS variable to hold the window height
+		const vh = window.innerHeight * 0.01;
+		document.documentElement.style.setProperty("--vh", `${vh}px`);
 
-    // Listen to the resize event and recalculate the CSS variable
-    window.addEventListener("resize", () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty("--vh", `${vh}px`);
-    });
-  }, []);
-  const getLayout = Component.getLayout ?? ((page) => page);
-  return (
-    <ThemeProvider defaultTheme="system">
-      <NextIntlClientProvider messages={messages}>
-        <Modal />
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Toaster
-          position="bottom-right"
-          toastOptions={{
-            className: "bg-primary-500",
-            style: {
-              border: "1px solid #191919",
-              color: "#fff",
-              background: "#404040",
-            },
-          }}
-        />
-        <SessionProvider session={session}>
-          {getLayout(<Component {...pageProps} />)}
-        </SessionProvider>
-      </NextIntlClientProvider>
-    </ThemeProvider>
-  );
+		// Listen to the resize event and recalculate the CSS variable
+		window.addEventListener("resize", () => {
+			const vh = window.innerHeight * 0.01;
+			document.documentElement.style.setProperty("--vh", `${vh}px`);
+		});
+	}, []);
+	const getLayout = Component.getLayout ?? ((page) => page);
+	return (
+		<ThemeProvider defaultTheme="system">
+			<NextIntlClientProvider messages={messages}>
+				<Modal />
+				<ReactQueryDevtools initialIsOpen={false} />
+				<Toaster
+					position="bottom-right"
+					toastOptions={{
+						className: "bg-primary-500",
+						style: {
+							border: "1px solid #191919",
+							color: "#fff",
+							background: "#404040",
+						},
+					}}
+				/>
+				<SessionProvider session={session}>
+					{getLayout(<Component {...pageProps} />)}
+				</SessionProvider>
+			</NextIntlClientProvider>
+		</ThemeProvider>
+	);
 };
 
 export default api.withTRPC(App);

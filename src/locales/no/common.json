@@ -1,367 +1,367 @@
 {
-  "changeButton": {
-    "change": "Endre",
-    "submit": "Send inn",
-    "cancel": "Avbryt",
-    "delete": "Slett"
-  },
-  "sidebar": {
-    "navigation": "Navigasjon",
-    "dashboard": "Dashbord",
-    "networks": "Lokal Kontroller",
-    "ztCentral": "ZT Sentral",
-    "admin": "Admin",
-    "settings": "Innstillinger",
-    "mail": "Post",
-    "users": "Brukere",
-    "controller": "ZT Kontroller",
-    "account": "Konto",
-    "user-settings": "Brukerinnstillinger",
-    "logout": "Logg ut"
-  },
-  "networks": {
-    "loading": "Laster",
-    "title": "Nettverk",
-    "description": "VPN-nettverk",
-    "addNetworkButton": "Opprett et nettverk",
-    "noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
-  },
-  "networksTable": {
-    "name": "Navn",
-    "description": "Beskrivelse",
-    "networkId": "Nettverk ID",
-    "members": "Medlemmer",
-    "networkSearchPlaceholder": "Søk etter nettverk"
-  },
-  "tableFooter": {
-    "show": "Vis",
-    "page": "Side",
-    "of": "av"
-  },
-  "modalLayout": {
-    "yesButton": "Ja",
-    "cancelButton": "Avbryt",
-    "closeButton": "Lukk"
-  },
-  "networkById": {
-    "loading": "Laster...",
-    "errorSteps": {
-      "step1": "Bekreft at ZeroTier-beholderen er operativ",
-      "step2": "Hvis andre instanser av ZeroTier er aktive lokalt, vennligst deaktiver dem da det kan forårsake konflikter."
-    },
-    "networkId": "Nettverks-ID:",
-    "networkName": "Nettverksnavn:",
-    "addDescription": "Legg til beskrivelse",
-    "descriptionPlaceholder": "Beskrivelse",
-    "networkStart": "Nettverksstart:",
-    "notSet": "ikke satt",
-    "networkEnd": "Nettverksslutt:",
-    "networkCidr": "Nettverk Cidr:",
-    "networkSettings": "Nettverksinnstillinger",
-    "networkMembers": "Nettverksmedlemmer",
-    "networkMembersAlert": {
-      "message": "Bli med på dette nettverks-ID og enheten vil automatisk bli vist"
-    },
-    "viewStashedMembers": "Se stashed medlemmer",
-    "networkActions": "Nettverksaksjoner",
-    "deleteNetwork": {
-      "title": "Slett nettverk",
-      "description": "Er du sikker på at du vil slette dette nettverket? Dette kan ikke angres og alle medlemmer vil bli slettet fra dette nettverket",
-      "yesAction": "Ja, slett det",
-      "noAction": "Nei, behold det"
-    },
-    "copyToClipboard": {
-      "title": "kopier til utklippstavlen",
-      "success": "{element} kopiert til utklippstavlen"
-    },
-    "privatePublicSwitch": {
-      "accessControllMessage": "Nettverket ditt er nå {authType}",
-      "privateCardTitle": "Privat",
-      "privateCardContent": "Hver bruker må bli autorisert av nettverksadministratoren.",
-      "publicCardTitle": "Offentlig",
-      "publicCardContent": "Alle brukere kan koble seg til dette nettverket uten autorisasjon",
-      "loading": "Laster"
-    },
-    "networkIpAssignments": {
-      "please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
-      "ip_range_already_exists": "IP-rangen eksisterer allerede",
-      "ipv4_assignment": "IPv4-tildeling",
-      "auto_assign_from_range": "Auto-Tildel fra Range",
-      "easy": "Enkel",
-      "advanced": "Avansert",
-      "delete_ip_assignment": "Slett IP-tildeling",
-      "range_start": "Range Start",
-      "range_start_placeholder": "192.168.168.1",
-      "range_end": "Range Slutt",
-      "range_end_placeholder": "192.168.168.254",
-      "submit": "Send inn"
-    },
-    "nettworkRoutes": {
-      "managedRoutesTitle": "Administrerte Ruter",
-      "noManagedRoutesTitle": "Ingen administrerte ruter definert.",
-      "noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
-      "noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
-      "destinationPlaceholder": "Destinasjon",
-      "viaPlaceholder": "mål",
-      "addButtonText": "Legg til",
-      "cancelButtonText": "Avbryt"
-    },
-    "networkDns": {
-      "DNS": "DNS",
-      "requiresZeroTierVersion": "Krever ZeroTier versjon 1.6.",
-      "clearDNS": "Tøm DNS",
-      "searchDomain": "Søk Domene",
-      "serverAddress": "Serveradresse",
-      "submit": "Send inn",
-      "servers": "Servere",
-      "addressAndDomainRequired": "Adresse og domene er påkrevd"
-    },
-    "networkMulticast": {
-      "Multicast": "Multicast",
-      "MulticastRecipientLimit": "Multicast Mottaker Limit",
-      "Submit": "Send inn",
-      "EnableBroadcast": "Aktiver Broadcast",
-      "NumberPlaceholder": "Nummer",
-      "MulticastUpdatedSuccessfully": "Multicast oppdatert vellykket"
-    },
-    "networkMembersTable": {
-      "searchPlaceholder": "Søk etter noe...",
-      "column": {
-        "authorized": "Autorisert",
-        "name": "Navn",
-        "id": "ID",
-        "ipAssignments": {
-          "header": "Administrert IP / Latency",
-          "notAssigned": "Ikke tildelt"
-        },
-        "created": "Opprettet",
-        "physicalIp": {
-          "header": "Fysisk IP",
-          "unknownValue": "Ukjent"
-        },
-        "conStatus": {
-          "header": "Tilkoblingsstatus",
-          "toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
-          "relayed": "VIDEREFORMIDLET",
-          "directLan": "Direkte LAN-tilkobling opprettet",
-          "directWan": "Direkte WAN-tilkobling opprettet",
-          "direct": "DIREKTE{version}",
-          "offline": "offline "
-        },
-        "email": "E-post",
-        "status": "Status",
-        "actions": {
-          "header": "Handlinger",
-          "optionBtn": "alternativer",
-          "stashBtn": "Stash"
-        }
-      },
-      "optionModalTitle": "Alternativer for medlem",
-      "tableRow": {
-        "updateName": "Klikk for å endre navn"
-      },
-      "toastMessages": {
-        "memberNameUpdated": "Medlemnavnet oppdatert vellykket"
-      },
-      "unauthorizedRowMessage": "Uautorisert tilgang",
-      "tableFooter": {
-        "RowsPerPage": "Rader per side",
-        "Of": "av"
-      },
-      "search": {
-        "placeholder": "Søk etter noe..."
-      }
-    },
-    "inviteMemberByMail": {
-      "title": "Epost",
-      "labelText": "E-postinvitasjonsinstruksjoner",
-      "placeholder": "ztnet@example.com",
-      "buttonText": "Inviter",
-      "loadingText": "Laster...",
-      "successMessage": "Suksess! En invitasjonsmail har blitt sendt til {email}",
-      "errorMessage": {
-        "unknownError": "En ukjent feil oppstod"
-      }
-    },
-    "addMemberById": {
-      "labelText": "Legg til medlem manuelt. Kan brukes til å gjenopprette et medlem.",
-      "memberIdInput": "Medlems ID",
-      "placeholder": "10-sifret heksadesimalt nummer",
-      "submitButton": "Legg til",
-      "error": {
-        "unknown": "En ukjent feil oppsto"
-      }
-    },
-    "memberOptionModal": {
-      "loading": {
-        "text": "Laster..."
-      },
-      "handleSumbit": {
-        "errorAssigned": "IP {target} er allerede tildelt",
-        "errorNotValidIp": "IP {target} er ikke en gyldig IP-adresse"
-      },
-      "ipAssignment": {
-        "header": "IP-tildeling",
-        "description": "Legg til eller fjern en IP-adresse for dette medlemmet."
-      },
-      "deleteIpAssignment": {
-        "title": "Slett IP-tildeling"
-      },
-      "addressInput": {
-        "label": "Adresse"
-      },
-      "addButton": {
-        "text": "Legg til"
-      },
-      "allowEthernetBridging": {
-        "header": "Tillat Ethernet-bro",
-        "description": "Bro krever ytterligere oppsett på enheten. Se manualen og kunnskapsbasen for mer informasjon. Mobile enheter kan ikke være broer."
-      },
-      "doNotAutoAssignIPs": {
-        "header": "Ikke tildel IPs automatisk",
-        "description": "Dette vil deaktivere muligheten til å tildele IP-adresser automatisk til dette medlemmet."
-      },
-      "capabilities": {
-        "header": "Egenskaper:"
-      },
-      "tags": {
-        "header": "Tags:"
-      },
-      "anotation": {
-        "header": "Anotasjon",
-        "description": "Forbedre din medlemsorganisasjon ved å legge til notater",
-        "placeholder": "Legg til Notat"
-      }
-    }
-  },
-  "admin": {
-    "tabs": {
-      "settings": "Innstillinger",
-      "network": "Nettverk",
-      "mail": "Post",
-      "users": "Brukere",
-      "notification": "Varsling",
-      "controller": "Kontroller"
-    },
-    "settings": {
-      "authentication": "Autentisering",
-      "enableUserRegistration": "Aktiver brukerregistrering?",
-      "application": "Applikasjon",
-      "version": "Versjon",
-      "developerMode": "utviklermodus"
-    },
-    "networkSetting": {
-      "memberAnotations": "Medlemsanmerkninger",
-      "showMarkerInTable": "Vis markør i tabellen",
-      "showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
-      "addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
-      "addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
-    },
-    "mail": {
-      "mailSMTP": "Mail SMTP",
-      "smtpHost": "SMTP-vert",
-      "smtpPort": "SMTP-port",
-      "senderEmail": "Avsenders e-post",
-      "mailPlaceholder": "post@eksempel.com",
-      "username": "Brukernavn",
-      "password": "Passord",
-      "useSSL": "Bruk SSL",
-      "inviteUserTemplate": "Inviter bruker mal",
-      "forgotPasswordTemplate": "Glemt passord mal",
-      "notificationTemplate": "Varslings mal",
-      "templates": {
-        "availableTags": "Tilgjengelige merker:",
-        "subject": "Emne",
-        "inputPlaceholderSubject": "Emne",
-        "htmlBody": "HTML Kropp",
-        "textareaPlaceholderBody": "Postmal",
-        "saveTemplateButton": "Lagre mal",
-        "resetButton": "Tilbakestill",
-        "sendTestMailButton": "Send testmail",
-        "sendTestMailButtonLoading": "Arbeider...",
-        "errorFields": "Vennligst fyll ut alle feltene",
-        "successToastMailSent": "E-post sendt",
-        "successToastTemplateSaved": "Mal lagret"
-      }
-    },
-    "users": {
-      "table": {
-        "id": "ID",
-        "memberName": "Medlemsnavn",
-        "email": "E-post",
-        "emailVerified": "E-post verifisert",
-        "role": "Rolle",
-        "emailVerifiedYes": "Ja",
-        "emailVerifiedNo": "Nei"
-      },
-      "roleDescriptions": {
-        "admin": "Som administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
-        "user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
-      },
-      "changeRoleModal": {
-        "title": "Endre rolle for {name}"
-      },
-      "toastMessages": {
-        "roleChangeSuccess": "Rollen er endret",
-        "errorOccurred": "En ukjent feil oppsto"
-      }
-    },
-    "notification": {
-      "authentication": "Autentisering",
-      "whenUserRegister": "Når en bruker registrerer seg",
-      "allAdminsNotification": "Alle administratorer vil få varsler"
-    },
-    "controller": {
-      "networkMembers": {
-        "title": "Nettverk & Medlemmer",
-        "totalNetworks": "Totalt nettverk:",
-        "totalMembers": "Totalt medlemmer:"
-      },
-      "management": {
-        "title": "Styring",
-        "allowManagementFrom": "Tillat styring fra:",
-        "allowTcpFallbackRelay": "Tillat TCP Fallback Relay:",
-        "listeningOn": "Lytter på:"
-      },
-      "controllerStatus": {
-        "title": "Kontrollerstatus",
-        "online": "Online:",
-        "tcpFallbackActive": "TCP Fallback er aktiv:",
-        "version": "Versjon:"
-      },
-      "yes": "Ja",
-      "no": "Nei"
-    }
-  },
-  "userSettings": {
-    "tabs": {
-      "account": "Konto",
-      "user": "Bruker"
-    },
-    "account": {
-      "accountSettings": {
-        "title": "Konto Innstillinger",
-        "nameLabel": "Navn",
-        "emailLabel": "E-post",
-        "verifiedBadge": "Bekreftet",
-        "notVerifiedBadge": "Ikke Bekreftet",
-        "passwordLabel": "Passord",
-        "currentPasswordPlaceholder": "Nåværende Passord",
-        "newPasswordPlaceholder": "Nytt Passord",
-        "repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
-        "role": "Rolle"
-      },
-      "zerotierCentral": {
-        "title": "Zerotier Central",
-        "description": "Ved å integrere din ZeroTier Central API vil du kunne administrere dine sentrale nettverk direkte fra ZTNET. Når du integrerer nøkkelen, vil en ny meny dukke opp i sidemenyen for økt tilgjengelighet og kontroll.<br></br>Du kan skaffe en nøkkel fra ZeroTier Central portal. https://my.zerotier.com/account",
-        "apiKeyLabel": "Zerotier Central API-nøkkel",
-        "apiUrlLabel": "Zerotier API-URL",
-        "apiUrlLabelDescription": "URL-en til ZeroTier Central API, standard er https://api.zerotier.com/api/v1"
-      },
-      "accountPreferences": {
-        "title": "Kontoinnstillinger",
-        "languageLabel": "Språk"
-      }
-    }
-  }
+	"changeButton": {
+		"change": "Endre",
+		"submit": "Send inn",
+		"cancel": "Avbryt",
+		"delete": "Slett"
+	},
+	"sidebar": {
+		"navigation": "Navigasjon",
+		"dashboard": "Dashbord",
+		"networks": "Lokal Kontroller",
+		"ztCentral": "ZT Sentral",
+		"admin": "Admin",
+		"settings": "Innstillinger",
+		"mail": "Post",
+		"users": "Brukere",
+		"controller": "ZT Kontroller",
+		"account": "Konto",
+		"user-settings": "Brukerinnstillinger",
+		"logout": "Logg ut"
+	},
+	"networks": {
+		"loading": "Laster",
+		"title": "Nettverk",
+		"description": "VPN-nettverk",
+		"addNetworkButton": "Opprett et nettverk",
+		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
+	},
+	"networksTable": {
+		"name": "Navn",
+		"description": "Beskrivelse",
+		"networkId": "Nettverk ID",
+		"members": "Medlemmer",
+		"networkSearchPlaceholder": "Søk etter nettverk"
+	},
+	"tableFooter": {
+		"show": "Vis",
+		"page": "Side",
+		"of": "av"
+	},
+	"modalLayout": {
+		"yesButton": "Ja",
+		"cancelButton": "Avbryt",
+		"closeButton": "Lukk"
+	},
+	"networkById": {
+		"loading": "Laster...",
+		"errorSteps": {
+			"step1": "Bekreft at ZeroTier-beholderen er operativ",
+			"step2": "Hvis andre instanser av ZeroTier er aktive lokalt, vennligst deaktiver dem da det kan forårsake konflikter."
+		},
+		"networkId": "Nettverks-ID:",
+		"networkName": "Nettverksnavn:",
+		"addDescription": "Legg til beskrivelse",
+		"descriptionPlaceholder": "Beskrivelse",
+		"networkStart": "Nettverksstart:",
+		"notSet": "ikke satt",
+		"networkEnd": "Nettverksslutt:",
+		"networkCidr": "Nettverk Cidr:",
+		"networkSettings": "Nettverksinnstillinger",
+		"networkMembers": "Nettverksmedlemmer",
+		"networkMembersAlert": {
+			"message": "Bli med på dette nettverks-ID og enheten vil automatisk bli vist"
+		},
+		"viewStashedMembers": "Se stashed medlemmer",
+		"networkActions": "Nettverksaksjoner",
+		"deleteNetwork": {
+			"title": "Slett nettverk",
+			"description": "Er du sikker på at du vil slette dette nettverket? Dette kan ikke angres og alle medlemmer vil bli slettet fra dette nettverket",
+			"yesAction": "Ja, slett det",
+			"noAction": "Nei, behold det"
+		},
+		"copyToClipboard": {
+			"title": "kopier til utklippstavlen",
+			"success": "{element} kopiert til utklippstavlen"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Nettverket ditt er nå {authType}",
+			"privateCardTitle": "Privat",
+			"privateCardContent": "Hver bruker må bli autorisert av nettverksadministratoren.",
+			"publicCardTitle": "Offentlig",
+			"publicCardContent": "Alle brukere kan koble seg til dette nettverket uten autorisasjon",
+			"loading": "Laster"
+		},
+		"networkIpAssignments": {
+			"please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
+			"ip_range_already_exists": "IP-rangen eksisterer allerede",
+			"ipv4_assignment": "IPv4-tildeling",
+			"auto_assign_from_range": "Auto-Tildel fra Range",
+			"easy": "Enkel",
+			"advanced": "Avansert",
+			"delete_ip_assignment": "Slett IP-tildeling",
+			"range_start": "Range Start",
+			"range_start_placeholder": "192.168.168.1",
+			"range_end": "Range Slutt",
+			"range_end_placeholder": "192.168.168.254",
+			"submit": "Send inn"
+		},
+		"nettworkRoutes": {
+			"managedRoutesTitle": "Administrerte Ruter",
+			"noManagedRoutesTitle": "Ingen administrerte ruter definert.",
+			"noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
+			"noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
+			"destinationPlaceholder": "Destinasjon",
+			"viaPlaceholder": "mål",
+			"addButtonText": "Legg til",
+			"cancelButtonText": "Avbryt"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Krever ZeroTier versjon 1.6.",
+			"clearDNS": "Tøm DNS",
+			"searchDomain": "Søk Domene",
+			"serverAddress": "Serveradresse",
+			"submit": "Send inn",
+			"servers": "Servere",
+			"addressAndDomainRequired": "Adresse og domene er påkrevd"
+		},
+		"networkMulticast": {
+			"Multicast": "Multicast",
+			"MulticastRecipientLimit": "Multicast Mottaker Limit",
+			"Submit": "Send inn",
+			"EnableBroadcast": "Aktiver Broadcast",
+			"NumberPlaceholder": "Nummer",
+			"MulticastUpdatedSuccessfully": "Multicast oppdatert vellykket"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Søk etter noe...",
+			"column": {
+				"authorized": "Autorisert",
+				"name": "Navn",
+				"id": "ID",
+				"ipAssignments": {
+					"header": "Administrert IP / Latency",
+					"notAssigned": "Ikke tildelt"
+				},
+				"created": "Opprettet",
+				"physicalIp": {
+					"header": "Fysisk IP",
+					"unknownValue": "Ukjent"
+				},
+				"conStatus": {
+					"header": "Tilkoblingsstatus",
+					"toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
+					"relayed": "VIDEREFORMIDLET",
+					"directLan": "Direkte LAN-tilkobling opprettet",
+					"directWan": "Direkte WAN-tilkobling opprettet",
+					"direct": "DIREKTE{version}",
+					"offline": "offline "
+				},
+				"email": "E-post",
+				"status": "Status",
+				"actions": {
+					"header": "Handlinger",
+					"optionBtn": "alternativer",
+					"stashBtn": "Stash"
+				}
+			},
+			"optionModalTitle": "Alternativer for medlem",
+			"tableRow": {
+				"updateName": "Klikk for å endre navn"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "Medlemnavnet oppdatert vellykket"
+			},
+			"unauthorizedRowMessage": "Uautorisert tilgang",
+			"tableFooter": {
+				"RowsPerPage": "Rader per side",
+				"Of": "av"
+			},
+			"search": {
+				"placeholder": "Søk etter noe..."
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Epost",
+			"labelText": "E-postinvitasjonsinstruksjoner",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Inviter",
+			"loadingText": "Laster...",
+			"successMessage": "Suksess! En invitasjonsmail har blitt sendt til {email}",
+			"errorMessage": {
+				"unknownError": "En ukjent feil oppstod"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Legg til medlem manuelt. Kan brukes til å gjenopprette et medlem.",
+			"memberIdInput": "Medlems ID",
+			"placeholder": "10-sifret heksadesimalt nummer",
+			"submitButton": "Legg til",
+			"error": {
+				"unknown": "En ukjent feil oppsto"
+			}
+		},
+		"memberOptionModal": {
+			"loading": {
+				"text": "Laster..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} er allerede tildelt",
+				"errorNotValidIp": "IP {target} er ikke en gyldig IP-adresse"
+			},
+			"ipAssignment": {
+				"header": "IP-tildeling",
+				"description": "Legg til eller fjern en IP-adresse for dette medlemmet."
+			},
+			"deleteIpAssignment": {
+				"title": "Slett IP-tildeling"
+			},
+			"addressInput": {
+				"label": "Adresse"
+			},
+			"addButton": {
+				"text": "Legg til"
+			},
+			"allowEthernetBridging": {
+				"header": "Tillat Ethernet-bro",
+				"description": "Bro krever ytterligere oppsett på enheten. Se manualen og kunnskapsbasen for mer informasjon. Mobile enheter kan ikke være broer."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "Ikke tildel IPs automatisk",
+				"description": "Dette vil deaktivere muligheten til å tildele IP-adresser automatisk til dette medlemmet."
+			},
+			"capabilities": {
+				"header": "Egenskaper:"
+			},
+			"tags": {
+				"header": "Tags:"
+			},
+			"anotation": {
+				"header": "Anotasjon",
+				"description": "Forbedre din medlemsorganisasjon ved å legge til notater",
+				"placeholder": "Legg til Notat"
+			}
+		}
+	},
+	"admin": {
+		"tabs": {
+			"settings": "Innstillinger",
+			"network": "Nettverk",
+			"mail": "Post",
+			"users": "Brukere",
+			"notification": "Varsling",
+			"controller": "Kontroller"
+		},
+		"settings": {
+			"authentication": "Autentisering",
+			"enableUserRegistration": "Aktiver brukerregistrering?",
+			"application": "Applikasjon",
+			"version": "Versjon",
+			"developerMode": "utviklermodus"
+		},
+		"networkSetting": {
+			"memberAnotations": "Medlemsanmerkninger",
+			"showMarkerInTable": "Vis markør i tabellen",
+			"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+			"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
+			"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
+		},
+		"mail": {
+			"mailSMTP": "Mail SMTP",
+			"smtpHost": "SMTP-vert",
+			"smtpPort": "SMTP-port",
+			"senderEmail": "Avsenders e-post",
+			"mailPlaceholder": "post@eksempel.com",
+			"username": "Brukernavn",
+			"password": "Passord",
+			"useSSL": "Bruk SSL",
+			"inviteUserTemplate": "Inviter bruker mal",
+			"forgotPasswordTemplate": "Glemt passord mal",
+			"notificationTemplate": "Varslings mal",
+			"templates": {
+				"availableTags": "Tilgjengelige merker:",
+				"subject": "Emne",
+				"inputPlaceholderSubject": "Emne",
+				"htmlBody": "HTML Kropp",
+				"textareaPlaceholderBody": "Postmal",
+				"saveTemplateButton": "Lagre mal",
+				"resetButton": "Tilbakestill",
+				"sendTestMailButton": "Send testmail",
+				"sendTestMailButtonLoading": "Arbeider...",
+				"errorFields": "Vennligst fyll ut alle feltene",
+				"successToastMailSent": "E-post sendt",
+				"successToastTemplateSaved": "Mal lagret"
+			}
+		},
+		"users": {
+			"table": {
+				"id": "ID",
+				"memberName": "Medlemsnavn",
+				"email": "E-post",
+				"emailVerified": "E-post verifisert",
+				"role": "Rolle",
+				"emailVerifiedYes": "Ja",
+				"emailVerifiedNo": "Nei"
+			},
+			"roleDescriptions": {
+				"admin": "Som administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
+				"user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
+			},
+			"changeRoleModal": {
+				"title": "Endre rolle for {name}"
+			},
+			"toastMessages": {
+				"roleChangeSuccess": "Rollen er endret",
+				"errorOccurred": "En ukjent feil oppsto"
+			}
+		},
+		"notification": {
+			"authentication": "Autentisering",
+			"whenUserRegister": "Når en bruker registrerer seg",
+			"allAdminsNotification": "Alle administratorer vil få varsler"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "Nettverk & Medlemmer",
+				"totalNetworks": "Totalt nettverk:",
+				"totalMembers": "Totalt medlemmer:"
+			},
+			"management": {
+				"title": "Styring",
+				"allowManagementFrom": "Tillat styring fra:",
+				"allowTcpFallbackRelay": "Tillat TCP Fallback Relay:",
+				"listeningOn": "Lytter på:"
+			},
+			"controllerStatus": {
+				"title": "Kontrollerstatus",
+				"online": "Online:",
+				"tcpFallbackActive": "TCP Fallback er aktiv:",
+				"version": "Versjon:"
+			},
+			"yes": "Ja",
+			"no": "Nei"
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Konto",
+			"user": "Bruker"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Konto Innstillinger",
+				"nameLabel": "Navn",
+				"emailLabel": "E-post",
+				"verifiedBadge": "Bekreftet",
+				"notVerifiedBadge": "Ikke Bekreftet",
+				"passwordLabel": "Passord",
+				"currentPasswordPlaceholder": "Nåværende Passord",
+				"newPasswordPlaceholder": "Nytt Passord",
+				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
+				"role": "Rolle"
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Ved å integrere din ZeroTier Central API vil du kunne administrere dine sentrale nettverk direkte fra ZTNET. Når du integrerer nøkkelen, vil en ny meny dukke opp i sidemenyen for økt tilgjengelighet og kontroll.<br></br>Du kan skaffe en nøkkel fra ZeroTier Central portal. https://my.zerotier.com/account",
+				"apiKeyLabel": "Zerotier Central API-nøkkel",
+				"apiUrlLabel": "Zerotier API-URL",
+				"apiUrlLabelDescription": "URL-en til ZeroTier Central API, standard er https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Kontoinnstillinger",
+				"languageLabel": "Språk"
+			}
+		}
+	}
 }
