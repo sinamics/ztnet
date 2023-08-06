@@ -17,7 +17,6 @@ import TableFooter from "../tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { MemberHeaderColumns } from "./memberHeaderColumns";
-import { type NetworkMemberNotation } from "~/types/local/member";
 import MemberEditCell from "./memberEditCell";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
@@ -169,8 +168,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
           {
             // Loop over the table rows
             table.getRowModel().rows.map((row) => {
-              const notation = row.original
-                ?.notations as NetworkMemberNotation[];
+              const notation = row.original?.notations;
               return (
                 <tr
                   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
