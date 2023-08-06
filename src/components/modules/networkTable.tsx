@@ -14,7 +14,7 @@ import {
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { useTranslations } from "next-intl";
-import { type NetworkMembers } from "@prisma/client";
+import { type network_members } from "@prisma/client";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -47,8 +47,8 @@ export const NetworkTable = ({ tableData = [] }) => {
     name: string;
     description: string;
     nwid: string;
-    members: NetworkMembers[];
-    networkMembers: NetworkMembers[];
+    members: network_members[];
+    networkMembers: network_members[];
   };
   const columnHelper = createColumnHelper<ColumnsType>();
   const columns = useMemo(
