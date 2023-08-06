@@ -82,8 +82,8 @@ model network_members {
 }
 model network {
   nwid                        String            @id
-  name                        String
-  description                 String?
+  name                        String?         
+  description                 String?       
   creationTime                DateTime?
   lastModifiedTime            DateTime?
   flowRule                    String?
