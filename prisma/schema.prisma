@@ -52,7 +52,7 @@ enum Role {
   ADMIN
 }
 
-model NetworkMembers {
+model network_members {
   nodeid               Int       @id @default(autoincrement())
   id                   String    
   nwid_ref             Network   @relation(fields: [nwid], references: [nwid])
@@ -94,7 +94,7 @@ model Network {
   tagsByName                  Json?
   capabilitiesByName          Json?
 
-  networkMembers              NetworkMembers[]
+  networkMembers              network_members[]
   notations                   Notation[]
 }
 
@@ -120,7 +120,7 @@ model NetworkMemberNotation {
   notationId            Int
   nodeid                Int
   label                 Notation          @relation(fields: [notationId], references: [id])
-  member                NetworkMembers    @relation(fields: [nodeid], references: [nodeid])
+  member                network_members    @relation(fields: [nodeid], references: [nodeid])
   @@id([notationId, nodeid])
 }
 
