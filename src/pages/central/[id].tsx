@@ -39,8 +39,8 @@ const CentralNetworkById = () => {
     {
       nwid: query.id as string,
       central: true,
-    }
-    // { enabled: !!query.id, refetchInterval: 10000 }
+    },
+    { enabled: !!query.id, refetchInterval: 15000 }
   );
 
   if (loadingNetwork) {

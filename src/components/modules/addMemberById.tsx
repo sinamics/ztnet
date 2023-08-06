@@ -74,6 +74,7 @@ export const AddMemberById = ({ central = false }: IProp) => {
                 {
                   id: user.memberid,
                   nwid: query.id as string,
+                  central,
                 },
                 { onSuccess: () => setUser({ memberid: "" }) }
               );
