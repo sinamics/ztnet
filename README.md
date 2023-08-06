@@ -71,7 +71,7 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 
 ## 🔥 Features
 
-🔗 **ZeroTier Central API Support**  
+🍬 **ZeroTier Central API Support**  
 ZTNET integrates seamlessly with the ZeroTier Central API, allowing for enhanced management and configuration capabilities directly from our interface.
 
 🌍 **Multi-Language Support**  
