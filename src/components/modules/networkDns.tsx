@@ -6,7 +6,11 @@ import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
 
-export const NetworkDns = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkDns = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
     address: "",
@@ -22,11 +26,12 @@ export const NetworkDns = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central,
     },
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
+  const { mutate: updateNetwork } = api.network.dns.useMutation({
     onError: (e) => {
       if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
         void toast.error(
@@ -40,7 +45,7 @@ export const NetworkDns = () => {
 
   useEffect(() => {
     if (
-      !networkByIdQuery.network?.dns ||
+      !networkByIdQuery?.network?.dns ||
       !Array.isArray(networkByIdQuery?.network?.dns.servers)
     )
       return;
@@ -50,7 +55,7 @@ export const NetworkDns = () => {
       servers:
         new Set([...networkByIdQuery?.network?.dns.servers]) || new Set(),
     }));
-  }, [networkByIdQuery.network.dns]);
+  }, [networkByIdQuery?.network.dns]);
 
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
@@ -66,6 +71,32 @@ export const NetworkDns = () => {
     setState({ ...state, [e.target.name]: e.target.value });
   };
 
+  const updateDns = (servers: string[]) => {
+    updateNetwork(
+      {
+        nwid: network.nwid,
+        central,
+        updateParams: {
+          dns: {
+            domain: state.domain,
+            servers,
+          },
+        },
+      },
+      {
+        onSuccess: () => {
+          void refetchNetwork();
+          toast.success("DNS updated successfully");
+          setState((prev) => ({
+            ...prev,
+            servers: new Set(servers),
+            address: "",
+          }));
+        },
+      }
+    );
+  };
+
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
     // add toast notification if address or domain is empty
@@ -73,27 +104,19 @@ export const NetworkDns = () => {
       return toast.error(t("networkDns.addressAndDomainRequired"));
     }
 
-    updateNetwork(
-      {
-        nwid: network.nwid,
-        updateParams: {
-          dns: {
-            domain: state.domain,
-            address: state.address,
-          },
-        },
-      },
-      {
-        onSuccess: () => {
-          void refetchNetwork();
-          setState({ ...state, address: "" });
-        },
-      }
-    );
+    // Generate an array with all the servers (old and new ones)
+    const servers = [...state.servers, state.address];
+    updateDns(servers);
   };
 
-  const { network } = networkByIdQuery;
-  // console.log(state.servers);
+  const removeDnsServer = (dnsToRemove: string) => {
+    const newServers = Array.from(state.servers).filter(
+      (dns) => dns !== dnsToRemove
+    );
+    updateDns(newServers);
+  };
+
+  const { network } = networkByIdQuery || {};
   return (
     <>
       <div
@@ -103,36 +126,68 @@ export const NetworkDns = () => {
         <input type="checkbox" />
         <div className="collapse-title">{t("networkDns.DNS")}</div>
         <div className="collapse-content" style={{ width: "100%" }}>
-          <div className="flex">
-            <div>
-              <p className="text-xs text-gray-300">
-                {t("networkDns.requiresZeroTierVersion")}
-              </p>
-            </div>
-            <div className="mx-auto flex">
-              {Array.from(state.servers).length > 0 ? (
-                <button
-                  onClick={() =>
-                    updateNetwork(
-                      {
-                        nwid: network.nwid,
-                        updateParams: {
-                          removeDns: true,
+          <p className="text-xs text-gray-300">
+            {t("networkDns.requiresZeroTierVersion")}
+          </p>
+
+          <div>
+            {Array.from(state.servers).length > 0 ? (
+              <p>{t("networkDns.servers")}</p>
+            ) : null}
+            <div className="flex justify-between">
+              <div className="flex flex-wrap gap-3">
+                {Array.from(state.servers).map((dns, idx: number) => (
+                  <div key={idx} className="form-control flex">
+                    <div className="text-md badge badge-primary label-text badge-lg gap-2 rounded-md opacity-80">
+                      {dns}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                        className="h-5 w-5 cursor-pointer"
+                        // onClick={() => !isUpdating && deleteRoute(route)}
+                        onClick={() => removeDnsServer(dns)}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mx-auto flex">
+                {Array.from(state.servers).length > 0 ? (
+                  <button
+                    onClick={() =>
+                      updateNetwork(
+                        {
+                          nwid: network.nwid,
+                          central,
+                          clearDns: true,
                         },
-                      },
-                      {
-                        onSuccess: () => {
-                          void refetchNetwork();
-                          setState({ ...state });
-                        },
-                      }
-                    )
-                  }
-                  className="btn btn-warning btn-outline btn-xs"
-                >
-                  {t("networkDns.clearDNS")}
-                </button>
-              ) : null}
+                        {
+                          onSuccess: () => {
+                            void refetchNetwork();
+                            setState((prev) => ({
+                              ...prev,
+                              servers: new Set<string>(),
+                              address: "",
+                            }));
+                          },
+                        }
+                      )
+                    }
+                    className="btn btn-warning btn-outline btn-xs"
+                  >
+                    {t("networkDns.clearDNS")}
+                  </button>
+                ) : null}
+              </div>
             </div>
           </div>
           <div>
@@ -176,20 +231,6 @@ export const NetworkDns = () => {
                 {t("networkDns.submit")}
               </button>
             </form>
-            <div>
-              {Array.from(state.servers).length > 0 ? (
-                <p>{t("networkDns.servers")}</p>
-              ) : null}
-              <div className="flex flex-wrap gap-3">
-                {Array.from(state.servers).map((dns, idx: number) => (
-                  <div key={idx} className="form-control">
-                    <span className="text-md badge badge-ghost label-text badge-lg  rounded-md opacity-80">
-                      {dns}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>

@@ -1,8 +1,15 @@
 {
+  "changeButton": {
+    "change": "Change",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
   "sidebar": {
     "navigation": "Navigation",
     "dashboard": "Dashboard",
-    "networks": "Networks",
+    "networks": "Local Controller",
+    "ztCentral": "ZT Central",
     "admin": "Admin",
     "settings": "Settings",
     "mail": "Mail",
@@ -332,18 +339,29 @@
       "user": "User"
     },
     "account": {
-      "accountSettings": "ACCOUNT SETTINGS",
-      "nameLabel": "Name",
-      "emailLabel": "Email",
-      "verifiedBadge": "Verified",
-      "notVerifiedBadge": "Not Verified!",
-      "passwordLabel": "Password",
-      "currentPasswordPlaceholder": "Current Password",
-      "newPasswordPlaceholder": "New Password",
-      "repeatNewPasswordPlaceholder": "Repeat New Password",
-      "role": "Role",
-      "accountPreferences": "ACCOUNT PREFERENCES",
-      "languageLabel": "Language"
+      "accountSettings": {
+        "title": "Account Settings",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "verifiedBadge": "Verified",
+        "notVerifiedBadge": "Not Verified",
+        "passwordLabel": "Password",
+        "currentPasswordPlaceholder": "Current Password",
+        "newPasswordPlaceholder": "New Password",
+        "repeatNewPasswordPlaceholder": "Repeat New Password",
+        "role": "Role"
+      },
+      "zerotierCentral": {
+        "title": "Zerotier Central",
+        "description": "Incorporating your ZeroTier Central API will enable you to manage your central networks directly from ZTNET. Upon integrating the key, a new menu will appear in the sidebar for enhanced accessibility and control.<br></br>You can obtain a key from the ZeroTier Central portal. https://my.zerotier.com/account",
+        "apiKeyLabel": "Zerotier Central API Key",
+        "apiUrlLabel": "Zerotier API Url",
+        "apiUrlLabelDescription": "The url of the ZeroTier Central API, Default is https://api.zerotier.com/api/v1"
+      },
+      "acccountPreferences": {
+        "title": "Account Preferences",
+        "languageLabel": "Language"
+      }
     }
   }
 }

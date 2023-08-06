@@ -2,15 +2,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/modules/networkRoutes";
-import { NetworkMembersTable } from "~/components/modules/networkMembersTable";
+import { NetworkMembersTable } from "~/components/modules/table/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
 import { AddMemberById } from "~/components/modules/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
-import EditIcon from "~/icons/edit";
-import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
@@ -22,6 +20,8 @@ import NetworkHelpText from "~/components/modules/networkHelp";
 import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next/types";
+import NetworkName from "~/components/modules/networkName";
+import NetworkDescription from "~/components/modules/networkDescription";
 
 const NetworkById = () => {
   const t = useTranslations("networkById");
@@ -39,18 +39,12 @@ const NetworkById = () => {
     data: networkById,
     isLoading: loadingNetwork,
     error: errorNetwork,
-    refetch: refetchNetwork,
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
     },
     { enabled: !!query.id, refetchInterval: 10000 }
   );
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
-    onError: (e) => {
-      void toast.error(e?.message);
-    },
-  });
 
   useEffect(() => {
     setState((prev) => ({
@@ -60,12 +54,7 @@ const NetworkById = () => {
     }));
   }, [networkById?.network?.description, networkById?.network?.name]);
 
-  const toggleDescriptionInput = () => {
-    setState({
-      ...state,
-      toggleDescriptionInput: !state.toggleDescriptionInput,
-    });
-  };
+  const { network, members = [] } = networkById || {};
   if (loadingNetwork) {
     // add loading progress bar to center of page, vertially and horizontally
     return (
@@ -76,29 +65,6 @@ const NetworkById = () => {
       </div>
     );
   }
-
-  const { network, members = [] } = networkById || {};
-  const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    updateNetwork(
-      {
-        nwid: network.nwid,
-        updateParams: { name: state?.networkName },
-      },
-      {
-        onSuccess: () => {
-          void refetchNetwork();
-          setState({ ...state, editNetworkName: false });
-        },
-      }
-    );
-  };
-  const eventHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setState({ ...state, [e.target.name]: e.target.value });
-  };
-
   if (errorNetwork) {
     return (
       <div className="flex flex-col items-center justify-center">
@@ -112,7 +78,6 @@ const NetworkById = () => {
       </div>
     );
   }
-
   return (
     <div>
       <div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
@@ -140,102 +105,14 @@ const NetworkById = () => {
                 </CopyToClipboard>
               </span>
             </div>
-            <div className="flex flex-col justify-between sm:flex-row">
-              <span className="font-medium">{t("networkName")}</span>
-              <span className="relative left-7 flex items-center gap-2">
-                {state.editNetworkName ? (
-                  <form onSubmit={changeNameHandler}>
-                    <Input
-                      focus
-                      name="networkName"
-                      onChange={eventHandler}
-                      defaultValue={network?.name}
-                      type="text"
-                      placeholder={network?.name}
-                      className="input-bordered input-primary input-xs"
-                    />
-                  </form>
-                ) : (
-                  network?.name
-                )}
-                <EditIcon
-                  data-testid="changeNetworkName"
-                  className="hover:text-opacity-50"
-                  onClick={() =>
-                    setState({
-                      ...state,
-                      editNetworkName: !state.editNetworkName,
-                    })
-                  }
-                />
-              </span>
-            </div>
-            <div className="py-3 font-light">
-              {!state.toggleDescriptionInput ? (
-                network?.description ? (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {network?.description}
-                  </div>
-                ) : (
-                  <div
-                    onClick={toggleDescriptionInput}
-                    className="cursor-pointer border-l-4 border-primary p-2 leading-snug"
-                    style={{ caretColor: "transparent" }}
-                  >
-                    {t("addDescription")}
-                  </div>
-                )
-              ) : (
-                <form>
-                  <textarea
-                    autoFocus
-                    rows={3}
-                    value={state?.description}
-                    name="description"
-                    onChange={eventHandler}
-                    maxLength={255}
-                    style={{ maxHeight: "100px" }}
-                    className="custom-scrollbar textarea textarea-primary w-full leading-snug "
-                    placeholder={t("descriptionPlaceholder")}
-                    onKeyDown={(
-                      e: React.KeyboardEvent<HTMLTextAreaElement>
-                    ) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        // submit form when Enter key is pressed and Shift key is not held down.
-                        const target = e.target as HTMLTextAreaElement;
-                        updateNetwork(
-                          {
-                            nwid: network.nwid,
-                            updateParams: { description: target.value },
-                          },
-                          {
-                            onSuccess: () => {
-                              void refetchNetwork();
-                              setState({
-                                ...state,
-                                toggleDescriptionInput:
-                                  !state.toggleDescriptionInput,
-                              });
-                            },
-                          }
-                        );
-                      }
-                    }}
-                  ></textarea>
-                </form>
-              )}
-            </div>
+            <NetworkName />
+            <NetworkDescription />
           </div>
         </div>
         <NetworkPrivatePublic />
       </div>
       <div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-        <div className="flex flex-col justify-between lg:flex-row space-y-3 lg:space-y-0 lg:space-x-3 whitespace-nowrap">
+        <div className="flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
           <div>
             <span className="text-muted font-medium">{t("networkStart")}</span>{" "}
             <span
@@ -303,10 +180,7 @@ const NetworkById = () => {
       <div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
         {members.length ? (
           <div className="membersTable-wrapper">
-            <NetworkMembersTable
-              nwid={network.nwid}
-              // setEditing={(e: boolean) => setEditing(e)}
-            />
+            <NetworkMembersTable nwid={network.nwid} central={false} />
           </div>
         ) : (
           <div className="alert alert-warning flex justify-center shadow-lg">

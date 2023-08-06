@@ -19,9 +19,9 @@ test("getUserNetworks", async () => {
 
   interface Network {
     nwid: string;
-    nwname: string;
+    name: string;
     authorId: number;
-    network_members: NetworkMember[];
+    networkMembers: NetworkMember[];
   }
 
   interface NetworkMember {
@@ -31,9 +31,9 @@ test("getUserNetworks", async () => {
   const mockOutput: Network[] = [
     {
       nwid: "1",
-      nwname: "test",
+      name: "test",
       authorId: 10,
-      network_members: [
+      networkMembers: [
         {
           id: "4ef7287f63",
         },
@@ -56,7 +56,9 @@ test("getUserNetworks", async () => {
     prisma: prismaMock,
   });
 
-  const result = await caller.network.getUserNetworks();
+  const result = await caller.network.getUserNetworks({
+    central: false,
+  });
 
   expect(result).toHaveLength(mockOutput.length);
   expect(result).toStrictEqual(mockOutput);

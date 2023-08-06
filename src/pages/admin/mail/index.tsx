@@ -52,7 +52,7 @@ const Mail = () => {
           <EditableField
             isLoading={false}
             label={t("mail.smtpHost")}
-            buttonClassName="hidden"
+            // buttonClassName="hidden"
             size="sm"
             fields={[
               {
@@ -69,7 +69,7 @@ const Mail = () => {
           <EditableField
             isLoading={false}
             label={t("mail.smtpPort")}
-            buttonClassName="hidden"
+            // buttonClassName="hidden"
             size="sm"
             fields={[
               {
@@ -86,7 +86,7 @@ const Mail = () => {
           <EditableField
             isLoading={false}
             label={t("mail.senderEmail")}
-            buttonClassName="hidden"
+            // buttonClassName="hidden"
             size="sm"
             fields={[
               {
@@ -103,7 +103,7 @@ const Mail = () => {
           <EditableField
             isLoading={false}
             label={t("mail.username")}
-            buttonClassName="hidden"
+            // buttonClassName="hidden"
             size="sm"
             fields={[
               {
@@ -120,7 +120,7 @@ const Mail = () => {
           <EditableField
             isLoading={false}
             label={t("mail.password")}
-            buttonClassName="hidden"
+            // buttonClassName="hidden"
             size="sm"
             fields={[
               {
@@ -146,7 +146,7 @@ const Mail = () => {
         </div>
         <div
           tabIndex={0}
-          className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
+          className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
         >
           <input type="checkbox" />
           <div className="collapse-title">{t("mail.inviteUserTemplate")}</div>

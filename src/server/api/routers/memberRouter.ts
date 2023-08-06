@@ -2,7 +2,8 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
-import { type NetworkAndMembers } from "~/types/network";
+import { type MemberEntity } from "~/types/local/member";
+import { type CentralMembers } from "~/types/central/members";
 
 const isValidZeroTierNetworkId = (id: string) => {
   const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -21,12 +22,23 @@ export const networkMemberRouter = createTRPCRouter({
   getMemberById: protectedProcedure
     .input(
       z.object({
+        central: z.boolean().default(false),
         id: z.string({ required_error: "No member id provided!" }),
         nwid: z.string({ required_error: "No network id provided!" }),
       })
     )
     .query(async ({ ctx, input }) => {
-      return await ctx.prisma.network_members.findFirst({
+      if (input.central) {
+        const memberDetails = await ztController.member_details(
+          input.nwid,
+          input.id,
+          input.central
+        );
+        return ztController.flattenCentralMember(
+          memberDetails as CentralMembers
+        );
+      }
+      return await ctx.prisma.networkMembers.findFirst({
         where: {
           id: input.id,
           nwid: input.nwid,
@@ -43,11 +55,22 @@ export const networkMemberRouter = createTRPCRouter({
               "Invalid ZeroTier network id provided. It should be a 10-digit hexadecimal number.",
           }),
         nwid: z.string({ required_error: "No network id provided!" }),
+        central: z.boolean().default(false),
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (input.central) {
+        return await ztController.member_update({
+          nwid: input.nwid,
+          memberId: input.id,
+          central: input.central,
+          updateParams: {
+            hidden: false,
+          },
+        });
+      }
       // check if user exist in db, and if so set deleted:false
-      const member = await ctx.prisma.network_members.findUnique({
+      const member = await ctx.prisma.networkMembers.findUnique({
         where: {
           id_nwid: {
             id: input.id,
@@ -56,7 +79,7 @@ export const networkMemberRouter = createTRPCRouter({
         },
       });
       if (member) {
-        return await ctx.prisma.network_members.update({
+        return await ctx.prisma.networkMembers.update({
           where: {
             id_nwid: {
               id: input.id,
@@ -70,12 +93,12 @@ export const networkMemberRouter = createTRPCRouter({
       }
 
       // if not, create new member
-      await ctx.prisma.network_members.create({
+      await ctx.prisma.networkMembers.create({
         data: {
           id: input.id,
           authorized: false,
           ipAssignments: [],
-          lastseen: new Date(),
+          lastSeen: new Date(),
           creationTime: new Date(),
           nwid_ref: {
             connect: { nwid: input.nwid },
@@ -89,6 +112,7 @@ export const networkMemberRouter = createTRPCRouter({
       z.object({
         nwid: z.string({ required_error: "No network id provided!" }),
         memberId: z.string({ required_error: "No member id provided!" }),
+        central: z.boolean().default(false),
         updateParams: z.object({
           activeBridge: z.boolean().optional(),
           noAutoAssignIps: z.boolean().optional(),
@@ -104,7 +128,7 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const payload: Partial<NetworkAndMembers> = {};
+      const payload: Partial<MemberEntity> = {};
 
       // update capabilities
       if (typeof input.updateParams.capabilities === "object") {
@@ -159,8 +183,19 @@ export const networkMemberRouter = createTRPCRouter({
         );
       }
 
+      const updateParams = input.central
+        ? { config: { ...payload } }
+        : { ...payload };
+
+      // if central is true, send the request to the central API and return the response
       const updatedMember = await ztController
-        .member_update(input.nwid, input.memberId, payload)
+        .member_update({
+          nwid: input.nwid,
+          memberId: input.memberId,
+          central: input.central,
+          // @ts-expect-error
+          updateParams,
+        })
         .catch(() => {
           throw new TRPCError({
             message:
@@ -169,13 +204,15 @@ export const networkMemberRouter = createTRPCRouter({
           });
         });
 
+      if (input.central) return updatedMember;
+
       const response = await ctx.prisma.network
         .update({
           where: {
             nwid: input.nwid,
           },
           data: {
-            network_members: {
+            networkMembers: {
               updateMany: {
                 where: { id: input.memberId, nwid: input.nwid },
                 data: {
@@ -183,6 +220,7 @@ export const networkMemberRouter = createTRPCRouter({
                   authorized: updatedMember.authorized,
                   noAutoAssignIps: updatedMember.noAutoAssignIps,
                   activeBridge: updatedMember.activeBridge,
+                  // @ts-expect-error
                   tags: updatedMember.tags,
                   capabilities: updatedMember.capabilities,
                 },
@@ -190,7 +228,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
           include: {
-            network_members: {
+            networkMembers: {
               where: {
                 id: input.memberId,
                 nwid: input.nwid,
@@ -207,8 +245,9 @@ export const networkMemberRouter = createTRPCRouter({
         });
       }
 
-      if ("network_members" in response) {
-        return { member: response.network_members[0] };
+      if ("networkMembers" in response) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        return { member: response.networkMembers[0] };
       } else {
         throw new TRPCError({
           message: "Response does not have network members.",
@@ -221,6 +260,7 @@ export const networkMemberRouter = createTRPCRouter({
       z.object({
         nwid: z.string(),
         id: z.string(),
+        central: z.boolean().default(false),
         updateParams: z.object({
           // ipAssignments: z
           //   .array(z.string({ required_error: "No Ip assignment provided!" }))
@@ -231,13 +271,31 @@ export const networkMemberRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      // if central is true, send the request to the central API and return the response
+      if (input.central && input?.updateParams?.name) {
+        return await ztController
+          .member_update({
+            nwid: input.nwid,
+            memberId: input.id,
+            central: input.central,
+            updateParams: input.updateParams,
+          })
+          .catch(() => {
+            throw new TRPCError({
+              message:
+                "Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
+              code: "FORBIDDEN",
+            });
+          });
+      }
+
       // if users click the re-generate icon on IP address
       const response = await ctx.prisma.network.update({
         where: {
           nwid: input.nwid,
         },
         data: {
-          network_members: {
+          networkMembers: {
             update: {
               where: {
                 id_nwid: {
@@ -252,14 +310,14 @@ export const networkMemberRouter = createTRPCRouter({
           },
         },
         include: {
-          network_members: {
+          networkMembers: {
             where: {
               id: input.id,
             },
           },
         },
       });
-      return { member: response.network_members[0] };
+      return { member: response.networkMembers[0] };
     }),
   stash: protectedProcedure
     .input(
@@ -290,7 +348,7 @@ export const networkMemberRouter = createTRPCRouter({
             nwid: input.nwid,
           },
           data: {
-            network_members: {
+            networkMembers: {
               updateMany: {
                 where: { id: input.id, nwid: input.nwid },
                 data: {
@@ -300,7 +358,7 @@ export const networkMemberRouter = createTRPCRouter({
             },
           },
           include: {
-            network_members: {
+            networkMembers: {
               where: {
                 id: input.id,
                 deleted: false,
@@ -315,6 +373,7 @@ export const networkMemberRouter = createTRPCRouter({
     .input(
       z
         .object({
+          central: z.boolean().default(false),
           nwid: z.string({ required_error: "network ID not provided!" }),
           id: z.string({ required_error: "memberId not provided!" }),
         })
@@ -322,16 +381,19 @@ export const networkMemberRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // remove member from controller
-      await ztController.member_delete({
+      const deleted = await ztController.member_delete({
+        central: input.central,
         nwid: input.nwid,
         memberId: input.id,
       });
 
-      await ctx.prisma.network_members.delete({
+      if (input.central) return deleted;
+
+      await ctx.prisma.networkMembers.delete({
         where: {
           id_nwid: {
             id: input.id,
-            nwid: input.nwid, // this should be the value of `nwid` you are looking for
+            nwid: input.nwid,
           },
         },
       });

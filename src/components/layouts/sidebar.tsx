@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore } from "~/utils/store";
+import { api } from "~/utils/api";
 // import type { ReactNode } from "react";
 // import Header from "./header";
 
@@ -18,6 +19,9 @@ const Sidebar = (): JSX.Element => {
 
   const sidebarRef = useRef<HTMLDivElement>();
   const router = useRouter();
+
+  const { data: globalOption } = api.admin.getAllOptions.useQuery();
+
   useEffect(() => {
     const handleClickOutside = (_event: MouseEvent) => {
       if (open) {
@@ -82,7 +86,7 @@ const Sidebar = (): JSX.Element => {
               href="/network"
               className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/network"
+                router.pathname.includes("/network")
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -103,6 +107,39 @@ const Sidebar = (): JSX.Element => {
               <span className="ml-3">{t("networks")}</span>
             </Link>
           </li>
+          {globalOption?.ztCentralApiKey ? (
+            <li className="my-px">
+              <Link
+                href="/central"
+                className={`flex h-10 flex-row items-center rounded-lg px-3 
+              ${
+                router.pathname.includes("/central")
+                  ? "bg-gray-100 text-gray-700"
+                  : "hover:bg-slate-700"
+              }`}
+              >
+                <span className="flex items-center justify-center text-lg text-gray-400">
+                  <svg
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    className="h-6 w-6"
+                  >
+                    <path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                  </svg>
+                </span>
+                <span className="ml-3">
+                  {t("ztCentral") + " "}
+                  <div className="badge badge-primary p-1 text-[0.6rem]">
+                    BETA
+                  </div>
+                </span>
+              </Link>
+            </li>
+          ) : null}
           {session?.user.role === "ADMIN" ? (
             <>
               <li className="my-px">
@@ -115,7 +152,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=site-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname.includes("/admin")
+                router.pathname === "/admin" &&
+                router.query.tab === "site-setting"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -149,7 +187,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=mail-setting"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=mail-setting"
+                router.pathname === "/admin" &&
+                router.query.tab === "mail-setting"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -186,7 +225,7 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=users"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=users"
+                router.pathname === "/admin" && router.query.tab === "users"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -215,7 +254,8 @@ const Sidebar = (): JSX.Element => {
                   href="/admin?tab=controller"
                   className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname === "/admin?tab=controller"
+                router.pathname === "/admin" &&
+                router.query.tab === "controller"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}
@@ -251,7 +291,8 @@ const Sidebar = (): JSX.Element => {
               href="/user-settings?tab=account"
               className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-                router.pathname.includes("/user-settings")
+                router.pathname === "/user-settings" &&
+                router.query.tab === "account"
                   ? "bg-gray-100 text-gray-700"
                   : "hover:bg-slate-700"
               }`}

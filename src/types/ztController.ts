@@ -1,5 +1,3 @@
-import { type MembersEntity, type ZtControllerNetwork } from "./network";
-
 /* 
   Node status and addressing info
   https://docs.zerotier.com/service/v1/#operation/getStatus
@@ -106,21 +104,6 @@ export interface HttpResponse {
 // Get Network Member Details by ID
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
-export interface MemberRevisionCounters {
-  [memberId: string]: number;
-}
-
-// Get network details
-// https://docs.zerotier.com/service/v1/#operation/getNetwork
-
-export interface ZTControllerResponse {
-  network: ZtControllerNetwork;
-  members: MembersEntity[];
-}
-
-// Get Network Member Details by ID
-// https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
-
 export interface ZTControllerMemberDetails {
   id: string;
   address: string;
@@ -143,6 +126,7 @@ export type MemberDeleteResponse = 200 | 401 | 403 | 404;
 export interface MemberDeleteInput {
   nwid: string;
   memberId: string;
+  central: boolean;
 }
 
 // Update Network Member by ID

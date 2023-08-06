@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
@@ -5,17 +6,19 @@ import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import cn from "classnames";
 import { useState, useEffect } from "react";
 import { type Prisma } from "@prisma/client";
-import {
-  type TagDetails,
-  type CapabilitiesByName,
-  type TagsByName,
-} from "~/types/network";
 import Anotation from "./anotation";
 import { useTranslations } from "next-intl";
+import {
+  type MemberEntity,
+  type CapabilitiesByName,
+  type TagDetails,
+} from "~/types/local/member";
+import { type TagsByName } from "~/types/local/network";
 
 interface ModalContentProps {
   nwid: string;
   memberId: string;
+  central: boolean;
   // ipAssignments: string[];
 }
 const initialIpState = { ipInput: "", isValid: false };
@@ -23,6 +26,7 @@ const initialIpState = { ipInput: "", isValid: false };
 export const MemberOptionsModal: React.FC<ModalContentProps> = ({
   nwid,
   memberId,
+  central = false,
 }) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState(initialIpState);
@@ -33,6 +37,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     api.network.getNetworkById.useQuery(
       {
         nwid,
+        central,
       },
       { enabled: !!query.id, networkMode: "online" }
     );
@@ -41,17 +46,19 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       {
         nwid,
         id: memberId,
+        central,
       },
       { enabled: !!query.id, networkMode: "online" }
     );
 
   useEffect(() => {
-    // find member by id
-    const member = networkById?.members.find(
-      (member) => member.id === memberId
-    );
+    if (networkById?.members && "id" in networkById.members[0]) {
+      const member = (networkById.members as MemberEntity[]).find(
+        (member) => member.id === memberId
+      );
 
-    seIpAssignments(member?.ipAssignments || []);
+      seIpAssignments(member?.ipAssignments || []);
+    }
   }, [networkById?.members, memberId]);
 
   const { mutate: updateMember, isLoading: updateMemberLoading } =
@@ -88,6 +95,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       {
         updateParams: { ipAssignments: [...newIpPool] },
         memberId: id,
+        central,
         nwid,
       },
       {
@@ -139,6 +147,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
       {
         updateParams: { ipAssignments: [...ipAssignments, ipInput] },
         memberId,
+        central,
         nwid,
       },
       {
@@ -176,6 +185,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
             capabilities,
           },
           memberId,
+          central,
           nwid,
         },
         {
@@ -223,7 +233,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
     );
   };
 
-  const TagDropdowns: React.FC<TagsByName> = (tagsByName) => {
+  const TagDropdowns: React.FC = (tagsByName: TagsByName) => {
     const handleDropdownChange = (
       e: React.ChangeEvent<HTMLSelectElement>,
       tagName: string,
@@ -252,6 +262,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
             tags,
           },
           memberId,
+          central,
           nwid,
         },
         {
@@ -425,6 +436,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                     activeBridge: e.target.checked,
                   },
                   memberId,
+                  central,
                   nwid,
                 },
                 {
@@ -454,6 +466,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
                     noAutoAssignIps: e.target.checked,
                   },
                   memberId,
+                  central,
                   nwid,
                 },
                 {
@@ -477,11 +490,14 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
             {TagDropdowns(networkById?.network?.tagsByName)}
           </div>
         </div>
-        <div className="grid grid-cols-4 items-start gap-4 py-3">
-          <div className="col-span-4">
-            <Anotation nwid={nwid} nodeid={memberById?.nodeid} />
+        {!central ? (
+          <div className="grid grid-cols-4 items-start gap-4 py-3">
+            <div className="col-span-4">
+              {/* @ts-expect-error as nodeid is not part of central api */}
+              <Anotation nwid={nwid} nodeid={memberById?.nodeid} />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </div>
   );

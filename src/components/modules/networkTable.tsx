@@ -11,10 +11,10 @@ import {
   createColumnHelper,
   type SortingState,
 } from "@tanstack/react-table";
-import { type UserNetworkTable } from "~/types/network";
 import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { useTranslations } from "next-intl";
+import { type NetworkMembers } from "@prisma/client";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -42,10 +42,18 @@ export const NetworkTable = ({ tableData = [] }) => {
       desc: true,
     },
   ]);
-  const columnHelper = createColumnHelper<UserNetworkTable>();
+
+  type ColumnsType = {
+    name: string;
+    description: string;
+    nwid: string;
+    members: NetworkMembers[];
+    networkMembers: NetworkMembers[];
+  };
+  const columnHelper = createColumnHelper<ColumnsType>();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("nwname", {
+      columnHelper.accessor("name", {
         cell: (info) => info.getValue(),
         header: () => <span>{t("name")}</span>,
       }),
@@ -62,8 +70,8 @@ export const NetworkTable = ({ tableData = [] }) => {
       columnHelper.accessor("members", {
         header: () => <span>{t("members")}</span>,
         cell: ({ row: { original } }) => {
-          if (!Array.isArray(original.network_members)) return <span>0</span>;
-          return <span>{original.network_members.length}</span>;
+          if (!Array.isArray(original.networkMembers)) return <span>0</span>;
+          return <span>{original.networkMembers.length}</span>;
         },
       }),
     ],
@@ -89,7 +97,7 @@ export const NetworkTable = ({ tableData = [] }) => {
       updateData: (rowIndex, columnId, value) => {
         // Skip page index reset until after next rerender
         skipAutoResetPageIndex();
-        setData((old: UserNetworkTable[]) =>
+        setData((old: ColumnsType[]) =>
           old.map((row, index) => {
             if (index === rowIndex) {
               return {

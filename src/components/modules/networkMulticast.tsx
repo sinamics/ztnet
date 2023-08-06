@@ -5,10 +5,14 @@ import { toast } from "react-hot-toast";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "use-intl";
 
-export const NetworkMulticast = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NetworkMulticast = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [state, setState] = useState({
-    multicastLimit: 0,
+    multicastLimit: "",
     enableBroadcast: false,
   });
 
@@ -20,11 +24,12 @@ export const NetworkMulticast = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central,
     },
     { enabled: !!query.id }
   );
 
-  const { mutate: updateNetwork } = api.network.updateNetwork.useMutation({
+  const { mutate: updateNetwork } = api.network.multiCast.useMutation({
     onError: (e) => {
       if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
         void toast.error(
@@ -39,11 +44,11 @@ export const NetworkMulticast = () => {
   useEffect(() => {
     setState((prev) => ({
       ...prev,
-      multicastLimit: networkByIdQuery?.network?.multicastLimit,
+      multicastLimit: networkByIdQuery?.network?.multicastLimit.toString(),
       enableBroadcast: networkByIdQuery?.network?.enableBroadcast,
     }));
   }, [
-    networkByIdQuery.network.multicastLimit,
+    networkByIdQuery?.network.multicastLimit,
     networkByIdQuery?.network?.enableBroadcast,
   ]);
 
@@ -68,10 +73,9 @@ export const NetworkMulticast = () => {
     updateNetwork(
       {
         nwid: network.nwid,
+        central,
         updateParams: {
-          multicast: {
-            multicastLimit: state.multicastLimit.toString(),
-          },
+          multicastLimit: parseInt(state.multicastLimit),
         },
       },
       {
@@ -83,7 +87,7 @@ export const NetworkMulticast = () => {
     );
   };
 
-  const { network } = networkByIdQuery;
+  const { network } = networkByIdQuery || {};
   return (
     <div
       tabIndex={0}
@@ -148,10 +152,9 @@ export const NetworkMulticast = () => {
                   updateNetwork(
                     {
                       nwid: network.nwid,
+                      central,
                       updateParams: {
-                        multicast: {
-                          enableBroadcast: e.target.checked,
-                        },
+                        enableBroadcast: e.target.checked,
                       },
                     },
                     {

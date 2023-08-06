@@ -1,8 +1,15 @@
 {
+  "changeButton": {
+    "change": "更改",
+    "submit": "提交",
+    "cancel": "取消",
+    "delete": "删除"
+  },
   "sidebar": {
     "navigation": "导航",
     "dashboard": "仪表盘",
-    "networks": "网络",
+    "networks": "本地控制器",
+    "ztCentral": "ZT 中心",
     "admin": "管理员",
     "settings": "设置",
     "mail": "邮件",
@@ -332,18 +339,29 @@
       "user": "用户"
     },
     "account": {
-      "accountSettings": "帐户设置",
-      "nameLabel": "名称",
-      "emailLabel": "电子邮件",
-      "verifiedBadge": "已验证",
-      "notVerifiedBadge": "未验证!",
-      "passwordLabel": "密码",
-      "currentPasswordPlaceholder": "当前密码",
-      "newPasswordPlaceholder": "新密码",
-      "repeatNewPasswordPlaceholder": "重复新密码",
-      "role": "角色",
-      "accountPreferences": "帐户首选项",
-      "languageLabel": "语言"
+      "accountSettings": {
+        "title": "账户设置",
+        "nameLabel": "姓名",
+        "emailLabel": "电子邮件",
+        "verifiedBadge": "已验证",
+        "notVerifiedBadge": "未验证",
+        "passwordLabel": "密码",
+        "currentPasswordPlaceholder": "当前密码",
+        "newPasswordPlaceholder": "新密码",
+        "repeatNewPasswordPlaceholder": "重复新密码",
+        "role": "角色"
+      },
+      "zerotierCentral": {
+        "title": "Zerotier Central",
+        "description": "整合您的ZeroTier Central API将使您能够直接从ZTNET管理您的中央网络。集成密钥后，侧边栏中将出现一个新菜单，以增强可访问性和控制。<br></br>您可以从ZeroTier Central门户获取密钥。https://my.zerotier.com/account",
+        "apiKeyLabel": "Zerotier Central API密钥",
+        "apiUrlLabel": "Zerotier API网址",
+        "apiUrlLabelDescription": "ZeroTier Central API的网址，默认为https://api.zerotier.com/api/v1"
+      },
+      "accountPreferences": {
+        "title": "帐户首选项",
+        "languageLabel": "语言"
+      }
     }
   }
 }

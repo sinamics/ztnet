@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
-import { type RoutesEntity } from "~/types/network";
+import { type RoutesEntity } from "~/types/local/network";
 import { type ChangeEvent, useState } from "react";
 import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
@@ -11,7 +11,11 @@ const initialRouteInput = {
   via: "",
 };
 
-export const NettworkRoutes = () => {
+interface IProp {
+  central?: boolean;
+}
+
+export const NettworkRoutes = ({ central = false }: IProp) => {
   const t = useTranslations("networkById");
   const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
   const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
@@ -24,12 +28,13 @@ export const NettworkRoutes = () => {
   } = api.network.getNetworkById.useQuery(
     {
       nwid: query.id as string,
+      central,
     },
     { enabled: !!query.id, networkMode: "always" }
   );
 
-  const { mutate: updateNetworkMutation, isLoading: isUpdating } =
-    api.network.updateNetwork.useMutation({
+  const { mutate: updateManageRoutes, isLoading: isUpdating } =
+    api.network.managedRoutes.useMutation({
       onError: (e) => {
         if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
           void toast.error(
@@ -45,10 +50,11 @@ export const NettworkRoutes = () => {
     const _routes = [...network?.routes];
     const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
-    updateNetworkMutation(
+    updateManageRoutes(
       {
         updateParams: { routes: [...newRouteArr] },
         nwid: query.id as string,
+        central,
       },
       { onSuccess: () => void refecthNetworkById() }
     );
@@ -62,10 +68,13 @@ export const NettworkRoutes = () => {
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateNetworkMutation(
+    updateManageRoutes(
       {
-        updateParams: { routes: [...network?.routes, { ...routeInput }] },
+        updateParams: {
+          routes: [...network?.routes, { ...routeInput }],
+        },
         nwid: query.id as string,
+        central,
       },
       {
         onSuccess: () => {
@@ -76,8 +85,9 @@ export const NettworkRoutes = () => {
       }
     );
   };
-  const { network } = networkById;
+  const { network } = networkById || {};
   if (isLoading) return <div>Loading</div>;
+
   return (
     <div
       tabIndex={0}

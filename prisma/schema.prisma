@@ -12,22 +12,22 @@ datasource db {
 }
 
 model GlobalOptions {
-  id                    Int     @id @default(autoincrement())
+  id                    Int                               @id @default(autoincrement())
 
   // Registration
-  enableRegistration    Boolean @default(true)
-  firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
+  enableRegistration    Boolean                           @default(true)
+  firstUserRegistration Boolean                           @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
   smtpHost                              String?
-  smtpPort                              String  @default("587")
+  smtpPort                              String            @default("587")
   smtpEmail                             String?
   smtpUsername                          String?
   smtpPassword                          String? 
-  smtpUseSSL                            Boolean @default(false)
-  smtpSecure                            Boolean @default(false)
-  smtpIgnoreTLS                         Boolean @default(false)
-  smtpRequireTLS                        Boolean @default(false)
+  smtpUseSSL                            Boolean           @default(false)
+  smtpSecure                            Boolean           @default(false)
+  smtpRequireTLS                        Boolean           @default(false)
+  smtpIgnoreTLS                         Boolean           @default(false)
   inviteUserTemplate                    Json?
   inviteAdminTemplate                   Json?
   forgotPasswordTemplate                Json?
@@ -35,11 +35,15 @@ model GlobalOptions {
   notificationTemplate                  Json?
 
   // Notifications
-  userRegistrationNotification          Boolean @default(false)
+  userRegistrationNotification          Boolean           @default(false)
 
   // networks
   useNotationColorAsBg                  Boolean?          @default(false)
   showNotationMarkerInTableRow          Boolean?          @default(true)
+
+  //zt central
+  ztCentralApiKey                       String?           @default("")
+  ztCentralApiUrl                       String?           @default("https://api.zerotier.com/api")
 }
 
 enum Role {
@@ -48,12 +52,12 @@ enum Role {
   ADMIN
 }
 
-model network_members {
+model NetworkMembers {
   nodeid               Int       @id @default(autoincrement())
   id                   String    
-  nwid_ref             network   @relation(fields: [nwid], references: [nwid])
+  nwid_ref             Network   @relation(fields: [nwid], references: [nwid])
   nwid                 String
-  lastseen             DateTime?
+  lastSeen             DateTime?
   online               Boolean?  @default(false)
   conStatus            Int?      @default(0)
   deleted              Boolean?  @default(false)
@@ -76,9 +80,9 @@ model network_members {
 
   @@unique([id, nwid])
 }
-model network {
+model Network {
   nwid                        String            @id
-  nwname                      String
+  name                        String
   description                 String?
   creationTime                DateTime?
   lastModifiedTime            DateTime?
@@ -90,8 +94,8 @@ model network {
   tagsByName                  Json?
   capabilitiesByName          Json?
 
-  network_members network_members[]
-  notations            Notation[]
+  networkMembers              NetworkMembers[]
+  notations                   Notation[]
 }
 
 model Notation {
@@ -103,8 +107,8 @@ model Notation {
   updatedTime               DateTime      @updatedAt
   isActive                  Boolean       @default(true)
   nwid                      String
-  network                   network       @relation(fields: [nwid], references: [nwid])
-  network_members           NetworkMemberNotation[]
+  network                   Network       @relation(fields: [nwid], references: [nwid])
+  networkMembers            NetworkMemberNotation[]
   icon                      String?   
   orderIndex                Int?    
   visibility                String?
@@ -116,7 +120,7 @@ model NetworkMemberNotation {
   notationId            Int
   nodeid                Int
   label                 Notation          @relation(fields: [notationId], references: [id])
-  member                network_members   @relation(fields: [nodeid], references: [nodeid])
+  member                NetworkMembers    @relation(fields: [nodeid], references: [nodeid])
   @@id([notationId, nodeid])
 }
 
@@ -164,7 +168,7 @@ model User {
     firstTime       Boolean     @default(true)
     accounts        Account[]
     sessions        Session[]
-    network         network[]
+    network         Network[]
 }
 
 model VerificationToken {
