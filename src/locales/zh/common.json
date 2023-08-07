@@ -315,7 +315,22 @@
 			"networkMembers": {
 				"title": "网络和成员",
 				"totalNetworks": "总网络数：",
-				"totalMembers": "总成员数："
+				"totalMembers": "总成员数：",
+				"unlinkedNetworks": {
+					"title": "未链接的网络",
+					"description": "此部分提供了ztnet数据库中所有尚未链接到任何用户的网络的表格。这些网络通常源自用户添加的但尚未在ZTNET中管理的定制ZeroTier控制器。该表格使您有机会将这些未管理的网络分配给特定的管理员用户。如果用户添加了一个尚未被ZTNET管理的定制ZeroTier控制器，这可能特别有帮助。",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "网络名称",
+						"creationTime": "创建时间",
+						"members": "成员",
+						"assign": "分配"
+					},
+					"assignModal": {
+						"title": "您确定要将用户 {user} 分配给网络 {network} 吗？",
+						"description": "此操作无法撤消"
+					}
+				}
 			},
 			"management": {
 				"title": "管理",
