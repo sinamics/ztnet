@@ -26,7 +26,6 @@
         ]
       },
       "extensions": [
-        "esbenp.prettier-vscode",
         "eamodio.gitlens",
         "GitHub.vscode-pull-request-github",
         "ms-azuretools.vscode-docker",
@@ -35,7 +34,8 @@
         "austenc.tailwind-docs",
         "bourhaouta.tailwindshades",
         "Gruntfuggly.todo-tree",
-        "yoavbls.pretty-ts-errors"
+        "yoavbls.pretty-ts-errors",
+        "rome.rome"
       ]
     }
   }

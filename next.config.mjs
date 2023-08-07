@@ -23,5 +23,8 @@ const config = {
   images: {
     domains: ["pbs.twimg.com"],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 export default config;

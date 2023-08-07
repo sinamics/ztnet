@@ -1,25 +1,25 @@
 interface ZodErrorFieldErrors {
-  updateParams?: string;
+	updateParams?: string;
 }
 
 interface ZodError {
-  fieldErrors?: ZodErrorFieldErrors;
+	fieldErrors?: ZodErrorFieldErrors;
 }
 
 interface ErrorData {
-  zodError?: ZodError;
+	zodError?: ZodError;
 }
 
 interface ShapeError {
-  data?: ErrorData;
+	data?: ErrorData;
 }
 
 interface CustomBackendError {
-  error?: string;
-  line?: number;
+	error?: string;
+	line?: number;
 }
 
 export interface CustomError {
-  shape?: ShapeError;
-  message?: CustomBackendError;
+	shape?: ShapeError;
+	message?: CustomBackendError;
 }

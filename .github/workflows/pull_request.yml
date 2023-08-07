@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   web_lint_test:
-    name: Web - Lint - Test
+    name: Web - Lint - Format - Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,9 +23,13 @@ jobs:
           echo "IS_GITHUB_ACTION=true" >> .env
 
       - run: npm install
+
       - name: Lint
         run: npm run lint
 
+      - name: Formatter
+        run: npm run format
+        
       - name: Test
         run: npm run test
 

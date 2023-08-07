@@ -6,26 +6,26 @@
  */
 
 export const getRandomColor = () => {
-  const maxRGBValue = 255;
-  const highContrastThreshold = 300; // This can be adjusted to get the desired contrast
+	const maxRGBValue = 255;
+	const highContrastThreshold = 300; // This can be adjusted to get the desired contrast
 
-  let r = Math.floor(Math.random() * maxRGBValue);
-  let g = Math.floor(Math.random() * (maxRGBValue - r));
-  let b = Math.floor(highContrastThreshold - r - g);
+	let r = Math.floor(Math.random() * maxRGBValue);
+	let g = Math.floor(Math.random() * (maxRGBValue - r));
+	let b = Math.floor(highContrastThreshold - r - g);
 
-  // Correct if sum exceeded the threshold due to flooring
-  if (r + g + b > highContrastThreshold) {
-    const excess = r + g + b - highContrastThreshold;
-    if (b >= excess) {
-      b -= excess;
-    } else if (g + b >= excess) {
-      g -= excess;
-    } else {
-      r -= excess;
-    }
-  }
+	// Correct if sum exceeded the threshold due to flooring
+	if (r + g + b > highContrastThreshold) {
+		const excess = r + g + b - highContrastThreshold;
+		if (b >= excess) {
+			b -= excess;
+		} else if (g + b >= excess) {
+			g -= excess;
+		} else {
+			r -= excess;
+		}
+	}
 
-  return `rgb(${r}, ${g}, ${b})`;
+	return `rgb(${r}, ${g}, ${b})`;
 };
 
 /**
@@ -37,5 +37,5 @@ export const getRandomColor = () => {
  * @returns {string} The RGBA color string in the format: "rgba(r, g, b, a)"
  */
 export const convertRGBtoRGBA = (rgb: string, alpha: number) => {
-  return rgb.replace(")", `, ${alpha})`).replace("rgb", "rgba");
+	return rgb.replace(")", `, ${alpha})`).replace("rgb", "rgba");
 };
