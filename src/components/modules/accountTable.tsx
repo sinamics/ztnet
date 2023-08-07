@@ -29,7 +29,7 @@ export const Accounts = () => {
 		data: members,
 		refetch: refetchUsers,
 		isLoading: loadingUsers,
-	} = api.admin.getUsers.useQuery();
+	} = api.admin.getUsers.useQuery({ isAdmin: false });
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [

@@ -1,12 +1,15 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
 import { api } from "~/utils/api";
 
 const Controller = () => {
 	const t = useTranslations("admin");
 	const { data: controllerData, isLoading } =
 		api.admin.getControllerStats.useQuery();
+
+	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery();
 
 	const { networkCount, totalMembers, controllerStatus } = controllerData || {};
 
@@ -39,6 +42,15 @@ const Controller = () => {
 					<p>{t("controller.networkMembers.totalMembers")}</p>
 					<p>{totalMembers}</p>
 				</div>
+				{unlinkedNetworks?.length > 0 ? (
+					<div className="py-4">
+						<p>{t("controller.networkMembers.unlinkedNetworks.title")}</p>
+						<p className="text-sm text-gray-500 pb-5">
+							{t("controller.networkMembers.unlinkedNetworks.description")}
+						</p>
+						<UnlinkedNetwork />
+					</div>
+				) : null}
 			</div>
 			<div className="pb-10">
 				<p className="text-sm text-gray-400">

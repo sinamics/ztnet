@@ -12,34 +12,43 @@ import type nodemailer from "nodemailer";
 import { Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
+import { NetworkAndMemberResponse } from "~/types/network";
+import { IPv4gen } from "~/utils/IPv4gen";
 
 export const adminRouter = createTRPCRouter({
-	getUsers: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		const users = await ctx.prisma.user.findMany({
-			select: {
-				id: true,
-				name: true,
-				email: true,
-				emailVerified: true,
-				lastLogin: true,
-				lastseen: true,
-				online: true,
-				role: true,
-				_count: {
-					select: {
-						network: true,
+	getUsers: adminRoleProtectedRoute
+		.input(
+			z.object({
+				isAdmin: z.boolean().default(false),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const users = await ctx.prisma.user.findMany({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					emailVerified: true,
+					lastLogin: true,
+					lastseen: true,
+					online: true,
+					role: true,
+					_count: {
+						select: {
+							network: true,
+						},
 					},
+					// network: {
+					//   select: {
+					//     nwid: true,
+					//     nwname: true,
+					//   },
+					// },
 				},
-				// network: {
-				//   select: {
-				//     nwid: true,
-				//     nwname: true,
-				//   },
-				// },
-			},
-		});
-		return users;
-	}),
+				where: input.isAdmin ? { role: "ADMIN" } : undefined,
+			});
+			return users;
+		}),
 
 	getControllerStats: adminRoleProtectedRoute.query(async () => {
 		const isCentral = false;
@@ -330,5 +339,91 @@ export const adminRouter = createTRPCRouter({
 					showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
 				},
 			});
+		}),
+	/**
+	 * `unlinkedNetwork` is an admin protected query that fetches and returns detailed information about networks
+	 * that are present in the controller but not stored in the database.
+	 *
+	 * First, it fetches the network IDs from the controller and from the database.
+	 *
+	 * It then compares these lists to find networks that exist in the controller but not in the database.
+	 *
+	 * For each of these unlinked networks, it fetches detailed network information from the controller.
+	 *
+	 * @access restricted to admins
+	 * @param {Object} ctx - context object that carries important information like database instance
+	 * @param {Object} input - input object that contains possible query parameters or payload
+	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
+	 */
+	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx, input }) => {
+		const ztNetworks =
+			(await ztController.get_controller_networks()) as string[];
+		const dbNetworks = await ctx.prisma.network.findMany({
+			select: { nwid: true },
+		});
+
+		// create a set of nwid for faster lookup
+		const dbNetworkIds = new Set(dbNetworks.map((network) => network.nwid));
+
+		// find networks that are not in database
+		const unlinkedNetworks = ztNetworks.filter(
+			(networkId) => !dbNetworkIds.has(networkId),
+		);
+
+		if (unlinkedNetworks.length === 0) return [];
+
+		const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
+			unlinkedNetworks.map((unlinked) =>
+				ztController.local_network_detail(unlinked, false),
+			),
+		);
+
+		return unlinkArr;
+	}),
+	assignNetworkToUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				userId: z.string(),
+				nwid: z.string(),
+				nwname: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			try {
+				// Generate ipv4 address, cidr, start & end
+				const ipAssignmentPools = IPv4gen(null);
+				// console.log(ipAssignmentPools);
+				// Store the created network in the database
+				const updatedUser = await ctx.prisma.user.update({
+					where: {
+						id: ctx.session.user.id,
+					},
+					data: {
+						network: {
+							create: {
+								nwid: input.nwid,
+								name: input.nwname || "",
+								ipAssignments: "",
+							},
+						},
+					},
+					select: {
+						network: true,
+					},
+				});
+				return updatedUser;
+
+				// return ipAssignmentPools;
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					// Log the error and throw a custom error message
+					// eslint-disable-next-line no-console
+					console.error(err);
+					throwError("Could not create network! Please try again");
+				} else {
+					// Throw a generic error for unknown error types
+					throwError("An unknown error occurred");
+				}
+			}
 		}),
 });
