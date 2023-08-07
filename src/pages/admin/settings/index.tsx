@@ -1,7 +1,6 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-import { globalSiteVersion } from "~/utils/global";
 import { useTranslations } from "next-intl";
 
 const Settings = () => {
@@ -43,19 +42,6 @@ const Settings = () => {
 							);
 						}}
 					/>
-				</div>
-			</div>
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">{t("settings.application")}</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex items-center justify-between">
-					<p>{t("settings.version")}</p>
-					<a
-						className="link text-primary"
-						href="https://github.com/sinamics/ztnet/releases"
-					>
-						{globalSiteVersion ?? t("settings.developerMode")}
-					</a>
 				</div>
 			</div>
 		</main>

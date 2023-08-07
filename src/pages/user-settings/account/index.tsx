@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
+import { globalSiteVersion } from "~/utils/global";
 
 const languageNames = {
 	en: "English",
@@ -233,13 +234,13 @@ const Account = () => {
 					</div>
 				</div>
 				<p className="pt-10 text-[0.7rem] text-gray-400">
-					{t("account.acccountPreferences.title")}
+					{t("account.accountPreferences.title")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
 				<div className="form-control w-full max-w-xs">
 					<label className="label">
 						<span className="label-text font-medium">
-							{t("account.acccountPreferences.languageLabel")}
+							{t("account.accountPreferences.languageLabel")}
 						</span>
 					</label>
 					<select
@@ -253,6 +254,21 @@ const Account = () => {
 							</option>
 						))}
 					</select>
+				</div>
+				<div className="py-10">
+					<p className="text-sm text-gray-400">
+						{t("account.application.title")}
+					</p>
+					<div className="divider mt-0 p-0 text-gray-500"></div>
+					<div className="flex items-center justify-between">
+						<p>{t("account.application.version")}</p>
+						<a
+							className="link text-primary"
+							href="https://github.com/sinamics/ztnet/releases"
+						>
+							{globalSiteVersion ?? t("account.application.developerMode")}
+						</a>
+					</div>
 				</div>
 			</div>
 		</main>

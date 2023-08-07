@@ -245,10 +245,7 @@
 		},
 		"settings": {
 			"authentication": "Autentisering",
-			"enableUserRegistration": "Aktiver brukerregistrering?",
-			"application": "Applikasjon",
-			"version": "Versjon",
-			"developerMode": "utviklermodus"
+			"enableUserRegistration": "Aktiver brukerregistrering?"
 		},
 		"networkSetting": {
 			"memberAnotations": "Medlemsanmerkninger",
@@ -376,6 +373,11 @@
 			"accountPreferences": {
 				"title": "Kontoinnstillinger",
 				"languageLabel": "Språk"
+			},
+			"application": {
+				"title": "Applikasjon",
+				"version": "Versjon",
+				"developerMode": "utviklermodus"
 			}
 		}
 	}

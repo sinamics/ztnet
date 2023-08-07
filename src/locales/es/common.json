@@ -244,10 +244,7 @@
 		},
 		"settings": {
 			"authentication": "Autenticación",
-			"enableUserRegistration": "¿Habilitar registro de usuario?",
-			"application": "Aplicación",
-			"version": "Versión",
-			"developerMode": "modo de desarrollador"
+			"enableUserRegistration": "¿Habilitar registro de usuario?"
 		},
 		"networkSetting": {
 			"memberAnotations": "Anotaciones de miembro",
@@ -376,6 +373,11 @@
 			"accountPreferences": {
 				"title": "Preferencias de la cuenta",
 				"languageLabel": "Idioma"
+			},
+			"application": {
+				"title": "Aplicación",
+				"version": "Versión",
+				"developerMode": "modo de desarrollador"
 			}
 		}
 	}

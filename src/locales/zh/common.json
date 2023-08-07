@@ -245,10 +245,7 @@
 		},
 		"settings": {
 			"authentication": "身份验证",
-			"enableUserRegistration": "启用用户注册？",
-			"application": "应用",
-			"version": "版本",
-			"developerMode": "开发者模式"
+			"enableUserRegistration": "启用用户注册？"
 		},
 		"networkSetting": {
 			"memberAnotations": "成员注释",
@@ -376,6 +373,11 @@
 			"accountPreferences": {
 				"title": "帐户首选项",
 				"languageLabel": "语言"
+			},
+			"application": {
+				"title": "应用",
+				"version": "版本",
+				"developerMode": "开发者模式"
 			}
 		}
 	}
