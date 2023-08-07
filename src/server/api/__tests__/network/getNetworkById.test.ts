@@ -6,35 +6,35 @@ import { TRPCError } from "@trpc/server";
 
 const prisma = new PrismaClient();
 const mockSession: PartialDeep<Session> = {
-  expires: new Date().toISOString(),
-  update: { name: "test" },
-  user: {
-    id: 1,
-    name: "Bernt Christian",
-    email: "mail@gmail.com",
-  },
+	expires: new Date().toISOString(),
+	update: { name: "test" },
+	user: {
+		id: 1,
+		name: "Bernt Christian",
+		email: "mail@gmail.com",
+	},
 };
 
 it("should throw an error if the user is not the author of the network", async () => {
-  prisma.network.findFirst = jest.fn().mockRejectedValue(
-    new TRPCError({
-      message: "You are not the Author of this network!",
-      code: "FORBIDDEN",
-    })
-  );
+	prisma.network.findFirst = jest.fn().mockRejectedValue(
+		new TRPCError({
+			message: "You are not the Author of this network!",
+			code: "FORBIDDEN",
+		}),
+	);
 
-  const caller = appRouter.createCaller({
-    session: mockSession as Session,
-    prisma: prisma,
-  });
-  try {
-    await caller.network.getNetworkById({ nwid: "test_nw_id" });
-  } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(error.message).toBe("You are not the Author of this network!");
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    expect(error.code).toBe("FORBIDDEN");
-  }
+	const caller = appRouter.createCaller({
+		session: mockSession as Session,
+		prisma: prisma,
+	});
+	try {
+		await caller.network.getNetworkById({ nwid: "test_nw_id" });
+	} catch (error) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		expect(error.message).toBe("You are not the Author of this network!");
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+		expect(error.code).toBe("FORBIDDEN");
+	}
 });
 
 // test("getNetworkById returns network and member data", async () => {

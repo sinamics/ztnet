@@ -5,67 +5,67 @@ import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 
 const Modal = () => {
-  const t = useTranslations("modalLayout");
-  const ref = useRef(null);
-  const {
-    isOpen,
-    description,
-    content,
-    title,
-    rootStyle,
-    yesAction,
-    toggleModal,
-    disableClickOutside,
-    closeModal,
-  } = useModalStore((state) => state);
+	const t = useTranslations("modalLayout");
+	const ref = useRef(null);
+	const {
+		isOpen,
+		description,
+		content,
+		title,
+		rootStyle,
+		yesAction,
+		toggleModal,
+		disableClickOutside,
+		closeModal,
+	} = useModalStore((state) => state);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  useOnClickOutside(ref, () => {
-    if (!disableClickOutside) {
-      closeModal();
-    }
-  });
-  const actionHandler = () => {
-    yesAction();
-    toggleModal();
-  };
-  const modalClass = cn({
-    "modal transition-none z-20": true,
-    "modal-open": isOpen,
-  });
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+	useOnClickOutside(ref, () => {
+		if (!disableClickOutside) {
+			closeModal();
+		}
+	});
+	const actionHandler = () => {
+		yesAction();
+		toggleModal();
+	};
+	const modalClass = cn({
+		"modal transition-none z-20": true,
+		"modal-open": isOpen,
+	});
 
-  return (
-    <dialog className={modalClass}>
-      <div
-        className={cn(
-          "custom-scrollbar modal-box relative bg-base-100",
-          rootStyle
-        )}
-        ref={ref}
-      >
-        <h3 className="text-lg font-bold">{title}</h3>
-        <p className="py-4">{description}</p>
-        <div>{content}</div>
-        <div className="modal-action">
-          {yesAction ? (
-            <>
-              {/* closes the modal */}
-              <button className="btn" onClick={actionHandler}>
-                {t("yesButton")}
-              </button>
-              <button className="btn" onClick={closeModal}>
-                {t("cancelButton")}
-              </button>
-            </>
-          ) : (
-            <button className="btn" onClick={closeModal}>
-              {t("closeButton")}
-            </button>
-          )}
-        </div>
-      </div>
-    </dialog>
-  );
+	return (
+		<dialog className={modalClass}>
+			<div
+				className={cn(
+					"custom-scrollbar modal-box relative bg-base-100",
+					rootStyle,
+				)}
+				ref={ref}
+			>
+				<h3 className="text-lg font-bold">{title}</h3>
+				<p className="py-4">{description}</p>
+				<div>{content}</div>
+				<div className="modal-action">
+					{yesAction ? (
+						<>
+							{/* closes the modal */}
+							<button className="btn" onClick={actionHandler}>
+								{t("yesButton")}
+							</button>
+							<button className="btn" onClick={closeModal}>
+								{t("cancelButton")}
+							</button>
+						</>
+					) : (
+						<button className="btn" onClick={closeModal}>
+							{t("closeButton")}
+						</button>
+					)}
+				</div>
+			</div>
+		</dialog>
+	);
 };
 
 export default Modal;
