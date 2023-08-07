@@ -315,7 +315,22 @@
 			"networkMembers": {
 				"title": "Redes & Miembros",
 				"totalNetworks": "Total de redes:",
-				"totalMembers": "Total de miembros:"
+				"totalMembers": "Total de miembros:",
+				"unlinkedNetworks": {
+					"title": "Redes no vinculadas",
+					"description": "This section provides a table of all networks that are not currently linked to any user in the ztnet database. These typically originate from custom ZeroTier controllers that have been added by users but are not yet managed within ZTNET. The table gives you the opportunity to assign these unmanaged networks to specific admin users. This can be particularly helpful if a user has added a custom ZeroTier controller that hasn't been managed by ZTNET yet.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Nombre de red",
+						"creationTime": "Hora de creación",
+						"members": "Miembros",
+						"assign": "Asignar"
+					},
+					"assignModal": {
+						"title": "¿Estás seguro de que quieres asignar el usuario {user} a la red {network}?",
+						"description": "Esta acción no puede deshacerse"
+					}
+				}
 			},
 			"management": {
 				"title": "Gestión",

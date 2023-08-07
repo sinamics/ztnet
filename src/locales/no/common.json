@@ -315,7 +315,22 @@
 			"networkMembers": {
 				"title": "Nettverk & Medlemmer",
 				"totalNetworks": "Totalt nettverk:",
-				"totalMembers": "Totalt medlemmer:"
+				"totalMembers": "Totalt medlemmer:",
+				"unlinkedNetworks": {
+					"title": "Ikke linket nettverk",
+					"description": "Denne delen gir en tabell over alle nettverkene som for øyeblikket ikke er knyttet til noen bruker i ztnet-databasen. Disse stammer typisk fra tilpassede ZeroTier-kontrollere som har blitt lagt til av brukere, men som ennå ikke er administrert innen ZTNET. Tabellen gir deg muligheten til å tildele disse uadministrerte nettverkene til bestemte admin-brukere. Dette kan være spesielt nyttig hvis en bruker har lagt til en tilpasset ZeroTier-kontroller som ennå ikke er administrert av ZTNET.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Nettverksnavn",
+						"creationTime": "Opprettelsestid",
+						"members": "Medlemmer",
+						"assign": "Tildel"
+					},
+					"assignModal": {
+						"title": "Er du sikker på at du vil tilordne bruker {user} til nettverk {network}?",
+						"description": "Denne handlingen kan ikke angres"
+					}
+				}
 			},
 			"management": {
 				"title": "Styring",
