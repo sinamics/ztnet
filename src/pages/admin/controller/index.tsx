@@ -48,8 +48,8 @@ const Controller = () => {
 				<div className="flex items-center justify-between">
 					<p>{t("controller.management.allowManagementFrom")}</p>
 					<div className="list-inside list-disc">
-						{allowManagementFrom.map((address, index) => (
-							<span key={index}>{address}</span>
+						{allowManagementFrom.map((address) => (
+							<span key={address}>{address}</span>
 						))}
 					</div>
 				</div>
@@ -60,8 +60,8 @@ const Controller = () => {
 				<div className="flex items-center justify-between">
 					<p>{t("controller.management.listeningOn")}</p>
 					<div className="list-inside list-disc space-x-2">
-						{listeningOn.map((address, index) => (
-							<span key={index}>{address}</span>
+						{listeningOn.map((address) => (
+							<span key={address}>{address}</span>
 						))}
 					</div>
 				</div>

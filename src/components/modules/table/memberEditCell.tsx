@@ -118,7 +118,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 							{options?.showNotationMarkerInTableRow &&
 								notations.map((notation, idx) => (
 									<div
-										key={idx}
+										key={notation.label?.name}
 										className="inline-block h-5 w-5 rounded-full"
 										title={notation.label?.name}
 										style={{

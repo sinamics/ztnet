@@ -9,7 +9,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 export const sendMailValidationLink = (user: User) => {
 	// eslint-disable-next-line no-throw-literal
 
-	if (!user || !user.hash) throw `User not found!`;
+	if (!user || !user.hash) throw "User not found!";
 
 	const validationToken = jwt.sign(
 		{
@@ -40,7 +40,7 @@ interface IJwt {
  * This function is validating the token sent to use uppon registration. Token has 15min expire time.
  */
 export const ValidateMailLink = async (validate: Ivalidate) => {
-	if (!validate.token) throw `Key not found!`;
+	if (!validate.token) throw "Key not found!";
 
 	try {
 		const { id, token } = jwt.decode(validate.token) as IJwt;
@@ -52,10 +52,10 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 			},
 		});
 
-		if (!loginUser || !loginUser.hash) throwError(`User not found!`);
+		if (!loginUser || !loginUser.hash) throwError("User not found!");
 
 		if (loginUser.emailVerified)
-			throw `Du har allerede validert denne eposten.`;
+			throw "Du har allerede validert denne eposten.";
 
 		jwt.verify(token, loginUser.hash);
 		Object.assign(loginUser, { emailConfirmed: true });
@@ -69,6 +69,6 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 			},
 		});
 	} catch (error) {
-		throw new Error(`An error occured!, please send new verification email!`);
+		throw new Error("An error occured!, please send new verification email!");
 	}
 };

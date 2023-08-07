@@ -143,7 +143,6 @@ const NetworkDescription = ({ central = false }: IProp) => {
 			) : (
 				<form>
 					<textarea
-						autoFocus
 						rows={3}
 						value={state?.description}
 						name="description"

@@ -132,16 +132,12 @@ export const adminRouter = createTRPCRouter({
 			switch (input.template) {
 				case "inviteUserTemplate":
 					return templates?.inviteUserTemplate ?? inviteUserTemplate();
-					break;
 				case "forgotPasswordTemplate":
 					return templates?.forgotPasswordTemplate ?? forgotPasswordTemplate();
-					break;
 				case "notificationTemplate":
 					return templates?.notificationTemplate ?? notificationTemplate();
-					break;
 				default:
 					return {};
-					break;
 			}
 		}),
 
@@ -188,7 +184,6 @@ export const adminRouter = createTRPCRouter({
 							inviteUserTemplate: templateObj,
 						},
 					});
-					break;
 				case "forgotPasswordTemplate":
 					return await ctx.prisma.globalOptions.update({
 						where: {
@@ -198,7 +193,6 @@ export const adminRouter = createTRPCRouter({
 							forgotPasswordTemplate: templateObj,
 						},
 					});
-					break;
 				case "notificationTemplate":
 					return await ctx.prisma.globalOptions.update({
 						where: {
@@ -208,7 +202,6 @@ export const adminRouter = createTRPCRouter({
 							notificationTemplate: templateObj,
 						},
 					});
-					break;
 				default:
 					break;
 			}
@@ -223,13 +216,10 @@ export const adminRouter = createTRPCRouter({
 			switch (input.template) {
 				case "inviteUserTemplate":
 					return inviteUserTemplate();
-					break;
 				case "forgotPasswordTemplate":
 					return forgotPasswordTemplate();
-					break;
 				case "notificationTemplate":
 					return notificationTemplate();
-					break;
 				default:
 					break;
 			}
@@ -266,45 +256,44 @@ export const adminRouter = createTRPCRouter({
 					string
 				>;
 
-				try {
-					const transporter: nodemailer.Transporter =
-						createTransporter(globalOptions);
+				const transporter: nodemailer.Transporter =
+					createTransporter(globalOptions);
 
-					// Define mail options
-					const mailOptions = {
-						from: globalOptions.smtpEmail,
-						to: ctx.session.user.email,
-						subject: parsedTemplate.subject,
-						html: parsedTemplate.body,
-					};
+				// Define mail options
+				const mailOptions = {
+					from: globalOptions.smtpEmail,
+					to: ctx.session.user.email,
+					subject: parsedTemplate.subject,
+					html: parsedTemplate.body,
+				};
 
-					// Send test mail to user
-					await sendEmail(transporter, mailOptions);
-				} catch (error) {
-					throw error;
-				}
+				// Send test mail to user
+				await sendEmail(transporter, mailOptions);
 			}
 
 			switch (input.type) {
-				case "inviteUserTemplate":
+				case "inviteUserTemplate": {
 					const defaultInviteTemplate = inviteUserTemplate();
 					const inviteTemplate =
 						globalOptions?.inviteUserTemplate ?? defaultInviteTemplate;
 					await sendTemplateEmail("inviteUser", inviteTemplate);
 					break;
+				}
 
-				case "forgotPasswordTemplate":
+				case "forgotPasswordTemplate": {
 					const defaultForgotTemplate = forgotPasswordTemplate();
 					const forgotTemplate =
 						globalOptions?.forgotPasswordTemplate ?? defaultForgotTemplate;
 					await sendTemplateEmail("forgotPassword", forgotTemplate);
 					break;
-				case "notificationTemplate":
+				}
+				case "notificationTemplate": {
 					const defaultNotificationTemplate = notificationTemplate();
 					const notifiyTemplate =
 						globalOptions?.notificationTemplate ?? defaultNotificationTemplate;
 					await sendTemplateEmail("notificationTemplate", notifiyTemplate);
 					break;
+				}
 				default:
 					break;
 			}

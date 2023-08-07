@@ -181,7 +181,7 @@ export const get_controller_version = async function () {
 	try {
 		return await getData<ZTControllerStatus>(addr, headers);
 	} catch (error) {
-		const message = `An error occurred while getting get_controller_version`;
+		const message = "An error occurred while getting get_controller_version";
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -540,7 +540,7 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 		const response: AxiosResponse = await axios.get(addr, { headers });
 		return response.data as ZTControllerGetPeer;
 	} catch (error) {
-		const message = `An error occurred while getting peers`;
+		const message = "An error occurred while getting peers";
 		throw new APIError(message, error as AxiosError);
 	}
 };

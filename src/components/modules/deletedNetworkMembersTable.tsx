@@ -172,7 +172,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 										// Loop over the headers in each row
 										headerGroup.headers.map((header, idx) => (
 											<th
-												key={idx}
+												key={header.id}
 												colSpan={header.colSpan}
 												className="py-3 pl-4"
 											>
@@ -207,10 +207,10 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 						// Loop over the table rows
 						table
 							.getRowModel()
-							.rows.map((row, idx) => (
+							.rows.map((row) => (
 								// Apply the row props
 								<tr
-									key={idx}
+									key={row.id}
 									className={`items-center ${
 										!row.original.authorized
 											? "border-dotted bg-error bg-opacity-20"

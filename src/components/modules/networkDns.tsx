@@ -52,8 +52,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 		setState((prev) => ({
 			...prev,
 			domain: networkByIdQuery?.network?.dns.domain,
-			servers:
-				new Set([...networkByIdQuery?.network?.dns.servers]) || new Set(),
+			servers: new Set([...networkByIdQuery.network.dns.servers]) || new Set(),
 		}));
 	}, [networkByIdQuery?.network.dns]);
 
@@ -136,8 +135,8 @@ export const NetworkDns = ({ central = false }: IProp) => {
 						) : null}
 						<div className="flex justify-between">
 							<div className="flex flex-wrap gap-3">
-								{Array.from(state.servers).map((dns, idx: number) => (
-									<div key={idx} className="form-control flex">
+								{Array.from(state.servers).map((dns) => (
+									<div key={dns} className="form-control flex">
 										<div className="text-md badge badge-primary label-text badge-lg gap-2 rounded-md opacity-80">
 											{dns}
 											<svg

@@ -47,7 +47,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 		});
 
 	const deleteRoute = (route: RoutesEntity) => {
-		const _routes = [...network?.routes];
+		const _routes = [...network.routes];
 		const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
 		updateManageRoutes(
@@ -71,7 +71,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 		updateManageRoutes(
 			{
 				updateParams: {
-					routes: [...network?.routes, { ...routeInput }],
+					routes: [...network.routes, { ...routeInput }],
 				},
 				nwid: query.id as string,
 				central,

@@ -4,19 +4,20 @@
     "enabled": false
   },
   "files": {
-    "ignore": ["scripts/*.js"]
+    "ignore": ["**/*.js"]
   },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
     "indentStyle": "tab",
-    "indentSize": 2,
+    "indentSize": 4,
     "lineWidth": 80,
     "ignore": []
   },
   "linter": {
     "enabled": true,
     "rules": {
+      "recommended": true,
       "style": {
         "useSelfClosingElements": "off",
         "noNonNullAssertion": "off"
@@ -28,7 +29,6 @@
         "useKeyWithMouseEvents": "off",
         "useKeyWithClickEvents": "off"
       },
-      "recommended": true,
       "suspicious": {
         "noCommentText": "warn",
         "noExplicitAny": "off"

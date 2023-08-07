@@ -66,14 +66,15 @@ export const authRouter = createTRPCRouter({
 			if (!settings.enableRegistration) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message: `Registration is disabled! Please contact the administrator.`,
+					message:
+						"Registration is disabled! Please contact the administrator.",
 				});
 			}
 
 			// Email validation
-			if (!email) return new Error(`Email required!`);
+			if (!email) return new Error("Email required!");
 			if (!z.string().nonempty().parse(email))
-				return new Error(`Email not supported!`);
+				return new Error("Email not supported!");
 
 			// Fecth from database
 			// const user = await client.query(`SELECT * FROM users WHERE email = $1 FETCH FIRST ROW ONLY`, [email]);
@@ -99,7 +100,7 @@ export const authRouter = createTRPCRouter({
 				if (!mediumPassword.test(password))
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: `Password does not meet the requirements!`,
+						message: "Password does not meet the requirements!",
 						// optional: pass the original error to retain stack trace
 						// cause: theError,
 					});
@@ -221,7 +222,7 @@ export const authRouter = createTRPCRouter({
 			if (!user) {
 				throw new TRPCError({
 					code: "NOT_FOUND",
-					message: `User not found!`,
+					message: "User not found!",
 				});
 			}
 
@@ -230,7 +231,7 @@ export const authRouter = createTRPCRouter({
 				if (!input.newPassword || !input.repeatNewPassword || !input.password) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: `Please fill all fields!`,
+						message: "Please fill all fields!",
 						// optional: pass the original error to retain stack trace
 
 						// cause: theError,
@@ -240,7 +241,7 @@ export const authRouter = createTRPCRouter({
 				if (!mediumPassword.test(input.newPassword))
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: `Password does not meet the requirements!`,
+						message: "Password does not meet the requirements!",
 						// optional: pass the original error to retain stack trace
 						// cause: theError,
 					});
@@ -249,7 +250,7 @@ export const authRouter = createTRPCRouter({
 				if (!bcrypt.compareSync(input.password, user.hash)) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: `Old password is incorrect!`,
+						message: "Old password is incorrect!",
 						// optional: pass the original error to retain stack trace
 						// cause: theError,
 					});
@@ -258,7 +259,7 @@ export const authRouter = createTRPCRouter({
 				if (input.newPassword !== input.repeatNewPassword) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: `Passwords do not match!`,
+						message: "Passwords do not match!",
 						// optional: pass the original error to retain stack trace
 						// cause: theError,
 					});
@@ -361,7 +362,7 @@ export const authRouter = createTRPCRouter({
 			const { token, password, newPassword } = input;
 			if (!token) throwError("token is required!");
 
-			if (password !== newPassword) throwError(`Passwords does not match!`);
+			if (password !== newPassword) throwError("Passwords does not match!");
 
 			try {
 				interface IJwt {
@@ -370,7 +371,7 @@ export const authRouter = createTRPCRouter({
 				}
 				const { id } = jwt.decode(token) as IJwt;
 
-				if (!id) throwError(`This link is not valid!`);
+				if (!id) throwError("This link is not valid!");
 
 				const user = await ctx.prisma.user.findFirst({
 					where: {
@@ -378,7 +379,7 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 
-				if (!user || !user.hash) throwError(`Something went wrong!`);
+				if (!user || !user.hash) throwError("Something went wrong!");
 
 				jwt.verify(token, user.hash);
 
@@ -392,7 +393,7 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 			} catch (error) {
-				throwError(`token is not valid, please try again!`);
+				throwError("token is not valid, please try again!");
 			}
 		}),
 });
