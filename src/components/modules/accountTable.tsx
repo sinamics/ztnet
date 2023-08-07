@@ -10,7 +10,6 @@ import {
 	type SortingState,
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
-
 import { type ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
@@ -254,7 +253,7 @@ export const Accounts = () => {
 									table
 										.getRowModel()
 										.rows.map((row) => (
-											<tr key={row.original.id} className={`items-center`}>
+											<tr key={row.original.id} className={"items-center"}>
 												{
 													// Loop over the rows cells
 													row

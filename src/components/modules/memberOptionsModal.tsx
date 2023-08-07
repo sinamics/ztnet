@@ -209,13 +209,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			return <p className="text-sm text-gray-500">None</p>;
 		return (
 			<div className="flex flex-wrap">
-				{Object.entries(caps).map(([capability, capId], index) => {
+				{Object.entries(caps).map(([capability, capId]) => {
 					const isChecked =
 						isCapabilitiesArray(memberById?.capabilities) &&
 						memberById.capabilities.includes(capId);
 
 					return (
-						<div key={index}>
+						<div key={capId}>
 							<label className="flex items-center gap-2 p-2">
 								<input
 									type="checkbox"

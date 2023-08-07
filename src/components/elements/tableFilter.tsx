@@ -66,7 +66,7 @@ export const TableFilter = ({
 		</div>
 	) : (
 		<>
-			<datalist id={column.id + "list"}>
+			<datalist id={`${column.id}list`}>
 				{sortedUniqueValues.slice(0, 5000).map((value: string) => (
 					<option value={value} key={value} />
 				))}
@@ -77,7 +77,7 @@ export const TableFilter = ({
 				onChange={(value) => column.setFilterValue(value)}
 				placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
 				className="w-36 rounded border shadow"
-				list={column.id + "list"}
+				list={`${column.id}list`}
 			/>
 			<div className="h-1" />
 		</>

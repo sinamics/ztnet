@@ -244,7 +244,8 @@ const CentralNetworkById = () => {
 						onClick={() =>
 							callModal({
 								title: `Delete network ${network.name}`,
-								description: `Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network`,
+								description:
+									"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 								yesAction: () => {
 									deleteNetwork(
 										{ nwid: network.id, central: true },

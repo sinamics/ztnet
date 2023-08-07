@@ -45,7 +45,7 @@ function determineConnectionStatus(peer: any): ConnectionStatus {
 
 	// Check if at least one path has a private IP
 	if (peer?.paths && peer.paths.length > 0) {
-		for (const path of peer?.paths) {
+		for (const path of peer.paths) {
 			const ip = path.address.split("/")[0];
 			if (isPrivateIP(ip)) {
 				return ConnectionStatus.DirectLAN;
@@ -153,7 +153,7 @@ function long2ip(long: number) {
 	const part3 = ((long >> 16) & 255).toString();
 	const part4 = ((long >> 24) & 255).toString();
 
-	return part4 + "." + part3 + "." + part2 + "." + part1;
+	return `${part4}.${part3}.${part2}.${part1}`;
 }
 
 // Function to get the next available IP from a range

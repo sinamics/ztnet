@@ -50,7 +50,7 @@ const CentralNetworks: NextPageWithLayout = () => {
 				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
 					<div className="flex justify-center">
 						<button
-							className={`btn btn-primary btn-outline`}
+							className={"btn btn-primary btn-outline"}
 							onClick={addNewNetwork}
 						>
 							<svg

@@ -103,8 +103,8 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 						list="anotation-list"
 					/>
 					<datalist id="anotation-list">
-						{filteredAnotations?.map((anotation, idx) => (
-							<option key={idx} value={anotation.name} />
+						{filteredAnotations?.map((anotation) => (
+							<option key={anotation.name} value={anotation.name} />
 						))}
 					</datalist>
 					<button
@@ -134,10 +134,10 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 			</div>
 
 			<div className="flex gap-2">
-				{memberAnotationArray?.map((anotation, idx) => (
+				{memberAnotationArray?.map((anotation) => (
 					<div
-						key={idx}
-						className={`badge badge-lg rounded-md`}
+						key={anotation.label.id}
+						className={"badge badge-lg rounded-md"}
 						style={{ backgroundColor: `${anotation.label.color}` }}
 					>
 						<p>{anotation?.label?.name}</p>

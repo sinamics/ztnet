@@ -87,7 +87,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 
 		// Check if the IP range already exists in the network's ipAssignmentPools
 		if (network?.ipAssignmentPools && network?.ipAssignmentPools.length > 0) {
-			for (const existingRange of network?.ipAssignmentPools) {
+			for (const existingRange of network.ipAssignmentPools) {
 				if (
 					existingRange?.ipRangeStart === ipRange.rangeStart &&
 					existingRange?.ipRangeEnd === ipRange.rangeEnd
@@ -246,7 +246,9 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 							return (
 								<div
 									key={pool.ipRangeStart}
-									className={`badge badge-primary badge-lg flex w-64 min-w-fit flex-wrap rounded-md`}
+									className={
+										"badge badge-primary badge-lg flex w-64 min-w-fit flex-wrap rounded-md"
+									}
 								>
 									<div className="cursor-pointer">
 										{pool.ipRangeStart} - {pool.ipRangeEnd}

@@ -140,7 +140,7 @@ export const networkRouter = createTRPCRouter({
 
 			// Only return nw details for author user!
 			if (!psqlNetworkData)
-				return throwError(`You are not the Author of this network!`);
+				return throwError("You are not the Author of this network!");
 
 			// Return nw obj details
 			const ztControllerResponse = await ztController
@@ -207,7 +207,7 @@ export const networkRouter = createTRPCRouter({
 					);
 					let activePreferredPath: Paths | undefined;
 
-					if (memberPeer && memberPeer.paths) {
+					if (memberPeer?.paths) {
 						activePreferredPath = memberPeer.paths.find(
 							(path) => path && path.active === true && path.preferred === true,
 						);
@@ -503,17 +503,16 @@ export const networkRouter = createTRPCRouter({
 						dns: z
 							.object({
 								domain: z.string().refine(isValidDomain, {
-									message: `Invalid DNS domain provided`,
+									message: "Invalid DNS domain provided",
 								}),
 								servers: z.array(
 									z.string().refine(isValidIP, {
-										message: `Invalid DNS server provided`,
+										message: "Invalid DNS server provided",
 									}),
 								),
 							})
 							.refine(
-								(dns) =>
-									dns === undefined || (dns && dns.domain && dns.servers),
+								(dns) => dns === undefined || (dns?.domain && dns.servers),
 								{
 									message:
 										"Both domain and servers must be provided if dns is defined",

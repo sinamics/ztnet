@@ -74,7 +74,7 @@ export const authOptions: NextAuthOptions = {
 
 				if (!user || !user.email || !user.hash)
 					//  return a nextauth error message
-					throw new Error(`User does not exist!`);
+					throw new Error("User does not exist!");
 
 				const isValid = await compare(_credentials?.password ?? "", user.hash);
 

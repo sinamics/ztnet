@@ -34,7 +34,7 @@ export const IPv4gen = (CIDR: string | null) => {
 	net32 = (net[0] << 24) + (net[1] << 16) + (net[2] << 8) + net[3];
 	net32 &= ~host32;
 
-	const nwCidr = int32toIPv4String(net32) + "/" + prefix;
+	const nwCidr = `${int32toIPv4String(net32)}/${prefix}`;
 	const ipRangeStart = int32toIPv4String(net32 + 1);
 
 	const bcast32 = net32 + host32;
@@ -51,8 +51,8 @@ export const IPv4gen = (CIDR: string | null) => {
 function int32toIPv4String(int32: number) {
 	let ipv4 = "";
 	ipv4 = ((int32 & 0xff000000) >>> 24).toString();
-	ipv4 += "." + ((int32 & 0x00ff0000) >>> 16).toString();
-	ipv4 += "." + ((int32 & 0x0000ff00) >>> 8).toString();
-	ipv4 += "." + (int32 & 0x000000ff).toString();
+	ipv4 += `.${((int32 & 0x00ff0000) >>> 16).toString()}`;
+	ipv4 += `.${((int32 & 0x0000ff00) >>> 8).toString()}`;
+	ipv4 += `.${(int32 & 0x000000ff).toString()}`;
 	return ipv4;
 }
