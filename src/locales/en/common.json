@@ -245,10 +245,7 @@
 		},
 		"settings": {
 			"authentication": "Authentication",
-			"enableUserRegistration": "Enable user registration?",
-			"application": "Application",
-			"version": "Version",
-			"developerMode": "developer mode"
+			"enableUserRegistration": "Enable user registration?"
 		},
 		"networkSetting": {
 			"memberAnotations": "Member Anotations",
@@ -373,9 +370,14 @@
 				"apiUrlLabel": "Zerotier API Url",
 				"apiUrlLabelDescription": "The url of the ZeroTier Central API, Default is https://api.zerotier.com/api/v1"
 			},
-			"acccountPreferences": {
+			"accountPreferences": {
 				"title": "Account Preferences",
 				"languageLabel": "Language"
+			},
+			"application": {
+				"title": "Application",
+				"version": "Version",
+				"developerMode": "developer mode"
 			}
 		}
 	}
