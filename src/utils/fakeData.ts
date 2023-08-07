@@ -20,7 +20,7 @@ const range = (len: number) => {
 	for (let i = 0; i < len; i++) {
 		arr.push(i);
 	}
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
 	return arr;
 };
 
