@@ -1,0 +1,311 @@
+import { useMemo, useState, useEffect } from "react";
+import {
+	useReactTable,
+	getCoreRowModel,
+	// getPaginationRowModel,
+	getSortedRowModel,
+	flexRender,
+	createColumnHelper,
+	type ColumnDef,
+	type SortingState,
+} from "@tanstack/react-table";
+import { api } from "~/utils/api";
+import { type ErrorData } from "~/types/errorHandling";
+import toast from "react-hot-toast";
+import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
+import { type User } from "@prisma/client";
+import TimeAgo from "react-timeago";
+import { NetworkEntity } from "~/types/local/network";
+
+interface UnlinkedNetworkTableProps {
+	network: NetworkEntity;
+	members: User[];
+	role: string;
+}
+export const UnlinkedNetwork = () => {
+	const t = useTranslations("admin");
+
+	const [sorting, setSorting] = useState<SortingState>([
+		{
+			id: "id",
+			desc: false,
+		},
+	]);
+	const {
+		data: unlinkedNetworks,
+		refetch: refetchNetworks,
+		isLoading: loadingNetworks,
+	} = api.admin.unlinkedNetwork.useQuery();
+
+	const { mutate: assignNetworkToUser } =
+		api.admin.assignNetworkToUser.useMutation({
+			onSuccess: () => {
+				void refetchNetworks();
+				toast.success("Network assigned to user");
+			},
+			onError: (error) => {
+				if ((error.data as ErrorData)?.zodError) {
+					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+					for (const field in fieldErrors) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+						toast.error(`${fieldErrors[field].join(", ")}`);
+					}
+				} else if (error.message) {
+					toast.error(error.message);
+				} else {
+					toast.error(t("users.toastMessages.errorOccurred"));
+				}
+				void refetchNetworks();
+			},
+		});
+
+	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps>();
+	const columns = useMemo<ColumnDef<UnlinkedNetworkTableProps>[]>(
+		() => [
+			columnHelper.accessor("network.nwid", {
+				header: () => (
+					<span>
+						{t(
+							"controller.networkMembers.unlinkedNetworks.table.nwid",
+						).toUpperCase()}
+					</span>
+				),
+				id: "nwid",
+			}),
+			columnHelper.accessor("network.name", {
+				header: () => (
+					<span>
+						{t(
+							"controller.networkMembers.unlinkedNetworks.table.networkName",
+						).toUpperCase()}
+					</span>
+				),
+				id: "name",
+			}),
+			columnHelper.accessor("network.creationTime", {
+				header: () => (
+					<span>
+						{t(
+							"controller.networkMembers.unlinkedNetworks.table.creationTime",
+						).toUpperCase()}
+					</span>
+				),
+				id: "creationTime",
+				cell: ({ getValue }) => {
+					const creationTime = getValue();
+					return <TimeAgo date={creationTime} />;
+				},
+			}),
+			columnHelper.accessor("members", {
+				header: () => (
+					<span>
+						{t(
+							"controller.networkMembers.unlinkedNetworks.table.members",
+						).toUpperCase()}
+					</span>
+				),
+				id: "members",
+				cell: ({ getValue }) => {
+					const members = getValue();
+
+					return members.length;
+				},
+			}),
+			columnHelper.accessor("role", {
+				header: () => (
+					<span>
+						{t(
+							"controller.networkMembers.unlinkedNetworks.table.assign",
+						).toUpperCase()}
+					</span>
+				),
+				id: "role",
+			}),
+		],
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[],
+	);
+
+	// Create an editable cell renderer
+	const defaultColumn: Partial<ColumnDef<UnlinkedNetworkTableProps>> = {
+		cell: ({
+			getValue,
+			row: { original: { network: { nwid, name } } },
+			column: { id },
+		}) => {
+			const { data: adminUsers } = api.admin.getUsers.useQuery({
+				isAdmin: true,
+			});
+			const initialValue = getValue();
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const { callModal } = useModalStore((state) => state);
+
+			// We need to keep and update the state of the cell normally
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [value, setValue] = useState(initialValue);
+
+			const dropDownHandler = (
+				e: React.ChangeEvent<HTMLSelectElement>,
+				nwid: string,
+			) => {
+				const userId = e.target.value;
+				const userName =
+					e.target.options[e.target.selectedIndex].dataset.username;
+
+				callModal({
+					title: t(
+						"controller.networkMembers.unlinkedNetworks.assignModal.title",
+						{ user: userName, network: nwid },
+					),
+					description: t(
+						"controller.networkMembers.unlinkedNetworks.assignModal.description",
+					),
+					yesAction: () => {
+						assignNetworkToUser({
+							nwid,
+							userId,
+							nwname: name,
+						});
+					},
+				});
+			};
+
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			useEffect(() => {
+				setValue(initialValue);
+			}, [initialValue]);
+			if (id === "role") {
+				return (
+					<select
+						onChange={(e) => dropDownHandler(e, nwid)}
+						className="select select-sm select-ghost w-full max-w-xs"
+					>
+						<option disabled selected>
+							Assign User
+						</option>
+						{adminUsers?.map((user) => (
+							<option key={user.id} value={user.id} data-username={user.name}>
+								{user.name}
+							</option>
+						))}
+					</select>
+				);
+			}
+			return value;
+		},
+	};
+
+	const data = useMemo(() => unlinkedNetworks || [], [unlinkedNetworks]);
+	const table = useReactTable({
+		data,
+		//@ts-expect-error
+		columns,
+		//@ts-expect-error
+		defaultColumn,
+		onSortingChange: setSorting,
+		getCoreRowModel: getCoreRowModel(),
+		// getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
+		state: {
+			sorting,
+		},
+	});
+
+	if (loadingNetworks) {
+		return (
+			<div className="flex flex-col items-center justify-center">
+				<h1 className="text-center text-2xl font-semibold">
+					<progress className="progress progress-primary w-56"></progress>
+				</h1>
+			</div>
+		);
+	}
+	return (
+		<div className="overflow-x-auto">
+			<div className="inline-block w-full p-1.5 text-center align-middle">
+				<div className="overflow-hidden rounded-lg border">
+					<table className="table-wrapper min-w-full divide-y divide-gray-400">
+						<thead className="bg-base-100">
+							{
+								// Loop over the header rows
+								table
+									.getHeaderGroups()
+									.map((headerGroup) => (
+										// Apply the header row props
+										<tr key={headerGroup.id}>
+											{
+												// Loop over the headers in each row
+												headerGroup.headers.map((header) => (
+													<th
+														key={header.id}
+														colSpan={header.colSpan}
+														scope="col"
+														className="bg-base-300/50 py-3 pl-4"
+													>
+														{header.isPlaceholder ? null : (
+															<div
+																{...{
+																	className: header.column.getCanSort()
+																		? "cursor-pointer select-none"
+																		: "",
+																	onClick:
+																		header.column.getToggleSortingHandler(),
+																}}
+															>
+																{flexRender(
+																	header.column.columnDef.header,
+																	header.getContext(),
+																)}
+																{{
+																	asc: " 🔼",
+																	desc: " 🔽",
+																}[header.column.getIsSorted() as string] ??
+																	null}
+															</div>
+														)}
+													</th>
+												))
+											}
+										</tr>
+									))
+							}
+						</thead>
+						<tbody className=" divide-y divide-gray-200">
+							{
+								// Loop over the table rows
+								table
+									.getRowModel()
+									.rows.map((row) => (
+										<tr
+											key={row.original?.network?.nwid}
+											className={"items-center"}
+										>
+											{
+												// Loop over the rows cells
+												row
+													.getVisibleCells()
+													.map((cell) => (
+														// Apply the cell props
+
+														<td key={cell.id} className="py-1 pl-4">
+															{
+																// Render the cell contents
+																flexRender(
+																	cell.column.columnDef.cell,
+																	cell.getContext(),
+																)
+															}
+														</td>
+													))
+											}
+										</tr>
+									))
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	);
+};
