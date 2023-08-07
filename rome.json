@@ -1,38 +1,38 @@
 {
-  "$schema": "https://docs.rome.tools/schemas/12.1.3/schema.json",
-  "organizeImports": {
-    "enabled": false
-  },
-  "files": {
-    "ignore": ["**/*.js"]
-  },
-  "formatter": {
-    "enabled": true,
-    "formatWithErrors": false,
-    "indentStyle": "tab",
-    "indentSize": 4,
-    "lineWidth": 80,
-    "ignore": []
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "useSelfClosingElements": "off",
-        "noNonNullAssertion": "off"
-      },
-      "a11y": {
-        "useButtonType": "off",
-        "noSvgWithoutTitle": "off",
-        "useValidAnchor": "off",
-        "useKeyWithMouseEvents": "off",
-        "useKeyWithClickEvents": "off"
-      },
-      "suspicious": {
-        "noCommentText": "warn",
-        "noExplicitAny": "off"
-      }
-    }
-  }
+	"$schema": "https://docs.rome.tools/schemas/12.1.3/schema.json",
+	"organizeImports": {
+		"enabled": false
+	},
+	"files": {
+		"ignore": ["**/*.js"]
+	},
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentSize": 2,
+		"lineWidth": 80,
+		"ignore": []
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"style": {
+				"useSelfClosingElements": "off",
+				"noNonNullAssertion": "off"
+			},
+			"a11y": {
+				"useButtonType": "off",
+				"noSvgWithoutTitle": "off",
+				"useValidAnchor": "off",
+				"useKeyWithMouseEvents": "off",
+				"useKeyWithClickEvents": "off"
+			},
+			"suspicious": {
+				"noCommentText": "warn",
+				"noExplicitAny": "off"
+			}
+		}
+	}
 }
