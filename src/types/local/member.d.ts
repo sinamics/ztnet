@@ -8,9 +8,8 @@ export interface MemberEntity {
 	nodeId?: string;
 	authenticationExpiryTime: number;
 	authorized: boolean;
-	capabilities?: null[] | null;
+	capabilities?: number[];
 	creationTime: number;
-	id: string;
 	identity: string;
 	ipAssignments: string[];
 	lastAuthorizedCredential: null;

@@ -32,6 +32,9 @@
 			"suspicious": {
 				"noCommentText": "warn",
 				"noExplicitAny": "off"
+			},
+			"nursery": {
+				"noConsoleLog": "error"
 			}
 		}
 	}
