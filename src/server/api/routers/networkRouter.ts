@@ -25,6 +25,7 @@ import {
 } from "~/types/local/member";
 import { type FlattenCentralMembers } from "~/types/central/members";
 import { type CentralNetwork } from "~/types/central/network";
+import { ZTControllerGetPeer } from "~/types/ztController";
 
 const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -110,20 +111,13 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Get available cidr options.
-			const ipAssignmentPools = IPv4gen(null);
-			const { cidrOptions } = ipAssignmentPools;
-
 			if (input.central) {
-				// const status = await ztController.get_controller_status(input.central);
-				// console.log(JSON.stringify(status, null, 2));
-				const t = await ztController.central_network_detail(
+				return await ztController.central_network_detail(
 					input.nwid,
 					input.central,
 				);
-				// console.log(JSON.stringify(t, null, 2));
-				return t;
 			}
+
 			const psqlNetworkData = await ctx.prisma.network.findFirst({
 				where: {
 					AND: [
@@ -149,66 +143,42 @@ export const networkRouter = createTRPCRouter({
 					return throwError(`${err.message}`);
 				});
 
-			// console.log(JSON.stringify(ztControllerResponse, null, 2));
+			// console.log(JSON.stringify(ztControllerResponse.members, null, 2));
+
 			// upate db with new memebers if they not exsist
 			await updateNetworkMembers(ztControllerResponse);
 
-			// merge network data from psql and zt controller
-			const mergedNetwork = {
-				...psqlNetworkData,
-				...ztControllerResponse?.network,
-				cidr: cidrOptions,
-			};
+			// Fetch members directly from the ztControllerResponse
+			const controllerMembers = ztControllerResponse.members;
 
-			const combined: Partial<NetworkAndMemberResponse> = {
-				...ztControllerResponse,
-				network: mergedNetwork as NetworkEntity,
-			};
-			const { members, network } = combined;
-
-			// Get all members that is deleted but still active in controller (zombies).
-			// Due to an issue were not possible to delete user.
-			// Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-			const getZombieMembersPromises = members.map(
+			// Check and enrich each member against your own database and with peer data
+			const memberPromises = controllerMembers.map(
 				async (member: MemberEntity | FlattenCentralMembers) => {
-					return await ctx.prisma.network_members.findFirst({
+					const dbMember = await ctx.prisma.network_members.findFirst({
 						where: {
 							nwid: input.nwid,
 							id: member.id,
-							deleted: true,
+						},
+						include: {
+							notations: {
+								include: {
+									label: true,
+								},
+							},
 						},
 					});
-				},
-			);
 
-			const getActiveMembers = await ctx.prisma.network_members.findMany({
-				where: {
-					nwid: input.nwid,
-					deleted: false,
-				},
-				include: {
-					notations: {
-						include: {
-							label: true,
-						},
-					},
-				},
-			});
+					if (!dbMember) return null; // member doesn't belong to the specific user
 
-			// Get peers to view client version of zt
-			const updatedActiveMembers = await Promise.all(
-				getActiveMembers.map(async (member) => {
-					const peers = (await ztController
-						.peer(member?.address)
-						.catch(() => [])) as Peers[];
+					// Explicitly type the peers variable
+					const peers = await ztController
+						.peer(dbMember?.address)
+						.catch(() => []);
 
-					const memberPeer = peers.find(
-						(peer: Peers) => peer.address === member.id,
-					);
 					let activePreferredPath: Paths | undefined;
 
-					if (memberPeer?.paths) {
-						activePreferredPath = memberPeer.paths.find(
+					if ("paths" in peers && peers.paths) {
+						activePreferredPath = peers.paths.find(
 							(path) => path && path.active === true && path.preferred === true,
 						);
 					}
@@ -218,27 +188,49 @@ export const networkRouter = createTRPCRouter({
 						activePreferredPath || {};
 
 					return {
+						...dbMember,
 						...member,
 						peers: {
-							...(memberPeer || {}),
+							...(peers || {}),
 							physicalAddress,
 							...restOfActivePreferredPath,
 						},
 					};
-				}),
+				},
 			);
 
-			// console.log(JSON.stringify(updatedActiveMembers, null, 2));
+			const enrichedMembers = await Promise.all(memberPromises);
+
+			// Get all members that is deleted but still active in controller (zombies).
+			// Due to an issue were not possible to delete user.
+			// Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
+			const getZombieMembersPromises = enrichedMembers.map(async (member) => {
+				return await ctx.prisma.network_members.findFirst({
+					where: {
+						nwid: input.nwid,
+						id: member.id,
+						deleted: true,
+					},
+				});
+			});
+
 			// Resolve the promises before passing them to Promise.all
 			const zombieMembers = await Promise.all(getZombieMembersPromises);
-			// console.log(JSON.stringify(updatedActiveMembers, null, 2));
 
 			// filters out any null or undefined elements in the zombieMembers array.
 			const filteredZombieMembers = zombieMembers.filter((a) => a);
 
+			// Get available cidr options.
+			const ipAssignmentPools = IPv4gen(null);
+			const { cidrOptions } = ipAssignmentPools;
+
 			return {
-				network,
-				members: updatedActiveMembers,
+				network: {
+					...ztControllerResponse?.network,
+					...psqlNetworkData,
+					cidr: cidrOptions,
+				},
+				members: enrichedMembers,
 				zombieMembers: filteredZombieMembers,
 			};
 		}),
@@ -609,7 +601,6 @@ export const networkRouter = createTRPCRouter({
 							create: {
 								name: newNw.name,
 								nwid: newNw.nwid,
-								ipAssignments: newNw.routes[0].target,
 							},
 						},
 					},

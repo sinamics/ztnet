@@ -132,7 +132,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					<span>{t("networkById.networkMembersTable.column.created")}</span>
 				),
 				id: "creationTime",
-				cell: (info) => <TimeAgo date={info.getValue()} />,
+				cell: (info) => {
+					return <TimeAgo date={info.getValue() * 1000} />;
+				},
 			}),
 			columnHelper.accessor("peers", {
 				header: () => (
@@ -179,6 +181,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					const formatTime = (value: string, unit: string) =>
 						`${value} ${unit}`;
 					const cursorStyle = { cursor: "pointer" };
+					// console.log(original);
 					if (central) {
 						const now = Date.now(); // current timestamp in milliseconds
 						const lastSeen = original?.lastSeen; // assuming lastSeen is a timestamp in milliseconds

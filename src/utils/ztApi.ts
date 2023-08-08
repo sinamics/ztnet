@@ -547,20 +547,14 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 
 // Get information about a specific peer by Node ID.
 // https://docs.zerotier.com/service/v1/#operation/getPeer
-export const peer = async (
-	userZtAddress: string,
-): Promise<ZTControllerGetPeer[]> => {
+export const peer = async (userZtAddress: string) => {
 	const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
 
 	// get headers based on local or central api
 	const { headers } = await getOptions(false);
 
-	try {
-		const response: AxiosResponse = await axios.get(addr, { headers });
+	const response: AxiosResponse = await axios.get(addr, { headers });
 
-		if (!response.data) return null as ZTControllerGetPeer[];
-		return response.data as ZTControllerGetPeer[];
-	} catch (error) {
-		return null;
-	}
+	if (!response.data) return {} as ZTControllerGetPeer;
+	return response.data as ZTControllerGetPeer;
 };

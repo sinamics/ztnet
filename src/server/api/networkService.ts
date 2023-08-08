@@ -71,13 +71,11 @@ export const updateNetworkMembers = async (zt_controller: any) => {
 };
 
 interface MemberI {
-	ipAssignments: any;
-	conStatus: number;
 	id: string;
-	identity: string;
-	authorized: boolean;
 	peers: Record<any, any>;
 	nwid: string;
+	address: string;
+	conStatus: number;
 }
 
 const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
@@ -85,11 +83,8 @@ const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
 	//loop array
 	for (const member of members) {
 		const storeValues = {
-			conStatus: member.conStatus || 0,
 			id: member.id,
-			identity: member.identity,
-			authorized: member.authorized,
-			ipAssignments: member.ipAssignments,
+			address: member.address,
 		};
 
 		// check if we should update lasteseen
@@ -125,9 +120,6 @@ const psql_addMember = async (member: MemberI) => {
 	return await prisma.network_members.create({
 		data: {
 			id: member.id,
-			identity: member.identity,
-			authorized: member.authorized,
-			ipAssignments: member.ipAssignments,
 			lastSeen: new Date(),
 			creationTime: new Date(),
 			nwid_ref: {

@@ -59,23 +59,10 @@ model network_members {
   nwid                 String
   lastSeen             DateTime?
   online               Boolean?  @default(false)
-  conStatus            Int?      @default(0)
   deleted              Boolean?  @default(false)
   name                 String?
-  activeBridge         Boolean   @default(false)
   address              String?   @default("")
-  authorized           Boolean   @default(false)
   creationTime         DateTime
-  identity             String?
-  lastAuthorizedTime   Int?
-  lastDeauthorizedTime Int?
-  objtype              String?
-  revision             Int?
-  tags                 Json?
-  capabilities         Json?
-  vRev                 Int?
-  ipAssignments        String[]
-  noAutoAssignIps      Boolean?  @default(false)
   notations            NetworkMemberNotation[]
 
   @@unique([id, nwid])
@@ -87,8 +74,7 @@ model network {
   creationTime                DateTime?
   lastModifiedTime            DateTime?
   flowRule                    String?
-  autoAssignIp                Boolean?          @default(true)
-  ipAssignments               String          
+  autoAssignIp                Boolean?          @default(true)        
   nw_userid                   User              @relation(fields: [authorId], references: [id])
   authorId                    Int
   tagsByName                  Json?
