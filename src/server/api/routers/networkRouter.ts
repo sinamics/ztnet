@@ -212,12 +212,6 @@ export const networkRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// Delete ZT network
-				const createCentralNw = await ztController
-					.network_delete(input.nwid, input.central)
-					.catch(() => []);
-
-				if (input.central) return createCentralNw;
 				// Delete networkMembers
 				await ctx.prisma.network_members.deleteMany({
 					where: {
@@ -232,6 +226,14 @@ export const networkRouter = createTRPCRouter({
 						nwid: input.nwid,
 					},
 				});
+
+				// Delete ZT network
+				const createCentralNw = await ztController.network_delete(
+					input.nwid,
+					input.central,
+				);
+
+				if (input.central) return createCentralNw;
 			} catch (error) {
 				if (error instanceof z.ZodError) {
 					return throwError(`Invalid routes provided ${error.message}`);
