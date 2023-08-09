@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import { type MemberEntity } from "~/types/local/member";
-import { type CentralMembers } from "~/types/central/members";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -35,7 +34,7 @@ export const networkMemberRouter = createTRPCRouter({
 			);
 
 			if (input.central) {
-				return ztController.flattenCentralMember(ztMembers as CentralMembers);
+				return ztController.flattenCentralMember(ztMembers);
 			}
 			const dbMember = await ctx.prisma.network_members.findFirst({
 				where: {
@@ -128,7 +127,7 @@ export const networkMemberRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ ctx, input }) => {
+		.mutation(async ({ input }) => {
 			const payload: Partial<MemberEntity> = {};
 
 			// update capabilities
@@ -265,7 +264,7 @@ export const networkMemberRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ ctx, input }) => {
+		.mutation(async ({ input }) => {
 			const tags = input.updateParams.tags;
 			const adjustedTags = tags && tags.length === 0 ? [] : tags;
 
@@ -379,7 +378,9 @@ export const networkMemberRouter = createTRPCRouter({
 					nwid: input.nwid,
 					updateParams: { authorized: false },
 				});
-			} catch (error) {}
+			} catch (error) {
+				console.error(error);
+			}
 
 			// Set member with deleted status in database.
 			await ctx.prisma.network

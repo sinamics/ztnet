@@ -58,8 +58,8 @@ export interface dns {
 }
 
 export interface IpAssignmentPoolsEntity {
-	ipRangeEnd: string;
-	ipRangeStart: string;
+	ipRangeEnd?: string;
+	ipRangeStart?: string;
 }
 
 export interface RulesEntity {
@@ -69,7 +69,7 @@ export interface RulesEntity {
 }
 
 export interface V4AssignMode {
-	zt: boolean;
+	zt?: boolean;
 }
 
 export interface V6AssignMode {

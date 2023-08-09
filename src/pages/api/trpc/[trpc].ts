@@ -11,7 +11,6 @@ export default createNextApiHandler({
 	onError:
 		env.NODE_ENV === "development"
 			? ({ path, error }) => {
-					// rome-ignore lint/nursery/noConsoleLog: <explanation>
 					console.error(
 						`❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
 					);

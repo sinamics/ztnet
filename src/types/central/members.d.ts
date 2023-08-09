@@ -1,26 +1,4 @@
-import { type Notation } from "../local/member";
-
-export interface CentralMembers {
-	id: string;
-	type: string;
-	clock: number;
-	networkId: string;
-	nodeId: string;
-	controllerId: string;
-	hidden: boolean;
-	name: string;
-	description: string;
-	config?: CentralMemberConfig;
-	lastOnline: number;
-	lastSeen?: number;
-	physicalAddress: string;
-	physicalLocation: null | string; // Assuming this can be string in some cases
-	clientVersion: string;
-	protocolVersion: number;
-	supportsRulesEngine: boolean;
-	notations?: Notation[];
-	totalMemberCount: number;
-}
+import { type MemberEntity } from "../local/member";
 
 interface CentralMemberConfig {
 	activeBridge: boolean;
@@ -48,5 +26,10 @@ interface CentralMemberConfig {
 }
 
 export interface FlattenCentralMembers
-	extends CentralMembers,
+	extends MemberEntity,
 		CentralMemberConfig {}
+
+export interface CentralMemberEntity extends MemberEntity {
+	description: string;
+	totalMemberCount: number;
+}

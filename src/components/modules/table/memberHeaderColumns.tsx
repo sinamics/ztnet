@@ -65,7 +65,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 		() => [
 			columnHelper.accessor(
 				(row) => {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+					// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 					const notations = (row as any)?.notations as NetworkMemberNotation[];
 					const output: string[] = [];
 					notations?.map((tag) => {
@@ -180,8 +180,18 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				),
 				id: "conStatus",
 				cell: ({ row: { original } }) => {
-					const formatTime = (value: string, unit: string) =>
-						`${value} ${unit}`;
+					const formatTime = (value: string, unit: string) => {
+						// Map full unit names to their abbreviations
+						const unitAbbreviations: { [key: string]: string } = {
+							second: "sec",
+							minute: "min",
+							hour: "hr",
+							day: "d",
+						};
+						const abbreviation = unitAbbreviations[unit] || unit;
+
+						return `${value} ${abbreviation}`;
+					};
 					const cursorStyle = { cursor: "pointer" };
 					// console.log(original);
 					if (central) {
@@ -244,10 +254,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 										"networkById.networkMembersTable.column.conStatus.directWan",
 								  );
 						const versionInfo =
-							original.peers && original?.peers?.version !== "-1.-1.-1"
-								? ` (v${original.peers?.version})`
+							original.peers?.version && original.peers.version !== "-1.-1.-1"
+								? ` (v${original.peers.version})`
 								: "";
-
 						return (
 							<span
 								style={cursorStyle}

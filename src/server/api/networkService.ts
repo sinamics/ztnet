@@ -7,7 +7,8 @@
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
 import { APIError, throwError } from "../helpers/errorHandler";
-import { Peers } from "~/types/local/member";
+import { MemberEntity, Paths, Peers } from "~/types/local/member";
+import { network_members } from "@prisma/client";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -58,23 +59,14 @@ function determineConnectionStatus(peer: Peers): ConnectionStatus {
 	return ConnectionStatus.DirectWAN;
 }
 
-interface MemberI {
-	id: string;
-	peers: Record<any, any>;
-	nwid: string;
-	address: string;
-	conStatus: number;
-}
-
 export const fetchZombieMembers = async (
-	ctx: any,
-	input: any,
-	enrichedMembers: any[],
+	nwid: string,
+	enrichedMembers: MemberEntity[],
 ) => {
 	const getZombieMembersPromises = enrichedMembers.map((member) => {
-		return ctx.prisma.network_members.findFirst({
+		return prisma.network_members.findFirst({
 			where: {
-				nwid: input.nwid,
+				nwid,
 				id: member.id,
 				deleted: true,
 			},
@@ -86,14 +78,13 @@ export const fetchZombieMembers = async (
 };
 
 export const enrichMembers = async (
-	ctx: any,
-	input: any,
-	controllerMembers: any[],
-	peersByAddress: Record<string, any>,
+	nwid: string,
+	controllerMembers: MemberEntity[],
+	peersByAddress: Peers[],
 ) => {
-	const memberPromises = controllerMembers.map(async (member: any) => {
-		const dbMember = await ctx.prisma.network_members.findFirst({
-			where: { nwid: input.nwid, id: member.id },
+	const memberPromises = controllerMembers.map(async (member) => {
+		const dbMember = await prisma.network_members.findFirst({
+			where: { nwid, id: member.id },
 			include: { notations: { include: { label: true } } },
 		});
 
@@ -101,10 +92,10 @@ export const enrichMembers = async (
 
 		const peers = peersByAddress[dbMember.address] || [];
 
-		let activePreferredPath: any;
+		let activePreferredPath: Peers;
 		if ("paths" in peers && peers.paths.length > 0) {
 			activePreferredPath = peers.paths.find(
-				(path: any) => path.active && path.preferred,
+				(path: Paths) => path.active && path.preferred,
 			);
 		}
 
@@ -125,15 +116,15 @@ export const enrichMembers = async (
 };
 
 export const fetchPeersForAllMembers = async (
-	members: any[],
-): Promise<Record<string, any>> => {
+	members: MemberEntity[],
+): Promise<Peers[]> => {
 	const memberAddresses = members.map((member) => member.address);
 	const peerPromises = memberAddresses.map((address) =>
 		ztController.peer(address).catch(() => null),
 	);
 
 	const peers = await Promise.all(peerPromises);
-	const peersByAddress: Record<string, any> = {};
+	const peersByAddress: Peers[] = [];
 
 	memberAddresses.forEach((address, index) => {
 		peersByAddress[address] = peers[index];
@@ -143,22 +134,22 @@ export const fetchPeersForAllMembers = async (
 };
 
 export const updateNetworkMembers = async (
-	zt_controller: any,
-	peersByAddress: Record<string, any>,
+	members: MemberEntity[],
+	peersByAddress: Peers[],
 ) => {
-	if (!zt_controller.members || zt_controller.members.length === 0) return;
+	if (!members || members.length === 0) return;
 
-	for (const member of zt_controller.members) {
+	for (const member of members) {
 		member.peers = peersByAddress[member.address] || [];
 		member.conStatus = determineConnectionStatus(member.peers);
 	}
 
-	await psql_updateMember(zt_controller.members);
+	await psql_updateMember(members);
 };
 
-const psql_updateMember = async (members: any[]): Promise<void> => {
+const psql_updateMember = async (members: MemberEntity[]): Promise<void> => {
 	for (const member of members) {
-		const storeValues: any = {
+		const storeValues: Partial<network_members> = {
 			id: member.id,
 			address: member.address,
 		};
@@ -183,7 +174,7 @@ const psql_updateMember = async (members: any[]): Promise<void> => {
 	}
 };
 
-const psql_addMember = async (member: MemberI) => {
+const psql_addMember = async (member: MemberEntity) => {
 	return await prisma.network_members.create({
 		data: {
 			id: member.id,

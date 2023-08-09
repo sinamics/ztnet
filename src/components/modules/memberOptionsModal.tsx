@@ -12,6 +12,7 @@ import {
 	type MemberEntity,
 	type CapabilitiesByName,
 	type TagDetails,
+	Tag,
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
 
@@ -252,7 +253,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			const tagId = tagDetails.id;
 
 			// Create a Map from existing tags for easy lookup and update
-			const tagMap = new Map(memberById.tags as [number, number][]);
+			const tagMap = new Map(memberById.tags);
 
 			if (selectedOption === "None") {
 				tagMap.delete(tagId); // Delete the entry if "None" is selected
