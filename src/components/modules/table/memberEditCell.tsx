@@ -7,10 +7,7 @@ import { useTranslations } from "next-intl";
 import { api } from "~/utils/api";
 import Input from "~/components/elements/input";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import {
-	type MemberEntity,
-	type NetworkMemberNotation,
-} from "~/types/local/member";
+import { type MemberEntity } from "~/types/local/member";
 
 interface IProp {
 	nwid: string;
