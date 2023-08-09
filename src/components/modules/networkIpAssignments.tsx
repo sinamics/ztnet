@@ -25,7 +25,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 			nwid: query.id as string,
 			central,
 		},
-		{ enabled: !!query.id, staleTime: Infinity },
+		{ enabled: !!query.id },
 	);
 
 	const { mutate: enableIpv4AutoAssign } =

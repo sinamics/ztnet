@@ -59,13 +59,10 @@ const NetworkDescription = ({ central = false }: IProp) => {
 		isLoading: loadingNetwork,
 		error: errorNetwork,
 		refetch: refetchNetwork,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central,
-		},
-		{ staleTime: Infinity },
-	);
+	} = api.network.getNetworkById.useQuery({
+		nwid: query.id as string,
+		central,
+	});
 
 	useEffect(() => {
 		setState((prev) => ({

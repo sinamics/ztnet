@@ -28,8 +28,9 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 		api.network.getNetworkById.useQuery(
 			{
 				nwid: nwid as string,
+				central: false,
 			},
-			{ enabled: !!query.id, staleTime: Infinity },
+			{ enabled: !!query.id },
 		);
 
 	const { mutate: updateUser } =

@@ -21,7 +21,7 @@ export const AddMemberById = ({ central = false }: IProp) => {
 			nwid: query.id as string,
 			central,
 		},
-		{ enabled: !!query.id, staleTime: Infinity },
+		{ enabled: !!query.id },
 	);
 
 	const { mutate: createUser } = api.networkMember.create.useMutation({

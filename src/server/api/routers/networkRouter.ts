@@ -119,7 +119,6 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			console.log("first");
 			if (input.central) {
 				return await ztController.central_network_detail(
 					input.nwid,
@@ -156,17 +155,17 @@ export const networkRouter = createTRPCRouter({
 
 			await updateNetworkMembers(ztControllerResponse, peersForAllMembers);
 
+			const zombieMembers = await fetchZombieMembers(
+				ctx,
+				input,
+				ztControllerResponse.members,
+			);
+
 			const enrichedMembers = await enrichMembers(
 				ctx,
 				input,
 				ztControllerResponse.members,
 				peersForAllMembers,
-			);
-
-			const zombieMembers = await fetchZombieMembers(
-				ctx,
-				input,
-				enrichedMembers,
 			);
 
 			const { cidrOptions } = IPv4gen(null);

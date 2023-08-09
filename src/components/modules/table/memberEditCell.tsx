@@ -26,7 +26,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				nwid,
 				central,
 			},
-			{ enabled: !!nwid, staleTime: Infinity },
+			{ enabled: !!nwid },
 		);
 
 	const { data: options } = api.admin.getAllOptions.useQuery();
