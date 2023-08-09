@@ -30,7 +30,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 			nwid: query.id as string,
 			central,
 		},
-		{ enabled: !!query.id, networkMode: "always" },
+		{ enabled: !!query.id, staleTime: Infinity },
 	);
 
 	const { mutate: updateManageRoutes, isLoading: isUpdating } =

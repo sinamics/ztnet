@@ -29,7 +29,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 			{
 				nwid: nwid as string,
 			},
-			{ enabled: !!query.id },
+			{ enabled: !!query.id, staleTime: Infinity },
 		);
 
 	const { mutate: updateUser } =

@@ -49,7 +49,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 				nwid,
 				central,
 			},
-			{ enabled: !!query.id },
+			{ enabled: !!query.id, staleTime: Infinity },
 		);
 
 	const { data: options } = api.admin.getAllOptions.useQuery();

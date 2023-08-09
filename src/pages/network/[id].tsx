@@ -41,7 +41,6 @@ const NetworkById = () => {
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
-
 	const { network, members = [] } = networkById || {};
 	if (loadingNetwork) {
 		// add loading progress bar to center of page, vertially and horizontally

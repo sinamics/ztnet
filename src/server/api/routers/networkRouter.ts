@@ -8,7 +8,15 @@ import {
 	uniqueNamesGenerator,
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import { updateNetworkMembers } from "../networkService";
+import {
+	enrichMembers,
+	fetchAndUpdateNetworkMembers,
+	fetchPeersForAllMembers,
+	fetchPsqlNetworkData,
+	fetchZTControllerResponse,
+	fetchZombieMembers,
+	updateNetworkMembers,
+} from "../networkService";
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
@@ -111,6 +119,7 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			console.log("first");
 			if (input.central) {
 				return await ztController.central_network_detail(
 					input.nwid,
@@ -127,103 +136,40 @@ export const networkRouter = createTRPCRouter({
 						},
 					],
 				},
-				include: {
-					networkMembers: false,
-				},
 			});
 
-			// Only return nw details for author user!
 			if (!psqlNetworkData)
 				return throwError("You are not the Author of this network!");
 
-			// Return nw obj details
 			const ztControllerResponse = await ztController
 				.local_network_detail(psqlNetworkData.nwid, false)
 				.catch((err: APIError) => {
-					return throwError(`${err.message}`);
+					throwError(`${err.message}`);
 				});
 
-			// console.log(JSON.stringify(ztControllerResponse.members, null, 2));
+			if (!ztControllerResponse)
+				return throwError("Failed to get network details!");
 
-			// upate db with new memebers if they not exsist
-			await updateNetworkMembers(ztControllerResponse);
-
-			// Fetch members directly from the ztControllerResponse
-			const controllerMembers = ztControllerResponse.members;
-
-			// Check and enrich each member against your own database and with peer data
-			const memberPromises = controllerMembers.map(
-				async (member: MemberEntity | FlattenCentralMembers) => {
-					const dbMember = await ctx.prisma.network_members.findFirst({
-						where: {
-							nwid: input.nwid,
-							id: member.id,
-						},
-						include: {
-							notations: {
-								include: {
-									label: true,
-								},
-							},
-						},
-					});
-
-					if (!dbMember) return null; // member doesn't belong to the specific user
-
-					// Explicitly type the peers variable
-					const peers = await ztController
-						.peer(dbMember?.address)
-						.catch(() => []);
-
-					let activePreferredPath: Paths | undefined;
-
-					if ("paths" in peers && peers.paths) {
-						activePreferredPath = peers.paths.find(
-							(path) => path && path.active === true && path.preferred === true,
-						);
-					}
-
-					// Renamed address field of activePreferredPath
-					const { address: physicalAddress, ...restOfActivePreferredPath } =
-						activePreferredPath || {};
-
-					return {
-						...dbMember,
-						...member,
-						peers: {
-							...(peers || {}),
-							physicalAddress,
-							...restOfActivePreferredPath,
-						},
-					};
-				},
+			const peersForAllMembers = await fetchPeersForAllMembers(
+				ztControllerResponse.members,
 			);
 
-			const enrichedMembers = await Promise.all(memberPromises);
+			await updateNetworkMembers(ztControllerResponse, peersForAllMembers);
 
-			// Get all members that is deleted but still active in controller (zombies).
-			// Due to an issue were not possible to delete user.
-			// Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-			const getZombieMembersPromises = enrichedMembers.map(async (member) => {
-				return await ctx.prisma.network_members.findFirst({
-					where: {
-						nwid: input.nwid,
-						id: member.id,
-						deleted: true,
-					},
-				});
-			});
+			const enrichedMembers = await enrichMembers(
+				ctx,
+				input,
+				ztControllerResponse.members,
+				peersForAllMembers,
+			);
 
-			// Resolve the promises before passing them to Promise.all
-			const zombieMembers = await Promise.all(getZombieMembersPromises);
+			const zombieMembers = await fetchZombieMembers(
+				ctx,
+				input,
+				enrichedMembers,
+			);
 
-			// filters out any null or undefined elements in the zombieMembers array.
-			const filteredZombieMembers = zombieMembers.filter((a) => a);
-
-			// Get available cidr options.
-			const ipAssignmentPools = IPv4gen(null);
-			const { cidrOptions } = ipAssignmentPools;
-
+			const { cidrOptions } = IPv4gen(null);
 			return {
 				network: {
 					...ztControllerResponse?.network,
@@ -231,7 +177,7 @@ export const networkRouter = createTRPCRouter({
 					cidr: cidrOptions,
 				},
 				members: enrichedMembers,
-				zombieMembers: filteredZombieMembers,
+				zombieMembers,
 			};
 		}),
 	deleteNetwork: protectedProcedure
