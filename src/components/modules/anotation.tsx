@@ -3,6 +3,7 @@ import Input from "~/components/elements/input";
 import { api } from "~/utils/api";
 import { getRandomColor } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
+import { toast } from "react-hot-toast";
 
 type IAnotationProps = {
 	name: string;
@@ -58,6 +59,10 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 			(anotation) => anotation.name === value,
 		);
 		if (isInList) {
+			if (!nodeid)
+				return toast.error(
+					"Member does not exist in DB, please Authorize first",
+				);
 			setAnotation(
 				{
 					name: value,

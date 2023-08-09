@@ -134,7 +134,6 @@ export const networkRouter = createTRPCRouter({
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
-
 			// console.log(JSON.stringify(ztControllerResponse, null, 2));
 			if (!ztControllerResponse)
 				return throwError("Failed to get network details!");
@@ -214,10 +213,9 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// Delete ZT network
-				const createCentralNw = await ztController.network_delete(
-					input.nwid,
-					input.central,
-				);
+				const createCentralNw = await ztController
+					.network_delete(input.nwid, input.central)
+					.catch(() => []);
 
 				if (input.central) return createCentralNw;
 				// Delete networkMembers

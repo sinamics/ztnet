@@ -45,16 +45,7 @@ const NetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
 	const { network, members = [] } = networkById || {};
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56" />
-				</h1>
-			</div>
-		);
-	}
+
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
@@ -65,9 +56,45 @@ const NetworkById = () => {
 					<li>{t("errorSteps.step1")}</li>
 					<li>{t("errorSteps.step2")}</li>
 				</ul>
+				<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+					Network Actions
+				</div>
+				<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+					<div className="flex items-end md:justify-end">
+						<button
+							onClick={() =>
+								callModal({
+									title: `Delete network ${network?.name}`,
+									description:
+										"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+									yesAction: () => {
+										deleteNetwork(
+											{ nwid: query.id as string },
+											{ onSuccess: () => void router("/network") },
+										);
+									},
+								})
+							}
+							className="btn btn-error btn-outline btn-wide"
+						>
+							Delete network
+						</button>
+					</div>
+				</div>
 			</div>
 		);
 	}
+	if (loadingNetwork) {
+		// add loading progress bar to center of page, vertially and horizontally
+		return (
+			<div className="flex flex-col items-center justify-center">
+				<h1 className="text-center text-2xl font-semibold">
+					<progress className="progress progress-primary w-56" />
+				</h1>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">

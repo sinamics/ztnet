@@ -315,18 +315,13 @@ export const network_members = async function (
 ) {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
-	try {
-		const addr = isCentral
-			? `${ztCentralApiUrl}/network/${nwid}/member`
-			: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member`;
 
-		// fetch members
-		return await getData<MemberEntity[]>(addr, headers);
-	} catch (error: unknown) {
-		const prefix = isCentral ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting network_members`;
-		throw new APIError(message, error as AxiosError);
-	}
+	const addr = isCentral
+		? `${ztCentralApiUrl}/network/${nwid}/member`
+		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member`;
+
+	// fetch members
+	return await getData<MemberEntity[]>(addr, headers);
 };
 
 export const local_network_detail = async function (
@@ -338,7 +333,6 @@ export const local_network_detail = async function (
 	try {
 		// get all members for a specific network
 		const members = await network_members(nwid);
-
 		const network = await getData<NetworkEntity>(
 			`${LOCAL_ZT_ADDR}/controller/network/${nwid}`,
 			headers,
@@ -358,9 +352,7 @@ export const local_network_detail = async function (
 			members: [...membersArr],
 		};
 	} catch (error) {
-		const message =
-			"An error occurred while getting data from network_details function";
-		throw new APIError(message, error as AxiosError);
+		throw new APIError(error, error as AxiosError);
 	}
 };
 // Get network details
