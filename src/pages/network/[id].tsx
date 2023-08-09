@@ -64,7 +64,7 @@ const NetworkById = () => {
 						<button
 							onClick={() =>
 								callModal({
-									title: `Delete network ${network?.name}`,
+									title: `Delete network ${query.id as string}`,
 									description:
 										"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 									yesAction: () => {

@@ -213,19 +213,23 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// Delete networkMembers
-				await ctx.prisma.network_members.deleteMany({
-					where: {
-						nwid: input.nwid,
-					},
-				});
+				await ctx.prisma.network_members
+					.deleteMany({
+						where: {
+							nwid: input.nwid,
+						},
+					})
+					.catch(() => []);
 
 				// Delete network
-				await ctx.prisma.network.deleteMany({
-					where: {
-						authorId: ctx.session.user.id,
-						nwid: input.nwid,
-					},
-				});
+				await ctx.prisma.network
+					.deleteMany({
+						where: {
+							authorId: ctx.session.user.id,
+							nwid: input.nwid,
+						},
+					})
+					.catch(() => []);
 
 				// Delete ZT network
 				const createCentralNw = await ztController.network_delete(
