@@ -109,15 +109,13 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 			}, [initialValue]);
 
 			if (id === "name") {
-				// rome-ignore lint/suspicious/noExplicitAny: <explanation>
-				const notations = (original as any)
-					?.notations as NetworkMemberNotation[];
+				const notations = original.notations || [];
 				return (
 					<form>
 						<span className="flex items-center space-x-2">
 							{!central &&
 								options?.showNotationMarkerInTableRow &&
-								notations.map((notation) => (
+								notations?.map((notation) => (
 									<div
 										key={notation.label?.name}
 										className="inline-block h-5 w-5 rounded-full"
