@@ -62,7 +62,7 @@ export const updateNetworkMembers = async (zt_controller: any) => {
 	// Get peers to view online status members
 	for (const member of zt_controller.members) {
 		member.peers = (await ztController.peer(member.address)) || null;
-		member.creationTime = member.creationTime / 1000;
+		member.creationTime = member.creationTime;
 		member.conStatus = determineConnectionStatus(member.peers);
 	}
 

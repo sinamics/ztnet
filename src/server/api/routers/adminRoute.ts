@@ -403,7 +403,6 @@ export const adminRouter = createTRPCRouter({
 							create: {
 								nwid: input.nwid,
 								name: input.nwname || "",
-								ipAssignments: "",
 							},
 						},
 					},
@@ -417,7 +416,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					// rome-ignore lint/nursery/noConsoleLog: <explanation>
+
 					console.error(err);
 					throwError("Could not create network! Please try again");
 				} else {
