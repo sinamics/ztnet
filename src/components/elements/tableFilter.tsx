@@ -1,15 +1,14 @@
 import { useMemo } from "react";
 import { DebouncedInput } from "./debouncedInput";
 import { type Column, type Table } from "@tanstack/react-table";
+import { type MemberEntity } from "~/types/local/member";
 
 export const TableFilter = ({
 	column,
 	table,
 }: {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	column: Column<any, unknown>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	table: Table<any>;
+	column: Column<MemberEntity, unknown>;
+	table: Table<MemberEntity>;
 }) => {
 	const firstValue = table
 		.getPreFilteredRowModel()

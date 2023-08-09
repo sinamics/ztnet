@@ -28,7 +28,7 @@ export const UnlinkedNetwork = () => {
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{
-			id: "id",
+			id: "creationTime",
 			desc: false,
 		},
 	]);
@@ -141,10 +141,6 @@ export const UnlinkedNetwork = () => {
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const { callModal } = useModalStore((state) => state);
 
-			// We need to keep and update the state of the cell normally
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const [value, setValue] = useState(initialValue);
-
 			const dropDownHandler = (
 				e: React.ChangeEvent<HTMLSelectElement>,
 				nwid: string,
@@ -171,17 +167,14 @@ export const UnlinkedNetwork = () => {
 				});
 			};
 
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			useEffect(() => {
-				setValue(initialValue);
-			}, [initialValue]);
 			if (id === "role") {
 				return (
 					<select
 						onChange={(e) => dropDownHandler(e, nwid)}
 						className="select select-sm select-ghost w-full max-w-xs"
+						defaultValue="defaultOption"
 					>
-						<option disabled selected>
+						<option disabled value="defaultOption">
 							Assign User
 						</option>
 						{adminUsers?.map((user) => (
@@ -192,7 +185,7 @@ export const UnlinkedNetwork = () => {
 					</select>
 				);
 			}
-			return value;
+			return initialValue;
 		},
 	};
 

@@ -46,12 +46,12 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 	});
 	const columnHelper = createColumnHelper<MemberEntity>();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const columns = useMemo<ColumnDef<MemberEntity, unknown>[]>(
+	const columns = useMemo<ColumnDef<MemberEntity>[]>(
 		() => [
 			columnHelper.accessor("authorized", {
 				header: () => <span>Authorized</span>,
 				id: "authorized",
-				cell: (info) => info.getValue(),
+				cell: (info) => <span>No</span>,
 			}),
 			columnHelper.accessor("name", {
 				header: () => <span>Member name</span>,

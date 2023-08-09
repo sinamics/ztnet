@@ -23,18 +23,45 @@ export interface MemberEntity {
 	remoteTraceTarget: null;
 	revision: number;
 	ssoExempt: boolean;
-	tags: Tag[];
+	tags: NumberPairArray;
 	peers: Peers;
-	lastSeen?: number;
+	lastSeen?: number | datetime;
 	conStatus?: number;
 	vMajor: number;
 	vMinor: number;
 	vProto: number;
 	vRev: number;
 	action: null;
-	notations?: Notation[];
+	notations?: NetworkMemberNotation[];
 	physicalAddress?: string;
 	accessorFn: () => void;
+	config?: CentralMemberConfig;
+}
+type NumberPairArray = [number, number][];
+
+interface CentralMemberConfig {
+	activeBridge: boolean;
+	address: string;
+	authorized: boolean;
+	capabilities: number[];
+	creationTime: number;
+	id: string;
+	identity: string;
+	ipAssignments: string[];
+	lastAuthorizedTime: number;
+	lastDeauthorizedTime: number;
+	noAutoAssignIps: boolean;
+	nwid: string;
+	objtype: string;
+	remoteTraceLevel: number;
+	remoteTraceTarget: string;
+	revision: number;
+	tags: number[][];
+	vMajor: number;
+	vMinor: number;
+	vRev: number;
+	vProto: number;
+	ssoExempt: boolean;
 }
 
 export interface Peers {

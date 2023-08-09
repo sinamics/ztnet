@@ -390,8 +390,6 @@ export const adminRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// Generate ipv4 address, cidr, start & end
-				const ipAssignmentPools = IPv4gen(null);
 				// console.log(ipAssignmentPools);
 				// Store the created network in the database
 				const updatedUser = await ctx.prisma.user.update({

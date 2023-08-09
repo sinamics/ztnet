@@ -10,10 +10,7 @@ import {
 import * as ztController from "~/utils/ztApi";
 import {
 	enrichMembers,
-	fetchAndUpdateNetworkMembers,
 	fetchPeersForAllMembers,
-	fetchPsqlNetworkData,
-	fetchZTControllerResponse,
 	fetchZombieMembers,
 	updateNetworkMembers,
 } from "../networkService";
@@ -24,16 +21,8 @@ import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
-import { type NetworkAndMemberResponse } from "~/types/network";
-import {
-	type CapabilitiesByName,
-	type MemberEntity,
-	type Paths,
-	type Peers,
-} from "~/types/local/member";
-import { type FlattenCentralMembers } from "~/types/central/members";
+import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
-import { ZTControllerGetPeer } from "~/types/ztController";
 
 const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -145,7 +134,7 @@ export const networkRouter = createTRPCRouter({
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
-
+			// console.log(JSON.stringify(ztControllerResponse, null, 2));
 			if (!ztControllerResponse)
 				return throwError("Failed to get network details!");
 
@@ -153,21 +142,21 @@ export const networkRouter = createTRPCRouter({
 				ztControllerResponse.members,
 			);
 
-			await updateNetworkMembers(ztControllerResponse, peersForAllMembers);
-
-			const zombieMembers = await fetchZombieMembers(
-				ctx,
-				input,
-				ztControllerResponse.members,
-			);
-
-			const enrichedMembers = await enrichMembers(
-				ctx,
-				input,
+			await updateNetworkMembers(
 				ztControllerResponse.members,
 				peersForAllMembers,
 			);
 
+			const zombieMembers = await fetchZombieMembers(
+				input.nwid,
+				ztControllerResponse.members,
+			);
+
+			const enrichedMembers = await enrichMembers(
+				input.nwid,
+				ztControllerResponse.members,
+				peersForAllMembers,
+			);
 			const { cidrOptions } = IPv4gen(null);
 			return {
 				network: {
@@ -582,7 +571,7 @@ export const networkRouter = createTRPCRouter({
 			const rules = [];
 
 			const caps: Record<string, CapabilitiesByName> = {};
-			const tags: Record<string, TagsByName> = {};
+			const tags: TagsByName = {};
 			// try {
 			const err = RuleCompiler(flowRoute, rules, caps, tags) as string[];
 			if (err) {
@@ -610,21 +599,6 @@ export const networkRouter = createTRPCRouter({
 					default: dfl || dfl === 0 ? dfl : null,
 				});
 			}
-			// console.log(
-			//   JSON.stringify(
-			//     {
-			//       config: {
-			//         rules: rules,
-			//         capabilities: capsArray,
-			//         tags: tagsArray,
-			//       },
-			//       capabilitiesByName: capabilitiesByName,
-			//       tagsByName: tags,
-			//     },
-			//     null,
-			//     2
-			//   )
-			// );
 
 			const updateObj = {
 				rules,
@@ -639,13 +613,17 @@ export const networkRouter = createTRPCRouter({
 						tagsByName: tags,
 						rulesSource: flowRoute,
 				  }
-				: { ...updateObj, capabilitiesByName, tagsByName: tags };
+				: {
+						...updateObj,
+						capabilitiesByName,
+						tagsByName: tags,
+						rulesSource: "#",
+				  };
 
 			// update zerotier network with the new flow route
 			const updatedRules = await ztController.network_update({
 				nwid: input.nwid,
 				central: input.central,
-				// @ts-expect-error
 				updateParams,
 			});
 
@@ -661,8 +639,8 @@ export const networkRouter = createTRPCRouter({
 					where: { nwid: input.nwid },
 					data: {
 						flowRule: flowRoute,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-						tagsByName: tags as any,
+						// @ts-expect-error
+						tagsByName: tags,
 						capabilitiesByName,
 					},
 				}),

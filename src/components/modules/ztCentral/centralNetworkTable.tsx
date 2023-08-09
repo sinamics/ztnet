@@ -14,7 +14,7 @@ import {
 import { useSkipper } from "../../elements/useSkipper";
 import TableFooter from "../tableFooter";
 import { useTranslations } from "next-intl";
-import { type FlattenCentralMembers } from "~/types/central/members";
+import { CentralMemberEntity } from "~/types/central/members";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -43,7 +43,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 		},
 	]);
 
-	const columnHelper = createColumnHelper<FlattenCentralMembers>();
+	const columnHelper = createColumnHelper<CentralMemberEntity>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {
@@ -87,7 +87,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 			updateData: (rowIndex, columnId, value) => {
 				// Skip page index reset until after next rerender
 				skipAutoResetPageIndex();
-				setData((old: FlattenCentralMembers[]) =>
+				setData((old: CentralMemberEntity[]) =>
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
