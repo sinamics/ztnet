@@ -213,10 +213,9 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// Delete ZT network
-				const createCentralNw = await ztController.network_delete(
-					input.nwid,
-					input.central,
-				);
+				const createCentralNw = await ztController
+					.network_delete(input.nwid, input.central)
+					.catch(() => []); // Ignore errors
 
 				if (input.central) return createCentralNw;
 
