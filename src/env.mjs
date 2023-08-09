@@ -66,7 +66,7 @@ if (!!process.env.SKIP_ENV_VALIDATION === false) {
 	);
 
 	if (parsed.success === false) {
-		// eslint-disable-next-line no-console
+		// rome-ignore lint/nursery/noConsoleLog: <explanation>
 		console.error(
 			"❌ Invalid environment variables:",
 			parsed.error.flatten().fieldErrors,

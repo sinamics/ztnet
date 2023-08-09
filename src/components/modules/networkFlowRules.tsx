@@ -35,7 +35,7 @@ export const NetworkFlowRules = () => {
 				setRuleError({ error: err.error, line: err.line });
 				void toast.error(err.error);
 			} catch (error) {
-				// eslint-disable-next-line no-console
+				// rome-ignore lint/nursery/noConsoleLog: <explanation>
 				console.log(error);
 			}
 		},

@@ -42,7 +42,7 @@ if (!ZT_SECRET) {
 		try {
 			ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
 		} catch (error) {
-			// eslint-disable-next-line no-console
+			// rome-ignore lint/nursery/noConsoleLog: <explanation>
 			console.error("an error occurred while reading the ZT_SECRET");
 		}
 	} else {
@@ -549,12 +549,14 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 // https://docs.zerotier.com/service/v1/#operation/getPeer
 export const peer = async (userZtAddress: string) => {
 	const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
+	try {
+		// get headers based on local or central api
+		const { headers } = await getOptions(false);
+		const response = await getData<ZTControllerGetPeer>(addr, headers);
 
-	// get headers based on local or central api
-	const { headers } = await getOptions(false);
-
-	const response: AxiosResponse = await axios.get(addr, { headers });
-
-	if (!response.data) return {} as ZTControllerGetPeer;
-	return response.data as ZTControllerGetPeer;
+		if (!response) return {} as ZTControllerGetPeer;
+		return response as ZTControllerGetPeer;
+	} catch (error) {
+		return [];
+	}
 };
