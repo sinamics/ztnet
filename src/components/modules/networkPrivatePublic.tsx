@@ -54,7 +54,7 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 				nwid: query.id as string,
 				central,
 			},
-			{ enabled: !!query.id },
+			{ enabled: !!query.id, staleTime: Infinity },
 		);
 	const { mutate: privatePublicNetwork } =
 		api.network.privatePublicNetwork.useMutation({

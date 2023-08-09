@@ -39,7 +39,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				nwid,
 				central,
 			},
-			{ enabled: !!query.id, networkMode: "online" },
+			{ enabled: !!query.id, staleTime: Infinity },
 		);
 	const { data: memberById, refetch: refetchMemberById } =
 		api.networkMember.getMemberById.useQuery(

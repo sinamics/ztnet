@@ -6,6 +6,8 @@
 
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
+import { APIError, throwError } from "../helpers/errorHandler";
+import { Peers } from "~/types/local/member";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -34,8 +36,8 @@ export enum ConnectionStatus {
 	DirectWAN = 3,
 }
 
-function determineConnectionStatus(peer: any): ConnectionStatus {
-	if (!peer) {
+function determineConnectionStatus(peer: Peers): ConnectionStatus {
+	if (Array.isArray(peer) && peer.length === 0) {
 		return ConnectionStatus.Offline;
 	}
 
@@ -55,20 +57,6 @@ function determineConnectionStatus(peer: any): ConnectionStatus {
 
 	return ConnectionStatus.DirectWAN;
 }
-export const updateNetworkMembers = async (zt_controller: any) => {
-	// return if no members
-	if (zt_controller.members.length === 0) return;
-
-	// Get peers to view online status members
-	for (const member of zt_controller.members) {
-		member.peers = (await ztController.peer(member.address)) || null;
-		member.creationTime = member.creationTime;
-		member.conStatus = determineConnectionStatus(member.peers);
-	}
-
-	// update or create members in db
-	await psql_updateMember(zt_controller.members);
-};
 
 interface MemberI {
 	id: string;
@@ -78,40 +66,118 @@ interface MemberI {
 	conStatus: number;
 }
 
-const psql_updateMember = async (members: Array<MemberI>): Promise<void> => {
-	if (members.length === 0) return;
-	//loop array
+export const fetchZombieMembers = async (
+	ctx: any,
+	input: any,
+	enrichedMembers: any[],
+) => {
+	const getZombieMembersPromises = enrichedMembers.map((member) => {
+		return ctx.prisma.network_members.findFirst({
+			where: {
+				nwid: input.nwid,
+				id: member.id,
+				deleted: true,
+			},
+		});
+	});
+
+	const zombieMembers = await Promise.all(getZombieMembersPromises);
+	return zombieMembers.filter(Boolean);
+};
+
+export const enrichMembers = async (
+	ctx: any,
+	input: any,
+	controllerMembers: any[],
+	peersByAddress: Record<string, any>,
+) => {
+	const memberPromises = controllerMembers.map(async (member: any) => {
+		const dbMember = await ctx.prisma.network_members.findFirst({
+			where: { nwid: input.nwid, id: member.id },
+			include: { notations: { include: { label: true } } },
+		});
+
+		if (!dbMember) return []; // member doesn't belong to the specific user
+
+		const peers = peersByAddress[dbMember.address] || [];
+
+		let activePreferredPath: any;
+		if ("paths" in peers && peers.paths.length > 0) {
+			activePreferredPath = peers.paths.find(
+				(path: any) => path.active && path.preferred,
+			);
+		}
+
+		if (!activePreferredPath) return { ...dbMember, ...member, peers: {} };
+
+		const { address: physicalAddress, ...restOfActivePreferredPath } =
+			activePreferredPath;
+
+		return {
+			...dbMember,
+			...member,
+			peers: { ...peers, physicalAddress, ...restOfActivePreferredPath },
+		};
+	});
+
+	return await Promise.all(memberPromises);
+};
+
+export const fetchPeersForAllMembers = async (
+	members: any[],
+): Promise<Record<string, any>> => {
+	const memberAddresses = members.map((member) => member.address);
+	const peerPromises = memberAddresses.map((address) =>
+		ztController.peer(address).catch(() => null),
+	);
+
+	const peers = await Promise.all(peerPromises);
+	const peersByAddress: Record<string, any> = {};
+
+	memberAddresses.forEach((address, index) => {
+		peersByAddress[address] = peers[index];
+	});
+
+	return peersByAddress;
+};
+
+export const updateNetworkMembers = async (
+	zt_controller: any,
+	peersByAddress: Record<string, any>,
+) => {
+	if (!zt_controller.members || zt_controller.members.length === 0) return;
+
+	for (const member of zt_controller.members) {
+		member.peers = peersByAddress[member.address] || [];
+		member.conStatus = determineConnectionStatus(member.peers);
+	}
+
+	await psql_updateMember(zt_controller.members);
+};
+
+const psql_updateMember = async (members: any[]): Promise<void> => {
 	for (const member of members) {
-		const storeValues = {
+		const storeValues: any = {
 			id: member.id,
 			address: member.address,
 		};
 
-		// check if we should update lasteseen
-		member.peers &&
-			member.conStatus !== 0 &&
-			Object.assign(storeValues, { lastSeen: new Date() });
+		if (member.peers && member.conStatus !== 0) {
+			storeValues.lastSeen = new Date();
+		}
 
-		// update members
 		const updateMember = await prisma.network_members.updateMany({
-			where: {
-				nwid: member.nwid,
-				id: member.id,
-			},
-			data: {
-				...storeValues,
-			},
+			where: { nwid: member.nwid, id: member.id },
+			data: storeValues,
 		});
 
-		// member has been updated count
-		if (updateMember.count) continue;
-
-		// if member is not in db, add it.
-		try {
-			await psql_addMember(member);
-		} catch (error) {
-			// rome-ignore lint/nursery/noConsoleLog: <explanation>
-			console.log(error);
+		if (!updateMember.count) {
+			try {
+				await psql_addMember(member);
+			} catch (error) {
+				// rome-ignore lint/nursery/noConsoleLog: <explanation>
+				console.log(error);
+			}
 		}
 	}
 };
