@@ -135,7 +135,19 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				),
 				id: "creationTime",
 				cell: (info) => {
-					return <TimeAgo date={info.getValue()} />;
+					const formatTime = (value: string, unit: string) => {
+						// Map full unit names to their abbreviations
+						const unitAbbreviations: { [key: string]: string } = {
+							second: "s ago",
+							minute: "m ago",
+							hour: "hr ago",
+							day: "dy ago",
+						};
+						const abbreviation = unitAbbreviations[unit] || unit;
+
+						return `${value} ${abbreviation}`;
+					};
+					return <TimeAgo date={info.getValue()} formatter={formatTime} />;
 				},
 			}),
 			columnHelper.accessor("peers", {
