@@ -134,6 +134,7 @@ export const networkRouter = createTRPCRouter({
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
+
 			// console.log(JSON.stringify(ztControllerResponse, null, 2));
 			if (!ztControllerResponse)
 				return throwError("Failed to get network details!");
@@ -142,29 +143,64 @@ export const networkRouter = createTRPCRouter({
 				ztControllerResponse.members,
 			);
 
+			// Update network members based on controller response and fetched peers data
 			await updateNetworkMembers(
 				ztControllerResponse.members,
 				peersForAllMembers,
 			);
 
+			// Fetch members which are marked as deleted/zombie in the database for a given network
 			const zombieMembers = await fetchZombieMembers(
 				input.nwid,
 				ztControllerResponse.members,
 			);
 
-			const enrichedMembers = await enrichMembers(
+			// Enrich controller members with additional database information and peer data
+			const controllerMembers = await enrichMembers(
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
 			);
+
+			// Generate CIDR options for IP configuration
 			const { cidrOptions } = IPv4gen(null);
+
+			// Merging logic to ensure that members who only exist in local database ( added manually ) are also included in the response
+
+			// Create a map to store members by their id for efficient lookup
+			const mergedMembersMap = new Map();
+
+			// Process controllerMembers first for precedence
+			for (const member of controllerMembers) {
+				mergedMembersMap.set(member.id, member);
+			}
+
+			// Fetch members from the database for a given network ID where the members are not deleted
+			const databaseMembers = await ctx.prisma.network_members.findMany({
+				where: {
+					nwid: input.nwid,
+					deleted: false,
+				},
+			});
+
+			// Process databaseMembers
+			for (const member of databaseMembers) {
+				if (!mergedMembersMap.has(member.id)) {
+					mergedMembersMap.set(member.id, member);
+				}
+			}
+
+			// Convert the map back to an array of merged members
+			const mergedMembers = [...mergedMembersMap.values()];
+
+			// Construct the final response object
 			return {
 				network: {
 					...ztControllerResponse?.network,
 					...psqlNetworkData,
 					cidr: cidrOptions,
 				},
-				members: enrichedMembers,
+				members: mergedMembers,
 				zombieMembers,
 			};
 		}),
