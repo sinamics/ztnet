@@ -98,6 +98,7 @@ export const networkMemberRouter = createTRPCRouter({
 			await ctx.prisma.network_members.create({
 				data: {
 					id: input.id,
+					address: input.id,
 					lastSeen: new Date(),
 					creationTime: new Date(),
 					nwid_ref: {

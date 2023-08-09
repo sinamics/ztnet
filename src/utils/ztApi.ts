@@ -545,8 +545,7 @@ export const peer = async (userZtAddress: string) => {
 
 		if (!response) return {} as ZTControllerGetPeer;
 		return response as ZTControllerGetPeer;
-	} catch (error) {
-		console.error(error);
+	} catch (_error) {
 		return [];
 	}
 };
