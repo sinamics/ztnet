@@ -28,7 +28,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 			nwid: query.id as string,
 			central,
 		},
-		{ enabled: !!query.id, staleTime: Infinity },
+		{ enabled: !!query.id },
 	);
 
 	const { mutate: updateNetwork } = api.network.dns.useMutation({

@@ -97,7 +97,7 @@ export const enrichMembers = async (
 			include: { notations: { include: { label: true } } },
 		});
 
-		if (!dbMember) return []; // member doesn't belong to the specific user
+		if (!dbMember || dbMember.deleted) return null; // member doesn't belong to the specific user or is deleted
 
 		const peers = peersByAddress[dbMember.address] || [];
 
@@ -120,7 +120,8 @@ export const enrichMembers = async (
 		};
 	});
 
-	return await Promise.all(memberPromises);
+	const members = await Promise.all(memberPromises);
+	return members.filter(Boolean); // This will filter out any null or undefined values
 };
 
 export const fetchPeersForAllMembers = async (

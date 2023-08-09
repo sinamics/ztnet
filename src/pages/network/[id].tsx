@@ -38,6 +38,7 @@ const NetworkById = () => {
 	} = api.network.getNetworkById.useQuery(
 		{
 			nwid: query.id as string,
+			central: false,
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);

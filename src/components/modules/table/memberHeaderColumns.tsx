@@ -33,20 +33,20 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				nwid,
 				central,
 			},
-			{ enabled: !!nwid, staleTime: Infinity },
+			{ enabled: !!nwid },
 		);
 
 	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: (e) => {
 			void toast.error(e?.message);
 		},
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const stashMember = (id: string) => {
 		stashUser(
@@ -54,7 +54,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				nwid,
 				id,
 			},
-			{ onSuccess: () => void refetchNetworkById() },
+			{
+				onSuccess: () => void refetchNetworkById(),
+			},
 		);
 	};
 
