@@ -170,7 +170,9 @@ export const authRouter = createTRPCRouter({
 					// we dont want to show any error related to sending emails when user signs up
 					try {
 						await sendEmail(transporter, mailOptions);
-					} catch (error) {}
+					} catch (error) {
+						console.error(error);
+					}
 				}
 			}
 
@@ -393,6 +395,7 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 			} catch (error) {
+				console.error(error);
 				throwError("token is not valid, please try again!");
 			}
 		}),

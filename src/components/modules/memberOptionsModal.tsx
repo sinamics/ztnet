@@ -39,7 +39,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				nwid,
 				central,
 			},
-			{ enabled: !!query.id, networkMode: "online" },
+			{ enabled: !!query.id },
 		);
 	const { data: memberById, refetch: refetchMemberById } =
 		api.networkMember.getMemberById.useQuery(
@@ -50,7 +50,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			{ enabled: !!query.id, networkMode: "online" },
 		);
-
 	useEffect(() => {
 		if (networkById?.members && "id" in networkById.members[0]) {
 			const member = (networkById.members as MemberEntity[]).find(
@@ -71,7 +70,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			onSuccess: () => refetchNetworkById(),
 		});
-
+	const { mutate: updateTags } = api.networkMember.Tags.useMutation({
+		onError: (e) => {
+			// zod error
+			// console.log(shape?.data?.zodError.fieldErrors);
+			// custom error
+			void toast.error(e?.message);
+		},
+		onSuccess: () => refetchNetworkById(),
+	});
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const subnetMatch = isIPInSubnet(
 			e.target.value,
@@ -159,7 +166,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		);
 	};
 
-	const CapabilityCheckboxes: React.FC<CapabilitiesByName | null> = (caps) => {
+	const CapabilityCheckboxes: React.FC<CapabilitiesByName> = (caps) => {
 		const handleCheckboxChange = (
 			e: React.ChangeEvent<HTMLInputElement>,
 			capId: number,
@@ -236,7 +243,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const TagDropdowns: React.FC = (tagsByName: TagsByName) => {
 		const handleDropdownChange = (
 			e: React.ChangeEvent<HTMLSelectElement>,
-			tagName: string,
 			tagDetails: TagDetails,
 		) => {
 			const selectedOption = e.target.value;
@@ -244,7 +250,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			const tagId = tagDetails.id;
 
 			// Create a Map from existing tags for easy lookup and update
-			const tagMap = new Map(memberById.tags as [number, number][]);
+			const tagMap = new Map(memberById.tags);
 
 			if (selectedOption === "None") {
 				tagMap.delete(tagId); // Delete the entry if "None" is selected
@@ -256,7 +262,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			// Convert back to the array of arrays format
 			const tags = Array.from(tagMap.entries());
 
-			updateMember(
+			updateTags(
 				{
 					updateParams: {
 						tags,
@@ -310,7 +316,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							</label>
 							<select
 								className="select select-bordered select-sm"
-								onChange={(e) => handleDropdownChange(e, tagName, tagDetails)}
+								onChange={(e) => handleDropdownChange(e, tagDetails)}
 								value={selectedOption}
 							>
 								<option value="None">None</option>
@@ -326,8 +332,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			</div>
 		);
 	};
-
-	// console.log(networkById);
 	return (
 		<div>
 			{updateMemberLoading ? (
@@ -481,7 +485,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
 						<header>{t("memberOptionModal.capabilities.header")}</header>
-						{CapabilityCheckboxes(networkById?.network?.capabilitiesByName)}
+						{CapabilityCheckboxes(
+							networkById?.network?.capabilitiesByName as CapabilitiesByName,
+						)}
 					</div>
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">

@@ -21,6 +21,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 	const { refetch: refetchNetworkById } = api.network.getNetworkById.useQuery(
 		{
 			nwid,
+			central: false,
 		},
 		{ enabled: !!nwid, networkMode: "online" },
 	);

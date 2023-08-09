@@ -156,8 +156,8 @@ export interface ZTControllerGetPeer {
 	address: string;
 	isBonded: boolean;
 	latency: number;
-	paths: Path[];
-	preferredPath: Path;
+	paths: Paths[];
+	preferredPath: Paths;
 	role: string;
 	version: string;
 	versionMajor: number;
@@ -165,7 +165,7 @@ export interface ZTControllerGetPeer {
 	versionRev: number;
 }
 
-export interface Path {
+export interface Paths {
 	active: boolean;
 	address: string;
 	expired: boolean;

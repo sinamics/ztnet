@@ -20,7 +20,7 @@ const Mail = () => {
 	} = api.admin.getAllOptions.useQuery();
 
 	const inputHandler = (e: Partial<GlobalOptions>) => {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			setMailOptions(e, {
 				onSuccess: () => {
 					void refetchOptions();

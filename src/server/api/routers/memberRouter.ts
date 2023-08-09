@@ -3,7 +3,6 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import * as ztController from "~/utils/ztApi";
 import { TRPCError } from "@trpc/server";
 import { type MemberEntity } from "~/types/local/member";
-import { type CentralMembers } from "~/types/central/members";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -28,22 +27,25 @@ export const networkMemberRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			const ztMembers = await ztController.member_details(
+				input.nwid,
+				input.id,
+				input.central,
+			);
+
 			if (input.central) {
-				const memberDetails = await ztController.member_details(
-					input.nwid,
-					input.id,
-					input.central,
-				);
-				return ztController.flattenCentralMember(
-					memberDetails as CentralMembers,
-				);
+				return ztController.flattenCentralMember(ztMembers);
 			}
-			return await ctx.prisma.network_members.findFirst({
+			const dbMember = await ctx.prisma.network_members.findFirst({
 				where: {
 					id: input.id,
-					nwid: input.nwid,
+					nwid: input.nwid, // this should be the value of `nwid` you are looking for
 				},
 			});
+			return {
+				...dbMember,
+				...ztMembers,
+			};
 		}),
 	create: protectedProcedure
 		.input(
@@ -96,8 +98,6 @@ export const networkMemberRouter = createTRPCRouter({
 			await ctx.prisma.network_members.create({
 				data: {
 					id: input.id,
-					authorized: false,
-					ipAssignments: [],
 					lastSeen: new Date(),
 					creationTime: new Date(),
 					nwid_ref: {
@@ -127,7 +127,7 @@ export const networkMemberRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ ctx, input }) => {
+		.mutation(async ({ input }) => {
 			const payload: Partial<MemberEntity> = {};
 
 			// update capabilities
@@ -206,54 +206,93 @@ export const networkMemberRouter = createTRPCRouter({
 
 			if (input.central) return updatedMember;
 
-			const response = await ctx.prisma.network
-				.update({
-					where: {
-						nwid: input.nwid,
-					},
-					data: {
-						networkMembers: {
-							updateMany: {
-								where: { id: input.memberId, nwid: input.nwid },
-								data: {
-									ipAssignments: updatedMember.ipAssignments,
-									authorized: updatedMember.authorized,
-									noAutoAssignIps: updatedMember.noAutoAssignIps,
-									activeBridge: updatedMember.activeBridge,
-									// @ts-expect-error
-									tags: updatedMember.tags,
-									capabilities: updatedMember.capabilities,
-								},
-							},
-						},
-					},
-					include: {
-						networkMembers: {
-							where: {
-								id: input.memberId,
-								nwid: input.nwid,
-							},
-						},
-					},
-				})
-				// eslint-disable-next-line no-console
-				.catch((err: string) => console.log(err));
-			if (!response) {
-				throw new TRPCError({
-					message: "Network database response is empty.",
-					code: "BAD_REQUEST",
-				});
-			}
+			// const response = await ctx.prisma.network
+			// 	.update({
+			// 		where: {
+			// 			nwid: input.nwid,
+			// 		},
+			// 		data: {
+			// 			networkMembers: {
+			// 				updateMany: {
+			// 					where: { id: input.memberId, nwid: input.nwid },
+			// 					data: {
+			// 						// @ts-expect-error
+			// 						tags: updatedMember.tags,
+			// 						capabilities: updatedMember.capabilities,
+			// 					},
+			// 				},
+			// 			},
+			// 		},
+			// 		include: {
+			// 			networkMembers: {
+			// 				where: {
+			// 					id: input.memberId,
+			// 					nwid: input.nwid,
+			// 				},
+			// 			},
+			// 		},
+			// 	})
+			// 	// rome-ignore lint/nursery/noConsoleLog: <explanation>
+			// 	.catch((err: string) => console.log(err));
+			// if (!response) {
+			// 	throw new TRPCError({
+			// 		message: "Network database response is empty.",
+			// 		code: "BAD_REQUEST",
+			// 	});
+			// }
 
-			if ("networkMembers" in response) {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				return { member: response.networkMembers[0] };
-			} else {
-				throw new TRPCError({
-					message: "Response does not have network members.",
-					code: "BAD_REQUEST",
+			// if ("networkMembers" in response) {
+			// 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			// 	return { member: response.networkMembers[0] };
+			// } else {
+			// 	throw new TRPCError({
+			// 		message: "Response does not have network members.",
+			// 		code: "BAD_REQUEST",
+			// 	});
+			// }
+		}),
+	Tags: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string({ required_error: "No network id provided!" }),
+				memberId: z.string({ required_error: "No member id provided!" }),
+				central: z.boolean().default(false),
+				updateParams: z.object({
+					tags: z
+						.array(z.tuple([z.number(), z.number()]).or(z.array(z.never())))
+						.optional(),
+				}),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const tags = input.updateParams.tags;
+			const adjustedTags = tags && tags.length === 0 ? [] : tags;
+
+			const payload: Partial<MemberEntity> = {};
+			Object.assign(payload, {}, { tags: adjustedTags });
+
+			const updateParams = input.central
+				? { config: { ...payload } }
+				: { ...payload };
+
+			// if central is true, send the request to the central API and return the response
+			const updatedMember = await ztController
+				.member_update({
+					nwid: input.nwid,
+					memberId: input.memberId,
+					central: input.central,
+					// @ts-expect-error
+					updateParams,
+				})
+				.catch(() => {
+					throw new TRPCError({
+						message:
+							"Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
+						code: "FORBIDDEN",
+					});
 				});
-			}
+
+			return updatedMember;
 		}),
 	UpdateDatabaseOnly: protectedProcedure
 		.input(
@@ -339,7 +378,9 @@ export const networkMemberRouter = createTRPCRouter({
 					nwid: input.nwid,
 					updateParams: { authorized: false },
 				});
-			} catch (error) {}
+			} catch (error) {
+				console.error(error);
+			}
 
 			// Set member with deleted status in database.
 			await ctx.prisma.network
@@ -366,7 +407,7 @@ export const networkMemberRouter = createTRPCRouter({
 						},
 					},
 				})
-				// eslint-disable-next-line no-console
+				// rome-ignore lint/nursery/noConsoleLog: <explanation>
 				.catch((err: string) => console.log(err));
 		}),
 	delete: protectedProcedure

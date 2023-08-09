@@ -8,7 +8,12 @@ import {
 	uniqueNamesGenerator,
 } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import { updateNetworkMembers } from "../networkService";
+import {
+	enrichMembers,
+	fetchPeersForAllMembers,
+	fetchZombieMembers,
+	updateNetworkMembers,
+} from "../networkService";
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
@@ -16,14 +21,7 @@ import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
-import { type NetworkAndMemberResponse } from "~/types/network";
-import {
-	type CapabilitiesByName,
-	type MemberEntity,
-	type Paths,
-	type Peers,
-} from "~/types/local/member";
-import { type FlattenCentralMembers } from "~/types/central/members";
+import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 
 const customConfig: Config = {
@@ -110,20 +108,13 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// Get available cidr options.
-			const ipAssignmentPools = IPv4gen(null);
-			const { cidrOptions } = ipAssignmentPools;
-
 			if (input.central) {
-				// const status = await ztController.get_controller_status(input.central);
-				// console.log(JSON.stringify(status, null, 2));
-				const t = await ztController.central_network_detail(
+				return await ztController.central_network_detail(
 					input.nwid,
 					input.central,
 				);
-				// console.log(JSON.stringify(t, null, 2));
-				return t;
 			}
+
 			const psqlNetworkData = await ctx.prisma.network.findFirst({
 				where: {
 					AND: [
@@ -133,113 +124,48 @@ export const networkRouter = createTRPCRouter({
 						},
 					],
 				},
-				include: {
-					networkMembers: false,
-				},
 			});
 
-			// Only return nw details for author user!
 			if (!psqlNetworkData)
 				return throwError("You are not the Author of this network!");
 
-			// Return nw obj details
 			const ztControllerResponse = await ztController
 				.local_network_detail(psqlNetworkData.nwid, false)
 				.catch((err: APIError) => {
-					return throwError(`${err.message}`);
+					throwError(`${err.message}`);
 				});
-
 			// console.log(JSON.stringify(ztControllerResponse, null, 2));
-			// upate db with new memebers if they not exsist
-			await updateNetworkMembers(ztControllerResponse);
+			if (!ztControllerResponse)
+				return throwError("Failed to get network details!");
 
-			// merge network data from psql and zt controller
-			const mergedNetwork = {
-				...psqlNetworkData,
-				...ztControllerResponse?.network,
-				cidr: cidrOptions,
-			};
-
-			const combined: Partial<NetworkAndMemberResponse> = {
-				...ztControllerResponse,
-				network: mergedNetwork as NetworkEntity,
-			};
-			const { members, network } = combined;
-
-			// Get all members that is deleted but still active in controller (zombies).
-			// Due to an issue were not possible to delete user.
-			// Updated 08/2022, delete function should work if user is de-autorized prior to deleting.
-			const getZombieMembersPromises = members.map(
-				async (member: MemberEntity | FlattenCentralMembers) => {
-					return await ctx.prisma.network_members.findFirst({
-						where: {
-							nwid: input.nwid,
-							id: member.id,
-							deleted: true,
-						},
-					});
-				},
+			const peersForAllMembers = await fetchPeersForAllMembers(
+				ztControllerResponse.members,
 			);
 
-			const getActiveMembers = await ctx.prisma.network_members.findMany({
-				where: {
-					nwid: input.nwid,
-					deleted: false,
-				},
-				include: {
-					notations: {
-						include: {
-							label: true,
-						},
-					},
-				},
-			});
-
-			// Get peers to view client version of zt
-			const updatedActiveMembers = await Promise.all(
-				getActiveMembers.map(async (member) => {
-					const peers = (await ztController
-						.peer(member?.address)
-						.catch(() => [])) as Peers[];
-
-					const memberPeer = peers.find(
-						(peer: Peers) => peer.address === member.id,
-					);
-					let activePreferredPath: Paths | undefined;
-
-					if (memberPeer?.paths) {
-						activePreferredPath = memberPeer.paths.find(
-							(path) => path && path.active === true && path.preferred === true,
-						);
-					}
-
-					// Renamed address field of activePreferredPath
-					const { address: physicalAddress, ...restOfActivePreferredPath } =
-						activePreferredPath || {};
-
-					return {
-						...member,
-						peers: {
-							...(memberPeer || {}),
-							physicalAddress,
-							...restOfActivePreferredPath,
-						},
-					};
-				}),
+			await updateNetworkMembers(
+				ztControllerResponse.members,
+				peersForAllMembers,
 			);
 
-			// console.log(JSON.stringify(updatedActiveMembers, null, 2));
-			// Resolve the promises before passing them to Promise.all
-			const zombieMembers = await Promise.all(getZombieMembersPromises);
-			// console.log(JSON.stringify(updatedActiveMembers, null, 2));
+			const zombieMembers = await fetchZombieMembers(
+				input.nwid,
+				ztControllerResponse.members,
+			);
 
-			// filters out any null or undefined elements in the zombieMembers array.
-			const filteredZombieMembers = zombieMembers.filter((a) => a);
-
+			const enrichedMembers = await enrichMembers(
+				input.nwid,
+				ztControllerResponse.members,
+				peersForAllMembers,
+			);
+			const { cidrOptions } = IPv4gen(null);
 			return {
-				network,
-				members: updatedActiveMembers,
-				zombieMembers: filteredZombieMembers,
+				network: {
+					...ztControllerResponse?.network,
+					...psqlNetworkData,
+					cidr: cidrOptions,
+				},
+				members: enrichedMembers,
+				zombieMembers,
 			};
 		}),
 	deleteNetwork: protectedProcedure
@@ -609,7 +535,6 @@ export const networkRouter = createTRPCRouter({
 							create: {
 								name: newNw.name,
 								nwid: newNw.nwid,
-								ipAssignments: newNw.routes[0].target,
 							},
 						},
 					},
@@ -646,7 +571,7 @@ export const networkRouter = createTRPCRouter({
 			const rules = [];
 
 			const caps: Record<string, CapabilitiesByName> = {};
-			const tags: Record<string, TagsByName> = {};
+			const tags: TagsByName = {};
 			// try {
 			const err = RuleCompiler(flowRoute, rules, caps, tags) as string[];
 			if (err) {
@@ -674,21 +599,6 @@ export const networkRouter = createTRPCRouter({
 					default: dfl || dfl === 0 ? dfl : null,
 				});
 			}
-			// console.log(
-			//   JSON.stringify(
-			//     {
-			//       config: {
-			//         rules: rules,
-			//         capabilities: capsArray,
-			//         tags: tagsArray,
-			//       },
-			//       capabilitiesByName: capabilitiesByName,
-			//       tagsByName: tags,
-			//     },
-			//     null,
-			//     2
-			//   )
-			// );
 
 			const updateObj = {
 				rules,
@@ -703,13 +613,17 @@ export const networkRouter = createTRPCRouter({
 						tagsByName: tags,
 						rulesSource: flowRoute,
 				  }
-				: { ...updateObj, capabilitiesByName, tagsByName: tags };
+				: {
+						...updateObj,
+						capabilitiesByName,
+						tagsByName: tags,
+						rulesSource: "#",
+				  };
 
 			// update zerotier network with the new flow route
 			const updatedRules = await ztController.network_update({
 				nwid: input.nwid,
 				central: input.central,
-				// @ts-expect-error
 				updateParams,
 			});
 
@@ -725,8 +639,8 @@ export const networkRouter = createTRPCRouter({
 					where: { nwid: input.nwid },
 					data: {
 						flowRule: flowRoute,
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-						tagsByName: tags as any,
+						// @ts-expect-error
+						tagsByName: tags,
 						capabilitiesByName,
 					},
 				}),
