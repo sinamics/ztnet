@@ -234,7 +234,7 @@ export const UnlinkedNetwork = () => {
 														key={header.id}
 														colSpan={header.colSpan}
 														scope="col"
-														className="bg-base-300/50 py-3 pl-4"
+														className="bg-base-300/50 py-2 pl-4 text-xs"
 													>
 														{header.isPlaceholder ? null : (
 															<div
