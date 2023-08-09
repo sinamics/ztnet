@@ -115,7 +115,8 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				return (
 					<form>
 						<span className="flex items-center space-x-2">
-							{options?.showNotationMarkerInTableRow &&
+							{!central &&
+								options?.showNotationMarkerInTableRow &&
 								notations.map((notation) => (
 									<div
 										key={notation.label?.name}
