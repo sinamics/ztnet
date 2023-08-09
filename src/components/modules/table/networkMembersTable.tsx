@@ -170,7 +170,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 						table
 							.getRowModel()
 							.rows.map((row) => {
-								const notation = row.original?.notations;
+								const notation = row.original?.notations || [];
 								return (
 									<tr
 										// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
@@ -184,7 +184,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 										style={
 											!central &&
 											options?.useNotationColorAsBg &&
-											notation.length > 0
+											notation?.length > 0
 												? {
 														backgroundColor: convertRGBtoRGBA(
 															notation[0]?.label?.color as string,
