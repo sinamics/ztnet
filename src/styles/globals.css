@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-.main-content {
-  /* min-height: 100vh; */
+.outer-content{
   min-height: 100dvh;
-  /* min-height: -webkit-fill-available; */
 }
+/* .main-content {
+
+} */
 .membersTable-wrapper {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
