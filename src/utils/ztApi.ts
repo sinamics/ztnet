@@ -15,11 +15,7 @@ import {
 } from "~/types/ztController";
 
 import { type CentralControllerStatus } from "~/types/central/controllerStatus";
-import {
-	type FlattenCentralMembers,
-	type CentralMembers,
-	type CentralMemberConfig,
-} from "~/types/central/members";
+import { type CentralMemberConfig } from "~/types/central/members";
 import {
 	type NetworkBase,
 	type CentralNetwork,
@@ -42,8 +38,8 @@ if (!ZT_SECRET) {
 		try {
 			ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
 		} catch (error) {
-			// eslint-disable-next-line no-console
 			console.error("an error occurred while reading the ZT_SECRET");
+			console.error(error);
 		}
 	} else {
 		// GitHub Actions
@@ -88,17 +84,15 @@ const getOptions = async (isCentral = false): Promise<GetOptionsResponse> => {
 	};
 };
 
-export const flattenCentralMember = (
-	member: CentralMembers,
-): FlattenCentralMembers => {
+export const flattenCentralMember = (member: MemberEntity): MemberEntity => {
 	const { id: nodeId, config, ...otherProps } = member;
 	const flattenedMember = { nodeId, ...config, ...otherProps };
 	return flattenedMember;
 };
 
 export const flattenCentralMembers = (
-	members: CentralMembers[],
-): FlattenCentralMembers[] => {
+	members: MemberEntity[],
+): MemberEntity[] => {
 	if (!members) return [];
 	return members.map((member) => flattenCentralMember(member));
 };
@@ -349,7 +343,6 @@ export const local_network_detail = async function (
 			`${LOCAL_ZT_ADDR}/controller/network/${nwid}`,
 			headers,
 		);
-
 		const membersArr: MemberEntity[] = [];
 		for (const [memberId] of Object.entries(members)) {
 			const memberDetails = await getData<MemberEntity>(
@@ -390,7 +383,7 @@ export const central_network_detail = async function (
 
 		const membersArr = await Promise.all(
 			members?.map(async (member) => {
-				return await getData<CentralMembers>(
+				return await getData<MemberEntity>(
 					`${addr}/member/${member?.nodeId}`,
 					headers,
 				);
@@ -421,7 +414,7 @@ export const central_network_detail = async function (
 
 type networkUpdate = {
 	nwid: string;
-	updateParams: Partial<NetworkEntity | CentralMembers>;
+	updateParams: Partial<NetworkEntity>;
 	central?: boolean;
 };
 
@@ -431,7 +424,7 @@ export const network_update = async function ({
 	nwid,
 	updateParams: payload,
 	central = false,
-}: networkUpdate): Promise<Partial<NetworkEntity | CentralMembers>> {
+}: networkUpdate): Promise<Partial<NetworkEntity>> {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl } = await getOptions(central);
 	const addr = central
@@ -439,11 +432,7 @@ export const network_update = async function ({
 		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
 
 	try {
-		return await postData<NetworkEntity | CentralMembers>(
-			addr,
-			headers,
-			payload,
-		);
+		return await postData<NetworkEntity>(addr, headers, payload);
 	} catch (error) {
 		const prefix = central ? "[CENTRAL] " : "";
 		const message = `${prefix}An error occurred while getting network_update`;
@@ -512,7 +501,7 @@ export const member_details = async function (
 	nwid: string,
 	memberId: string,
 	central = false,
-): Promise<MemberEntity | FlattenCentralMembers> {
+): Promise<MemberEntity> {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl } = await getOptions(central);
 
@@ -521,7 +510,7 @@ export const member_details = async function (
 			? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
 			: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
 
-		return await getData<MemberEntity | FlattenCentralMembers>(addr, headers);
+		return await getData<MemberEntity>(addr, headers);
 	} catch (error) {
 		const message = "An error occurred while getting member_detail";
 		throw new APIError(message, error as AxiosError);
@@ -547,20 +536,17 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 
 // Get information about a specific peer by Node ID.
 // https://docs.zerotier.com/service/v1/#operation/getPeer
-export const peer = async (
-	userZtAddress: string,
-): Promise<ZTControllerGetPeer[]> => {
+export const peer = async (userZtAddress: string) => {
 	const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
-
-	// get headers based on local or central api
-	const { headers } = await getOptions(false);
-
 	try {
-		const response: AxiosResponse = await axios.get(addr, { headers });
+		// get headers based on local or central api
+		const { headers } = await getOptions(false);
+		const response = await getData<ZTControllerGetPeer>(addr, headers);
 
-		if (!response.data) return null as ZTControllerGetPeer[];
-		return response.data as ZTControllerGetPeer[];
+		if (!response) return {} as ZTControllerGetPeer;
+		return response as ZTControllerGetPeer;
 	} catch (error) {
-		return null;
+		console.error(error);
+		return [];
 	}
 };

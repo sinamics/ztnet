@@ -28,6 +28,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 		api.network.getNetworkById.useQuery(
 			{
 				nwid: nwid as string,
+				central: false,
 			},
 			{ enabled: !!query.id },
 		);
@@ -45,12 +46,12 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 	});
 	const columnHelper = createColumnHelper<MemberEntity>();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const columns = useMemo<ColumnDef<MemberEntity, unknown>[]>(
+	const columns = useMemo<ColumnDef<MemberEntity>[]>(
 		() => [
 			columnHelper.accessor("authorized", {
 				header: () => <span>Authorized</span>,
 				id: "authorized",
-				cell: (info) => info.getValue(),
+				cell: () => <span>No</span>,
 			}),
 			columnHelper.accessor("name", {
 				header: () => <span>Member name</span>,
@@ -170,7 +171,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 								<tr key={headerGroup.id}>
 									{
 										// Loop over the headers in each row
-										headerGroup.headers.map((header, idx) => (
+										headerGroup.headers.map((header) => (
 											<th
 												key={header.id}
 												colSpan={header.colSpan}

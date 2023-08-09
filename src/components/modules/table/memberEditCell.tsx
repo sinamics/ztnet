@@ -109,14 +109,15 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 			}, [initialValue]);
 
 			if (id === "name") {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+				// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 				const notations = (original as any)
 					?.notations as NetworkMemberNotation[];
 				return (
 					<form>
 						<span className="flex items-center space-x-2">
-							{options?.showNotationMarkerInTableRow &&
-								notations.map((notation, idx) => (
+							{!central &&
+								options?.showNotationMarkerInTableRow &&
+								notations.map((notation) => (
 									<div
 										key={notation.label?.name}
 										className="inline-block h-5 w-5 rounded-full"

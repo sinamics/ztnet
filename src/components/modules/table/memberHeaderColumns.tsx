@@ -33,20 +33,20 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				nwid,
 				central,
 			},
-			{ enabled: !!nwid, networkMode: "online" },
+			{ enabled: !!nwid },
 		);
 
 	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: (e) => {
 			void toast.error(e?.message);
 		},
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: () => void refetchNetworkById(),
 	});
 	const stashMember = (id: string) => {
 		stashUser(
@@ -54,7 +54,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				nwid,
 				id,
 			},
-			{ onSuccess: () => void refetchNetworkById() },
+			{
+				onSuccess: () => void refetchNetworkById(),
+			},
 		);
 	};
 
@@ -63,7 +65,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 		() => [
 			columnHelper.accessor(
 				(row) => {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+					// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 					const notations = (row as any)?.notations as NetworkMemberNotation[];
 					const output: string[] = [];
 					notations?.map((tag) => {
@@ -132,7 +134,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					<span>{t("networkById.networkMembersTable.column.created")}</span>
 				),
 				id: "creationTime",
-				cell: (info) => <TimeAgo date={info.getValue()} />,
+				cell: (info) => {
+					return <TimeAgo date={info.getValue()} />;
+				},
 			}),
 			columnHelper.accessor("peers", {
 				header: () => (
@@ -176,9 +180,20 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				),
 				id: "conStatus",
 				cell: ({ row: { original } }) => {
-					const formatTime = (value: string, unit: string) =>
-						`${value} ${unit}`;
+					const formatTime = (value: string, unit: string) => {
+						// Map full unit names to their abbreviations
+						const unitAbbreviations: { [key: string]: string } = {
+							second: "sec",
+							minute: "min",
+							hour: "hr",
+							day: "d",
+						};
+						const abbreviation = unitAbbreviations[unit] || unit;
+
+						return `${value} ${abbreviation}`;
+					};
 					const cursorStyle = { cursor: "pointer" };
+					// console.log(original);
 					if (central) {
 						const now = Date.now(); // current timestamp in milliseconds
 						const lastSeen = original?.lastSeen; // assuming lastSeen is a timestamp in milliseconds
@@ -239,10 +254,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 										"networkById.networkMembersTable.column.conStatus.directWan",
 								  );
 						const versionInfo =
-							original.peers && original?.peers?.version !== "-1.-1.-1"
-								? ` (v${original.peers?.version})`
+							original.peers?.version && original.peers.version !== "-1.-1.-1"
+								? ` (v${original.peers.version})`
 								: "";
-
 						return (
 							<span
 								style={cursorStyle}

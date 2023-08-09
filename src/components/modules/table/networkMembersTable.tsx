@@ -49,7 +49,9 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 				nwid,
 				central,
 			},
-			{ enabled: !!query.id },
+			{
+				enabled: !!query.id,
+			},
 		);
 
 	const { data: options } = api.admin.getAllOptions.useQuery();
@@ -66,11 +68,9 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 	// const [data, setData] = useState(() => makeNetworkMemberData(100));
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
-		// @ts-expect-error known error
+		//@ts-expect-error
 		data,
-		// @ts-expect-error known error
 		columns: columnsHeader,
-		// @ts-expect-error known error
 		defaultColumn,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
@@ -183,10 +183,12 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 												: ""
 										}`}
 										style={
-											options?.useNotationColorAsBg && notation.length > 0
+											!central &&
+											options?.useNotationColorAsBg &&
+											notation.length > 0
 												? {
 														backgroundColor: convertRGBtoRGBA(
-															(notation[0] as any)?.label?.color as string,
+															notation[0]?.label?.color as string,
 															0.3,
 														),
 												  }

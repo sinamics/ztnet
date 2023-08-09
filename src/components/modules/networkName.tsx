@@ -10,7 +10,6 @@ import {
 	type InfiniteData,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { type CentralNetwork } from "~/types/central/network";
 import { type NetworkEntity } from "~/types/local/network";
 
 interface IProp {
@@ -24,7 +23,7 @@ const updateCache = ({
 }: {
 	client: QueryClient;
 	input: RouterInputs["network"]["getNetworkById"];
-	data: Partial<NetworkEntity> | Partial<CentralNetwork>;
+	data: Partial<NetworkEntity>;
 }) => {
 	client.setQueryData(
 		[

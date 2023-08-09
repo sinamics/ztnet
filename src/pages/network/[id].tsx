@@ -22,11 +22,13 @@ import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next/types";
 import NetworkName from "~/components/modules/networkName";
 import NetworkDescription from "~/components/modules/networkDescription";
+// import DebugMirror from "~/components/modules/debugController";
 
 const NetworkById = () => {
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		viewZombieTable: false,
+		isDebug: false,
 	});
 	const { callModal } = useModalStore((state) => state);
 	const { query, push: router } = useRouter();
@@ -38,10 +40,10 @@ const NetworkById = () => {
 	} = api.network.getNetworkById.useQuery(
 		{
 			nwid: query.id as string,
+			central: false,
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
-
 	const { network, members = [] } = networkById || {};
 	if (loadingNetwork) {
 		// add loading progress bar to center of page, vertially and horizontally
@@ -230,6 +232,14 @@ const NetworkById = () => {
 			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 				<NetworkFlowRules />
 			</div>
+			{/* <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+				DEBUG
+			</div>
+			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base space-y-8">
+				<DebugMirror data={networkById?.network} title="Controler Networks" />
+				<DebugMirror data={networkById?.members} title="Controler Members" />
+			</div> */}
+
 			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 				Network Actions
 			</div>

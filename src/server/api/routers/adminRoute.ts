@@ -13,7 +13,6 @@ import { Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
 import { NetworkAndMemberResponse } from "~/types/network";
-import { IPv4gen } from "~/utils/IPv4gen";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -246,7 +245,7 @@ export const adminRouter = createTRPCRouter({
 				},
 			});
 
-			async function sendTemplateEmail(templateName, template) {
+			async function sendTemplateEmail(template) {
 				const renderedTemplate = await ejs.render(
 					JSON.stringify(template),
 					{
@@ -285,7 +284,7 @@ export const adminRouter = createTRPCRouter({
 					const defaultInviteTemplate = inviteUserTemplate();
 					const inviteTemplate =
 						globalOptions?.inviteUserTemplate ?? defaultInviteTemplate;
-					await sendTemplateEmail("inviteUser", inviteTemplate);
+					await sendTemplateEmail(inviteTemplate);
 					break;
 				}
 
@@ -293,14 +292,14 @@ export const adminRouter = createTRPCRouter({
 					const defaultForgotTemplate = forgotPasswordTemplate();
 					const forgotTemplate =
 						globalOptions?.forgotPasswordTemplate ?? defaultForgotTemplate;
-					await sendTemplateEmail("forgotPassword", forgotTemplate);
+					await sendTemplateEmail(forgotTemplate);
 					break;
 				}
 				case "notificationTemplate": {
 					const defaultNotificationTemplate = notificationTemplate();
 					const notifiyTemplate =
 						globalOptions?.notificationTemplate ?? defaultNotificationTemplate;
-					await sendTemplateEmail("notificationTemplate", notifiyTemplate);
+					await sendTemplateEmail(notifiyTemplate);
 					break;
 				}
 				default:
@@ -355,7 +354,7 @@ export const adminRouter = createTRPCRouter({
 	 * @param {Object} input - input object that contains possible query parameters or payload
 	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
 	 */
-	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx, input }) => {
+	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		const ztNetworks =
 			(await ztController.get_controller_networks()) as string[];
 		const dbNetworks = await ctx.prisma.network.findMany({
@@ -390,8 +389,6 @@ export const adminRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// Generate ipv4 address, cidr, start & end
-				const ipAssignmentPools = IPv4gen(null);
 				// console.log(ipAssignmentPools);
 				// Store the created network in the database
 				const updatedUser = await ctx.prisma.user.update({
@@ -403,7 +400,6 @@ export const adminRouter = createTRPCRouter({
 							create: {
 								nwid: input.nwid,
 								name: input.nwname || "",
-								ipAssignments: "",
 							},
 						},
 					},
@@ -417,7 +413,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					// eslint-disable-next-line no-console
+
 					console.error(err);
 					throwError("Could not create network! Please try again");
 				} else {
