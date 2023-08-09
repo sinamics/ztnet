@@ -6,7 +6,6 @@
 
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
-import { APIError, throwError } from "../helpers/errorHandler";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import { network_members } from "@prisma/client";
 

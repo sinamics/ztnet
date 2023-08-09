@@ -116,7 +116,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 					<form>
 						<span className="flex items-center space-x-2">
 							{options?.showNotationMarkerInTableRow &&
-								notations.map((notation, idx) => (
+								notations.map((notation) => (
 									<div
 										key={notation.label?.name}
 										className="inline-block h-5 w-5 rounded-full"

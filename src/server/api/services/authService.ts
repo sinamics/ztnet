@@ -69,6 +69,7 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 			},
 		});
 	} catch (error) {
+		console.error(error);
 		throw new Error("An error occured!, please send new verification email!");
 	}
 };
