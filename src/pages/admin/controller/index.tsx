@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
+import DebugMirror from "~/components/modules/debugController";
 import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
 import { api } from "~/utils/api";
 
@@ -96,6 +97,12 @@ const Controller = () => {
 					<p>{t("controller.controllerStatus.version")}</p>
 					<p>{version}</p>
 				</div>
+			</div>
+			<div className="pb-10">
+				<p className="text-sm text-gray-400">Debug</p>
+				<div className="divider mt-0 p-0 text-gray-500"></div>
+
+				<DebugMirror data={controllerData} title="Controller Status" />
 			</div>
 		</main>
 	);
