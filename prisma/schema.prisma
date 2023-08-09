@@ -55,7 +55,7 @@ enum Role {
 model network_members {
   nodeid               Int       @id @default(autoincrement())
   id                   String    
-  nwid_ref             network   @relation(fields: [nwid], references: [nwid])
+  nwid_ref             network   @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
   nwid                 String
   lastSeen             DateTime?
   online               Boolean?  @default(false)
@@ -93,7 +93,7 @@ model Notation {
   updatedTime               DateTime      @updatedAt
   isActive                  Boolean       @default(true)
   nwid                      String
-  network                   network       @relation(fields: [nwid], references: [nwid])
+  network                   network       @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
   networkMembers            NetworkMemberNotation[]
   icon                      String?   
   orderIndex                Int?    
@@ -106,7 +106,7 @@ model NetworkMemberNotation {
   notationId            Int
   nodeid                Int
   label                 Notation          @relation(fields: [notationId], references: [id])
-  member                network_members    @relation(fields: [nodeid], references: [nodeid])
+  member                network_members    @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
   @@id([notationId, nodeid])
 }
 
