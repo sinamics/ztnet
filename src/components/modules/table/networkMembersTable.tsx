@@ -68,7 +68,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 	// const [data, setData] = useState(() => makeNetworkMemberData(100));
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
-		//@ts-expect-error
 		data,
 		columns: columnsHeader,
 		defaultColumn,
