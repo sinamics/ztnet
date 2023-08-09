@@ -417,7 +417,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					// eslint-disable-next-line no-console
+					// rome-ignore lint/nursery/noConsoleLog: <explanation>
 					console.error(err);
 					throwError("Could not create network! Please try again");
 				} else {

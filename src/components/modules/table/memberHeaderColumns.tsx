@@ -133,7 +133,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				),
 				id: "creationTime",
 				cell: (info) => {
-					return <TimeAgo date={info.getValue() * 1000} />;
+					return <TimeAgo date={info.getValue()} />;
 				},
 			}),
 			columnHelper.accessor("peers", {

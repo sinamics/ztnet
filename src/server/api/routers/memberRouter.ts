@@ -233,7 +233,7 @@ export const networkMemberRouter = createTRPCRouter({
 			// 			},
 			// 		},
 			// 	})
-			// 	// eslint-disable-next-line no-console
+			// 	// rome-ignore lint/nursery/noConsoleLog: <explanation>
 			// 	.catch((err: string) => console.log(err));
 			// if (!response) {
 			// 	throw new TRPCError({
