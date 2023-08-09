@@ -183,7 +183,9 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 												: ""
 										}`}
 										style={
-											options?.useNotationColorAsBg && notation.length > 0
+											!central &&
+											options?.useNotationColorAsBg &&
+											notation.length > 0
 												? {
 														backgroundColor: convertRGBtoRGBA(
 															notation[0]?.label?.color as string,
