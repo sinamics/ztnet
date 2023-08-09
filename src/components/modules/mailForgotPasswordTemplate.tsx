@@ -110,7 +110,6 @@ const ForgotPasswordMailTemplate = () => {
 		);
 	};
 
-	const mailTemplate = mailTemplates as InviteUserTemplate;
 	if (loadingTemplates) {
 		return (
 			<div className="flex flex-col items-center justify-center">

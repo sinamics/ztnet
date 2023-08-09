@@ -12,7 +12,6 @@ import {
 	type MemberEntity,
 	type CapabilitiesByName,
 	type TagDetails,
-	Tag,
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
 
@@ -71,16 +70,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			onSuccess: () => refetchNetworkById(),
 		});
-	const { mutate: updateTags, isLoading: updateTagsLoading } =
-		api.networkMember.Tags.useMutation({
-			onError: (e) => {
-				// zod error
-				// console.log(shape?.data?.zodError.fieldErrors);
-				// custom error
-				void toast.error(e?.message);
-			},
-			onSuccess: () => refetchNetworkById(),
-		});
+	const { mutate: updateTags } = api.networkMember.Tags.useMutation({
+		onError: (e) => {
+			// zod error
+			// console.log(shape?.data?.zodError.fieldErrors);
+			// custom error
+			void toast.error(e?.message);
+		},
+		onSuccess: () => refetchNetworkById(),
+	});
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const subnetMatch = isIPInSubnet(
 			e.target.value,
@@ -245,7 +243,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const TagDropdowns: React.FC = (tagsByName: TagsByName) => {
 		const handleDropdownChange = (
 			e: React.ChangeEvent<HTMLSelectElement>,
-			tagName: string,
 			tagDetails: TagDetails,
 		) => {
 			const selectedOption = e.target.value;
@@ -319,7 +316,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							</label>
 							<select
 								className="select select-bordered select-sm"
-								onChange={(e) => handleDropdownChange(e, tagName, tagDetails)}
+								onChange={(e) => handleDropdownChange(e, tagDetails)}
 								value={selectedOption}
 							>
 								<option value="None">None</option>

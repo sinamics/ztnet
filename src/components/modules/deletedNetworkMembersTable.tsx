@@ -51,7 +51,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 			columnHelper.accessor("authorized", {
 				header: () => <span>Authorized</span>,
 				id: "authorized",
-				cell: (info) => <span>No</span>,
+				cell: () => <span>No</span>,
 			}),
 			columnHelper.accessor("name", {
 				header: () => <span>Member name</span>,
@@ -171,7 +171,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 								<tr key={headerGroup.id}>
 									{
 										// Loop over the headers in each row
-										headerGroup.headers.map((header, idx) => (
+										headerGroup.headers.map((header) => (
 											<th
 												key={header.id}
 												colSpan={header.colSpan}
