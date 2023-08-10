@@ -45,7 +45,7 @@ const NetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
 	const { network, members = [] } = networkById || {};
-
+	
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
