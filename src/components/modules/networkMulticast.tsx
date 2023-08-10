@@ -99,13 +99,14 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 				<div>
 					<form className="flex justify-between">
 						<div className="form-control ">
-							<label className="label">
+							<label className="label" htmlFor="multicastLimit">
 								<span className="label-text">
 									{t("networkMulticast.MulticastRecipientLimit")}
 								</span>
 							</label>
 							<div className="join">
 								<input
+									id="multicastLimit"
 									name="multicastLimit"
 									value={state.multicastLimit || 0}
 									onChange={onChangeHandler}
@@ -138,13 +139,14 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
               />
             </div> */}
 						<div className="form-control">
-							<label>
+							<label htmlFor="enableBroadcast">
 								<span className="label-text text-xs">
 									{t("networkMulticast.EnableBroadcast")}
 								</span>
 							</label>
 							<input
 								type="checkbox"
+								id="enableBroadcast"
 								name="enableBroadcast"
 								checked={state.enableBroadcast || false}
 								className="checkbox-primary checkbox checkbox-sm"
