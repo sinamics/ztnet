@@ -14,8 +14,8 @@ enum ConnectionStatus {
 	Offline = 0,
 	Relayed = 1,
 	DirectLAN = 1,
-	DirectWAN = 2
-  }
+	DirectWAN = 2,
+}
 
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
@@ -162,7 +162,7 @@ describe("NetworkById component", () => {
 		await waitFor(() => expect(input).not.toBeInTheDocument());
 	});
 
-	it("renders Members table correctly",	async () => {
+	it("renders Members table correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: {
 				network: {
@@ -176,21 +176,21 @@ describe("NetworkById component", () => {
 					multicastLimit: 32,
 					enableBroadcast: true,
 				},
-				members: [{
-					nodeid: 1,
-					id: "member_id",
-					nwid: "network_id",
-					lastSeen: "2023-08-09T18:02:14.723Z",
-					name: "members_name",
-					creationTime: 1691603143446,
-					ipAssignments: [
-						"10.121.15.173"
-					],
-					peers: {
-						physicalAddress: "10.10.10.10",
+				members: [
+					{
+						nodeid: 1,
+						id: "member_id",
+						nwid: "network_id",
+						lastSeen: "2023-08-09T18:02:14.723Z",
+						name: "members_name",
+						creationTime: 1691603143446,
+						ipAssignments: ["10.121.15.173"],
+						peers: {
+							physicalAddress: "10.10.10.10",
+						},
+						conStatus: 0,
 					},
-					conStatus: 0
-				}],
+				],
 			},
 			isLoading: false,
 			refetch: jest.fn(),
@@ -206,19 +206,25 @@ describe("NetworkById component", () => {
 		);
 		// await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
 		// Ensure table is present
-		const table = screen.getByRole('table'); // This will throw an error if the table is not present
-		
-		await waitFor(() => {
-			expect(screen.getByDisplayValue(/members_name/i)).toBeInTheDocument();
-			expect(screen.getByText(/network_id/i)).toBeInTheDocument();
-			expect(screen.getByText(/10.10.10.10/i)).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /options/i })).toBeInTheDocument();
-			expect(screen.getByRole('button', { name: /stash/i })).toBeInTheDocument();
-		  },{timeout: 5000});
+		screen.getByRole("table"); // This will throw an error if the table is not present
 
+		await waitFor(
+			() => {
+				expect(screen.getByDisplayValue(/members_name/i)).toBeInTheDocument();
+				expect(screen.getByText(/network_id/i)).toBeInTheDocument();
+				expect(screen.getByText(/10.10.10.10/i)).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /options/i }),
+				).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /stash/i }),
+				).toBeInTheDocument();
+			},
+			{ timeout: 5000 },
+		);
 	});
-	  // Test for ONLINE status
-	  it("renders DIRECT WAN status correctly", async () => {
+	// Test for ONLINE status
+	it("renders DIRECT WAN status correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: {
 				network: {
@@ -229,18 +235,19 @@ describe("NetworkById component", () => {
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},
-				members: [{
-					id: "member_id",
-					creationTime: 1691603143446,
-					lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
-					conStatus: ConnectionStatus.DirectWAN,
-				}],
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.DirectWAN,
+					},
+				],
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 
-	
 		api.network.getNetworkById.useQuery = useQueryMock;
 
 		render(
@@ -250,10 +257,13 @@ describe("NetworkById component", () => {
 				</NextIntlProvider>
 			</QueryClientProvider>,
 		);
-		await waitFor(() => {
-			expect(screen.getByText("DIRECT")).toHaveClass("text-success");
-		  },{timeout: 2000});
-	  });
+		await waitFor(
+			() => {
+				expect(screen.getByText("DIRECT")).toHaveClass("text-success");
+			},
+			{ timeout: 2000 },
+		);
+	});
 	// Test for Relayed status
 	it("renders RELAYED status correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
@@ -266,17 +276,18 @@ describe("NetworkById component", () => {
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},
-				members: [{
-					id: "member_id",
-					creationTime: 1691603143446,
-					lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
-					conStatus: ConnectionStatus.Relayed,
-				}],
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.Relayed,
+					},
+				],
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
-
 
 		api.network.getNetworkById.useQuery = useQueryMock;
 
@@ -287,11 +298,13 @@ describe("NetworkById component", () => {
 				</NextIntlProvider>
 			</QueryClientProvider>,
 		);
-		await waitFor(() => {
-			expect(screen.getByText("RELAYED")).toHaveClass("text-warning");
-			},{timeout: 2000});
-		
-		});
+		await waitFor(
+			() => {
+				expect(screen.getByText("RELAYED")).toHaveClass("text-warning");
+			},
+			{ timeout: 2000 },
+		);
+	});
 	// Test for Offline status
 	it("renders OFFLINE status correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
@@ -304,18 +317,19 @@ describe("NetworkById component", () => {
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},
-				members: [{
-					id: "member_id",
-					creationTime: 1691603143446,
-					lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
-					conStatus: ConnectionStatus.Offline,
-				}],
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.Offline,
+					},
+				],
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 
-	
 		api.network.getNetworkById.useQuery = useQueryMock;
 
 		render(
@@ -325,9 +339,11 @@ describe("NetworkById component", () => {
 				</NextIntlProvider>
 			</QueryClientProvider>,
 		);
-		await waitFor(() => {
-			expect(screen.getByText("offline")).toHaveClass("text-error");
-			},{timeout: 2000});
-		
-		});
+		await waitFor(
+			() => {
+				expect(screen.getByText("offline")).toHaveClass("text-error");
+			},
+			{ timeout: 2000 },
+		);
+	});
 });

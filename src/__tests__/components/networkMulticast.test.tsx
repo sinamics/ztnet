@@ -1,125 +1,128 @@
 import "../__mocks__/networkById";
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { NetworkMulticast } from '~/components/modules/networkMulticast';
-import { useRouter } from 'next/router';
-import { api } from '~/utils/api';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { NextIntlProvider } from 'next-intl';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import { NextRouter, useRouter } from "next/router";
+import { api } from "~/utils/api";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NextIntlProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 
 // Mocking the next/router module
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(),
+jest.mock("next/router", () => ({
+	useRouter: jest.fn(),
 }));
 
-describe('<NetworkMulticast />', () => {
-  let queryClient: QueryClient;
+const mockedRouter: Partial<NextRouter> = {
+	query: {
+		id: "test-id",
+	},
+};
+const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
+mockUseRouter.mockReturnValue(mockedRouter as NextRouter);
 
-  beforeEach(() => {
-    queryClient = new QueryClient();
-    (useRouter as jest.Mock).mockImplementation(() => ({
-      query: {
-        id: "test-id",
-      },
-    }));
-  });
+describe("<NetworkMulticast />", () => {
+	let queryClient: QueryClient;
 
-  it('sends the correct multicastLimit to the server when submitted', async () => {
-    const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
-    mockUseRouter.mockReturnValue({
-      query: { id: 'test-id' },
-    } as any);
+	beforeEach(() => {
+		queryClient = new QueryClient();
+		(useRouter as jest.Mock).mockImplementation(() => ({
+			query: {
+				id: "test-id",
+			},
+		}));
+	});
 
-    const mockMutation = jest.fn();
+	it("sends the correct multicastLimit to the server when submitted", async () => {
+		const mockMutation = jest.fn();
 
-    const useQueryMock = jest.fn().mockReturnValue({
-      data: {
-        network: {
-          nwid: 'test-id',
-          multicastLimit: 5,
-          enableBroadcast: false,
-        },
-      },
-      isLoading: false,
-      refetch: jest.fn(),
-    });
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "test-id",
+					multicastLimit: 5,
+					enableBroadcast: false,
+				},
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
-    api.network.getNetworkById.useQuery = useQueryMock;
-    api.network.multiCast.useMutation = jest.fn().mockReturnValue({
-      mutate: mockMutation,
-    });
+		api.network.getNetworkById.useQuery = useQueryMock;
+		api.network.multiCast.useMutation = jest.fn().mockReturnValue({
+			mutate: mockMutation,
+		});
 
-    render(
-      <QueryClientProvider client={queryClient}>
-        <NextIntlProvider locale="en" messages={enTranslation}>
-          <NetworkMulticast />
-        </NextIntlProvider>
-      </QueryClientProvider>,
-    );
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkMulticast />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
 
-    // Simulate typing in the multicastLimit
-    const multicastLimitInput = screen.getByPlaceholderText('Number');
-    fireEvent.change(multicastLimitInput, { target: { value: '10' } });
+		// Simulate typing in the multicastLimit
+		const multicastLimitInput = screen.getByPlaceholderText("Number");
+		fireEvent.change(multicastLimitInput, { target: { value: "10" } });
 
-    const submitButton = screen.getByText('Submit');
-    fireEvent.click(submitButton);
+		const submitButton = screen.getByText("Submit");
+		fireEvent.click(submitButton);
 
-    await waitFor(() => {
-      expect(mockMutation).toHaveBeenCalledWith(
-        expect.objectContaining({
-          central: false,
-          nwid: 'test-id',
-          updateParams: {
-            multicastLimit: 10,
-          },
-        }),
-        expect.anything()
-      );
-    });
-  });
+		await waitFor(() => {
+			expect(mockMutation).toHaveBeenCalledWith(
+				expect.objectContaining({
+					central: false,
+					nwid: "test-id",
+					updateParams: {
+						multicastLimit: 10,
+					},
+				}),
+				expect.anything(),
+			);
+		});
+	});
 
-  it('toggles enableBroadcast correctly', async () => {
-    // ... Most of the mocking stays the same ...
-    const mockMutation = jest.fn();
+	it("toggles enableBroadcast correctly", async () => {
+		// ... Most of the mocking stays the same ...
+		const mockMutation = jest.fn();
 
-    const useQueryMock = jest.fn().mockReturnValue({
-      data: {
-        network: {
-          nwid: 'test-id',
-          multicastLimit: 5,
-          enableBroadcast: false,
-        },
-      },
-      isLoading: false,
-      refetch: jest.fn(),
-    });
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "test-id",
+					multicastLimit: 5,
+					enableBroadcast: false,
+				},
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
-    api.network.getNetworkById.useQuery = useQueryMock;
-    api.network.multiCast.useMutation = jest.fn().mockReturnValue({
-      mutate: mockMutation,
-    });
-    render(
-      <QueryClientProvider client={queryClient}>
-        <NextIntlProvider locale="en" messages={enTranslation}>
-          <NetworkMulticast />
-        </NextIntlProvider>
-      </QueryClientProvider>,
-    );
+		api.network.getNetworkById.useQuery = useQueryMock;
+		api.network.multiCast.useMutation = jest.fn().mockReturnValue({
+			mutate: mockMutation,
+		});
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkMulticast />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
 
-    const enableBroadcastCheckbox = screen.getByLabelText('Enable Broadcast');
-    fireEvent.click(enableBroadcastCheckbox);
+		const enableBroadcastCheckbox = screen.getByLabelText("Enable Broadcast");
+		fireEvent.click(enableBroadcastCheckbox);
 
-    await waitFor(() => {
-      expect(mockMutation).toHaveBeenCalledWith(
-        expect.objectContaining({
-          central: false,
-          nwid: 'test-id',
-          updateParams: {
-            enableBroadcast: true,
-          },
-        }),
-        expect.anything()
-      );
-    });
-  });
+		await waitFor(() => {
+			expect(mockMutation).toHaveBeenCalledWith(
+				expect.objectContaining({
+					central: false,
+					nwid: "test-id",
+					updateParams: {
+						enableBroadcast: true,
+					},
+				}),
+				expect.anything(),
+			);
+		});
+	});
 });
