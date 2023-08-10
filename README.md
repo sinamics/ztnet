@@ -160,6 +160,7 @@ services:
       - 3000:3000
     environment:
       ZT_ADDR: http://zerotier:9993
+      # ZT_SECRET: (content of authtoken.secret) # only used if custom ZT_ADDR is specified.
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
