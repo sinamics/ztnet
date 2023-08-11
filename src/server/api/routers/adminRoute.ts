@@ -50,28 +50,35 @@ export const adminRouter = createTRPCRouter({
 		}),
 
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		const isCentral = false;
-		const networks = await ztController.get_controller_networks(ctx, isCentral);
-
-		const networkCount = networks.length;
-		let totalMembers = 0;
-		for (const network of networks) {
-			const members = await ztController.network_members(
+		try {
+			const isCentral = false;
+			const networks = await ztController.get_controller_networks(
 				ctx,
-				network as string,
+				isCentral,
 			);
-			totalMembers += Object.keys(members).length;
-		}
 
-		const controllerStatus = (await ztController.get_controller_status(
-			ctx,
-			isCentral,
-		)) as ZTControllerNodeStatus;
-		return {
-			networkCount,
-			totalMembers,
-			controllerStatus,
-		};
+			const networkCount = networks.length;
+			let totalMembers = 0;
+			for (const network of networks) {
+				const members = await ztController.network_members(
+					ctx,
+					network as string,
+				);
+				totalMembers += Object.keys(members).length;
+			}
+
+			const controllerStatus = (await ztController.get_controller_status(
+				ctx,
+				isCentral,
+			)) as ZTControllerNodeStatus;
+			return {
+				networkCount,
+				totalMembers,
+				controllerStatus,
+			};
+		} catch (error) {
+			return throwError(error);
+		}
 	}),
 
 	// Set global options
@@ -327,30 +334,34 @@ export const adminRouter = createTRPCRouter({
 	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
 	 */
 	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		const ztNetworks = (await ztController.get_controller_networks(
-			ctx,
-		)) as string[];
-		const dbNetworks = await ctx.prisma.network.findMany({
-			select: { nwid: true },
-		});
+		try {
+			const ztNetworks = (await ztController.get_controller_networks(
+				ctx,
+			)) as string[];
+			const dbNetworks = await ctx.prisma.network.findMany({
+				select: { nwid: true },
+			});
 
-		// create a set of nwid for faster lookup
-		const dbNetworkIds = new Set(dbNetworks.map((network) => network.nwid));
+			// create a set of nwid for faster lookup
+			const dbNetworkIds = new Set(dbNetworks.map((network) => network.nwid));
 
-		// find networks that are not in database
-		const unlinkedNetworks = ztNetworks.filter(
-			(networkId) => !dbNetworkIds.has(networkId),
-		);
+			// find networks that are not in database
+			const unlinkedNetworks = ztNetworks.filter(
+				(networkId) => !dbNetworkIds.has(networkId),
+			);
 
-		if (unlinkedNetworks.length === 0) return [];
+			if (unlinkedNetworks.length === 0) return [];
 
-		const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
-			unlinkedNetworks.map((unlinked) =>
-				ztController.local_network_detail(ctx, unlinked, false),
-			),
-		);
+			const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
+				unlinkedNetworks.map((unlinked) =>
+					ztController.local_network_detail(ctx, unlinked, false),
+				),
+			);
 
-		return unlinkArr;
+			return unlinkArr;
+		} catch (_error) {
+			return throwError("Failed to fetch unlinked networks", _error);
+		}
 	}),
 	assignNetworkToUser: adminRoleProtectedRoute
 		.input(

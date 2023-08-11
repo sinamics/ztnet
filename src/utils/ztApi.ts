@@ -25,7 +25,7 @@ import { type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
 
-const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
+const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
 let ZT_SECRET = process.env.ZT_SECRET;

@@ -1,17 +1,33 @@
 import { useTranslations } from "next-intl";
-import { type ReactElement } from "react";
+import { useState, type ReactElement } from "react";
+import EditableField from "~/components/elements/inputField";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import DebugMirror from "~/components/modules/debugController";
 import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
 import { api } from "~/utils/api";
 
 const Controller = () => {
+	const [error, setError] = useState(false);
 	const t = useTranslations("admin");
-	const { data: controllerData, isLoading } =
-		api.admin.getControllerStats.useQuery();
+	const { data: controllerData, refetch: refetchStats } =
+		api.admin.getControllerStats.useQuery(null, {
+			retry: 1,
+			onError: () => {
+				setError(true);
+			},
+			onSuccess: () => {
+				setError(false);
+			},
+		});
 
 	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery();
-
+	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
+	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
+		onSuccess: () => {
+			void refetchMe();
+			void refetchStats();
+		},
+	});
 	const { networkCount, totalMembers, controllerStatus } = controllerData || {};
 
 	const { allowManagementFrom, allowTcpFallbackRelay, listeningOn } =
@@ -19,90 +35,161 @@ const Controller = () => {
 
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
 
-	if (isLoading) {
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">
-					{t("controller.networkMembers.title")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.networkMembers.totalNetworks")}</p>
-					<p>{networkCount}</p>
+			{error ? (
+				<div className="alert alert-error">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="stroke-current shrink-0 h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<span>Error! Controller unreachable</span>
 				</div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.networkMembers.totalMembers")}</p>
-					<p>{totalMembers}</p>
-				</div>
-				{unlinkedNetworks?.length > 0 ? (
-					<div className="py-4">
-						<p>{t("controller.networkMembers.unlinkedNetworks.title")}</p>
-						<p className="text-sm text-gray-500 pb-5">
-							{t("controller.networkMembers.unlinkedNetworks.description")}
+			) : (
+				<>
+					<div className="pb-10">
+						<p className="text-sm text-gray-400">
+							{t("controller.networkMembers.title")}
 						</p>
-						<UnlinkedNetwork />
+						<div className="divider mt-0 p-0 text-gray-500"></div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.networkMembers.totalNetworks")}</p>
+							<p>{networkCount}</p>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.networkMembers.totalMembers")}</p>
+							<p>{totalMembers}</p>
+						</div>
+						{unlinkedNetworks && unlinkedNetworks?.length > 0 ? (
+							<div className="py-4">
+								<p>{t("controller.networkMembers.unlinkedNetworks.title")}</p>
+								<p className="text-sm text-gray-500 pb-5">
+									{t("controller.networkMembers.unlinkedNetworks.description")}
+								</p>
+								<UnlinkedNetwork />
+							</div>
+						) : null}
 					</div>
-				) : null}
-			</div>
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">
-					{t("controller.management.title")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.management.allowManagementFrom")}</p>
-					<div className="list-inside list-disc">
-						{allowManagementFrom.map((address) => (
-							<span key={address}>{address}</span>
-						))}
+					<div className="pb-10">
+						<p className="text-sm text-gray-400">
+							{t("controller.management.title")}
+						</p>
+						<div className="divider mt-0 p-0 text-gray-500"></div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.management.allowManagementFrom")}</p>
+							<div className="list-inside list-disc">
+								{allowManagementFrom?.map((address) => (
+									<span key={address}>{address}</span>
+								))}
+							</div>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.management.allowTcpFallbackRelay")}</p>
+							<p>{allowTcpFallbackRelay ? "Yes" : "No"}</p>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.management.listeningOn")}</p>
+							<div className="list-inside list-disc space-x-2">
+								{listeningOn?.map((address) => (
+									<span key={address}>{address}</span>
+								))}
+							</div>
+						</div>
 					</div>
-				</div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.management.allowTcpFallbackRelay")}</p>
-					<p>{allowTcpFallbackRelay ? "Yes" : "No"}</p>
-				</div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.management.listeningOn")}</p>
-					<div className="list-inside list-disc space-x-2">
-						{listeningOn.map((address) => (
-							<span key={address}>{address}</span>
-						))}
-					</div>
-				</div>
-			</div>
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">
-					{t("controller.controllerStatus.title")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
+					<div className="pb-10">
+						<p className="text-sm text-gray-400">
+							{t("controller.controllerStatus.title")}
+						</p>
+						<div className="divider mt-0 p-0 text-gray-500"></div>
 
-				<div className="flex items-center justify-between">
-					<p>{t("controller.controllerStatus.online")}</p>
-					<p>{online ? "Yes" : "No"}</p>
-				</div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.controllerStatus.tcpFallbackActive")}</p>
-					<p>{tcpFallbackActive ? "Yes" : "No"}</p>
-				</div>
-				<div className="flex items-center justify-between">
-					<p>{t("controller.controllerStatus.version")}</p>
-					<p>{version}</p>
-				</div>
-			</div>
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">Debug</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.controllerStatus.online")}</p>
+							<p>{online ? "Yes" : "No"}</p>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.controllerStatus.tcpFallbackActive")}</p>
+							<p>{tcpFallbackActive ? "Yes" : "No"}</p>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.controllerStatus.version")}</p>
+							<p>{version}</p>
+						</div>
+					</div>
+					<div className="pb-10">
+						<p className="text-sm text-gray-400">Debug</p>
+						<div className="divider mt-0 p-0 text-gray-500"></div>
 
-				<DebugMirror data={controllerData} title="Controller Status" />
+						<DebugMirror data={controllerData} title="Controller Status" />
+					</div>
+				</>
+			)}
+			<div className="pb-10">
+				<p className="text-sm text-error">DANGER ZONE</p>
+				<div className="divider mt-0 p-0 text-error"></div>
+
+				<div className="space-y-5">
+					<p className="text-sm text-gray-500">
+						<span className="text-error">Proceed with Caution:</span> Modifying
+						the ZeroTier controller URL affects all users. While this offers
+						flexibility for those wanting a custom controller, be aware of
+						potential disruptions and compatibility issues. Always backup
+						configurations before changes.
+					</p>
+					<div className="flex items-center justify-between">
+						<EditableField
+							isLoading={false}
+							label="Local Zerotier URL"
+							description="Submit empty field to use the default."
+							size="sm"
+							fields={[
+								{
+									name: "localControllerUrl",
+									type: "text",
+									placeholder:
+										me?.options?.localControllerUrl || "http://zerotier:9993",
+									value: me?.options?.localControllerUrl,
+								},
+							]}
+							submitHandler={(params) =>
+								new Promise((resolve) => {
+									setZtOptions(params);
+									resolve(true);
+								})
+							}
+						/>
+					</div>
+					<div className="flex items-center justify-between">
+						<EditableField
+							isLoading={false}
+							label="Zerotier Secret"
+							description="Submit empty field to use the default."
+							size="sm"
+							fields={[
+								{
+									name: "localControllerSecret",
+									type: "text",
+									placeholder: me?.options?.localControllerSecret || "********",
+									value: me?.options?.localControllerSecret || "",
+								},
+							]}
+							submitHandler={(params) =>
+								new Promise((resolve) => {
+									setZtOptions(params);
+									resolve(true);
+								})
+							}
+						/>
+					</div>
+				</div>
 			</div>
 		</main>
 	);
