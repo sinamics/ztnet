@@ -1,3 +1,4 @@
+import "../../__mocks__/networkById";
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
@@ -8,141 +9,13 @@ import { api } from "../../../utils/api";
 import { NextIntlProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// function createTestContext(network?: Network) {
-//   return {
-//     db: prisma,
-//     prisma,
-//     network: network || null,
-//   };
-// }
 
-jest.mock("../../../utils/api", () => ({
-	api: {
-		network: {
-			getNetworkById: {
-				useQuery: () => ({
-					data: {
-						network: {
-							nwid: "1234567890",
-							name: "Test Network",
-							private: true,
-							ipAssignmentPools: [
-								{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-							],
-							routes: [{ target: "10.0.0.0/24" }],
-							dns: {
-								domain: "",
-								servers: [],
-							},
-							tags: [],
-							multicastLimit: 32,
-							enableBroadcast: true,
-							rutes: [
-								{
-									target: "172.25.28.0/24",
-									via: null,
-								},
-							],
-							rules: [
-								{
-									not: false,
-									or: false,
-									type: "ACTION_ACCEPT",
-								},
-							],
-						},
-						members: [],
-						zombieMembers: [],
-					},
-					isLoading: false,
-					refetch: jest.fn(),
-				}),
-			},
-			updateNetwork: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			getFlowRule: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			setFlowRule: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			deleteNetwork: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			inviteUserByMail: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			networkName: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			networkDescription: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			privatePublicNetwork: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			enableIpv4AutoAssign: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			easyIpAssignment: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			advancedIpAssignment: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			managedRoutes: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			dns: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			multiCast: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-		},
-		networkMember: {
-			UpdateDatabaseOnly: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-			create: {
-				useMutation: () => ({
-					mutate: jest.fn(),
-				}),
-			},
-		},
-	},
-}));
+enum ConnectionStatus {
+	Offline = 0,
+	Relayed = 1,
+	DirectLAN = 1,
+	DirectWAN = 2,
+}
 
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
@@ -169,9 +42,11 @@ describe("NetworkById component", () => {
 		api.network.getNetworkById.useQuery = useQueryMock;
 
 		render(
-			<NextIntlProvider locale="en" messages={enTranslation}>
-				<NetworkById />
-			</NextIntlProvider>,
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkById />
+				</NextIntlProvider>
+			</QueryClientProvider>,
 		);
 		// expect(screen.getByText(/loading/i)).toBeInTheDocument();
 		expect(screen.getByRole("progressbar")).toBeInTheDocument();
@@ -285,5 +160,190 @@ describe("NetworkById component", () => {
 		await userEvent.click(editIcon);
 
 		await waitFor(() => expect(input).not.toBeInTheDocument());
+	});
+
+	it("renders Members table correctly", async () => {
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "network_id",
+					name: "Test Network",
+					private: true,
+					ipAssignmentPools: [
+						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
+					],
+					routes: [{ target: "10.0.0.0/24" }],
+					multicastLimit: 32,
+					enableBroadcast: true,
+				},
+				members: [
+					{
+						nodeid: 1,
+						id: "member_id",
+						nwid: "network_id",
+						lastSeen: "2023-08-09T18:02:14.723Z",
+						name: "members_name",
+						creationTime: 1691603143446,
+						ipAssignments: ["10.121.15.173"],
+						peers: {
+							physicalAddress: "10.10.10.10",
+						},
+						conStatus: 0,
+					},
+				],
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
+		api.network.getNetworkById.useQuery = useQueryMock;
+
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkById />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
+		// await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
+		// Ensure table is present
+		screen.getByRole("table"); // This will throw an error if the table is not present
+
+		await waitFor(
+			() => {
+				expect(screen.getByDisplayValue(/members_name/i)).toBeInTheDocument();
+				expect(screen.getByText(/network_id/i)).toBeInTheDocument();
+				expect(screen.getByText(/10.10.10.10/i)).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /options/i }),
+				).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /stash/i }),
+				).toBeInTheDocument();
+			},
+			{ timeout: 5000 },
+		);
+	});
+	// Test for ONLINE status
+	it("renders DIRECT WAN status correctly", async () => {
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "network_id",
+					ipAssignmentPools: [
+						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
+					],
+					routes: [{ target: "10.0.0.0/24" }],
+					multicastLimit: 32,
+				},
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.DirectWAN,
+					},
+				],
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
+
+		api.network.getNetworkById.useQuery = useQueryMock;
+
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkById />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
+		await waitFor(
+			() => {
+				expect(screen.getByText("DIRECT")).toHaveClass("text-success");
+			},
+			{ timeout: 2000 },
+		);
+	});
+	// Test for Relayed status
+	it("renders RELAYED status correctly", async () => {
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "network_id",
+					ipAssignmentPools: [
+						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
+					],
+					routes: [{ target: "10.0.0.0/24" }],
+					multicastLimit: 32,
+				},
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.Relayed,
+					},
+				],
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
+
+		api.network.getNetworkById.useQuery = useQueryMock;
+
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkById />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
+		await waitFor(
+			() => {
+				expect(screen.getByText("RELAYED")).toHaveClass("text-warning");
+			},
+			{ timeout: 2000 },
+		);
+	});
+	// Test for Offline status
+	it("renders OFFLINE status correctly", async () => {
+		const useQueryMock = jest.fn().mockReturnValue({
+			data: {
+				network: {
+					nwid: "network_id",
+					ipAssignmentPools: [
+						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
+					],
+					routes: [{ target: "10.0.0.0/24" }],
+					multicastLimit: 32,
+				},
+				members: [
+					{
+						id: "member_id",
+						creationTime: 1691603143446,
+						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+						conStatus: ConnectionStatus.Offline,
+					},
+				],
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
+
+		api.network.getNetworkById.useQuery = useQueryMock;
+
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlProvider locale="en" messages={enTranslation}>
+					<NetworkById />
+				</NextIntlProvider>
+			</QueryClientProvider>,
+		);
+		await waitFor(
+			() => {
+				expect(screen.getByText("offline")).toHaveClass("text-error");
+			},
+			{ timeout: 2000 },
+		);
 	});
 });

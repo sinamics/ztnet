@@ -21,14 +21,14 @@ describe("LoginForm", () => {
 	});
 
 	it("renders the LoginForm component", () => {
-		render(<LoginForm />);
+		render(<LoginForm setViewForgotForm={() => {}} />);
 		expect(
 			screen.getByRole("heading", { name: /Sign In/i }),
 		).toBeInTheDocument();
 	});
 
 	it("updates email and password inputs on change", () => {
-		render(<LoginForm />);
+		render(<LoginForm setViewForgotForm={() => {}} />);
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -41,7 +41,7 @@ describe("LoginForm", () => {
 	});
 
 	it("submits the form with correct email and password", async () => {
-		render(<LoginForm />);
+		render(<LoginForm setViewForgotForm={() => {}} />);
 
 		(signIn as jest.Mock).mockResolvedValue({});
 

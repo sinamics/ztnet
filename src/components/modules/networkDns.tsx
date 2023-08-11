@@ -70,6 +70,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
+	const { network } = networkByIdQuery || {};
 	const updateDns = (servers: string[]) => {
 		updateNetwork(
 			{
@@ -97,6 +98,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 	};
 
 	const submitHandler = (e: React.FormEvent) => {
+		
 		e.preventDefault();
 		// add toast notification if address or domain is empty
 		if (!state.address || !state.domain) {
@@ -115,7 +117,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 		updateDns(newServers);
 	};
 
-	const { network } = networkByIdQuery || {};
+	
 	return (
 		<>
 			<div
