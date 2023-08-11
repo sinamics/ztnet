@@ -2,6 +2,25 @@ import "@testing-library/jest-dom";
 
 jest.mock("../../utils/api", () => ({
 	api: {
+		auth: {
+			me: {
+				useQuery: () => ({
+					data: {
+						user: {
+							id: "1234567890",
+							email: "",
+							role: "ADMIN",
+							verified: true,
+							avatar: null,
+							createdAt: "2021-05-04T12:00:00.000Z",
+							updatedAt: "2021-05-04T12:00:00.000Z",
+						},
+					},
+					isLoading: false,
+					refetch: jest.fn(),
+				}),
+			},
+		},
 		admin: {
 			getAllOptions: {
 				useQuery: () => ({
@@ -53,7 +72,7 @@ jest.mock("../../utils/api", () => ({
 				useMutation: () => ({
 					mutate: jest.fn(),
 				}),
-			}
+			},
 		},
 		network: {
 			getNetworkById: {
@@ -88,8 +107,8 @@ jest.mock("../../utils/api", () => ({
 								},
 							],
 							v4AssignMode: {
-								zt: false,  // Changed state to checked
-							 },
+								zt: false, // Changed state to checked
+							},
 						},
 						members: [],
 						zombieMembers: [],
