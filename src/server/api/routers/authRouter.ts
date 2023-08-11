@@ -497,4 +497,38 @@ export const authRouter = createTRPCRouter({
 
 			return updated;
 		}),
+	setLocalZt: protectedProcedure
+		.input(
+			z.object({
+				localControllerUrl: z.string().optional(),
+				localControllerSecret: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// we use upsert in case the user has no options yet
+			const updated = await ctx.prisma.user.update({
+				where: {
+					id: ctx.session.user.id,
+				},
+				data: {
+					options: {
+						upsert: {
+							create: {
+								localControllerUrl: input.localControllerUrl,
+								localControllerSecret: input.localControllerSecret,
+							},
+							update: {
+								localControllerUrl: input.localControllerUrl,
+								localControllerSecret: input.localControllerSecret,
+							},
+						},
+					},
+				},
+				include: {
+					options: true,
+				},
+			});
+
+			return updated;
+		}),
 });
