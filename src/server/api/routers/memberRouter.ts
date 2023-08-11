@@ -130,7 +130,7 @@ export const networkMemberRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const payload: Partial<MemberEntity> = {};
 
 			// update capabilities
@@ -193,6 +193,7 @@ export const networkMemberRouter = createTRPCRouter({
 			// if central is true, send the request to the central API and return the response
 			const updatedMember = await ztController
 				.member_update({
+					ctx,
 					nwid: input.nwid,
 					memberId: input.memberId,
 					central: input.central,
@@ -267,7 +268,7 @@ export const networkMemberRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const tags = input.updateParams.tags;
 			const adjustedTags = tags && tags.length === 0 ? [] : tags;
 
@@ -281,6 +282,7 @@ export const networkMemberRouter = createTRPCRouter({
 			// if central is true, send the request to the central API and return the response
 			const updatedMember = await ztController
 				.member_update({
+					ctx,
 					nwid: input.nwid,
 					memberId: input.memberId,
 					central: input.central,

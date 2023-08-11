@@ -127,7 +127,7 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "搜索任何东西...",
 			"column": {
-				"authorized": "已授权",
+				"authorized": "授权",
 				"name": "名字",
 				"id": "ID",
 				"ipAssignments": {

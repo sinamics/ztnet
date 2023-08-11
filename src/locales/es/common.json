@@ -23,7 +23,8 @@
 		"loading": "Cargando",
 		"title": "Redes",
 		"description": "Redes VPN",
-		"addNetworkButton": "Crear una red"
+		"addNetworkButton": "Crear una red",
+		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí."
 	},
 	"networksTable": {
 		"name": "Nombre",
@@ -126,7 +127,7 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Buscar cualquier cosa...",
 			"column": {
-				"authorized": "Autorizado",
+				"authorized": "Auth",
 				"name": "Nombre",
 				"id": "ID",
 				"ipAssignments": {
@@ -139,7 +140,7 @@
 					"unknownValue": "Desconocido"
 				},
 				"conStatus": {
-					"header": "Estado de la conexión",
+					"header": "Estado",
 					"toolTip": "No se pudo establecer una conexión directa y actualmente se está retransmitiendo a través de los servidores zerotier con mayor latencia",
 					"relayed": "REENVIADO",
 					"directLan": "Conexión directa LAN establecida",
@@ -301,7 +302,6 @@
 			"allAdminsNotification": "Todos los administradores recibirán notificaciones"
 		},
 		"controller": {
-			"loading": "Cargando...",
 			"networkMembers": {
 				"title": "Redes & Miembros",
 				"totalNetworks": "Total de redes:",
