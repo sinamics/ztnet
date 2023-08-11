@@ -133,22 +133,25 @@ const Controller = () => {
 				</>
 			)}
 			<div className="pb-10">
-				<p className="text-sm text-error">DANGER ZONE</p>
+				<p className="text-sm text-error">
+					{t("controller.controllerConfig.danger_zone")}
+				</p>
 				<div className="divider mt-0 p-0 text-error"></div>
 
 				<div className="space-y-5">
 					<p className="text-sm text-gray-500">
-						<span className="text-error">Proceed with Caution:</span> Modifying
-						the ZeroTier controller URL affects all users. While this offers
-						flexibility for those wanting a custom controller, be aware of
-						potential disruptions and compatibility issues. Always backup
-						configurations before changes.
+						{t.rich("controller.controllerConfig.proceed_with_caution", {
+							span: (content) => <span className="text-error">{content} </span>,
+						})}
+						{t("controller.controllerConfig.modification_warning")}
 					</p>
 					<div className="flex items-center justify-between">
 						<EditableField
 							isLoading={false}
-							label="Local Zerotier URL"
-							description="Submit empty field to use the default."
+							label={t("controller.controllerConfig.local_zerotier_url")}
+							description={t(
+								"controller.controllerConfig.submit_empty_field_default",
+							)}
 							size="sm"
 							fields={[
 								{
@@ -170,8 +173,10 @@ const Controller = () => {
 					<div className="flex items-center justify-between">
 						<EditableField
 							isLoading={false}
-							label="Zerotier Secret"
-							description="Submit empty field to use the default."
+							label={t("controller.controllerConfig.zerotier_secret")}
+							description={t(
+								"controller.controllerConfig.submit_empty_field_default",
+							)}
 							size="sm"
 							fields={[
 								{

@@ -246,13 +246,6 @@
 			"authentication": "Autenticación",
 			"enableUserRegistration": "¿Habilitar registro de usuario?"
 		},
-		"networkSetting": {
-			"memberAnotations": "Anotaciones de miembro",
-			"showMarkerInTable": "Mostrar marcador en la tabla",
-			"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
-			"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
-			"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "Host SMTP",
@@ -341,6 +334,14 @@
 				"tcpFallbackActive": "TCP Fallback activo:",
 				"version": "Versión:"
 			},
+			"controllerConfig": {
+				"danger_zone": "ZONA DE PELIGRO",
+				"proceed_with_caution": "<span>Proceda con precaución:</span>",
+				"modification_warning": "Modificar la URL del controlador ZeroTier afecta a todos los usuarios. Aunque esto ofrece flexibilidad para aquellos que quieren un controlador personalizado, ten en cuenta las posibles interrupciones y problemas de compatibilidad. Siempre realiza una copia de seguridad de las configuraciones antes de hacer cambios.",
+				"local_zerotier_url": "URL local de Zerotier",
+				"zerotier_secret": "Secreto de Zerotier",
+				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado."
+			},
 			"yes": "Sí",
 			"no": "No"
 		}
@@ -362,6 +363,13 @@
 				"newPasswordPlaceholder": "Nueva Contraseña",
 				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
 				"role": "Rol"
+			},
+			"networkSetting": {
+				"memberAnotations": "Anotaciones de miembro",
+				"showMarkerInTable": "Mostrar marcador en la tabla",
+				"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+				"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
+				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
