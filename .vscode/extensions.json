@@ -1,3 +1,6 @@
 {
-  "recommendations": ["prisma.prisma"]
+  "recommendations": [
+    "prisma.prisma",
+    "rome.rome"
+  ]
 }
