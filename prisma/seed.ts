@@ -1,4 +1,4 @@
-import { seedUserOptions } from "./user-option.seed";
+import { seedUserOptions } from "./seeds/user-option.seed";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
