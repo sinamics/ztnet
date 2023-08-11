@@ -119,6 +119,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 	};
 	const { network } = networkByIdQuery || {};
 	if (isLoading) return <div>Loading</div>;
+
 	return (
 		<div
 			tabIndex={0}
@@ -133,6 +134,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 					<p>{t("networkIpAssignments.auto_assign_from_range")}</p>
 					<input
 						type="checkbox"
+						data-testid="auto-assign-checkbox"
 						checked={network?.v4AssignMode?.zt || false}
 						className="checkbox-primary checkbox checkbox-sm"
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
