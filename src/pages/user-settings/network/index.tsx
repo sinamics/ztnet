@@ -3,26 +3,11 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "use-intl";
 
-const NetworkSetting = () => {
+const UserNetworkSetting = () => {
 	const t = useTranslations("admin");
-	const { mutate: updateNotation } =
-		api.admin.updateGlobalNotation.useMutation();
+	const { mutate: updateNotation } = api.auth.updateUserNotation.useMutation();
+	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
-	const {
-		data: options,
-		refetch: refetchOptions,
-		isLoading: loadingOptions,
-	} = api.admin.getAllOptions.useQuery();
-
-	if (loadingOptions) {
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
@@ -43,14 +28,14 @@ const NetworkSetting = () => {
 					</div>
 					<input
 						type="checkbox"
-						checked={options?.showNotationMarkerInTableRow}
+						checked={me?.options?.showNotationMarkerInTableRow || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
 							updateNotation(
 								{
 									showNotationMarkerInTableRow: e.target.checked,
 								},
-								{ onSuccess: () => void refetchOptions() },
+								{ onSuccess: () => void refetchMe() },
 							);
 						}}
 					/>
@@ -68,14 +53,14 @@ const NetworkSetting = () => {
 					</div>
 					<input
 						type="checkbox"
-						checked={options?.useNotationColorAsBg}
+						checked={me?.options?.useNotationColorAsBg || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
 							updateNotation(
 								{
 									useNotationColorAsBg: e.target.checked,
 								},
-								{ onSuccess: () => void refetchOptions() },
+								{ onSuccess: () => void refetchMe() },
 							);
 						}}
 					/>
@@ -84,8 +69,8 @@ const NetworkSetting = () => {
 		</main>
 	);
 };
-NetworkSetting.getLayout = function getLayout(page: ReactElement) {
+UserNetworkSetting.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export default NetworkSetting;
+export default UserNetworkSetting;

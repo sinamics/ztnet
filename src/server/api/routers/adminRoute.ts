@@ -49,18 +49,22 @@ export const adminRouter = createTRPCRouter({
 			return users;
 		}),
 
-	getControllerStats: adminRoleProtectedRoute.query(async () => {
+	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		const isCentral = false;
-		const networks = await ztController.get_controller_networks(isCentral);
+		const networks = await ztController.get_controller_networks(ctx, isCentral);
 
 		const networkCount = networks.length;
 		let totalMembers = 0;
 		for (const network of networks) {
-			const members = await ztController.network_members(network as string);
+			const members = await ztController.network_members(
+				ctx,
+				network as string,
+			);
 			totalMembers += Object.keys(members).length;
 		}
 
 		const controllerStatus = (await ztController.get_controller_status(
+			ctx,
 			isCentral,
 		)) as ZTControllerNodeStatus;
 		return {
@@ -308,38 +312,6 @@ export const adminRouter = createTRPCRouter({
 		}),
 
 	/**
-	 * Update the specified NetworkMemberNotation instance.
-	 *
-	 * This protectedProcedure takes an input of object type with properties: notationId, nodeid,
-	 * useAsTableBackground, and showMarkerInTable. It updates the fields showMarkerInTable and
-	 * useAsTableBackground in the NetworkMemberNotation model for the specified notationId and nodeid.
-	 *
-	 * @input An object with properties:
-	 * - notationId: a number representing the unique ID of the notation
-	 * - nodeid: a number representing the ID of the node to which the notation is linked
-	 * - useAsTableBackground: an optional boolean that determines whether the notation is used as a background in the table
-	 * - showMarkerInTable: an optional boolean that determines whether to show a marker in the table for the notation
-	 * @returns A Promise that resolves with the updated NetworkMemberNotation instance.
-	 */
-	updateGlobalNotation: adminRoleProtectedRoute
-		.input(
-			z.object({
-				useNotationColorAsBg: z.boolean().optional(),
-				showNotationMarkerInTableRow: z.boolean().optional(),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			return await ctx.prisma.globalOptions.update({
-				where: {
-					id: 1,
-				},
-				data: {
-					useNotationColorAsBg: input.useNotationColorAsBg,
-					showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
-				},
-			});
-		}),
-	/**
 	 * `unlinkedNetwork` is an admin protected query that fetches and returns detailed information about networks
 	 * that are present in the controller but not stored in the database.
 	 *
@@ -355,8 +327,9 @@ export const adminRouter = createTRPCRouter({
 	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
 	 */
 	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		const ztNetworks =
-			(await ztController.get_controller_networks()) as string[];
+		const ztNetworks = (await ztController.get_controller_networks(
+			ctx,
+		)) as string[];
 		const dbNetworks = await ctx.prisma.network.findMany({
 			select: { nwid: true },
 		});
@@ -373,7 +346,7 @@ export const adminRouter = createTRPCRouter({
 
 		const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
 			unlinkedNetworks.map((unlinked) =>
-				ztController.local_network_detail(unlinked, false),
+				ztController.local_network_detail(ctx, unlinked, false),
 			),
 		);
 
