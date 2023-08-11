@@ -15,12 +15,11 @@ import { api } from "~/utils/api";
 const Sidebar = (): JSX.Element => {
 	const { open, toggle } = useSidebarStore();
 	const { data: session } = useSession();
+	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 
 	const sidebarRef = useRef<HTMLDivElement>();
 	const router = useRouter();
-
-	const { data: globalOption } = api.admin.getAllOptions.useQuery();
 
 	useEffect(() => {
 		const handleClickOutside = (_event: MouseEvent) => {
@@ -107,7 +106,7 @@ const Sidebar = (): JSX.Element => {
 							<span className="ml-3">{t("networks")}</span>
 						</Link>
 					</li>
-					{globalOption?.ztCentralApiKey ? (
+					{me?.options?.ztCentralApiKey ? (
 						<li className="my-px">
 							<Link
 								href="/central"

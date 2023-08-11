@@ -54,7 +54,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 			},
 		);
 
-	const { data: options } = api.admin.getAllOptions.useQuery();
+	const { data: me } = api.auth.me.useQuery();
 
 	useEffect(() => {
 		setData(networkById?.members ?? []);
@@ -183,7 +183,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 										}`}
 										style={
 											!central &&
-											options?.useNotationColorAsBg &&
+											me?.options?.useNotationColorAsBg &&
 											notation?.length > 0
 												? {
 														backgroundColor: convertRGBtoRGBA(

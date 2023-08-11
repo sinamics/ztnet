@@ -28,6 +28,7 @@ export const networkMemberRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			const ztMembers = await ztController.member_details(
+				ctx,
 				input.nwid,
 				input.id,
 				input.central,
@@ -63,6 +64,7 @@ export const networkMemberRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			if (input.central) {
 				return await ztController.member_update({
+					ctx,
 					nwid: input.nwid,
 					memberId: input.id,
 					central: input.central,
@@ -315,6 +317,7 @@ export const networkMemberRouter = createTRPCRouter({
 			if (input.central && input?.updateParams?.name) {
 				return await ztController
 					.member_update({
+						ctx,
 						nwid: input.nwid,
 						memberId: input.id,
 						central: input.central,
@@ -424,6 +427,7 @@ export const networkMemberRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			// remove member from controller
 			const deleted = await ztController.member_delete({
+				ctx,
 				central: input.central,
 				nwid: input.nwid,
 				memberId: input.id,
