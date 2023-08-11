@@ -127,7 +127,7 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Søk etter noe...",
 			"column": {
-				"authorized": "Autorisert",
+				"authorized": "Auth",
 				"name": "Navn",
 				"id": "ID",
 				"ipAssignments": {
@@ -140,7 +140,7 @@
 					"unknownValue": "Ukjent"
 				},
 				"conStatus": {
-					"header": "Tilkoblingsstatus",
+					"header": "Status",
 					"toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
 					"relayed": "VIDEREFORMIDLET",
 					"directLan": "Direkte LAN-tilkobling opprettet",

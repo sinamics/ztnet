@@ -127,7 +127,7 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Search anything...",
 			"column": {
-				"authorized": "Authorized",
+				"authorized": "Auth",
 				"name": "Name",
 				"id": "ID",
 				"ipAssignments": {
@@ -140,7 +140,7 @@
 					"unknownValue": "Unknown"
 				},
 				"conStatus": {
-					"header": "Conn Status",
+					"header": "Status",
 					"toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
 					"relayed": "RELAYED",
 					"directLan": "Direct LAN connection established",

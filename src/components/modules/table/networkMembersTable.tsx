@@ -200,7 +200,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 												.getVisibleCells()
 												.map((cell) => (
 													// Apply the cell props
-
 													<td key={cell.id} className="py-1 pl-4">
 														{
 															// Render the cell contents
