@@ -290,8 +290,7 @@ const Sidebar = (): JSX.Element => {
 							href="/user-settings?tab=account"
 							className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/user-settings" &&
-								router.query.tab === "account"
+								router.pathname.includes("/user-settings")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}

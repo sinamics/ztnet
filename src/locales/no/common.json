@@ -247,13 +247,6 @@
 			"authentication": "Autentisering",
 			"enableUserRegistration": "Aktiver brukerregistrering?"
 		},
-		"networkSetting": {
-			"memberAnotations": "Medlemsanmerkninger",
-			"showMarkerInTable": "Vis markør i tabellen",
-			"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
-			"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
-			"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP-vert",
@@ -341,6 +334,14 @@
 				"tcpFallbackActive": "TCP Fallback er aktiv:",
 				"version": "Versjon:"
 			},
+			"controllerConfig": {
+				"danger_zone": "FARESONE",
+				"proceed_with_caution": "<span>Fortsett med forsiktighet:</span>",
+				"modification_warning": "Å endre ZeroTier-kontrollerens URL påvirker alle brukere. Selv om dette gir fleksibilitet for de som ønsker en tilpasset kontroller, vær oppmerksom på potensielle avbrudd og kompatibilitetsproblemer. Ta alltid sikkerhetskopi av konfigurasjoner før endringer.",
+				"local_zerotier_url": "Lokal Zerotier URL",
+				"zerotier_secret": "Zerotier Hemmelighet",
+				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen."
+			},
 			"yes": "Ja",
 			"no": "Nei"
 		}
@@ -362,6 +363,13 @@
 				"newPasswordPlaceholder": "Nytt Passord",
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
 				"role": "Rolle"
+			},
+			"networkSetting": {
+				"memberAnotations": "Medlemsanmerkninger",
+				"showMarkerInTable": "Vis markør i tabellen",
+				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
+				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",

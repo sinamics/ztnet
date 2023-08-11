@@ -247,13 +247,6 @@
 			"authentication": "身份验证",
 			"enableUserRegistration": "启用用户注册？"
 		},
-		"networkSetting": {
-			"memberAnotations": "成员注释",
-			"showMarkerInTable": "在表格中显示标记",
-			"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
-			"addBackgroundColorInTable": "在表格中添加背景颜色",
-			"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。"
-		},
 		"mail": {
 			"mailSMTP": "邮件SMTP",
 			"smtpHost": "SMTP主机",
@@ -341,6 +334,14 @@
 				"tcpFallbackActive": "TCP Fallback 激活：",
 				"version": "版本："
 			},
+			"controllerConfig": {
+				"danger_zone": "危险区域",
+				"proceed_with_caution": "<span>请谨慎操作：</span>",
+				"modification_warning": "修改ZeroTier控制器URL会影响所有用户。虽然这为想要自定义控制器的人提供了灵活性，但请注意可能的中断和兼容性问题。更改前始终备份配置。",
+				"local_zerotier_url": "本地Zerotier URL",
+				"zerotier_secret": "Zerotier密码",
+				"submit_empty_field_default": "提交空字段以使用默认值。"
+			},
 			"yes": "是",
 			"no": "否"
 		}
@@ -362,6 +363,13 @@
 				"newPasswordPlaceholder": "新密码",
 				"repeatNewPasswordPlaceholder": "重复新密码",
 				"role": "角色"
+			},
+			"networkSetting": {
+				"memberAnotations": "成员注释",
+				"showMarkerInTable": "在表格中显示标记",
+				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
+				"addBackgroundColorInTable": "在表格中添加背景颜色",
+				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。"
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
