@@ -49,5 +49,10 @@ echo "Applying migrations to the database..."
 npx prisma migrate deploy
 echo "Migrations applied successfully!"
 
+# seed the database
+echo "Seeding the database..."
+npx prisma db seed
+echo "Database seeded successfully!"
+
 >&2 echo "Executing command"
 exec $cmd

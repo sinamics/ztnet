@@ -13,7 +13,7 @@ export interface NetworkEntity {
 	v6AssignMode: V6AssignMode;
 	authTokens?: null;
 	authorizationEndpoint?: string;
-	capabilities?: null[] | null;
+	capabilities?: Capability[];
 	clientId?: string;
 	creationTime?: number;
 	dns?: dns;
@@ -29,6 +29,30 @@ export interface NetworkEntity {
 	cidr?: string[];
 	tagsByName?: TagsByName;
 	capabilitiesByName?: CapabilitiesByName;
+	config?: Partial<NetworkConfig>;
+}
+
+interface NetworkConfig {
+	authTokens?: null;
+	creationTime?: number;
+	capabilities?: Capability[];
+	enableBroadcast: boolean;
+	id: string;
+	ipAssignmentPools: IpAssignmentPool[];
+	lastModified: number;
+	mtu: number;
+	multicastLimit?: number;
+	name: string;
+	private: boolean;
+	remoteTraceLevel: number;
+	remoteTraceTarget: string;
+	routes: Route[];
+	rules: Rule[];
+	tags: Tag[];
+	v4AssignMode: V4AssignMode;
+	v6AssignMode: V6AssignMode;
+	dns: { domain?: string; servers?: string[] };
+	ssoConfig: { enabled: boolean; mode: string };
 }
 
 interface CapabilitiesByName {

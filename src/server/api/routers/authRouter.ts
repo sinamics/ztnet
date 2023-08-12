@@ -16,6 +16,7 @@ import {
 	notificationTemplate,
 } from "~/utils/mail";
 import ejs from "ejs";
+import * as ztController from "~/utils/ztApi";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -122,6 +123,9 @@ export const authRouter = createTRPCRouter({
 					lastLogin: new Date().toISOString(),
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
+					options: {
+						create: {}, // empty object will make Prisma use the default values from the model
+					},
 				},
 			});
 
@@ -181,9 +185,12 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		await ctx.prisma.user.findFirst({
+		return await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
+			},
+			include: {
+				options: true,
 			},
 		});
 	}),
@@ -398,5 +405,130 @@ export const authRouter = createTRPCRouter({
 				console.error(error);
 				throwError("token is not valid, please try again!");
 			}
+		}),
+	/**
+	 * Update the specified NetworkMemberNotation instance.
+	 *
+	 * This protectedProcedure takes an input of object type with properties: notationId, nodeid,
+	 * useAsTableBackground, and showMarkerInTable. It updates the fields showMarkerInTable and
+	 * useAsTableBackground in the NetworkMemberNotation model for the specified notationId and nodeid.
+	 *
+	 * @input An object with properties:
+	 * - notationId: a number representing the unique ID of the notation
+	 * - nodeid: a number representing the ID of the node to which the notation is linked
+	 * - useAsTableBackground: an optional boolean that determines whether the notation is used as a background in the table
+	 * - showMarkerInTable: an optional boolean that determines whether to show a marker in the table for the notation
+	 * @returns A Promise that resolves with the updated NetworkMemberNotation instance.
+	 */
+	updateUserNotation: protectedProcedure
+		.input(
+			z.object({
+				useNotationColorAsBg: z.boolean().optional(),
+				showNotationMarkerInTableRow: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.user.update({
+				where: {
+					id: ctx.session.user.id,
+				},
+				data: {
+					options: {
+						upsert: {
+							create: {
+								useNotationColorAsBg: input.useNotationColorAsBg,
+								showNotationMarkerInTableRow:
+									input.showNotationMarkerInTableRow,
+							},
+							update: {
+								useNotationColorAsBg: input.useNotationColorAsBg,
+								showNotationMarkerInTableRow:
+									input.showNotationMarkerInTableRow,
+							},
+						},
+					},
+				},
+			});
+		}),
+	setZtApi: protectedProcedure
+		.input(
+			z.object({
+				ztCentralApiKey: z.string().optional(),
+				ztCentralApiUrl: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// we use upsert in case the user has no options yet
+			const updated = await ctx.prisma.user.update({
+				where: {
+					id: ctx.session.user.id,
+				},
+				data: {
+					options: {
+						upsert: {
+							create: {
+								ztCentralApiKey: input.ztCentralApiKey,
+								ztCentralApiUrl: input.ztCentralApiUrl,
+							},
+							update: {
+								ztCentralApiKey: input.ztCentralApiKey,
+								ztCentralApiUrl: input.ztCentralApiUrl,
+							},
+						},
+					},
+				},
+				include: {
+					options: true,
+				},
+			});
+
+			if (updated.options?.ztCentralApiKey) {
+				try {
+					await ztController.ping_api({ ctx });
+					return { status: "success" };
+				} catch (error) {
+					throw new TRPCError({
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+						message: error.message,
+						code: "FORBIDDEN",
+					});
+				}
+			}
+
+			return updated;
+		}),
+	setLocalZt: protectedProcedure
+		.input(
+			z.object({
+				localControllerUrl: z.string().optional(),
+				localControllerSecret: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// we use upsert in case the user has no options yet
+			const updated = await ctx.prisma.user.update({
+				where: {
+					id: ctx.session.user.id,
+				},
+				data: {
+					options: {
+						upsert: {
+							create: {
+								localControllerUrl: input.localControllerUrl,
+								localControllerSecret: input.localControllerSecret,
+							},
+							update: {
+								localControllerUrl: input.localControllerUrl,
+								localControllerSecret: input.localControllerSecret,
+							},
+						},
+					},
+				},
+				include: {
+					options: true,
+				},
+			});
+
+			return updated;
 		}),
 });

@@ -26,7 +26,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 			{ enabled: !!nwid },
 		);
 
-	const { data: options } = api.admin.getAllOptions.useQuery();
+	const { data: me } = api.auth.me.useQuery();
 	const { mutate: updateMemberDatabaseOnly } =
 		api.networkMember.UpdateDatabaseOnly.useMutation();
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
@@ -111,7 +111,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 					<form>
 						<span className="flex items-center space-x-2">
 							{!central &&
-								options?.showNotationMarkerInTableRow &&
+								me?.options?.showNotationMarkerInTableRow &&
 								notations?.map((notation) => (
 									<div
 										key={notation.label?.name}

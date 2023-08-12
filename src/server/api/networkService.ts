@@ -8,6 +8,7 @@ import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import { network_members } from "@prisma/client";
+import { UserContext } from "~/types/ctx";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -115,11 +116,12 @@ export const enrichMembers = async (
 };
 
 export const fetchPeersForAllMembers = async (
+	ctx: UserContext,
 	members: MemberEntity[],
 ): Promise<Peers[]> => {
 	const memberAddresses = members.map((member) => member.address);
 	const peerPromises = memberAddresses.map((address) =>
-		ztController.peer(address).catch(() => null),
+		ztController.peer(ctx, address).catch(() => null),
 	);
 
 	const peers = await Promise.all(peerPromises);
