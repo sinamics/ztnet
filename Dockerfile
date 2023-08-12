@@ -76,7 +76,7 @@ RUN chmod u+x init-db.sh
 EXPOSE 3000
 
 ENV PORT 3000
-ENV HOSTNAME localhost
+ENV HOSTNAME 127.0.0.1
 
 ENTRYPOINT ["/app/init-db.sh"]
 CMD ["node", "server.js"]
