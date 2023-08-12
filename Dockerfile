@@ -1,4 +1,5 @@
-FROM node:18-bullseye-slim AS base
+ARG NODEJS_IMAGE=node:18-bullseye-slim
+FROM --platform=$BUILDPLATFORM $NODEJS_IMAGE AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -32,7 +33,7 @@ COPY . .
 RUN SKIP_ENV_VALIDATION=1 npm run build
 
 # Production image, copy all the files and run next
-FROM base AS runner
+FROM $NODEJS_IMAGE AS runner
 WORKDIR /app
 
 # set the app version as an environment variable. Used in the github action
