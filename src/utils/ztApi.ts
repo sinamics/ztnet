@@ -1,5 +1,4 @@
 import fs from "fs";
-import { prisma } from "~/server/db";
 import { IPv4gen } from "./IPv4gen";
 import axios, { type AxiosError, type AxiosResponse } from "axios";
 import { APIError } from "~/server/helpers/errorHandler";
@@ -24,8 +23,9 @@ import {
 import { type MemberEntity } from "~/types/local/member";
 import { type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
+import { UserContext } from "~/types/ctx";
 
-const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://127.0.0.1:9993";
+const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
 let ZT_SECRET = process.env.ZT_SECRET;
@@ -47,15 +47,43 @@ if (!ZT_SECRET) {
 	}
 }
 
-const getApiCredentials = async () => {
-	return await prisma.globalOptions.findFirst({
+const getApiCredentials = async (
+	ctx: UserContext,
+): Promise<{
+	ztCentralApiKey: string | null;
+	ztCentralApiUrl: string | null;
+	localControllerSecret: string | null;
+	localControllerUrl: string | null;
+}> => {
+	const userWithOptions = await ctx.prisma.user.findFirst({
 		where: {
-			id: 1,
+			id: ctx.session.user.id,
+		},
+		select: {
+			options: {
+				select: {
+					ztCentralApiKey: true,
+					ztCentralApiUrl: true,
+					localControllerSecret: true,
+					localControllerUrl: true,
+				},
+			},
 		},
 	});
+
+	// Return only the options. If options are not available, return null values.
+	return (
+		userWithOptions?.options || {
+			ztCentralApiKey: null,
+			ztCentralApiUrl: null,
+			localControllerSecret: null,
+			localControllerUrl: null,
+		}
+	);
 };
 interface GetOptionsResponse {
-	ztCentralApiUrl: string | null;
+	ztCentralApiUrl?: string;
+	localControllerUrl: string;
 	headers: {
 		Authorization?: string;
 		"X-ZT1-Auth"?: string;
@@ -63,11 +91,21 @@ interface GetOptionsResponse {
 	};
 }
 
-const getOptions = async (isCentral = false): Promise<GetOptionsResponse> => {
+const getOptions = async (
+	ctx: UserContext,
+	isCentral = false,
+): Promise<GetOptionsResponse> => {
+	const {
+		ztCentralApiKey,
+		ztCentralApiUrl,
+		localControllerUrl,
+		localControllerSecret,
+	} = await getApiCredentials(ctx);
+
 	if (isCentral) {
-		const { ztCentralApiKey, ztCentralApiUrl } = await getApiCredentials();
 		return {
 			ztCentralApiUrl: ztCentralApiUrl || CENTRAL_ZT_ADDR,
+			localControllerUrl: null,
 			headers: {
 				Authorization: `token ${ztCentralApiKey}`,
 				"Content-Type": "application/json",
@@ -76,9 +114,9 @@ const getOptions = async (isCentral = false): Promise<GetOptionsResponse> => {
 	}
 
 	return {
-		ztCentralApiUrl: null,
+		localControllerUrl: localControllerUrl || LOCAL_ZT_ADDR,
 		headers: {
-			"X-ZT1-Auth": ZT_SECRET,
+			"X-ZT1-Auth": localControllerSecret || ZT_SECRET,
 			"Content-Type": "application/json",
 		},
 	};
@@ -153,11 +191,13 @@ const postData = async <T, P = unknown>(
 /* 
   Controller API for Admin
 */
-
+interface Ictx {
+	ctx: UserContext;
+}
 //Test API
-export const ping_api = async function () {
+export const ping_api = async function ({ ctx }: Ictx) {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(true);
+	const { headers, ztCentralApiUrl } = await getOptions(ctx, true);
 	const addr = `${ztCentralApiUrl}/network`;
 
 	return await getData<ZTControllerStatus>(addr, headers);
@@ -167,11 +207,12 @@ export const ping_api = async function () {
 // https://docs.zerotier.com/service/v1/#operation/getControllerStatus
 
 //Get Version
-export const get_controller_version = async function () {
-	const addr = `${LOCAL_ZT_ADDR}/controller`;
-
+export const get_controller_version = async function ({ ctx }: Ictx) {
 	// get headers based on local or central api
-	const { headers } = await getOptions(false);
+	const { headers, localControllerUrl } = await getOptions(ctx, false);
+
+	const addr = `${localControllerUrl}/controller`;
+
 	try {
 		return await getData<ZTControllerStatus>(addr, headers);
 	} catch (error) {
@@ -187,14 +228,18 @@ type ZTControllerListNetworks = Array<string>;
 
 // Get all networks
 export const get_controller_networks = async function (
+	ctx: UserContext,
 	isCentral = false,
 ): Promise<NetworkBase[] | string[]> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 
 	const addr = isCentral
 		? `${ztCentralApiUrl}/network`
-		: `${LOCAL_ZT_ADDR}/controller/network`;
+		: `${localControllerUrl}/controller/network`;
 
 	try {
 		if (isCentral) {
@@ -216,13 +261,17 @@ export const get_controller_networks = async function (
 */
 
 export const get_controller_status = async function (
+	ctx: UserContext,
 	isCentral: boolean,
 ): Promise<ZTControllerNodeStatus | CentralControllerStatus> {
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 
 	const addr = isCentral
 		? `${ztCentralApiUrl}/status`
-		: `${LOCAL_ZT_ADDR}/status`;
+		: `${localControllerUrl}/status`;
 
 	try {
 		if (isCentral) {
@@ -242,12 +291,16 @@ export const get_controller_status = async function (
   https://docs.zerotier.com/service/v1/#operation/createNetwork
 */
 export const network_create = async (
+	ctx: UserContext,
 	name: string,
 	ipAssignment,
 	isCentral = false,
 ): Promise<ZTControllerCreateNetwork | FlattenCentralNetwork> => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 	const payload: Partial<CentralNetwork> = {
@@ -267,10 +320,11 @@ export const network_create = async (
 			return flattenNetwork(data);
 		} else {
 			const controllerStatus = (await get_controller_status(
+				ctx,
 				isCentral,
 			)) as ZTControllerNodeStatus;
 			return await postData<ZTControllerCreateNetwork>(
-				`${LOCAL_ZT_ADDR}/controller/network/${controllerStatus.address}______`,
+				`${localControllerUrl}/controller/network/${controllerStatus.address}______`,
 				headers,
 				payload,
 			);
@@ -286,14 +340,18 @@ export const network_create = async (
 // https://docs.zerotier.com/service/v1/#operation/deleteNetwork
 
 export async function network_delete(
+	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
 ): Promise<HttpResponse> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 	const addr = isCentral
 		? `${ztCentralApiUrl}/network/${nwid}`
-		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
+		: `${localControllerUrl}/controller/network/${nwid}`;
 
 	try {
 		const response = await axios.delete(addr, { headers });
@@ -310,37 +368,43 @@ export async function network_delete(
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
 export const network_members = async function (
+	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
 ) {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 
 	const addr = isCentral
 		? `${ztCentralApiUrl}/network/${nwid}/member`
-		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member`;
+		: `${localControllerUrl}/controller/network/${nwid}/member`;
 
 	// fetch members
 	return await getData<MemberEntity[]>(addr, headers);
 };
 
 export const local_network_detail = async function (
+	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
 ): Promise<NetworkAndMemberResponse> {
 	// get headers based on local or central api
-	const { headers } = await getOptions(isCentral);
+	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+
 	try {
 		// get all members for a specific network
-		const members = await network_members(nwid);
+		const members = await network_members(ctx, nwid);
 		const network = await getData<NetworkEntity>(
-			`${LOCAL_ZT_ADDR}/controller/network/${nwid}`,
+			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
 		const membersArr: MemberEntity[] = [];
 		for (const [memberId] of Object.entries(members)) {
 			const memberDetails = await getData<MemberEntity>(
-				`${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`,
+				`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
 				headers,
 			);
 
@@ -359,18 +423,22 @@ export const local_network_detail = async function (
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 
 export const central_network_detail = async function (
+	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
 ): Promise<NetworkAndMemberResponse> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(isCentral);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
 	try {
 		const addr = isCentral
 			? `${ztCentralApiUrl}/network/${nwid}`
-			: `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
+			: `${localControllerUrl}/controller/network/${nwid}`;
 
 		// get all members for a specific network
-		const members = await network_members(nwid, isCentral);
+		const members = await network_members(ctx, nwid, isCentral);
 		const network = await getData<CentralNetwork>(addr, headers);
 
 		const membersArr = await Promise.all(
@@ -405,6 +473,7 @@ export const central_network_detail = async function (
 };
 
 type networkUpdate = {
+	ctx: UserContext;
 	nwid: string;
 	updateParams: Partial<NetworkEntity>;
 	central?: boolean;
@@ -413,15 +482,19 @@ type networkUpdate = {
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 export const network_update = async function ({
+	ctx,
 	nwid,
 	updateParams: payload,
 	central = false,
 }: networkUpdate): Promise<Partial<NetworkEntity>> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		central,
+	);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}`
-		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}`;
+		: `${localControllerUrl}/controller/network/${nwid}`;
 
 	try {
 		return await postData<NetworkEntity>(addr, headers, payload);
@@ -436,15 +509,19 @@ export const network_update = async function ({
 // https://docs.zerotier.com/service/v1/#operation/deleteControllerNetworkMember
 
 export const member_delete = async ({
+	ctx,
 	nwid,
 	memberId,
 	central = false,
 }: MemberDeleteInput): Promise<Partial<MemberDeleteResponse>> => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		central,
+	);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
-		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
+		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
 
 	try {
 		const response: AxiosResponse = await axios.delete(addr, { headers });
@@ -457,6 +534,7 @@ export const member_delete = async ({
 };
 
 type memberUpdate = {
+	ctx: UserContext;
 	nwid: string;
 	memberId: string;
 	updateParams: Partial<MemberEntity> | Partial<CentralMemberConfig>;
@@ -466,16 +544,20 @@ type memberUpdate = {
 // Update Network Member by ID
 // https://docs.zerotier.com/service/v1/#operation/updateControllerNetworkMember
 export const member_update = async ({
+	ctx,
 	nwid,
 	memberId,
 	updateParams: payload,
 	central = false,
 }: memberUpdate) => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		central,
+	);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
-		: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
+		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
 
 	try {
 		return await postData<MemberEntity>(addr, headers, payload);
@@ -490,17 +572,21 @@ export const member_update = async ({
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
 export const member_details = async function (
+	ctx: UserContext,
 	nwid: string,
 	memberId: string,
 	central = false,
 ): Promise<MemberEntity> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl } = await getOptions(central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		ctx,
+		central,
+	);
 
 	try {
 		const addr = central
 			? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
-			: `${LOCAL_ZT_ADDR}/controller/network/${nwid}/member/${memberId}`;
+			: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
 
 		return await getData<MemberEntity>(addr, headers);
 	} catch (error) {
@@ -511,11 +597,14 @@ export const member_details = async function (
 
 // Get all peers
 // https://docs.zerotier.com/service/v1/#operation/getPeers
-export const peers = async (): Promise<ZTControllerGetPeer> => {
-	const addr = `${LOCAL_ZT_ADDR}/peer`;
+export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer> => {
+	// get headers based on local or central api
+	const { localControllerUrl } = await getOptions(ctx, false);
+
+	const addr = `${localControllerUrl}/peer`;
 
 	// get headers based on local or central api
-	const { headers } = await getOptions(false);
+	const { headers } = await getOptions(ctx, false);
 
 	try {
 		const response: AxiosResponse = await axios.get(addr, { headers });
@@ -528,11 +617,13 @@ export const peers = async (): Promise<ZTControllerGetPeer> => {
 
 // Get information about a specific peer by Node ID.
 // https://docs.zerotier.com/service/v1/#operation/getPeer
-export const peer = async (userZtAddress: string) => {
-	const addr = `${LOCAL_ZT_ADDR}/peer/${userZtAddress}`;
+export const peer = async (ctx: UserContext, userZtAddress: string) => {
+	const { localControllerUrl } = await getOptions(ctx, false);
+
+	const addr = `${localControllerUrl}/peer/${userZtAddress}`;
 	try {
 		// get headers based on local or central api
-		const { headers } = await getOptions(false);
+		const { headers } = await getOptions(ctx, false);
 		const response = await getData<ZTControllerGetPeer>(addr, headers);
 
 		if (!response) return {} as ZTControllerGetPeer;

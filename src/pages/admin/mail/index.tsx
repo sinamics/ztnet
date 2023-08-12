@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import EditableField from "~/components/elements/inputField";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";

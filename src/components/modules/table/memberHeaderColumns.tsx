@@ -138,10 +138,13 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					const formatTime = (value: string, unit: string) => {
 						// Map full unit names to their abbreviations
 						const unitAbbreviations: { [key: string]: string } = {
-							second: "s ago",
-							minute: "m ago",
-							hour: "hr ago",
-							day: "dy ago",
+							second: "sec ago",
+							minute: "min ago",
+							hour: "hours ago",
+							day: "days ago",
+							week: "weeks ago",
+							month: "months ago",
+							year: "years ago",
 						};
 						const abbreviation = unitAbbreviations[unit] || unit;
 
@@ -197,18 +200,21 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						const unitAbbreviations: { [key: string]: string } = {
 							second: "sec",
 							minute: "min",
-							hour: "hr",
-							day: "d",
+							hour: "hour",
+							day: "day",
+							week: "week",
+							month: "month",
+							year: "year",
 						};
 						const abbreviation = unitAbbreviations[unit] || unit;
 
 						return `${value} ${abbreviation}`;
 					};
 					const cursorStyle = { cursor: "pointer" };
-					// console.log(original);
+
 					if (central) {
-						const now = Date.now(); // current timestamp in milliseconds
 						const lastSeen = original?.lastSeen; // assuming lastSeen is a timestamp in milliseconds
+						const now = Date.now(); // current timestamp in milliseconds
 						const fiveMinutesAgo = now - 5 * 60 * 1000; // timestamp 5 minutes ago
 
 						// Check if lastSeen is within the last 5 minutes
@@ -270,15 +276,15 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 								? ` (v${original.peers.version})`
 								: "";
 						return (
-							<span
+							<div
 								style={cursorStyle}
-								className="text-success"
+								className="text-success "
 								title={directTitle}
 							>
 								{t("networkById.networkMembersTable.column.conStatus.direct", {
 									version: versionInfo,
-								})}
-							</span>
+								})}{" "}
+							</div>
 						);
 					}
 

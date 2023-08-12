@@ -127,7 +127,7 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Search anything...",
 			"column": {
-				"authorized": "Authorized",
+				"authorized": "Auth",
 				"name": "Name",
 				"id": "ID",
 				"ipAssignments": {
@@ -140,7 +140,7 @@
 					"unknownValue": "Unknown"
 				},
 				"conStatus": {
-					"header": "Conn Status",
+					"header": "Status",
 					"toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
 					"relayed": "RELAYED",
 					"directLan": "Direct LAN connection established",
@@ -247,13 +247,6 @@
 			"authentication": "Authentication",
 			"enableUserRegistration": "Enable user registration?"
 		},
-		"networkSetting": {
-			"memberAnotations": "Member Anotations",
-			"showMarkerInTable": "Show marker in Table",
-			"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
-			"addBackgroundColorInTable": "Add background color in table",
-			"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP Host",
@@ -341,6 +334,14 @@
 				"tcpFallbackActive": "TCP Fallback Active:",
 				"version": "Version:"
 			},
+			"controllerConfig": {
+				"danger_zone": "DANGER ZONE",
+				"proceed_with_caution": "<span>Proceed with Caution:</span>",
+				"modification_warning": "Modifying the ZeroTier controller URL affects all users. While this offers flexibility for those wanting a custom controller, be aware of potential disruptions and compatibility issues. Always backup configurations before changes.",
+				"local_zerotier_url": "Local Zerotier URL",
+				"zerotier_secret": "Zerotier Secret",
+				"submit_empty_field_default": "Submit empty field to use the default."
+			},
 			"yes": "Yes",
 			"no": "No"
 		}
@@ -362,6 +363,13 @@
 				"newPasswordPlaceholder": "New Password",
 				"repeatNewPasswordPlaceholder": "Repeat New Password",
 				"role": "Role"
+			},
+			"networkSetting": {
+				"memberAnotations": "Member Anotations",
+				"showMarkerInTable": "Show marker in Table",
+				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
+				"addBackgroundColorInTable": "Add background color in table",
+				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",

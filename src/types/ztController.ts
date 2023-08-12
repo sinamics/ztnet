@@ -1,3 +1,5 @@
+import { UserContext } from "./ctx";
+
 /* 
   Node status and addressing info
   https://docs.zerotier.com/service/v1/#operation/getStatus
@@ -124,6 +126,7 @@ export interface ZTControllerMemberDetails {
 export type MemberDeleteResponse = 200 | 401 | 403 | 404;
 
 export interface MemberDeleteInput {
+	ctx: UserContext;
 	nwid: string;
 	memberId: string;
 	central: boolean;

@@ -83,7 +83,7 @@ export const networkRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
-				return await ztController.get_controller_networks(input.central);
+				return await ztController.get_controller_networks(ctx, input.central);
 			}
 			const networks = await ctx.prisma.network.findMany({
 				where: {
@@ -110,6 +110,7 @@ export const networkRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
 				return await ztController.central_network_detail(
+					ctx,
 					input.nwid,
 					input.central,
 				);
@@ -130,7 +131,7 @@ export const networkRouter = createTRPCRouter({
 				return throwError("You are not the Author of this network!");
 
 			const ztControllerResponse = await ztController
-				.local_network_detail(psqlNetworkData.nwid, false)
+				.local_network_detail(ctx, psqlNetworkData.nwid, false)
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
@@ -139,6 +140,7 @@ export const networkRouter = createTRPCRouter({
 				return throwError("Failed to get network details!");
 
 			const peersForAllMembers = await fetchPeersForAllMembers(
+				ctx,
 				ztControllerResponse.members,
 			);
 
@@ -214,7 +216,7 @@ export const networkRouter = createTRPCRouter({
 			try {
 				// Delete ZT network
 				const createCentralNw = await ztController
-					.network_delete(input.nwid, input.central)
+					.network_delete(ctx, input.nwid, input.central)
 					.catch(() => []); // Ignore errors
 
 				if (input.central) return createCentralNw;
@@ -246,7 +248,7 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			// if central is true, send the request to the central API and return the response
 			const { v4AssignMode } = input.updateParams;
 			// prepare update params
@@ -256,6 +258,7 @@ export const networkRouter = createTRPCRouter({
 
 			// update network
 			return ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -271,13 +274,14 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const { routes } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
 
 			// update network
 			return ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -293,7 +297,7 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
@@ -306,6 +310,7 @@ export const networkRouter = createTRPCRouter({
 
 			// update network
 			return ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -328,7 +333,7 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const { ipAssignmentPools } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central
@@ -337,6 +342,7 @@ export const networkRouter = createTRPCRouter({
 
 			// update network
 			return ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -352,13 +358,14 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
 				: { private: input.updateParams.private };
 
 			// if central is true, send the request to the central API and return the response
 			const updated = await ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -388,9 +395,9 @@ export const networkRouter = createTRPCRouter({
 
 			// if central is true, send the request to the central API and return the response
 			const updated = await ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
-				// @ts-expect-error
 				updateParams,
 			});
 
@@ -423,6 +430,7 @@ export const networkRouter = createTRPCRouter({
 			// if central is true, send the request to the central API and return the response
 			if (input.central) {
 				const updated = await ztController.network_update({
+					ctx,
 					nwid: input.nwid,
 					central: input.central,
 					updateParams: input.updateParams,
@@ -476,7 +484,7 @@ export const networkRouter = createTRPCRouter({
 					.optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			let ztControllerUpdates = {};
 
 			// If clearDns is true, set DNS to an empty object
@@ -493,6 +501,7 @@ export const networkRouter = createTRPCRouter({
 
 			// Send the request to update the network
 			return await ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams: ztControllerUpdates,
@@ -510,16 +519,16 @@ export const networkRouter = createTRPCRouter({
 				}),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
 
 			try {
 				return await ztController.network_update({
+					ctx,
 					nwid: input.nwid,
 					central: input.central,
-					// @ts-expect-error
 					updateParams,
 				});
 			} catch (error) {
@@ -546,6 +555,7 @@ export const networkRouter = createTRPCRouter({
 
 				// Create ZT network
 				const newNw = await ztController.network_create(
+					ctx,
 					networkName,
 					ipAssignmentPools,
 					input.central,
@@ -650,6 +660,7 @@ export const networkRouter = createTRPCRouter({
 
 			// update zerotier network with the new flow route
 			const updatedRules = await ztController.network_update({
+				ctx,
 				nwid: input.nwid,
 				central: input.central,
 				updateParams,
@@ -667,7 +678,7 @@ export const networkRouter = createTRPCRouter({
 					where: { nwid: input.nwid },
 					data: {
 						flowRule: flowRoute,
-						// @ts-expect-error
+						//@ts-expect-error
 						tagsByName: tags,
 						capabilitiesByName,
 					},

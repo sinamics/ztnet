@@ -4,6 +4,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Account from "./account";
 import { type GetServerSidePropsContext } from "next";
 import { useTranslations } from "next-intl";
+import UserNetworkSetting from "./network";
 
 const UserSettings = () => {
 	const router = useRouter();
@@ -21,6 +22,11 @@ const UserSettings = () => {
 			name: t("tabs.account"),
 			value: "account",
 			component: <Account />,
+		},
+		{
+			name: "Network",
+			value: "network",
+			component: <UserNetworkSetting />,
 		},
 	];
 
