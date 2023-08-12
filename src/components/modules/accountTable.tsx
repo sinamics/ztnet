@@ -197,87 +197,85 @@ export const Accounts = () => {
 		);
 	}
 	return (
-		<div className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-8/12">
-			<div className="overflow-x-auto">
-				<div className="inline-block w-full p-1.5 text-center align-middle">
-					<div className="overflow-hidden rounded-lg border">
-						<table className="table-wrapper min-w-full divide-y divide-gray-400">
-							<thead className="bg-base-100">
-								{
-									// Loop over the header rows
-									table
-										.getHeaderGroups()
-										.map((headerGroup) => (
-											// Apply the header row props
-											<tr key={headerGroup.id}>
-												{
-													// Loop over the headers in each row
-													headerGroup.headers.map((header) => (
-														<th
-															key={header.id}
-															colSpan={header.colSpan}
-															scope="col"
-															className="bg-base-300/50 py-3 pl-4"
-														>
-															{header.isPlaceholder ? null : (
-																<div
-																	{...{
-																		className: header.column.getCanSort()
-																			? "cursor-pointer select-none"
-																			: "",
-																		onClick:
-																			header.column.getToggleSortingHandler(),
-																	}}
-																>
-																	{flexRender(
-																		header.column.columnDef.header,
-																		header.getContext(),
-																	)}
-																	{{
-																		asc: " 🔼",
-																		desc: " 🔽",
-																	}[header.column.getIsSorted() as string] ??
-																		null}
-																</div>
-															)}
-														</th>
-													))
-												}
-											</tr>
-										))
-								}
-							</thead>
-							<tbody className=" divide-y divide-gray-200">
-								{
-									// Loop over the table rows
-									table
-										.getRowModel()
-										.rows.map((row) => (
-											<tr key={row.original.id} className={"items-center"}>
-												{
-													// Loop over the rows cells
-													row
-														.getVisibleCells()
-														.map((cell) => (
-															// Apply the cell props
+		<div className="overflow-x-auto">
+			<div className="inline-block w-full p-1.5 text-center align-middle">
+				<div className="overflow-hidden rounded-lg border">
+					<table className="table-wrapper min-w-full divide-y divide-gray-400">
+						<thead className="bg-base-100">
+							{
+								// Loop over the header rows
+								table
+									.getHeaderGroups()
+									.map((headerGroup) => (
+										// Apply the header row props
+										<tr key={headerGroup.id}>
+											{
+												// Loop over the headers in each row
+												headerGroup.headers.map((header) => (
+													<th
+														key={header.id}
+														colSpan={header.colSpan}
+														scope="col"
+														className="bg-base-300/50 py-3 pl-4"
+													>
+														{header.isPlaceholder ? null : (
+															<div
+																{...{
+																	className: header.column.getCanSort()
+																		? "cursor-pointer select-none"
+																		: "",
+																	onClick:
+																		header.column.getToggleSortingHandler(),
+																}}
+															>
+																{flexRender(
+																	header.column.columnDef.header,
+																	header.getContext(),
+																)}
+																{{
+																	asc: " 🔼",
+																	desc: " 🔽",
+																}[header.column.getIsSorted() as string] ??
+																	null}
+															</div>
+														)}
+													</th>
+												))
+											}
+										</tr>
+									))
+							}
+						</thead>
+						<tbody className=" divide-y divide-gray-200">
+							{
+								// Loop over the table rows
+								table
+									.getRowModel()
+									.rows.map((row) => (
+										<tr key={row.original.id} className={"items-center"}>
+											{
+												// Loop over the rows cells
+												row
+													.getVisibleCells()
+													.map((cell) => (
+														// Apply the cell props
 
-															<td key={cell.id} className="py-1 pl-4">
-																{
-																	// Render the cell contents
-																	flexRender(
-																		cell.column.columnDef.cell,
-																		cell.getContext(),
-																	)
-																}
-															</td>
-														))
-												}
-											</tr>
-										))
-								}
-							</tbody>
-						</table>
-					</div>
+														<td key={cell.id} className="py-1 pl-4">
+															{
+																// Render the cell contents
+																flexRender(
+																	cell.column.columnDef.cell,
+																	cell.getContext(),
+																)
+															}
+														</td>
+													))
+											}
+										</tr>
+									))
+							}
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>

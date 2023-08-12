@@ -5,11 +5,13 @@ import Input from "~/components/elements/input";
 interface FieldConfig {
 	name: string;
 	initialValue?: string;
-	type: string;
+	type?: string;
 	placeholder: string;
 	displayValue?: string;
 	defaultValue?: string | number;
 	value?: string | number;
+	elementType?: "input" | "select";
+	selectOptions?: { value: string; label: string }[];
 }
 
 interface FormProps {
@@ -23,6 +25,7 @@ interface FormProps {
 	rootClassName?: string;
 	rootFormClassName?: string;
 	labelStyle?: string;
+	buttonText?: string;
 	submitHandler: (formValues: {
 		[key: string]: string;
 	}) => Promise<unknown> | string | void;
@@ -50,6 +53,7 @@ const InputField = ({
 	rootClassName,
 	rootFormClassName,
 	labelStyle,
+	buttonText,
 }: FormProps) => {
 	const t = useTranslations("changeButton");
 	const [showInputs, setShowInputs] = useState(false);
@@ -57,6 +61,7 @@ const InputField = ({
 	const [formValues, setFormValues] = useState<Record<string, string>>({});
 	// Create a new ref
 	const inputRef = useRef<HTMLInputElement>(null);
+	const selectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
 		setFormValues(
@@ -68,14 +73,21 @@ const InputField = ({
 	}, [fields]);
 
 	useEffect(() => {
-		// When showInputs is true, focus the input field
+		// When showInputs is true, focus the appropriate field based on its type
 		if (showInputs) {
-			inputRef.current?.focus();
+			if (fields[0].type === "select") {
+				selectRef.current?.focus();
+			} else {
+				inputRef.current?.focus();
+			}
 		}
-	}, [showInputs]);
+	}, [showInputs, fields]);
+
 	const handleEditClick = () => setShowInputs(!showInputs);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+	) => {
 		setFormValues((prevValues) => ({
 			...prevValues,
 			[e.target.name]: e.target.value,
@@ -137,7 +149,7 @@ const InputField = ({
 							onClick={handleEditClick}
 							className={`btn btn-${size}`}
 						>
-							{t("change")}
+							{buttonText || t("change")}
 						</button>
 					</div>
 				</div>
@@ -166,18 +178,39 @@ const InputField = ({
 							) : null}
 						</div>
 						<div className={rootFormClassName}>
-							{fields.map((field, i) => (
-								<Input
-									ref={i === 0 ? inputRef : undefined}
-									type={field.type}
-									key={field.name}
-									placeholder={field.placeholder}
-									value={formValues[field.name]}
-									onChange={handleChange}
-									name={field.name}
-									className={`input-bordered input-${size}`}
-								/>
-							))}
+							{fields.map((field, i) => {
+								if (field.elementType === "select" && field.selectOptions) {
+									return (
+										<select
+											ref={i === 0 ? selectRef : undefined}
+											key={field.name}
+											value={formValues[field.name]}
+											onChange={handleChange}
+											name={field.name}
+											className={`input-bordered input-${size}`}
+										>
+											{field.selectOptions.map((option) => (
+												<option value={option.value} key={option.value}>
+													{option.label}
+												</option>
+											))}
+										</select>
+									);
+								}
+
+								return (
+									<Input
+										ref={i === 0 ? inputRef : undefined}
+										type={field.type}
+										key={field.name}
+										placeholder={field.placeholder}
+										value={formValues[field.name]}
+										onChange={handleChange}
+										name={field.name}
+										className={`input-bordered input-${size}`}
+									/>
+								);
+							})}
 						</div>
 					</div>
 					<div className="flex gap-3">

@@ -144,13 +144,20 @@ model UserOptions {
   localControllerSecret          String?           @default("")
 }
 
+enum AccessLevel {
+  READ_ONLY
+  WRITE
+  ADMINISTRATIVE
+}
+
 model UserGroup {
-  id            Int    @id @default(autoincrement())
-  name          String @unique
+  id            Int           @id @default(autoincrement())
+  name          String        @unique
   description   String?
-  maxNetworks   Int    @default(5) 
-  isDefault     Boolean @default(false)
-  users         User[]
+  maxNetworks   Int           @default(5) 
+  accessLevel   AccessLevel   @default(WRITE)
+  isDefault     Boolean       @default(false)
+  users         User[] 
 }
 
 model User {
@@ -173,8 +180,8 @@ model User {
     tempPassword                          String?
     firstTime                             Boolean           @default(true)
     userGroupId                           Int?
-    
-    userGroup       UserGroup? @relation(fields: [userGroupId], references: [id])
+
+    userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
     options         UserOptions?
     accounts        Account[]
     sessions        Session[]
@@ -190,7 +197,7 @@ model VerificationToken {
 }
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
-// npx prisma migrate dev --name init --preview-feature
+// npx prisma migrate dev --name init
 
 // reset db
 // npx prisma migrate reset
