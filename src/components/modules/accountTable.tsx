@@ -30,6 +30,28 @@ export const Accounts = () => {
 		refetch: refetchUsers,
 		isLoading: loadingUsers,
 	} = api.admin.getUsers.useQuery({ isAdmin: false });
+
+	const { data: usergroups, refetch } = api.admin.getUserGroups.useQuery();
+	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+		onSuccess: () => {
+			toast.success("Group added successfully");
+			refetch();
+		},
+	});
+
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
@@ -56,17 +78,10 @@ export const Accounts = () => {
 					return t("users.table.emailVerifiedNo");
 				},
 			}),
-			// columnHelper.accessor("online", {
-			//   header: () => <span>Online</span>,
-			//   id: "online",
-			//   cell: ({ getValue }) => {
-			//     if (getValue()) {
-			//       return "Yes";
-			//     }
-
-			//     return "No";
-			//   },
-			// }),
+			columnHelper.accessor("userGroupId", {
+				header: () => <span>Group</span>,
+				id: "group",
+			}),
 			columnHelper.accessor("role", {
 				header: () => <span>{t("users.table.role")}</span>,
 				id: "role",
@@ -80,7 +95,7 @@ export const Accounts = () => {
 	const defaultColumn: Partial<ColumnDef<User>> = {
 		cell: ({
 			getValue,
-			row: { index, original: { id: userid, name } },
+			row: { index, original: { id: userid, name, userGroupId } },
 			column: { id },
 		}) => {
 			const initialValue = getValue();
@@ -160,10 +175,32 @@ export const Accounts = () => {
 					<select
 						defaultValue={initialValue as string}
 						onChange={(e) => dropDownHandler(e, userid)}
-						className="select select-ghost max-w-xs"
+						className="select select-sm select-ghost max-w-xs"
 					>
 						<option>ADMIN</option>
 						<option>USER</option>
+					</select>
+				);
+			}
+			if (id === "group") {
+				return (
+					<select
+						defaultValue={userGroupId}
+						onChange={(e) => {
+							assignUserGroup({
+								userid,
+								userGroupId: e.target.value,
+							});
+						}}
+						className="select select-sm select-ghost max-w-xs"
+					>
+						{usergroups.map((group) => {
+							return (
+								<option key={group.id} value={group.id}>
+									{group.name}
+								</option>
+							);
+						})}
 					</select>
 				);
 			}
