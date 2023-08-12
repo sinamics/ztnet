@@ -10,7 +10,7 @@
 		"lint:fix": "rome check src --apply",
 		"format": "rome format src",
 		"format:fix": "rome format src --write",
-		"start": "next start",
+		"start": "node .next/standalone/server.js",
 		"test:dev": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts",
 		"test": "jest --config jest.pages.config.ts && jest --config jest.api.config.ts --ci --coverage",
 		"studio": "prisma studio"
