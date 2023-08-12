@@ -1,17 +1,8 @@
-# ARG DATABASE_URL
-# ARG POSTGRES_HOST
-# ARG POSTGRES_PORT
-# ARG POSTGRES_USER
-# ARG POSTGRES_PASSWORD
-# ARG POSTGRES_DB
-# ARG NEXTAUTH_URL
-# ARG NEXTAUTH_SECRET
-
 FROM node:18-bullseye-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+
 # RUN apt update && apt install libc6-compat
 WORKDIR /app
 
@@ -38,32 +29,25 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
 RUN SKIP_ENV_VALIDATION=1 npm run build
-
-
-# If using npm comment out above and use below instead
-# RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+
 # set the app version as an environment variable. Used in the github action
 # used in the init-db.sh script
 ARG NEXT_PUBLIC_APP_VERSION
 ENV NEXT_PUBLIC_APP_VERSION ${NEXT_PUBLIC_APP_VERSION}
 
 ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
+
+# Disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-# RUN curl -s https://install.zerotier.com | sudo bash
 RUN npm install @prisma/client
 RUN npm install -g prisma ts-node
 RUN mkdir -p /var/lib/zerotier-one && chown -R nextjs:nodejs /var/lib/zerotier-one && chmod -R 777 /var/lib/zerotier-one
