@@ -43,7 +43,6 @@ services:
     ports:
       - 3000:3000
     environment:
-      ZT_ADDR: http://zerotier:9993
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
