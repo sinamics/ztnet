@@ -1,3 +1,6 @@
+ARG NEXTAUTH_URL
+ARG NEXTAUTH_SECRET
+
 FROM node:18-bullseye-slim AS base
 
 # Install dependencies only when needed
