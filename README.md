@@ -22,32 +22,6 @@
 [![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
 [![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/)
 
-# 📝 Important: Repository Renaming Notice
-
-The repo name has recently been changed from next_ztnet to ztnet. If you have previously installed next_ztnet, please follow these steps to update your image.
-
-First, bring down the running Docker containers:
-
-```yml
-docker-compose down
-```
-
-Next, update your docker-compose.yml file:
-
-```yml
----
-ztnet:
-  image: sinamics/ztnet:latest
----
-```
-
-Finally, pull the updated image and bring up the Docker containers:
-
-```bash
-docker-compose pull
-docker-compose up -d
-```
-
 # ZTNET
 
 ZTNET is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
