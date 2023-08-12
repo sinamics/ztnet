@@ -106,6 +106,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 		return { props: { messages } };
 	}
 
+	if (session.user) {
+		return {
+			redirect: {
+				destination: "/dashboard",
+				permanent: false,
+			},
+		};
+	}
+
 	return {
 		props: { auth: session.user, messages },
 	};

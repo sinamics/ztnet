@@ -6,7 +6,6 @@ import Controller from "./controller";
 import Settings from "./settings";
 import Mail from "./mail";
 import Notification from "./notification";
-import NetworkSettings from "./network";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next";
 
@@ -25,11 +24,6 @@ const AdminSettings = () => {
 			name: t("tabs.settings"),
 			value: "site-setting",
 			component: <Settings />,
-		},
-		{
-			name: t("tabs.network"),
-			value: "network-setting",
-			component: <NetworkSettings />,
 		},
 		{
 			name: t("tabs.mail"),

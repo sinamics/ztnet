@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "prisma.prisma",
-    "rome.rome"
+    "rome.rome",
+    "bradlc.vscode-tailwindcss"
   ]
 }

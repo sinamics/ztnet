@@ -36,14 +36,6 @@ model GlobalOptions {
 
   // Notifications
   userRegistrationNotification          Boolean           @default(false)
-
-  // networks
-  useNotationColorAsBg                  Boolean?          @default(false)
-  showNotationMarkerInTableRow          Boolean?          @default(true)
-
-  //zt central
-  ztCentralApiKey                       String?           @default("")
-  ztCentralApiUrl                       String?           @default("https://api.zerotier.com/api")
 }
 
 enum Role {
@@ -133,25 +125,45 @@ model Session {
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model UserOptions {
+  id                   Int       @id @default(autoincrement())
+  userId               Int       @unique
+  user                 User      @relation(fields: [userId], references: [id])
+
+  //networks
+  useNotationColorAsBg           Boolean?          @default(false)
+  showNotationMarkerInTableRow   Boolean?          @default(true)
+
+  //zt central
+  ztCentralApiKey                String?           @default("")
+  ztCentralApiUrl                String?           @default("https://api.zerotier.com/api/v1")
+
+  // local controller
+  localControllerUrl             String?           @default("http://zerotier:9993")
+  localControllerSecret          String?           @default("")
+}
+
 model User {
-    id              Int         @id @default(autoincrement())
-    name            String
-    email           String      @unique
-    emailVerified   DateTime?
-    lastLogin       DateTime
-    lastseen        DateTime?
-    expirationDate  String      @default("")
-    online          Boolean?    @default(false)
-    role            Role        @default(USER)
-    image           String?
-    hash            String
-    licenseStatus   String?
-    orderStatus     String?
-    orderId         Int         @default(0)
-    product_id      Int?        @default(0)
-    licenseKey      String?     @default("")
-    tempPassword    String?
-    firstTime       Boolean     @default(true)
+    id                                    Int               @id @default(autoincrement())
+    name                                  String
+    email                                 String            @unique
+    emailVerified                         DateTime?
+    lastLogin                             DateTime
+    lastseen                              DateTime?
+    expirationDate                        String            @default("")
+    online                                Boolean?          @default(false)
+    role                                  Role              @default(USER)
+    image                                 String?
+    hash                                  String
+    licenseStatus                         String?
+    orderStatus                           String?
+    orderId                               Int               @default(0)
+    product_id                            Int?              @default(0)
+    licenseKey                            String?           @default("")
+    tempPassword                          String?
+    firstTime                             Boolean           @default(true)
+
+    options         UserOptions?
     accounts        Account[]
     sessions        Session[]
     network         network[]
