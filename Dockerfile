@@ -1,6 +1,3 @@
-ARG NEXTAUTH_URL
-ARG NEXTAUTH_SECRET
-
 FROM node:18-bullseye-slim AS base
 
 # Install dependencies only when needed
@@ -40,6 +37,9 @@ WORKDIR /app
 
 # set the app version as an environment variable. Used in the github action
 # used in the init-db.sh script
+ARG NEXTAUTH_URL
+ARG NEXTAUTH_SECRET
+
 ARG NEXT_PUBLIC_APP_VERSION
 ENV NEXT_PUBLIC_APP_VERSION ${NEXT_PUBLIC_APP_VERSION}
 
