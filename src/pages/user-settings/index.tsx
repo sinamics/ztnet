@@ -24,7 +24,7 @@ const UserSettings = () => {
 			component: <Account />,
 		},
 		{
-			name: "Network",
+			name: t("tabs.network"),
 			value: "network",
 			component: <UserNetworkSetting />,
 		},
