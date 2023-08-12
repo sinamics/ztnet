@@ -10,10 +10,6 @@ on:
       - "src/**"
       - "prisma/**"
       - "public/**"
-  
-  pull_request:
-    branches:
-      - main
 
   workflow_dispatch:
 jobs:
