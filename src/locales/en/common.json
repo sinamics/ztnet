@@ -349,6 +349,7 @@
 	"userSettings": {
 		"tabs": {
 			"account": "Account",
+			"network": "Network",
 			"user": "User"
 		},
 		"account": {

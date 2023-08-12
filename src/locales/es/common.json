@@ -146,7 +146,7 @@
 					"directLan": "Conexión directa LAN establecida",
 					"directWan": "Conexión directa WAN establecida",
 					"direct": "DIRECTO{version}",
-					"offline": "fuera de línea "
+					"offline": "desconectado "
 				},
 				"email": "Correo electrónico",
 				"status": "Estado",
@@ -349,6 +349,7 @@
 	"userSettings": {
 		"tabs": {
 			"account": "Cuenta",
+			"network": "Red",
 			"user": "Usuario"
 		},
 		"account": {
