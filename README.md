@@ -41,40 +41,19 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 - [📷 Pictures](#network-page-layout)
 - [⚠️ Disclaimer](#%EF%B8%8F-disclaimer)
 
-## 🔥 Features
+## 🔥 Top Features
 
 🍬 **ZeroTier Central API Support**  
-ZTNET integrates seamlessly with the ZeroTier Central API, allowing for enhanced management and configuration capabilities directly from our interface.
+ZTNET integrates seamlessly with the ZeroTier Central, allowing for enhanced management and configuration capabilities directly from our interface.
 
-🌍 **Multi-Language Support**  
+🚀 **Personalized User Spaces & Networks**  
+Every user in ZTNET enjoys their individual space, granting them the autonomy to create and manage personal networks. It's not just about connecting; it's about personalizing your connectivity.
+
+🌍 **Multi-Language**  
 The app supports English, Spanish (ES), Norwegian (NO), and Chinese (ZH) languages for user convenience and inclusivity.
 
-🛠️ **Multi-Architecture Support**  
+🛠️ **Multi-Architecture**  
 Designed for versatility, ZTNET supports multiple architectures - ARM64 and AMD64. This ensures compatibility across a wide range of devices and systems.
-
-🌐 **ZeroTier Network Management**  
-Seamlessly create, modify, and oversee multiple ZeroTier networks.
-
-💻 **Node Monitoring**  
-Effortlessly track network status and monitor connected nodes.
-
-🔗 **Intuitive Node Operations**  
-Simply add or remove nodes from your networks with just a few clicks.
-
-⚙️ **Configurable Network Settings**  
-Easily adjust IP ranges, routes, Flow-Rules and access control settings according to your needs.
-
-📡 **DNS and Multicast Configuration**  
-Customize DNS and Multicast settings for each network to optimize performance.
-
-📍 **IP Assignment Pool Management**  
-Handle IP assignment pools with a user-friendly UI for effective management.
-
-🔀 **Auto-Assign IP Functionality**  
-Benefit from the convenience of automatic IP assignment.
-
-🔒 **Network Privacy Controls**  
-Ensure the confidentiality of your network with private network settings.
 
 📧 **Email Invitations**  
 Easily invite members to your network with the integrated email feature.
