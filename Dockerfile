@@ -65,7 +65,7 @@ RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # RUN curl -s https://install.zerotier.com | sudo bash
 RUN npm install @prisma/client
-RUN npm install -g prisma
+RUN npm install -g prisma ts-node
 RUN mkdir -p /var/lib/zerotier-one && chown -R nextjs:nodejs /var/lib/zerotier-one && chmod -R 777 /var/lib/zerotier-one
 
 COPY --from=builder /app/next.config.mjs ./
