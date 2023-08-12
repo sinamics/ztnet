@@ -45,7 +45,6 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 		},
 	});
 	const columnHelper = createColumnHelper<MemberEntity>();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const columns = useMemo<ColumnDef<MemberEntity>[]>(
 		() => [
 			columnHelper.accessor("authorized", {

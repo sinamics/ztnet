@@ -18,18 +18,17 @@ const languageNames = {
 const Account = () => {
 	const { asPath, locale, locales, push } = useRouter();
 	const t = useTranslations("userSettings");
+	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
 	const { mutate: userUpdate, error: userError } =
 		api.auth.update.useMutation();
 
-	const { mutate: updateZtApi } = api.settings.setZtApi.useMutation({
+	const { mutate: updateZtApi } = api.auth.setZtApi.useMutation({
 		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
-	const { data: globalOption, refetch: refetchOptions } =
-		api.admin.getAllOptions.useQuery();
 
 	const ChangeLanguage = async (locale: string) => {
 		await push(asPath, asPath, { locale });
@@ -38,6 +37,7 @@ const Account = () => {
 	if (userError) {
 		toast.error(userError.message);
 	}
+
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
@@ -172,7 +172,7 @@ const Account = () => {
 									name: "ztCentralApiKey",
 									type: "text",
 									placeholder: "api key",
-									value: globalOption?.ztCentralApiKey,
+									value: me?.options?.ztCentralApiKey,
 								},
 							]}
 							submitHandler={(params) => {
@@ -181,11 +181,11 @@ const Account = () => {
 										{ ...params },
 										{
 											onSuccess: () => {
-												void refetchOptions();
+												void refetchMe();
 												resolve(true);
 											},
 											onError: () => {
-												void refetchOptions();
+												void refetchMe();
 												reject(false);
 											},
 										},
@@ -208,9 +208,9 @@ const Account = () => {
 									name: "ztCentralApiUrl",
 									type: "text",
 									placeholder:
-										globalOption?.ztCentralApiUrl ||
+										me?.options?.ztCentralApiUrl ||
 										"https://api.zerotier.com/api/v1",
-									value: globalOption?.ztCentralApiUrl,
+									value: me?.options?.ztCentralApiUrl,
 								},
 							]}
 							submitHandler={(params) => {
@@ -219,11 +219,11 @@ const Account = () => {
 										{ ...params },
 										{
 											onSuccess: () => {
-												void refetchOptions();
+												void refetchMe();
 												resolve(true);
 											},
 											onError: () => {
-												void refetchOptions();
+												void refetchMe();
 												reject(false);
 											},
 										},
