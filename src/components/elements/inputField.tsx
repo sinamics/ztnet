@@ -1,9 +1,11 @@
 import { useTranslations } from "next-intl";
+import React from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 
 interface FieldConfig {
 	name: string;
+	description?: string;
 	initialValue?: string;
 	type?: string;
 	placeholder: string;
@@ -66,7 +68,13 @@ const InputField = ({
 	useEffect(() => {
 		setFormValues(
 			fields.reduce((acc, field) => {
-				acc[field.name] = field.value || field.initialValue || "";
+				let value;
+				if (field.type === "checkbox") {
+					value = !!field.value || !!field.initialValue;
+				} else {
+					value = field.value || field.initialValue || "";
+				}
+				acc[field.name] = value;
 				return acc;
 			}, {}),
 		);
@@ -88,9 +96,11 @@ const InputField = ({
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
+		const value =
+			e.target.type === "checkbox" ? e.target.checked : e.target.value;
 		setFormValues((prevValues) => ({
 			...prevValues,
-			[e.target.name]: e.target.value,
+			[e.target.name]: value,
 		}));
 	};
 
@@ -179,36 +189,71 @@ const InputField = ({
 						</div>
 						<div className={rootFormClassName}>
 							{fields.map((field, i) => {
+								if (field.type === "checkbox") {
+									return (
+										<div key={field.name} className="form-control">
+											{field.description ? (
+												<label className="text-sm text-gray-500 leading-none pt-2">
+													{field.description}
+												</label>
+											) : null}
+											<label className="label cursor-pointer">
+												<input
+													ref={i === 0 ? inputRef : undefined}
+													type="checkbox"
+													name={field.name}
+													checked={!!formValues[field.name]}
+													onChange={handleChange}
+													className="checkbox checkbox-primary"
+												/>
+												<span>{field.placeholder}</span>
+											</label>
+										</div>
+									);
+								}
 								if (field.elementType === "select" && field.selectOptions) {
 									return (
-										<select
-											ref={i === 0 ? selectRef : undefined}
-											key={field.name}
-											value={formValues[field.name]}
-											onChange={handleChange}
-											name={field.name}
-											className={`input-bordered input-${size}`}
-										>
-											{field.selectOptions.map((option) => (
-												<option value={option.value} key={option.value}>
-													{option.label}
-												</option>
-											))}
-										</select>
+										<React.Fragment key={field.name}>
+											{field.description ? (
+												<label className="text-sm text-gray-500 leading-none pt-2">
+													{field.description}
+												</label>
+											) : null}
+											<select
+												ref={i === 0 ? selectRef : undefined}
+												value={formValues[field.name]}
+												onChange={handleChange}
+												name={field.name}
+												className={`select select-bordered select-${size}`}
+											>
+												{field.selectOptions.map((option) => (
+													<option value={option.value} key={option.value}>
+														{option.label}
+													</option>
+												))}
+											</select>
+										</React.Fragment>
 									);
 								}
 
 								return (
-									<Input
-										ref={i === 0 ? inputRef : undefined}
-										type={field.type}
-										key={field.name}
-										placeholder={field.placeholder}
-										value={formValues[field.name]}
-										onChange={handleChange}
-										name={field.name}
-										className={`input-bordered input-${size}`}
-									/>
+									<React.Fragment key={field.name}>
+										{field.description ? (
+											<label className="text-sm text-gray-500 leading-none pt-2">
+												{field.description}
+											</label>
+										) : null}
+										<Input
+											ref={i === 0 ? inputRef : undefined}
+											type={field.type}
+											key={field.name}
+											placeholder={field.placeholder}
+											value={formValues[field.name]}
+											onChange={handleChange}
+											name={field.name}
+											className={`input-bordered input-${size} w-full`}
+										/>
+									</React.Fragment>
 								);
 							})}
 						</div>

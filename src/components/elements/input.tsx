@@ -66,7 +66,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				value={value}
 				onChange={onChange}
 				onBlur={onBlur}
-				className={`input w-full max-w-xs ${className}`}
+				className={`input ${className}`}
 				ref={handleRef}
 				{...rest}
 			/>
