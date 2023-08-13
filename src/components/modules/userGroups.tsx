@@ -126,11 +126,23 @@ const UserLabel = ({ groups }) => {
 								strokeWidth="1.5"
 								stroke="currentColor"
 								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
-								onClick={() =>
-									deleteGroup({
-										id: group.id,
-									})
-								}
+								onClick={() => {
+									callModal({
+										title: "Delete Group",
+										description:
+											"Are you sure you want to delete this group? If assigned, it will be removed from the user.",
+										yesAction: () => {
+											deleteGroup({
+												id: group.id,
+											});
+										},
+									});
+								}}
+								// onClick={() =>
+								// 	deleteGroup({
+								// 		id: group.id,
+								// 	})
+								// }
 							>
 								<path
 									strokeLinecap="round"
