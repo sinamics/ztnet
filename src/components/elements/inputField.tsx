@@ -11,7 +11,7 @@ interface FieldConfig {
 	placeholder: string;
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
-	value?: string | number;
+	value?: string | number | boolean;
 	elementType?: "input" | "select";
 	selectOptions?: { value: string; label: string }[];
 }
