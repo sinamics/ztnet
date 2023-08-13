@@ -2,22 +2,33 @@ import { useMemo, useState, useEffect } from "react";
 import {
 	useReactTable,
 	getCoreRowModel,
-	// getPaginationRowModel,
 	getSortedRowModel,
 	flexRender,
 	createColumnHelper,
 	type ColumnDef,
 	type SortingState,
+	getPaginationRowModel,
+	getFilteredRowModel,
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
 import { type ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
-import { type User } from "@prisma/client";
+import { useSkipper } from "../elements/useSkipper";
+import { DebouncedInput } from "../elements/debouncedInput";
+import TableFooter from "./tableFooter";
+import { User } from "@prisma/client";
+
+type ExtendedUser = {
+	_count: {
+		network: number;
+	};
+} & Partial<User>;
 
 export const Accounts = () => {
 	const t = useTranslations("admin");
+	const [globalFilter, setGlobalFilter] = useState("");
 
 	const [sorting, setSorting] = useState<SortingState>([
 		{
@@ -36,7 +47,6 @@ export const Accounts = () => {
 			if ((error.data as ErrorData)?.zodError) {
 				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
 				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
 					toast.error(`${fieldErrors[field].join(", ")}`);
 				}
 			} else if (error.message) {
@@ -49,13 +59,9 @@ export const Accounts = () => {
 			toast.success("Group added successfully");
 		},
 	});
-	type ExtendedUser = {
-		_count: {
-			network: number;
-		};
-	} & User;
-	const columnHelper = createColumnHelper<User>();
-	const columns = useMemo<ColumnDef<User>[]>(
+
+	const columnHelper = createColumnHelper<ExtendedUser>();
+	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
 			columnHelper.accessor("id", {
 				header: () => <span>{t("users.users.table.id")}</span>,
@@ -105,12 +111,11 @@ export const Accounts = () => {
 				minSize: 80,
 			}),
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
 
 	// Create an editable cell renderer
-	const defaultColumn: Partial<ColumnDef<User>> = {
+	const defaultColumn: Partial<ColumnDef<ExtendedUser>> = {
 		cell: ({
 			getValue,
 			row: { original: { id: userid, name, userGroupId } },
@@ -168,7 +173,6 @@ export const Accounts = () => {
 				});
 			};
 
-			// eslint-disable-next-line react-hooks/rules-of-hooks
 			useEffect(() => {
 				setValue(initialValue);
 			}, [initialValue]);
@@ -226,19 +230,45 @@ export const Accounts = () => {
 		},
 	};
 
-	const data = useMemo(() => members || [], [members]);
+	useEffect(() => {
+		setData(members ?? []);
+	}, [members]);
+
+	const [data, setData] = useState<ExtendedUser[]>(members ?? []);
+
+	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
 		data,
-		//@ts-expect-error
 		columns,
-		//@ts-expect-error
 		defaultColumn,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
-		// getPaginationRowModel: getPaginationRowModel(),
-		getSortedRowModel: getSortedRowModel(), //order doesn't matter anymore!
+		getPaginationRowModel: getPaginationRowModel(),
+		autoResetPageIndex,
+		meta: {
+			updateData: (rowIndex, columnId, value) => {
+				// Skip page index reset until after next rerender
+				skipAutoResetPageIndex();
+				setData((old: ExtendedUser[]) =>
+					old.map((row, index) => {
+						if (index === rowIndex) {
+							return {
+								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+								...old[rowIndex]!,
+								[columnId]: value,
+							};
+						}
+						return row;
+					}),
+				);
+			},
+		},
+		onGlobalFilterChange: setGlobalFilter,
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
 		state: {
 			sorting,
+			globalFilter,
 		},
 	});
 
@@ -256,7 +286,15 @@ export const Accounts = () => {
 			<div className="pb-5">
 				<p className="text-sm text-gray-500">{t("users.users.description")}</p>
 			</div>
-			<div className="inline-block py-5 text-center ">
+			<div className="inline-block py-5 ">
+				<div className="p-2">
+					<DebouncedInput
+						value={globalFilter ?? ""}
+						onChange={(value) => setGlobalFilter(String(value))}
+						className="font-lg border-block border p-2 shadow"
+						placeholder="search users"
+					/>
+				</div>
 				<div className="overflow-hidden rounded-lg border w-full">
 					<table
 						// {...{
@@ -264,7 +302,7 @@ export const Accounts = () => {
 						// 		width: table.getCenterTotalSize(),
 						// 	},
 						// }}
-						className="overflow-x-auto table-wrapper divide-y divide-gray-400"
+						className="overflow-x-auto text-center  table-wrapper divide-y divide-gray-400"
 					>
 						<thead className="bg-base-100">
 							{
@@ -356,6 +394,9 @@ export const Accounts = () => {
 							}
 						</tbody>
 					</table>
+					<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
+						<TableFooter table={table} />
+					</div>
 				</div>
 			</div>
 		</div>

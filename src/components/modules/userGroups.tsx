@@ -38,7 +38,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 			}
 		},
 		onSuccess: () => {
-			toast.success("Group added successfully");
+			toast.success("Group updated successfully");
 			refetch();
 		},
 	});
