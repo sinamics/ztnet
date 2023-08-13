@@ -7,6 +7,8 @@ import { NetworkTable } from "../../components/modules/networkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { type GetServerSidePropsContext } from "next";
+import toast from "react-hot-toast";
+import { ErrorData } from "~/types/errorHandling";
 
 const Networks: NextPageWithLayout = () => {
 	const t = useTranslations("networks");
@@ -17,7 +19,25 @@ const Networks: NextPageWithLayout = () => {
 	} = api.network.getUserNetworks.useQuery({
 		central: false,
 	});
-	const { mutate: createNetwork } = api.network.createNetwork.useMutation();
+	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+		onSuccess: () => {
+			toast.success("Network created successfully");
+			refetch();
+		},
+	});
 
 	const addNewNetwork = () => {
 		createNetwork({ central: false }, { onSuccess: () => void refetch() });

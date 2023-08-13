@@ -17,7 +17,11 @@ import {
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
-import { throwError, type APIError } from "~/server/helpers/errorHandler";
+import {
+	throwError,
+	type APIError,
+	CustomLimitError,
+} from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
@@ -547,6 +551,29 @@ export const networkRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
+				// 1. Fetch the user with its related UserGroup
+				const userWithGroup = await ctx.prisma.user.findUnique({
+					where: { id: ctx.session.user.id },
+					select: {
+						userGroup: true,
+					},
+				});
+
+				if (userWithGroup?.userGroup) {
+					// 2. Fetch the current number of networks linked to the user
+					const currentNetworksCount = await ctx.prisma.network.count({
+						where: { authorId: ctx.session.user.id },
+					});
+
+					// Check against the defined limit
+					const networkLimit = userWithGroup.userGroup.maxNetworks;
+					if (currentNetworksCount >= networkLimit) {
+						throw new CustomLimitError(
+							"You have reached the maximum number of networks allowed for your user group.",
+						);
+					}
+				}
+
 				// Generate ipv4 address, cidr, start & end
 				const ipAssignmentPools = IPv4gen(null);
 
@@ -582,13 +609,12 @@ export const networkRouter = createTRPCRouter({
 				});
 				return updatedUser;
 			} catch (err: unknown) {
-				if (err instanceof Error) {
-					// Log the error and throw a custom error message
-					// eslint-disable-next-line no-console
+				if (err instanceof CustomLimitError) {
+					throwError(err.message);
+				} else if (err instanceof Error) {
 					console.error(err);
 					throwError("Could not create network! Please try again");
 				} else {
-					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred");
 				}
 			}
