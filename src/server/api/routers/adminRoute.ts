@@ -37,13 +37,10 @@ export const adminRouter = createTRPCRouter({
 							network: true,
 						},
 					},
-					// network: {
-					//   select: {
-					//     nwid: true,
-					//     nwname: true,
-					//   },
-					// },
+					userGroup: true,
+					userGroupId: true,
 				},
+
 				where: input.isAdmin ? { role: "ADMIN" } : undefined,
 			});
 			return users;
@@ -108,13 +105,23 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === id) {
 				throwError("You can't change your own role");
 			}
+
+			// If the role is set to Admin, also set the userGroupId to null (i.e., delete the userGroup for the user)
+			const updateData =
+				role === "ADMIN"
+					? {
+							role: role as Role,
+							userGroupId: null,
+					  }
+					: {
+							role: role as Role,
+					  };
+
 			return await ctx.prisma.user.update({
 				where: {
 					id,
 				},
-				data: {
-					role: role as Role,
-				},
+				data: updateData,
 			});
 		}),
 	updateGlobalOptions: adminRoleProtectedRoute
@@ -400,6 +407,191 @@ export const adminRouter = createTRPCRouter({
 
 					console.error(err);
 					throwError("Could not create network! Please try again");
+				} else {
+					// Throw a generic error for unknown error types
+					throwError("An unknown error occurred");
+				}
+			}
+		}),
+	addUserGroup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number().optional(),
+				groupName: z
+					.string()
+					.nonempty()
+					.refine((val) => val.trim().length > 0, {
+						message: "Group name cannot be empty",
+					}),
+				maxNetworks: z
+					.string()
+					.nonempty()
+					.refine((val) => val.trim().length > 0, {
+						message: "Max networks cannot be empty",
+					}),
+				isDefault: z
+					.boolean()
+					.refine((val) => typeof val !== "string", {
+						message: "Default must be a boolean, not a string",
+					})
+					.optional()
+					.refine((val) => val !== undefined, {
+						message: "Default is required",
+					}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			try {
+				// If isDefault is true, update all other groups to have isDefault as false
+				if (input.isDefault) {
+					await ctx.prisma.userGroup.updateMany({
+						where: {
+							isDefault: true,
+						},
+						data: {
+							isDefault: false,
+						},
+					});
+				}
+
+				// Use upsert to either update or create a new userGroup
+				return await ctx.prisma.userGroup.upsert({
+					where: {
+						id: input.id || -1, // If no ID is provided, it assumes -1 which likely doesn't exist (assuming positive autoincrementing IDs)
+					},
+					create: {
+						name: input.groupName,
+						maxNetworks: parseInt(input.maxNetworks),
+						isDefault: input.isDefault,
+					},
+					update: {
+						name: input.groupName,
+						maxNetworks: parseInt(input.maxNetworks),
+						isDefault: input.isDefault,
+					},
+				});
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					// Log the error and throw a custom error message
+					throwError(
+						"Could not process user group operation! Please try again",
+					);
+				} else {
+					// Throw a generic error for unknown error types
+					throwError("An unknown error occurred");
+				}
+			}
+		}),
+	getUserGroups: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		const userGroups = await ctx.prisma.userGroup.findMany({
+			select: {
+				id: true,
+				name: true,
+				maxNetworks: true,
+				isDefault: true,
+				_count: {
+					select: {
+						users: true,
+					},
+				},
+			},
+		});
+
+		return userGroups;
+	}),
+	deleteUserGroup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number().refine((val) => val > 0, {
+					message: "A valid group ID is required",
+				}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			try {
+				// Check if the user group exists
+				const existingGroup = await ctx.prisma.userGroup.findUnique({
+					where: {
+						id: input.id,
+					},
+				});
+
+				if (!existingGroup) {
+					throwError("User group not found!");
+				}
+
+				// Delete the user group
+				await ctx.prisma.userGroup.delete({
+					where: {
+						id: input.id,
+					},
+				});
+
+				return { message: "User group successfully deleted." };
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					// Log the error and throw a custom error message
+					throwError("Could not delete user group! Please try again.");
+				} else {
+					// Throw a generic error for unknown error types
+					throwError("An unknown error occurred.");
+				}
+			}
+		}),
+	assignUserGroup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				userid: z.number(),
+				userGroupId: z.string().nullable(), // Allow null value for userGroupId
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.userid) {
+				throwError("You can't change your own Group");
+			}
+			try {
+				// If "none" is selected, remove the user from the group
+				if (input.userGroupId === "none") {
+					return await ctx.prisma.user.update({
+						where: {
+							id: input.userid,
+						},
+						data: {
+							userGroupId: null, // Remove the user's association with a userGroup
+						},
+					});
+				}
+
+				// Check if the user and the user group exist
+				const user = await ctx.prisma.user.findUnique({
+					where: {
+						id: input.userid,
+					},
+				});
+
+				const userGroup = await ctx.prisma.userGroup.findUnique({
+					where: {
+						id: parseInt(input.userGroupId),
+					},
+				});
+
+				if (!user || !userGroup) {
+					throw new Error("User or UserGroup not found");
+				}
+
+				// Assign the user to the user group
+				return await ctx.prisma.user.update({
+					where: {
+						id: input.userid,
+					},
+					data: {
+						userGroupId: parseInt(input.userGroupId), // Link the user to the userGroup
+					},
+				});
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					// Log the error and throw a custom error message
+					throwError(`Error assigning user to group: ${err.message}`);
 				} else {
 					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred");

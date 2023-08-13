@@ -115,6 +115,13 @@ export const authRouter = createTRPCRouter({
 			// Check the total number of users in the database
 			const userCount = await ctx.prisma.user.count();
 
+			// Fetch the default user group if any.
+			const defaultUserGroup = await ctx.prisma.userGroup.findFirst({
+				where: {
+					isDefault: true,
+				},
+			});
+
 			// create new user
 			const newUser = await ctx.prisma.user.create({
 				data: {
@@ -123,6 +130,7 @@ export const authRouter = createTRPCRouter({
 					lastLogin: new Date().toISOString(),
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
+					userGroupId: defaultUserGroup?.id,
 					options: {
 						create: {}, // empty object will make Prisma use the default values from the model
 					},

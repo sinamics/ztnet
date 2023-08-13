@@ -14,6 +14,7 @@
 		"settings": "Configuraciones",
 		"mail": "Correo",
 		"users": "Usuarios",
+		"notification": "Notificación",
 		"controller": "Controlador",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
@@ -275,25 +276,48 @@
 			}
 		},
 		"users": {
-			"table": {
-				"id": "ID",
-				"memberName": "Nombre del miembro",
-				"email": "Correo electrónico",
-				"emailVerified": "Correo electrónico verificado",
-				"role": "Rol",
-				"emailVerifiedYes": "Sí",
-				"emailVerifiedNo": "No"
+			"users": {
+				"sectionTitle": "Usuarios",
+				"description": "Todos los usuarios registrados en la plataforma.",
+				"table": {
+					"id": "ID",
+					"memberName": "Nombre del miembro",
+					"email": "Correo electrónico",
+					"emailVerified": "Correo verificado",
+					"role": "Rol",
+					"networks": "Redes",
+					"group": "Grupo",
+					"emailVerifiedYes": "Sí",
+					"emailVerifiedNo": "No"
+				},
+				"roleDescriptions": {
+					"admin": "Como administrador, este usuario tendrá permisos completos, incluido el acceso al panel de administración.",
+					"user": "Si se establece como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
+				},
+				"changeRoleModal": {
+					"title": "Cambiar rol para {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Rol cambiado exitosamente",
+					"errorOccurred": "Ocurrió un error desconocido"
+				}
 			},
-			"roleDescriptions": {
-				"admin": "Como administrador, este usuario tendrá todos los permisos, incluido el acceso al panel de administración.",
-				"user": "Si se configura como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
-			},
-			"changeRoleModal": {
-				"title": "Cambiar rol para {name}"
-			},
-			"toastMessages": {
-				"roleChangeSuccess": "Rol cambiado con éxito",
-				"errorOccurred": "Ocurrió un error desconocido"
+			"groups": {
+				"sectionTitle": "Grupos",
+				"description": "Crea un nuevo grupo de usuarios para organizar mejor a los usuarios de la plataforma. Asignar usuarios a grupos específicos permite un acceso controlado, establecimiento de límites y ajuste de configuraciones según los tipos de usuarios.",
+				"addGroup": {
+					"editGroupTitle": "Editar grupo",
+					"deleteGroupTitle": "Eliminar grupo",
+					"deleteGroupDescription": "¿Estás seguro de que deseas eliminar este grupo? Si se asigna, se eliminará del usuario.",
+					"addGroupLabel": "Agregar nuevo grupo",
+					"addGroupButton": "Añadir grupo",
+					"groupNamePlaceholder": "Nombre del grupo",
+					"groupNameDescription": "Introduce un nombre para el nuevo grupo",
+					"networkLimitPlaceholder": "Límite de red",
+					"networkLimitDescription": "Establece el número máximo de redes que pueden ser creadas por usuarios en este grupo",
+					"useAsDefaultPlaceholder": "Usar como predeterminado",
+					"useAsDefaultDescription": "Establecer este grupo como el grupo predeterminado para nuevos usuarios"
+				}
 			}
 		},
 		"notification": {

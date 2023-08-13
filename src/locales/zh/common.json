@@ -14,6 +14,7 @@
 		"settings": "设置",
 		"mail": "邮件",
 		"users": "用户",
+		"notification": "通知",
 		"controller": "控制器",
 		"account": "账户",
 		"user-settings": "用户设置",
@@ -275,25 +276,48 @@
 			}
 		},
 		"users": {
-			"table": {
-				"id": "ID",
-				"memberName": "成员名",
-				"email": "电子邮件",
-				"emailVerified": "电子邮件已验证",
-				"role": "角色",
-				"emailVerifiedYes": "是",
-				"emailVerifiedNo": "否"
+			"users": {
+				"sectionTitle": "用户",
+				"description": "平台上的所有已注册用户。",
+				"table": {
+					"id": "ID",
+					"memberName": "成员名称",
+					"email": "电子邮件",
+					"emailVerified": "电子邮件已验证",
+					"role": "角色",
+					"networks": "网络",
+					"group": "组",
+					"emailVerifiedYes": "是",
+					"emailVerifiedNo": "否"
+				},
+				"roleDescriptions": {
+					"admin": "作为管理员，此用户将拥有完全的权限，包括访问管理面板的权限。",
+					"user": "如果设置为用户，此用户将只拥有有限的权限，并且不能访问管理面板。"
+				},
+				"changeRoleModal": {
+					"title": "更改{name}的角色"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "角色成功更改",
+					"errorOccurred": "发生未知错误"
+				}
 			},
-			"roleDescriptions": {
-				"admin": "作为管理员，此用户将具有全部权限，包括访问管理面板。",
-				"user": "如果设为用户，此用户将具有有限的权限，无法访问管理面板。"
-			},
-			"changeRoleModal": {
-				"title": "更改{name}的角色"
-			},
-			"toastMessages": {
-				"roleChangeSuccess": "角色更改成功",
-				"errorOccurred": "发生未知错误"
+			"groups": {
+				"sectionTitle": "用户组",
+				"description": "创建一个新的用户组以更好地组织平台用户。将用户分配到特定组可以进行受控访问，设置限制，并根据用户类型调整设置。",
+				"addGroup": {
+					"editGroupTitle": "编辑组",
+					"deleteGroupTitle": "删除组",
+					"deleteGroupDescription": "您确定要删除此用户组吗？如果分配，它将从用户中删除。",
+					"addGroupLabel": "添加新组",
+					"addGroupButton": "添加组",
+					"groupNamePlaceholder": "组名",
+					"groupNameDescription": "为新组输入名称",
+					"networkLimitPlaceholder": "网络限制",
+					"networkLimitDescription": "设置此组中用户可以创建的网络数量的最大值",
+					"useAsDefaultPlaceholder": "默认使用",
+					"useAsDefaultDescription": "将此组设置为新用户的默认组"
+				}
 			}
 		},
 		"notification": {

@@ -27,6 +27,7 @@ type ModalStore = {
 	content?: JSX.Element;
 	rootStyle?: string;
 	title?: string;
+	showButtons?: boolean;
 	yesAction?: () => void;
 	closeModal?: () => void;
 };
@@ -37,10 +38,12 @@ export const useModalStore = create<ModalStore>((set, get) => ({
 	content: null,
 	title: "",
 	rootStyle: "",
+	showButtons: true,
 	disableClickOutside: false,
 	closeModal: () =>
 		set(() => ({
 			isOpen: false,
+			showButtons: true,
 			description: "",
 			content: null,
 			title: "",

@@ -54,7 +54,7 @@ export const UnlinkedNetwork = () => {
 				} else if (error.message) {
 					toast.error(error.message);
 				} else {
-					toast.error(t("users.toastMessages.errorOccurred"));
+					toast.error(t("users.users.toastMessages.errorOccurred"));
 				}
 				void refetchNetworks();
 			},

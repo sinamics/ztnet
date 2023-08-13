@@ -14,6 +14,7 @@
 		"settings": "Innstillinger",
 		"mail": "Post",
 		"users": "Brukere",
+		"notification": "Varsling",
 		"controller": "ZT Kontroller",
 		"account": "Konto",
 		"user-settings": "Brukerinnstillinger",
@@ -275,25 +276,48 @@
 			}
 		},
 		"users": {
-			"table": {
-				"id": "ID",
-				"memberName": "Medlemsnavn",
-				"email": "E-post",
-				"emailVerified": "E-post verifisert",
-				"role": "Rolle",
-				"emailVerifiedYes": "Ja",
-				"emailVerifiedNo": "Nei"
+			"users": {
+				"sectionTitle": "Brukere",
+				"description": "Alle registrerte brukere på plattformen.",
+				"table": {
+					"id": "ID",
+					"memberName": "Medlemsnavn",
+					"email": "E-post",
+					"emailVerified": "E-post bekreftet",
+					"role": "Rolle",
+					"networks": "Nettverk",
+					"group": "Gruppe",
+					"emailVerifiedYes": "Ja",
+					"emailVerifiedNo": "Nei"
+				},
+				"roleDescriptions": {
+					"admin": "Som en administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
+					"user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
+				},
+				"changeRoleModal": {
+					"title": "Endre rolle for {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Rolle endret vellykket",
+					"errorOccurred": "Det oppstod en ukjent feil"
+				}
 			},
-			"roleDescriptions": {
-				"admin": "Som administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
-				"user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
-			},
-			"changeRoleModal": {
-				"title": "Endre rolle for {name}"
-			},
-			"toastMessages": {
-				"roleChangeSuccess": "Rollen er endret",
-				"errorOccurred": "En ukjent feil oppsto"
+			"groups": {
+				"sectionTitle": "Grupper",
+				"description": "Opprett en ny brukergruppe for bedre å organisere plattformbrukere. Å tildele brukere til spesifikke grupper gjør det mulig å styre tilgangen, sette grenser og justere innstillinger basert på brukertyper.",
+				"addGroup": {
+					"editGroupTitle": "Rediger gruppe",
+					"deleteGroupTitle": "Slett gruppe",
+					"deleteGroupDescription": "Er du sikker på at du vil slette denne gruppen? Hvis tildelt, vil den bli fjernet fra brukeren.",
+					"addGroupLabel": "Legg til ny gruppe",
+					"addGroupButton": "Legg til gruppe",
+					"groupNamePlaceholder": "Gruppenavn",
+					"groupNameDescription": "Skriv inn et navn for den nye gruppen",
+					"networkLimitPlaceholder": "Nettverksbegrensning",
+					"networkLimitDescription": "Sett maksimalt antall nettverk som kan opprettes av brukere i denne gruppen",
+					"useAsDefaultPlaceholder": "Bruk som standard",
+					"useAsDefaultDescription": "Sett denne gruppen som standardgruppen for nye brukere"
+				}
 			}
 		},
 		"notification": {
