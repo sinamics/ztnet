@@ -5,8 +5,18 @@ import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import cn from "classnames";
 import { useModalStore } from "~/utils/store";
+import { UserGroup } from "@prisma/client";
 
-const UserLabel = ({ groups }) => {
+type UserGroupWithCount = UserGroup & {
+	_count: {
+		users: number;
+	};
+};
+type GroupLabelProps = {
+	groups: UserGroupWithCount[];
+};
+
+const GroupLabel = ({ groups }: GroupLabelProps) => {
 	if (!Array.isArray(groups) || !groups) return null;
 	const { refetch } = api.admin.getUserGroups.useQuery();
 	const { callModal } = useModalStore((state) => state);
@@ -50,7 +60,7 @@ const UserLabel = ({ groups }) => {
 	});
 	return (
 		<div className="flex flex-wrap gap-3 text-center">
-			{groups.map((group) => {
+			{groups?.map((group) => {
 				return (
 					<div
 						key={group.id}
@@ -182,7 +192,7 @@ const UserGroups = () => {
 
 	return (
 		<div className="space-y-10">
-			<UserLabel groups={usergroups} />
+			<GroupLabel groups={usergroups as UserGroupWithCount[]} />
 			<InputFields
 				isLoading={false}
 				label="Add new group"
