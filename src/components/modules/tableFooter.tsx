@@ -1,9 +1,8 @@
 import { type Table } from "@tanstack/react-table";
 import React from "react";
 import { useTranslations } from "next-intl";
-import { MemberEntity } from "~/types/local/member";
 
-const BackForwardBtn = ({ table }: { table: Table<MemberEntity> }) => (
+const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
 	<>
 		<button
 			className="btn btn-primary btn-outline btn-sm"
@@ -36,7 +35,8 @@ const BackForwardBtn = ({ table }: { table: Table<MemberEntity> }) => (
 	</>
 );
 
-const TableFooter = ({ table }: { table: Table<MemberEntity> }) => {
+// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+const TableFooter = ({ table }: { table: Table<any> }) => {
 	// In your component...
 	const t = useTranslations("tableFooter"); // use the 'footer' namespace
 	return (
