@@ -31,7 +31,6 @@ export const Accounts = () => {
 		isLoading: loadingUsers,
 	} = api.admin.getUsers.useQuery({ isAdmin: false });
 
-	const { data: usergroups, refetch } = api.admin.getUserGroups.useQuery();
 	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -48,10 +47,13 @@ export const Accounts = () => {
 		},
 		onSuccess: () => {
 			toast.success("Group added successfully");
-			refetch();
 		},
 	});
-
+	type ExtendedUser = {
+		_count: {
+			network: number;
+		};
+	} & User;
 	const columnHelper = createColumnHelper<User>();
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
@@ -78,6 +80,13 @@ export const Accounts = () => {
 					return t("users.table.emailVerifiedNo");
 				},
 			}),
+			columnHelper.accessor((row: ExtendedUser) => row._count?.network, {
+				header: () => <span>Networks</span>,
+				id: "Networks",
+				cell: ({ getValue }) => {
+					return getValue();
+				},
+			}),
 			columnHelper.accessor("userGroupId", {
 				header: () => <span>Group</span>,
 				id: "group",
@@ -101,6 +110,7 @@ export const Accounts = () => {
 			const initialValue = getValue();
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const { callModal } = useModalStore((state) => state);
+			const { data: usergroups } = api.admin.getUserGroups.useQuery();
 
 			// We need to keep and update the state of the cell normally
 			// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -183,9 +193,13 @@ export const Accounts = () => {
 				);
 			}
 			if (id === "group") {
+				if (Array.isArray(usergroups) && usergroups.length === 0) {
+					return "None";
+				}
+
 				return (
 					<select
-						defaultValue={userGroupId}
+						defaultValue={userGroupId ?? "none"}
 						onChange={(e) => {
 							assignUserGroup({
 								userid,
@@ -194,6 +208,7 @@ export const Accounts = () => {
 						}}
 						className="select select-sm select-ghost max-w-xs"
 					>
+						<option value="none">None</option>
 						{usergroups.map((group) => {
 							return (
 								<option key={group.id} value={group.id}>

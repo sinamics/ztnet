@@ -37,19 +37,12 @@ export const adminRouter = createTRPCRouter({
 							network: true,
 						},
 					},
-					// network: {
-					//   select: {
-					//     nwid: true,
-					//     nwname: true,
-					//   },
-					// },
 					userGroup: true,
 					userGroupId: true,
 				},
 
 				where: input.isAdmin ? { role: "ADMIN" } : undefined,
 			});
-
 			return users;
 		}),
 
@@ -112,13 +105,23 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === id) {
 				throwError("You can't change your own role");
 			}
+
+			// If the role is set to Admin, also set the userGroupId to null (i.e., delete the userGroup for the user)
+			const updateData =
+				role === "ADMIN"
+					? {
+							role: role as Role,
+							userGroupId: null,
+					  }
+					: {
+							role: role as Role,
+					  };
+
 			return await ctx.prisma.user.update({
 				where: {
 					id,
 				},
-				data: {
-					role: role as Role,
-				},
+				data: updateData,
 			});
 		}),
 	updateGlobalOptions: adminRoleProtectedRoute
@@ -539,11 +542,26 @@ export const adminRouter = createTRPCRouter({
 		.input(
 			z.object({
 				userid: z.number(),
-				userGroupId: z.string(),
+				userGroupId: z.string().nullable(), // Allow null value for userGroupId
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.userid) {
+				throwError("You can't change your own Group");
+			}
 			try {
+				// If "none" is selected, remove the user from the group
+				if (input.userGroupId === "none") {
+					return await ctx.prisma.user.update({
+						where: {
+							id: input.userid,
+						},
+						data: {
+							userGroupId: null, // Remove the user's association with a userGroup
+						},
+					});
+				}
+
 				// Check if the user and the user group exist
 				const user = await ctx.prisma.user.findUnique({
 					where: {
@@ -567,7 +585,7 @@ export const adminRouter = createTRPCRouter({
 						id: input.userid,
 					},
 					data: {
-						userGroupId: parseInt(input.userGroupId), // Assuming you have a field like this on your user model to link a user to a userGroup
+						userGroupId: parseInt(input.userGroupId), // Link the user to the userGroup
 					},
 				});
 			} catch (err: unknown) {

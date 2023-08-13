@@ -13,6 +13,7 @@ const Modal = () => {
 		content,
 		title,
 		rootStyle,
+		showButtons,
 		yesAction,
 		toggleModal,
 		disableClickOutside,
@@ -46,23 +47,25 @@ const Modal = () => {
 				<h3 className="text-lg font-bold">{title}</h3>
 				<p className="py-4">{description}</p>
 				<div>{content}</div>
-				<div className="modal-action">
-					{yesAction ? (
-						<>
-							{/* closes the modal */}
-							<button className="btn" onClick={actionHandler}>
-								{t("yesButton")}
-							</button>
+				{showButtons ? (
+					<div className="modal-action">
+						{yesAction ? (
+							<>
+								{/* closes the modal */}
+								<button className="btn" onClick={actionHandler}>
+									{t("yesButton")}
+								</button>
+								<button className="btn" onClick={closeModal}>
+									{t("cancelButton")}
+								</button>
+							</>
+						) : (
 							<button className="btn" onClick={closeModal}>
-								{t("cancelButton")}
+								{t("closeButton")}
 							</button>
-						</>
-					) : (
-						<button className="btn" onClick={closeModal}>
-							{t("closeButton")}
-						</button>
-					)}
-				</div>
+						)}
+					</div>
+				) : null}
 			</div>
 		</dialog>
 	);

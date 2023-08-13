@@ -10,6 +10,25 @@ const UserLabel = ({ groups }) => {
 	if (!Array.isArray(groups) || !groups) return null;
 	const { refetch } = api.admin.getUserGroups.useQuery();
 	const { callModal } = useModalStore((state) => state);
+	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+		onSuccess: () => {
+			toast.success("Group added successfully");
+			refetch();
+		},
+	});
 	const { mutate: deleteGroup } = api.admin.deleteUserGroup.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -38,16 +57,66 @@ const UserLabel = ({ groups }) => {
 						className={cn("badge  badge-lg rounded-md flex items-center", {
 							"badge-primary": group.isDefault,
 						})}
-						onClick={() => {
-							// open modal
-							callModal({
-								title: <p>Edit Group</p>,
-								rootStyle: "text-left",
-								content: <p>hey</p>,
-							});
-						}}
 					>
-						<div className="cursor-pointer">{group.name}</div>
+						<div
+							onClick={() => {
+								// open modal
+								callModal({
+									title: <p>Edit Group</p>,
+									rootStyle: "text-left",
+									showButtons: true,
+									closeModalOnSubmit: true,
+									content: (
+										<InputFields
+											isLoading={false}
+											label=""
+											rootClassName="flex-col space-y-2 "
+											rootFormClassName="flex flex-col space-y-2 "
+											size="sm"
+											openByDefault={true}
+											showSubmitButtons={true}
+											showCancelButton={false}
+											placeholder=""
+											buttonText="Edit Group"
+											fields={[
+												{
+													name: "groupName",
+													type: "text",
+													placeholder: "Group Name",
+													description: "Enter a name for the new group",
+													value: group?.name,
+												},
+												{
+													name: "maxNetworks",
+													type: "number",
+													placeholder: "Network Limit",
+													description:
+														"Set the maximum number of networks that can be created by users in this group",
+													value: group?.maxNetworks.toString(),
+												},
+												{
+													name: "isDefault",
+													type: "checkbox",
+													description:
+														"Set this group as the default group for new users",
+													placeholder: "Use as Default",
+													value: group?.isDefault,
+												},
+											]}
+											submitHandler={(params) =>
+												void updateGroup({
+													id: group.id,
+													...params,
+												})
+											}
+										/>
+									),
+								});
+							}}
+							className="cursor-pointer"
+						>
+							{group.name}
+						</div>
 
 						<div>
 							<svg
@@ -132,12 +201,21 @@ const UserGroups = () => {
 						type: "checkbox",
 						description: "Set this group as the default group for new users",
 						placeholder: "Use as Default",
-						value: false,
+						defaultValue: false,
 					},
 				]}
 				submitHandler={(params) =>
-					addGroup({
-						...params,
+					new Promise((resolve) => {
+						void addGroup(
+							{
+								...params,
+							},
+							{
+								onSuccess: () => {
+									resolve(true);
+								},
+							},
+						);
 					})
 				}
 			/>

@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
-
+import cn from "classnames";
 interface FieldConfig {
 	name: string;
 	description?: string;
@@ -10,11 +10,15 @@ interface FieldConfig {
 	type?: string;
 	placeholder: string;
 	displayValue?: string;
-	defaultValue?: string | number;
+	defaultValue?: string | number | boolean;
 	value?: string | number;
 	elementType?: "input" | "select";
 	selectOptions?: { value: string; label: string }[];
 }
+
+type SubmitHandlerType = (
+	values: Record<string, string | boolean>,
+) => Promise<unknown>;
 
 interface FormProps {
 	label: string;
@@ -28,9 +32,10 @@ interface FormProps {
 	rootFormClassName?: string;
 	labelStyle?: string;
 	buttonText?: string;
-	submitHandler: (formValues: {
-		[key: string]: string;
-	}) => Promise<unknown> | string | void;
+	openByDefault?: boolean;
+	showSubmitButtons?: boolean;
+	showCancelButton?: boolean;
+	submitHandler: SubmitHandlerType;
 	badge?: {
 		text: string;
 		color: string;
@@ -56,11 +61,16 @@ const InputField = ({
 	rootFormClassName,
 	labelStyle,
 	buttonText,
+	openByDefault = false,
+	showSubmitButtons = true,
+	showCancelButton = true,
 }: FormProps) => {
 	const t = useTranslations("changeButton");
-	const [showInputs, setShowInputs] = useState(false);
+	const [showInputs, setShowInputs] = useState(openByDefault);
+	const [formValues, setFormValues] = useState<
+		Record<string, string | boolean>
+	>({});
 
-	const [formValues, setFormValues] = useState<Record<string, string>>({});
 	// Create a new ref
 	const inputRef = useRef<HTMLInputElement>(null);
 	const selectRef = useRef<HTMLSelectElement>(null);
@@ -96,12 +106,19 @@ const InputField = ({
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
-		const value =
-			e.target.type === "checkbox" ? e.target.checked : e.target.value;
-		setFormValues((prevValues) => ({
-			...prevValues,
-			[e.target.name]: value,
-		}));
+		if (e.target.type === "checkbox") {
+			// Check for the type
+			const checked = (e.target as HTMLInputElement).checked;
+			setFormValues((prevValues) => ({
+				...prevValues,
+				[e.target.name]: checked, // This will be a boolean: true or false
+			}));
+		} else {
+			setFormValues((prevValues) => ({
+				...prevValues,
+				[e.target.name]: e.target.value,
+			}));
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -157,7 +174,7 @@ const InputField = ({
 						<button
 							data-testid="view-form"
 							onClick={handleEditClick}
-							className={`btn btn-${size}`}
+							className={cn(`btn btn-${size}`, { hidden: !showSubmitButtons })}
 						>
 							{buttonText || t("change")}
 						</button>
@@ -221,7 +238,7 @@ const InputField = ({
 											) : null}
 											<select
 												ref={i === 0 ? selectRef : undefined}
-												value={formValues[field.name]}
+												value={String(formValues[field.name])}
 												onChange={handleChange}
 												name={field.name}
 												className={`select select-bordered select-${size}`}
@@ -248,7 +265,7 @@ const InputField = ({
 											type={field.type}
 											key={field.name}
 											placeholder={field.placeholder}
-											value={formValues[field.name]}
+											value={String(formValues[field.name])}
 											onChange={handleChange}
 											name={field.name}
 											className={`input-bordered input-${size} w-full`}
@@ -258,7 +275,7 @@ const InputField = ({
 							})}
 						</div>
 					</div>
-					<div className="flex gap-3">
+					<div className={cn("flex gap-3", { hidden: !showSubmitButtons })}>
 						{isLoading ? (
 							renderLoading()
 						) : (
@@ -270,7 +287,9 @@ const InputField = ({
 									{t("submit")}
 								</button>
 								<button
-									className={`btn btn-${size} ${buttonClassName}`}
+									className={cn(`btn btn-${size} ${buttonClassName}`, {
+										hidden: !showCancelButton,
+									})}
 									onClick={(e) => {
 										e.preventDefault();
 										handleEditClick();
