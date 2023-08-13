@@ -13,7 +13,7 @@ const Modal = () => {
 		content,
 		title,
 		rootStyle,
-		showButtons,
+		showButtons = true,
 		yesAction,
 		toggleModal,
 		disableClickOutside,
