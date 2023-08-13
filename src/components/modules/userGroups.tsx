@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { UserGroup } from "@prisma/client";
+import { useTranslations } from "next-intl";
 
 type UserGroupWithCount = UserGroup & {
 	_count: {
@@ -18,6 +19,8 @@ type GroupLabelProps = {
 
 const GroupLabel = ({ groups }: GroupLabelProps) => {
 	if (!Array.isArray(groups) || !groups) return null;
+	const t = useTranslations("admin");
+
 	const { refetch } = api.admin.getUserGroups.useQuery();
 	const { callModal } = useModalStore((state) => state);
 	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
@@ -72,7 +75,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 							onClick={() => {
 								// open modal
 								callModal({
-									title: <p>Edit Group</p>,
+									title: <p>{t("users.groups.addGroup.editGroupTitle")}</p>,
 									rootStyle: "text-left",
 									showButtons: true,
 									closeModalOnSubmit: true,
@@ -87,29 +90,39 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 											showSubmitButtons={true}
 											showCancelButton={false}
 											placeholder=""
-											buttonText="Edit Group"
+											buttonText={t("users.groups.addGroup.editGroupTitle")}
 											fields={[
 												{
 													name: "groupName",
 													type: "text",
-													placeholder: "Group Name",
-													description: "Enter a name for the new group",
+													placeholder: t(
+														"users.groups.addGroup.groupNamePlaceholder",
+													),
+													description: t(
+														"users.groups.addGroup.groupNameDescription",
+													),
 													value: group?.name,
 												},
 												{
 													name: "maxNetworks",
 													type: "number",
-													placeholder: "Network Limit",
-													description:
-														"Set the maximum number of networks that can be created by users in this group",
+													placeholder: t(
+														"users.groups.addGroup.networkLimitPlaceholder",
+													),
+													description: t(
+														"users.groups.addGroup.networkLimitDescription",
+													),
 													value: group?.maxNetworks.toString(),
 												},
 												{
 													name: "isDefault",
 													type: "checkbox",
-													description:
-														"Set this group as the default group for new users",
-													placeholder: "Use as Default",
+													description: t(
+														"users.groups.addGroup.useAsDefaultDescription",
+													),
+													placeholder: t(
+														"users.groups.addGroup.useAsDefaultPlaceholder",
+													),
 													value: group?.isDefault,
 												},
 											]}
@@ -138,9 +151,10 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
 								onClick={() => {
 									callModal({
-										title: "Delete Group",
-										description:
-											"Are you sure you want to delete this group? If assigned, it will be removed from the user.",
+										title: t("users.groups.addGroup.deleteGroupTitle"),
+										description: t(
+											"users.groups.addGroup.deleteGroupDescription",
+										),
 										yesAction: () => {
 											deleteGroup({
 												id: group.id,
@@ -168,6 +182,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 	);
 };
 const UserGroups = () => {
+	const t = useTranslations("admin");
 	const { data: usergroups, refetch } = api.admin.getUserGroups.useQuery();
 
 	const { mutate: addGroup } = api.admin.addUserGroup.useMutation({
@@ -192,37 +207,39 @@ const UserGroups = () => {
 
 	return (
 		<div className="space-y-10">
+			<div className="pb-5">
+				<p className="text-sm text-gray-500">{t("users.groups.description")}</p>
+			</div>
 			<GroupLabel groups={usergroups as UserGroupWithCount[]} />
 			<InputFields
 				isLoading={false}
-				label="Add new group"
+				label={t("users.groups.addGroup.addGroupLabel")}
 				rootFormClassName="flex flex-col space-y-2 "
 				size="sm"
 				placeholder=""
-				buttonText="Add Group"
+				buttonText={t("users.groups.addGroup.addGroupButton")}
 				fields={[
 					{
 						name: "groupName",
 						type: "text",
-						placeholder: "Group Name",
+						placeholder: t("users.groups.addGroup.groupNamePlaceholder"),
 						// fieldClassName: "max-w-sm",
-						description: "Enter a name for the new group",
+						description: t("users.groups.addGroup.groupNameDescription"),
 						defaultValue: "",
 					},
 					{
 						name: "maxNetworks",
 						type: "number",
 						// fieldClassName: "w-3/6",
-						placeholder: "Network Limit",
-						description:
-							"Set the maximum number of networks that can be created by users in this group",
+						placeholder: t("users.groups.addGroup.networkLimitPlaceholder"),
+						description: t("users.groups.addGroup.networkLimitDescription"),
 						defaultValue: "",
 					},
 					{
 						name: "isDefault",
 						type: "checkbox",
-						description: "Set this group as the default group for new users",
-						placeholder: "Use as Default",
+						description: t("users.groups.addGroup.useAsDefaultDescription"),
+						placeholder: t("users.groups.addGroup.useAsDefaultPlaceholder"),
 						defaultValue: false,
 					},
 				]}

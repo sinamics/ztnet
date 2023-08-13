@@ -58,42 +58,51 @@ export const Accounts = () => {
 	const columns = useMemo<ColumnDef<User>[]>(
 		() => [
 			columnHelper.accessor("id", {
-				header: () => <span>{t("users.table.id")}</span>,
+				header: () => <span>{t("users.users.table.id")}</span>,
 				id: "id",
+				minSize: 70,
 			}),
 			columnHelper.accessor("name", {
-				header: () => <span>{t("users.table.memberName")}</span>,
+				header: () => <span>{t("users.users.table.memberName")}</span>,
 				id: "name",
-			}),
-			columnHelper.accessor("email", {
-				header: () => <span>{t("users.table.email")}</span>,
-				id: "email",
-			}),
-			columnHelper.accessor("emailVerified", {
-				header: () => <span>{t("users.table.emailVerified")}</span>,
-				id: "emailVerified",
+				minSize: 350,
 				cell: ({ getValue }) => {
-					if (getValue()) {
-						return t("users.table.emailVerifiedYes");
-					}
-
-					return t("users.table.emailVerifiedNo");
+					return getValue();
 				},
 			}),
+			columnHelper.accessor("email", {
+				header: () => <span>{t("users.users.table.email")}</span>,
+				id: "email",
+			}),
+			// columnHelper.accessor("emailVerified", {
+			// 	header: () => <span>{t("users.users.table.emailVerified")}</span>,
+			// 	id: "emailVerified",
+			// 	size: 140,
+			// 	cell: ({ getValue }) => {
+			// 		if (getValue()) {
+			// 			return t("users.users.table.emailVerifiedYes");
+			// 		}
+
+			// 		return t("users.users.table.emailVerifiedNo");
+			// 	},
+			// }),
 			columnHelper.accessor((row: ExtendedUser) => row._count?.network, {
-				header: () => <span>Networks</span>,
+				header: () => <span>{t("users.users.table.networks")}</span>,
 				id: "Networks",
+				minSize: 20,
 				cell: ({ getValue }) => {
 					return getValue();
 				},
 			}),
 			columnHelper.accessor("userGroupId", {
-				header: () => <span>Group</span>,
+				header: () => <span>{t("users.users.table.group")}</span>,
 				id: "group",
+				minSize: 80,
 			}),
 			columnHelper.accessor("role", {
-				header: () => <span>{t("users.table.role")}</span>,
+				header: () => <span>{t("users.users.table.role")}</span>,
 				id: "role",
+				minSize: 80,
 			}),
 		],
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +113,7 @@ export const Accounts = () => {
 	const defaultColumn: Partial<ColumnDef<User>> = {
 		cell: ({
 			getValue,
-			row: { index, original: { id: userid, name, userGroupId } },
+			row: { original: { id: userid, name, userGroupId } },
 			column: { id },
 		}) => {
 			const initialValue = getValue();
@@ -118,7 +127,7 @@ export const Accounts = () => {
 			const { mutate: changeRole } = api.admin.changeRole.useMutation({
 				onSuccess: () => {
 					void refetchUsers();
-					toast.success(t("users.toastMessages.roleChangeSuccess"));
+					toast.success(t("users.users.toastMessages.roleChangeSuccess"));
 				},
 				onError: (error) => {
 					if ((error.data as ErrorData)?.zodError) {
@@ -130,17 +139,11 @@ export const Accounts = () => {
 					} else if (error.message) {
 						toast.error(error.message);
 					} else {
-						toast.error(t("users.toastMessages.errorOccurred"));
+						toast.error(t("users.users.toastMessages.errorOccurred"));
 					}
 					void refetchUsers();
 				},
 			});
-			const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-				setValue(e.target.value);
-			};
-			const onBlur = () => {
-				table.options.meta?.updateData(index, id, value);
-			};
 			const dropDownHandler = (
 				e: React.ChangeEvent<HTMLSelectElement>,
 				id: number,
@@ -148,13 +151,13 @@ export const Accounts = () => {
 				let description = "";
 
 				if (e.target.value === "ADMIN") {
-					description = t("users.roleDescriptions.admin");
+					description = t("users.users.roleDescriptions.admin");
 				} else if (e.target.value === "USER") {
-					description = t("users.roleDescriptions.user");
+					description = t("users.users.roleDescriptions.user");
 				}
 
 				callModal({
-					title: t("users.changeRoleModal.title", { name }),
+					title: t("users.users.changeRoleModal.title", { name }),
 					description,
 					yesAction: () => {
 						changeRole({
@@ -170,16 +173,16 @@ export const Accounts = () => {
 				setValue(initialValue);
 			}, [initialValue]);
 
-			if (id === "name") {
-				return (
-					<input
-						className="m-0 border-0 bg-transparent p-0"
-						value={value as string}
-						onChange={onChange}
-						onBlur={onBlur}
-					/>
-				);
-			}
+			// if (id === "name") {
+			// 	return (
+			// 		<input
+			// 			className="m-0 border-0 bg-transparent p-0"
+			// 			value={value as string}
+			// 			onChange={onChange}
+			// 			onBlur={onBlur}
+			// 		/>
+			// 	);
+			// }
 			if (id === "role") {
 				return (
 					<select
@@ -249,10 +252,20 @@ export const Accounts = () => {
 		);
 	}
 	return (
-		<div className="overflow-x-auto">
-			<div className="inline-block w-full p-1.5 text-center align-middle">
-				<div className="overflow-hidden rounded-lg border">
-					<table className="table-wrapper min-w-full divide-y divide-gray-400">
+		<div className="overflow-x-auto w-full">
+			<div className="pb-5">
+				<p className="text-sm text-gray-500">{t("users.users.description")}</p>
+			</div>
+			<div className="inline-block py-5 text-center ">
+				<div className="overflow-hidden rounded-lg border w-full">
+					<table
+						// {...{
+						// 	style: {
+						// 		width: table.getCenterTotalSize(),
+						// 	},
+						// }}
+						className="overflow-x-auto table-wrapper divide-y divide-gray-400"
+					>
 						<thead className="bg-base-100">
 							{
 								// Loop over the header rows
@@ -263,36 +276,43 @@ export const Accounts = () => {
 										<tr key={headerGroup.id}>
 											{
 												// Loop over the headers in each row
-												headerGroup.headers.map((header) => (
-													<th
-														key={header.id}
-														colSpan={header.colSpan}
-														scope="col"
-														className="bg-base-300/50 py-3 pl-4"
-													>
-														{header.isPlaceholder ? null : (
-															<div
-																{...{
-																	className: header.column.getCanSort()
-																		? "cursor-pointer select-none"
-																		: "",
-																	onClick:
-																		header.column.getToggleSortingHandler(),
-																}}
-															>
-																{flexRender(
-																	header.column.columnDef.header,
-																	header.getContext(),
-																)}
-																{{
-																	asc: " 🔼",
-																	desc: " 🔽",
-																}[header.column.getIsSorted() as string] ??
-																	null}
-															</div>
-														)}
-													</th>
-												))
+												headerGroup.headers.map((header) => {
+													return (
+														<th
+															{...{
+																style: {
+																	width: header.getSize(),
+																},
+															}}
+															key={header.id}
+															colSpan={header.colSpan}
+															scope="col"
+															className="bg-base-300/50 py-2 pl-4 text-xs"
+														>
+															{header.isPlaceholder ? null : (
+																<div
+																	{...{
+																		className: header.column.getCanSort()
+																			? "cursor-pointer select-none"
+																			: "",
+																		onClick:
+																			header.column.getToggleSortingHandler(),
+																	}}
+																>
+																	{flexRender(
+																		header.column.columnDef.header,
+																		header.getContext(),
+																	)}
+																	{{
+																		asc: " 🔼",
+																		desc: " 🔽",
+																	}[header.column.getIsSorted() as string] ??
+																		null}
+																</div>
+															)}
+														</th>
+													);
+												})
 											}
 										</tr>
 									))
@@ -312,7 +332,15 @@ export const Accounts = () => {
 													.map((cell) => (
 														// Apply the cell props
 
-														<td key={cell.id} className="py-1 pl-4">
+														<td
+															{...{
+																style: {
+																	width: cell.column.getSize(),
+																},
+															}}
+															key={cell.id}
+															className="py-1 pl-4"
+														>
 															{
 																// Render the cell contents
 																flexRender(
