@@ -197,7 +197,7 @@ model VerificationToken {
 }
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
-// npx prisma migrate dev --name init
+// npx prisma migrate dev --name (NAME)
 
 // reset db
 // npx prisma migrate reset
