@@ -1,16 +1,24 @@
 import { useTranslations } from "next-intl";
+import React from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
-
+import cn from "classnames";
 interface FieldConfig {
 	name: string;
+	description?: string;
 	initialValue?: string;
-	type: string;
+	type?: string;
 	placeholder: string;
 	displayValue?: string;
-	defaultValue?: string | number;
-	value?: string | number;
+	defaultValue?: string | number | boolean;
+	value?: string | number | boolean;
+	elementType?: "input" | "select";
+	selectOptions?: { value: string; label: string }[];
 }
+
+type SubmitHandlerType = (
+	values: Record<string, string | boolean>,
+) => Promise<unknown>;
 
 interface FormProps {
 	label: string;
@@ -23,9 +31,11 @@ interface FormProps {
 	rootClassName?: string;
 	rootFormClassName?: string;
 	labelStyle?: string;
-	submitHandler: (formValues: {
-		[key: string]: string;
-	}) => Promise<unknown> | string | void;
+	buttonText?: string;
+	openByDefault?: boolean;
+	showSubmitButtons?: boolean;
+	showCancelButton?: boolean;
+	submitHandler: SubmitHandlerType;
 	badge?: {
 		text: string;
 		color: string;
@@ -50,36 +60,65 @@ const InputField = ({
 	rootClassName,
 	rootFormClassName,
 	labelStyle,
+	buttonText,
+	openByDefault = false,
+	showSubmitButtons = true,
+	showCancelButton = true,
 }: FormProps) => {
 	const t = useTranslations("changeButton");
-	const [showInputs, setShowInputs] = useState(false);
+	const [showInputs, setShowInputs] = useState(openByDefault);
+	const [formValues, setFormValues] = useState<
+		Record<string, string | boolean>
+	>({});
 
-	const [formValues, setFormValues] = useState<Record<string, string>>({});
 	// Create a new ref
 	const inputRef = useRef<HTMLInputElement>(null);
+	const selectRef = useRef<HTMLSelectElement>(null);
 
 	useEffect(() => {
 		setFormValues(
 			fields.reduce((acc, field) => {
-				acc[field.name] = field.value || field.initialValue || "";
+				let value;
+				if (field.type === "checkbox") {
+					value = !!field.value || !!field.initialValue;
+				} else {
+					value = field.value || field.initialValue || "";
+				}
+				acc[field.name] = value;
 				return acc;
 			}, {}),
 		);
 	}, [fields]);
 
 	useEffect(() => {
-		// When showInputs is true, focus the input field
+		// When showInputs is true, focus the appropriate field based on its type
 		if (showInputs) {
-			inputRef.current?.focus();
+			if (fields[0].type === "select") {
+				selectRef.current?.focus();
+			} else {
+				inputRef.current?.focus();
+			}
 		}
-	}, [showInputs]);
+	}, [showInputs, fields]);
+
 	const handleEditClick = () => setShowInputs(!showInputs);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setFormValues((prevValues) => ({
-			...prevValues,
-			[e.target.name]: e.target.value,
-		}));
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+	) => {
+		if (e.target.type === "checkbox") {
+			// Check for the type
+			const checked = (e.target as HTMLInputElement).checked;
+			setFormValues((prevValues) => ({
+				...prevValues,
+				[e.target.name]: checked, // This will be a boolean: true or false
+			}));
+		} else {
+			setFormValues((prevValues) => ({
+				...prevValues,
+				[e.target.name]: e.target.value,
+			}));
+		}
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -135,9 +174,9 @@ const InputField = ({
 						<button
 							data-testid="view-form"
 							onClick={handleEditClick}
-							className={`btn btn-${size}`}
+							className={cn(`btn btn-${size}`, { hidden: !showSubmitButtons })}
 						>
-							{t("change")}
+							{buttonText || t("change")}
 						</button>
 					</div>
 				</div>
@@ -166,21 +205,77 @@ const InputField = ({
 							) : null}
 						</div>
 						<div className={rootFormClassName}>
-							{fields.map((field, i) => (
-								<Input
-									ref={i === 0 ? inputRef : undefined}
-									type={field.type}
-									key={field.name}
-									placeholder={field.placeholder}
-									value={formValues[field.name]}
-									onChange={handleChange}
-									name={field.name}
-									className={`input-bordered input-${size}`}
-								/>
-							))}
+							{fields.map((field, i) => {
+								if (field.type === "checkbox") {
+									return (
+										<div key={field.name} className="form-control">
+											{field.description ? (
+												<label className="text-sm text-gray-500 leading-none pt-2">
+													{field.description}
+												</label>
+											) : null}
+											<label className="label cursor-pointer">
+												<input
+													ref={i === 0 ? inputRef : undefined}
+													type="checkbox"
+													name={field.name}
+													checked={!!formValues[field.name]}
+													onChange={handleChange}
+													className="checkbox checkbox-primary"
+												/>
+												<span>{field.placeholder}</span>
+											</label>
+										</div>
+									);
+								}
+								if (field.elementType === "select" && field.selectOptions) {
+									return (
+										<React.Fragment key={field.name}>
+											{field.description ? (
+												<label className="text-sm text-gray-500 leading-none pt-2">
+													{field.description}
+												</label>
+											) : null}
+											<select
+												ref={i === 0 ? selectRef : undefined}
+												value={String(formValues[field.name])}
+												onChange={handleChange}
+												name={field.name}
+												className={`select select-bordered select-${size}`}
+											>
+												{field.selectOptions.map((option) => (
+													<option value={option.value} key={option.value}>
+														{option.label}
+													</option>
+												))}
+											</select>
+										</React.Fragment>
+									);
+								}
+
+								return (
+									<React.Fragment key={field.name}>
+										{field.description ? (
+											<label className="text-sm text-gray-500 leading-none pt-2">
+												{field.description}
+											</label>
+										) : null}
+										<Input
+											ref={i === 0 ? inputRef : undefined}
+											type={field.type}
+											key={field.name}
+											placeholder={field.placeholder}
+											value={String(formValues[field.name])}
+											onChange={handleChange}
+											name={field.name}
+											className={`input-bordered input-${size} w-full`}
+										/>
+									</React.Fragment>
+								);
+							})}
 						</div>
 					</div>
-					<div className="flex gap-3">
+					<div className={cn("flex gap-3", { hidden: !showSubmitButtons })}>
 						{isLoading ? (
 							renderLoading()
 						) : (
@@ -192,7 +287,9 @@ const InputField = ({
 									{t("submit")}
 								</button>
 								<button
-									className={`btn btn-${size} ${buttonClassName}`}
+									className={cn(`btn btn-${size} ${buttonClassName}`, {
+										hidden: !showCancelButton,
+									})}
 									onClick={(e) => {
 										e.preventDefault();
 										handleEditClick();

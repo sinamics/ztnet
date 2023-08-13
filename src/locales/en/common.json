@@ -14,6 +14,7 @@
 		"settings": "Settings",
 		"mail": "Mail",
 		"users": "Users",
+		"notification": "Notification",
 		"controller": "ZT Controller",
 		"account": "Account",
 		"user-settings": "User Settings",
@@ -275,25 +276,48 @@
 			}
 		},
 		"users": {
-			"table": {
-				"id": "ID",
-				"memberName": "Member name",
-				"email": "Email",
-				"emailVerified": "Email Verified",
-				"role": "Role",
-				"emailVerifiedYes": "Yes",
-				"emailVerifiedNo": "No"
+			"users": {
+				"sectionTitle": "Users",
+				"description": "All registered users on the platform.",
+				"table": {
+					"id": "ID",
+					"memberName": "Member name",
+					"email": "Email",
+					"emailVerified": "Email Verified",
+					"role": "Role",
+					"networks": "Networks",
+					"group": "Group",
+					"emailVerifiedYes": "Yes",
+					"emailVerifiedNo": "No"
+				},
+				"roleDescriptions": {
+					"admin": "As an admin, this user will have full permissions, including access to the admin panel.",
+					"user": "If set to User, this user will have limited permissions and will not be able to access the admin panel."
+				},
+				"changeRoleModal": {
+					"title": "Change role for {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Role changed successfully",
+					"errorOccurred": "An unknown error occurred"
+				}
 			},
-			"roleDescriptions": {
-				"admin": "As an admin, this user will have full permissions, including access to the admin panel.",
-				"user": "If set to User, this user will have limited permissions and will not be able to access the admin panel."
-			},
-			"changeRoleModal": {
-				"title": "Change role for {name}"
-			},
-			"toastMessages": {
-				"roleChangeSuccess": "Role changed successfully",
-				"errorOccurred": "An unknown error occurred"
+			"groups": {
+				"sectionTitle": "Groups",
+				"description": "Create a new user group to better organize platform users. Assigning users to specific groups allows for controlled access, setting of limits, and adjusting settings based on user types.",
+				"addGroup": {
+					"editGroupTitle": "Edit Group",
+					"deleteGroupTitle": "Delete Group",
+					"deleteGroupDescription": "Are you sure you want to delete this group? If assigned, it will be removed from the user.",
+					"addGroupLabel": "Add new group",
+					"addGroupButton": "Add Group",
+					"groupNamePlaceholder": "Group Name",
+					"groupNameDescription": "Enter a name for the new group",
+					"networkLimitPlaceholder": "Network Limit",
+					"networkLimitDescription": "Set the maximum number of networks that can be created by users in this group",
+					"useAsDefaultPlaceholder": "Use as Default",
+					"useAsDefaultDescription": "Set this group as the default group for new users"
+				}
 			}
 		},
 		"notification": {
