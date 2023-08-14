@@ -13,6 +13,9 @@ import { Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
 import { NetworkAndMemberResponse } from "~/types/network";
+import { execSync } from "child_process";
+import fs from "fs";
+import axios from "axios";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -588,6 +591,109 @@ export const adminRouter = createTRPCRouter({
 						userGroupId: parseInt(input.userGroupId), // Link the user to the userGroup
 					},
 				});
+			} catch (err: unknown) {
+				if (err instanceof Error) {
+					// Log the error and throw a custom error message
+					throwError(`Error assigning user to group: ${err.message}`);
+				} else {
+					// Throw a generic error for unknown error types
+					throwError("An unknown error occurred");
+				}
+			}
+		}),
+
+	getWorld: adminRoleProtectedRoute.query(async () => {
+		try {
+			// Using ip.sb as an example service to get the public IP
+			const response = await axios.get("https://api.ip.sb/ip");
+			return { ip: response.data.trim() };
+		} catch (err) {
+			if (err instanceof Error) {
+				throw new Error(`Failed to retrieve public IP: ${err.message}`);
+			} else {
+				throw new Error("An unknown error occurred while retrieving public IP");
+			}
+		}
+	}),
+	makeWorld: adminRoleProtectedRoute
+		.input(
+			z.object({
+				domain: z.string().optional(),
+				endpoints: z.string(),
+				comment: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				// Check if identity.public exists
+				if (!fs.existsSync("/var/lib/zerotier-one/identity.public")) {
+					throwError(
+						"identity.public file does NOT exist, cannot generate planet file.",
+					);
+				}
+				const ztmkworldPath = "/usr/local/bin/ztmkworld";
+				if (!fs.existsSync(ztmkworldPath)) {
+					throwError(
+						"ztmkworld executable does not exist at the specified location.",
+					);
+				}
+				// Ensure /etc/zt-mkworld directory exists
+				const mkworldDir = "/etc/zt-mkworld";
+				if (!fs.existsSync(mkworldDir)) {
+					fs.mkdirSync(mkworldDir);
+				}
+
+				// Backup existing planet file if it exists
+				const planetPath = "/var/lib/zerotier-one/planet";
+				if (fs.existsSync(planetPath)) {
+					const backupFolder = "/var/lib/zerotier-one/planet_backup";
+					if (!fs.existsSync(backupFolder)) {
+						fs.mkdirSync(backupFolder);
+					}
+					const timestamp = new Date()
+						.toISOString()
+						.replace(/[^a-zA-Z0-9]/g, "_");
+					fs.copyFileSync(
+						planetPath,
+						`${backupFolder}/planet.bak.${timestamp}`,
+					);
+				}
+
+				const config = {
+					rootNodes: [
+						{
+							comments: `custom planet - ${
+								input.domain || "default.domain"
+							} - ${input.endpoints}`,
+							identity: fs
+								.readFileSync("/var/lib/zerotier-one/identity.public", "utf-8")
+								.trim(),
+							endpoints: [input.endpoints],
+						},
+					],
+					signing: ["previous.c25519", "current.c25519"],
+					output: "planet.custom",
+					plID: 0,
+					plBirth: 0,
+					plRecommend: true,
+				};
+				fs.writeFileSync(
+					"/etc/zt-mkworld/mkworld.config.json",
+					JSON.stringify(config),
+				);
+
+				// Run ztmkworld command
+				execSync(
+					"cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
+				);
+
+				// Copy generated planet file
+				// fs.copyFileSync(
+				// 	"/etc/zt-mkworld/planet.custom",
+				// 	"/var/lib/zerotier-one/planet",
+				// );
+
+				return { success: true };
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message

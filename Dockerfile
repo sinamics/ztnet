@@ -32,6 +32,21 @@ COPY . .
 
 RUN SKIP_ENV_VALIDATION=1 npm run build
 
+
+# Copy the ztmkworld binary based on the target platform architecture
+FROM base AS ztmkworld_builder
+ARG TARGETPLATFORM
+WORKDIR /app
+COPY /workspaces/ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
+COPY /workspaces/ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
+RUN \
+    case "${TARGETPLATFORM}" in \
+    "linux/amd64") cp ztmkworld_amd64 /usr/local/bin/ztmkworld ;; \
+    "linux/arm64") cp ztmkworld_arm64 /usr/local/bin/ztmkworld ;; \
+    *) echo "Unsupported architecture" && exit 1 ;; \
+    esac && \
+    chmod +x /usr/local/bin/ztmkworld
+
 # Production image, copy all the files and run next
 FROM $NODEJS_IMAGE AS runner
 WORKDIR /app
@@ -66,6 +81,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
+COPY --from=ztmkworld_builder /usr/local/bin/ztmkworld /usr/local/bin/ztmkworld
 
 # prepeare .env file for the init-db.sh script
 RUN touch .env && chown nextjs:nodejs .env
