@@ -14,7 +14,7 @@ services:
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
-      - zerotier:/var/lib/zerotier-one:ro
+      - zerotier:/var/lib/zerotier-one
     container_name: ztnet
     environment:
       ZT_ADDR: http://zerotier:9993

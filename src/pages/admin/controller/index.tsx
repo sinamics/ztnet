@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { useState, type ReactElement } from "react";
 import EditableField from "~/components/elements/inputField";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
+import PrivateRoot from "~/components/modules/controller/privateRoot";
 import DebugMirror from "~/components/modules/debugController";
 import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
 import { api } from "~/utils/api";
@@ -194,6 +195,8 @@ const Controller = () => {
 							}
 						/>
 					</div>
+					<div className="divider mt-0 p-0 text-error"></div>
+					<PrivateRoot />
 				</div>
 			</div>
 		</main>
