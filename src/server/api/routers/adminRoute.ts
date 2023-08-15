@@ -606,7 +606,14 @@ export const adminRouter = createTRPCRouter({
 		try {
 			// Using ip.sb as an example service to get the public IP
 			const response = await axios.get("https://api.ip.sb/ip");
-			return { ip: response.data.trim() };
+			let identity = "";
+			const identityPath = "/var/lib/zerotier-one/identity.public";
+
+			if (fs.existsSync(identityPath)) {
+				identity = fs.readFileSync(identityPath, "utf-8").trim();
+			}
+
+			return { ip: response.data.trim(), identity };
 		} catch (err) {
 			if (err instanceof Error) {
 				throw new Error(`Failed to retrieve public IP: ${err.message}`);
@@ -621,9 +628,10 @@ export const adminRouter = createTRPCRouter({
 				domain: z.string().optional(),
 				endpoints: z.string(),
 				comment: z.string().optional(),
+				identity: z.string().optional(),
 			}),
 		)
-		.mutation(async ({ input }) => {
+		.mutation(async ({ ctx, input }) => {
 			try {
 				// Check if identity.public exists
 				if (!fs.existsSync("/var/lib/zerotier-one/identity.public")) {
@@ -658,6 +666,11 @@ export const adminRouter = createTRPCRouter({
 						`${backupFolder}/planet.bak.${timestamp}`,
 					);
 				}
+				const identity =
+					input.identity ||
+					fs
+						.readFileSync("/var/lib/zerotier-one/identity.public", "utf-8")
+						.trim();
 
 				const config = {
 					rootNodes: [
@@ -665,9 +678,7 @@ export const adminRouter = createTRPCRouter({
 							comments: `custom planet - ${
 								input.domain || "default.domain"
 							} - ${input.endpoints}`,
-							identity: fs
-								.readFileSync("/var/lib/zerotier-one/identity.public", "utf-8")
-								.trim(),
+							identity,
 							endpoints: [input.endpoints],
 						},
 					],
@@ -688,10 +699,19 @@ export const adminRouter = createTRPCRouter({
 				);
 
 				// Copy generated planet file
-				// fs.copyFileSync(
-				// 	"/etc/zt-mkworld/planet.custom",
-				// 	"/var/lib/zerotier-one/planet",
-				// );
+				fs.copyFileSync(
+					"/etc/zt-mkworld/planet.custom",
+					"/var/lib/zerotier-one/planet",
+				);
+
+				await ctx.prisma.globalOptions.update({
+					where: {
+						id: 1,
+					},
+					data: {
+						customPlanetUsed: true,
+					},
+				});
 
 				return { success: true };
 			} catch (err: unknown) {
@@ -704,4 +724,61 @@ export const adminRouter = createTRPCRouter({
 				}
 			}
 		}),
+	resetWorld: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
+		try {
+			// Define backup folder and planet path
+			const backupFolder = "/var/lib/zerotier-one/planet_backup";
+			const planetPath = "/var/lib/zerotier-one/planet";
+
+			// Ensure backup directory exists
+			if (!fs.existsSync(backupFolder)) {
+				// Update the customPlanetUsed to false, as you're now using the original planet
+				await ctx.prisma.globalOptions.update({
+					where: {
+						id: 1,
+					},
+					data: {
+						customPlanetUsed: false,
+					},
+				});
+				throwError("Backup directory does not exist.");
+			}
+
+			// Get list of backup files and sort them to find the most recent
+			const backups = fs
+				.readdirSync(backupFolder)
+				.filter((file) => file.startsWith("planet.bak."))
+				.sort();
+
+			// If there are no backups, throw an error
+			if (backups.length === 0) {
+				throwError("No backup files found.");
+			}
+
+			// Get the latest backup
+			const latestBackup = backups.at(-1);
+
+			// Copy the latest backup to planet location
+			fs.copyFileSync(`${backupFolder}/${latestBackup}`, planetPath);
+
+			// Remove the backup directory
+			fs.rmSync(backupFolder, { recursive: true, force: true });
+			// Update the customPlanetUsed to false, as you're now using the original planet
+			await ctx.prisma.globalOptions.update({
+				where: {
+					id: 1,
+				},
+				data: {
+					customPlanetUsed: false,
+				},
+			});
+			return { success: true };
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				throwError(`Error during reset: ${err.message}`);
+			} else {
+				throwError("An unknown error occurred during reset.");
+			}
+		}
+	}),
 });

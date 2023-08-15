@@ -37,7 +37,7 @@ const Controller = () => {
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12 pb-80">
 			{error ? (
 				<div className="alert alert-error">
 					<svg
@@ -133,7 +133,7 @@ const Controller = () => {
 					</div>
 				</>
 			)}
-			<div className="pb-10">
+			<div className="pb-10 border-t border-b border-red-600/25 rounded-md p-2">
 				<p className="text-sm text-error">
 					{t("controller.controllerConfig.danger_zone")}
 				</p>

@@ -37,6 +37,9 @@ model GlobalOptions {
 
   // Notifications
   userRegistrationNotification          Boolean           @default(false)
+
+  // mkworld
+  customPlanetUsed                      Boolean           @default(false)
 }
 
 enum Role {
