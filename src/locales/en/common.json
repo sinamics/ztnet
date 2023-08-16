@@ -366,6 +366,21 @@
 				"zerotier_secret": "Zerotier Secret",
 				"submit_empty_field_default": "Submit empty field to use the default."
 			},
+			"generatePlanet": {
+				"noteTitle": "NOTE!",
+				"customPlanetGenerated": "Custom planet has been generated.",
+				"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
+				"updatePlanetWarning": "Updating the planet file will modify the core structure of your ZeroTier network, impacting routes, flexibility, and potentially availability. Proceed with caution, understanding the implications.",
+				"customPlanetInUse": "Custom Planet is currently in use!",
+				"downloadPlanetButton": "Download Planet",
+				"restoreOriginalPlanetButton": "Restore Original Planet",
+				"generatePrivateRootLabel": "Generate private root",
+				"generatePrivateRootPlaceholder": "Add a private root to your controller",
+				"domainDescription": "Add the domain name (optionally)",
+				"commentDescription": "Add a comment for this planet (optionally)",
+				"identityDescription": "Identity (optionally). Default value is the content of current identity.public",
+				"endpointsDescription": "Enter the external IP address of your controller. Use a comma-separated format (IP/PORT) for multiple addresses. For example: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Ensure these addresses are globally reachable if you want nodes outside your local network to connect."
+			},
 			"yes": "Yes",
 			"no": "No"
 		}
