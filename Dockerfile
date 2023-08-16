@@ -32,13 +32,12 @@ COPY . .
 
 RUN SKIP_ENV_VALIDATION=1 npm run build
 
-
 # Copy the ztmkworld binary based on the target platform architecture
 FROM base AS ztmkworld_builder
 ARG TARGETPLATFORM
 WORKDIR /app
-COPY /workspaces/ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
-COPY /workspaces/ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
+COPY ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
+COPY ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
 RUN \
     case "${TARGETPLATFORM}" in \
     "linux/amd64") cp ztmkworld_amd64 /usr/local/bin/ztmkworld ;; \
