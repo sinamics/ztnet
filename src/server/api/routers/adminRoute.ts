@@ -633,6 +633,15 @@ export const adminRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
+				// Check for write permission on the directory
+				const volumePath = "/var/lib/zerotier-one";
+				try {
+					fs.accessSync(volumePath, fs.constants.W_OK);
+				} catch (_err) {
+					throwError(
+						`Please remove the :ro flag from the docker volume mount for ${volumePath}`,
+					);
+				}
 				// Check if identity.public exists
 				if (!fs.existsSync("/var/lib/zerotier-one/identity.public")) {
 					throwError(
