@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 import toast from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
+import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
@@ -41,6 +42,19 @@ const PrivateRoot = () => {
 				),
 			});
 		},
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
 	});
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
 		onSuccess: () => {
@@ -75,7 +89,6 @@ const PrivateRoot = () => {
 				<p className="text-sm text-gray-500 pb-4">
 					{t("controller.generatePlanet.updatePlanetWarning")}
 				</p>
-
 				{globalOptions?.customPlanetUsed ? (
 					<div className="space-y-4">
 						<div className="alert">
