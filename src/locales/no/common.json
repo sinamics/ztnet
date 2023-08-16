@@ -366,6 +366,21 @@
 				"zerotier_secret": "Zerotier Hemmelighet",
 				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen."
 			},
+			"generatePlanet": {
+				"noteTitle": "NOTE!",
+				"customPlanetGenerated": "Egendefinert planet har blitt generert.",
+				"restartContainerInstructions": "Du må starte zerotier-containeren på nytt for å laste inn den nye konfigurasjonen:<br></br><br></br><span>docker restart zerotier</span>",
+				"updatePlanetWarning": "Ved å oppdatere planetfilen vil du endre kjernestrukturen i ditt ZeroTier-nettverk, noe som påvirker ruter, fleksibilitet og potensielt tilgjengelighet. Fortsett med forsiktighet, og forstå konsekvensene.",
+				"customPlanetInUse": "Egendefinert Planet er for øyeblikket i bruk!",
+				"downloadPlanetButton": "Last ned Planet",
+				"restoreOriginalPlanetButton": "Gjenopprett original Planet",
+				"generatePrivateRootLabel": "Generer privat root",
+				"generatePrivateRootPlaceholder": "Legg til en privat root i kontrolleren din",
+				"domainDescription": "Legg til domenenavnet (valgfritt)",
+				"commentDescription": "Legg til en kommentar for denne planeten (valgfritt)",
+				"identityDescription": "Identitet (valgfritt). Standardverdien er innholdet i nåværende identity.public",
+				"endpointsDescription": "Skriv inn den eksterne IP-adressen til kontrolleren din. Bruk et komma-separert format (IP/PORT) for flere adresser. For eksempel: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Forsikre deg om at disse adressene er globalt tilgjengelige hvis du vil at noder utenfor det lokale nettverket ditt skal koble seg til."
+			},
 			"yes": "Ja",
 			"no": "Nei"
 		}

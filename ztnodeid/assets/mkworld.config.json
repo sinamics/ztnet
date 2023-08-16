@@ -1,0 +1,20 @@
+{
+    "rootNodes": [
+        {
+            "comments": "amsterdam official",
+            "identity": "992fcf1db7:0:206ed59350b31916f749a1f85dffb3a8787dcbf83b8c6e9448d4e3ea0e3369301be716c3609344a9d1533850fb4460c50af43322bcfc8e13d3301a1f1003ceb6",
+            "endpoints": [
+                "195.181.173.159/443",
+                "2a02:6ea0:c024::/443"
+            ]
+        }
+    ],
+    "signing": [
+        "previous.c25519",
+        "current.c25519"
+    ],
+    "output": "planet.custom",
+    "plID": 0,
+    "plBirth": 0,
+    "plRecommend": true
+}

@@ -38,7 +38,7 @@ services:
     container_name: ztnet
     working_dir: /app
     volumes:
-      - zerotier:/var/lib/zerotier-one:ro
+      - zerotier:/var/lib/zerotier-one
     restart: unless-stopped
     ports:
       - 3000:3000

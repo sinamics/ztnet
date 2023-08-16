@@ -22,6 +22,7 @@ type SubmitHandlerType = (
 
 interface FormProps {
 	label: string;
+	labelClassName?: string;
 	isLoading?: boolean;
 	placeholder?: string;
 	description?: string;
@@ -48,6 +49,7 @@ interface FormProps {
 
 const InputField = ({
 	label,
+	labelClassName,
 	placeholder,
 	description,
 	fields,
@@ -210,7 +212,9 @@ const InputField = ({
 									return (
 										<div key={field.name} className="form-control">
 											{field.description ? (
-												<label className="text-sm text-gray-500 leading-none pt-2">
+												<label
+													className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
+												>
 													{field.description}
 												</label>
 											) : null}
@@ -230,9 +234,11 @@ const InputField = ({
 								}
 								if (field.elementType === "select" && field.selectOptions) {
 									return (
-										<React.Fragment key={field.name}>
+										<div key={field.name} className="form-control">
 											{field.description ? (
-												<label className="text-sm text-gray-500 leading-none pt-2">
+												<label
+													className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
+												>
 													{field.description}
 												</label>
 											) : null}
@@ -249,14 +255,16 @@ const InputField = ({
 													</option>
 												))}
 											</select>
-										</React.Fragment>
+										</div>
 									);
 								}
 
 								return (
-									<React.Fragment key={field.name}>
+									<div key={field.name} className="form-control">
 										{field.description ? (
-											<label className="text-sm text-gray-500 leading-none pt-2">
+											<label
+												className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
+											>
 												{field.description}
 											</label>
 										) : null}
@@ -270,7 +278,7 @@ const InputField = ({
 											name={field.name}
 											className={`input-bordered input-${size} w-full`}
 										/>
-									</React.Fragment>
+									</div>
 								);
 							})}
 						</div>

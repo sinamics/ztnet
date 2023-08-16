@@ -366,6 +366,22 @@
 				"zerotier_secret": "Zerotier密码",
 				"submit_empty_field_default": "提交空字段以使用默认值。"
 			},
+			"generatePlanet": {
+				"noteTitle": "注意!",
+				"customPlanetGenerated": "已生成自定义星球。",
+				"restartContainerInstructions": "您需要重新启动zerotier容器以加载新配置：<br></br><br></br><span>docker 重启 zerotier</span>",
+				"dockerRestartCommand": "docker 重启 zerotier",
+				"updatePlanetWarning": "更新行星文件将修改您的ZeroTier网络的核心结构，影响路由、灵活性和可能的可用性。在理解后果的情况下小心进行。",
+				"customPlanetInUse": "当前正在使用自定义星球！",
+				"downloadPlanetButton": "下载星球",
+				"restoreOriginalPlanetButton": "恢复原始星球",
+				"generatePrivateRootLabel": "生成私人根",
+				"generatePrivateRootPlaceholder": "向控制器添加私人根",
+				"domainDescription": "添加域名（可选）",
+				"commentDescription": "为此星球添加评论（可选）",
+				"identityDescription": "身份（可选）。默认值是当前identity.public的内容",
+				"endpointsDescription": "输入控制器的外部IP地址。使用逗号分隔的格式（IP/PORT）输入多个地址。例如：'84.17.53.155/9993,2a02:6ea0:d405::9993'。确保如果您希望本地网络之外的节点连接，这些地址是全球可达的。"
+			},
 			"yes": "是",
 			"no": "否"
 		}

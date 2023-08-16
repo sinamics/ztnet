@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { useState, type ReactElement } from "react";
 import EditableField from "~/components/elements/inputField";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
+import PrivateRoot from "~/components/modules/controller/privateRoot";
 import DebugMirror from "~/components/modules/debugController";
 import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
 import { api } from "~/utils/api";
@@ -36,7 +37,7 @@ const Controller = () => {
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12 pb-80">
 			{error ? (
 				<div className="alert alert-error">
 					<svg
@@ -132,7 +133,7 @@ const Controller = () => {
 					</div>
 				</>
 			)}
-			<div className="pb-10">
+			<div className="pb-10 border-t border-b border-red-600/25 rounded-md p-2">
 				<p className="text-sm text-error">
 					{t("controller.controllerConfig.danger_zone")}
 				</p>
@@ -194,6 +195,8 @@ const Controller = () => {
 							}
 						/>
 					</div>
+					<div className="divider mt-0 p-0 text-error"></div>
+					<PrivateRoot />
 				</div>
 			</div>
 		</main>
