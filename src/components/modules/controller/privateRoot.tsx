@@ -1,9 +1,13 @@
+import { useTranslations } from "next-intl";
 import React from "react";
+import toast from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const PrivateRoot = () => {
+	const t = useTranslations("admin");
+
 	const { callModal } = useModalStore((state) => state);
 	const { data: getWorld } = api.admin.getWorld.useQuery();
 
@@ -14,20 +18,25 @@ const PrivateRoot = () => {
 		onSuccess: () => {
 			refetchOptions();
 			callModal({
-				title: <p>NOTE!</p>,
-				rootStyle: "text-left",
+				title: <p>{t("controller.generatePlanet.noteTitle")}</p>,
+				rootStyle: "text-left border border-yellow-300/30",
 				showButtons: true,
 				closeModalOnSubmit: true,
 				content: (
 					<span>
-						Custom planet has been generated.
+						{t("controller.generatePlanet.customPlanetGenerated")}
 						<br />
 						<p>
-							You will need to restart zerotier container to load the new
-							configuration:
+							{t.rich(
+								"controller.generatePlanet.restartContainerInstructions",
+								{
+									span: (content) => (
+										<span className="text-yellow-300">{content} </span>
+									),
+									br: () => <br />,
+								},
+							)}
 						</p>
-						<br />
-						<pre className="text-yellow-300">docker restart zerotier</pre>
 					</span>
 				),
 			});
@@ -36,6 +45,7 @@ const PrivateRoot = () => {
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
 		onSuccess: () => {
 			refetchOptions();
+			toast.success("Planet file has been restored!");
 		},
 	});
 	async function downloadPlanet() {
@@ -63,11 +73,7 @@ const PrivateRoot = () => {
 		<div className="space-y-4">
 			<div>
 				<p className="text-sm text-gray-500 pb-4">
-					<p>
-						Updating the planet file will modify the core structure of your
-						ZeroTier network, impacting routes, flexibility, and potentially
-						availability. Proceed with caution, understanding the implications.
-					</p>
+					{t("controller.generatePlanet.updatePlanetWarning")}
 				</p>
 
 				{globalOptions?.customPlanetUsed ? (
@@ -86,26 +92,26 @@ const PrivateRoot = () => {
 									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
 								></path>
 							</svg>
-							<span>Custom Planet is currently in use!</span>
+							<span>{t("controller.generatePlanet.customPlanetInUse")}</span>
 						</div>
 						<div className="flex justify-between">
 							<div className="join">
-								<div>
+								{/* <div>
 									<div>
 										<input
 											className="input input-bordered join-item"
 											placeholder="example@mail.com"
 										/>
 									</div>
-								</div>
+								</div> */}
 								<div className="">
-									<button className="btn join-item">INVITE USER</button>
+									{/* <button className="btn join-item">INVITE USER</button> */}
 
 									<button
 										onClick={() => downloadPlanet()}
 										className="btn join-item bg-primary"
 									>
-										Download Planet
+										{t("controller.generatePlanet.downloadPlanetButton")}
 									</button>
 								</div>
 							</div>
@@ -113,15 +119,17 @@ const PrivateRoot = () => {
 								onClick={() => resetWorld()}
 								className="btn btn-outline btn-error"
 							>
-								Restore Original Planet
+								{t("controller.generatePlanet.restoreOriginalPlanetButton")}
 							</button>
 						</div>
 					</div>
 				) : (
 					<InputField
 						isLoading={false}
-						label="Generate private root"
-						placeholder="Add a private root to your controller"
+						label={t("controller.generatePlanet.generatePrivateRootLabel")}
+						placeholder={t(
+							"controller.generatePlanet.generatePrivateRootPlaceholder",
+						)}
 						size="sm"
 						buttonText="ADD"
 						rootFormClassName="space-y-3 "
@@ -130,22 +138,21 @@ const PrivateRoot = () => {
 						fields={[
 							{
 								name: "domain",
-								description: "Add the domain name (optionally)",
+								description: t("controller.generatePlanet.domainDescription"),
 								type: "text",
 								placeholder: "Domain name",
-								value: "",
+								defaultValue: "",
 							},
 							{
 								name: "comment",
-								description: "Add a comment for this planet (optionally)",
+								description: t("controller.generatePlanet.commentDescription"),
 								type: "text",
 								placeholder: "comment",
 								value: "",
 							},
 							{
 								name: "Identity",
-								description:
-									"Identity (optionally). Default value is the content of current identity.public",
+								description: t("controller.generatePlanet.identityDescription"),
 								type: "text",
 								placeholder: "identity",
 								value: getWorld?.identity,
@@ -153,8 +160,9 @@ const PrivateRoot = () => {
 							{
 								name: "endpoints",
 								type: "text",
-								description:
-									"Enter the external IP address of your controller. Use a comma-separated format (IP/PORT) for multiple addresses. For example: '195.181.173.159/443,2a02:6ea0:c024::/443'. Ensure these addresses are globally reachable if you want nodes outside your local network to connect.",
+								description: t(
+									"controller.generatePlanet.endpointsDescription",
+								),
 								placeholder: "IP Address",
 								value: `${getWorld?.ip}/9993`,
 							},
@@ -168,29 +176,6 @@ const PrivateRoot = () => {
 					/>
 				)}
 			</div>
-			{/* <div className="">
-				<p className="">Invite User</p>
-				<p className="text-gray-500 text-sm">
-					This will send a email with the custom planet file for the peer to
-					connect this private root server.
-				</p>
-				<div className="join">
-					<div>
-						<div>
-							<input
-								className="input input-bordered input-sm join-item"
-								placeholder="example@mail.com"
-							/>
-						</div>
-					</div>
-					<div className="">
-						<button className="btn join-item btn-sm">Send Email</button>
-						<button className="btn join-item btn-sm bg-primary">
-							Download Planet
-						</button>
-					</div>
-				</div>
-			</div> */}
 		</div>
 	);
 };
