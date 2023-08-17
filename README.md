@@ -14,19 +14,23 @@
     ·
     <a href="https://github.com/sinamics/ztnet/discussions">Ask a Question</a>
   </p>
+  <div align="center">
 
+  [![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
+  [![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
+  [![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/)
+
+  </div>
 </p>
 <br />
-
-[![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
-[![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
-[![Docker Pulls](https://img.shields.io/docker/pulls/sinamics/ztnet.svg)](https://hub.docker.com/r/sinamics/ztnet/)
 
 ZTNET is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
 
 With a rich palette of features, and an intuitive user interface, ZTNET embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
-## Table of Contents
+
+<details open="open" >
+<summary>Table of Contents</summary>
 
 - [Overview](#next-ztnet)
 - [🔥 Features](#-features)
@@ -41,7 +45,12 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 - [📷 Pictures](#network-page-layout)
 - [⚠️ Disclaimer](#%EF%B8%8F-disclaimer)
 
-## 🔥 Top Features
+</details>
+
+<table>
+<tr>
+<td>
+<h2> 🔥 Top Features </h2>
 
 🍬 **ZeroTier Central API Support**  
 ZTNET integrates seamlessly with the ZeroTier Central, allowing for enhanced management and configuration capabilities directly from our interface.
@@ -60,6 +69,10 @@ Designed for versatility, ZTNET supports multiple architectures - ARM64 and AMD6
 
 📧 **Email Invitations**  
 Easily invite members to your network with the integrated email feature.
+
+</td>
+</tr>
+</table>
 
 ## ⚙️ Installations
 
