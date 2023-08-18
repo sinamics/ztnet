@@ -45,7 +45,7 @@ const NetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
 	const { network, members = [] } = networkById || {};
-	
+
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
@@ -240,7 +240,8 @@ const NetworkById = () => {
 								}
 								className="btn btn-wide"
 							>
-								View stashed members ({networkById?.zombieMembers?.length})
+								{t("deletedNetworkMembersTable.buttons.viewStashedMembers")} (
+								{networkById?.zombieMembers?.length})
 							</button>
 
 							{state.viewZombieTable ? (
