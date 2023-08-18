@@ -12,6 +12,7 @@ interface InputProps {
 	className?: string;
 	defaultValue?: string | number;
 	list?: string;
+	disabled?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
