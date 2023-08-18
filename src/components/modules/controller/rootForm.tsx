@@ -64,9 +64,9 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	useEffect(() => {
 		if (getOptions) {
 			setWorld((prev) => ({
-				plRecommend: getOptions?.plRecommend ?? prev.plRecommend,
-				plBirth: Number(getOptions?.plBirth) ?? prev.plBirth,
-				plID: Number(getOptions?.plID) ?? prev.plID,
+				plRecommend: getOptions?.plRecommend || prev.plRecommend,
+				plBirth: Number(getOptions?.plBirth) || prev.plBirth,
+				plID: Number(getOptions?.plID) || prev.plID,
 				endpoints: getOptions?.plEndpoints,
 				comment: getOptions?.plComment,
 			}));
