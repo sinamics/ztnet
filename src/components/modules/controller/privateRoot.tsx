@@ -73,17 +73,17 @@ const PrivateRoot = () => {
 			.then(() => {
 				refetchOptions();
 				callModal({
-					title: <p>{t("controller.generatePlanet.noteTitle")}</p>,
+					title: <p>{t("controller.generatePlanet.modal.noteTitle")}</p>,
 					rootStyle: "text-left border border-yellow-300/30",
 					showButtons: true,
 					closeModalOnSubmit: true,
 					content: (
 						<span>
-							{t("controller.generatePlanet.customPlanetGenerated")}
+							{t("controller.generatePlanet.modal.customPlanetGenerated")}
 							<br />
 							<p>
 								{t.rich(
-									"controller.generatePlanet.restartContainerInstructions",
+									"controller.generatePlanet.modal.restartContainerInstructions",
 									{
 										span: (content) => (
 											<span className="text-yellow-300">{content} </span>
@@ -147,22 +147,27 @@ const PrivateRoot = () => {
 										onClick={() => downloadPlanet()}
 										className="btn join-item bg-primary"
 									>
-										{t("controller.generatePlanet.downloadPlanetButton")}
+										{t(
+											"controller.generatePlanet.buttons.downloadPlanetButton",
+										)}
 									</button>
 									<button
 										onClick={() => setOpen(!open)}
 										className="btn join-item"
 									>
-										EDIT PLANET CONFIG
+										{t("controller.generatePlanet.buttons.editPlanetConfig")}
 									</button>
 								</div>
 
 								<button
 									onClick={() =>
 										callModal({
-											title: "Restore Original Planet",
-											content:
-												"Are you sure you want to restore the original planet file? Make sure to backup your current planet file if you want to keep the current keys",
+											title: t(
+												"controller.generatePlanet.modal.restoreOriginalPlanetTitle",
+											),
+											content: t(
+												"controller.generatePlanet.modal.restoreOriginalPlanetContent",
+											),
 											yesAction: () => {
 												resetWorld();
 												setOpen(false);
@@ -171,7 +176,9 @@ const PrivateRoot = () => {
 									}
 									className="btn btn-outline btn-error"
 								>
-									{t("controller.generatePlanet.restoreOriginalPlanetButton")}
+									{t(
+										"controller.generatePlanet.buttons.restoreOriginalPlanetButton",
+									)}
 								</button>
 							</div>
 							{open ? <RootForm onClose={closeForm} /> : null}
@@ -200,7 +207,7 @@ const PrivateRoot = () => {
 									data-testid="view-form"
 									className="btn btn-sm"
 								>
-									CREATE PLANET
+									{t("controller.generatePlanet.buttons.createPlanet")}
 								</button>
 								<input
 									type="file"
@@ -214,7 +221,7 @@ const PrivateRoot = () => {
 									className="btn btn-sm"
 									onClick={triggerFileInput}
 								>
-									UPLOAD CONFIG
+									{t("controller.generatePlanet.buttons.uploadConfig")}
 								</button>
 							</div>
 						</div>

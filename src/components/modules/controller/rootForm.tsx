@@ -24,17 +24,17 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		onSuccess: () => {
 			// refetchOptions();
 			callModal({
-				title: <p>{t("controller.generatePlanet.noteTitle")}</p>,
+				title: <p>{t("controller.generatePlanet.modal.noteTitle")}</p>,
 				rootStyle: "text-left border border-yellow-300/30",
 				showButtons: true,
 				closeModalOnSubmit: true,
 				content: (
 					<span>
-						{t("controller.generatePlanet.customPlanetGenerated")}
+						{t("controller.generatePlanet.modal.customPlanetGenerated")}
 						<br />
 						<p>
 							{t.rich(
-								"controller.generatePlanet.restartContainerInstructions",
+								"controller.generatePlanet.modal.restartContainerInstructions",
 								{
 									span: (content) => (
 										<span className="text-yellow-300">{content} </span>
@@ -77,25 +77,34 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
 		const target = e.target as HTMLInputElement;
-		const value = target.type === "checkbox" ? target.checked : target.value;
+		let value;
+
+		switch (target.type) {
+			case "checkbox":
+				value = target.checked;
+				break;
+			case "number":
+				value = parseInt(target.value, 10);
+				break;
+			default:
+				value = target.value;
+		}
 
 		setWorld({
 			...world,
 			[e.target.name]: value,
 		});
 	};
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		// Handle the form submission here.
-	};
 
 	return (
 		<>
 			{/* Display list of root nodes */}
-			<form onSubmit={handleSubmit} className="pt-6 rounded-md space-y-4">
+			<form className="pt-6 rounded-md space-y-4">
 				{!getOptions?.customPlanetUsed ? (
 					<div className="flex flex-col space-y-2">
-						<span className="label-text">Auto-Generate IDs</span>
+						<span className="label-text">
+							{t("controller.generatePlanet.plRecommend")}
+						</span>
 						<input
 							name="plRecommend"
 							type="checkbox"
@@ -107,11 +116,13 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				) : null}
 				<div className="flex justify-between gap-5">
 					<div className="w-full">
-						<label className="block text-gray-500 mb-2">Birth (plBirth)</label>
+						<label className="block text-gray-500 mb-2">
+							{t("controller.generatePlanet.birthLabel")}
+						</label>
 						<Input
 							name="plBirth"
 							type="number"
-							placeholder="Enter Birth"
+							placeholder={t("controller.generatePlanet.birthLabel")}
 							value={world.plBirth}
 							onChange={inputChange}
 							className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
@@ -120,11 +131,13 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					</div>
 
 					<div className="w-full">
-						<label className="block text-gray-500 mb-2">ID (plID)</label>
+						<label className="block text-gray-500 mb-2">
+							{t("controller.generatePlanet.idLabel")}
+						</label>
 						<Input
 							name="plID"
 							type="number"
-							placeholder="Enter ID"
+							placeholder={t("controller.generatePlanet.idPlaceholder")}
 							value={world.plID}
 							onChange={inputChange}
 							className="input-bordered input-md px-3 w-full py-2 rounded-md border-gray-300"
@@ -133,11 +146,13 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					</div>
 				</div>
 				<div>
-					<label className="block text-gray-500 mb-2">Endpoints</label>
+					<label className="block text-gray-500 mb-2">
+						{t("controller.generatePlanet.endpointsDescription")}
+					</label>
 					<Input
 						name="endpoints"
 						type="text"
-						placeholder="Enter Domain"
+						placeholder={t("controller.generatePlanet.endpointsPlaceholder")}
 						value={world?.endpoints}
 						onChange={inputChange}
 						className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
@@ -145,30 +160,35 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				</div>
 
 				<div>
-					<label className="block text-gray-500 mb-2">Comment</label>
+					<label className="block text-gray-500 mb-2">
+						{t("controller.generatePlanet.commentDescription")}
+					</label>
 					<Input
 						name="comment"
 						type="text"
-						placeholder="Enter Comment"
+						placeholder={t("controller.generatePlanet.commentPlaceholder")}
 						value={world?.comment}
 						onChange={inputChange}
 						className="px-3 py-2 w-full rounded-md border-gray-300"
 					/>
 				</div>
 				<button
-					onClick={() =>
+					onClick={(e) => {
+						e.preventDefault();
 						makeWorld(world, {
 							onSuccess: () => {
 								refetchOptions();
 
 								if (onClose) onClose();
 							},
-						})
-					}
+						});
+					}}
 					className={"btn btn-primary btn-md"}
 					type="submit"
 				>
-					{getOptions?.customPlanetUsed ? "Update World" : "Create World"}
+					{getOptions?.customPlanetUsed
+						? t("controller.generatePlanet.buttons.updateWorld")
+						: t("controller.generatePlanet.buttons.createPlanet")}
 				</button>
 			</form>
 		</>
