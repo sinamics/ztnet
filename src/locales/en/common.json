@@ -372,7 +372,7 @@
 				"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
 				"updatePlanetWarning": "Updating the planet file will modify the core structure of your ZeroTier network, impacting routes, flexibility, and potentially availability. Proceed with caution, understanding the implications.",
 				"customPlanetInUse": "Custom Planet is currently in use!",
-				"downloadPlanetButton": "Download Planet",
+				"downloadPlanetButton": "Download Config",
 				"restoreOriginalPlanetButton": "Restore Original Planet",
 				"generatePrivateRootLabel": "Generate private root",
 				"generatePrivateRootPlaceholder": "Add a private root to your controller",

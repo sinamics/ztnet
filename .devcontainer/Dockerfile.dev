@@ -1,7 +1,7 @@
 FROM node:18-bullseye-slim
 
 ENV NODE_ENV development
-RUN apt update && apt install -y git curl sudo postgresql-client procps nano
+RUN apt update && apt install -y unzip git curl sudo postgresql-client procps nano
 
 # RUN chmod +x .devcontainer/init-cmd.sh
 
