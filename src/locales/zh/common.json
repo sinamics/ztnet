@@ -380,7 +380,7 @@
 				"commentPlaceholder": "输入评论",
 				"identityDescription": "身份（可选）。默认值是当前identity.public的内容",
 				"endpointsDescription": "输入您控制器的外部IP地址。对于多个地址，请使用逗号分隔的格式（IP/端口）。例如：'84.17.53.155/9993,2a02:6ea0:d405::9993'。如果您希望本地网络外的节点连接，请确保这些地址可以全球访问。",
-				"endpointsPlaceholder": "输入端点",
+				"endpointsPlaceholder": "外部 IP/9993",
 				"plRecommend": "自动生成ID",
 				"birthLabel": "出生 (plBirth)",
 				"birthPlaceholder": "输入出生日期",

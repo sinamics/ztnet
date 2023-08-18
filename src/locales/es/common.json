@@ -380,7 +380,7 @@
 				"commentPlaceholder": "Ingresar Comentario",
 				"identityDescription": "Identidad (opcionalmente). El valor predeterminado es el contenido de la identidad actual.public",
 				"endpointsDescription": "Introduce la dirección IP externa de tu controlador. Utiliza un formato separado por comas (IP/PUERTO) para múltiples direcciones. Por ejemplo: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Asegúrate de que estas direcciones sean accesibles globalmente si quieres que los nodos fuera de tu red local se conecten.",
-				"endpointsPlaceholder": "Ingresar Puntos Finales",
+				"endpointsPlaceholder":  "ip externa/9993",
 				"plRecommend": "Auto-Generar IDs",
 				"birthLabel": "Nacimiento (plBirth)",
 				"birthPlaceholder": "Ingresar Fecha de Nacimiento",
