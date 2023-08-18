@@ -366,22 +366,37 @@
 				"zerotier_secret": "Zerotier密码",
 				"submit_empty_field_default": "提交空字段以使用默认值。"
 			},
-			"generatePlanet": {
-				"noteTitle": "注意!",
-				"customPlanetGenerated": "已生成自定义星球。",
-				"restartContainerInstructions": "您需要重新启动zerotier容器以加载新配置：<br></br><br></br><span>docker 重启 zerotier</span>",
-				"dockerRestartCommand": "docker 重启 zerotier",
-				"updatePlanetWarning": "更新行星文件将修改您的ZeroTier网络的核心结构，影响路由、灵活性和可能的可用性。在理解后果的情况下小心进行。",
-				"customPlanetInUse": "当前正在使用自定义星球！",
-				"downloadPlanetButton": "下载星球",
-				"restoreOriginalPlanetButton": "恢复原始星球",
-				"generatePrivateRootLabel": "生成私人根",
-				"generatePrivateRootPlaceholder": "向控制器添加私人根",
-				"domainDescription": "添加域名（可选）",
-				"commentDescription": "为此星球添加评论（可选）",
+      "generatePlanet": {
+				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
+				"customPlanetInUse": "自定义星球目前正在使用中！",
+				"generatePrivateRootLabel": "生成私有根",
+				"generatePrivateRootPlaceholder": "为您的控制器添加私有根",
+				"commentDescription": "为此星球添加注释（可选）",
+				"commentPlaceholder": "输入评论",
 				"identityDescription": "身份（可选）。默认值是当前identity.public的内容",
-				"endpointsDescription": "输入控制器的外部IP地址。使用逗号分隔的格式（IP/PORT）输入多个地址。例如：'84.17.53.155/9993,2a02:6ea0:d405::9993'。确保如果您希望本地网络之外的节点连接，这些地址是全球可达的。"
-			},
+				"endpointsDescription": "输入您控制器的外部IP地址。对于多个地址，请使用逗号分隔的格式（IP/端口）。例如：'84.17.53.155/9993,2a02:6ea0:d405::9993'。如果您希望本地网络外的节点连接，请确保这些地址可以全球访问。",
+				"endpointsPlaceholder": "输入端点",
+				"plRecommend": "自动生成ID",
+				"birthLabel": "出生 (plBirth)",
+				"birthPlaceholder": "输入出生日期",
+				"idLabel": "身份 (plID)",
+				"idPlaceholder": "输入ID",
+				"buttons":{
+					"editPlanetConfig": "编辑行星配置",
+					"createPlanet": "创建行星",
+					"uploadConfig": "上传配置",
+					"updateWorld": "更新世界",
+					"downloadPlanetButton": "下载配置",
+					"restoreOriginalPlanetButton": "恢复原始星球"
+				},
+				"modal":{
+					"noteTitle": "注意！",
+					"customPlanetGenerated": "已生成自定义星球。",
+					"restartContainerInstructions": "您需要重新启动zerotier容器以加载新配置：<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "恢复原始星球",
+					"restoreOriginalPlanetContent": "您确定要恢复原始星球文件吗？如果您想保留当前的密钥，请确保备份您当前的星球文件"
+				}
+		},
 			"yes": "是",
 			"no": "否"
 		}
