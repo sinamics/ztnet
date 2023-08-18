@@ -1,61 +1,18 @@
 import { useTranslations } from "next-intl";
-import React from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import InputField from "~/components/elements/inputField";
-import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
+import RootForm from "./rootForm";
 
 const PrivateRoot = () => {
 	const t = useTranslations("admin");
-
+	const [open, setOpen] = useState(false);
 	const { callModal } = useModalStore((state) => state);
-	const { data: getWorld } = api.admin.getWorld.useQuery();
-
+	const { data: getOptions } = api.settings.getAllOptions.useQuery();
 	const { data: globalOptions, refetch: refetchOptions } =
 		api.settings.getAllOptions.useQuery();
-
-	const { mutate: makeWorld } = api.admin.makeWorld.useMutation({
-		onSuccess: () => {
-			refetchOptions();
-			callModal({
-				title: <p>{t("controller.generatePlanet.noteTitle")}</p>,
-				rootStyle: "text-left border border-yellow-300/30",
-				showButtons: true,
-				closeModalOnSubmit: true,
-				content: (
-					<span>
-						{t("controller.generatePlanet.customPlanetGenerated")}
-						<br />
-						<p>
-							{t.rich(
-								"controller.generatePlanet.restartContainerInstructions",
-								{
-									span: (content) => (
-										<span className="text-yellow-300">{content} </span>
-									),
-									br: () => <br />,
-								},
-							)}
-						</p>
-					</span>
-				),
-			});
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-	});
+	const closeForm = () => setOpen(false);
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
 		onSuccess: () => {
 			refetchOptions();
@@ -64,7 +21,7 @@ const PrivateRoot = () => {
 	});
 	async function downloadPlanet() {
 		try {
-			const response = await fetch("/api/planet");
+			const response = await fetch("/api/downloadPlanet");
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}
@@ -74,7 +31,7 @@ const PrivateRoot = () => {
 			a.style.display = "none";
 			a.href = url;
 			// the filename you want
-			a.download = "planet.custom";
+			a.download = "ztnet-world.zip";
 			document.body.appendChild(a);
 			a.click();
 			window.URL.revokeObjectURL(url);
@@ -82,7 +39,69 @@ const PrivateRoot = () => {
 			console.error("There was an error downloading the file:", error);
 		}
 	}
+	const handleFileChange = (event) => {
+		const file = event.target.files[0];
+		if (file) {
+			// Handle file upload here. For example, send it to your server.
+			uploadFile(file);
+		}
+	};
 
+	const triggerFileInput = () => {
+		const fileInput = document.getElementById("fileInput");
+		fileInput.click();
+	};
+
+	const uploadFile = (file) => {
+		// This is just a basic example. Adjust it to your needs.
+		const formData = new FormData();
+		formData.append("file", file);
+
+		fetch("/api/uploadPlanet", {
+			method: "POST",
+			body: formData,
+		})
+			.then((response) => {
+				if (!response.ok) {
+					// Convert non-2xx HTTP responses into errors
+					return response.json().then((data) => {
+						throw new Error(data.error || "Unknown error");
+					});
+				}
+				return response.json();
+			})
+			.then(() => {
+				refetchOptions();
+				callModal({
+					title: <p>{t("controller.generatePlanet.noteTitle")}</p>,
+					rootStyle: "text-left border border-yellow-300/30",
+					showButtons: true,
+					closeModalOnSubmit: true,
+					content: (
+						<span>
+							{t("controller.generatePlanet.customPlanetGenerated")}
+							<br />
+							<p>
+								{t.rich(
+									"controller.generatePlanet.restartContainerInstructions",
+									{
+										span: (content) => (
+											<span className="text-yellow-300">{content} </span>
+										),
+										br: () => <br />,
+									},
+								)}
+							</p>
+						</span>
+					),
+				});
+			})
+			.catch((error) => {
+				console.error("Error uploading the file:", error);
+				// Display the error message to the user using toast or another method
+				toast.error(error.message);
+			});
+	};
 	return (
 		<div className="space-y-4">
 			<div>
@@ -90,103 +109,117 @@ const PrivateRoot = () => {
 					{t("controller.generatePlanet.updatePlanetWarning")}
 				</p>
 				{globalOptions?.customPlanetUsed ? (
-					<div className="space-y-4">
-						<div className="alert">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								className="stroke-info shrink-0 w-6 h-6"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-								></path>
-							</svg>
-							<span>{t("controller.generatePlanet.customPlanetInUse")}</span>
-						</div>
-						<div className="flex justify-between">
-							<div className="join">
-								{/* <div>
-									<div>
-										<input
-											className="input input-bordered join-item"
-											placeholder="example@mail.com"
-										/>
-									</div>
-								</div> */}
-								<div className="">
-									{/* <button className="btn join-item">INVITE USER</button> */}
+					<>
+						<div className="space-y-4">
+							<div className="alert">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									className="stroke-info shrink-0 w-6 h-6"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+									></path>
+								</svg>
+								<span>{t("controller.generatePlanet.customPlanetInUse")}</span>
+							</div>
+							<div className="border border-primary p-4 my-4 rounded">
+								<p>
+									<strong>Comments:</strong> {getOptions?.plComment}
+								</p>
+								<p>
+									<strong>Endpoints:</strong> {getOptions?.plEndpoints}
+								</p>
+								<p>
+									<strong>Identity:</strong>{" "}
+									{getOptions?.plIdentity?.substring(0, 50)}
+									...
+								</p>
+							</div>
 
+							<div className="flex justify-between">
+								<div className="flex gap-3">
 									<button
 										onClick={() => downloadPlanet()}
 										className="btn join-item bg-primary"
 									>
 										{t("controller.generatePlanet.downloadPlanetButton")}
 									</button>
+									<button
+										onClick={() => setOpen(!open)}
+										className="btn join-item"
+									>
+										EDIT PLANET CONFIG
+									</button>
+								</div>
+
+								<button
+									onClick={() =>
+										callModal({
+											title: "Restore Original Planet",
+											content:
+												"Are you sure you want to restore the original planet file? Make sure to backup your current planet file if you want to keep the current keys",
+											yesAction: () => {
+												resetWorld();
+												setOpen(false);
+											},
+										})
+									}
+									className="btn btn-outline btn-error"
+								>
+									{t("controller.generatePlanet.restoreOriginalPlanetButton")}
+								</button>
+							</div>
+							{open ? <RootForm onClose={closeForm} /> : null}
+						</div>
+					</>
+				) : (
+					<>
+						<div className="flex w-full justify-between">
+							<div className={"cursor-pointer"}>
+								<div className="flex font-medium">
+									<span>
+										{t("controller.generatePlanet.generatePrivateRootLabel")}
+									</span>
+								</div>
+								<div>
+									<p className="m-0 p-0 text-xs text-gray-500">
+										{t(
+											"controller.generatePlanet.generatePrivateRootPlaceholder",
+										)}
+									</p>
 								</div>
 							</div>
-							<button
-								onClick={() => resetWorld()}
-								className="btn btn-outline btn-error"
-							>
-								{t("controller.generatePlanet.restoreOriginalPlanetButton")}
-							</button>
+							<div className="flex gap-3">
+								<button
+									onClick={() => setOpen(!open)}
+									data-testid="view-form"
+									className="btn btn-sm"
+								>
+									CREATE PLANET
+								</button>
+								<input
+									type="file"
+									id="fileInput"
+									style={{ display: "none" }}
+									onChange={handleFileChange}
+									accept=".zip"
+								/>
+								<button
+									data-testid="view-form"
+									className="btn btn-sm"
+									onClick={triggerFileInput}
+								>
+									UPLOAD CONFIG
+								</button>
+							</div>
 						</div>
-					</div>
-				) : (
-					<InputField
-						isLoading={false}
-						label={t("controller.generatePlanet.generatePrivateRootLabel")}
-						placeholder={t(
-							"controller.generatePlanet.generatePrivateRootPlaceholder",
-						)}
-						size="sm"
-						buttonText="ADD"
-						rootFormClassName="space-y-3 "
-						rootClassName=""
-						labelClassName="text-sm leading-tight py-1"
-						fields={[
-							{
-								name: "domain",
-								description: t("controller.generatePlanet.domainDescription"),
-								type: "text",
-								placeholder: "Domain name",
-								defaultValue: "",
-							},
-							{
-								name: "comment",
-								description: t("controller.generatePlanet.commentDescription"),
-								type: "text",
-								placeholder: "comment",
-								value: "",
-							},
-							{
-								name: "Identity",
-								description: t("controller.generatePlanet.identityDescription"),
-								type: "text",
-								placeholder: "identity",
-								value: getWorld?.identity,
-							},
-							{
-								name: "endpoints",
-								type: "text",
-								description: t(
-									"controller.generatePlanet.endpointsDescription",
-								),
-								placeholder: "IP Address",
-								value: `${getWorld?.ip}/9993`,
-							},
-						]}
-						submitHandler={(params) =>
-							new Promise((resolve) => {
-								makeWorld(params);
-								resolve(true);
-							})
-						}
-					/>
+						{open ? <RootForm onClose={closeForm} /> : null}
+					</>
 				)}
 			</div>
 		</div>
