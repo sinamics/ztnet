@@ -154,7 +154,7 @@
 				"actions": {
 					"header": "操作",
 					"optionBtn": "选项",
-					"stashBtn": "存储"
+					"stashBtn": "隐藏"
 				}
 			},
 			"optionModalTitle": "成员选项",
@@ -171,6 +171,11 @@
 			},
 			"search": {
 				"placeholder": "搜索任何东西..."
+			}
+		},
+		"deletedNetworkMembersTable":{
+			"buttons":{
+				"viewStashedMembers":"显示隐藏的成员"
 			}
 		},
 		"inviteMemberByMail": {
