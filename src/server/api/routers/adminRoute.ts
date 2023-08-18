@@ -768,61 +768,16 @@ export const adminRouter = createTRPCRouter({
 			}
 		}),
 	resetWorld: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
-		try {
-			// Define backup folder and planet path
-			const zerotierOneDir = "/var/lib/zerotier-one";
-			const backupDir = `${zerotierOneDir}/planet_backup`;
-			const planetPath = "/var/lib/zerotier-one/planet";
-			const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
+		const zerotierOneDir = "/var/lib/zerotier-one";
+		const paths = {
+			backupDir: `${zerotierOneDir}/planet_backup`,
+			planetPath: `${zerotierOneDir}/planet`,
+			mkworldDir: `${zerotierOneDir}/zt-mkworld`,
+		};
 
-			// Ensure backup directory exists
-			if (!fs.existsSync(backupDir)) {
-				// Update the customPlanetUsed to false, as you're now using the original planet
-				await ctx.prisma.globalOptions.update({
-					where: {
-						id: 1,
-					},
-					data: {
-						customPlanetUsed: false,
-						plBirth: 0,
-						plID: 0,
-						plEndpoints: "",
-						plComment: "",
-						plRecommend: false,
-						plIdentity: "",
-					},
-				});
-				throwError("Backup directory does not exist.");
-			}
-
-			// Get list of backup files and sort them to find the most recent
-			const backups = fs
-				.readdirSync(backupDir)
-				.filter((file) => file.startsWith("planet.bak."))
-				.sort();
-
-			// If there are no backups, throw an error
-			if (backups.length === 0) {
-				throwError("No backup files found.");
-			}
-
-			// Get the latest backup
-			const latestBackup = backups.at(-1);
-
-			// Copy the latest backup to planet location
-			fs.copyFileSync(`${backupDir}/${latestBackup}`, planetPath);
-
-			// Remove the backup directory
-			fs.rmSync(backupDir, { recursive: true, force: true });
-
-			// Remove the mkworld config directory
-			fs.rmSync(mkworldDir, { recursive: true, force: true });
-
-			// Update the customPlanetUsed to false, as you're now using the original planet
+		const resetDatabase = async () => {
 			await ctx.prisma.globalOptions.update({
-				where: {
-					id: 1,
-				},
+				where: { id: 1 },
 				data: {
 					customPlanetUsed: false,
 					plBirth: 0,
@@ -833,8 +788,36 @@ export const adminRouter = createTRPCRouter({
 					plIdentity: "",
 				},
 			});
+		};
+
+		try {
+			// Ensure backup directory exists
+			if (!fs.existsSync(paths.backupDir)) {
+				await resetDatabase();
+				throw new Error("Backup directory does not exist.");
+			}
+
+			// Get list of backup files and find the most recent
+			const backups = fs
+				.readdirSync(paths.backupDir)
+				.filter((file) => file.startsWith("planet.bak."))
+				.sort();
+
+			if (backups.length === 0) {
+				throw new Error("No backup files found.");
+			}
+
+			// Restore from the latest backup
+			const latestBackup = backups.at(-1);
+			fs.copyFileSync(`${paths.backupDir}/${latestBackup}`, paths.planetPath);
+
+			// Clean up backup and mkworld directories
+			fs.rmSync(paths.backupDir, { recursive: true, force: true });
+			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
+
+			await resetDatabase();
 			return { success: true };
-		} catch (err: unknown) {
+		} catch (err) {
 			if (err instanceof Error) {
 				throwError(`Error during reset: ${err.message}`);
 			} else {
