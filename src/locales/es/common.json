@@ -173,6 +173,11 @@
 				"placeholder": "Buscar cualquier cosa..."
 			}
 		},
+		"deletedNetworkMembersTable":{
+			"buttons":{
+				"viewStashedMembers":"Ver miembros almacenados"
+			}
+		},
 		"inviteMemberByMail": {
 			"title": "Correo",
 			"labelText": "Instrucciones para unirse por correo electrónico",

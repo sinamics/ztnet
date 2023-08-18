@@ -173,6 +173,11 @@
 				"placeholder": "Search anything..."
 			}
 		},
+		"deletedNetworkMembersTable":{
+			"buttons":{
+				"viewStashedMembers":"View stashed members"
+			}
+		},
 		"inviteMemberByMail": {
 			"title": "Mail",
 			"labelText": "E-Mail Join Instructions",

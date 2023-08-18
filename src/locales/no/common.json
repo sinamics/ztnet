@@ -173,6 +173,11 @@
 				"placeholder": "Søk etter noe..."
 			}
 		},
+		"deletedNetworkMembersTable":{
+			"buttons":{
+				"viewStashedMembers":"Se lagrede medlemmer"
+			}
+		},
 		"inviteMemberByMail": {
 			"title": "Epost",
 			"labelText": "E-postinvitasjonsinstruksjoner",
