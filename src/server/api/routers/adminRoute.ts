@@ -784,6 +784,12 @@ export const adminRouter = createTRPCRouter({
 					},
 					data: {
 						customPlanetUsed: false,
+						plBirth: 0,
+						plID: 0,
+						plEndpoints: "",
+						plComment: "",
+						plRecommend: false,
+						plIdentity: "",
 					},
 				});
 				throwError("Backup directory does not exist.");
@@ -819,6 +825,12 @@ export const adminRouter = createTRPCRouter({
 				},
 				data: {
 					customPlanetUsed: false,
+					plBirth: 0,
+					plID: 0,
+					plEndpoints: "",
+					plComment: "",
+					plRecommend: false,
+					plIdentity: "",
 				},
 			});
 			return { success: true };
