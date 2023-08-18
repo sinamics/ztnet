@@ -15,7 +15,7 @@ import { type ZTControllerNodeStatus } from "~/types/ztController";
 import { NetworkAndMemberResponse } from "~/types/network";
 import { execSync } from "child_process";
 import fs from "fs";
-import axios from "axios";
+import { WorldConfig } from "~/types/worldConfig";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -602,115 +602,143 @@ export const adminRouter = createTRPCRouter({
 			}
 		}),
 
-	getWorld: adminRoleProtectedRoute.query(async () => {
-		try {
-			// Using ip.sb as an example service to get the public IP
-			const response = await axios.get("https://api.ip.sb/ip");
-			let identity = "";
-			const identityPath = "/var/lib/zerotier-one/identity.public";
-
-			if (fs.existsSync(identityPath)) {
-				identity = fs.readFileSync(identityPath, "utf-8").trim();
-			}
-
-			return { ip: response.data.trim(), identity };
-		} catch (err) {
-			if (err instanceof Error) {
-				throw new Error(`Failed to retrieve public IP: ${err.message}`);
-			} else {
-				throw new Error("An unknown error occurred while retrieving public IP");
-			}
-		}
-	}),
 	makeWorld: adminRoleProtectedRoute
 		.input(
-			z.object({
-				domain: z.string().optional(),
-				endpoints: z.string(),
-				comment: z.string().optional(),
-				identity: z.string().optional(),
-			}),
+			z
+				.object({
+					plID: z.number().optional(),
+					plRecommend: z.boolean().default(true),
+					plBirth: z.number().optional(),
+					comment: z.string().optional(),
+					identity: z.string().optional(),
+					endpoints: z.string(),
+				})
+				.refine(
+					// Validator function
+					(data) => {
+						if (!data.plRecommend) {
+							return data.plID !== null && data.plBirth !== null;
+						}
+						return true;
+					},
+					// Error message
+					{
+						message:
+							"If plRecommend is false, both plID and plBirth need to be provided.",
+						path: ["plID", "plBirth"], // Path of the fields the error refers to
+					},
+				)
+				.refine(
+					(data) => {
+						if (
+							data.plID === 149604618 || // official world in production ZeroTier Cloud
+							data.plID === 227883110 || // reserved world for future
+							data.plBirth === 1567191349589
+						) {
+							return false;
+						}
+						if (!data.plRecommend && data.plBirth <= 1567191349589) {
+							return false;
+						}
+						return true;
+					},
+					{
+						message:
+							"Invalid Planet ID / Birth values provided. Consider using recommended values.",
+						path: ["plID", "plBirth"],
+					},
+				),
 		)
+
 		.mutation(async ({ ctx, input }) => {
+			// console.log(JSON.stringify(input, null, 2));
+			// return { success: true };
 			try {
+				const zerotierOneDir = "/var/lib/zerotier-one";
+				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
+				const planetPath = `${zerotierOneDir}/planet`;
+				const backupDir = `${zerotierOneDir}/planet_backup`;
+
 				// Check for write permission on the directory
-				const volumePath = "/var/lib/zerotier-one";
 				try {
-					fs.accessSync(volumePath, fs.constants.W_OK);
+					fs.accessSync(zerotierOneDir, fs.constants.W_OK);
 				} catch (_err) {
 					throwError(
-						`Please remove the :ro flag from the docker volume mount for ${volumePath}`,
+						`Please remove the :ro flag from the docker volume mount for ${zerotierOneDir}`,
 					);
 				}
 				// Check if identity.public exists
-				if (!fs.existsSync("/var/lib/zerotier-one/identity.public")) {
+				if (!fs.existsSync(`${zerotierOneDir}/identity.public`)) {
 					throwError(
 						"identity.public file does NOT exist, cannot generate planet file.",
 					);
 				}
-				const ztmkworldPath = "/usr/local/bin/ztmkworld";
-				if (!fs.existsSync(ztmkworldPath)) {
+
+				// Check if ztmkworld executable exists
+				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
+				if (!fs.existsSync(ztmkworldBinPath)) {
 					throwError(
 						"ztmkworld executable does not exist at the specified location.",
 					);
 				}
-				// Ensure /etc/zt-mkworld directory exists
-				const mkworldDir = "/etc/zt-mkworld";
+				// Ensure /var/lib/zerotier-one/zt-mkworld directory exists
 				if (!fs.existsSync(mkworldDir)) {
 					fs.mkdirSync(mkworldDir);
 				}
 
 				// Backup existing planet file if it exists
-				const planetPath = "/var/lib/zerotier-one/planet";
 				if (fs.existsSync(planetPath)) {
-					const backupFolder = "/var/lib/zerotier-one/planet_backup";
-					if (!fs.existsSync(backupFolder)) {
-						fs.mkdirSync(backupFolder);
+					// we only backup the orginal planet file once
+					if (!fs.existsSync(backupDir)) {
+						fs.mkdirSync(backupDir);
+
+						const timestamp = new Date()
+							.toISOString()
+							.replace(/[^a-zA-Z0-9]/g, "_");
+						fs.copyFileSync(planetPath, `${backupDir}/planet.bak.${timestamp}`);
 					}
-					const timestamp = new Date()
-						.toISOString()
-						.replace(/[^a-zA-Z0-9]/g, "_");
-					fs.copyFileSync(
-						planetPath,
-						`${backupFolder}/planet.bak.${timestamp}`,
-					);
 				}
 				const identity =
 					input.identity ||
-					fs
-						.readFileSync("/var/lib/zerotier-one/identity.public", "utf-8")
-						.trim();
+					fs.readFileSync(`${zerotierOneDir}/identity.public`, "utf-8").trim();
 
-				const config = {
+				const config: WorldConfig = {
 					rootNodes: [
 						{
-							comments: `custom planet - ${
-								input.domain || "default.domain"
-							} - ${input.endpoints}`,
+							comments: `${input.comment || "default.domain"}`,
 							identity,
 							endpoints: [input.endpoints],
 						},
 					],
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
-					plID: 0,
-					plBirth: 0,
-					plRecommend: true,
+					plID: input.plID || 0,
+					plBirth: input.plBirth || 0,
+					plRecommend: input.plRecommend,
 				};
+
 				fs.writeFileSync(
-					"/etc/zt-mkworld/mkworld.config.json",
+					`${mkworldDir}/mkworld.config.json`,
 					JSON.stringify(config),
 				);
 
 				// Run ztmkworld command
-				execSync(
-					"cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
-				);
-
+				try {
+					execSync(
+						// "cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
+						// use mkworldDir
+						`cd ${mkworldDir} && ${ztmkworldBinPath} -c ${mkworldDir}/mkworld.config.json`,
+					);
+				} catch (_error) {
+					throwError(
+						"Could not create planet file. Please make sure your config is valid.",
+					);
+				}
 				// Copy generated planet file
 				fs.copyFileSync(
-					"/etc/zt-mkworld/planet.custom",
-					"/var/lib/zerotier-one/planet",
+					`${mkworldDir}/planet.custom`,
+					// "/var/lib/zerotier-one/planet",
+					planetPath,
 				);
 
 				await ctx.prisma.globalOptions.update({
@@ -719,10 +747,16 @@ export const adminRouter = createTRPCRouter({
 					},
 					data: {
 						customPlanetUsed: true,
+						plBirth: config.plBirth,
+						plID: config.plID,
+						plEndpoints: config.rootNodes[0].endpoints[0],
+						plComment: config.rootNodes[0].comments,
+						plRecommend: config.plRecommend,
+						plIdentity: config.rootNodes[0].identity,
 					},
 				});
 
-				return { success: true };
+				return config;
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
@@ -734,55 +768,56 @@ export const adminRouter = createTRPCRouter({
 			}
 		}),
 	resetWorld: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
-		try {
-			// Define backup folder and planet path
-			const backupFolder = "/var/lib/zerotier-one/planet_backup";
-			const planetPath = "/var/lib/zerotier-one/planet";
+		const zerotierOneDir = "/var/lib/zerotier-one";
+		const paths = {
+			backupDir: `${zerotierOneDir}/planet_backup`,
+			planetPath: `${zerotierOneDir}/planet`,
+			mkworldDir: `${zerotierOneDir}/zt-mkworld`,
+		};
 
+		const resetDatabase = async () => {
+			await ctx.prisma.globalOptions.update({
+				where: { id: 1 },
+				data: {
+					customPlanetUsed: false,
+					plBirth: 0,
+					plID: 0,
+					plEndpoints: "",
+					plComment: "",
+					plRecommend: false,
+					plIdentity: "",
+				},
+			});
+		};
+
+		try {
 			// Ensure backup directory exists
-			if (!fs.existsSync(backupFolder)) {
-				// Update the customPlanetUsed to false, as you're now using the original planet
-				await ctx.prisma.globalOptions.update({
-					where: {
-						id: 1,
-					},
-					data: {
-						customPlanetUsed: false,
-					},
-				});
-				throwError("Backup directory does not exist.");
+			if (!fs.existsSync(paths.backupDir)) {
+				await resetDatabase();
+				throw new Error("Backup directory does not exist.");
 			}
 
-			// Get list of backup files and sort them to find the most recent
+			// Get list of backup files and find the most recent
 			const backups = fs
-				.readdirSync(backupFolder)
+				.readdirSync(paths.backupDir)
 				.filter((file) => file.startsWith("planet.bak."))
 				.sort();
 
-			// If there are no backups, throw an error
 			if (backups.length === 0) {
-				throwError("No backup files found.");
+				throw new Error("No backup files found.");
 			}
 
-			// Get the latest backup
+			// Restore from the latest backup
 			const latestBackup = backups.at(-1);
+			fs.copyFileSync(`${paths.backupDir}/${latestBackup}`, paths.planetPath);
 
-			// Copy the latest backup to planet location
-			fs.copyFileSync(`${backupFolder}/${latestBackup}`, planetPath);
+			// Clean up backup and mkworld directories
+			fs.rmSync(paths.backupDir, { recursive: true, force: true });
+			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
 
-			// Remove the backup directory
-			fs.rmSync(backupFolder, { recursive: true, force: true });
-			// Update the customPlanetUsed to false, as you're now using the original planet
-			await ctx.prisma.globalOptions.update({
-				where: {
-					id: 1,
-				},
-				data: {
-					customPlanetUsed: false,
-				},
-			});
+			await resetDatabase();
 			return { success: true };
-		} catch (err: unknown) {
+		} catch (err) {
 			if (err instanceof Error) {
 				throwError(`Error during reset: ${err.message}`);
 			} else {

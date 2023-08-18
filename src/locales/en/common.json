@@ -367,19 +367,35 @@
 				"submit_empty_field_default": "Submit empty field to use the default."
 			},
 			"generatePlanet": {
-				"noteTitle": "NOTE!",
-				"customPlanetGenerated": "Custom planet has been generated.",
-				"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
 				"updatePlanetWarning": "Updating the planet file will modify the core structure of your ZeroTier network, impacting routes, flexibility, and potentially availability. Proceed with caution, understanding the implications.",
 				"customPlanetInUse": "Custom Planet is currently in use!",
-				"downloadPlanetButton": "Download Planet",
-				"restoreOriginalPlanetButton": "Restore Original Planet",
 				"generatePrivateRootLabel": "Generate private root",
 				"generatePrivateRootPlaceholder": "Add a private root to your controller",
-				"domainDescription": "Add the domain name (optionally)",
 				"commentDescription": "Add a comment for this planet (optionally)",
+				"commentPlaceholder": "Enter Comment",
 				"identityDescription": "Identity (optionally). Default value is the content of current identity.public",
-				"endpointsDescription": "Enter the external IP address of your controller. Use a comma-separated format (IP/PORT) for multiple addresses. For example: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Ensure these addresses are globally reachable if you want nodes outside your local network to connect."
+				"endpointsDescription": "Enter the external IP address of your controller. Use a comma-separated format (IP/PORT) for multiple addresses. For example: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Ensure these addresses are globally reachable if you want nodes outside your local network to connect.",
+				"endpointsPlaceholder": "Enter Endpoints",
+				"plRecommend": "Auto-Generate IDs",
+				"birthLabel": "Birth (plBirth)",
+				"birthPlaceholder": "Enter Birth",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Enter ID",
+				"buttons":{
+					"editPlanetConfig": "EDIT PLANET CONFIG",
+					"createPlanet": "CREATE PLANET",
+					"uploadConfig": "UPLOAD CONFIG",
+					"updateWorld":"Update World",
+					"downloadPlanetButton": "Download Config",
+					"restoreOriginalPlanetButton": "Restore Original Planet"
+				},
+				"modal":{
+					"noteTitle": "NOTE!",
+					"customPlanetGenerated": "Custom planet has been generated.",
+					"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Restore Original Planet",
+					"restoreOriginalPlanetContent": "Are you sure you want to restore the original planet file? Make sure to backup your current planet file if you want to keep the current keys"
+				}
 			},
 			"yes": "Yes",
 			"no": "No"

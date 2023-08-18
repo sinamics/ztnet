@@ -367,20 +367,36 @@
 				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado."
 			},
 			"generatePlanet": {
-				"noteTitle": "¡NOTA!",
-				"customPlanetGenerated": "Se ha generado un planeta personalizado.",
-				"restartContainerInstructions": "Necesitarás reiniciar el contenedor zerotier para cargar la nueva configuración:<br></br><br></br><span>docker restart zerotier</span>",
-				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura principal de tu red ZeroTier, impactando las rutas, flexibilidad y potencialmente la disponibilidad. Procede con precaución, comprendiendo las implicaciones.",
+				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",
 				"customPlanetInUse": "¡El Planeta Personalizado está actualmente en uso!",
-				"downloadPlanetButton": "Descargar Planeta",
-				"restoreOriginalPlanetButton": "Restaurar Planeta Original",
 				"generatePrivateRootLabel": "Generar raíz privada",
 				"generatePrivateRootPlaceholder": "Agregar una raíz privada a tu controlador",
-				"domainDescription": "Agrega el nombre de dominio (opcionalmente)",
-				"commentDescription": "Agrega un comentario para este planeta (opcionalmente)",
+				"commentDescription": "Añadir un comentario para este planeta (opcionalmente)",
+				"commentPlaceholder": "Ingresar Comentario",
 				"identityDescription": "Identidad (opcionalmente). El valor predeterminado es el contenido de la identidad actual.public",
-				"endpointsDescription": "Ingresa la dirección IP externa de tu controlador. Usa un formato separado por comas (IP/PUERTO) para múltiples direcciones. Por ejemplo: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Asegúrate de que estas direcciones sean globalmente accesibles si deseas que los nodos fuera de tu red local se conecten."
-			},
+				"endpointsDescription": "Introduce la dirección IP externa de tu controlador. Utiliza un formato separado por comas (IP/PUERTO) para múltiples direcciones. Por ejemplo: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Asegúrate de que estas direcciones sean accesibles globalmente si quieres que los nodos fuera de tu red local se conecten.",
+				"endpointsPlaceholder": "Ingresar Puntos Finales",
+				"plRecommend": "Auto-Generar IDs",
+				"birthLabel": "Nacimiento (plBirth)",
+				"birthPlaceholder": "Ingresar Fecha de Nacimiento",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Ingresar ID",
+				"buttons":{
+					"editPlanetConfig": "EDITAR PLANETA",
+					"createPlanet": "CREAR PLANETA",
+					"uploadConfig": "SUBIR CONFIGURACIÓN",
+					"updateWorld": "Actualizar Mundo",
+					"downloadPlanetButton": "Descargar Configuración",
+					"restoreOriginalPlanetButton": "Restaurar Planeta Original"
+				},
+				"modal":{
+					"noteTitle": "¡NOTA!",
+					"customPlanetGenerated": "Se ha generado un planeta personalizado.",
+					"restartContainerInstructions": "Necesitará reiniciar el contenedor zerotier para cargar la nueva configuración:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Restaurar Planeta Original",
+					"restoreOriginalPlanetContent": "¿Está seguro de que desea restaurar el archivo del planeta original? Asegúrese de hacer una copia de seguridad de su archivo de planeta actual si desea mantener las claves actuales"
+				}
+		},
 			"yes": "Sí",
 			"no": "No"
 		}

@@ -21,14 +21,14 @@ model GlobalOptions {
 
   // Email configuration
   smtpHost                              String?
-  smtpPort                              String            @default("587")
+  smtpPort                              String              @default("587")
   smtpEmail                             String?
   smtpUsername                          String?
   smtpPassword                          String? 
-  smtpUseSSL                            Boolean           @default(false)
-  smtpSecure                            Boolean           @default(false)
-  smtpRequireTLS                        Boolean           @default(false)
-  smtpIgnoreTLS                         Boolean           @default(false)
+  smtpUseSSL                            Boolean             @default(false)
+  smtpSecure                            Boolean             @default(false)
+  smtpRequireTLS                        Boolean             @default(false)
+  smtpIgnoreTLS                         Boolean             @default(false)
   inviteUserTemplate                    Json?
   inviteAdminTemplate                   Json?
   forgotPasswordTemplate                Json?
@@ -36,10 +36,16 @@ model GlobalOptions {
   notificationTemplate                  Json?
 
   // Notifications
-  userRegistrationNotification          Boolean           @default(false)
+  userRegistrationNotification          Boolean             @default(false)
 
   // mkworld
-  customPlanetUsed                      Boolean           @default(false)
+  customPlanetUsed                      Boolean             @default(false)
+  plID                                  BigInt              @default(0)
+  plBirth                               BigInt              @default(0)
+  plRecommend                           Boolean             @default(false)
+  plComment                             String?
+  plIdentity                            String?
+  plEndpoints                           String?
 }
 
 enum Role {
