@@ -125,7 +125,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							placeholder={t("controller.generatePlanet.birthLabel")}
 							value={world.plBirth}
 							onChange={inputChange}
-							className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
+							className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
 							disabled={world.plRecommend && !getOptions?.customPlanetUsed}
 						/>
 					</div>
@@ -140,7 +140,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							placeholder={t("controller.generatePlanet.idPlaceholder")}
 							value={world.plID}
 							onChange={inputChange}
-							className="input-bordered input-md px-3 w-full py-2 rounded-md border-gray-300"
+							className="input-bordered input-sm px-3 w-full py-2 rounded-md border-gray-300"
 							disabled={world.plRecommend && !getOptions?.customPlanetUsed}
 						/>
 					</div>
@@ -155,7 +155,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						placeholder={t("controller.generatePlanet.endpointsPlaceholder")}
 						value={world?.endpoints}
 						onChange={inputChange}
-						className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
+						className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
 					/>
 				</div>
 
@@ -169,7 +169,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						placeholder={t("controller.generatePlanet.commentPlaceholder")}
 						value={world?.comment}
 						onChange={inputChange}
-						className="px-3 py-2 w-full rounded-md border-gray-300"
+						className="px-3 py-2 w-full input-sm rounded-md border-gray-300"
 					/>
 				</div>
 				<button
@@ -183,7 +183,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							},
 						});
 					}}
-					className={"btn btn-primary btn-md"}
+					className={"btn btn-primary btn-sm"}
 					type="submit"
 				>
 					{getOptions?.customPlanetUsed
