@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Hit Enter to save"
+	},
 	"changeButton": {
 		"change": "Change",
 		"submit": "Submit",

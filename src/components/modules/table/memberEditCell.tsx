@@ -126,6 +126,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 									></div>
 								))}
 							<Input
+								useTooltip
 								ref={inputRef}
 								placeholder={t("networkMembersTable.tableRow.updateName")}
 								name="networkName"

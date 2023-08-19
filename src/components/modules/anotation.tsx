@@ -100,6 +100,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 				</div>
 				<form>
 					<Input
+						useTooltip
 						type="text"
 						className="input-bordered input-sm"
 						name="name"

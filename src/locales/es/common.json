@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Pulsa Enter para guardar"
+	},
 	"changeButton": {
 		"change": "Cambiar",
 		"submit": "Enviar",

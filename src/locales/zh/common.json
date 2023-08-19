@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "按 Enter 保存"
+	},
 	"changeButton": {
 		"change": "更改",
 		"submit": "提交",
