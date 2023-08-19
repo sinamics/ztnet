@@ -11,6 +11,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	const { callModal } = useModalStore((state) => state);
 	const { data: getOptions, refetch: refetchOptions } =
 		api.settings.getAllOptions.useQuery();
+	const { data: getWorld } = api.admin.getWorld.useQuery();
 
 	const [world, setWorld] = useState({
 		plRecommend: true,
@@ -18,6 +19,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		plID: Math.floor(Math.random() * 2 ** 32),
 		endpoints: "",
 		comment: "",
+		identity: "",
 	});
 
 	const { mutate: makeWorld } = api.admin.makeWorld.useMutation({
@@ -67,11 +69,12 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				plRecommend: getOptions?.plRecommend || prev.plRecommend,
 				plBirth: Number(getOptions?.plBirth) || prev.plBirth,
 				plID: Number(getOptions?.plID) || prev.plID,
-				endpoints: getOptions?.plEndpoints,
+				endpoints: getOptions?.plEndpoints || `${getWorld?.ip}/9993`,
 				comment: getOptions?.plComment,
+				identity: getOptions?.plIdentity || getWorld?.identity,
 			}));
 		}
-	}, [getOptions]);
+	}, [getOptions, getWorld]);
 
 	const inputChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -109,7 +112,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							name="plRecommend"
 							type="checkbox"
 							checked={world.plRecommend}
-							className="checkbox checkbox-primary"
+							className="checkbox checkbox-primary checkbox-sm"
 							onChange={inputChange}
 						/>
 					</div>
@@ -125,7 +128,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							placeholder={t("controller.generatePlanet.birthLabel")}
 							value={world.plBirth}
 							onChange={inputChange}
-							className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
+							className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
 							disabled={world.plRecommend && !getOptions?.customPlanetUsed}
 						/>
 					</div>
@@ -140,7 +143,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							placeholder={t("controller.generatePlanet.idPlaceholder")}
 							value={world.plID}
 							onChange={inputChange}
-							className="input-bordered input-md px-3 w-full py-2 rounded-md border-gray-300"
+							className="input-bordered input-sm px-3 w-full py-2 rounded-md border-gray-300"
 							disabled={world.plRecommend && !getOptions?.customPlanetUsed}
 						/>
 					</div>
@@ -155,10 +158,20 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						placeholder={t("controller.generatePlanet.endpointsPlaceholder")}
 						value={world?.endpoints}
 						onChange={inputChange}
-						className="input-bordered input-md px-3 py-2 w-full rounded-md border-gray-300"
+						className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
 					/>
 				</div>
-
+				<div>
+					<label className="block text-gray-500 mb-2">Idendity</label>
+					<Input
+						name="identity"
+						type="text"
+						placeholder={t("controller.generatePlanet.commentPlaceholder")}
+						value={world?.identity}
+						onChange={inputChange}
+						className="px-3 py-2 w-full input-sm rounded-md border-gray-300"
+					/>
+				</div>
 				<div>
 					<label className="block text-gray-500 mb-2">
 						{t("controller.generatePlanet.commentDescription")}
@@ -169,7 +182,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						placeholder={t("controller.generatePlanet.commentPlaceholder")}
 						value={world?.comment}
 						onChange={inputChange}
-						className="px-3 py-2 w-full rounded-md border-gray-300"
+						className="px-3 py-2 w-full input-sm rounded-md border-gray-300"
 					/>
 				</div>
 				<button
@@ -183,7 +196,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							},
 						});
 					}}
-					className={"btn btn-primary btn-md"}
+					className={"btn btn-primary btn-sm"}
 					type="submit"
 				>
 					{getOptions?.customPlanetUsed

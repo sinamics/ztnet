@@ -145,7 +145,7 @@ const PrivateRoot = () => {
 								<div className="flex gap-3">
 									<button
 										onClick={() => downloadPlanet()}
-										className="btn join-item bg-primary"
+										className="btn join-item bg-primary btn-sm"
 									>
 										{t(
 											"controller.generatePlanet.buttons.downloadPlanetButton",
@@ -153,7 +153,7 @@ const PrivateRoot = () => {
 									</button>
 									<button
 										onClick={() => setOpen(!open)}
-										className="btn join-item"
+										className="btn join-item btn-sm"
 									>
 										{t("controller.generatePlanet.buttons.editPlanetConfig")}
 									</button>
@@ -174,7 +174,7 @@ const PrivateRoot = () => {
 											},
 										})
 									}
-									className="btn btn-outline btn-error"
+									className="btn btn-outline btn-error btn-sm"
 								>
 									{t(
 										"controller.generatePlanet.buttons.restoreOriginalPlanetButton",

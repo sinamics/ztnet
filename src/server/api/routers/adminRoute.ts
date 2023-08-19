@@ -16,6 +16,7 @@ import { NetworkAndMemberResponse } from "~/types/network";
 import { execSync } from "child_process";
 import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
+import axios from "axios";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -601,7 +602,23 @@ export const adminRouter = createTRPCRouter({
 				}
 			}
 		}),
+	getWorld: adminRoleProtectedRoute.query(async () => {
+		let ip = "External IP";
+		try {
+			const response = await axios.get("https://api.ip.sb/ip");
+			ip = response.data.trim();
+		} catch (error) {
+			console.error("Failed to fetch public IP:", error);
+		}
 
+		// Get identity from the file system
+		const identityPath = "/var/lib/zerotier-one/identity.public";
+		const identity = fs.existsSync(identityPath)
+			? fs.readFileSync(identityPath, "utf-8").trim()
+			: "";
+
+		return { ip, identity };
+	}),
 	makeWorld: adminRoleProtectedRoute
 		.input(
 			z
