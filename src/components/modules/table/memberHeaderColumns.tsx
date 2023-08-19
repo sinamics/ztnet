@@ -36,29 +36,12 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			{ enabled: !!nwid },
 		);
 
-	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: () => void refetchNetworkById(),
-	});
-	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => void refetchNetworkById(),
-	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: (e) => {
 			void toast.error(e?.message);
 		},
 		onSuccess: () => void refetchNetworkById(),
 	});
-	const stashMember = (id: string) => {
-		stashUser(
-			{
-				nwid,
-				id,
-			},
-			{
-				onSuccess: () => void refetchNetworkById(),
-			},
-		);
-	};
 
 	const columnHelper = createColumnHelper<MemberEntity>();
 	const columns = useMemo<ColumnDef<MemberEntity>[]>(
@@ -335,28 +318,6 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							>
 								{t("networkById.networkMembersTable.column.actions.optionBtn")}
 							</button>
-
-							{central ? (
-								<button
-									onClick={() =>
-										deleteMember({
-											central,
-											id: original.id,
-											nwid: original.nwid,
-										})
-									}
-									className="btn btn-error btn-outline btn-xs rounded-sm"
-								>
-									{t("changeButton.delete")}
-								</button>
-							) : (
-								<button
-									onClick={() => stashMember(original.id)}
-									className="btn btn-warning btn-outline btn-xs rounded-sm"
-								>
-									{t("networkById.networkMembersTable.column.actions.stashBtn")}
-								</button>
-							)}
 						</div>
 					);
 				},

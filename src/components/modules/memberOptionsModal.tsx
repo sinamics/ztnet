@@ -14,6 +14,7 @@ import {
 	type TagDetails,
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
+import { useModalStore } from "~/utils/store";
 
 interface ModalContentProps {
 	nwid: string;
@@ -28,11 +29,18 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	memberId,
 	central = false,
 }) => {
-	const t = useTranslations("networkById");
+	const t = useTranslations();
+	const { closeModal } = useModalStore((state) => state);
 	const [state, setState] = useState(initialIpState);
 	const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 
 	const { query } = useRouter();
+	const { mutate: stashUser } = api.networkMember.stash.useMutation({
+		onSuccess: () => void refetchNetworkById(),
+	});
+	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+		onSuccess: () => void refetchNetworkById(),
+	});
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -51,7 +59,8 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			{ enabled: !!query.id, networkMode: "online" },
 		);
 	useEffect(() => {
-		if (networkById?.members && "id" in networkById.members[0]) {
+		// Check if members is an array and the first member has an 'id' property
+		if (Array.isArray(networkById?.members) && networkById.members[0]?.id) {
 			const member = (networkById.members as MemberEntity[]).find(
 				(member) => member.id === memberId,
 			);
@@ -79,6 +88,21 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		},
 		onSuccess: () => refetchNetworkById(),
 	});
+	const stashMember = (id: string) => {
+		stashUser(
+			{
+				nwid,
+				id,
+			},
+			{
+				onSuccess: () => {
+					closeModal();
+					void refetchNetworkById();
+				},
+			},
+		);
+	};
+
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const subnetMatch = isIPInSubnet(
 			e.target.value,
@@ -131,7 +155,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		}
 		if (ipAssignments.includes(ipInput)) {
 			void toast.error(
-				t("memberOptionModal.handleSumbit.errorAssigned", { target }),
+				t("networkById.memberOptionModal.handleSumbit.errorAssigned", {
+					target,
+				}),
 			);
 			return;
 		}
@@ -145,7 +171,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 		if (!regex.test(ipInput)) {
 			void toast.error(
-				t("memberOptionModal.handleSumbit.errorNotValidIp", { target }),
+				t("networkById.memberOptionModal.handleSumbit.errorNotValidIp", {
+					target,
+				}),
 			);
 			return;
 		}
@@ -342,9 +370,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			<div className={cn({ "opacity-30": updateMemberLoading })}>
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-3">
-						<header>{t("memberOptionModal.ipAssignment.header")}</header>
+						<header>
+							{t("networkById.memberOptionModal.ipAssignment.header")}
+						</header>
 						<p className="text-sm text-gray-500">
-							{t("memberOptionModal.ipAssignment.description")}
+							{t("networkById.memberOptionModal.ipAssignment.description")}
 						</p>
 					</div>
 				</div>
@@ -366,7 +396,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								<div className="cursor-pointer">{assignedIp}</div>
 
 								{ipAssignments.length > 0 && (
-									<div title={t("memberOptionModal.deleteIpAssignment.title")}>
+									<div
+										title={t(
+											"networkById.memberOptionModal.deleteIpAssignment.title",
+										)}
+									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
@@ -394,7 +428,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					<form>
 						<label className="input-group input-group-sm">
 							<span className="bg-base-200">
-								{t("memberOptionModal.addressInput.label")}
+								{t("networkById.memberOptionModal.addressInput.label")}
 							</span>
 							<input
 								type="text"
@@ -413,7 +447,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								// disabled={!state.isValid}
 								className="btn-square btn-sm w-12 bg-base-200"
 							>
-								{t("memberOptionModal.addButton.text")}
+								{t("networkById.memberOptionModal.addButton.text")}
 							</button>
 						</label>
 					</form>
@@ -423,10 +457,12 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-3">
 						<header>
-							{t("memberOptionModal.allowEthernetBridging.header")}
+							{t("networkById.memberOptionModal.allowEthernetBridging.header")}
 						</header>
 						<p className="text-sm text-gray-500">
-							{t("memberOptionModal.allowEthernetBridging.description")}
+							{t(
+								"networkById.memberOptionModal.allowEthernetBridging.description",
+							)}
 						</p>
 					</div>
 					<input
@@ -454,9 +490,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-3">
-						<header>{t("memberOptionModal.doNotAutoAssignIPs.header")}</header>
+						<header>
+							{t("networkById.memberOptionModal.doNotAutoAssignIPs.header")}
+						</header>
 						<p className="text-sm text-gray-500">
-							{t("memberOptionModal.doNotAutoAssignIPs.description")}
+							{t(
+								"networkById.memberOptionModal.doNotAutoAssignIPs.description",
+							)}
 						</p>
 					</div>
 					<input
@@ -484,7 +524,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
-						<header>{t("memberOptionModal.capabilities.header")}</header>
+						<header>
+							{t("networkById.memberOptionModal.capabilities.header")}
+						</header>
 						{CapabilityCheckboxes(
 							networkById?.network?.capabilitiesByName as CapabilitiesByName,
 						)}
@@ -492,7 +534,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
-						<header>{t("memberOptionModal.tags.header")}</header>
+						<header>{t("networkById.memberOptionModal.tags.header")}</header>
 						{TagDropdowns(networkById?.network?.tagsByName)}
 					</div>
 				</div>
@@ -504,6 +546,34 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						</div>
 					</div>
 				) : null}
+
+				<div className="grid grid-cols-4 items-start gap-4 py-3">
+					<div className="col-span-4 space-y-4">
+						<p>{t("networkById.memberOptionModal.userActions.header")}</p>
+
+						{central ? (
+							<button
+								onClick={() =>
+									deleteMember({
+										central,
+										id: memberById?.id,
+										nwid,
+									})
+								}
+								className="btn btn-error btn-outline btn-sm rounded-sm"
+							>
+								{t("changeButton.delete")}
+							</button>
+						) : (
+							<button
+								onClick={() => stashMember(memberById?.id)}
+								className="btn btn-warning btn-outline btn-sm rounded-sm"
+							>
+								{t("networkById.memberOptionModal.userActions.stashBtn")}
+							</button>
+						)}
+					</div>
+				</div>
 			</div>
 		</div>
 	);
