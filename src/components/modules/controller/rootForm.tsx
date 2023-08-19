@@ -109,7 +109,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							name="plRecommend"
 							type="checkbox"
 							checked={world.plRecommend}
-							className="checkbox checkbox-primary"
+							className="checkbox checkbox-primary checkbox-sm"
 							onChange={inputChange}
 						/>
 					</div>
