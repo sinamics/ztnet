@@ -71,17 +71,17 @@ const Account = () => {
 							isLoading={!session?.user}
 							rootClassName=""
 							size="sm"
-							badge={
-								session?.user?.emailVerified
-									? {
-											text: t("account.accountSettings.verifiedBadge"),
-											color: "success",
-									  }
-									: {
-											text: t("account.accountSettings.notVerifiedBadge"),
-											color: "warning",
-									  }
-							}
+							// badge={
+							// 	session?.user?.emailVerified
+							// 		? {
+							// 				text: t("account.accountSettings.verifiedBadge"),
+							// 				color: "success",
+							// 		  }
+							// 		: {
+							// 				text: t("account.accountSettings.notVerifiedBadge"),
+							// 				color: "warning",
+							// 		  }
+							// }
 							fields={[
 								{
 									name: "email",
