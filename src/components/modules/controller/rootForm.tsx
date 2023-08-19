@@ -12,7 +12,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	const { data: getOptions, refetch: refetchOptions } =
 		api.settings.getAllOptions.useQuery();
 	const { data: getWorld } = api.admin.getWorld.useQuery();
-	console.log(getWorld);
+
 	const [world, setWorld] = useState({
 		plRecommend: true,
 		plBirth: Date.now(),
