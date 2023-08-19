@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Trykk Enter for å lagre"
+	},
 	"changeButton": {
 		"change": "Endre",
 		"submit": "Send inn",
