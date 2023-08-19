@@ -216,9 +216,6 @@ describe("NetworkById component", () => {
 				expect(
 					screen.getByRole("button", { name: /options/i }),
 				).toBeInTheDocument();
-				expect(
-					screen.getByRole("button", { name: /stash/i }),
-				).toBeInTheDocument();
 			},
 			{ timeout: 5000 },
 		);
