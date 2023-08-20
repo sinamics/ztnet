@@ -626,7 +626,7 @@ export const adminRouter = createTRPCRouter({
 					plID: z.number().optional(),
 					plRecommend: z.boolean().default(true),
 					plBirth: z.number().optional(),
-					comment: z.string().optional(),
+					comment: z.string().nullable().optional(),
 					identity: z.string().optional(),
 					endpoints: z.string(),
 				})
