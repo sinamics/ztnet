@@ -20,7 +20,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 		>
 			<input type="checkbox" />
 			<div className="collapse-title">
-				{t("networkIpAssignments.ipv4_assignment")}
+				{t("networkIpAssignments.ipv4.ipv4_assignment")}
 			</div>
 			<div className="w-100 collapse-content">
 				<div className="tabs w-full justify-center pb-5">
@@ -30,7 +30,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 						}`}
 						onClick={() => setActiveTab("IPv4")}
 					>
-						IPv4
+						{t("networkIpAssignments.tabs.ipv4")}
 					</a>
 					<a
 						className={`tab tab-bordered ${
@@ -38,7 +38,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 						}`}
 						onClick={() => setActiveTab("IPv6")}
 					>
-						IPv6
+						{t("networkIpAssignments.tabs.ipv6")}
 					</a>
 				</div>
 

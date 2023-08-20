@@ -278,17 +278,17 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				input.central,
 			);
-
-			const v6AssignMode = { ...network.v6AssignMode, ...input.v6AssignMode };
-
 			// prepare update params
 			const updateParams = input.central
 				? {
 						config: {
-							v6AssignMode,
+							v6AssignMode: {
+								...network?.config?.v6AssignMode,
+								...input.v6AssignMode,
+							},
 						},
 				  }
-				: { v6AssignMode };
+				: { v6AssignMode: { ...network.v6AssignMode, ...input.v6AssignMode } };
 
 			// update network
 			return ztController.network_update({

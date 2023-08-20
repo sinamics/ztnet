@@ -87,18 +87,30 @@
 			"loading": "Cargando"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
-			"ip_range_already_exists": "El rango de IP ya existe",
-			"ipv4_assignment": "Asignación de IPv4",
-			"auto_assign_from_range": "Asignar automáticamente desde el rango",
-			"easy": "Fácil",
-			"advanced": "Avanzado",
-			"delete_ip_assignment": "Eliminar asignación de IP",
-			"range_start": "Inicio del rango",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "Fin del rango",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "Enviar"
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 para cada dispositivo)",
+				"plane6Label": "ZeroTier 6PLANE (/80 enrutables para cada dispositivo)",
+				"rfc4193Updated": "rfc4193 actualizado",
+				"plane6Updated": "6plane actualizado"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
+				"ip_range_already_exists": "El rango de IP ya existe",
+				"ipv4_assignment": "Asignación de IPv4",
+				"auto_assign_from_range": "Asignar automáticamente desde el rango",
+				"easy": "Fácil",
+				"advanced": "Avanzado",
+				"delete_ip_assignment": "Eliminar asignación de IP",
+				"range_start": "Inicio del rango",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Fin del rango",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Enviar"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "Rutas administradas",

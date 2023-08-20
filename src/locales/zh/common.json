@@ -87,18 +87,30 @@
 			"loading": "加载中"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "请输入有效的 IP 范围",
-			"ip_range_already_exists": "IP 范围已存在",
-			"ipv4_assignment": "IPv4 分配",
-			"auto_assign_from_range": "自动从范围分配",
-			"easy": "简单",
-			"advanced": "高级",
-			"delete_ip_assignment": "删除 IP 分配",
-			"range_start": "范围起始",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "范围结束",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "提交"
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 对于每一台设备)",
+				"plane6Label": "ZeroTier 6PLANE (/80 可路由对于每一台设备)",
+				"rfc4193Updated": "rfc4193 已更新",
+				"plane6Updated": "6plane 已更新"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "请输入有效的 IP 范围",
+				"ip_range_already_exists": "IP 范围已存在",
+				"ipv4_assignment": "IPv4 分配",
+				"auto_assign_from_range": "自动从范围分配",
+				"easy": "简单",
+				"advanced": "高级",
+				"delete_ip_assignment": "删除 IP 分配",
+				"range_start": "范围起始",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "范围结束",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "提交"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "管理路由",

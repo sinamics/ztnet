@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import React from "react";
 import toast from "react-hot-toast";
@@ -8,6 +9,8 @@ interface IProp {
 }
 
 export const Ipv6assignment = ({ central = false }: IProp) => {
+	const t = useTranslations("networkById");
+
 	const { query } = useRouter();
 	const {
 		data: networkByIdQuery,
@@ -31,7 +34,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 		<div className="form-control">
 			<label className="label cursor-pointer">
 				<span className="label-text">
-					ZeroTier RFC4193 (/128 for each device)
+					{t("networkIpAssignments.ipv6.rfc4193Label")}
 				</span>
 				<input
 					type="checkbox"
@@ -42,13 +45,16 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 						setIpv6(
 							{
 								nwid: query.id as string,
+								central,
 								v6AssignMode: {
 									rfc4193: e.target.checked,
 								},
 							},
 							{
 								onSuccess: () => {
-									void toast.success("rfc4193 updated");
+									void toast.success(
+										t("networkIpAssignments.ipv6.rfc4193Updated"),
+									);
 								},
 							},
 						);
@@ -57,7 +63,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 			</label>
 			<label className="label cursor-pointer">
 				<span className="label-text">
-					ZeroTier 6PLANE (/80 routable for each device)
+					{t("networkIpAssignments.ipv6.plane6Label")}
 				</span>
 				<input
 					type="checkbox"
@@ -68,13 +74,16 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 						setIpv6(
 							{
 								nwid: query.id as string,
+								central,
 								v6AssignMode: {
 									"6plane": e.target.checked,
 								},
 							},
 							{
 								onSuccess: () => {
-									void toast.success("6plane updated");
+									void toast.success(
+										t("networkIpAssignments.ipv6.plane6Updated"),
+									);
 								},
 							},
 						);
