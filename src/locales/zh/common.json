@@ -87,6 +87,7 @@
 			"loading": "加载中"
 		},
 		"networkIpAssignments": {
+			"header": "IP 分配",
 			"tabs": {
 				"ipv4": "IPv4",
 				"ipv6": "IPv6"
@@ -100,7 +101,6 @@
 			"ipv4": {
 				"please_enter_valid_ip_range": "请输入有效的 IP 范围",
 				"ip_range_already_exists": "IP 范围已存在",
-				"ipv4_assignment": "IPv4 分配",
 				"auto_assign_from_range": "自动从范围分配",
 				"easy": "简单",
 				"advanced": "高级",
