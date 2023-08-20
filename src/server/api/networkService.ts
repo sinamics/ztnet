@@ -9,6 +9,8 @@ import { prisma } from "../db";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import { network_members } from "@prisma/client";
 import { UserContext } from "~/types/ctx";
+import { V6AssignMode } from "~/types/local/network";
+import { sixPlane, toRfc4193Ip } from "~/utils/IPv6";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -81,6 +83,7 @@ export const enrichMembers = async (
 	nwid: string,
 	controllerMembers: MemberEntity[],
 	peersByAddress: Peers[],
+	v6AssignMode: V6AssignMode,
 ) => {
 	const memberPromises = controllerMembers.map(async (member) => {
 		const dbMember = await prisma.network_members.findFirst({
@@ -97,6 +100,18 @@ export const enrichMembers = async (
 			activePreferredPath = peers.paths.find(
 				(path: Paths) => path.active && path.preferred,
 			);
+		}
+
+		if (v6AssignMode) {
+			member.V6AssignMode = {};
+
+			if (v6AssignMode.rfc4193) {
+				member.V6AssignMode.rfc4193 = toRfc4193Ip(nwid, member.id);
+			}
+
+			if (v6AssignMode["6plane"]) {
+				member.V6AssignMode["6plane"] = sixPlane(nwid, member.id);
+			}
 		}
 
 		if (!activePreferredPath) return { ...dbMember, ...member, peers: {} };

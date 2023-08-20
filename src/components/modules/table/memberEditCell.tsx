@@ -151,6 +151,44 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 
 				return (
 					<div className="space-y-1">
+						{original?.V6AssignMode?.rfc4193 ? (
+							<CopyToClipboard
+								text={original?.V6AssignMode?.rfc4193}
+								onCopy={() =>
+									toast.success(
+										t("copyToClipboard.success", {
+											element: original?.V6AssignMode?.rfc4193,
+										}),
+									)
+								}
+								title={t("copyToClipboard.title")}
+							>
+								<div className="cursor-pointer">
+									<div className="badge badge-ghost  rounded-md">
+										{original?.V6AssignMode?.rfc4193}
+									</div>
+								</div>
+							</CopyToClipboard>
+						) : null}
+						{original?.V6AssignMode?.["6plane"] ? (
+							<CopyToClipboard
+								text={original?.V6AssignMode?.["6plane"]}
+								onCopy={() =>
+									toast.success(
+										t("copyToClipboard.success", {
+											element: original?.V6AssignMode?.["6plane"],
+										}),
+									)
+								}
+								title={t("copyToClipboard.title")}
+							>
+								<div className="cursor-pointer">
+									<div className="badge badge-ghost  rounded-md">
+										{original?.V6AssignMode?.["6plane"]}
+									</div>
+								</div>
+							</CopyToClipboard>
+						) : null}
 						{original?.ipAssignments.map((assignedIp) => {
 							const subnetMatch = isIPInSubnet(
 								assignedIp,
