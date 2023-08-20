@@ -36,6 +36,7 @@ export interface MemberEntity {
 	physicalAddress?: string;
 	accessorFn: () => void;
 	config?: CentralMemberConfig;
+	V6AssignMode?: V6AssignMode;
 }
 type NumberPairArray = [number, number][];
 
