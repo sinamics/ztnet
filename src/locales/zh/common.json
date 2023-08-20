@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "按 Enter 保存"
+	},
 	"changeButton": {
 		"change": "更改",
 		"submit": "提交",
@@ -84,18 +87,30 @@
 			"loading": "加载中"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "请输入有效的 IP 范围",
-			"ip_range_already_exists": "IP 范围已存在",
-			"ipv4_assignment": "IPv4 分配",
-			"auto_assign_from_range": "自动从范围分配",
-			"easy": "简单",
-			"advanced": "高级",
-			"delete_ip_assignment": "删除 IP 分配",
-			"range_start": "范围起始",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "范围结束",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "提交"
+			"header": "IP 分配",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 对于每一台设备)",
+				"plane6Label": "ZeroTier 6PLANE (/80 可路由对于每一台设备)",
+				"rfc4193Updated": "rfc4193 已更新",
+				"plane6Updated": "6plane 已更新"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "请输入有效的 IP 范围",
+				"ip_range_already_exists": "IP 范围已存在",
+				"auto_assign_from_range": "自动从范围分配",
+				"easy": "简单",
+				"advanced": "高级",
+				"delete_ip_assignment": "删除 IP 分配",
+				"range_start": "范围起始",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "范围结束",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "提交"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "管理路由",
@@ -153,8 +168,7 @@
 				"status": "状态",
 				"actions": {
 					"header": "操作",
-					"optionBtn": "选项",
-					"stashBtn": "隐藏"
+					"optionBtn": "选项"
 				}
 			},
 			"optionModalTitle": "成员选项",
@@ -173,9 +187,9 @@
 				"placeholder": "搜索任何东西..."
 			}
 		},
-		"deletedNetworkMembersTable":{
-			"buttons":{
-				"viewStashedMembers":"显示隐藏的成员"
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "显示隐藏的成员"
 			}
 		},
 		"inviteMemberByMail": {
@@ -237,6 +251,10 @@
 				"header": "注解",
 				"description": "通过添加注解来增强您的成员组织",
 				"placeholder": "添加注解"
+			},
+			"userActions": {
+				"header": "用户操作",
+				"stashBtn": "隐藏"
 			}
 		}
 	},
@@ -371,7 +389,7 @@
 				"zerotier_secret": "Zerotier密码",
 				"submit_empty_field_default": "提交空字段以使用默认值。"
 			},
-      "generatePlanet": {
+			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
 				"customPlanetInUse": "自定义星球目前正在使用中！",
 				"generatePrivateRootLabel": "生成私有根",
@@ -386,7 +404,7 @@
 				"birthPlaceholder": "输入出生日期",
 				"idLabel": "身份 (plID)",
 				"idPlaceholder": "输入ID",
-				"buttons":{
+				"buttons": {
 					"editPlanetConfig": "编辑行星配置",
 					"createPlanet": "创建行星",
 					"uploadConfig": "上传配置",
@@ -394,14 +412,14 @@
 					"downloadPlanetButton": "下载配置",
 					"restoreOriginalPlanetButton": "恢复原始星球"
 				},
-				"modal":{
+				"modal": {
 					"noteTitle": "注意！",
 					"customPlanetGenerated": "已生成自定义星球。",
 					"restartContainerInstructions": "您需要重新启动zerotier容器以加载新配置：<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "恢复原始星球",
 					"restoreOriginalPlanetContent": "您确定要恢复原始星球文件吗？如果您想保留当前的密钥，请确保备份您当前的星球文件"
 				}
-		},
+			},
 			"yes": "是",
 			"no": "否"
 		}

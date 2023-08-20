@@ -602,7 +602,7 @@ export const adminRouter = createTRPCRouter({
 				}
 			}
 		}),
-	getWorld: adminRoleProtectedRoute.query(async () => {
+	getIdentity: adminRoleProtectedRoute.query(async () => {
 		let ip = "External IP";
 		try {
 			const response = await axios.get("https://api.ip.sb/ip");

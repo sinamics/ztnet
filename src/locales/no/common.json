@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Trykk Enter for å lagre"
+	},
 	"changeButton": {
 		"change": "Endre",
 		"submit": "Send inn",
@@ -84,18 +87,30 @@
 			"loading": "Laster"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
-			"ip_range_already_exists": "IP-rangen eksisterer allerede",
-			"ipv4_assignment": "IPv4-tildeling",
-			"auto_assign_from_range": "Auto-Tildel fra Range",
-			"easy": "Enkel",
-			"advanced": "Avansert",
-			"delete_ip_assignment": "Slett IP-tildeling",
-			"range_start": "Range Start",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "Range Slutt",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "Send inn"
+			"header": "IP-tilordninger",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 for hver enhet)",
+				"plane6Label": "ZeroTier 6PLANE (/80 rutbare for hver enhet)",
+				"rfc4193Updated": "rfc4193 oppdatert",
+				"plane6Updated": "6plane oppdatert"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
+				"ip_range_already_exists": "IP-rangen eksisterer allerede",
+				"auto_assign_from_range": "Auto-Tildel fra Range",
+				"easy": "Enkel",
+				"advanced": "Avansert",
+				"delete_ip_assignment": "Slett IP-tildeling",
+				"range_start": "Range Start",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Range Slutt",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Send inn"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "Administrerte Ruter",
@@ -153,8 +168,7 @@
 				"status": "Status",
 				"actions": {
 					"header": "Handlinger",
-					"optionBtn": "alternativer",
-					"stashBtn": "Stash"
+					"optionBtn": "alternativer"
 				}
 			},
 			"optionModalTitle": "Alternativer for medlem",
@@ -173,9 +187,9 @@
 				"placeholder": "Søk etter noe..."
 			}
 		},
-		"deletedNetworkMembersTable":{
-			"buttons":{
-				"viewStashedMembers":"Se lagrede medlemmer"
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "Se lagrede medlemmer"
 			}
 		},
 		"inviteMemberByMail": {
@@ -237,6 +251,10 @@
 				"header": "Anotasjon",
 				"description": "Forbedre din medlemsorganisasjon ved å legge til notater",
 				"placeholder": "Legg til Notat"
+			},
+			"userActions": {
+				"header": "Brukerhandlinger",
+				"stashBtn": "Arkiver"
 			}
 		}
 	},
@@ -386,7 +404,7 @@
 				"birthPlaceholder": "Skriv inn Fødsel ID",
 				"idLabel": "ID (plID)",
 				"idPlaceholder": "Skriv inn ID",
-				"buttons":{
+				"buttons": {
 					"editPlanetConfig": "REDIGER PLANET KONFIG",
 					"createPlanet": "OPPRETT PLANET",
 					"uploadConfig": "LAST OPP KONFIG",
@@ -394,14 +412,14 @@
 					"downloadPlanetButton": "Last ned Konfigurasjon",
 					"restoreOriginalPlanetButton": "Gjenopprett Original Planet"
 				},
-				"modal":{
+				"modal": {
 					"noteTitle": "MERK!",
 					"customPlanetGenerated": "Egendefinert planet har blitt generert.",
 					"restartContainerInstructions": "Du må starte zerotier-containeren på nytt for å laste inn den nye konfigurasjonen:<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Gjenopprett Opprinnelig Planet",
 					"restoreOriginalPlanetContent": "Er du sikker på at du vil gjenopprette den opprinnelige planetfilen? Pass på å ta en sikkerhetskopi av din nåværende planetfil hvis du vil beholde de nåværende nøklene"
 				}
-		},
+			},
 			"yes": "Ja",
 			"no": "Nei"
 		}

@@ -139,6 +139,7 @@ const NetworkName = ({ central = false }: IProp) => {
 					<form onSubmit={changeNameHandler}>
 						<Input
 							focus
+							useTooltip
 							name="networkName"
 							onChange={eventHandler}
 							defaultValue={network?.name}

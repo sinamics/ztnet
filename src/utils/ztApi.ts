@@ -386,6 +386,28 @@ export const network_members = async function (
 	return await getData<MemberEntity[]>(addr, headers);
 };
 
+export const get_network = async function (
+	ctx: UserContext,
+	nwid: string,
+	isCentral = false,
+): Promise<NetworkEntity> {
+	// get headers based on local or central api
+	const { headers, localControllerUrl, ztCentralApiUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
+
+	const addr = isCentral
+		? `${ztCentralApiUrl}/network/${nwid}`
+		: `${localControllerUrl}/controller/network/${nwid}`;
+
+	try {
+		return await getData<NetworkEntity>(addr, headers);
+	} catch (error) {
+		throw new APIError(error, error as AxiosError);
+	}
+};
+
 export const local_network_detail = async function (
 	ctx: UserContext,
 	nwid: string,

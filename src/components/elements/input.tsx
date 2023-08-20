@@ -1,8 +1,11 @@
-import { forwardRef, useEffect } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import cn from "classnames";
+import { useTranslations } from "next-intl";
 
 interface InputProps {
 	placeholder: string;
 	value?: string | number;
+	useTooltip?: boolean;
 	name: string;
 	type: string;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -25,10 +28,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			className = "",
 			defaultValue,
 			focus = false,
+			useTooltip = false,
 			...rest
 		}: InputProps,
 		forwardedRef,
 	) => {
+		const t = useTranslations("input");
+		const [isFocused, setIsFocused] = useState(false);
 		const handleRef = (instance: HTMLInputElement | null) => {
 			if (typeof forwardedRef === "function") {
 				forwardedRef(instance);
@@ -36,7 +42,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 				forwardedRef.current = instance;
 			}
 		};
+		const handleFocus = () => {
+			setIsFocused(true);
+		};
 
+		const handleBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+			setIsFocused(false);
+			if (onBlur) {
+				onBlur(event);
+			}
+		};
 		useEffect(() => {
 			if (focus && forwardedRef && "current" in forwardedRef) {
 				forwardedRef.current?.focus();
@@ -61,16 +76,22 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 		}, [defaultValue, onChange, forwardedRef]);
 
 		return (
-			<input
-				name={name}
-				defaultValue={defaultValue}
-				value={value}
-				onChange={onChange}
-				onBlur={onBlur}
-				className={`input ${className}`}
-				ref={handleRef}
-				{...rest}
-			/>
+			<div
+				className={cn({ tooltip: useTooltip && isFocused })}
+				data-tip={t("enterToSave")}
+			>
+				<input
+					name={name}
+					defaultValue={defaultValue}
+					value={value}
+					onChange={onChange}
+					onBlur={handleBlur}
+					onFocus={handleFocus}
+					className={`input ${className}`}
+					ref={handleRef}
+					{...rest}
+				/>
+			</div>
 		);
 	},
 );

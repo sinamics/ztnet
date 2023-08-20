@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Pulsa Enter para guardar"
+	},
 	"changeButton": {
 		"change": "Cambiar",
 		"submit": "Enviar",
@@ -84,18 +87,30 @@
 			"loading": "Cargando"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
-			"ip_range_already_exists": "El rango de IP ya existe",
-			"ipv4_assignment": "Asignación de IPv4",
-			"auto_assign_from_range": "Asignar automáticamente desde el rango",
-			"easy": "Fácil",
-			"advanced": "Avanzado",
-			"delete_ip_assignment": "Eliminar asignación de IP",
-			"range_start": "Inicio del rango",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "Fin del rango",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "Enviar"
+			"header": "Asignaciones de IP",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 para cada dispositivo)",
+				"plane6Label": "ZeroTier 6PLANE (/80 enrutables para cada dispositivo)",
+				"rfc4193Updated": "rfc4193 actualizado",
+				"plane6Updated": "6plane actualizado"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
+				"ip_range_already_exists": "El rango de IP ya existe",
+				"auto_assign_from_range": "Asignar automáticamente desde el rango",
+				"easy": "Fácil",
+				"advanced": "Avanzado",
+				"delete_ip_assignment": "Eliminar asignación de IP",
+				"range_start": "Inicio del rango",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Fin del rango",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Enviar"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "Rutas administradas",
@@ -153,8 +168,7 @@
 				"status": "Estado",
 				"actions": {
 					"header": "Acciones",
-					"optionBtn": "opciones",
-					"stashBtn": "Almacenar"
+					"optionBtn": "opciones"
 				}
 			},
 			"optionModalTitle": "Opciones para miembro",
@@ -173,9 +187,9 @@
 				"placeholder": "Buscar cualquier cosa..."
 			}
 		},
-		"deletedNetworkMembersTable":{
-			"buttons":{
-				"viewStashedMembers":"Ver miembros almacenados"
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "Ver miembros almacenados"
 			}
 		},
 		"inviteMemberByMail": {
@@ -237,6 +251,10 @@
 				"header": "Anotación",
 				"description": "Mejore la organización de su miembro añadiendo anotaciones",
 				"placeholder": "Agregar Anotación"
+			},
+			"userActions": {
+				"header": "Acciones del Usuario",
+				"stashBtn": "Almacenar"
 			}
 		}
 	},
@@ -380,13 +398,13 @@
 				"commentPlaceholder": "Ingresar Comentario",
 				"identityDescription": "Identidad (opcionalmente). El valor predeterminado es el contenido de la identidad actual.public",
 				"endpointsDescription": "Introduce la dirección IP externa de tu controlador. Utiliza un formato separado por comas (IP/PUERTO) para múltiples direcciones. Por ejemplo: '84.17.53.155/9993,2a02:6ea0:d405::9993'. Asegúrate de que estas direcciones sean accesibles globalmente si quieres que los nodos fuera de tu red local se conecten.",
-				"endpointsPlaceholder":  "ip externa/9993",
+				"endpointsPlaceholder": "ip externa/9993",
 				"plRecommend": "Auto-Generar IDs",
 				"birthLabel": "Nacimiento (plBirth)",
 				"birthPlaceholder": "Ingresar Fecha de Nacimiento",
 				"idLabel": "ID (plID)",
 				"idPlaceholder": "Ingresar ID",
-				"buttons":{
+				"buttons": {
 					"editPlanetConfig": "EDITAR PLANETA",
 					"createPlanet": "CREAR PLANETA",
 					"uploadConfig": "SUBIR CONFIGURACIÓN",
@@ -394,14 +412,14 @@
 					"downloadPlanetButton": "Descargar Configuración",
 					"restoreOriginalPlanetButton": "Restaurar Planeta Original"
 				},
-				"modal":{
+				"modal": {
 					"noteTitle": "¡NOTA!",
 					"customPlanetGenerated": "Se ha generado un planeta personalizado.",
 					"restartContainerInstructions": "Necesitará reiniciar el contenedor zerotier para cargar la nueva configuración:<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Restaurar Planeta Original",
 					"restoreOriginalPlanetContent": "¿Está seguro de que desea restaurar el archivo del planeta original? Asegúrese de hacer una copia de seguridad de su archivo de planeta actual si desea mantener las claves actuales"
 				}
-		},
+			},
 			"yes": "Sí",
 			"no": "No"
 		}
