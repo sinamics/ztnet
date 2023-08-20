@@ -97,7 +97,7 @@ export interface V4AssignMode {
 }
 
 export interface V6AssignMode {
-	"6plane": boolean;
-	rfc4193: boolean;
-	zt: boolean;
+	"6plane"?: boolean;
+	rfc4193?: boolean;
+	zt?: boolean;
 }

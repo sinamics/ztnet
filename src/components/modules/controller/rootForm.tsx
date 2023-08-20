@@ -11,7 +11,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	const { callModal } = useModalStore((state) => state);
 	const { data: getOptions, refetch: refetchOptions } =
 		api.settings.getAllOptions.useQuery();
-	const { data: getWorld } = api.admin.getWorld.useQuery();
+	const { data: getIdentity } = api.admin.getIdentity.useQuery();
 
 	const [world, setWorld] = useState({
 		plRecommend: true,
@@ -69,12 +69,12 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				plRecommend: getOptions?.plRecommend || prev.plRecommend,
 				plBirth: Number(getOptions?.plBirth) || prev.plBirth,
 				plID: Number(getOptions?.plID) || prev.plID,
-				endpoints: getOptions?.plEndpoints || `${getWorld?.ip}/9993`,
+				endpoints: getOptions?.plEndpoints || `${getIdentity?.ip}/9993`,
 				comment: getOptions?.plComment,
-				identity: getOptions?.plIdentity || getWorld?.identity,
+				identity: getOptions?.plIdentity || getIdentity?.identity,
 			}));
 		}
-	}, [getOptions, getWorld]);
+	}, [getOptions, getIdentity]);
 
 	const inputChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

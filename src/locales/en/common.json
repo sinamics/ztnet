@@ -1,4 +1,7 @@
 {
+	"input": {
+		"enterToSave": "Hit Enter to save"
+	},
 	"changeButton": {
 		"change": "Change",
 		"submit": "Submit",
@@ -84,18 +87,30 @@
 			"loading": "Loading"
 		},
 		"networkIpAssignments": {
-			"please_enter_valid_ip_range": "Please enter a valid IP range",
-			"ip_range_already_exists": "The IP range already exists",
-			"ipv4_assignment": "IPv4 Assignment",
-			"auto_assign_from_range": "Auto-Assign from Range",
-			"easy": "Easy",
-			"advanced": "Advanced",
-			"delete_ip_assignment": "Delete IP assignment",
-			"range_start": "Range Start",
-			"range_start_placeholder": "192.168.168.1",
-			"range_end": "Range End",
-			"range_end_placeholder": "192.168.168.254",
-			"submit": "Submit"
+			"header": "IP Assignment",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 for each device)",
+				"plane6Label": "ZeroTier 6PLANE (/80 routable for each device)",
+				"rfc4193Updated": "rfc4193 updated",
+				"plane6Updated": "6plane updated"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "Please enter a valid IP range",
+				"ip_range_already_exists": "The IP range already exists",
+				"auto_assign_from_range": "Auto-Assign from Range",
+				"easy": "Easy",
+				"advanced": "Advanced",
+				"delete_ip_assignment": "Delete IP assignment",
+				"range_start": "Range Start",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Range End",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Submit"
+			}
 		},
 		"nettworkRoutes": {
 			"managedRoutesTitle": "Managed Routes",
@@ -153,8 +168,7 @@
 				"status": "Status",
 				"actions": {
 					"header": "Actions",
-					"optionBtn": "options",
-					"stashBtn": "Stash"
+					"optionBtn": "options"
 				}
 			},
 			"optionModalTitle": "Options for member",
@@ -173,9 +187,9 @@
 				"placeholder": "Search anything..."
 			}
 		},
-		"deletedNetworkMembersTable":{
-			"buttons":{
-				"viewStashedMembers":"View stashed members"
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "View stashed members"
 			}
 		},
 		"inviteMemberByMail": {
@@ -237,6 +251,10 @@
 				"header": "Anotation",
 				"description": "Enhance your member organization by adding notations",
 				"placeholder": "Add Notation"
+			},
+			"userActions": {
+				"header": "User Actions",
+				"stashBtn": "Stash"
 			}
 		}
 	},
@@ -386,15 +404,15 @@
 				"birthPlaceholder": "Enter Birth",
 				"idLabel": "ID (plID)",
 				"idPlaceholder": "Enter ID",
-				"buttons":{
+				"buttons": {
 					"editPlanetConfig": "EDIT PLANET CONFIG",
 					"createPlanet": "CREATE PLANET",
 					"uploadConfig": "UPLOAD CONFIG",
-					"updateWorld":"Update World",
+					"updateWorld": "Update World",
 					"downloadPlanetButton": "Download Config",
 					"restoreOriginalPlanetButton": "Restore Original Planet"
 				},
-				"modal":{
+				"modal": {
 					"noteTitle": "NOTE!",
 					"customPlanetGenerated": "Custom planet has been generated.",
 					"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",

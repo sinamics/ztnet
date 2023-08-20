@@ -165,6 +165,7 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
+				ztControllerResponse?.network?.v6AssignMode,
 			);
 
 			// Generate CIDR options for IP configuration
@@ -258,6 +259,44 @@ export const networkRouter = createTRPCRouter({
 					throw error;
 				}
 			}
+		}),
+	ipv6: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string().nonempty(),
+				central: z.boolean().optional().default(false),
+				v6AssignMode: z.object({
+					"6plane": z.boolean().optional(),
+					rfc4193: z.boolean().optional(),
+					zt: z.boolean().optional(),
+				}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const network = await ztController.get_network(
+				ctx,
+				input.nwid,
+				input.central,
+			);
+			// prepare update params
+			const updateParams = input.central
+				? {
+						config: {
+							v6AssignMode: {
+								...network?.config?.v6AssignMode,
+								...input.v6AssignMode,
+							},
+						},
+				  }
+				: { v6AssignMode: { ...network.v6AssignMode, ...input.v6AssignMode } };
+
+			// update network
+			return ztController.network_update({
+				ctx,
+				nwid: input.nwid,
+				central: input.central,
+				updateParams,
+			});
 		}),
 	enableIpv4AutoAssign: protectedProcedure
 		.input(

@@ -109,7 +109,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 		getFilteredRowModel: getFilteredRowModel(),
 		debugTable: false,
 	});
-
 	if (loadingNetworks) return <div>Loading</div>;
 	return (
 		<span className="rounded-xl pt-2">
