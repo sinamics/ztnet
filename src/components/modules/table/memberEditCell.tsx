@@ -142,12 +142,20 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				);
 			}
 			if (id === "ipAssignments") {
-				if (!original.ipAssignments || !original.ipAssignments.length)
+				const hasRfc4193Assigned = original?.V6AssignMode?.rfc4193;
+				const has6planeAssigned = original?.V6AssignMode?.["6plane"];
+
+				if (
+					!original.ipAssignments?.length &&
+					!hasRfc4193Assigned &&
+					!has6planeAssigned
+				) {
 					return (
 						<p className="text-gray-500">
 							{t("networkMembersTable.column.ipAssignments.notAssigned")}
 						</p>
 					);
+				}
 
 				return (
 					<div className="space-y-1">
