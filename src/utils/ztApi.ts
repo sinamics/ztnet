@@ -392,13 +392,17 @@ export const get_network = async function (
 	isCentral = false,
 ): Promise<NetworkEntity> {
 	// get headers based on local or central api
-	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+	const { headers, localControllerUrl, ztCentralApiUrl } = await getOptions(
+		ctx,
+		isCentral,
+	);
+
+	const addr = isCentral
+		? `${ztCentralApiUrl}/network/${nwid}`
+		: `${localControllerUrl}/controller/network/${nwid}`;
 
 	try {
-		return await getData<NetworkEntity>(
-			`${localControllerUrl}/controller/network/${nwid}`,
-			headers,
-		);
+		return await getData<NetworkEntity>(addr, headers);
 	} catch (error) {
 		throw new APIError(error, error as AxiosError);
 	}
