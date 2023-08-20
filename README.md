@@ -58,7 +58,7 @@ ZTNET integrates seamlessly with the ZeroTier Central, allowing for enhanced man
 🌐 **Custom Root: Craft Your Private World**  
 With ZTNET, set up your own private root server and create an isolated network world, offering both privacy and enhanced control in your ZeroTier journey.
 
-🌍 **6plane and rfc4193 IPv6 Support**   
+🛰️ **6plane and rfc4193 IPv6 Support**   
 ZTNET now supports both 6plane and rfc4193 IPv6, enhancing your networking capabilities.
 
 🚀 **Personalized User Spaces & Networks**  
