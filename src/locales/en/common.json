@@ -87,6 +87,7 @@
 			"loading": "Loading"
 		},
 		"networkIpAssignments": {
+			"header": "IP Assignment",
 			"tabs": {
 				"ipv4": "IPv4",
 				"ipv6": "IPv6"
@@ -100,7 +101,6 @@
 			"ipv4": {
 				"please_enter_valid_ip_range": "Please enter a valid IP range",
 				"ip_range_already_exists": "The IP range already exists",
-				"ipv4_assignment": "IPv4 Assignment",
 				"auto_assign_from_range": "Auto-Assign from Range",
 				"easy": "Easy",
 				"advanced": "Advanced",
