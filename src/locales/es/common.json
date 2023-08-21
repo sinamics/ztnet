@@ -392,6 +392,8 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",
 				"customPlanetInUse": "¡El Planeta Personalizado está actualmente en uso!",
+				"downloadPlanetInfo": "También puedes descargar el archivo del planeta accediendo a la URL:",
+				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "Generar raíz privada",
 				"generatePrivateRootPlaceholder": "Agregar una raíz privada a tu controlador",
 				"commentDescription": "Añadir un comentario para este planeta (opcionalmente)",

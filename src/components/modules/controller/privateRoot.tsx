@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import RootForm from "./rootForm";
+import Link from "next/link";
 
 const PrivateRoot = () => {
 	const t = useTranslations("admin");
@@ -141,12 +142,11 @@ const PrivateRoot = () => {
 								</p>
 							</div>
 							<div>
-								<p className="text-sm">
-									You can also download the planet file by accessing the URL
-									endpoint:{" "}
-									<a href="/api/planet" className="link text-blue-500">
-										api/planet
-									</a>
+								<p className=" text-sm">
+									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
+									<Link href="/api/planet" className="link text-blue-500">
+										{t("controller.generatePlanet.downloadPlanetUrl")}
+									</Link>
 								</p>
 							</div>
 							<div className="flex justify-between">

@@ -392,6 +392,8 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "Updating the planet file will modify the core structure of your ZeroTier network, impacting routes, flexibility, and potentially availability. Proceed with caution, understanding the implications.",
 				"customPlanetInUse": "Custom Planet is currently in use!",
+				"downloadPlanetInfo": "You can also download the planet file by accessing the URL:",
+				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "Generate private root",
 				"generatePrivateRootPlaceholder": "Add a private root to your controller",
 				"commentDescription": "Add a comment for this planet (optionally)",
