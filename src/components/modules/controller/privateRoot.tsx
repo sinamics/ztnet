@@ -21,7 +21,7 @@ const PrivateRoot = () => {
 	});
 	async function downloadPlanet() {
 		try {
-			const response = await fetch("/api/downloadPlanet");
+			const response = await fetch("/api/mkworld/config");
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}
@@ -57,7 +57,7 @@ const PrivateRoot = () => {
 		const formData = new FormData();
 		formData.append("file", file);
 
-		fetch("/api/uploadPlanet", {
+		fetch("/api/mkworld/config", {
 			method: "POST",
 			body: formData,
 		})
@@ -140,7 +140,15 @@ const PrivateRoot = () => {
 									...
 								</p>
 							</div>
-
+							<div>
+								<p className="text-sm">
+									You can also download the planet file by accessing the URL
+									endpoint:{" "}
+									<a href="/api/planet" className="link text-blue-500">
+										api/planet
+									</a>
+								</p>
+							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">
 									<button
