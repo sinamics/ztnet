@@ -717,6 +717,11 @@ export const adminRouter = createTRPCRouter({
 					input.identity ||
 					fs.readFileSync(`${zerotierOneDir}/identity.public`, "utf-8").trim();
 
+				/*
+				 *
+				 * Mock the mkworld.config.json file and write it to the file system
+				 *
+				 */
 				const config: WorldConfig = {
 					rootNodes: [
 						{
@@ -737,7 +742,11 @@ export const adminRouter = createTRPCRouter({
 					JSON.stringify(config),
 				);
 
-				// Run ztmkworld command
+				/*
+				 *
+				 * Generate planet file using mkworld
+				 *
+				 */
 				try {
 					execSync(
 						// "cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
@@ -756,6 +765,11 @@ export const adminRouter = createTRPCRouter({
 					planetPath,
 				);
 
+				/*
+				 *
+				 * Update local.conf file with the new port number
+				 *
+				 */
 				const localConfPath = `${zerotierOneDir}/local.conf`;
 
 				// Read the existing local.conf file
@@ -765,7 +779,7 @@ export const adminRouter = createTRPCRouter({
 				const portNumber = parseInt(input.endpoints.split("/").pop() || "", 10);
 
 				// Check if "settings" object and "primaryPort" key exist, then update it
-				if (localConf.settings && "primaryPort" in localConf.settings) {
+				if (localConf?.settings && "primaryPort" in localConf.settings) {
 					localConf.settings.primaryPort = portNumber;
 					// Write the updated JSON data back to the file
 					fs.writeFileSync(localConfPath, JSON.stringify(localConf, null, 2));
@@ -777,8 +791,11 @@ export const adminRouter = createTRPCRouter({
 					);
 				}
 
-				console.log(localConf);
-
+				/*
+				 *
+				 * Update DB with the new planet file details
+				 *
+				 */
 				await ctx.prisma.globalOptions.update({
 					where: {
 						id: 1,
