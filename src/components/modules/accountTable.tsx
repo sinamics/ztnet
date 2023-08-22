@@ -138,7 +138,6 @@ export const Accounts = () => {
 					if ((error.data as ErrorData)?.zodError) {
 						const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
 						for (const field in fieldErrors) {
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
 							toast.error(`${fieldErrors[field].join(", ")}`);
 						}
 					} else if (error.message) {
@@ -174,16 +173,6 @@ export const Accounts = () => {
 				setValue(initialValue);
 			}, [initialValue]);
 
-			// if (id === "name") {
-			// 	return (
-			// 		<input
-			// 			className="m-0 border-0 bg-transparent p-0"
-			// 			value={value as string}
-			// 			onChange={onChange}
-			// 			onBlur={onBlur}
-			// 		/>
-			// 	);
-			// }
 			if (id === "role") {
 				return (
 					<select
@@ -250,7 +239,6 @@ export const Accounts = () => {
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
-								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 								...old[rowIndex]!,
 								[columnId]: value,
 							};
@@ -293,14 +281,7 @@ export const Accounts = () => {
 					/>
 				</div>
 				<div className="overflow-hidden rounded-lg border w-full">
-					<table
-						// {...{
-						// 	style: {
-						// 		width: table.getCenterTotalSize(),
-						// 	},
-						// }}
-						className="overflow-x-auto text-center  table-wrapper divide-y divide-gray-400"
-					>
+					<table className="overflow-x-auto text-center  table-wrapper divide-y divide-gray-400">
 						<thead className="bg-base-100">
 							{
 								// Loop over the header rows
