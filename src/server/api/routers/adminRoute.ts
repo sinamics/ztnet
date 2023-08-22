@@ -17,6 +17,7 @@ import { execSync } from "child_process";
 import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
+import { updateLocalConf } from "~/utils/planet";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -744,6 +745,27 @@ export const adminRouter = createTRPCRouter({
 
 				/*
 				 *
+				 * Update local.conf file with the new port number
+				 *
+				 */
+				// Extract the port numbers from the endpoint string
+				const portNumbers = input.endpoints
+					.split(",")
+					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
+				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
+					throwError(
+						"Error: Port numbers are not equal in the provided endpoints",
+					);
+				}
+
+				try {
+					await updateLocalConf(portNumbers[0]);
+				} catch (error) {
+					throwError(error);
+				}
+
+				/*
+				 *
 				 * Generate planet file using mkworld
 				 *
 				 */
@@ -764,32 +786,6 @@ export const adminRouter = createTRPCRouter({
 					// "/var/lib/zerotier-one/planet",
 					planetPath,
 				);
-
-				/*
-				 *
-				 * Update local.conf file with the new port number
-				 *
-				 */
-				const localConfPath = `${zerotierOneDir}/local.conf`;
-
-				// Read the existing local.conf file
-				const localConf = JSON.parse(fs.readFileSync(localConfPath, "utf8"));
-
-				// Extract the port number from the endpoint string
-				const portNumber = parseInt(input.endpoints.split("/").pop() || "", 10);
-
-				// Check if "settings" object and "primaryPort" key exist, then update it
-				if (localConf?.settings && "primaryPort" in localConf.settings) {
-					localConf.settings.primaryPort = portNumber;
-					// Write the updated JSON data back to the file
-					fs.writeFileSync(localConfPath, JSON.stringify(localConf, null, 2));
-				} else {
-					// Handle error, key does not exist
-					// rome-ignore lint/nursery/noConsoleLog: <explanation>
-					console.log(
-						'Error: "primaryPort" key does not exist in local.conf file',
-					);
-				}
 
 				/*
 				 *
@@ -871,6 +867,17 @@ export const adminRouter = createTRPCRouter({
 			// Clean up backup and mkworld directories
 			fs.rmSync(paths.backupDir, { recursive: true, force: true });
 			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
+
+			/*
+			 *
+			 * Reset local.conf with default port number
+			 *
+			 */
+			try {
+				await updateLocalConf(9993);
+			} catch (error) {
+				throwError(error);
+			}
 
 			await resetDatabase();
 			return { success: true };
