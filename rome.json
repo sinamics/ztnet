@@ -4,7 +4,9 @@
 		"enabled": false
 	},
 	"files": {
-		"ignore": ["**/*.js"]
+		"ignore": [
+			"**/*.js"
+		]
 	},
 	"formatter": {
 		"enabled": true,
