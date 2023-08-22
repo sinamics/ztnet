@@ -8,6 +8,7 @@ import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
 import { type GetStaticPropsContext } from "next";
+import Organization from "./organization";
 
 const AdminSettings = () => {
 	const router = useRouter();
@@ -44,6 +45,11 @@ const AdminSettings = () => {
 			name: t("tabs.controller"),
 			value: "controller",
 			component: <Controller />,
+		},
+		{
+			name: "Organization",
+			value: "organization",
+			component: <Organization />,
 		},
 	];
 
