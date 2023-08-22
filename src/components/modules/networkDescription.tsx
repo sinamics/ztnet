@@ -3,11 +3,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
-import {
-	type QueryClient,
-	useQueryClient,
-	type Query,
-} from "@tanstack/react-query";
+import { type QueryClient, useQueryClient, type Query } from "@tanstack/react-query";
 import { type CentralNetwork } from "~/types/central/network";
 import { type NetworkEntity } from "~/types/local/network";
 import cn from "classnames";
@@ -33,9 +29,7 @@ const updateCache = ({
 			},
 		],
 		(oldData) => {
-			const newData = oldData as Query<
-				RouterOutputs["network"]["getNetworkById"]
-			>;
+			const newData = oldData as Query<RouterOutputs["network"]["getNetworkById"]>;
 			if ("network" in newData && newData.network && typeof data === "object") {
 				return {
 					...newData,
@@ -95,17 +89,16 @@ const NetworkDescription = ({ central = false }: IProp) => {
 		}));
 	}, [networkById?.network?.description]);
 
-	const { mutate: networkDescription } =
-		api.network.networkDescription.useMutation({
-			onSuccess: (data) => {
-				const input = {
-					nwid: query.id as string,
-					central,
-				};
-				// void refecthNetworkById();
-				updateCache({ client, data, input });
-			},
-		});
+	const { mutate: networkDescription } = api.network.networkDescription.useMutation({
+		onSuccess: (data) => {
+			const input = {
+				nwid: query.id as string,
+				central,
+			};
+			// void refecthNetworkById();
+			updateCache({ client, data, input });
+		},
+	});
 
 	const toggleDescriptionInput = () => {
 		setState({
@@ -113,17 +106,13 @@ const NetworkDescription = ({ central = false }: IProp) => {
 			toggleDescriptionInput: !state.toggleDescriptionInput,
 		});
 	};
-	const eventHandler = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
+	const eventHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					{errorNetwork.message}
-				</h1>
+				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 				<ul className="list-disc">
 					<li>{t("networkById.errorSteps.step1")}</li>
 					<li>{t("networkById.errorSteps.step2")}</li>

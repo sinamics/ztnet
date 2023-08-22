@@ -16,9 +16,7 @@ interface FieldConfig {
 	selectOptions?: { value: string; label: string }[];
 }
 
-type SubmitHandlerType = (
-	values: Record<string, string | boolean>,
-) => Promise<unknown>;
+type SubmitHandlerType = (values: Record<string, string | boolean>) => Promise<unknown>;
 
 interface FormProps {
 	label: string;
@@ -69,9 +67,7 @@ const InputField = ({
 }: FormProps) => {
 	const t = useTranslations("changeButton");
 	const [showInputs, setShowInputs] = useState(openByDefault);
-	const [formValues, setFormValues] = useState<
-		Record<string, string | boolean>
-	>({});
+	const [formValues, setFormValues] = useState<Record<string, string | boolean>>({});
 
 	// Create a new ref
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -105,9 +101,7 @@ const InputField = ({
 
 	const handleEditClick = () => setShowInputs(!showInputs);
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-	) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		if (e.target.type === "checkbox") {
 			// Check for the type
 			const checked = (e.target as HTMLInputElement).checked;
@@ -141,17 +135,12 @@ const InputField = ({
 		<>
 			{!showInputs ? (
 				<div className="flex w-full justify-between">
-					<div
-						onClick={handleEditClick}
-						className={`cursor-pointer  ${labelStyle}`}
-					>
+					<div onClick={handleEditClick} className={`cursor-pointer  ${labelStyle}`}>
 						<div className="flex font-medium">
 							<span>{label}</span>
 
 							{headerBadge && (
-								<span
-									className={`badge badge-outline badge-${headerBadge.color} ml-2`}
-								>
+								<span className={`badge badge-outline badge-${headerBadge.color} ml-2`}>
 									{headerBadge.text}
 								</span>
 							)}
@@ -164,9 +153,7 @@ const InputField = ({
 						<div className="text-gray-500">
 							{placeholder ?? fields[0].placeholder}
 							{badge && (
-								<span
-									className={`badge badge-outline badge-${badge.color} ml-2`}
-								>
+								<span className={`badge badge-outline badge-${badge.color} ml-2`}>
 									{badge.text}
 								</span>
 							)}
@@ -194,9 +181,7 @@ const InputField = ({
 							<span>{label}</span>
 
 							{headerBadge && (
-								<span
-									className={`badge badge-outline badge-${headerBadge.color} ml-2`}
-								>
+								<span className={`badge badge-outline badge-${headerBadge.color} ml-2`}>
 									{headerBadge.text}
 								</span>
 							)}
@@ -212,9 +197,7 @@ const InputField = ({
 									return (
 										<div key={field.name} className="form-control">
 											{field.description ? (
-												<label
-													className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
-												>
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
 												</label>
 											) : null}
@@ -236,9 +219,7 @@ const InputField = ({
 									return (
 										<div key={field.name} className="form-control">
 											{field.description ? (
-												<label
-													className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
-												>
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
 												</label>
 											) : null}
@@ -262,9 +243,7 @@ const InputField = ({
 								return (
 									<div key={field.name} className="form-control">
 										{field.description ? (
-											<label
-												className={`text-sm text-gray-500 pt-2 ${labelClassName}`}
-											>
+											<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 												{field.description}
 											</label>
 										) : null}

@@ -54,18 +54,12 @@ export const adminRouter = createTRPCRouter({
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
 			const isCentral = false;
-			const networks = await ztController.get_controller_networks(
-				ctx,
-				isCentral,
-			);
+			const networks = await ztController.get_controller_networks(ctx, isCentral);
 
 			const networkCount = networks.length;
 			let totalMembers = 0;
 			for (const network of networks) {
-				const members = await ztController.network_members(
-					ctx,
-					network as string,
-				);
+				const members = await ztController.network_members(ctx, network as string);
 				totalMembers += Object.keys(members).length;
 			}
 
@@ -95,12 +89,10 @@ export const adminRouter = createTRPCRouter({
 	changeRole: adminRoleProtectedRoute
 		.input(
 			z.object({
-				role: z
-					.string()
-					.refine((value) => Object.values(Role).includes(value as Role), {
-						message: "Role is not valid",
-						path: ["role"],
-					}),
+				role: z.string().refine((value) => Object.values(Role).includes(value as Role), {
+					message: "Role is not valid",
+					path: ["role"],
+				}),
 				id: z.number(),
 			}),
 		)
@@ -282,13 +274,9 @@ export const adminRouter = createTRPCRouter({
 					{ async: true },
 				);
 
-				const parsedTemplate = JSON.parse(renderedTemplate) as Record<
-					string,
-					string
-				>;
+				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
-				const transporter: nodemailer.Transporter =
-					createTransporter(globalOptions);
+				const transporter: nodemailer.Transporter = createTransporter(globalOptions);
 
 				// Define mail options
 				const mailOptions = {
@@ -347,9 +335,7 @@ export const adminRouter = createTRPCRouter({
 	 */
 	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
-			const ztNetworks = (await ztController.get_controller_networks(
-				ctx,
-			)) as string[];
+			const ztNetworks = (await ztController.get_controller_networks(ctx)) as string[];
 			const dbNetworks = await ctx.prisma.network.findMany({
 				select: { nwid: true },
 			});
@@ -478,9 +464,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					throwError(
-						"Could not process user group operation! Please try again",
-					);
+					throwError("Could not process user group operation! Please try again");
 				} else {
 					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred");
@@ -685,17 +669,13 @@ export const adminRouter = createTRPCRouter({
 				}
 				// Check if identity.public exists
 				if (!fs.existsSync(`${zerotierOneDir}/identity.public`)) {
-					throwError(
-						"identity.public file does NOT exist, cannot generate planet file.",
-					);
+					throwError("identity.public file does NOT exist, cannot generate planet file.");
 				}
 
 				// Check if ztmkworld executable exists
 				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
 				if (!fs.existsSync(ztmkworldBinPath)) {
-					throwError(
-						"ztmkworld executable does not exist at the specified location.",
-					);
+					throwError("ztmkworld executable does not exist at the specified location.");
 				}
 				// Ensure /var/lib/zerotier-one/zt-mkworld directory exists
 				if (!fs.existsSync(mkworldDir)) {
@@ -708,9 +688,7 @@ export const adminRouter = createTRPCRouter({
 					if (!fs.existsSync(backupDir)) {
 						fs.mkdirSync(backupDir);
 
-						const timestamp = new Date()
-							.toISOString()
-							.replace(/[^a-zA-Z0-9]/g, "_");
+						const timestamp = new Date().toISOString().replace(/[^a-zA-Z0-9]/g, "_");
 						fs.copyFileSync(planetPath, `${backupDir}/planet.bak.${timestamp}`);
 					}
 				}
@@ -738,10 +716,7 @@ export const adminRouter = createTRPCRouter({
 					plRecommend: input.plRecommend,
 				};
 
-				fs.writeFileSync(
-					`${mkworldDir}/mkworld.config.json`,
-					JSON.stringify(config),
-				);
+				fs.writeFileSync(`${mkworldDir}/mkworld.config.json`, JSON.stringify(config));
 
 				/*
 				 *
@@ -753,9 +728,7 @@ export const adminRouter = createTRPCRouter({
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
 				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-					throwError(
-						"Error: Port numbers are not equal in the provided endpoints",
-					);
+					throwError("Error: Port numbers are not equal in the provided endpoints");
 				}
 
 				try {

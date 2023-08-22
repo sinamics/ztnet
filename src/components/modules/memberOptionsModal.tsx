@@ -104,21 +104,14 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const subnetMatch = isIPInSubnet(
-			e.target.value,
-			networkById?.network?.routes,
-		);
+		const subnetMatch = isIPInSubnet(e.target.value, networkById?.network?.routes);
 		setState((prevState) => ({
 			...prevState,
 			[e.target.name]: e.target.value,
 			isValid: subnetMatch,
 		}));
 	};
-	const deleteIpAssignment = (
-		ipAssignments: Array<string>,
-		Ipv4: string,
-		id: string,
-	) => {
+	const deleteIpAssignment = (ipAssignments: Array<string>, Ipv4: string, id: string) => {
 		const _ipv4 = [...ipAssignments];
 		const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
@@ -316,11 +309,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		return (
 			<div className="flex flex-wrap gap-2">
 				{Object.entries(tagsByName).map(([tagName, tagDetails]) => {
-					if (
-						!tagDetails ||
-						typeof tagDetails !== "object" ||
-						!tagDetails.enums
-					) {
+					if (!tagDetails || typeof tagDetails !== "object" || !tagDetails.enums) {
 						return null;
 					}
 
@@ -370,9 +359,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			<div className={cn({ "opacity-30": updateMemberLoading })}>
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-3">
-						<header>
-							{t("networkById.memberOptionModal.ipAssignment.header")}
-						</header>
+						<header>{t("networkById.memberOptionModal.ipAssignment.header")}</header>
 						<p className="text-sm text-gray-500">
 							{t("networkById.memberOptionModal.ipAssignment.description")}
 						</p>
@@ -380,10 +367,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="flex flex-wrap gap-3 text-center">
 					{ipAssignments.map((assignedIp) => {
-						const subnetMatch = isIPInSubnet(
-							assignedIp,
-							networkById?.network?.routes,
-						);
+						const subnetMatch = isIPInSubnet(assignedIp, networkById?.network?.routes);
 						return (
 							<div
 								key={assignedIp}
@@ -397,9 +381,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 								{ipAssignments.length > 0 && (
 									<div
-										title={t(
-											"networkById.memberOptionModal.deleteIpAssignment.title",
-										)}
+										title={t("networkById.memberOptionModal.deleteIpAssignment.title")}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -460,9 +442,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							{t("networkById.memberOptionModal.allowEthernetBridging.header")}
 						</header>
 						<p className="text-sm text-gray-500">
-							{t(
-								"networkById.memberOptionModal.allowEthernetBridging.description",
-							)}
+							{t("networkById.memberOptionModal.allowEthernetBridging.description")}
 						</p>
 					</div>
 					<input
@@ -494,9 +474,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							{t("networkById.memberOptionModal.doNotAutoAssignIPs.header")}
 						</header>
 						<p className="text-sm text-gray-500">
-							{t(
-								"networkById.memberOptionModal.doNotAutoAssignIPs.description",
-							)}
+							{t("networkById.memberOptionModal.doNotAutoAssignIPs.description")}
 						</p>
 					</div>
 					<input
@@ -524,9 +502,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
-						<header>
-							{t("networkById.memberOptionModal.capabilities.header")}
-						</header>
+						<header>{t("networkById.memberOptionModal.capabilities.header")}</header>
 						{CapabilityCheckboxes(
 							networkById?.network?.capabilitiesByName as CapabilitiesByName,
 						)}

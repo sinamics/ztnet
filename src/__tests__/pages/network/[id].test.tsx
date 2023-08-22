@@ -59,9 +59,7 @@ describe("NetworkById component", () => {
 					nwid: "1234567890",
 					name: "Test Network",
 					private: true,
-					ipAssignmentPools: [
-						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-					],
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 					enableBroadcast: true,
@@ -169,9 +167,7 @@ describe("NetworkById component", () => {
 					nwid: "network_id",
 					name: "Test Network",
 					private: true,
-					ipAssignmentPools: [
-						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-					],
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 					enableBroadcast: true,
@@ -213,9 +209,7 @@ describe("NetworkById component", () => {
 				expect(screen.getByDisplayValue(/members_name/i)).toBeInTheDocument();
 				expect(screen.getByText(/network_id/i)).toBeInTheDocument();
 				expect(screen.getByText(/10.10.10.10/i)).toBeInTheDocument();
-				expect(
-					screen.getByRole("button", { name: /options/i }),
-				).toBeInTheDocument();
+				expect(screen.getByRole("button", { name: /options/i })).toBeInTheDocument();
 			},
 			{ timeout: 5000 },
 		);
@@ -226,9 +220,7 @@ describe("NetworkById component", () => {
 			data: {
 				network: {
 					nwid: "network_id",
-					ipAssignmentPools: [
-						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-					],
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},
@@ -267,9 +259,7 @@ describe("NetworkById component", () => {
 			data: {
 				network: {
 					nwid: "network_id",
-					ipAssignmentPools: [
-						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-					],
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},
@@ -308,9 +298,7 @@ describe("NetworkById component", () => {
 			data: {
 				network: {
 					nwid: "network_id",
-					ipAssignmentPools: [
-						{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" },
-					],
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
 					multicastLimit: 32,
 				},

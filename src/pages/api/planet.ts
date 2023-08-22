@@ -27,10 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			const fileStream = fs.createReadStream(filePath);
 
 			// Set the headers
-			res.setHeader(
-				"Content-Disposition",
-				"attachment; filename=planet.custom",
-			);
+			res.setHeader("Content-Disposition", "attachment; filename=planet.custom");
 			res.setHeader("Content-Type", "application/octet-stream");
 
 			// Pipe the read stream to the response

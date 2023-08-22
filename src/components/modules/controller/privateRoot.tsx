@@ -83,15 +83,10 @@ const PrivateRoot = () => {
 							{t("controller.generatePlanet.modal.customPlanetGenerated")}
 							<br />
 							<p>
-								{t.rich(
-									"controller.generatePlanet.modal.restartContainerInstructions",
-									{
-										span: (content) => (
-											<span className="text-yellow-300">{content} </span>
-										),
-										br: () => <br />,
-									},
-								)}
+								{t.rich("controller.generatePlanet.modal.restartContainerInstructions", {
+									span: (content) => <span className="text-yellow-300">{content} </span>,
+									br: () => <br />,
+								})}
 							</p>
 						</span>
 					),
@@ -136,8 +131,7 @@ const PrivateRoot = () => {
 									<strong>Endpoints:</strong> {getOptions?.plEndpoints}
 								</p>
 								<p>
-									<strong>Identity:</strong>{" "}
-									{getOptions?.plIdentity?.substring(0, 50)}
+									<strong>Identity:</strong> {getOptions?.plIdentity?.substring(0, 50)}
 									...
 								</p>
 							</div>
@@ -155,14 +149,9 @@ const PrivateRoot = () => {
 										onClick={() => downloadPlanet()}
 										className="btn join-item bg-primary btn-sm"
 									>
-										{t(
-											"controller.generatePlanet.buttons.downloadPlanetButton",
-										)}
+										{t("controller.generatePlanet.buttons.downloadPlanetButton")}
 									</button>
-									<button
-										onClick={() => setOpen(!open)}
-										className="btn join-item btn-sm"
-									>
+									<button onClick={() => setOpen(!open)} className="btn join-item btn-sm">
 										{t("controller.generatePlanet.buttons.editPlanetConfig")}
 									</button>
 								</div>
@@ -184,9 +173,7 @@ const PrivateRoot = () => {
 									}
 									className="btn btn-outline btn-error btn-sm"
 								>
-									{t(
-										"controller.generatePlanet.buttons.restoreOriginalPlanetButton",
-									)}
+									{t("controller.generatePlanet.buttons.restoreOriginalPlanetButton")}
 								</button>
 							</div>
 							{open ? <RootForm onClose={closeForm} /> : null}
@@ -197,15 +184,11 @@ const PrivateRoot = () => {
 						<div className="flex w-full justify-between">
 							<div className={"cursor-pointer"}>
 								<div className="flex font-medium">
-									<span>
-										{t("controller.generatePlanet.generatePrivateRootLabel")}
-									</span>
+									<span>{t("controller.generatePlanet.generatePrivateRootLabel")}</span>
 								</div>
 								<div>
 									<p className="m-0 p-0 text-xs text-gray-500">
-										{t(
-											"controller.generatePlanet.generatePrivateRootPlaceholder",
-										)}
+										{t("controller.generatePlanet.generatePrivateRootPlaceholder")}
 									</p>
 								</div>
 							</div>

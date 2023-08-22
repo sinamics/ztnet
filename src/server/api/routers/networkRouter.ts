@@ -38,8 +38,7 @@ function isValidIP(ip: string): boolean {
 	return Address4.isValid(ip) || Address6.isValid(ip);
 }
 function isValidDomain(domain: string): boolean {
-	const domainRegex =
-		/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+	const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
 	return domainRegex.test(domain);
 }
 const RouteSchema = z.object({
@@ -113,11 +112,7 @@ export const networkRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
-				return await ztController.central_network_detail(
-					ctx,
-					input.nwid,
-					input.central,
-				);
+				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
 
 			const psqlNetworkData = await ctx.prisma.network.findFirst({
@@ -131,8 +126,7 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			if (!psqlNetworkData)
-				return throwError("You are not the Author of this network!");
+			if (!psqlNetworkData) return throwError("You are not the Author of this network!");
 
 			const ztControllerResponse = await ztController
 				.local_network_detail(ctx, psqlNetworkData.nwid, false)
@@ -140,8 +134,7 @@ export const networkRouter = createTRPCRouter({
 					throwError(`${err.message}`);
 				});
 			// console.log(JSON.stringify(ztControllerResponse, null, 2));
-			if (!ztControllerResponse)
-				return throwError("Failed to get network details!");
+			if (!ztControllerResponse) return throwError("Failed to get network details!");
 
 			const peersForAllMembers = await fetchPeersForAllMembers(
 				ctx,
@@ -149,10 +142,7 @@ export const networkRouter = createTRPCRouter({
 			);
 
 			// Update network members based on controller response and fetched peers data
-			await updateNetworkMembers(
-				ztControllerResponse.members,
-				peersForAllMembers,
-			);
+			await updateNetworkMembers(ztControllerResponse.members, peersForAllMembers);
 
 			// Fetch members which are marked as deleted/zombie in the database for a given network
 			const zombieMembers = await fetchZombieMembers(
@@ -220,11 +210,7 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// de-authorize all members before we delete network
-				const members = await ztController.network_members(
-					ctx,
-					input.nwid,
-					false,
-				);
+				const members = await ztController.network_members(ctx, input.nwid, false);
 
 				for (const member in members) {
 					await ztController.member_update({
@@ -273,11 +259,7 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const network = await ztController.get_network(
-				ctx,
-				input.nwid,
-				input.central,
-			);
+			const network = await ztController.get_network(ctx, input.nwid, input.central);
 			// prepare update params
 			const updateParams = input.central
 				? {
@@ -535,13 +517,9 @@ export const networkRouter = createTRPCRouter({
 									}),
 								),
 							})
-							.refine(
-								(dns) => dns === undefined || (dns?.domain && dns.servers),
-								{
-									message:
-										"Both domain and servers must be provided if dns is defined",
-								},
-							),
+							.refine((dns) => dns === undefined || (dns?.domain && dns.servers), {
+								message: "Both domain and servers must be provided if dns is defined",
+							}),
 					})
 					.optional(),
 			}),
@@ -864,10 +842,7 @@ accept;`;
 			);
 			// create transporter
 			const transporter = createTransporter(globalOptions);
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<
-				string,
-				string
-			>;
+			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
 			// define mail options
 			const mailOptions = {

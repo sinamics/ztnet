@@ -34,9 +34,7 @@ const updateCache = ({
 			},
 		],
 		(oldData) => {
-			const newData = oldData as InfiniteData<
-				RouterOutputs["network"]["getNetworkById"]
-			>;
+			const newData = oldData as InfiniteData<RouterOutputs["network"]["getNetworkById"]>;
 			return {
 				...newData,
 				network: { ...data },
@@ -100,9 +98,7 @@ const NetworkName = ({ central = false }: IProp) => {
 			},
 		);
 	};
-	const eventHandler = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
+	const eventHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
@@ -119,9 +115,7 @@ const NetworkName = ({ central = false }: IProp) => {
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					{errorNetwork.message}
-				</h1>
+				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 				<ul className="list-disc">
 					<li>{t("errorSteps.step1")}</li>
 					<li>{t("errorSteps.step2")}</li>

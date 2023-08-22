@@ -44,11 +44,7 @@ export const notificationTemplate = () => {
 };
 
 export function createTransporter(globalOptions: GlobalOptions) {
-	if (
-		!globalOptions.smtpHost ||
-		!globalOptions.smtpPort ||
-		!globalOptions.smtpEmail
-	) {
+	if (!globalOptions.smtpHost || !globalOptions.smtpPort || !globalOptions.smtpEmail) {
 		return throwError(
 			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",
 		);

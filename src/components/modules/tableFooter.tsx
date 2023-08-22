@@ -63,8 +63,7 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
 				<span className="flex items-center gap-1 text-xs">
 					<div>{t("page")}</div>
 					<strong>
-						{table.getState().pagination.pageIndex + 1} {t("of")}{" "}
-						{table.getPageCount()}
+						{table.getState().pagination.pageIndex + 1} {t("of")} {table.getPageCount()}
 					</strong>
 				</span>
 			</div>

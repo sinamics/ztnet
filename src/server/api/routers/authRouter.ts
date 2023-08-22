@@ -67,15 +67,13 @@ export const authRouter = createTRPCRouter({
 			if (!settings.enableRegistration) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
-					message:
-						"Registration is disabled! Please contact the administrator.",
+					message: "Registration is disabled! Please contact the administrator.",
 				});
 			}
 
 			// Email validation
 			if (!email) return new Error("Email required!");
-			if (!z.string().nonempty().parse(email))
-				return new Error("Email not supported!");
+			if (!z.string().nonempty().parse(email)) return new Error("Email not supported!");
 
 			// Fecth from database
 			// const user = await client.query(`SELECT * FROM users WHERE email = $1 FETCH FIRST ROW ONLY`, [email]);
@@ -167,10 +165,7 @@ export const authRouter = createTRPCRouter({
 						{ async: true },
 					);
 
-					const parsedTemplate = JSON.parse(renderedTemplate) as Record<
-						string,
-						string
-					>;
+					const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
 					// define mail options
 					const mailOptions = {
@@ -210,14 +205,10 @@ export const authRouter = createTRPCRouter({
 					.email()
 					.transform((val) => val.trim())
 					.optional(),
-				password: passwordSchema(
-					"Current password does not meet the requirements!",
-				)
+				password: passwordSchema("Current password does not meet the requirements!")
 					.transform((val) => val.trim())
 					.optional(),
-				newPassword: passwordSchema(
-					"New Password does not meet the requirements!",
-				)
+				newPassword: passwordSchema("New Password does not meet the requirements!")
 					.transform((val) => val.trim())
 					.optional(),
 				repeatNewPassword: passwordSchema(
@@ -291,9 +282,7 @@ export const authRouter = createTRPCRouter({
 				data: {
 					email: input.email || user.email,
 					name: input.name || user.name,
-					hash: input.newPassword
-						? bcrypt.hashSync(input.newPassword, 10)
-						: user.hash,
+					hash: input.newPassword ? bcrypt.hashSync(input.newPassword, 10) : user.hash,
 				},
 			});
 		}),
@@ -350,10 +339,7 @@ export const authRouter = createTRPCRouter({
 
 			// create transporter
 			const transporter = createTransporter(globalOptions);
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<
-				string,
-				string
-			>;
+			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
 			// define mail options
 			const mailOptions = {
@@ -445,13 +431,11 @@ export const authRouter = createTRPCRouter({
 						upsert: {
 							create: {
 								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow:
-									input.showNotationMarkerInTableRow,
+								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
 							},
 							update: {
 								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow:
-									input.showNotationMarkerInTableRow,
+								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
 							},
 						},
 					},

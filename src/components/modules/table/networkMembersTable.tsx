@@ -202,10 +202,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 													<td key={cell.id} className="py-1 pl-4">
 														{
 															// Render the cell contents
-															flexRender(
-																cell.column.columnDef.cell,
-																cell.getContext(),
-															)
+															flexRender(cell.column.columnDef.cell, cell.getContext())
 														}
 													</td>
 												))

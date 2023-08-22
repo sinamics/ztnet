@@ -69,10 +69,7 @@ const Networks: NextPageWithLayout = () => {
 				</div>
 				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
 					<div className="flex justify-center">
-						<button
-							className={"btn btn-primary btn-outline"}
-							onClick={addNewNetwork}
-						>
+						<button className={"btn btn-primary btn-outline"} onClick={addNewNetwork}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
@@ -130,8 +127,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			// pattern is to put them in JSON files separated by locale and read
 			// the desired one based on the `locale` received from Next.js.
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`))
-				.default,
+			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
 }

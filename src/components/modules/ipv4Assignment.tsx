@@ -28,25 +28,21 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 		{ enabled: !!query.id },
 	);
 
-	const { mutate: enableIpv4AutoAssign } =
-		api.network.enableIpv4AutoAssign.useMutation({
-			onError: (e) => {
-				void toast.error(e?.message);
-			},
-		});
-	const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation(
-		{
-			onError: (e) => {
-				void toast.error(e?.message);
-			},
+	const { mutate: enableIpv4AutoAssign } = api.network.enableIpv4AutoAssign.useMutation({
+		onError: (e) => {
+			void toast.error(e?.message);
 		},
-	);
-	const { mutate: advancedIpAssignment } =
-		api.network.advancedIpAssignment.useMutation({
-			onError: (e) => {
-				void toast.error(e?.message);
-			},
-		});
+	});
+	const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation({
+		onError: (e) => {
+			void toast.error(e?.message);
+		},
+	});
+	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
+		onError: (e) => {
+			void toast.error(e?.message);
+		},
+	});
 
 	const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setIpRange({ ...ipRange, [e.target.name]: e.target.value });
@@ -79,9 +75,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 	const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		if (!ipRange.rangeStart || !ipRange.rangeEnd) {
-			void toast.error(
-				t("networkIpAssignments.ipv4.please_enter_valid_ip_range"),
-			);
+			void toast.error(t("networkIpAssignments.ipv4.please_enter_valid_ip_range"));
 			return;
 		}
 
@@ -94,9 +88,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 					existingRange?.ipRangeStart === ipRange.rangeStart &&
 					existingRange?.ipRangeEnd === ipRange.rangeEnd
 				) {
-					void toast.error(
-						t("networkIpAssignments.ipv4.ip_range_already_exists"),
-					);
+					void toast.error(t("networkIpAssignments.ipv4.ip_range_already_exists"));
 					return;
 				}
 			}
@@ -250,9 +242,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 									{pool.ipRangeStart} - {pool.ipRangeEnd}
 								</div>
 
-								<div
-									title={t("networkIpAssignments.ipv4.delete_ip_assignment")}
-								>
+								<div title={t("networkIpAssignments.ipv4.delete_ip_assignment")}>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -284,9 +274,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 								name="rangeStart"
 								value={ipRange.rangeStart}
 								onChange={rangeChangeHandler}
-								placeholder={t(
-									"networkIpAssignments.ipv4.range_start_placeholder",
-								)}
+								placeholder={t("networkIpAssignments.ipv4.range_start_placeholder")}
 								className="input input-bordered input-sm w-full"
 							/>
 						</div>
@@ -303,9 +291,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 									value={ipRange.rangeEnd}
 									onChange={rangeChangeHandler}
 									className="input join-item input-sm  w-full"
-									placeholder={t(
-										"networkIpAssignments.ipv4.range_end_placeholder",
-									)}
+									placeholder={t("networkIpAssignments.ipv4.range_end_placeholder")}
 								/>
 							</div>
 						</div>

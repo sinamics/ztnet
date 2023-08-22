@@ -135,10 +135,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 											colSpan={header.colSpan}
 											className="bg-base-300/50 p-2 "
 											style={{
-												width:
-													header.getSize() !== 150
-														? header.getSize()
-														: undefined,
+												width: header.getSize() !== 150 ? header.getSize() : undefined,
 											}}
 										>
 											{header.isPlaceholder ? null : (
@@ -178,10 +175,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 									{row.getVisibleCells().map((cell) => {
 										return (
 											<td key={cell.id} className="p-2">
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext(),
-												)}
+												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</td>
 										);
 									})}

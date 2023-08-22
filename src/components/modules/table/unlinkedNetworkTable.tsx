@@ -38,27 +38,26 @@ export const UnlinkedNetwork = () => {
 		isLoading: loadingNetworks,
 	} = api.admin.unlinkedNetwork.useQuery();
 
-	const { mutate: assignNetworkToUser } =
-		api.admin.assignNetworkToUser.useMutation({
-			onSuccess: () => {
-				void refetchNetworks();
-				toast.success("Network assigned to user");
-			},
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error(t("users.users.toastMessages.errorOccurred"));
+	const { mutate: assignNetworkToUser } = api.admin.assignNetworkToUser.useMutation({
+		onSuccess: () => {
+			void refetchNetworks();
+			toast.success("Network assigned to user");
+		},
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
+					toast.error(`${fieldErrors[field].join(", ")}`);
 				}
-				void refetchNetworks();
-			},
-		});
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error(t("users.users.toastMessages.errorOccurred"));
+			}
+			void refetchNetworks();
+		},
+	});
 
 	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps>();
 	const columns = useMemo<ColumnDef<UnlinkedNetworkTableProps>[]>(
@@ -66,9 +65,7 @@ export const UnlinkedNetwork = () => {
 			columnHelper.accessor("network.nwid", {
 				header: () => (
 					<span>
-						{t(
-							"controller.networkMembers.unlinkedNetworks.table.nwid",
-						).toUpperCase()}
+						{t("controller.networkMembers.unlinkedNetworks.table.nwid").toUpperCase()}
 					</span>
 				),
 				id: "nwid",
@@ -100,9 +97,7 @@ export const UnlinkedNetwork = () => {
 			columnHelper.accessor("members", {
 				header: () => (
 					<span>
-						{t(
-							"controller.networkMembers.unlinkedNetworks.table.members",
-						).toUpperCase()}
+						{t("controller.networkMembers.unlinkedNetworks.table.members").toUpperCase()}
 					</span>
 				),
 				id: "members",
@@ -115,9 +110,7 @@ export const UnlinkedNetwork = () => {
 			columnHelper.accessor("role", {
 				header: () => (
 					<span>
-						{t(
-							"controller.networkMembers.unlinkedNetworks.table.assign",
-						).toUpperCase()}
+						{t("controller.networkMembers.unlinkedNetworks.table.assign").toUpperCase()}
 					</span>
 				),
 				id: "role",
@@ -141,19 +134,15 @@ export const UnlinkedNetwork = () => {
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const { callModal } = useModalStore((state) => state);
 
-			const dropDownHandler = (
-				e: React.ChangeEvent<HTMLSelectElement>,
-				nwid: string,
-			) => {
+			const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, nwid: string) => {
 				const userId = e.target.value;
-				const userName =
-					e.target.options[e.target.selectedIndex].dataset.username;
+				const userName = e.target.options[e.target.selectedIndex].dataset.username;
 
 				callModal({
-					title: t(
-						"controller.networkMembers.unlinkedNetworks.assignModal.title",
-						{ user: userName, network: nwid },
-					),
+					title: t("controller.networkMembers.unlinkedNetworks.assignModal.title", {
+						user: userName,
+						network: nwid,
+					}),
 					description: t(
 						"controller.networkMembers.unlinkedNetworks.assignModal.description",
 					),
@@ -242,8 +231,7 @@ export const UnlinkedNetwork = () => {
 																	className: header.column.getCanSort()
 																		? "cursor-pointer select-none"
 																		: "",
-																	onClick:
-																		header.column.getToggleSortingHandler(),
+																	onClick: header.column.getToggleSortingHandler(),
 																}}
 															>
 																{flexRender(
@@ -253,8 +241,7 @@ export const UnlinkedNetwork = () => {
 																{{
 																	asc: " 🔼",
 																	desc: " 🔽",
-																}[header.column.getIsSorted() as string] ??
-																	null}
+																}[header.column.getIsSorted() as string] ?? null}
 															</div>
 														)}
 													</th>
@@ -270,10 +257,7 @@ export const UnlinkedNetwork = () => {
 								table
 									.getRowModel()
 									.rows.map((row) => (
-										<tr
-											key={row.original?.network?.nwid}
-											className={"items-center"}
-										>
+										<tr key={row.original?.network?.nwid} className={"items-center"}>
 											{
 												// Loop over the rows cells
 												row
@@ -284,10 +268,7 @@ export const UnlinkedNetwork = () => {
 														<td key={cell.id} className="py-1 pl-4">
 															{
 																// Render the cell contents
-																flexRender(
-																	cell.column.columnDef.cell,
-																	cell.getContext(),
-																)
+																flexRender(cell.column.columnDef.cell, cell.getContext())
 															}
 														</td>
 													))

@@ -8,9 +8,7 @@ export const sixPlane = (networkId: string, nodeId: string): string => {
 	}
 
 	const networkPart = bytes
-		.map(
-			(substr, idx, arr) => parseInt(substr, 16) ^ parseInt(arr[idx + 4], 16),
-		)
+		.map((substr, idx, arr) => parseInt(substr, 16) ^ parseInt(arr[idx + 4], 16))
 		.map((byte) => byte.toString(16).toLowerCase())
 		.map((byte) => (byte.length === 2 ? byte : `0${byte}`))
 		.slice(0, 4);

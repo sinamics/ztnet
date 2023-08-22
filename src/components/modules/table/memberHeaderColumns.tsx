@@ -6,10 +6,7 @@ import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
 import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import {
-	type NetworkMemberNotation,
-	type MemberEntity,
-} from "~/types/local/member";
+import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -92,30 +89,22 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				},
 			}),
 			columnHelper.accessor("name", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.name")}</span>
-				),
+				header: () => <span>{t("networkById.networkMembersTable.column.name")}</span>,
 				id: "name",
 			}),
 			columnHelper.accessor("id", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.id")}</span>
-				),
+				header: () => <span>{t("networkById.networkMembersTable.column.id")}</span>,
 				id: "id",
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("ipAssignments", {
 				header: () => (
-					<span>
-						{t("networkById.networkMembersTable.column.ipAssignments.header")}
-					</span>
+					<span>{t("networkById.networkMembersTable.column.ipAssignments.header")}</span>
 				),
 				id: "ipAssignments",
 			}),
 			columnHelper.accessor("creationTime", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.created")}</span>
-				),
+				header: () => <span>{t("networkById.networkMembersTable.column.created")}</span>,
 				id: "creationTime",
 				cell: (info) => {
 					const formatTime = (value: string, unit: string) => {
@@ -138,9 +127,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			}),
 			columnHelper.accessor("peers", {
 				header: () => (
-					<span>
-						{t("networkById.networkMembersTable.column.physicalIp.header")}
-					</span>
+					<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
 				),
 				id: "physicalAddress",
 				cell: ({ getValue, row: { original } }) => {
@@ -149,9 +136,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						if (!val || typeof val.physicalAddress !== "string")
 							return (
 								<span className="text-gray-400/50">
-									{t(
-										"networkById.networkMembersTable.column.physicalIp.unknownValue",
-									)}
+									{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
 								</span>
 							);
 
@@ -161,9 +146,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					if (!val || typeof val.physicalAddress !== "string")
 						return (
 							<span className="text-gray-400/50">
-								{t(
-									"networkById.networkMembersTable.column.physicalIp.unknownValue",
-								)}
+								{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
 							</span>
 						);
 
@@ -172,9 +155,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			}),
 			columnHelper.accessor("conStatus", {
 				header: () => (
-					<span>
-						{t("networkById.networkMembersTable.column.conStatus.header")}
-					</span>
+					<span>{t("networkById.networkMembersTable.column.conStatus.header")}</span>
 				),
 				id: "conStatus",
 				cell: ({ row: { original } }) => {
@@ -215,14 +196,8 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						} else {
 							// The user is considered offline
 							return (
-								<span
-									style={cursorStyle}
-									className="text-error"
-									title="User is offline"
-								>
-									{t(
-										"networkById.networkMembersTable.column.conStatus.offline",
-									)}
+								<span style={cursorStyle} className="text-error" title="User is offline">
+									{t("networkById.networkMembersTable.column.conStatus.offline")}
 									<TimeAgo date={lastSeen} formatter={formatTime} />
 								</span>
 							);
@@ -233,9 +208,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							<span
 								style={cursorStyle}
 								className="cursor-pointer text-warning"
-								title={t(
-									"networkById.networkMembersTable.column.conStatus.toolTip",
-								)}
+								title={t("networkById.networkMembersTable.column.conStatus.toolTip")}
 							>
 								{t("networkById.networkMembersTable.column.conStatus.relayed")}
 							</span>
@@ -248,22 +221,14 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					) {
 						const directTitle =
 							original.conStatus === ConnectionStatus.DirectLAN
-								? t(
-										"networkById.networkMembersTable.column.conStatus.directLan",
-								  )
-								: t(
-										"networkById.networkMembersTable.column.conStatus.directWan",
-								  );
+								? t("networkById.networkMembersTable.column.conStatus.directLan")
+								: t("networkById.networkMembersTable.column.conStatus.directWan");
 						const versionInfo =
 							original.peers?.version && original.peers.version !== "-1.-1.-1"
 								? ` (v${original.peers.version})`
 								: "";
 						return (
-							<div
-								style={cursorStyle}
-								className="text-success "
-								title={directTitle}
-							>
+							<div style={cursorStyle} className="text-success " title={directTitle}>
 								{t("networkById.networkMembersTable.column.conStatus.direct", {
 									version: versionInfo,
 								})}{" "}
@@ -272,11 +237,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					}
 
 					return (
-						<span
-							style={cursorStyle}
-							className="text-error"
-							title="User is offline"
-						>
+						<span style={cursorStyle} className="text-error" title="User is offline">
 							{t("networkById.networkMembersTable.column.conStatus.offline")}
 							<TimeAgo date={original?.lastSeen} formatter={formatTime} />
 						</span>
@@ -285,9 +246,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			}),
 			columnHelper.accessor("action", {
 				header: () => (
-					<span>
-						{t("networkById.networkMembersTable.column.actions.header")}
-					</span>
+					<span>{t("networkById.networkMembersTable.column.actions.header")}</span>
 				),
 				id: "action",
 				cell: ({ row: { original } }) => {

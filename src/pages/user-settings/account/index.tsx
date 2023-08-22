@@ -21,8 +21,7 @@ const Account = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
-	const { mutate: userUpdate, error: userError } =
-		api.auth.update.useMutation();
+	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation();
 
 	const { mutate: updateZtApi } = api.auth.setZtApi.useMutation({
 		onError: (error) => {
@@ -106,23 +105,17 @@ const Account = () => {
 								{
 									name: "password",
 									type: "password",
-									placeholder: t(
-										"account.accountSettings.currentPasswordPlaceholder",
-									),
+									placeholder: t("account.accountSettings.currentPasswordPlaceholder"),
 								},
 								{
 									name: "newPassword",
 									type: "password",
-									placeholder: t(
-										"account.accountSettings.newPasswordPlaceholder",
-									),
+									placeholder: t("account.accountSettings.newPasswordPlaceholder"),
 								},
 								{
 									name: "repeatNewPassword",
 									type: "password",
-									placeholder: t(
-										"account.accountSettings.repeatNewPasswordPlaceholder",
-									),
+									placeholder: t("account.accountSettings.repeatNewPasswordPlaceholder"),
 								},
 							]}
 							submitHandler={(params) => {
@@ -208,8 +201,7 @@ const Account = () => {
 									name: "ztCentralApiUrl",
 									type: "text",
 									placeholder:
-										me?.options?.ztCentralApiUrl ||
-										"https://api.zerotier.com/api/v1",
+										me?.options?.ztCentralApiUrl || "https://api.zerotier.com/api/v1",
 									value: me?.options?.ztCentralApiUrl,
 								},
 							]}
@@ -256,9 +248,7 @@ const Account = () => {
 					</select>
 				</div>
 				<div className="py-10">
-					<p className="text-sm text-gray-400">
-						{t("account.application.title")}
-					</p>
+					<p className="text-sm text-gray-400">{t("account.application.title")}</p>
 					<div className="divider mt-0 p-0 text-gray-500"></div>
 					<div className="flex items-center justify-between">
 						<p>{t("account.application.version")}</p>

@@ -5,8 +5,7 @@ import { useTranslations } from "next-intl";
 
 const Settings = () => {
 	const t = useTranslations("admin");
-	const { mutate: setRegistration } =
-		api.admin.updateGlobalOptions.useMutation();
+	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation();
 
 	const {
 		data: options,

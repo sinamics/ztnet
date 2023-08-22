@@ -38,10 +38,7 @@ const Modal = () => {
 	return (
 		<dialog className={modalClass}>
 			<div
-				className={cn(
-					"custom-scrollbar modal-box relative bg-base-100",
-					rootStyle,
-				)}
+				className={cn("custom-scrollbar modal-box relative bg-base-100", rootStyle)}
 				ref={ref}
 			>
 				<h3 className="text-lg font-bold">{title}</h3>

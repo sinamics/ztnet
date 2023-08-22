@@ -82,9 +82,7 @@ export interface CentralNetwork extends NetworkBase {
 	config: Partial<NetworkConfig>;
 }
 
-export interface FlattenCentralNetwork
-	extends NetworkBase,
-		Partial<NetworkConfig> {
+export interface FlattenCentralNetwork extends NetworkBase, Partial<NetworkConfig> {
 	cidr?: string[];
 	nwid?: string;
 }

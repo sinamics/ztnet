@@ -32,12 +32,9 @@ const ForgotPasswordForm: React.FC = () => {
 			onSuccess: () => {
 				setLoading(false);
 				setFormData({ email: "" });
-				toast.success(
-					"Password reset link sent to your email if the account exist!",
-					{
-						duration: 10000,
-					},
-				);
+				toast.success("Password reset link sent to your email if the account exist!", {
+					duration: 10000,
+				});
 			},
 			onError: (error) => {
 				setLoading(false);
@@ -59,9 +56,7 @@ const ForgotPasswordForm: React.FC = () => {
 		<div className="z-10 flex justify-center  self-center">
 			<div className="w-100 mx-auto rounded-2xl bg-white p-12 ">
 				<div className="mb-4">
-					<h3 className="text-2xl font-semibold text-gray-800">
-						Forgot Password{" "}
-					</h3>
+					<h3 className="text-2xl font-semibold text-gray-800">Forgot Password </h3>
 					<p className="text-gray-500">Please sign up with your credentials</p>
 				</div>
 				<form className="space-y-5" onSubmit={submitHandler}>
@@ -85,9 +80,7 @@ const ForgotPasswordForm: React.FC = () => {
 								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100 shadow-lg",
 							)}
 						>
-							{loading ? (
-								<span className="loading loading-spinner"></span>
-							) : null}
+							{loading ? <span className="loading loading-spinner"></span> : null}
 							Send Email
 						</button>
 					</div>

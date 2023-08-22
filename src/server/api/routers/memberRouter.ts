@@ -136,11 +136,7 @@ export const networkMemberRouter = createTRPCRouter({
 			// update capabilities
 			if (typeof input.updateParams.capabilities === "object") {
 				// update member
-				Object.assign(
-					payload,
-					{},
-					{ capabilities: input.updateParams.capabilities },
-				);
+				Object.assign(payload, {}, { capabilities: input.updateParams.capabilities });
 			}
 
 			// update tags
@@ -151,11 +147,7 @@ export const networkMemberRouter = createTRPCRouter({
 			// update noAutoAssignIps
 			if (typeof input.updateParams.activeBridge === "boolean") {
 				// update member
-				Object.assign(
-					payload,
-					{},
-					{ activeBridge: input.updateParams.activeBridge },
-				);
+				Object.assign(payload, {}, { activeBridge: input.updateParams.activeBridge });
 			}
 			// update noAutoAssignIps
 			if (typeof input.updateParams.noAutoAssignIps === "boolean") {
@@ -170,25 +162,15 @@ export const networkMemberRouter = createTRPCRouter({
 			// update ip specified by user UI
 			if (input.updateParams.ipAssignments) {
 				// update member
-				Object.assign(
-					payload,
-					{},
-					{ ipAssignments: input.updateParams.ipAssignments },
-				);
+				Object.assign(payload, {}, { ipAssignments: input.updateParams.ipAssignments });
 			}
 
 			// update authorized
 			if (typeof input.updateParams.authorized === "boolean") {
-				Object.assign(
-					payload,
-					{},
-					{ authorized: input.updateParams.authorized },
-				);
+				Object.assign(payload, {}, { authorized: input.updateParams.authorized });
 			}
 
-			const updateParams = input.central
-				? { config: { ...payload } }
-				: { ...payload };
+			const updateParams = input.central ? { config: { ...payload } } : { ...payload };
 
 			// if central is true, send the request to the central API and return the response
 			const updatedMember = await ztController
@@ -275,9 +257,7 @@ export const networkMemberRouter = createTRPCRouter({
 			const payload: Partial<MemberEntity> = {};
 			Object.assign(payload, {}, { tags: adjustedTags });
 
-			const updateParams = input.central
-				? { config: { ...payload } }
-				: { ...payload };
+			const updateParams = input.central ? { config: { ...payload } } : { ...payload };
 
 			// if central is true, send the request to the central API and return the response
 			const updatedMember = await ztController

@@ -10,9 +10,7 @@ export const TableFilter = ({
 	column: Column<MemberEntity, unknown>;
 	table: Table<MemberEntity>;
 }) => {
-	const firstValue = table
-		.getPreFilteredRowModel()
-		.flatRows[0]?.getValue(column.id);
+	const firstValue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id);
 
 	const columnFilterValue = column.getFilterValue();
 
@@ -20,9 +18,7 @@ export const TableFilter = ({
 		() =>
 			typeof firstValue === "number"
 				? []
-				: (Array.from(
-						column.getFacetedUniqueValues().keys(),
-				  ).sort() as string[]),
+				: (Array.from(column.getFacetedUniqueValues().keys()).sort() as string[]),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[column.getFacetedUniqueValues()],
 	);

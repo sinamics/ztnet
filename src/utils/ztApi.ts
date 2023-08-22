@@ -30,8 +30,7 @@ const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
 let ZT_SECRET = process.env.ZT_SECRET;
 
-const ZT_FILE =
-	process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
+const ZT_FILE = process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
 
 if (!ZT_SECRET) {
 	if (process.env.IS_GITHUB_ACTION !== "true") {
@@ -95,12 +94,8 @@ const getOptions = async (
 	ctx: UserContext,
 	isCentral = false,
 ): Promise<GetOptionsResponse> => {
-	const {
-		ztCentralApiKey,
-		ztCentralApiUrl,
-		localControllerUrl,
-		localControllerSecret,
-	} = await getApiCredentials(ctx);
+	const { ztCentralApiKey, ztCentralApiUrl, localControllerUrl, localControllerSecret } =
+		await getApiCredentials(ctx);
 
 	if (isCentral) {
 		return {
@@ -128,24 +123,18 @@ export const flattenCentralMember = (member: MemberEntity): MemberEntity => {
 	return flattenedMember;
 };
 
-export const flattenCentralMembers = (
-	members: MemberEntity[],
-): MemberEntity[] => {
+export const flattenCentralMembers = (members: MemberEntity[]): MemberEntity[] => {
 	if (!members) return [];
 	return members.map((member) => flattenCentralMember(member));
 };
 
-export const flattenNetwork = (
-	network: CentralNetwork,
-): FlattenCentralNetwork => {
+export const flattenNetwork = (network: CentralNetwork): FlattenCentralNetwork => {
 	const { id: nwid, config, ...otherProps } = network;
 	const flattenedNetwork = { nwid, ...config, ...otherProps };
 	return flattenedNetwork;
 };
 
-export const flattenNetworks = (
-	networks: CentralNetwork[],
-): FlattenCentralNetwork[] => {
+export const flattenNetworks = (networks: CentralNetwork[]): FlattenCentralNetwork[] => {
 	return networks.map((network) => flattenNetwork(network));
 };
 
@@ -269,9 +258,7 @@ export const get_controller_status = async function (
 		isCentral,
 	);
 
-	const addr = isCentral
-		? `${ztCentralApiUrl}/status`
-		: `${localControllerUrl}/status`;
+	const addr = isCentral ? `${ztCentralApiUrl}/status` : `${localControllerUrl}/status`;
 
 	try {
 		if (isCentral) {
@@ -311,11 +298,10 @@ export const network_create = async (
 
 	try {
 		if (isCentral) {
-			const data = await postData<CentralNetwork>(
-				`${ztCentralApiUrl}/network`,
-				headers,
-				{ config: { ...payload }, description: "created with ztnet" },
-			);
+			const data = await postData<CentralNetwork>(`${ztCentralApiUrl}/network`, headers, {
+				config: { ...payload },
+				description: "created with ztnet",
+			});
 
 			return flattenNetwork(data);
 		} else {
@@ -465,10 +451,7 @@ export const central_network_detail = async function (
 
 		const membersArr = await Promise.all(
 			members?.map(async (member) => {
-				return await getData<MemberEntity>(
-					`${addr}/member/${member?.nodeId}`,
-					headers,
-				);
+				return await getData<MemberEntity>(`${addr}/member/${member?.nodeId}`, headers);
 			}),
 		);
 
@@ -510,10 +493,7 @@ export const network_update = async function ({
 	central = false,
 }: networkUpdate): Promise<Partial<NetworkEntity>> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
-		central,
-	);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}`
 		: `${localControllerUrl}/controller/network/${nwid}`;
@@ -537,10 +517,7 @@ export const member_delete = async ({
 	central = false,
 }: MemberDeleteInput): Promise<Partial<MemberDeleteResponse>> => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
-		central,
-	);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
 		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
@@ -573,10 +550,7 @@ export const member_update = async ({
 	central = false,
 }: memberUpdate) => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
-		central,
-	);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
 		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
@@ -600,10 +574,7 @@ export const member_details = async function (
 	central = false,
 ): Promise<MemberEntity> {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
-		central,
-	);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
 
 	try {
 		const addr = central

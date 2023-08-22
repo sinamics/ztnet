@@ -13,7 +13,7 @@
 		"formatWithErrors": false,
 		"indentStyle": "tab",
 		"indentSize": 2,
-		"lineWidth": 80,
+		"lineWidth": 90,
 		"ignore": []
 	},
 	"linter": {

@@ -158,9 +158,7 @@ const Mail = () => {
 					className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
 				>
 					<input type="checkbox" />
-					<div className="collapse-title">
-						{t("mail.forgotPasswordTemplate")}
-					</div>
+					<div className="collapse-title">{t("mail.forgotPasswordTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<ForgotPasswordMailTemplate />
 					</div>

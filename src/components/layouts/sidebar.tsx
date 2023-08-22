@@ -138,9 +138,7 @@ const Sidebar = (): JSX.Element => {
 								</span>
 								<span className="ml-3">
 									{`${t("ztCentral")} `}
-									<div className="badge badge-primary p-1 text-[0.6rem]">
-										BETA
-									</div>
+									<div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
 								</span>
 							</Link>
 						</li>
@@ -157,8 +155,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=site-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" &&
-								router.query.tab === "site-setting"
+								router.pathname === "/admin" && router.query.tab === "site-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -192,18 +189,13 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=mail-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" &&
-								router.query.tab === "mail-setting"
+								router.pathname === "/admin" && router.query.tab === "mail-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
 								>
 									<span className="flex items-center justify-center text-lg text-gray-400">
-										<svg
-											viewBox="0 0 512 512"
-											fill="currentColor"
-											className="h-6 w-6"
-										>
+										<svg viewBox="0 0 512 512" fill="currentColor" className="h-6 w-6">
 											<path
 												fill="none"
 												stroke="currentColor"

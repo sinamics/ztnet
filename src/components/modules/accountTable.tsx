@@ -149,10 +149,7 @@ export const Accounts = () => {
 					void refetchUsers();
 				},
 			});
-			const dropDownHandler = (
-				e: React.ChangeEvent<HTMLSelectElement>,
-				id: number,
-			) => {
+			const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: number) => {
 				let description = "";
 
 				if (e.target.value === "ADMIN") {
@@ -333,8 +330,7 @@ export const Accounts = () => {
 																		className: header.column.getCanSort()
 																			? "cursor-pointer select-none"
 																			: "",
-																		onClick:
-																			header.column.getToggleSortingHandler(),
+																		onClick: header.column.getToggleSortingHandler(),
 																	}}
 																>
 																	{flexRender(
@@ -344,8 +340,7 @@ export const Accounts = () => {
 																	{{
 																		asc: " 🔼",
 																		desc: " 🔽",
-																	}[header.column.getIsSorted() as string] ??
-																		null}
+																	}[header.column.getIsSorted() as string] ?? null}
 																</div>
 															)}
 														</th>
@@ -381,10 +376,7 @@ export const Accounts = () => {
 														>
 															{
 																// Render the cell contents
-																flexRender(
-																	cell.column.columnDef.cell,
-																	cell.getContext(),
-																)
+																flexRender(cell.column.columnDef.cell, cell.getContext())
 															}
 														</td>
 													))
