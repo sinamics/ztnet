@@ -17,6 +17,7 @@ import { execSync } from "child_process";
 import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
+import { updateLocalConf } from "~/utils/planet";
 
 export const adminRouter = createTRPCRouter({
 	getUsers: adminRoleProtectedRoute
@@ -717,6 +718,11 @@ export const adminRouter = createTRPCRouter({
 					input.identity ||
 					fs.readFileSync(`${zerotierOneDir}/identity.public`, "utf-8").trim();
 
+				/*
+				 *
+				 * Mock the mkworld.config.json file and write it to the file system
+				 *
+				 */
 				const config: WorldConfig = {
 					rootNodes: [
 						{
@@ -737,7 +743,32 @@ export const adminRouter = createTRPCRouter({
 					JSON.stringify(config),
 				);
 
-				// Run ztmkworld command
+				/*
+				 *
+				 * Update local.conf file with the new port number
+				 *
+				 */
+				// Extract the port numbers from the endpoint string
+				const portNumbers = input.endpoints
+					.split(",")
+					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
+				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
+					throwError(
+						"Error: Port numbers are not equal in the provided endpoints",
+					);
+				}
+
+				try {
+					await updateLocalConf(portNumbers[0]);
+				} catch (error) {
+					throwError(error);
+				}
+
+				/*
+				 *
+				 * Generate planet file using mkworld
+				 *
+				 */
 				try {
 					execSync(
 						// "cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
@@ -756,6 +787,11 @@ export const adminRouter = createTRPCRouter({
 					planetPath,
 				);
 
+				/*
+				 *
+				 * Update DB with the new planet file details
+				 *
+				 */
 				await ctx.prisma.globalOptions.update({
 					where: {
 						id: 1,
@@ -777,7 +813,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					throwError(`Error assigning user to group: ${err.message}`);
+					throwError(`${err.message}`);
 				} else {
 					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred");
@@ -831,6 +867,17 @@ export const adminRouter = createTRPCRouter({
 			// Clean up backup and mkworld directories
 			fs.rmSync(paths.backupDir, { recursive: true, force: true });
 			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
+
+			/*
+			 *
+			 * Reset local.conf with default port number
+			 *
+			 */
+			try {
+				await updateLocalConf(9993);
+			} catch (error) {
+				throwError(error);
+			}
 
 			await resetDatabase();
 			return { success: true };

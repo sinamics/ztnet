@@ -8,6 +8,7 @@ import { prisma } from "~/server/db";
 import unzipper from "unzipper";
 import { PassThrough } from "stream";
 import { execSync } from "child_process";
+import { updateLocalConf } from "~/utils/planet";
 
 export const config = {
 	api: {
@@ -125,6 +126,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 										.on("end", async () => {
 											try {
 												const parsedContent = JSON.parse(jsonContent);
+												const plEndpoints =
+													parsedContent?.rootNodes?.[0]?.endpoints.join(",");
+
 												await prisma.globalOptions.update({
 													where: { id: 1 },
 													data: {
@@ -134,12 +138,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 														plRecommend: parsedContent?.plRecommend,
 														plComment: parsedContent?.rootNodes?.[0]?.comments,
 														plIdentity: parsedContent?.rootNodes?.[0]?.identity,
-														plEndpoints:
-															parsedContent?.rootNodes?.[0]?.endpoints.join(
-																",",
-															),
+														plEndpoints,
 													},
 												});
+												/*
+												 *
+												 * Update local.conf file with the new port number
+												 *
+												 */
+												// Extract the port number from the endpoint string
+												const portNumber = parseInt(
+													plEndpoints.split("/").pop() || "",
+													10,
+												);
+
+												try {
+													await updateLocalConf(portNumber);
+												} catch (_error) {
+													res.status(400).json({
+														error: "Error parsing mkworld.config.json",
+													});
+												}
 
 												prisma.$disconnect();
 											} catch (e) {
