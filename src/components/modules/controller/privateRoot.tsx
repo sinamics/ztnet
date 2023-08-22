@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import RootForm from "./rootForm";
+import Link from "next/link";
 
 const PrivateRoot = () => {
 	const t = useTranslations("admin");
@@ -21,7 +22,7 @@ const PrivateRoot = () => {
 	});
 	async function downloadPlanet() {
 		try {
-			const response = await fetch("/api/downloadPlanet");
+			const response = await fetch("/api/mkworld/config");
 			if (!response.ok) {
 				throw new Error("Network response was not ok");
 			}
@@ -57,7 +58,7 @@ const PrivateRoot = () => {
 		const formData = new FormData();
 		formData.append("file", file);
 
-		fetch("/api/uploadPlanet", {
+		fetch("/api/mkworld/config", {
 			method: "POST",
 			body: formData,
 		})
@@ -140,7 +141,14 @@ const PrivateRoot = () => {
 									...
 								</p>
 							</div>
-
+							<div>
+								<p className=" text-sm">
+									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
+									<Link href="/api/planet" className="link text-blue-500">
+										{t("controller.generatePlanet.downloadPlanetUrl")}
+									</Link>
+								</p>
+							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">
 									<button
