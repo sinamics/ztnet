@@ -187,50 +187,50 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				<button
 					onClick={(e) => {
 						e.preventDefault();
-						if (world.endpoints && !world.endpoints.includes("9993")) {
-							return callModal({
-								title: <p>Port Notification</p>,
-								rootStyle: "text-left border border-yellow-300/30",
-								showButtons: true,
-								content: (
-									<>
-										<span className="space-y-3">
-											As you are using a custom port, you must also be aware
-											that
-											<span className="bg-gray-600">
-												/var/lib/zerotier-one/local.conf
-											</span>
-											must be updated to reflect the new port.
-										</span>
-										<pre className="text-secondary bg-base-200 p-4 rounded">
-											{JSON.stringify(
-												{
-													settings: {
-														primaryPort: "your port",
-														//.....
-													},
-												},
-												null,
-												2,
-											)}
-										</pre>
+						// if (world.endpoints && !world.endpoints.includes("9993")) {
+						// 	return callModal({
+						// 		title: <p>Port Notification</p>,
+						// 		rootStyle: "text-left border border-yellow-300/30",
+						// 		showButtons: true,
+						// 		content: (
+						// 			<>
+						// 				<span className="space-y-3">
+						// 					As you are using a custom port, you must also be aware
+						// 					that
+						// 					<span className="bg-gray-600">
+						// 						/var/lib/zerotier-one/local.conf
+						// 					</span>
+						// 					must be updated to reflect the new port.
+						// 				</span>
+						// 				<pre className="text-secondary bg-base-200 p-4 rounded">
+						// 					{JSON.stringify(
+						// 						{
+						// 							settings: {
+						// 								primaryPort: "your port",
+						// 								//.....
+						// 							},
+						// 						},
+						// 						null,
+						// 						2,
+						// 					)}
+						// 				</pre>
 
-										<div className="pt-10">
-											Do you want to continue with your current config?
-										</div>
-									</>
-								),
-								yesAction: () => {
-									return makeWorld(world, {
-										onSuccess: () => {
-											refetchOptions();
+						// 				<div className="pt-10">
+						// 					Do you want to continue with your current config?
+						// 				</div>
+						// 			</>
+						// 		),
+						// 		yesAction: () => {
+						// 			return makeWorld(world, {
+						// 				onSuccess: () => {
+						// 					refetchOptions();
 
-											if (onClose) onClose();
-										},
-									});
-								},
-							});
-						}
+						// 					if (onClose) onClose();
+						// 				},
+						// 			});
+						// 		},
+						// 	});
+						// }
 
 						makeWorld(world, {
 							onSuccess: () => {

@@ -758,6 +758,29 @@ export const adminRouter = createTRPCRouter({
 					planetPath,
 				);
 
+				const localConfPath = `${zerotierOneDir}/local.conf`;
+
+				// Read the existing local.conf file
+				const localConf = JSON.parse(fs.readFileSync(localConfPath, "utf8"));
+
+				// Extract the port number from the endpoint string
+				const portNumber = parseInt(input.endpoints.split("/").pop() || "", 10);
+
+				// Check if "settings" object and "primaryPort" key exist, then update it
+				if (localConf.settings && "primaryPort" in localConf.settings) {
+					localConf.settings.primaryPort = portNumber;
+					// Write the updated JSON data back to the file
+					fs.writeFileSync(localConfPath, JSON.stringify(localConf, null, 2));
+				} else {
+					// Handle error, key does not exist
+					// rome-ignore lint/nursery/noConsoleLog: <explanation>
+					console.log(
+						'Error: "primaryPort" key does not exist in local.conf file',
+					);
+				}
+
+				console.log(localConf);
+
 				await ctx.prisma.globalOptions.update({
 					where: {
 						id: 1,
@@ -777,7 +800,7 @@ export const adminRouter = createTRPCRouter({
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					throwError(`Error assigning user to group: ${err.message}`);
+					throwError(`${err.message}`);
 				} else {
 					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred");
