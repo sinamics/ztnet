@@ -59,10 +59,10 @@ const Home: NextPage<{ auth: User }> = ({ auth }) => {
 									)}
 								</div>
 								<p className="pr-3">
-									ZeroTier VPN is your key to boundless connectivity and
-									ultimate privacy. Experience a secure and borderless digital
-									world, free from limitations. Empower yourself with unmatched
-									performance, while safeguarding your data.
+									ZeroTier VPN is your key to boundless connectivity and ultimate privacy.
+									Experience a secure and borderless digital world, free from limitations.
+									Empower yourself with unmatched performance, while safeguarding your
+									data.
 								</p>
 							</div>
 							{auth && (
@@ -99,8 +99,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
 	const session = await getSession(context);
-	const messages = (await import(`~/locales/${context.locale}/common.json`))
-		.default;
+	const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
 
 	if (!session || !("user" in session)) {
 		return { props: { messages } };

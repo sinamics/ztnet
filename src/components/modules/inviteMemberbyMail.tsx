@@ -49,9 +49,7 @@ export const InviteMemberByMail = () => {
 		<form>
 			<div className="form-control">
 				<label className="label">
-					<span className="label-text">
-						{t("inviteMemberByMail.labelText")}
-					</span>
+					<span className="label-text">{t("inviteMemberByMail.labelText")}</span>
 				</label>
 				<label className="input-group">
 					<span>{t("inviteMemberByMail.title")}</span>

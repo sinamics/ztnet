@@ -24,11 +24,7 @@ describe("InputField", () => {
 
 		const { container } = render(
 			<NextIntlProvider locale="en" messages={enTranslation}>
-				<InputField
-					label="Test Label"
-					fields={fields}
-					submitHandler={submitHandler}
-				/>
+				<InputField label="Test Label" fields={fields} submitHandler={submitHandler} />
 			</NextIntlProvider>,
 		);
 

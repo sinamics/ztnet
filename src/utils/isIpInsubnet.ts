@@ -2,10 +2,7 @@ type Route = {
 	target?: string;
 };
 // make a function that check if an ip is in a subnet
-export const isIPInSubnet = (
-	ip: string,
-	targets: Route[] | undefined,
-): boolean => {
+export const isIPInSubnet = (ip: string, targets: Route[] | undefined): boolean => {
 	if (!Array.isArray(targets)) {
 		// console.warn(
 		//   "isIPInSubnet function expects 'targets' to be an array of strings. Invalid input received."

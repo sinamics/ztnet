@@ -32,9 +32,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 	const { mutate: updateNetwork } = api.network.multiCast.useMutation({
 		onError: (e) => {
 			if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-				void toast.error(
-					(e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams,
-				);
+				void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
 			} else {
 				void toast.error(e?.message);
 			}
@@ -161,9 +159,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 										},
 										{
 											onSuccess: () => {
-												toast.success(
-													t("networkMulticast.MulticastUpdatedSuccessfully"),
-												);
+												toast.success(t("networkMulticast.MulticastUpdatedSuccessfully"));
 												void refetchNetwork();
 											},
 										},

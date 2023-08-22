@@ -34,9 +34,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 	const { mutate: updateNetwork } = api.network.dns.useMutation({
 		onError: (e) => {
 			if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-				void toast.error(
-					(e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams,
-				);
+				void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
 			} else {
 				void toast.error(e?.message);
 			}
@@ -98,7 +96,6 @@ export const NetworkDns = ({ central = false }: IProp) => {
 	};
 
 	const submitHandler = (e: React.FormEvent) => {
-		
 		e.preventDefault();
 		// add toast notification if address or domain is empty
 		if (!state.address || !state.domain) {
@@ -111,13 +108,10 @@ export const NetworkDns = ({ central = false }: IProp) => {
 	};
 
 	const removeDnsServer = (dnsToRemove: string) => {
-		const newServers = Array.from(state.servers).filter(
-			(dns) => dns !== dnsToRemove,
-		);
+		const newServers = Array.from(state.servers).filter((dns) => dns !== dnsToRemove);
 		updateDns(newServers);
 	};
 
-	
 	return (
 		<>
 			<div
@@ -195,9 +189,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 						<form className="grid grid-cols-2 gap-5 pt-4">
 							<div className="form-control w-full">
 								<label className="label">
-									<span className="label-text">
-										{t("networkDns.searchDomain")}
-									</span>
+									<span className="label-text">{t("networkDns.searchDomain")}</span>
 								</label>
 								<input
 									type="text"
@@ -210,9 +202,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 							</div>
 							<div className="form-control ">
 								<label className="label">
-									<span className="label-text">
-										{t("networkDns.serverAddress")}
-									</span>
+									<span className="label-text">{t("networkDns.serverAddress")}</span>
 								</label>
 								<div className="join">
 									<input

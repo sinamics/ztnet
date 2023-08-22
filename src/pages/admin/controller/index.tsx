@@ -81,9 +81,7 @@ const Controller = () => {
 						) : null}
 					</div>
 					<div className="pb-10">
-						<p className="text-sm text-gray-400">
-							{t("controller.management.title")}
-						</p>
+						<p className="text-sm text-gray-400">{t("controller.management.title")}</p>
 						<div className="divider mt-0 p-0 text-gray-500"></div>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.management.allowManagementFrom")}</p>
@@ -150,16 +148,13 @@ const Controller = () => {
 						<EditableField
 							isLoading={false}
 							label={t("controller.controllerConfig.local_zerotier_url")}
-							description={t(
-								"controller.controllerConfig.submit_empty_field_default",
-							)}
+							description={t("controller.controllerConfig.submit_empty_field_default")}
 							size="sm"
 							fields={[
 								{
 									name: "localControllerUrl",
 									type: "text",
-									placeholder:
-										me?.options?.localControllerUrl || "http://zerotier:9993",
+									placeholder: me?.options?.localControllerUrl || "http://zerotier:9993",
 									value: me?.options?.localControllerUrl,
 								},
 							]}
@@ -175,9 +170,7 @@ const Controller = () => {
 						<EditableField
 							isLoading={false}
 							label={t("controller.controllerConfig.zerotier_secret")}
-							description={t(
-								"controller.controllerConfig.submit_empty_field_default",
-							)}
+							description={t("controller.controllerConfig.submit_empty_field_default")}
 							size="sm"
 							fields={[
 								{

@@ -107,9 +107,7 @@ const RegisterForm: React.FC = () => {
 								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg",
 							)}
 						>
-							{loading ? (
-								<span className="loading loading-spinner"></span>
-							) : null}
+							{loading ? <span className="loading loading-spinner"></span> : null}
 							Sign Up
 						</button>
 					</div>

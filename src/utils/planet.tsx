@@ -32,18 +32,12 @@ export const updateLocalConf = (portNumber: number): Promise<boolean> => {
 				return;
 			}
 		}
-		if (
-			localConf?.settings &&
-			"primaryPort" in localConf.settings &&
-			portNumber
-		) {
+		if (localConf?.settings && "primaryPort" in localConf.settings && portNumber) {
 			localConf.settings.primaryPort = portNumber;
 			fs.writeFileSync(localConfPath, JSON.stringify(localConf, null, 2));
 			resolve(true);
 		} else {
-			reject(
-				'Error: "primaryPort" key does not exist in zerotier-one/local.conf file',
-			);
+			reject('Error: "primaryPort" key does not exist in zerotier-one/local.conf file');
 		}
 	});
 };

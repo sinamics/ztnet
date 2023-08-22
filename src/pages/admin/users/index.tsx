@@ -9,9 +9,7 @@ const Users = () => {
 	return (
 		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-6/12">
 			<div>
-				<p className="text-sm text-gray-400">
-					{t("users.groups.sectionTitle")}
-				</p>
+				<p className="text-sm text-gray-400">{t("users.groups.sectionTitle")}</p>
 				<div className="divider mt-0 text-gray-500"></div>
 			</div>
 			<div className="space-y-5 ">

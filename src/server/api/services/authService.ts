@@ -54,8 +54,7 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 
 		if (!loginUser || !loginUser.hash) throwError("User not found!");
 
-		if (loginUser.emailVerified)
-			throw "Du har allerede validert denne eposten.";
+		if (loginUser.emailVerified) throw "Du har allerede validert denne eposten.";
 
 		jwt.verify(token, loginUser.hash);
 		Object.assign(loginUser, { emailConfirmed: true });

@@ -103,9 +103,7 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					{errorNetwork.message}
-				</h1>
+				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 			</div>
 		);
 	}
@@ -146,10 +144,7 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 					>
 						Save Changes
 					</button>
-					<button
-						onClick={() => handleReset()}
-						className="btn btn-outline my-3 "
-					>
+					<button onClick={() => handleReset()} className="btn btn-outline my-3 ">
 						Reset
 					</button>
 				</div>

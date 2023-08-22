@@ -95,34 +95,22 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 												{
 													name: "groupName",
 													type: "text",
-													placeholder: t(
-														"users.groups.addGroup.groupNamePlaceholder",
-													),
-													description: t(
-														"users.groups.addGroup.groupNameDescription",
-													),
+													placeholder: t("users.groups.addGroup.groupNamePlaceholder"),
+													description: t("users.groups.addGroup.groupNameDescription"),
 													value: group?.name,
 												},
 												{
 													name: "maxNetworks",
 													type: "number",
-													placeholder: t(
-														"users.groups.addGroup.networkLimitPlaceholder",
-													),
-													description: t(
-														"users.groups.addGroup.networkLimitDescription",
-													),
+													placeholder: t("users.groups.addGroup.networkLimitPlaceholder"),
+													description: t("users.groups.addGroup.networkLimitDescription"),
 													value: group?.maxNetworks.toString(),
 												},
 												{
 													name: "isDefault",
 													type: "checkbox",
-													description: t(
-														"users.groups.addGroup.useAsDefaultDescription",
-													),
-													placeholder: t(
-														"users.groups.addGroup.useAsDefaultPlaceholder",
-													),
+													description: t("users.groups.addGroup.useAsDefaultDescription"),
+													placeholder: t("users.groups.addGroup.useAsDefaultPlaceholder"),
 													value: group?.isDefault,
 												},
 											]}
@@ -152,9 +140,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 								onClick={() => {
 									callModal({
 										title: t("users.groups.addGroup.deleteGroupTitle"),
-										description: t(
-											"users.groups.addGroup.deleteGroupDescription",
-										),
+										description: t("users.groups.addGroup.deleteGroupDescription"),
 										yesAction: () => {
 											deleteGroup({
 												id: group.id,

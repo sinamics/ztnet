@@ -55,14 +55,10 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 		const { name, value } = e.target;
 
 		// Check if the value is in the datalist
-		const isInList = filteredAnotations.some(
-			(anotation) => anotation.name === value,
-		);
+		const isInList = filteredAnotations.some((anotation) => anotation.name === value);
 		if (isInList) {
 			if (!nodeid)
-				return toast.error(
-					"Member does not exist in DB, please Authorize first",
-				);
+				return toast.error("Member does not exist in DB, please Authorize first");
 			setAnotation(
 				{
 					name: value,

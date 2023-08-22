@@ -37,9 +37,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 		api.network.managedRoutes.useMutation({
 			onError: (e) => {
 				if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-					void toast.error(
-						(e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams,
-					);
+					void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
 				} else {
 					void toast.error(e?.message);
 				}
@@ -94,9 +92,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 			className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
 		>
 			<input type="checkbox" />
-			<div className="collapse-title">
-				{t("nettworkRoutes.managedRoutesTitle")}
-			</div>
+			<div className="collapse-title">{t("nettworkRoutes.managedRoutesTitle")}</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
 				{network?.routes.length === 0 ? (
 					<div className="alert alert-warning p-2">
@@ -114,9 +110,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 							/>
 						</svg>
 						<div>
-							<h3 className="font-bold">
-								{t("nettworkRoutes.noManagedRoutesTitle")}
-							</h3>
+							<h3 className="font-bold">{t("nettworkRoutes.noManagedRoutesTitle")}</h3>
 							<div className="text-xs">
 								<p>{t("nettworkRoutes.noManagedRoutesDescription1")}</p>
 								<p>{t("nettworkRoutes.noManagedRoutesDescription2")}</p>
@@ -131,10 +125,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 								key={route.target}
 								className="flex items-center justify-between space-y-1"
 							>
-								<div
-									key={route.target}
-									className="text-xs opacity-30 md:text-base"
-								>
+								<div key={route.target} className="text-xs opacity-30 md:text-base">
 									{route.target} via {route.via ? route.via : "LAN"}
 								</div>
 								<div>
@@ -175,10 +166,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 							placeholder={t("nettworkRoutes.viaPlaceholder")}
 							className="input input-bordered input-primary input-xs w-3/6 rounded-md"
 						/>
-						<button
-							type="submit"
-							className="btn btn-success btn-xs ml-4 rounded-md"
-						>
+						<button type="submit" className="btn btn-success btn-xs ml-4 rounded-md">
 							{t("nettworkRoutes.addButtonText")}
 						</button>
 						<button

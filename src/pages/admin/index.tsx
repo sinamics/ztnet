@@ -60,9 +60,7 @@ const AdminSettings = () => {
 					<a
 						key={t.value}
 						onClick={() => void changeTab(t)}
-						className={`text-md tab tab-bordered ${
-							t.value === tab ? "tab-active" : ""
-						}`}
+						className={`text-md tab tab-bordered ${t.value === tab ? "tab-active" : ""}`}
 					>
 						{t.name}
 					</a>
@@ -83,8 +81,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 			// pattern is to put them in JSON files separated by locale and read
 			// the desired one based on the `locale` received from Next.js.
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`))
-				.default,
+			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
 }

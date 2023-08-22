@@ -17,9 +17,7 @@ const UserNetworkSetting = () => {
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
-						<p className="font-medium">
-							{t("account.networkSetting.showMarkerInTable")}
-						</p>
+						<p className="font-medium">{t("account.networkSetting.showMarkerInTable")}</p>
 						<p className="text-sm text-gray-500">
 							{t.rich("account.networkSetting.showMarkerInTableDescription", {
 								br: () => <br />,
@@ -46,12 +44,9 @@ const UserNetworkSetting = () => {
 							{t("account.networkSetting.addBackgroundColorInTable")}
 						</p>
 						<p className="text-sm text-gray-500">
-							{t.rich(
-								"account.networkSetting.addBackgroundColorInTableDescription",
-								{
-									br: () => <br />,
-								},
-							)}
+							{t.rich("account.networkSetting.addBackgroundColorInTableDescription", {
+								br: () => <br />,
+							})}
 						</p>
 					</div>
 					<input

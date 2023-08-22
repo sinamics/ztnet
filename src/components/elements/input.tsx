@@ -59,12 +59,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 		}, [focus, forwardedRef]);
 
 		useEffect(() => {
-			if (
-				defaultValue &&
-				forwardedRef &&
-				"current" in forwardedRef &&
-				onChange
-			) {
+			if (defaultValue && forwardedRef && "current" in forwardedRef && onChange) {
 				const event = {
 					target: {
 						name: forwardedRef.current?.name || "",

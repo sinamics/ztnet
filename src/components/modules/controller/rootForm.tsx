@@ -34,15 +34,10 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						{t("controller.generatePlanet.modal.customPlanetGenerated")}
 						<br />
 						<p>
-							{t.rich(
-								"controller.generatePlanet.modal.restartContainerInstructions",
-								{
-									span: (content) => (
-										<span className="text-yellow-300">{content} </span>
-									),
-									br: () => <br />,
-								},
-							)}
+							{t.rich("controller.generatePlanet.modal.restartContainerInstructions", {
+								span: (content) => <span className="text-yellow-300">{content} </span>,
+								br: () => <br />,
+							})}
 						</p>
 					</span>
 				),
@@ -75,9 +70,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		}
 	}, [getOptions, getIdentity]);
 
-	const inputChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
+	const inputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const target = e.target as HTMLInputElement;
 		let value;
 

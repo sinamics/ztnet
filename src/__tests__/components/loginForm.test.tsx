@@ -22,9 +22,7 @@ describe("LoginForm", () => {
 
 	it("renders the LoginForm component", () => {
 		render(<LoginForm setViewForgotForm={() => {}} />);
-		expect(
-			screen.getByRole("heading", { name: /Sign In/i }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: /Sign In/i })).toBeInTheDocument();
 	});
 
 	it("updates email and password inputs on change", () => {

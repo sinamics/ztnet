@@ -55,9 +55,7 @@ export const AddMemberById = ({ central = false }: IProp) => {
 					<span className="label-text">{t("addMemberById.labelText")}</span>
 				</label>
 				<label className="input-group">
-					<span className="bg-base-300">
-						{t("addMemberById.memberIdInput")}
-					</span>
+					<span className="bg-base-300">{t("addMemberById.memberIdInput")}</span>
 					<input
 						onChange={inputHandler}
 						name="memberid"

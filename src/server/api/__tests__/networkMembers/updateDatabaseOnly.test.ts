@@ -36,9 +36,7 @@ test("updateDatabaseOnly test", async () => {
 		networkMembers: [],
 	};
 
-	type Input = inferProcedureInput<
-		AppRouter["networkMember"]["UpdateDatabaseOnly"]
-	>;
+	type Input = inferProcedureInput<AppRouter["networkMember"]["UpdateDatabaseOnly"]>;
 	const input: Input = {
 		nwid: "1234id",
 		id: "12234",

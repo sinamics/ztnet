@@ -33,9 +33,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 	return (
 		<div className="form-control">
 			<label className="label cursor-pointer">
-				<span className="label-text">
-					{t("networkIpAssignments.ipv6.rfc4193Label")}
-				</span>
+				<span className="label-text">{t("networkIpAssignments.ipv6.rfc4193Label")}</span>
 				<input
 					type="checkbox"
 					name="rfc4193"
@@ -52,9 +50,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 							},
 							{
 								onSuccess: () => {
-									void toast.success(
-										t("networkIpAssignments.ipv6.rfc4193Updated"),
-									);
+									void toast.success(t("networkIpAssignments.ipv6.rfc4193Updated"));
 								},
 							},
 						);
@@ -62,9 +58,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 				/>
 			</label>
 			<label className="label cursor-pointer">
-				<span className="label-text">
-					{t("networkIpAssignments.ipv6.plane6Label")}
-				</span>
+				<span className="label-text">{t("networkIpAssignments.ipv6.plane6Label")}</span>
 				<input
 					type="checkbox"
 					name="6plane"
@@ -81,9 +75,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 							},
 							{
 								onSuccess: () => {
-									void toast.success(
-										t("networkIpAssignments.ipv6.plane6Updated"),
-									);
+									void toast.success(t("networkIpAssignments.ipv6.plane6Updated"));
 								},
 							},
 						);

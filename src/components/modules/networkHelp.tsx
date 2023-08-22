@@ -14,8 +14,8 @@ const NetworkHelpText: React.FC = () => (
 						<section>
 							<b>Network ID</b>
 							<p className="text-gray-400">
-								The networks globally unique 16-digit ID. This cannot currently
-								be changed.
+								The networks globally unique 16-digit ID. This cannot currently be
+								changed.
 							</p>
 						</section>
 					</div>
@@ -23,9 +23,9 @@ const NetworkHelpText: React.FC = () => (
 						<section>
 							<b>Network Name</b>
 							<p className="text-gray-400">
-								A user-defined short name for this network that is visible to
-								members. We recommend using something like a domain name (e.g.
-								zerotier.com) or e-mail address.
+								A user-defined short name for this network that is visible to members. We
+								recommend using something like a domain name (e.g. zerotier.com) or e-mail
+								address.
 							</p>
 						</section>
 					</div>
@@ -39,9 +39,8 @@ const NetworkHelpText: React.FC = () => (
 						<section>
 							<b>Access Control</b>
 							<p className="text-gray-400">
-								How is membership controlled? This should be left on its default
-								setting unless you want to create a totally open network for
-								testing, gaming, etc.
+								How is membership controlled? This should be left on its default setting
+								unless you want to create a totally open network for testing, gaming, etc.
 							</p>
 						</section>
 					</div>
@@ -50,16 +49,15 @@ const NetworkHelpText: React.FC = () => (
 						<section>
 							<b>Multicast Recipient Limit</b>
 							<p className="text-gray-400">
-								The maximum number of recipients that can receive an Ethernet
-								multicast or broadcast. If the number of recipients exceeds this
-								limit, a random subset will receive the announcement. Setting
-								this higher makes multicasts more reliable on large networks at
-								the expense of bandwidth.
+								The maximum number of recipients that can receive an Ethernet multicast or
+								broadcast. If the number of recipients exceeds this limit, a random subset
+								will receive the announcement. Setting this higher makes multicasts more
+								reliable on large networks at the expense of bandwidth.
 							</p>
 							<p className="text-gray-400">
-								Setting to <b>0</b> disables multicast, but be aware that only
-								IPv6 with NDP emulation (RFC4193 or 6PLANE addressing modes) or
-								other unicast-only protocols will work without multicast.
+								Setting to <b>0</b> disables multicast, but be aware that only IPv6 with
+								NDP emulation (RFC4193 or 6PLANE addressing modes) or other unicast-only
+								protocols will work without multicast.
 							</p>
 						</section>
 					</div>
@@ -70,12 +68,11 @@ const NetworkHelpText: React.FC = () => (
 							<b>Managed Routes</b>
 
 							<p className="text-gray-400">
-								IPv4 routes to be published to network members. This can be used
-								to create routes to other networks via gateways on a ZeroTier
-								network. Note that for security reasons most clients will not
-								use default routes or routes that overlap with public IP address
-								space unless this is specifically allowed by the user. Public IP
-								ranges are marked with an icon:
+								IPv4 routes to be published to network members. This can be used to create
+								routes to other networks via gateways on a ZeroTier network. Note that for
+								security reasons most clients will not use default routes or routes that
+								overlap with public IP address space unless this is specifically allowed
+								by the user. Public IP ranges are marked with an icon:
 								<svg
 									stroke="currentColor"
 									fill="currentColor"
@@ -97,10 +94,10 @@ const NetworkHelpText: React.FC = () => (
 						<section>
 							<b>IPv4 Auto-Assign</b>
 							<p className="text-gray-400">
-								IPv4 range from which to auto-assign IPs. Note that IPs will
-								only be assigned if they also fall within a defined route. Easy
-								mode allows users to pick an IP range and a route and pool
-								definition will automatically be created.
+								IPv4 range from which to auto-assign IPs. Note that IPs will only be
+								assigned if they also fall within a defined route. Easy mode allows users
+								to pick an IP range and a route and pool definition will automatically be
+								created.
 							</p>
 						</section>
 						{/* Add other sections */}
@@ -115,23 +112,21 @@ const NetworkHelpText: React.FC = () => (
 								Older versions of ZeroTier will ignore these settings
 							</p>
 							<p className="text-gray-400">
-								On macOS, iOS, Windows, and Android, ZeroTier can automatically
-								add DNS servers for a specific domain. It does not set up or
-								host a DNS server. You must host your own.
+								On macOS, iOS, Windows, and Android, ZeroTier can automatically add DNS
+								servers for a specific domain. It does not set up or host a DNS server.
+								You must host your own.
 							</p>
 							<p className="text-gray-400">
-								If you configure <span className="link">zt.example.com</span> as
-								your search domain, and{" "}
-								<span className="link">10.147.20.1</span> as a server address,
-								then your computer will ask{" "}
-								<span className="link">10.147.20.1</span> to look up IP
-								addresses for hostnames ending in{" "}
-								<span className="link">zt.example.com</span>
+								If you configure <span className="link">zt.example.com</span> as your
+								search domain, and <span className="link">10.147.20.1</span> as a server
+								address, then your computer will ask{" "}
+								<span className="link">10.147.20.1</span> to look up IP addresses for
+								hostnames ending in <span className="link">zt.example.com</span>
 							</p>
 							<p className="text-gray-400">
-								This must be enabled on each client with the allowDNS option.
-								There is a checkbox in the UI in each networks details, near the
-								Allow Managed checkbox.
+								This must be enabled on each client with the allowDNS option. There is a
+								checkbox in the UI in each networks details, near the Allow Managed
+								checkbox.
 							</p>
 						</section>
 					</section>

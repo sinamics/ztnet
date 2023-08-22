@@ -59,9 +59,7 @@ const CentralNetworkById = () => {
 	if (errorNetwork) {
 		return (
 			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					{errorNetwork.message}
-				</h1>
+				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 				<ul className="list-disc">
 					<li>{t("errorSteps.step1")}</li>
 					<li>{t("errorSteps.step2")}</li>
@@ -275,8 +273,7 @@ export async function getServerSideProps(context: GetStaticPropsContext) {
 			// pattern is to put them in JSON files separated by locale and read
 			// the desired one based on the `locale` received from Next.js.
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`))
-				.default,
+			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
 }

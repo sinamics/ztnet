@@ -33,12 +33,11 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 			{ enabled: !!query.id },
 		);
 
-	const { mutate: updateUser } =
-		api.networkMember.UpdateDatabaseOnly.useMutation({
-			onSuccess: () => {
-				void refetchNetworkById();
-			},
-		});
+	const { mutate: updateUser } = api.networkMember.UpdateDatabaseOnly.useMutation({
+		onSuccess: () => {
+			void refetchNetworkById();
+		},
+	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
 		onSuccess: () => {
 			void refetchNetworkById();
@@ -79,9 +78,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 					return (
 						<span className="space-x-5">
 							<button
-								onClick={() =>
-									updateUser({ nwid, id, updateParams: { deleted: false } })
-								}
+								onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
 								className="btn-success btn-xs rounded-sm"
 							>
 								Re-Activate
@@ -93,9 +90,9 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 										description: (
 											<>
 												<p>
-													By performing this action, the member will be removed
-													from the database. To re-add the user in the future,
-													you must manually enter their Member ID.
+													By performing this action, the member will be removed from the
+													database. To re-add the user in the future, you must manually
+													enter their Member ID.
 												</p>
 											</>
 										),
@@ -171,11 +168,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 									{
 										// Loop over the headers in each row
 										headerGroup.headers.map((header) => (
-											<th
-												key={header.id}
-												colSpan={header.colSpan}
-												className="py-3 pl-4"
-											>
+											<th key={header.id} colSpan={header.colSpan} className="py-3 pl-4">
 												{header.isPlaceholder ? null : (
 													<div
 														{...{
@@ -212,9 +205,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 								<tr
 									key={row.id}
 									className={`items-center ${
-										!row.original.authorized
-											? "border-dotted bg-error bg-opacity-20"
-											: ""
+										!row.original.authorized ? "border-dotted bg-error bg-opacity-20" : ""
 									}`}
 								>
 									{
@@ -227,10 +218,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 												<td key={cell.id} className="py-1 pl-4">
 													{
 														// Render the cell contents
-														flexRender(
-															cell.column.columnDef.cell,
-															cell.getContext(),
-														)
+														flexRender(cell.column.columnDef.cell, cell.getContext())
 													}
 												</td>
 											))

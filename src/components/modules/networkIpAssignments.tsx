@@ -23,17 +23,13 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 			<div className="w-100 collapse-content">
 				<div className="tabs w-full justify-center pb-5">
 					<a
-						className={`tab tab-bordered ${
-							activeTab === "IPv4" ? "tab-active" : ""
-						}`}
+						className={`tab tab-bordered ${activeTab === "IPv4" ? "tab-active" : ""}`}
 						onClick={() => setActiveTab("IPv4")}
 					>
 						{t("networkIpAssignments.tabs.ipv4")}
 					</a>
 					<a
-						className={`tab tab-bordered ${
-							activeTab === "IPv6" ? "tab-active" : ""
-						}`}
+						className={`tab tab-bordered ${activeTab === "IPv6" ? "tab-active" : ""}`}
 						onClick={() => setActiveTab("IPv6")}
 					>
 						{t("networkIpAssignments.tabs.ipv6")}

@@ -33,9 +33,7 @@ const updateCache = ({
 			},
 		],
 		(oldData) => {
-			const newData = oldData as InfiniteData<
-				RouterOutputs["network"]["getNetworkById"]
-			>;
+			const newData = oldData as InfiniteData<RouterOutputs["network"]["getNetworkById"]>;
 			return {
 				...newData,
 				network: { ...data },
@@ -48,20 +46,18 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 	const t = useTranslations();
 	const { query } = useRouter();
 	const client = useQueryClient();
-	const { data: networkByIdQuery, isLoading } =
-		api.network.getNetworkById.useQuery(
-			{
-				nwid: query.id as string,
-				central,
-			},
-			{ enabled: !!query.id },
-		);
-	const { mutate: privatePublicNetwork } =
-		api.network.privatePublicNetwork.useMutation({
-			onError: (e) => {
-				void toast.error(e?.message);
-			},
-		});
+	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
+		{
+			nwid: query.id as string,
+			central,
+		},
+		{ enabled: !!query.id },
+	);
+	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
+		onError: (e) => {
+			void toast.error(e?.message);
+		},
+	});
 	const privateHandler = (privateNetwork: boolean) => {
 		privatePublicNetwork(
 			{
@@ -77,9 +73,7 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 					};
 					// void refecthNetworkById();
 					updateCache({ client, data, input });
-					const secure = privateNetwork
-						? "private"
-						: "public, please use with caution!";
+					const secure = privateNetwork ? "private" : "public, please use with caution!";
 
 					toast.success(
 						t("networkById.privatePublicSwitch.accessControllMessage", {

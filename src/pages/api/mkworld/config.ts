@@ -22,10 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			const folderPath = path.resolve("/var/lib/zerotier-one/zt-mkworld");
 
 			// Check if the directory exists
-			if (
-				!fs.existsSync(folderPath) ||
-				!fs.statSync(folderPath).isDirectory()
-			) {
+			if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
 				return res.status(404).send("Folder not found.");
 			}
 
@@ -49,10 +46,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 			// Set the headers
-			res.setHeader(
-				"Content-Disposition",
-				"attachment; filename=zt-mkworld.zip",
-			);
+			res.setHeader("Content-Disposition", "attachment; filename=zt-mkworld.zip");
 			res.setHeader("Content-Type", "application/zip");
 
 			// Stream the archive data to the response object
@@ -97,11 +91,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 					await fsPromises.mkdir(mkworldDir, { recursive: true });
 
 					const requiredFiles = ["mkworld.config.json"];
-					const optionalFiles = [
-						"current.c25519",
-						"previous.c25519",
-						"planet.custom",
-					];
+					const optionalFiles = ["current.c25519", "previous.c25519", "planet.custom"];
 					const foundFiles = [];
 
 					fs.createReadStream(uploadedFilePath)
@@ -110,10 +100,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 							const fileName = entry.path;
 							let jsonContent = "";
 
-							if (
-								requiredFiles.includes(fileName) ||
-								optionalFiles.includes(fileName)
-							) {
+							if (requiredFiles.includes(fileName) || optionalFiles.includes(fileName)) {
 								foundFiles.push(fileName);
 								if (fileName === "mkworld.config.json") {
 									const pass = new PassThrough();
@@ -169,14 +156,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 											}
 										});
 
-									pass.pipe(
-										fs.createWriteStream(path.join(mkworldDir, fileName)),
-									);
+									pass.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
 								} else {
 									// Extract other files to the target directory
-									entry.pipe(
-										fs.createWriteStream(path.join(mkworldDir, fileName)),
-									);
+									entry.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
 								}
 							} else {
 								entry.autodrain();
@@ -194,10 +177,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 											const timestamp = new Date()
 												.toISOString()
 												.replace(/[^a-zA-Z0-9]/g, "_");
-											fs.copyFileSync(
-												planetPath,
-												`${backupDir}/planet.bak.${timestamp}`,
-											);
+											fs.copyFileSync(planetPath, `${backupDir}/planet.bak.${timestamp}`);
 										}
 									}
 									execSync(
@@ -222,10 +202,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 								const missingFiles = requiredFiles.filter(
 									(file) => !foundFiles.includes(file),
 								);
-								console.error(
-									"Missing required files in the zip:",
-									missingFiles,
-								);
+								console.error("Missing required files in the zip:", missingFiles);
 								res.status(400).json({
 									error: "Missing required files in the zip.",
 									files: missingFiles,

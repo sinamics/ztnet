@@ -14,9 +14,7 @@ import { sixPlane, toRfc4193Ip } from "~/utils/IPv6";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
-	const ipInt = ip
-		.split(".")
-		.reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+	const ipInt = ip.split(".").reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
 	const ranges = [
 		{ start: 10 << 24, end: (10 << 24) + (1 << 24) - 1 },
 		{

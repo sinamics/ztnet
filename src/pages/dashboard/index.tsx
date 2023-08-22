@@ -26,9 +26,9 @@ const Dashboard: NextPageWithLayout = () => {
 							<div className="card-body">
 								<h2 className="card-title">Members</h2>
 								<p>
-									Connect team members from anywhere in the world on any device.
-									ZeroTier creates secure networks between on-premise, cloud,
-									desktop, and mobile devices.
+									Connect team members from anywhere in the world on any device. ZeroTier
+									creates secure networks between on-premise, cloud, desktop, and mobile
+									devices.
 								</p>
 							</div>
 						</div>
@@ -36,8 +36,7 @@ const Dashboard: NextPageWithLayout = () => {
 							<div className="card-body">
 								<h2 className="card-title">Everywhere</h2>
 								<p>
-									Connect Everywhere, Securely: ZeroTier, Your Global Network
-									Solution
+									Connect Everywhere, Securely: ZeroTier, Your Global Network Solution
 								</p>
 							</div>
 						</div>
@@ -65,8 +64,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			// pattern is to put them in JSON files separated by locale and read
 			// the desired one based on the `locale` received from Next.js.
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`))
-				.default,
+			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
 }

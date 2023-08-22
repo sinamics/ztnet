@@ -25,9 +25,7 @@ interface CentralMemberConfig {
 	ssoExempt: boolean;
 }
 
-export interface FlattenCentralMembers
-	extends MemberEntity,
-		CentralMemberConfig {}
+export interface FlattenCentralMembers extends MemberEntity, CentralMemberConfig {}
 
 export interface CentralMemberEntity extends MemberEntity {
 	description: string;

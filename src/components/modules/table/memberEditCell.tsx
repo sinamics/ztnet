@@ -36,11 +36,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 		onSuccess: () => refetchNetworkById(),
 	});
 
-	const deleteIpAssignment = (
-		ipAssignments: Array<string>,
-		Ipv4: string,
-		id: string,
-	) => {
+	const deleteIpAssignment = (ipAssignments: Array<string>, Ipv4: string, id: string) => {
 		const _ipv4 = [...ipAssignments];
 		const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
@@ -89,9 +85,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 					{
 						onSuccess: () => {
 							void refetchNetworkById();
-							toast.success(
-								t("networkMembersTable.toastMessages.memberNameUpdated"),
-							);
+							toast.success(t("networkMembersTable.toastMessages.memberNameUpdated"));
 						},
 					},
 				);
@@ -118,10 +112,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 										className="inline-block h-5 w-5 rounded-full"
 										title={notation.label?.name}
 										style={{
-											backgroundColor: convertRGBtoRGBA(
-												notation.label?.color,
-												1,
-											),
+											backgroundColor: convertRGBtoRGBA(notation.label?.color, 1),
 										}}
 									></div>
 								))}
@@ -198,15 +189,9 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 							</CopyToClipboard>
 						) : null}
 						{original?.ipAssignments.map((assignedIp) => {
-							const subnetMatch = isIPInSubnet(
-								assignedIp,
-								networkById.network?.routes,
-							);
+							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);
 							return (
-								<div
-									key={assignedIp}
-									className="flex justify-center text-center"
-								>
+								<div key={assignedIp} className="flex justify-center text-center">
 									<div
 										className={`${
 											subnetMatch
@@ -226,8 +211,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 											<div className="cursor-pointer">{assignedIp}</div>
 										</CopyToClipboard>
 										<div className="text-xs">
-											{original?.peers?.latency > 0 &&
-												` (${original?.peers.latency}ms)`}
+											{original?.peers?.latency > 0 && ` (${original?.peers.latency}ms)`}
 										</div>
 										{original?.ipAssignments.length > 0 && (
 											<div title="delete ip assignment">
