@@ -28,8 +28,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 			callModal({
 				title: <p>{t("controller.generatePlanet.modal.noteTitle")}</p>,
 				rootStyle: "text-left border border-yellow-300/30",
-				showButtons: true,
-				closeModalOnSubmit: true,
+				yesAction: null,
 				content: (
 					<span>
 						{t("controller.generatePlanet.modal.customPlanetGenerated")}
