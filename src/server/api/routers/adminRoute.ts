@@ -626,7 +626,7 @@ export const adminRouter = createTRPCRouter({
 					plID: z.number().optional(),
 					plRecommend: z.boolean().default(true),
 					plBirth: z.number().optional(),
-					comment: z.string().optional(),
+					comment: z.string().nullable().optional(),
 					identity: z.string().optional(),
 					endpoints: z.string(),
 				})
@@ -668,8 +668,6 @@ export const adminRouter = createTRPCRouter({
 		)
 
 		.mutation(async ({ ctx, input }) => {
-			// console.log(JSON.stringify(input, null, 2));
-			// return { success: true };
 			try {
 				const zerotierOneDir = "/var/lib/zerotier-one";
 				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
@@ -724,7 +722,7 @@ export const adminRouter = createTRPCRouter({
 						{
 							comments: `${input.comment || "default.domain"}`,
 							identity,
-							endpoints: [input.endpoints],
+							endpoints: input.endpoints.split(","),
 						},
 					],
 					signing: ["previous.c25519", "current.c25519"],
@@ -789,7 +787,9 @@ export const adminRouter = createTRPCRouter({
 						customPlanetUsed: true,
 						plBirth: config.plBirth,
 						plID: config.plID,
-						plEndpoints: config.rootNodes[0].endpoints[0],
+						plEndpoints: Array.isArray(config.rootNodes[0]?.endpoints)
+							? config.rootNodes[0].endpoints.join(",")
+							: null,
 						plComment: config.rootNodes[0].comments,
 						plRecommend: config.plRecommend,
 						plIdentity: config.rootNodes[0].identity,
