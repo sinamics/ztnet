@@ -82,6 +82,9 @@ model network {
   tagsByName                  Json?
   capabilitiesByName          Json?
 
+  organizationId  Int?
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
   networkMembers              network_members[]
   notations                   Notation[]
 }
@@ -189,12 +192,25 @@ model User {
     tempPassword                          String?
     firstTime                             Boolean           @default(true)
     userGroupId                           Int?
+    
+    adminOrgs       Organization[] @relation("AdminRelation")
+    organizations   Organization[] @relation("MemberRelation")
 
     userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
     options         UserOptions?
     accounts        Account[]
     sessions        Session[]
     network         network[]
+}
+
+model Organization {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  adminId        Int
+  admin          User         @relation("AdminRelation", fields: [adminId], references: [id])
+  members        User[]       @relation("MemberRelation")
+  networks       network[]
 }
 
 model VerificationToken {
