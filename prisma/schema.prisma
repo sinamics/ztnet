@@ -77,7 +77,7 @@ model network {
   lastModifiedTime            DateTime?
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User              @relation(fields: [authorId], references: [id])
+  nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId                    Int
   tagsByName                  Json?
   capabilitiesByName          Json?
@@ -138,7 +138,7 @@ model Session {
 model UserOptions {
   id                   Int       @id @default(autoincrement())
   userId               Int       @unique
-  user                 User      @relation(fields: [userId], references: [id])
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
   useNotationColorAsBg           Boolean?          @default(false)

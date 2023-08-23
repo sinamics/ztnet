@@ -30,9 +30,43 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === input.id) {
 				throwError("You can't delete your own account");
 			}
+			if (input.id === 1) {
+				throwError("You can't delete the user who created the first account");
+			}
 			return await ctx.prisma.user.delete({
 				where: {
 					id: input.id,
+				},
+			});
+		}),
+	getUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				userId: z.number(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			return await ctx.prisma.user.findFirst({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					emailVerified: true,
+					lastLogin: true,
+					lastseen: true,
+					online: true,
+					role: true,
+					_count: {
+						select: {
+							network: true,
+						},
+					},
+					userGroup: true,
+					userGroupId: true,
+				},
+
+				where: {
+					id: input.userId,
 				},
 			});
 		}),
