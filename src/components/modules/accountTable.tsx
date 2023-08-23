@@ -21,6 +21,7 @@ import TableFooter from "./tableFooter";
 import { User } from "@prisma/client";
 
 type ExtendedUser = {
+	action?: string;
 	_count: {
 		network: number;
 	};
@@ -29,7 +30,7 @@ type ExtendedUser = {
 export const Accounts = () => {
 	const t = useTranslations("admin");
 	const [globalFilter, setGlobalFilter] = useState("");
-
+	const { callModal } = useModalStore((state) => state);
 	const [sorting, setSorting] = useState<SortingState>([
 		{
 			id: "id",
@@ -109,6 +110,46 @@ export const Accounts = () => {
 				header: () => <span>{t("users.users.table.role")}</span>,
 				id: "role",
 				minSize: 80,
+			}),
+			columnHelper.accessor("action", {
+				header: () => <span>Actions</span>,
+				id: "action",
+				cell: ({ row: { original } }) => {
+					return (
+						<div className="space-x-2">
+							<button
+								onClick={() =>
+									callModal({
+										title: (
+											<p>
+												<span>Options for user </span>
+												<span className="text-primary">{`${
+													original.name ? original.name : original.id
+												}`}</span>
+											</p>
+										),
+										rootStyle: "text-left",
+										content: (
+											<div>
+												<button
+													// onClick={handleIpSubmit}
+													type="submit"
+													// disabled={!state.isValid}
+													className="btn-sm btn-error"
+												>
+													Delete user
+												</button>
+											</div>
+										),
+									})
+								}
+								className="btn btn-outline btn-xs rounded-sm"
+							>
+								Options
+							</button>
+						</div>
+					);
+				},
 			}),
 		],
 		[],

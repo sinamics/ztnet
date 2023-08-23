@@ -20,6 +20,22 @@ import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 
 export const adminRouter = createTRPCRouter({
+	deleteUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.id) {
+				throwError("You can't delete your own account");
+			}
+			return await ctx.prisma.user.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
 	getUsers: adminRoleProtectedRoute
 		.input(
 			z.object({
