@@ -19,6 +19,7 @@ import { useSkipper } from "../elements/useSkipper";
 import { DebouncedInput } from "../elements/debouncedInput";
 import TableFooter from "./tableFooter";
 import { User } from "@prisma/client";
+import UserOptionsModal from "../admin/users/userOptionsModal";
 
 type ExtendedUser = {
 	action?: string;
@@ -129,18 +130,7 @@ export const Accounts = () => {
 											</p>
 										),
 										rootStyle: "text-left",
-										content: (
-											<div>
-												<button
-													// onClick={handleIpSubmit}
-													type="submit"
-													// disabled={!state.isValid}
-													className="btn-sm btn-error"
-												>
-													Delete user
-												</button>
-											</div>
-										),
+										content: <UserOptionsModal userId={original.id} />,
 									})
 								}
 								className="btn btn-outline btn-xs rounded-sm"
