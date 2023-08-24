@@ -44,27 +44,69 @@ const passwordSchema = (errorMessage: string) =>
 export const authRouter = createTRPCRouter({
 	register: publicProcedure
 		.input(
-			z
-				.object({
-					email: z
-						.string()
-						.email()
-						.transform((val) => val.trim()),
-					password: passwordSchema("password does not meet the requirements!"),
-					name: z.string().min(3).max(40),
-				})
-				.required(),
+			z.object({
+				email: z
+					.string()
+					.email()
+					.transform((val) => val.trim()),
+				password: passwordSchema("password does not meet the requirements!"),
+				name: z.string().min(3).max(40),
+				code: z.string().optional(),
+				token: z.string().optional(),
+			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name } = input;
+			const { email, password, name, code, token } = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
 				},
 			});
+			const invitationToken = code?.trim() || token?.trim();
+
+			const hasValidCode =
+				invitationToken &&
+				(await (async () => {
+					if (!code.trim()) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: "No invitation code provided",
+						});
+					}
+					const invitation = await ctx.prisma.userInvitation.findUnique({
+						where: { token: token.trim(), secret: code.trim() },
+					});
+
+					if (!invitation || invitation.used) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: invitation
+								? "Code has already been used"
+								: "Invalid code provided",
+						});
+					}
+
+					// Validate the token using jwt
+
+					try {
+						jwt.verify(token.trim(), process.env.NEXTAUTH_SECRET);
+					} catch (_e) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: "Invitation has expired or is invalid",
+						});
+					}
+
+					await ctx.prisma.userInvitation.update({
+						where: { token: token.trim() },
+						data: { used: true },
+					});
+
+					return true;
+				})());
 
 			// check if enableRegistration is true
-			if (!settings.enableRegistration) {
+			if (!settings.enableRegistration && !hasValidCode) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "Registration is disabled! Please contact the administrator.",
