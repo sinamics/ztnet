@@ -11,8 +11,6 @@ import {
 	getFilteredRowModel,
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
-import { type ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { useSkipper } from "../elements/useSkipper";
@@ -40,27 +38,9 @@ export const Accounts = () => {
 	]);
 	const {
 		data: members,
-		refetch: refetchUsers,
+		// refetch: refetchUsers,
 		isLoading: loadingUsers,
 	} = api.admin.getUsers.useQuery({ isAdmin: false });
-
-	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Group added successfully");
-		},
-	});
 
 	const columnHelper = createColumnHelper<ExtendedUser>();
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
@@ -106,11 +86,18 @@ export const Accounts = () => {
 				header: () => <span>{t("users.users.table.group")}</span>,
 				id: "group",
 				minSize: 80,
+				cell: ({ getValue }) => {
+					const group = getValue();
+					return group ?? "None";
+				},
 			}),
 			columnHelper.accessor("role", {
 				header: () => <span>{t("users.users.table.role")}</span>,
 				id: "role",
 				minSize: 80,
+				cell: ({ getValue }) => {
+					return getValue();
+				},
 			}),
 			columnHelper.accessor("action", {
 				header: () => <span>Actions</span>,
@@ -145,108 +132,6 @@ export const Accounts = () => {
 		[],
 	);
 
-	// Create an editable cell renderer
-	const defaultColumn: Partial<ColumnDef<ExtendedUser>> = {
-		cell: ({
-			getValue,
-			row: { original: { id: userid, name, userGroupId } },
-			column: { id },
-		}) => {
-			const initialValue = getValue();
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const { callModal } = useModalStore((state) => state);
-			const { data: usergroups } = api.admin.getUserGroups.useQuery();
-
-			// We need to keep and update the state of the cell normally
-			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const [value, setValue] = useState(initialValue);
-			const { mutate: changeRole } = api.admin.changeRole.useMutation({
-				onSuccess: () => {
-					void refetchUsers();
-					toast.success(t("users.users.toastMessages.roleChangeSuccess"));
-				},
-				onError: (error) => {
-					if ((error.data as ErrorData)?.zodError) {
-						const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-						for (const field in fieldErrors) {
-							toast.error(`${fieldErrors[field].join(", ")}`);
-						}
-					} else if (error.message) {
-						toast.error(error.message);
-					} else {
-						toast.error(t("users.users.toastMessages.errorOccurred"));
-					}
-					void refetchUsers();
-				},
-			});
-			const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: number) => {
-				let description = "";
-
-				if (e.target.value === "ADMIN") {
-					description = t("users.users.roleDescriptions.admin");
-				} else if (e.target.value === "USER") {
-					description = t("users.users.roleDescriptions.user");
-				}
-
-				callModal({
-					title: t("users.users.changeRoleModal.title", { name }),
-					description,
-					yesAction: () => {
-						changeRole({
-							id,
-							role: e.target.value,
-						});
-					},
-				});
-			};
-
-			useEffect(() => {
-				setValue(initialValue);
-			}, [initialValue]);
-
-			if (id === "role") {
-				return (
-					<select
-						defaultValue={initialValue as string}
-						onChange={(e) => dropDownHandler(e, userid)}
-						className="select select-sm select-ghost max-w-xs"
-					>
-						<option>ADMIN</option>
-						<option>USER</option>
-					</select>
-				);
-			}
-			if (id === "group") {
-				if (Array.isArray(usergroups) && usergroups.length === 0) {
-					return "None";
-				}
-
-				return (
-					<select
-						defaultValue={userGroupId ?? "none"}
-						onChange={(e) => {
-							assignUserGroup({
-								userid,
-								userGroupId: e.target.value,
-							});
-						}}
-						className="select select-sm select-ghost max-w-xs"
-					>
-						<option value="none">None</option>
-						{usergroups.map((group) => {
-							return (
-								<option key={group.id} value={group.id}>
-									{group.name}
-								</option>
-							);
-						})}
-					</select>
-				);
-			}
-			return value;
-		},
-	};
-
 	useEffect(() => {
 		setData(members ?? []);
 	}, [members]);
@@ -257,7 +142,6 @@ export const Accounts = () => {
 	const table = useReactTable({
 		data,
 		columns,
-		defaultColumn,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
