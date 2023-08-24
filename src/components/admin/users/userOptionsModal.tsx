@@ -13,10 +13,10 @@ interface Iprops {
 const UserOptionsModal = ({ userId }: Iprops) => {
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
-
-	const { data: userById } = api.admin.getUser.useQuery({
-		userId,
+	const { data: user, isLoading: loadingUser } = api.admin.getUser.useQuery({
+		userId: userId,
 	});
+
 	const { mutate: deleteUser, isLoading: userDeleteLoading } =
 		api.admin.deleteUser.useMutation({
 			onError: (error) => {
@@ -35,12 +35,12 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 	const deleteUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		// check if input name is the same as the user name
-		if (input.name !== userById?.name) {
+		if (input.name !== user?.name) {
 			toast.error("The username you entered is not the same as the user.");
 			return;
 		}
 		deleteUser({
-			id: userId,
+			id: user.id,
 		});
 	};
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +49,13 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 			[e.target.name]: e.target.value,
 		});
 	};
+	if (loadingUser) {
+		return (
+			<div className="fixed inset-0 z-50 flex items-center justify-center">
+				<span className="loading loading-bars loading-lg"></span>
+			</div>
+		);
+	}
 	return (
 		<div>
 			{userDeleteLoading ? (
@@ -61,17 +68,14 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-4">
 						<header>User Group</header>
-						<UserGroup user={userById} />
+						<UserGroup user={user} />
 					</div>
 					<div className="col-span-4">
 						<header>User Role</header>
-						<UserRole user={userById} />
+						<UserRole user={user} />
 					</div>
-					<div className="col-span-4">
-						<header>User Action</header>
-						<p className="text-sm text-gray-500">
-							Select an option to perform on the user.
-						</p>
+					<div className="col-span-4 space-y-4">
+						<header>User Actions</header>
 						{deleted ? (
 							<form>
 								<input

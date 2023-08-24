@@ -11,8 +11,19 @@ interface Iuser {
 }
 const UserRole = ({ user }: Iuser) => {
 	// const t = useTranslations("admin");
-	// const { callModal } = useModalStore((state) => state);
 	const { data: usergroups } = api.admin.getUserGroups.useQuery();
+	// will update the users table as it uses key "getUsers"
+	// !TODO should rework to update local cache instead.. but this works for now
+	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
+		isAdmin: false,
+	});
+
+	// Updates this modal as it uses key "getUser"
+	// !TODO should rework to update local cache instead.. but this works for now
+	const { refetch: refetchUser } = api.admin.getUser.useQuery({
+		userId: user?.id,
+	});
+
 	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -28,25 +39,26 @@ const UserRole = ({ user }: Iuser) => {
 		},
 		onSuccess: () => {
 			toast.success("Group added successfully");
+
+			refetchUser();
+			refetchUsers();
 		},
 	});
-	if (Array.isArray(usergroups) && usergroups.length === 0) {
-		return "None";
-	}
+
 	return (
 		<div className="form-control w-full max-w-xs">
 			<select
-				defaultValue={user?.userGroupId ?? "none"}
+				value={user?.userGroupId ?? "None"}
 				onChange={(e) => {
 					assignUserGroup({
-						userid: user.id,
+						userid: user?.id,
 						userGroupId: e.target.value,
 					});
 				}}
-				className="select select-sm select-ghost max-w-xs"
+				className="select select-sm select-bordered select-ghost max-w-xs"
 			>
 				<option value="none">None</option>
-				{usergroups.map((group) => {
+				{usergroups?.map((group) => {
 					return (
 						<option key={group.id} value={group.id}>
 							{group.name}
