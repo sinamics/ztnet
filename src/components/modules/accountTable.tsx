@@ -21,6 +21,9 @@ import UserOptionsModal from "../admin/users/userOptionsModal";
 
 type ExtendedUser = {
 	action?: string;
+	userGroup?: {
+		name: string;
+	};
 	_count: {
 		network: number;
 	};
@@ -36,11 +39,9 @@ export const Accounts = () => {
 			desc: false,
 		},
 	]);
-	const {
-		data: members,
-		// refetch: refetchUsers,
-		isLoading: loadingUsers,
-	} = api.admin.getUsers.useQuery({ isAdmin: false });
+	const { data: users, isLoading: loadingUsers } = api.admin.getUsers.useQuery({
+		isAdmin: false,
+	});
 
 	const columnHelper = createColumnHelper<ExtendedUser>();
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
@@ -86,9 +87,8 @@ export const Accounts = () => {
 				header: () => <span>{t("users.users.table.group")}</span>,
 				id: "group",
 				minSize: 80,
-				cell: ({ getValue }) => {
-					const group = getValue();
-					return group ?? "None";
+				cell: ({ row: { original: { userGroup } } }) => {
+					return userGroup?.name ?? "None";
 				},
 			}),
 			columnHelper.accessor("role", {
@@ -117,7 +117,7 @@ export const Accounts = () => {
 											</p>
 										),
 										rootStyle: "text-left",
-										content: <UserOptionsModal userId={original.id} />,
+										content: <UserOptionsModal userId={original?.id} />,
 									})
 								}
 								className="btn btn-outline btn-xs rounded-sm"
@@ -133,10 +133,10 @@ export const Accounts = () => {
 	);
 
 	useEffect(() => {
-		setData(members ?? []);
-	}, [members]);
+		setData(users ?? []);
+	}, [users]);
 
-	const [data, setData] = useState<ExtendedUser[]>(members ?? []);
+	const [data, setData] = useState<ExtendedUser[]>(users ?? []);
 
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({

@@ -11,10 +11,22 @@ interface Iuser {
 }
 const UserRole = ({ user }: Iuser) => {
 	const t = useTranslations("admin");
-	// const { callModal } = useModalStore((state) => state);
+	// will update the users table as it uses key "getUsers"
+	// !TODO should rework to update local cache instead.. but this works for now
+	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
+		isAdmin: false,
+	});
+
+	// Updates this modal as it uses key "getUser"
+	// !TODO should rework to update local cache instead.. but this works for now
+	const { refetch: refetchUser } = api.admin.getUser.useQuery({
+		userId: user?.id,
+	});
+
 	const { mutate: changeRole } = api.admin.changeRole.useMutation({
 		onSuccess: () => {
-			// void refetchUsers();
+			void refetchUsers();
+			void refetchUser();
 			toast.success(t("users.users.toastMessages.roleChangeSuccess"));
 		},
 		onError: (error) => {
@@ -28,7 +40,6 @@ const UserRole = ({ user }: Iuser) => {
 			} else {
 				toast.error(t("users.users.toastMessages.errorOccurred"));
 			}
-			// void refetchUsers();
 		},
 	});
 	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: number) => {
@@ -45,6 +56,7 @@ const UserRole = ({ user }: Iuser) => {
 			role: e.target.value,
 		});
 	};
+
 	return (
 		<div className="form-control w-full max-w-xs">
 			{/* <label className="label">
