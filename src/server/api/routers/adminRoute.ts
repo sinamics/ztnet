@@ -18,6 +18,7 @@ import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
+import jwt from "jsonwebtoken";
 
 export const adminRouter = createTRPCRouter({
 	deleteUser: adminRoleProtectedRoute
@@ -100,7 +101,53 @@ export const adminRouter = createTRPCRouter({
 			});
 			return users;
 		}),
+	generateInviteLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				secret: z.string(),
+				expireTime: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { secret, expireTime } = input;
+			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
+				expiresIn: `${expireTime}m`,
+			});
 
+			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
+			// Store the token, email, createdBy, and expiration in the UserInvitation table
+			await ctx.prisma.userInvitation.create({
+				data: {
+					token,
+					url,
+					secret,
+					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					createdBy: ctx.session.user.id,
+				},
+			});
+
+			return token;
+		}),
+	getInvitationLink: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.userInvitation.findMany({
+			where: {
+				createdBy: ctx.session.user.id,
+			},
+		});
+	}),
+	deleteInvitationLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.userInvitation.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
 			const isCentral = false;

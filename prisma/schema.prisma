@@ -205,6 +205,19 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model UserInvitation {
+  id         Int       @id @default(autoincrement())
+  email      String?    // Email for which the invitation was created
+  secret     String     // Secret used to create the invitation
+  url        String     // URL to which the user will be redirected after accepting the invitation
+  token      String    @unique // Invitation token
+  expires    DateTime  // Expiration date
+  createdBy  Int       // Admin user ID who created the invitation
+  used       Boolean   @default(false) // Whether the invitation was used
+  createdAt  DateTime  @default(now())
+}
+
+
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
 // npx prisma migrate dev --name (NAME)
 
