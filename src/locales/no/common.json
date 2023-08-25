@@ -306,7 +306,18 @@
 					"expireTimeLabel": "Invitasjonslenken vil utløpe etter denne tiden",
 					"expireTimePlaceholder": "Utløp tid i minutter",
 					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
-					"timeUsedPlaceholder": "Ganger kan brukes"
+					"timeUsedPlaceholder": "Ganger kan brukes",
+					"activeInvitationsLabel": "Aktive invitasjoner (klikk for mer info)",
+					"invitationModal": {
+						"header": "Invitasjonsdetaljer",
+						"secretLabel": "Hemmelighet:",
+						"expiresLabel": "Utløper:",
+						"timesUsedLabel": "Ganger brukt:",
+						"invitationLinkLabel": "Invitasjonslenke:",
+						"clickToCopyLabel": "klikk for å kopiere",
+						"linkCopiedToast": "lenke kopiert til utklippstavle",
+						"deleteButton": "Slett"
+					}
 				}
 			},
 			"users": {
