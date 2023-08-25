@@ -7,7 +7,8 @@ import Controller from "./controller";
 import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
+import { withAuth } from "~/components/auth/withAuth";
 
 const AdminSettings = () => {
 	const router = useRouter();
@@ -74,7 +75,7 @@ const AdminSettings = () => {
 AdminSettings.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getStaticProps(context: GetStaticPropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -84,5 +85,5 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default AdminSettings;

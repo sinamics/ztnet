@@ -7,6 +7,7 @@ import { CentralNetworkTable } from "../../components/modules/ztCentral/centralN
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { type GetServerSidePropsContext } from "next";
+import { withAuth } from "~/components/auth/withAuth";
 
 const CentralNetworks: NextPageWithLayout = () => {
 	const t = useTranslations("networks");
@@ -100,7 +101,7 @@ const CentralNetworks: NextPageWithLayout = () => {
 CentralNetworks.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -110,5 +111,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default CentralNetworks;

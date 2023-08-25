@@ -18,6 +18,7 @@ import { type User as IUser } from "@prisma/client";
 declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: IUser;
+		error: string;
 		update: {
 			name?: string;
 			email?: string;
@@ -162,8 +163,18 @@ export const authOptions: NextAuthOptions = {
 			}
 			return token;
 		},
-		session: ({ session, token }) => {
+		session: async ({ session, token }) => {
 			if (!token.id) return null;
+
+			// Check the user exists in the database
+			const user = await prisma.user.findFirst({
+				where: { id: token.id },
+			});
+
+			if (!user) {
+				// If the user does not exist, return null to log them out
+				return null;
+			}
 
 			session.user = { ...token } as IUser;
 			return session;
@@ -177,7 +188,7 @@ export const authOptions: NextAuthOptions = {
 		},
 	},
 	pages: {
-		signIn: "/",
+		signIn: "/auth/login",
 	},
 	debug: false,
 };
