@@ -1,12 +1,10 @@
 import { signIn } from "next-auth/react";
 import router from "next/router";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { useState } from "react";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
-interface IProps {
-	setViewForgotForm: Dispatch<SetStateAction<boolean>>;
-}
 interface FormData {
 	email: string;
 	password: string;
@@ -18,7 +16,7 @@ type NextAuthError = {
 	statusCode?: number;
 };
 
-const LoginForm: React.FC<IProps> = ({ setViewForgotForm }) => {
+const LoginForm: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
@@ -92,12 +90,12 @@ const LoginForm: React.FC<IProps> = ({ setViewForgotForm }) => {
 					</div>
 					<div className="flex items-center justify-between">
 						<div className="text-sm">
-							<a
-								onClick={() => void setViewForgotForm((prev: boolean) => !prev)}
+							<Link
+								href="/auth/forgotPassword"
 								className="cursor-pointer text-gray-400 hover:text-base-200"
 							>
 								Forgot your password?
-							</a>
+							</Link>
 						</div>
 					</div>
 					<div>

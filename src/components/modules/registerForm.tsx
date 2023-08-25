@@ -9,18 +9,24 @@ interface FormData {
 	email: string;
 	password: string;
 	name: string;
+	code?: string;
+	token?: string;
 }
 
 const RegisterForm: React.FC = () => {
+	const router = useRouter();
+	const { invite } = router.query;
+
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
 		password: "",
 		name: "",
+		code: "",
+		token: invite?.toString(),
 	});
 
 	const { mutate: register } = api.auth.register.useMutation();
-	const router = useRouter();
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
@@ -61,6 +67,21 @@ const RegisterForm: React.FC = () => {
 					<p className="text-gray-500">Please sign up with your credentials</p>
 				</div>
 				<form className="space-y-5" onSubmit={submitHandler}>
+					{invite ? (
+						<div className="space-y-2">
+							<label className="text-sm font-medium tracking-wide text-gray-700">
+								Code
+							</label>
+							<input
+								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
+								value={formData.code}
+								onChange={handleChange}
+								type=""
+								name="code"
+								placeholder="Inviation code"
+							/>
+						</div>
+					) : null}
 					<div className="space-y-2">
 						<label className="text-sm font-medium tracking-wide text-gray-700">
 							Name

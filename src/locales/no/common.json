@@ -6,7 +6,8 @@
 		"change": "Endre",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
-		"delete": "Slett"
+		"delete": "Slett",
+		"generate": "Generer"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -267,10 +268,6 @@
 			"notification": "Varsling",
 			"controller": "Kontroller"
 		},
-		"settings": {
-			"authentication": "Autentisering",
-			"enableUserRegistration": "Aktiver brukerregistrering?"
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP-vert",
@@ -299,6 +296,30 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "Autentisering",
+				"enableUserRegistration": "Aktiver brukerregistrering?",
+				"generateInvitation": {
+					"header": "Generer invitasjonslenke",
+					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",
+					"secretMessagePlaceholder": "Legg til hemmelig melding",
+					"expireTimeLabel": "Invitasjonslenken vil utløpe etter denne tiden",
+					"expireTimePlaceholder": "Utløp tid i minutter",
+					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
+					"timeUsedPlaceholder": "Ganger kan brukes",
+					"activeInvitationsLabel": "Aktive invitasjoner (klikk for mer info)",
+					"invitationModal": {
+						"header": "Invitasjonsdetaljer",
+						"secretLabel": "Hemmelighet:",
+						"expiresLabel": "Status:",
+						"timesUsedLabel": "Ganger brukt:",
+						"invitationLinkLabel": "Invitasjonslenke:",
+						"clickToCopyLabel": "klikk for å kopiere",
+						"linkCopiedToast": "lenke kopiert til utklippstavle",
+						"deleteButton": "Slett"
+					}
+				}
+			},
 			"users": {
 				"sectionTitle": "Brukere",
 				"description": "Alle registrerte brukere på plattformen.",
@@ -312,6 +333,20 @@
 					"group": "Gruppe",
 					"emailVerifiedYes": "Ja",
 					"emailVerifiedNo": "Nei"
+				},
+				"userOptionModal": {
+					"userGroupLabel": "Brukergruppe",
+					"userRoleLabel": "Brukerrolle",
+					"userActionsLabel": "Brukerhandlinger",
+					"typeUserName": "Skriv inn brukerens navn.",
+					"buttons": {
+						"deleteUser": "Slett bruker",
+						"cancle": "Avbryt"
+					},
+					"toast": {
+						"deleteUserSuccess": "Bruker slettet vellykket",
+						"nameNotEqual": "Brukernavnet du skrev inn er ikke det samme som brukeren."
+					}
 				},
 				"roleDescriptions": {
 					"admin": "Som en administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
