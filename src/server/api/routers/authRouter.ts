@@ -77,7 +77,11 @@ export const authRouter = createTRPCRouter({
 						where: { token: token.trim(), secret: code.trim() },
 					});
 
-					if (!invitation || invitation.used) {
+					if (
+						!invitation ||
+						invitation.used ||
+						invitation.timesUsed >= invitation.timesCanUse
+					) {
 						throw new TRPCError({
 							code: "BAD_REQUEST",
 							message: invitation
@@ -87,7 +91,6 @@ export const authRouter = createTRPCRouter({
 					}
 
 					// Validate the token using jwt
-
 					try {
 						jwt.verify(token.trim(), process.env.NEXTAUTH_SECRET);
 					} catch (_e) {
@@ -99,7 +102,12 @@ export const authRouter = createTRPCRouter({
 
 					await ctx.prisma.userInvitation.update({
 						where: { token: token.trim() },
-						data: { used: true },
+						data: {
+							used: invitation.timesUsed + 1 >= invitation.timesCanUse,
+							timesUsed: {
+								increment: 1,
+							},
+						},
 					});
 
 					return true;

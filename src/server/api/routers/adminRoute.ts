@@ -106,14 +106,14 @@ export const adminRouter = createTRPCRouter({
 			z.object({
 				secret: z.string(),
 				expireTime: z.string(),
+				timesCanUse: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { secret, expireTime } = input;
+			const { secret, expireTime, timesCanUse } = input;
 			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
 				expiresIn: `${expireTime}m`,
 			});
-
 			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
 			// Store the token, email, createdBy, and expiration in the UserInvitation table
 			await ctx.prisma.userInvitation.create({
@@ -121,6 +121,7 @@ export const adminRouter = createTRPCRouter({
 					token,
 					url,
 					secret,
+					timesCanUse: parseInt(timesCanUse) || 1,
 					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
 					createdBy: ctx.session.user.id,
 				},

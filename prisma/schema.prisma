@@ -206,15 +206,17 @@ model VerificationToken {
 }
 
 model UserInvitation {
-  id         Int       @id @default(autoincrement())
-  email      String?    // Email for which the invitation was created
-  secret     String     // Secret used to create the invitation
-  url        String     // URL to which the user will be redirected after accepting the invitation
-  token      String    @unique // Invitation token
-  expires    DateTime  // Expiration date
-  createdBy  Int       // Admin user ID who created the invitation
-  used       Boolean   @default(false) // Whether the invitation was used
-  createdAt  DateTime  @default(now())
+  id              Int       @id @default(autoincrement())
+  token           String    @unique
+  used            Boolean   @default(false)
+  email           String?   
+  secret          String    
+  url             String    
+  expires         DateTime 
+  timesCanUse     Int       @default(1)
+  timesUsed       Int       @default(0)
+  createdBy       Int      
+  createdAt       DateTime  @default(now())
 }
 
 
