@@ -6,7 +6,8 @@
 		"change": "Endre",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
-		"delete": "Slett"
+		"delete": "Slett",
+		"generate": "Generer"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -267,10 +268,6 @@
 			"notification": "Varsling",
 			"controller": "Kontroller"
 		},
-		"settings": {
-			"authentication": "Autentisering",
-			"enableUserRegistration": "Aktiver brukerregistrering?"
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP-vert",
@@ -299,6 +296,19 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "Autentisering",
+				"enableUserRegistration": "Aktiver brukerregistrering?",
+				"generateInvitation": {
+					"header": "Generer invitasjonslenke",
+					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",
+					"secretMessagePlaceholder": "Legg til hemmelig melding",
+					"expireTimeLabel": "Invitasjonslenken vil utløpe etter denne tiden",
+					"expireTimePlaceholder": "Utløp tid i minutter",
+					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
+					"timeUsedPlaceholder": "Ganger kan brukes"
+				}
+			},
 			"users": {
 				"sectionTitle": "Brukere",
 				"description": "Alle registrerte brukere på plattformen.",

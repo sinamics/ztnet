@@ -6,7 +6,8 @@
 		"change": "Change",
 		"submit": "Submit",
 		"cancel": "Cancel",
-		"delete": "Delete"
+		"delete": "Delete",
+		"generate": "Generate"
 	},
 	"sidebar": {
 		"navigation": "Navigation",
@@ -267,10 +268,6 @@
 			"notification": "Notification",
 			"controller": "Controller"
 		},
-		"settings": {
-			"authentication": "Authentication",
-			"enableUserRegistration": "Enable user registration?"
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP Host",
@@ -299,6 +296,19 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "Authentication",
+				"enableUserRegistration": "Enable user registration?",
+				"generateInvitation": {
+					"header": "Generate invitation link",
+					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",
+					"secretMessagePlaceholder": "Add secret message",
+					"expireTimeLabel": "Invitation link will expire after this time",
+					"expireTimePlaceholder": "Expire time in minutes",
+					"timeUsedLabel": "How many times can this link be used? (Optional, default 1)",
+					"timeUsedPlaceholder": "Times can be used"
+				}
+			},
 			"users": {
 				"sectionTitle": "Users",
 				"description": "All registered users on the platform.",
