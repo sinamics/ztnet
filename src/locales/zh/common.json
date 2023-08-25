@@ -6,7 +6,8 @@
 		"change": "更改",
 		"submit": "提交",
 		"cancel": "取消",
-		"delete": "删除"
+		"delete": "删除",
+		"generate": "生成"
 	},
 	"sidebar": {
 		"navigation": "导航",
@@ -267,10 +268,6 @@
 			"notification": "通知",
 			"controller": "控制器"
 		},
-		"settings": {
-			"authentication": "身份验证",
-			"enableUserRegistration": "启用用户注册？"
-		},
 		"mail": {
 			"mailSMTP": "邮件SMTP",
 			"smtpHost": "SMTP主机",
@@ -299,6 +296,19 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "身份验证",
+				"enableUserRegistration": "启用用户注册？",
+				"generateInvitation": {
+					"header": "生成邀请链接",
+					"secretMessageLabel": "用户注册时将被要求输入此消息（区分大小写）",
+					"secretMessagePlaceholder": "添加秘密消息",
+					"expireTimeLabel": "邀请链接将在此时间后过期",
+					"expireTimePlaceholder": "过期时间（分钟）",
+					"timeUsedLabel": "此链接可以使用多少次？（可选，默认1次）",
+					"timeUsedPlaceholder": "可使用次数"
+				}
+			},
 			"users": {
 				"sectionTitle": "用户",
 				"description": "平台上的所有已注册用户。",

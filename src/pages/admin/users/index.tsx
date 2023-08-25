@@ -29,10 +29,12 @@ const Users = () => {
 	return (
 		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
-				<p className="text-sm text-gray-400">{t("settings.authentication")}</p>
+				<p className="text-sm text-gray-400 ">{t("users.authentication.header")}</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex items-center justify-between">
-					<p>{t("settings.enableUserRegistration")}</p>
+					<p className="font-medium">
+						{t("users.authentication.enableUserRegistration")}
+					</p>
 					<input
 						type="checkbox"
 						checked={options?.enableRegistration}

@@ -6,6 +6,7 @@ import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import cn from "classnames";
+import { useTranslations } from "next-intl";
 
 const InvitationLink = () => {
 	const { callModal, closeModal } = useModalStore((state) => state);
@@ -107,6 +108,8 @@ const InvitationLink = () => {
 	);
 };
 const UserInvitation = () => {
+	const t = useTranslations();
+
 	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation();
 	const { refetch: refetchInvitations } = api.admin.getInvitationLink.useQuery();
 	const { data: options } = api.admin.getAllOptions.useQuery();
@@ -115,32 +118,41 @@ const UserInvitation = () => {
 			<InputFields
 				disabled={options?.enableRegistration}
 				isLoading={false}
-				label="Generate Invitation"
+				label={t("admin.users.authentication.generateInvitation.header")}
 				rootFormClassName="flex flex-col space-y-2 w-6/6"
 				size="sm"
 				placeholder=""
-				buttonText="Generate"
+				buttonText={t("changeButton.generate")}
 				fields={[
 					{
 						name: "secret",
 						type: "text",
-						description:
-							"User will be asked to enter this message upon registration (Case sensitive)",
-						placeholder: "Add secret message",
+						description: t(
+							"admin.users.authentication.generateInvitation.secretMessageLabel",
+						),
+						placeholder: t(
+							"admin.users.authentication.generateInvitation.secretMessagePlaceholder",
+						),
 						defaultValue: "",
 					},
 					{
 						name: "expireTime",
 						type: "number",
-						placeholder: "Expire time in minutes",
-						description: "Invitation link will expire after this time",
+						placeholder: t(
+							"admin.users.authentication.generateInvitation.expireTimePlaceholder",
+						),
+						description: t(
+							"admin.users.authentication.generateInvitation.expireTimeLabel",
+						),
 						defaultValue: "",
 					},
 					{
 						name: "timesCanUse",
 						type: "number",
-						placeholder: "Times can be used",
-						description: "How many times can this link be used? (Optional, default 1))",
+						placeholder: t(
+							"admin.users.authentication.generateInvitation.timeUsedPlaceholder",
+						),
+						description: t("admin.users.authentication.generateInvitation.timeUsedLabel"),
 						defaultValue: "",
 					},
 				]}

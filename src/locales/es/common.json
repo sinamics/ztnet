@@ -6,7 +6,8 @@
 		"change": "Cambiar",
 		"submit": "Enviar",
 		"cancel": "Cancelar",
-		"delete": "Eliminar"
+		"delete": "Eliminar",
+		"generate": "Generar"
 	},
 	"sidebar": {
 		"navigation": "Navegación",
@@ -267,10 +268,6 @@
 			"notification": "Notificación",
 			"controller": "Controlador"
 		},
-		"settings": {
-			"authentication": "Autenticación",
-			"enableUserRegistration": "¿Habilitar registro de usuario?"
-		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "Host SMTP",
@@ -299,6 +296,19 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "Autenticación",
+				"enableUserRegistration": "¿Habilitar el registro de usuarios?",
+				"generateInvitation": {
+					"header": "Generar enlace de invitación",
+					"secretMessageLabel": "Se le pedirá al usuario que ingrese este mensaje al registrarse (sensible a mayúsculas y minúsculas)",
+					"secretMessagePlaceholder": "Agregar mensaje secreto",
+					"expireTimeLabel": "El enlace de invitación expirará después de este tiempo",
+					"expireTimePlaceholder": "Tiempo de expiración en minutos",
+					"timeUsedLabel": "¿Cuántas veces se puede utilizar este enlace? (Opcional, por defecto 1)",
+					"timeUsedPlaceholder": "Veces que se puede utilizar"
+				}
+			},
 			"users": {
 				"sectionTitle": "Usuarios",
 				"description": "Todos los usuarios registrados en la plataforma.",
