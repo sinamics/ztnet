@@ -39,7 +39,7 @@ const InvitationLink = () => {
 								"admin.users.authentication.generateInvitation.invitationModal.expiresLabel",
 							)}{" "}
 						</span>
-						{expired ? (
+						{expired || invite?.used ? (
 							<span className="text-error">Expired</span>
 						) : (
 							<span>
@@ -118,7 +118,7 @@ const InvitationLink = () => {
 					</p>
 					<div className="flex gap-3">
 						{invitationLink?.map((invite) => {
-							const expired = new Date(invite.expires) < new Date();
+							const expired = new Date(invite.expires) < new Date() || invite?.used;
 							return (
 								<div
 									key={invite.id}
