@@ -368,7 +368,7 @@ export const authRouter = createTRPCRouter({
 				},
 			);
 
-			const forgotLink = `${process.env.NEXTAUTH_URL}/login/forgotpassword?token=${validationToken}`;
+			const forgotLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
 			const globalOptions = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
