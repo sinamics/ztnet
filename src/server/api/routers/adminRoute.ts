@@ -650,6 +650,19 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === input.userid) {
 				throwError("You can't change your own Group");
 			}
+
+			// Check if the user and the user group exist
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userid,
+				},
+			});
+
+			// do not add usergroup if admin user
+			if (user.role === "ADMIN" && input.userGroupId !== "none") {
+				throwError("You can't add groups to admin users");
+			}
+
 			try {
 				// If "none" is selected, remove the user from the group
 				if (input.userGroupId === "none") {
@@ -662,13 +675,6 @@ export const adminRouter = createTRPCRouter({
 						},
 					});
 				}
-
-				// Check if the user and the user group exist
-				const user = await ctx.prisma.user.findUnique({
-					where: {
-						id: input.userid,
-					},
-				});
 
 				const userGroup = await ctx.prisma.userGroup.findUnique({
 					where: {
