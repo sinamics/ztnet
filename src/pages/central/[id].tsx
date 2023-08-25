@@ -19,9 +19,10 @@ import cn from "classnames";
 import NetworkHelpText from "~/components/modules/networkHelp";
 import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next/types";
+import { GetServerSidePropsContext } from "next/types";
 import NetworkDescription from "../../components/modules/networkDescription";
 import NetworkName from "~/components/modules/networkName";
+import { withAuth } from "~/components/auth/withAuth";
 
 const CentralNetworkById = () => {
 	const t = useTranslations("networkById");
@@ -266,7 +267,7 @@ CentralNetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getServerSideProps(context: GetStaticPropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -276,5 +277,5 @@ export async function getServerSideProps(context: GetStaticPropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default CentralNetworkById;
