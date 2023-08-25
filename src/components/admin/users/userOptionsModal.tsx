@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import UserRole from "./userRole";
 import UserGroup from "./userGroup";
+import { useModalStore } from "~/utils/store";
 
 interface Iprops {
 	userId: number;
@@ -13,10 +14,14 @@ interface Iprops {
 const UserOptionsModal = ({ userId }: Iprops) => {
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
+	const { closeModal } = useModalStore((state) => state);
+
 	const { data: user, isLoading: loadingUser } = api.admin.getUser.useQuery({
 		userId: userId,
 	});
-
+	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
+		isAdmin: false,
+	});
 	const { mutate: deleteUser, isLoading: userDeleteLoading } =
 		api.admin.deleteUser.useMutation({
 			onError: (error) => {
@@ -30,6 +35,10 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 				} else {
 					toast.error("An unknown error occurred");
 				}
+			},
+			onSuccess: () => {
+				closeModal();
+				refetchUsers();
 			},
 		});
 	const deleteUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

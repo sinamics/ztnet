@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
 import UserInvitation from "~/components/admin/users/userInvitation";
-import InputField from "~/components/elements/inputField";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { Accounts } from "~/components/modules/accountTable";
 import UserGroups from "~/components/modules/userGroups";
