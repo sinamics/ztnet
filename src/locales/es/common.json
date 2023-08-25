@@ -311,7 +311,7 @@
 					"invitationModal": {
 						"header": "Detalles de la Invitación",
 						"secretLabel": "Secreto:",
-						"expiresLabel": "Expira:",
+						"expiresLabel": "Estado:",
 						"timesUsedLabel": "Veces usado:",
 						"invitationLinkLabel": "Enlace de invitación:",
 						"clickToCopyLabel": "haz clic para copiar",

@@ -311,7 +311,7 @@
 					"invitationModal": {
 						"header": "Invitasjonsdetaljer",
 						"secretLabel": "Hemmelighet:",
-						"expiresLabel": "Utløper:",
+						"expiresLabel": "Status:",
 						"timesUsedLabel": "Ganger brukt:",
 						"invitationLinkLabel": "Invitasjonslenke:",
 						"clickToCopyLabel": "klikk for å kopiere",

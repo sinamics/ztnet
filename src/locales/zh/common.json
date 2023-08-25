@@ -311,7 +311,7 @@
 					"invitationModal": {
 						"header": "邀请详情",
 						"secretLabel": "密钥:",
-						"expiresLabel": "过期时间:",
+						"expiresLabel": "状态:",
 						"timesUsedLabel": "使用次数:",
 						"invitationLinkLabel": "邀请链接:",
 						"clickToCopyLabel": "点击复制",

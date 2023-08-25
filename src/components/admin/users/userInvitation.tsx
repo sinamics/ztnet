@@ -17,6 +17,7 @@ const InvitationLink = () => {
 		api.admin.getInvitationLink.useQuery();
 
 	const showInviationDetails = (invite) => {
+		const expired = new Date(invite.expires) < new Date();
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
 			rootStyle: "text-left",
@@ -38,7 +39,13 @@ const InvitationLink = () => {
 								"admin.users.authentication.generateInvitation.invitationModal.expiresLabel",
 							)}{" "}
 						</span>
-						<TimeAgo date={invite.expires} />
+						{expired ? (
+							<span className="text-error">Expired</span>
+						) : (
+							<span>
+								Expires in <TimeAgo date={invite.expires} />
+							</span>
+						)}
 					</p>
 					<p>
 						<span className="text-gray-400">
