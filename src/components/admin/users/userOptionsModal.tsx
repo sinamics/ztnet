@@ -6,12 +6,14 @@ import { ErrorData } from "~/types/errorHandling";
 import UserRole from "./userRole";
 import UserGroup from "./userGroup";
 import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
 
 interface Iprops {
 	userId: number;
 }
 
 const UserOptionsModal = ({ userId }: Iprops) => {
+	const t = useTranslations("admin");
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
 	const { closeModal } = useModalStore((state) => state);
@@ -45,12 +47,19 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 		e.preventDefault();
 		// check if input name is the same as the user name
 		if (input.name !== user?.name) {
-			toast.error("The username you entered is not the same as the user.");
+			toast.error(t("users.users.userOptionModal.toast.nameNotEqual"));
 			return;
 		}
-		deleteUser({
-			id: user.id,
-		});
+		deleteUser(
+			{
+				id: user.id,
+			},
+			{
+				onSuccess: () => {
+					toast.success(t("users.users.userOptionModal.toast.deleteUserSuccess"));
+				},
+			},
+		);
 	};
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInput({
@@ -76,22 +85,22 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 			<div className={cn({ "opacity-30": userDeleteLoading })}>
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-4">
-						<header>User Group</header>
+						<header>{t("users.users.userOptionModal.userGroupLabel")}</header>
 						<UserGroup user={user} />
 					</div>
 					<div className="col-span-4">
-						<header>User Role</header>
+						<header>{t("users.users.userOptionModal.userRoleLabel")}</header>
 						<UserRole user={user} />
 					</div>
 					<div className="col-span-4 space-y-4">
-						<header>User Actions</header>
+						<header>{t("users.users.userOptionModal.userActionsLabel")}</header>
 						{deleted ? (
 							<form>
 								<input
 									type="text"
 									name="name"
 									onChange={inputHandler}
-									placeholder="Type the name of the user."
+									placeholder={t("users.users.userOptionModal.typeUserName")}
 									className="input input-bordered border-warning input-sm w-full max-w-xs my-2"
 								/>
 
@@ -101,34 +110,24 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>
-										Delete user
+										{t("users.users.userOptionModal.buttons.deleteUser")}
 									</button>
 									<button
-										onClick={
-											() => setDelete(!deleted)
-											// deleteUser({
-											// 	id: userId,
-											// });
-										}
+										onClick={() => setDelete(!deleted)}
 										type="submit"
 										className="btn-sm btn w-2/6"
 									>
-										Cancle
+										{t("users.users.userOptionModal.buttons.cancle")}
 									</button>
 								</div>
 							</form>
 						) : (
 							<button
-								onClick={
-									() => setDelete(!deleted)
-									// deleteUser({
-									// 	id: userId,
-									// });
-								}
+								onClick={() => setDelete(!deleted)}
 								type="submit"
 								className="btn-sm btn btn-error btn-outline"
 							>
-								Delete user
+								{t("users.users.userOptionModal.buttons.deleteUser")}
 							</button>
 						)}
 					</div>

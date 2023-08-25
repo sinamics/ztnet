@@ -67,7 +67,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 				return (
 					<div
 						key={group.id}
-						className={cn("badge  badge-lg rounded-md flex items-center", {
+						className={cn("badge badge-lg rounded-md flex items-center", {
 							"badge-primary": group.isDefault,
 						})}
 					>
@@ -83,7 +83,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 										<InputFields
 											isLoading={false}
 											label=""
-											rootClassName="flex-col space-y-2 "
+											rootClassName="flex-col space-y-2"
 											rootFormClassName="flex flex-col space-y-2 "
 											size="sm"
 											openByDefault={true}
@@ -192,15 +192,14 @@ const UserGroups = () => {
 	});
 
 	return (
-		<div className="space-y-10">
-			<div className="pb-5">
+		<div className="space-y-5">
+			<div className="">
 				<p className="text-sm text-gray-500">{t("users.groups.description")}</p>
 			</div>
-			<GroupLabel groups={usergroups as UserGroupWithCount[]} />
 			<InputFields
 				isLoading={false}
 				label={t("users.groups.addGroup.addGroupLabel")}
-				rootFormClassName="flex flex-col space-y-2 "
+				rootFormClassName="flex flex-col space-y-2"
 				size="sm"
 				placeholder=""
 				buttonText={t("users.groups.addGroup.addGroupButton")}
@@ -244,6 +243,7 @@ const UserGroups = () => {
 					})
 				}
 			/>
+			<GroupLabel groups={usergroups as UserGroupWithCount[]} />
 		</div>
 	);
 };

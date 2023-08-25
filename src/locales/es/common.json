@@ -323,6 +323,20 @@
 					"emailVerifiedYes": "Sí",
 					"emailVerifiedNo": "No"
 				},
+				"userOptionModal": {
+					"userGroupLabel": "Grupo de usuarios",
+					"userRoleLabel": "Rol de usuario",
+					"userActionsLabel": "Acciones del usuario",
+					"typeUserName": "Escribe el nombre del usuario.",
+					"buttons": {
+						"deleteUser": "Eliminar usuario",
+						"cancle": "Cancelar"
+					},
+					"toast": {
+						"deleteUserSuccess": "Usuario eliminado exitosamente",
+						"nameNotEqual": "El nombre de usuario que ingresaste no es el mismo que el usuario."
+					}
+				},
 				"roleDescriptions": {
 					"admin": "Como administrador, este usuario tendrá permisos completos, incluido el acceso al panel de administración.",
 					"user": "Si se establece como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."

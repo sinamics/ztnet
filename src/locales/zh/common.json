@@ -323,6 +323,20 @@
 					"emailVerifiedYes": "是",
 					"emailVerifiedNo": "否"
 				},
+				"userOptionModal": {
+					"userGroupLabel": "用户组",
+					"userRoleLabel": "用户角色",
+					"userActionsLabel": "用户操作",
+					"typeUserName": "输入用户的名称。",
+					"buttons": {
+						"deleteUser": "删除用户",
+						"cancle": "取消"
+					},
+					"toast": {
+						"deleteUserSuccess": "用户删除成功",
+						"nameNotEqual": "您输入的用户名与用户的用户名不同。"
+					}
+				},
 				"roleDescriptions": {
 					"admin": "作为管理员，此用户将拥有完全的权限，包括访问管理面板的权限。",
 					"user": "如果设置为用户，此用户将只拥有有限的权限，并且不能访问管理面板。"

@@ -323,6 +323,20 @@
 					"emailVerifiedYes": "Ja",
 					"emailVerifiedNo": "Nei"
 				},
+				"userOptionModal": {
+					"userGroupLabel": "Brukergruppe",
+					"userRoleLabel": "Brukerrolle",
+					"userActionsLabel": "Brukerhandlinger",
+					"typeUserName": "Skriv inn brukerens navn.",
+					"buttons": {
+						"deleteUser": "Slett bruker",
+						"cancle": "Avbryt"
+					},
+					"toast": {
+						"deleteUserSuccess": "Bruker slettet vellykket",
+						"nameNotEqual": "Brukernavnet du skrev inn er ikke det samme som brukeren."
+					}
+				},
 				"roleDescriptions": {
 					"admin": "Som en administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
 					"user": "Hvis satt til Bruker, vil denne brukeren ha begrensede tillatelser og vil ikke kunne få tilgang til administrasjonspanelet."
