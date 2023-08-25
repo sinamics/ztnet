@@ -172,10 +172,9 @@ export const authOptions: NextAuthOptions = {
 			});
 
 			if (!user) {
-				// If the user does not exist, return null to log them out
-				return null;
+				// If the user does not exist, set user to null
+				return { ...session, user: null };
 			}
-
 			session.user = { ...token } as IUser;
 			return session;
 		},
