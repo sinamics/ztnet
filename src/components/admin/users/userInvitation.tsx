@@ -7,6 +7,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import cn from "classnames";
 import { useTranslations } from "next-intl";
+import { UserInvitation } from "@prisma/client";
 
 const InvitationLink = () => {
 	const t = useTranslations();
@@ -16,7 +17,7 @@ const InvitationLink = () => {
 	const { data: invitationLink, refetch: refetchInvitations } =
 		api.admin.getInvitationLink.useQuery();
 
-	const showInviationDetails = (invite) => {
+	const showInviationDetails = (invite: UserInvitation) => {
 		const expired = new Date(invite.expires) < new Date() || invite?.used;
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
@@ -151,7 +152,8 @@ const InvitationLink = () => {
 		</div>
 	);
 };
-const UserInvitation = () => {
+
+const UserInvitationLink = () => {
 	const t = useTranslations();
 
 	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation();
@@ -221,4 +223,4 @@ const UserInvitation = () => {
 	);
 };
 
-export default UserInvitation;
+export default UserInvitationLink;
