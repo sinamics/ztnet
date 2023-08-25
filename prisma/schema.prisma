@@ -77,7 +77,7 @@ model network {
   lastModifiedTime            DateTime?
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User              @relation(fields: [authorId], references: [id])
+  nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId                    Int
   tagsByName                  Json?
   capabilitiesByName          Json?
@@ -138,7 +138,7 @@ model Session {
 model UserOptions {
   id                   Int       @id @default(autoincrement())
   userId               Int       @unique
-  user                 User      @relation(fields: [userId], references: [id])
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
   useNotationColorAsBg           Boolean?          @default(false)
@@ -204,6 +204,21 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model UserInvitation {
+  id              Int       @id @default(autoincrement())
+  token           String    @unique
+  used            Boolean   @default(false)
+  email           String?   
+  secret          String    
+  url             String    
+  expires         DateTime 
+  timesCanUse     Int       @default(1)
+  timesUsed       Int       @default(0)
+  createdBy       Int      
+  createdAt       DateTime  @default(now())
+}
+
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
 // npx prisma migrate dev --name (NAME)

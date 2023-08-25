@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
 import Controller from "./controller";
-import Settings from "./settings";
+// import Settings from "./settings";
 import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
@@ -20,11 +20,11 @@ const AdminSettings = () => {
 	}
 
 	const tabs: ITab[] = [
-		{
-			name: t("tabs.settings"),
-			value: "site-setting",
-			component: <Settings />,
-		},
+		// {
+		// 	name: t("tabs.settings"),
+		// 	value: "site-setting",
+		// 	component: <Settings />,
+		// },
 		{
 			name: t("tabs.mail"),
 			value: "mail-setting",

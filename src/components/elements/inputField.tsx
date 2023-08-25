@@ -23,6 +23,7 @@ interface FormProps {
 	labelClassName?: string;
 	isLoading?: boolean;
 	placeholder?: string;
+	disabled?: boolean;
 	description?: string;
 	fields: FieldConfig[];
 	size?: "xs" | "sm" | "md" | "lg";
@@ -48,6 +49,7 @@ interface FormProps {
 const InputField = ({
 	label,
 	labelClassName,
+	disabled,
 	placeholder,
 	description,
 	fields,
@@ -162,6 +164,7 @@ const InputField = ({
 					<div>
 						<button
 							data-testid="view-form"
+							disabled={disabled}
 							onClick={handleEditClick}
 							className={cn(`btn btn-${size}`, { hidden: !showSubmitButtons })}
 						>

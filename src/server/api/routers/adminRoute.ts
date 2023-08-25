@@ -18,8 +18,73 @@ import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
+import jwt from "jsonwebtoken";
+import { networkRouter } from "./networkRouter";
 
 export const adminRouter = createTRPCRouter({
+	deleteUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.id) {
+				throwError("You can't delete your own account");
+			}
+			if (input.id === 1) {
+				throwError("You can't delete the user who created the first account");
+			}
+			// get user networks
+			const userNetworks = await ctx.prisma.network.findMany({
+				where: {
+					authorId: input.id,
+				},
+			});
+
+			// delete user networks
+			const caller = networkRouter.createCaller(ctx);
+			for (const network of userNetworks) {
+				caller.deleteNetwork({ nwid: network.nwid, central: false });
+			}
+
+			return await ctx.prisma.user.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
+	getUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				userId: z.number(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			return await ctx.prisma.user.findFirst({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					emailVerified: true,
+					lastLogin: true,
+					lastseen: true,
+					online: true,
+					role: true,
+					_count: {
+						select: {
+							network: true,
+						},
+					},
+					userGroup: true,
+					userGroupId: true,
+				},
+
+				where: {
+					id: input.userId,
+				},
+			});
+		}),
 	getUsers: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -50,7 +115,54 @@ export const adminRouter = createTRPCRouter({
 			});
 			return users;
 		}),
+	generateInviteLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				secret: z.string(),
+				expireTime: z.string(),
+				timesCanUse: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { secret, expireTime, timesCanUse } = input;
+			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
+				expiresIn: `${expireTime}m`,
+			});
+			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
+			// Store the token, email, createdBy, and expiration in the UserInvitation table
+			await ctx.prisma.userInvitation.create({
+				data: {
+					token,
+					url,
+					secret,
+					timesCanUse: parseInt(timesCanUse) || 1,
+					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					createdBy: ctx.session.user.id,
+				},
+			});
 
+			return token;
+		}),
+	getInvitationLink: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.userInvitation.findMany({
+			where: {
+				createdBy: ctx.session.user.id,
+			},
+		});
+	}),
+	deleteInvitationLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.userInvitation.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
 			const isCentral = false;
@@ -538,6 +650,19 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === input.userid) {
 				throwError("You can't change your own Group");
 			}
+
+			// Check if the user and the user group exist
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userid,
+				},
+			});
+
+			// do not add usergroup if admin user
+			if (user.role === "ADMIN" && input.userGroupId !== "none") {
+				throwError("You can't add groups to admin users");
+			}
+
 			try {
 				// If "none" is selected, remove the user from the group
 				if (input.userGroupId === "none") {
@@ -550,13 +675,6 @@ export const adminRouter = createTRPCRouter({
 						},
 					});
 				}
-
-				// Check if the user and the user group exist
-				const user = await ctx.prisma.user.findUnique({
-					where: {
-						id: input.userid,
-					},
-				});
 
 				const userGroup = await ctx.prisma.userGroup.findUnique({
 					where: {

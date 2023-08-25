@@ -150,7 +150,7 @@ const Sidebar = (): JSX.Element => {
 									{t("admin")}
 								</span>
 							</li>
-							<li className="my-px">
+							{/* <li className="my-px">
 								<Link
 									href="/admin?tab=site-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
@@ -183,7 +183,7 @@ const Sidebar = (): JSX.Element => {
 									</span>
 									<span className="ml-3">{t("settings")}</span>
 								</Link>
-							</li>
+							</li> */}
 							<li className="my-px">
 								<Link
 									href="/admin?tab=mail-setting"
