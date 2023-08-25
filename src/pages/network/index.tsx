@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { type GetServerSidePropsContext } from "next";
 import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
+import { withAuth } from "~/components/auth/withAuth";
 
 const Networks: NextPageWithLayout = () => {
 	const t = useTranslations("networks");
@@ -120,7 +121,7 @@ const Networks: NextPageWithLayout = () => {
 Networks.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -130,5 +131,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default Networks;
