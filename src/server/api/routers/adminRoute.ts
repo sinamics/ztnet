@@ -19,6 +19,7 @@ import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
+import { networkRouter } from "./networkRouter";
 
 export const adminRouter = createTRPCRouter({
 	deleteUser: adminRoleProtectedRoute
@@ -34,6 +35,19 @@ export const adminRouter = createTRPCRouter({
 			if (input.id === 1) {
 				throwError("You can't delete the user who created the first account");
 			}
+			// get user networks
+			const userNetworks = await ctx.prisma.network.findMany({
+				where: {
+					authorId: input.id,
+				},
+			});
+
+			// delete user networks
+			const caller = networkRouter.createCaller(ctx);
+			for (const network of userNetworks) {
+				caller.deleteNetwork({ nwid: network.nwid, central: false });
+			}
+
 			return await ctx.prisma.user.delete({
 				where: {
 					id: input.id,
