@@ -306,7 +306,18 @@
 					"expireTimeLabel": "邀请链接将在此时间后过期",
 					"expireTimePlaceholder": "过期时间（分钟）",
 					"timeUsedLabel": "此链接可以使用多少次？（可选，默认1次）",
-					"timeUsedPlaceholder": "可使用次数"
+					"timeUsedPlaceholder": "可使用次数",
+					"activeInvitationsLabel": "有效邀请（点击获取更多信息）",
+					"invitationModal": {
+						"header": "邀请详情",
+						"secretLabel": "密钥:",
+						"expiresLabel": "过期时间:",
+						"timesUsedLabel": "使用次数:",
+						"invitationLinkLabel": "邀请链接:",
+						"clickToCopyLabel": "点击复制",
+						"linkCopiedToast": "链接已复制到剪贴板",
+						"deleteButton": "删除"
+					}
 				}
 			},
 			"users": {

@@ -306,7 +306,18 @@
 					"expireTimeLabel": "El enlace de invitación expirará después de este tiempo",
 					"expireTimePlaceholder": "Tiempo de expiración en minutos",
 					"timeUsedLabel": "¿Cuántas veces se puede utilizar este enlace? (Opcional, por defecto 1)",
-					"timeUsedPlaceholder": "Veces que se puede utilizar"
+					"timeUsedPlaceholder": "Veces que se puede utilizar",
+					"activeInvitationsLabel": "Invitaciones activas (haz clic para más información)",
+					"invitationModal": {
+						"header": "Detalles de la Invitación",
+						"secretLabel": "Secreto:",
+						"expiresLabel": "Expira:",
+						"timesUsedLabel": "Veces usado:",
+						"invitationLinkLabel": "Enlace de invitación:",
+						"clickToCopyLabel": "haz clic para copiar",
+						"linkCopiedToast": "enlace copiado al portapapeles",
+						"deleteButton": "Eliminar"
+					}
 				}
 			},
 			"users": {

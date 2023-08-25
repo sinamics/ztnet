@@ -9,6 +9,7 @@ import cn from "classnames";
 import { useTranslations } from "next-intl";
 
 const InvitationLink = () => {
+	const t = useTranslations();
 	const { callModal, closeModal } = useModalStore((state) => state);
 	const { mutate: deleteInvitation } = api.admin.deleteInvitationLink.useMutation();
 
@@ -17,31 +18,62 @@ const InvitationLink = () => {
 
 	const showInviationDetails = (invite) => {
 		callModal({
-			title: "Invitation Details",
+			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
 			rootStyle: "text-left",
 			showButtons: true,
 			closeModalOnSubmit: true,
 			content: (
 				<div>
 					<p>
-						Secret: <span className="text-primary">{invite.secret}</span>
+						<span className="text-gray-400">
+							{t(
+								"admin.users.authentication.generateInvitation.invitationModal.secretLabel",
+							)}
+						</span>
+						<span className="text-primary pl-1">{invite.secret}</span>
 					</p>
 					<p>
-						Expires: <TimeAgo date={invite.expires} />
+						<span className="text-gray-400">
+							{t(
+								"admin.users.authentication.generateInvitation.invitationModal.expiresLabel",
+							)}{" "}
+						</span>
+						<TimeAgo date={invite.expires} />
 					</p>
-					<p>Times used: {`${invite.timesUsed}/${invite.timesCanUse || 1}`}</p>
+					<p>
+						<span className="text-gray-400">
+							{t(
+								"admin.users.authentication.generateInvitation.invitationModal.timesUsedLabel",
+							)}{" "}
+						</span>
+						{`${invite.timesUsed}/${invite.timesCanUse || 1}`}
+					</p>
 					<div>
-						Invitation Link:
+						<span className="text-gray-400">
+							{t(
+								"admin.users.authentication.generateInvitation.invitationModal.invitationLinkLabel",
+							)}
+						</span>
 						<CopyToClipboard
 							text={invite.url}
-							onCopy={() => toast.success("link copied to clipboard")}
+							onCopy={() =>
+								toast.success(
+									t(
+										"admin.users.authentication.generateInvitation.invitationModal.linkCopiedToast",
+									),
+								)
+							}
 							title={"copyToClipboard.title"}
 						>
 							<div
 								style={{ wordWrap: "break-word" }}
 								className="cursor-pointer text-blue-500"
 							>
-								<p className="pt-5 text-sm text-gray-400">click to copy</p>
+								<p className="pt-5 text-sm text-gray-400">
+									{t(
+										"admin.users.authentication.generateInvitation.invitationModal.clickToCopyLabel",
+									)}
+								</p>
 								{invite.url}
 							</div>
 						</CopyToClipboard>
@@ -61,7 +93,9 @@ const InvitationLink = () => {
 							}}
 							className="btn btn-sm btn-error btn-outline"
 						>
-							Delete
+							{t(
+								"admin.users.authentication.generateInvitation.invitationModal.deleteButton",
+							)}
 						</button>
 					</div>
 				</div>
@@ -72,7 +106,9 @@ const InvitationLink = () => {
 		<div>
 			{invitationLink?.length > 0 ? (
 				<>
-					<p className="pt-5 text-sm text-gray-400">Active invitations</p>
+					<p className="pt-5 text-sm text-gray-400">
+						{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
+					</p>
 					<div className="flex gap-3">
 						{invitationLink?.map((link) => {
 							const expired = new Date(link.expires) < new Date();
