@@ -117,11 +117,12 @@ const InvitationLink = () => {
 						{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
 					</p>
 					<div className="flex gap-3">
-						{invitationLink?.map((link) => {
-							const expired = new Date(link.expires) < new Date();
+						{invitationLink?.map((invite) => {
+							const expired = new Date(invite.expires) < new Date();
 							return (
 								<div
-									onClick={() => showInviationDetails(link)}
+									key={invite.id}
+									onClick={() => showInviationDetails(invite)}
 									className="cursor-pointer"
 								>
 									<p
@@ -130,14 +131,14 @@ const InvitationLink = () => {
 											"bg-error": expired,
 										})}
 									>
-										{link.secret}
+										{invite.secret}
 										<span className="pl-1">
-											{`${link.timesUsed}/${link.timesCanUse || 1}`} --{" "}
+											{`${invite.timesUsed}/${invite.timesCanUse || 1}`} --{" "}
 										</span>
 										{`${expired ? "Expired" : "Expires in"}`}
 										{!expired && (
 											<span className="pl-1">
-												<TimeAgo date={link.expires} />
+												<TimeAgo date={invite.expires} />
 											</span>
 										)}
 									</p>
