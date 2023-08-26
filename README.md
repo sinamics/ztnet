@@ -210,34 +210,6 @@ This project welcomes contributions. To ensure smooth collaboration, please foll
 
 **NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload.
 
-## The traditional way
-
-To start development, first, clone the repository:
-
-`git clone https://github.com/yourusername/ztnet.git
-cd ztnet`
-
-### Setup Environment Variables
-
-Create a `.env` file in the root of the project and set the necessary environment variables:
-
-- `POSTGRES_HOST`=localhost
-- `POSTGRES_PORT`=5432
-- `POSTGRES_USER`=postgres
-- `POSTGRES_PASSWORD`=postgres
-- `POSTGRES_DB`=ztnet
-- `NEXTAUTH_URL`=http://localhost:3000
-- `NEXTAUTH_SECRET`="your_nextauth_secret"
-- `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
-- `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
-  You need to run the following command to create the database:
-
-`npx prisma db push`
-
-Now start the development server:
-
-`npm run dev`
-
 ## 📷 Images
 View the following images for a visual overview of the ZTNet application:
 <details>
