@@ -238,9 +238,55 @@ Now start the development server:
 
 `npm run dev`
 
-## Network page layout
+## 📷 Images
+View the following images for a visual overview of the ZTNet application:
+<details>
+<summary>Network Page</summary>
 
-![Networks](docs/images/showcase/ztnet_network.jpg)
+![Networks](docs/images/showcase/network_local.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>Network Member Options</summary>
+
+![Networks](docs/images/showcase/member_options.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>Mail Settings</summary>
+
+![Networks](docs/images/showcase/admin_mail.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>Platform Users</summary>
+
+![Networks](docs/images/showcase/admin_users.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>Controller</summary>
+
+![Networks](docs/images/showcase/admin_controller.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>User Profile</summary>
+
+![Networks](docs/images/showcase/profile.jpg)
+
+</summary>
+</details>
 
 ### ⚠️ Disclaimer:
 
