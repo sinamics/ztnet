@@ -189,7 +189,7 @@ These are system environment variables used by the ZeroTier service and should n
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
-# Development
+# 🛠️Development
 
 This project welcomes contributions. To ensure smooth collaboration, please follow the steps below:
 
@@ -260,11 +260,11 @@ View the following images for a visual overview of the ZTNet application:
 </summary>
 </details>
 
-### ⚠️ Disclaimer:
+## ⚠️ Disclaimer:
 
 Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
 
-### 📄 Attribution and Licensing Notice for Third-Party Components
+## 📄 Attribution and Licensing Notice for Third-Party Components
 This project utilizes the **mkworld** tool, written in Go, to generate the custom planet file. While the original mkworld tool was developed by ZeroTier, the version we are using was adapted and re-implemented in Go by Patrick Young (@kmahyyg). This Go adaptation is licensed under the GNU General Public License v3.0. We would like to express our appreciation to Patrick Young (@kmahyyg) for his efforts in creating this Go version, which has benefited our project.
 
 Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file.
