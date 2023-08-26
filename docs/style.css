@@ -133,14 +133,15 @@
   }
   
   .navbar .logo a {
-    color: #fff;
+    color: #d1d0d0;
     font-size: 35px;
     font-weight: 600;
   }
   
   /*  Nav Logo Span Linear-Gradient  */
   .navbar .logo a span {
-    background: linear-gradient(90deg, #7e22ce, #d341ae);
+    /* background: linear-gradient(90deg, #7e22ce, #d341ae); */
+    color: white;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -228,11 +229,41 @@
     width: 100%;
     display: flex;
   }
-  
+  .home-content .nav-buttons{
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    width: 100%;
+  }
   .home .max-width .row {
     margin-right: 0;
   }
+  .home .home-content {
+    /* Existing styles */
+    padding: 30px;
+    /* Add a background color with an RGBA value for transparency */
+    background-color: rgba(0, 0, 0, 0.5);
   
+    /* Add a blur effect to the background image */
+    backdrop-filter: blur(10px);
+  
+    /* Create a pseudo-element for the faded edge effect */
+    position: relative;
+  }
+  
+  .home .home-content::before {
+    /* Position and size */
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  
+    /* Add a radial gradient for a more blurry edge */
+    background: radial-gradient(circle at center, transparent, rgba(0, 0, 0, 0.6));
+    pointer-events: none;
+  }
   .home .home-content .text-1 {
     font-size: 27px;
   }
@@ -863,6 +894,7 @@
     }
     .home .home-content .text-2 {
       font-size: 70px;
+  
     }
     .home .home-content .text-3 {
       font-size: 35px;
