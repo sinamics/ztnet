@@ -19,8 +19,8 @@ const LandingPage = (): JSX.Element => {
 					<div className="home-content">
 						<h1 className="text-2">{siteConfig.tagline}</h1>
 						<div className="nav-buttons">
-							<a title="Goto github project" href="https://github.com/sinamics/ztnet">
-								Github Project
+							<a title="Goto github project" href="/category/installation">
+								Get Started
 							</a>
 							<a
 								title="Goto github project"
@@ -28,9 +28,9 @@ const LandingPage = (): JSX.Element => {
 									backgroundColor: "rgb(19, 19, 19)",
 									borderColor: "rgb(44, 44, 44)",
 								}}
-								href="https://github.com/sinamics/ztnet#%EF%B8%8F-installations"
+								href="https://github.com/sinamics/ztnet"
 							>
-								Installation
+								Github Project
 							</a>
 						</div>
 					</div>
@@ -41,12 +41,9 @@ const LandingPage = (): JSX.Element => {
 };
 
 export default function Home(): JSX.Element {
-	const { siteConfig } = useDocusaurusContext();
+	// const { siteConfig } = useDocusaurusContext();
 	return (
-		<Layout
-			title={`Hello from ${siteConfig.title}`}
-			description="Description will go into a meta tag in <head />"
-		>
+		<Layout title="Docs" description="Description will go into a meta tag in <head />">
 			<main>
 				<LandingPage />
 			</main>

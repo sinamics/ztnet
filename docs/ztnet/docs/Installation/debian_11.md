@@ -8,16 +8,22 @@ sidebar_position: 2
 ### Install PostgreSQL and ZeroTier
 First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.
 ```bash
-    curl -s https://install.zerotier.com | sudo bash
-    sudo apt install postgresql postgresql-contrib
+curl -s https://install.zerotier.com | sudo bash
+sudo apt install postgresql postgresql-contrib
 ```
 
+Set a password for the PostgreSQL user. If you change the password, make sure to update the `DATABASE_URL` url variable in the `.env` file.
+```bash
+sudo -u postgres psql
+\password postgres
+```
 ### Install Node.js and npm
 Next, install Node.js version 18.
 ```bash
-    curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
-    sudo apt-get install -y nodejs
+curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
+sudo apt-get install -y nodejs
 ```
+
 ### Setup Ztnet
 
 1. Clone the Ztnet repository:

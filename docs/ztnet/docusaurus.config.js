@@ -61,6 +61,8 @@ const config = {
         logo: {
           alt: 'ZTNET logo',
           src: 'img/ztnet_100x100.png',
+          // height: '20px,
+          width: '35px',
         },
         items: [
           // {
