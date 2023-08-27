@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'ZTNET',
   tagline: 'Awesome Zerotier Controller',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/ztnet_16x16.png',
 
   // Set the production url of your site here
   url: 'https://ztnet.network',
@@ -59,7 +59,7 @@ const config = {
       navbar: {
         title: 'ZTNET',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'ZTNET logo',
           src: 'img/ztnet_100x100.png',
         },
         items: [
