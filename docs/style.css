@@ -213,17 +213,31 @@
   }
   
   /*  Home  */
+  .home::before {
+    mask: url(#mask);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("./images/showcase/network_page.jpg") no-repeat center;
+    background-size: cover;
+    background-attachment: fixed;
+    filter: blur(3px) saturate(1.5);
+    z-index: -1;
+  }
+
   .home {
     display: flex;
-    background: url("./images/showcase/member_options.jpg") no-repeat
-      center;
     height: 100vh;
     color: #fff;
     min-height: 500px;
-    background-size: cover;
-    background-attachment: fixed;
     font-family: "Ubuntu", sans-serif;
+    position: relative;
+    overflow: hidden;
   }
+
   
   .home .max-width {
     width: 100%;
@@ -266,6 +280,8 @@
   }
   .home .home-content .text-1 {
     font-size: 27px;
+    display: flex;
+    align-items: center;
   }
   
   .home .home-content .text-2 {
