@@ -14,10 +14,7 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 	const [activeTab, setActiveTab] = useState("IPv4");
 
 	return (
-		<div
-			tabIndex={0}
-			className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
-		>
+		<div className="collapse collapse-arrow w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
 			<div className="collapse-title">{t("networkIpAssignments.header")}</div>
 			<div className="w-100 collapse-content">
