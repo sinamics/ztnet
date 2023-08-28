@@ -143,30 +143,21 @@ const Mail = () => {
 						}}
 					/>
 				</div>
-				<div
-					tabIndex={0}
-					className="collapse collapse-arrow w-full border border-base-300 bg-base-200"
-				>
+				<div className="collapse collapse-arrow w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
 					<div className="collapse-title">{t("mail.inviteUserTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<MailUserInviteTemplate />
 					</div>
 				</div>
-				<div
-					tabIndex={0}
-					className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
-				>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
 					<div className="collapse-title">{t("mail.forgotPasswordTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<ForgotPasswordMailTemplate />
 					</div>
 				</div>
-				<div
-					tabIndex={0}
-					className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
-				>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
 					<div className="collapse-title">{t("mail.notificationTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
