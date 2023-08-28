@@ -85,7 +85,7 @@ const Controller = () => {
 						<div className="divider mt-0 p-0 text-gray-500"></div>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.management.allowManagementFrom")}</p>
-							<div className="list-inside list-disc">
+							<div className="list-inside list-disc space-x-2">
 								{allowManagementFrom?.map((address) => (
 									<span key={address}>{address}</span>
 								))}
