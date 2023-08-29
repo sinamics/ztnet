@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'ZTNET',
-  tagline: 'Awesome Zerotier Controller',
+  tagline: 'Zerotier Controller Web UI',
   favicon: 'img/ztnet_16x16.png',
 
   // Set the production url of your site here

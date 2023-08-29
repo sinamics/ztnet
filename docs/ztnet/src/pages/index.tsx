@@ -1,13 +1,10 @@
 import React from "react";
 // import clsx from "clsx";
 // import Link from "@docusaurus/Link";
-import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+// import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
-// import HomepageFeatures from '@site/src/components/HomepageFeatures';
 
 const LandingPage = (): JSX.Element => {
-	const { siteConfig } = useDocusaurusContext();
-
 	return (
 		<header>
 			<div className="scroll-up-btn">
@@ -17,17 +14,22 @@ const LandingPage = (): JSX.Element => {
 			<section className="home">
 				<div className="info-box">
 					<div className="home-content">
-						<h1 className="text-2">{siteConfig.tagline}</h1>
+						<h2>ZTNET</h2>
+
+						<h1 className="title-text">
+							<span className="text-primary ">Zerotier </span>Controller Web UI
+						</h1>
 						<div className="nav-buttons">
-							<a title="Goto github project" href="/category/installation">
+							<a
+								className="bg-primary bg-primary-outline main-button"
+								title="Goto github project"
+								href="/Installation/docker-compose"
+							>
 								Get Started
 							</a>
 							<a
+								className="bg-primary-outline sm-hidden"
 								title="Goto github project"
-								style={{
-									backgroundColor: "rgb(19, 19, 19)",
-									borderColor: "rgb(44, 44, 44)",
-								}}
 								href="https://github.com/sinamics/ztnet"
 							>
 								Github Project
