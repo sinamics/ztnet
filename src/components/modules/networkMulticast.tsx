@@ -87,10 +87,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 
 	const { network } = networkByIdQuery || {};
 	return (
-		<div
-			tabIndex={0}
-			className="collapse-arrow collapse w-full border border-base-300 bg-base-200"
-		>
+		<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
 			<div className="collapse-title">{t("networkMulticast.Multicast")}</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
