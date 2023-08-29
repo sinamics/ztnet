@@ -1,0 +1,38 @@
+name: Build and Deploy Docusaurus
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - "docs/ztnet/**"
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install Dependencies
+      run: |
+        cd docs/ztnet
+        npm install
+
+    - name: Build Docusaurus
+      run: |
+        cd docs/ztnet
+        npm run build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs/ztnet/build
