@@ -26,7 +26,12 @@ jobs:
       run: npm install tailwindcss
     - name: Build website
       run: npm run build
-
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        # Upload entire repository
+        path: build
+        
   deploy:
     environment:
       name: github-pages
