@@ -116,6 +116,10 @@
 .nav-buttons a {
   text-decoration: none;
 }
+.nav-buttons a svg {
+  width: 40px;
+  height: 40px;
+}
 /* create button anmation when hover  */
 .nav-buttons a:hover {
   background: rgba(32, 32, 32, 0.281);
