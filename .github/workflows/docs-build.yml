@@ -37,6 +37,3 @@ jobs:
     - name: Deploy to GitHub Pages 🚀
       id: deployment
       uses: actions/deploy-pages@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        deploy_dir: docs/ztnet/build  # Set your build directory
