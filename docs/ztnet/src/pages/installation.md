@@ -1,5 +1,5 @@
 
-<h2> 🔥 Top Features </h2>
+<h2> 🔥 Top Features of ZTNET </h2>
 
 🍬 **ZeroTier Central API Support**  
 ZTNET integrates seamlessly with the ZeroTier Central, allowing for enhanced management and configuration capabilities directly from our interface.
