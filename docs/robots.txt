@@ -1,4 +1,0 @@
-# robots.txt
-User-agent: *
-Disallow: 
-Sitemap: https://sinamics.github.io/ztnet/sitemap.xml
