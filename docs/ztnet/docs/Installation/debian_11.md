@@ -6,7 +6,7 @@ sidebar_position: 2
 
 
 ### Install PostgreSQL and ZeroTier
-First, make sure PostgreSQL and ZeroTier are all installedd and configured on your FreeBSD server.
+First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.
 ```bash
 curl -s https://install.zerotier.com | sudo bash
 sudo apt install postgresql postgresql-contrib
