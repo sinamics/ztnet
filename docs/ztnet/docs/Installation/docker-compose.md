@@ -5,8 +5,8 @@ sidebar_position: 1
 # Docker Compose
 ### Services
 - **Postgres**: Database. **Change `POSTGRES_PASSWORD` for security**.
-- **ZeroTier**: VPN service.
-- **ZTnet**: Main app, depends on both `postgres` and `zerotier`.
+- **ZeroTier**: Zerotier Docker service.
+- **ZTNET**: Main app, depends on both `postgres` and `zerotier`.
 
 ### Setup
 Create a `docker-compose.yml` file on your machine and populate it as follows:
