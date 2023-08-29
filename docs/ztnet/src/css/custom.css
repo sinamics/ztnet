@@ -1,0 +1,142 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #2e8555;
+  --ifm-color-primary-dark: #29784c;
+  --ifm-color-primary-darker: #277148;
+  --ifm-color-primary-darkest: #205d3b;
+  --ifm-color-primary-light: #33925d;
+  --ifm-color-primary-lighter: #359962;
+  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #21af90;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.info-box {
+  display: flex;
+  align-items: start;
+  margin-top: 10%;
+  width: 100%;
+  margin-left: auto;
+  justify-content: space-between;
+}
+.text-primary{
+  color: rgb(255, 180, 65);
+}
+.home::before {
+  content: ""; 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("@site/static/img/ztnet_landing.png") no-repeat center;
+  background-size: cover;
+  background-attachment: fixed;
+  filter: saturate(0.4);
+}
+
+.home {
+  display: flex;
+  height: calc(100vh - 60px);
+  color: #fff;
+  min-height: 500px;
+  font-family: "Ubuntu", sans-serif;
+}
+
+.home .info-box {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+}
+
+.home .home-content {
+  padding: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  position: relative;
+}
+
+.home .home-content .title-text {
+  font-size: 75px;
+  font-weight: 600;
+  margin-left: -3px;
+  /* add cool font */
+  font-family: "Ubuntu", sans-serif;
+}
+
+/* position buttons bottom of the page  */
+.nav-buttons {
+  /* position: relative;
+  bottom: 20%;
+  left: 0; */
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 30px;
+  z-index: 1;
+}
+.nav-buttons a {
+  display: inline-block;
+  
+  color: #ffebfc;
+  font-size: 25px;
+  padding: 12px 36px;
+  margin-top: 20px;
+  font-weight: 400;
+  border-radius: 6px;
+  /* border: 2px solid #3b0753; */
+  /* transition: all 0.3s ease; */
+}
+.bg-primary {
+  background: rgb(19, 19, 19);
+}
+.bg-primary-outline {
+  border: 2px solid rgb(19, 19, 19);
+}
+ /* create button with blue color anchor */
+.nav-buttons a {
+  text-decoration: none;
+}
+/* create button anmation when hover  */
+.nav-buttons a:hover {
+  background: rgba(32, 32, 32, 0.281);
+  color: #fff;
+  /* border: 2px solid #7e22ce; */
+}
+
+/* add mobile breakpoint and display title-text with smaller size */
+@media (max-width: 768px) {
+  .home .home-content .title-text {
+    font-size: 40px;
+  }
+  .info-box {
+    margin: 10px;
+    padding-top: 30%;
+  }
+  .sm-hidden {
+    display: none !important;
+  }
+  .main-button{
+    width: 100%;
+    text-align: center;
+  }
+}
