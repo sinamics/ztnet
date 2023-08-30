@@ -58,7 +58,7 @@ const Mail = () => {
 								name: "smtpHost",
 								type: "text",
 								placeholder: options?.smtpHost || "host.smtp.com",
-								defaultValue: options?.smtpHost,
+								value: options?.smtpHost,
 							},
 						]}
 						submitHandler={async (params) => await inputHandler(params)}
@@ -75,7 +75,7 @@ const Mail = () => {
 								name: "smtpPort",
 								type: "number",
 								placeholder: options?.smtpPort || "587",
-								defaultValue: options?.smtpPort,
+								value: options?.smtpPort,
 							},
 						]}
 						submitHandler={(params) => inputHandler(params)}
@@ -92,7 +92,7 @@ const Mail = () => {
 								name: "smtpEmail",
 								type: "text",
 								placeholder: options?.smtpEmail || t("mail.mailPlaceholder"),
-								defaultValue: options?.smtpEmail,
+								value: options?.smtpEmail,
 							},
 						]}
 						submitHandler={(params) => inputHandler(params)}
@@ -109,7 +109,7 @@ const Mail = () => {
 								name: "smtpUsername",
 								type: "text",
 								placeholder: options?.smtpUsername || t("mail.username"),
-								defaultValue: options?.smtpUsername,
+								value: options?.smtpUsername,
 							},
 						]}
 						submitHandler={(params) => inputHandler(params)}
@@ -126,7 +126,7 @@ const Mail = () => {
 								name: "smtpPassword",
 								type: "password",
 								placeholder: "******",
-								defaultValue: options?.smtpPassword,
+								value: options?.smtpPassword,
 							},
 						]}
 						submitHandler={(params) => inputHandler(params)}
