@@ -45,6 +45,10 @@ const config = {
           editUrl:
             'https://github.com/sinamics/ztnet',
         },
+        gtag: {
+          trackingID: 'G-K5FT4B5HF2',
+          anonymizeIP: false,
+        },
         blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
