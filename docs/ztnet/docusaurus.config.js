@@ -57,7 +57,7 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/ztnet_social.png',
-      metadatas: [
+      metadata: [
         {name: 'viewport', content: 'width=device-width, initial-scale=1.0'},
         {name: 'title', content: 'ZTNET - Ultimate ZeroTier Web UI Network Controller'},
         {name: 'description', content: 'Manage your decentralized VPN effortlessly with ZTNET, the most advanced ZeroTier Web UI Network Controller available. Secure, scalable, and user-friendly.'},
