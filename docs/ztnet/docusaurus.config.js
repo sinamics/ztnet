@@ -45,6 +45,7 @@ const config = {
           editUrl:
             'https://github.com/sinamics/ztnet',
         },
+        blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
