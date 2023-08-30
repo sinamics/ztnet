@@ -747,30 +747,13 @@ export const adminRouter = createTRPCRouter({
 							"If plRecommend is false, both plID and plBirth need to be provided.",
 						path: ["plID", "plBirth"], // Path of the fields the error refers to
 					},
-				)
-				.refine(
-					(data) => {
-						if (
-							data.plID === 149604618 || // official world in production ZeroTier Cloud
-							data.plID === 227883110 || // reserved world for future
-							data.plBirth === 1567191349589
-						) {
-							return false;
-						}
-						if (!data.plRecommend && data.plBirth <= 1567191349589) {
-							return false;
-						}
-						return true;
-					},
-					{
-						message:
-							"Invalid Planet ID / Birth values provided. Consider using recommended values.",
-						path: ["plID", "plBirth"],
-					},
 				),
 		)
 
 		.mutation(async ({ ctx, input }) => {
+			// data.plID 149604618 // official world in production ZeroTier Cloud
+			// data.plID  227883110  // reserved world for future
+			// data.plBirth 1567191349589
 			try {
 				const zerotierOneDir = "/var/lib/zerotier-one";
 				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
