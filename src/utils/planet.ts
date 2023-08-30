@@ -3,6 +3,8 @@ import fs from "fs";
 interface LocalConf {
 	settings?: {
 		primaryPort?: number;
+		secondaryPort?: number;
+		allowSecondaryPort?: boolean;
 	};
 }
 
@@ -12,7 +14,7 @@ interface LocalConf {
  *
  */
 const zerotierOneDir = "/var/lib/zerotier-one";
-export const updateLocalConf = (portNumber: number): Promise<boolean> => {
+export const updateLocalConf = (portNumbers: number[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
 		const localConfPath = `${zerotierOneDir}/local.conf`;
 		let localConf: LocalConf;
@@ -32,8 +34,18 @@ export const updateLocalConf = (portNumber: number): Promise<boolean> => {
 				return;
 			}
 		}
-		if (localConf?.settings && "primaryPort" in localConf.settings && portNumber) {
-			localConf.settings.primaryPort = portNumber;
+		if (localConf?.settings && "primaryPort" in localConf.settings && portNumbers) {
+			localConf.settings.primaryPort = portNumbers[0];
+
+			if (portNumbers.length > 1) {
+				localConf.settings.secondaryPort = portNumbers[1];
+				localConf.settings.allowSecondaryPort = true;
+			} else {
+				// remove the secondaryPort and allowSecondaryPort keys from local.conf
+				// rome-ignore lint/correctness/noUnusedVariables: <explanation>
+				const { secondaryPort, allowSecondaryPort, ...restSettings } = localConf.settings;
+				localConf.settings = restSettings;
+			}
 			fs.writeFileSync(localConfPath, JSON.stringify(localConf, null, 2));
 			resolve(true);
 		} else {

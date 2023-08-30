@@ -828,12 +828,12 @@ export const adminRouter = createTRPCRouter({
 				const portNumbers = input.endpoints
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-					throwError("Error: Port numbers are not equal in the provided endpoints");
-				}
+				// if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
+				// 	throwError("Error: Port numbers are not equal in the provided endpoints");
+				// }
 
 				try {
-					await updateLocalConf(portNumbers[0]);
+					await updateLocalConf(portNumbers);
 				} catch (error) {
 					throwError(error);
 				}
@@ -948,7 +948,7 @@ export const adminRouter = createTRPCRouter({
 			 *
 			 */
 			try {
-				await updateLocalConf(9993);
+				await updateLocalConf([9993]);
 			} catch (error) {
 				throwError(error);
 			}
