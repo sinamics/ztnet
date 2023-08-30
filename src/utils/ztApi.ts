@@ -370,7 +370,8 @@ export const network_members = async function (
 
 	// fetch members
 	const fetchedMembers = await getData<MemberEntity[]>(addr, headers);
-
+	// fix bug in zerotier version 1.12.1
+	// https://github.com/zerotier/ZeroTierOne/issues/2114
 	if (!isCentral && Array.isArray(fetchedMembers)) {
 		const convertedMembers: { [key: string]: number } = {};
 		for (const obj of fetchedMembers) {
@@ -421,8 +422,7 @@ export const local_network_detail = async function (
 			headers,
 		);
 		let memberIds: string[] = [];
-		// fix bug in zerotier version 1.12.1
-		// https://github.com/zerotier/ZeroTierOne/issues/2114
+
 		if (Array.isArray(members)) {
 			memberIds = members.map((obj) => Object.keys(obj)[0]);
 		} else if (typeof members === "object") {
@@ -430,7 +430,7 @@ export const local_network_detail = async function (
 		}
 
 		const membersArr: MemberEntity[] = [];
-		for (const memberId of memberIds) {
+		for (const [memberId] of Object.entries(members)) {
 			const memberDetails = await getData<MemberEntity>(
 				`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
 				headers,
