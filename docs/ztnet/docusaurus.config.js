@@ -56,6 +56,23 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/ztnet_social.png',
+      metadatas: [
+        {name: 'viewport', content: 'width=device-width, initial-scale=1.0'},
+        {name: 'title', content: 'ZTNET - Ultimate ZeroTier Web UI Network Controller'},
+        {name: 'description', content: 'Manage your decentralized VPN effortlessly with ZTNET, the most advanced ZeroTier Web UI Network Controller available. Secure, scalable, and user-friendly.'},
+        {name: 'keywords', content: 'ztnet,zerotier,web-ui,network-controller,VPN,decentralized,zerotier-controller,zerotier-webui,zerotier-network-controller,zerotier-web-ui,zerotier-network,zerotier-network-ui,zerotier-network-webui,'},
+        {name: 'canonical', content: 'https://ztnet.network'},
+        {property: 'og:type', content: 'website'},
+        {property: 'og:url', content: 'https://ztnet.network'},
+        {property: 'og:title', content: 'ZTNET - Ultimate ZeroTier Web UI Network Controller'},
+        {property: 'og:description', content: 'Manage your decentralized VPN effortlessly with ZTNET, the most advanced ZeroTier Web UI Network Controller available. Secure, scalable, and user-friendly.'},
+        {property: 'og:image', content: 'img/ztnet_social.png'},
+        {property: 'twitter:card', content: 'summary_large_image'},
+        {property: 'twitter:url', content: 'https://ztnet.network'},
+        {property: 'twitter:title', content: 'ZTNET - Ultimate ZeroTier Web UI Network Controller'},
+        {property: 'twitter:description', content: 'Manage your decentralized VPN effortlessly with ZTNET, the most advanced ZeroTier Web UI Network Controller available. Secure, scalable, and user-friendly.'},
+        {property: 'twitter:image', content: 'img/ztnet_social.png'},
+      ],
       navbar: {
         title: 'ZTNET',
         logo: {
