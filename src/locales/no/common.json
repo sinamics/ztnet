@@ -388,6 +388,7 @@
 				"title": "Nettverk & Medlemmer",
 				"totalNetworks": "Totalt nettverk:",
 				"totalMembers": "Totalt medlemmer:",
+				"totalUnlinkedNetworks": "Totalt Uknyttede Nettverk:",
 				"unlinkedNetworks": {
 					"title": "Ikke linket nettverk",
 					"description": "Denne delen gir en tabell over alle nettverkene som for øyeblikket ikke er knyttet til noen bruker i ztnet-databasen. Disse stammer typisk fra tilpassede ZeroTier-kontrollere som har blitt lagt til av brukere, men som ennå ikke er administrert innen ZTNET. Tabellen gir deg muligheten til å tildele disse uadministrerte nettverkene til bestemte admin-brukere. Dette kan være spesielt nyttig hvis en bruker har lagt til en tilpasset ZeroTier-kontroller som ennå ikke er administrert av ZTNET.",

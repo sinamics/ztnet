@@ -388,6 +388,7 @@
 				"title": "网络和成员",
 				"totalNetworks": "总网络数：",
 				"totalMembers": "总成员数：",
+				"totalUnlinkedNetworks": "总未链接网络：",
 				"unlinkedNetworks": {
 					"title": "未链接的网络",
 					"description": "此部分提供了ztnet数据库中所有尚未链接到任何用户的网络的表格。这些网络通常源自用户添加的但尚未在ZTNET中管理的定制ZeroTier控制器。该表格使您有机会将这些未管理的网络分配给特定的管理员用户。如果用户添加了一个尚未被ZTNET管理的定制ZeroTier控制器，这可能特别有帮助。",
