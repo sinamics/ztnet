@@ -134,13 +134,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 												 *
 												 */
 												// Extract the port number from the endpoint string
-												const portNumber = parseInt(
-													plEndpoints.split("/").pop() || "",
-													10,
-												);
-
+												const portNumbers = plEndpoints
+													.split(",")
+													.map((endpoint) =>
+														parseInt(endpoint.split("/").pop() || "", 10),
+													);
 												try {
-													await updateLocalConf(portNumber);
+													await updateLocalConf(portNumbers);
 												} catch (_error) {
 													res.status(400).json({
 														error: "Error parsing mkworld.config.json",

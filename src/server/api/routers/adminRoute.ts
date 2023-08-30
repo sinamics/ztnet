@@ -747,30 +747,13 @@ export const adminRouter = createTRPCRouter({
 							"If plRecommend is false, both plID and plBirth need to be provided.",
 						path: ["plID", "plBirth"], // Path of the fields the error refers to
 					},
-				)
-				.refine(
-					(data) => {
-						if (
-							data.plID === 149604618 || // official world in production ZeroTier Cloud
-							data.plID === 227883110 || // reserved world for future
-							data.plBirth === 1567191349589
-						) {
-							return false;
-						}
-						if (!data.plRecommend && data.plBirth <= 1567191349589) {
-							return false;
-						}
-						return true;
-					},
-					{
-						message:
-							"Invalid Planet ID / Birth values provided. Consider using recommended values.",
-						path: ["plID", "plBirth"],
-					},
 				),
 		)
 
 		.mutation(async ({ ctx, input }) => {
+			// data.plID 149604618 // official world in production ZeroTier Cloud
+			// data.plID  227883110  // reserved world for future
+			// data.plBirth 1567191349589
 			try {
 				const zerotierOneDir = "/var/lib/zerotier-one";
 				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
@@ -845,12 +828,12 @@ export const adminRouter = createTRPCRouter({
 				const portNumbers = input.endpoints
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-					throwError("Error: Port numbers are not equal in the provided endpoints");
-				}
+				// if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
+				// 	throwError("Error: Port numbers are not equal in the provided endpoints");
+				// }
 
 				try {
-					await updateLocalConf(portNumbers[0]);
+					await updateLocalConf(portNumbers);
 				} catch (error) {
 					throwError(error);
 				}
@@ -965,7 +948,7 @@ export const adminRouter = createTRPCRouter({
 			 *
 			 */
 			try {
-				await updateLocalConf(9993);
+				await updateLocalConf([9993]);
 			} catch (error) {
 				throwError(error);
 			}
