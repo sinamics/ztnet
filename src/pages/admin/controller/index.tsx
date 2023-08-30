@@ -20,8 +20,8 @@ const Controller = () => {
 				setError(false);
 			},
 		});
-
-	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery();
+	const { data: unlinkedNetworks, refetch: refetchUnlinkedNetworks } =
+		api.admin.unlinkedNetwork.useQuery();
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
 		onSuccess: () => {
@@ -69,6 +69,10 @@ const Controller = () => {
 						<div className="flex items-center justify-between">
 							<p>{t("controller.networkMembers.totalMembers")}</p>
 							<p>{totalMembers}</p>
+						</div>
+						<div className="flex items-center justify-between">
+							<p>{t("controller.networkMembers.totalUnlinkedNetworks")}</p>
+							<p>{unlinkedNetworks?.length}</p>
 						</div>
 						{unlinkedNetworks && unlinkedNetworks?.length > 0 ? (
 							<div className="py-4">
@@ -161,6 +165,7 @@ const Controller = () => {
 							submitHandler={(params) =>
 								new Promise((resolve) => {
 									setZtOptions(params);
+									refetchUnlinkedNetworks();
 									resolve(true);
 								})
 							}
@@ -183,6 +188,7 @@ const Controller = () => {
 							submitHandler={(params) =>
 								new Promise((resolve) => {
 									setZtOptions(params);
+									refetchUnlinkedNetworks();
 									resolve(true);
 								})
 							}
