@@ -369,7 +369,18 @@ export const network_members = async function (
 		: `${localControllerUrl}/controller/network/${nwid}/member`;
 
 	// fetch members
-	return await getData<MemberEntity[]>(addr, headers);
+	const fetchedMembers = await getData<MemberEntity[]>(addr, headers);
+
+	if (!isCentral && Array.isArray(fetchedMembers)) {
+		const convertedMembers: { [key: string]: number } = {};
+		for (const obj of fetchedMembers) {
+			const key = Object.keys(obj)[0];
+			convertedMembers[key] = obj[key];
+		}
+		return convertedMembers;
+	}
+
+	return fetchedMembers;
 };
 
 export const get_network = async function (
@@ -457,11 +468,16 @@ export const central_network_detail = async function (
 		const members = await network_members(ctx, nwid, isCentral);
 		const network = await getData<CentralNetwork>(addr, headers);
 
-		const membersArr = await Promise.all(
-			members?.map(async (member) => {
-				return await getData<MemberEntity>(`${addr}/member/${member?.nodeId}`, headers);
-			}),
-		);
+		const membersArr = Array.isArray(members)
+			? await Promise.all(
+					members?.map(async (member) => {
+						return await getData<MemberEntity>(
+							`${addr}/member/${member?.nodeId}`,
+							headers,
+						);
+					}),
+			  )
+			: [];
 
 		// Get available cidr options.
 		const ipAssignmentPools = IPv4gen(null);
