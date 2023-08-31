@@ -1,6 +1,6 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
 import Controller from "./controller";
 // import Settings from "./settings";
@@ -73,7 +73,7 @@ const AdminSettings = () => {
 };
 
 AdminSettings.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
