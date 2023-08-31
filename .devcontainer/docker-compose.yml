@@ -22,7 +22,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
       NEXTAUTH_SECRET: "random_secret"
       NEXT_PUBLIC_SITE_NAME: "ZTnet"
