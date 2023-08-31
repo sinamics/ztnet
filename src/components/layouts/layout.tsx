@@ -52,9 +52,12 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 		</div>
 	);
 };
+
 export const LayoutAdminAuthenticated = ({ children }: Props): JSX.Element => {
 	// check if role is admin
-	const { data } = useSession();
+	const { data, status } = useSession();
+	if (status === "loading") return null;
+
 	const isAdmin = data?.user?.role === "ADMIN";
 	if (!isAdmin) {
 		return <FourOhFour />;
