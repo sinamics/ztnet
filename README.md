@@ -137,7 +137,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
     networks:
