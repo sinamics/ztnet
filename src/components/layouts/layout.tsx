@@ -6,10 +6,14 @@ import Footer from "../modules/footer";
 import { globalSiteTitle } from "~/utils/global";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { User } from "@prisma/client";
 
+type TUser = {
+	user: User;
+};
 interface Props {
 	children: ReactNode;
+	props?: TUser;
 }
 
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
@@ -53,12 +57,8 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	);
 };
 
-export const LayoutAdminAuthenticated = ({ children }: Props): JSX.Element => {
-	// check if role is admin
-	const { data, status } = useSession();
-	if (status === "loading") return null;
-
-	const isAdmin = data?.user?.role === "ADMIN";
+export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
+	const isAdmin = props?.user?.role === "ADMIN";
 	if (!isAdmin) {
 		return <FourOhFour />;
 	}

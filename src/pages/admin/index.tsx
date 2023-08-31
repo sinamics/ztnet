@@ -73,7 +73,7 @@ const AdminSettings = () => {
 };
 
 AdminSettings.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
+	return <LayoutAdminAuthenticated props={page?.props}>{page}</LayoutAdminAuthenticated>;
 };
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
