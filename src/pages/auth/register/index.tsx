@@ -5,6 +5,7 @@ import Head from "next/head";
 import React, { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
 import RegisterForm from "~/components/modules/registerForm";
+import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
 
 const Register = () => {
@@ -50,9 +51,29 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
+	const options = await prisma.globalOptions.findFirst({
+		where: {
+			id: 1,
+		},
+		select: {
+			enableRegistration: true,
+		},
+	});
+	// easy check to see if the invite probably is a jwt token
+	const isJwt = !!context.query?.invite && context.query?.invite.length > 50;
+
 	const session = await getSession(context);
 	const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
 
+	// redirect user to 404 if registration is disabled
+	if (!options?.enableRegistration && !isJwt) {
+		return {
+			redirect: {
+				destination: "/404",
+				permanent: false,
+			},
+		};
+	}
 	if (!session || !("user" in session)) {
 		return { props: { messages } };
 	}
