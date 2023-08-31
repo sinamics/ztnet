@@ -7,6 +7,7 @@ import { globalSiteTitle } from "~/utils/global";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
+import { api } from "~/utils/api";
 
 type TUser = {
 	user: User;
@@ -18,6 +19,9 @@ interface Props {
 
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	const router = useRouter();
+	const { data: options, isLoading: loadingRegistration } =
+		api.settings.registrationAllowed.useQuery();
+
 	const currentPath = router.pathname;
 	return (
 		<div className="outer-content">
@@ -27,14 +31,16 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 				</div>
 
 				<div className="m-3 mx-0 flex w-10/12 justify-end">
-					<Link
-						href={
-							currentPath.includes("/auth/register") ? "/auth/login" : "/auth/register"
-						}
-						className="btn"
-					>
-						{currentPath === "/auth/register" ? "Login" : "Sign Up"}
-					</Link>
+					{options?.enableRegistration && !loadingRegistration ? (
+						<Link
+							href={
+								currentPath.includes("/auth/register") ? "/auth/login" : "/auth/register"
+							}
+							className="btn"
+						>
+							{currentPath === "/auth/register" ? "Login" : "Sign Up"}
+						</Link>
+					) : null}
 				</div>
 			</div>
 			{children}
