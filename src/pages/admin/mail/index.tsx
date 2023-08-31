@@ -1,6 +1,6 @@
 import EditableField from "~/components/elements/inputField";
 import { type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { type GlobalOptions } from "@prisma/client";
 import MailUserInviteTemplate from "~/components/modules/mailUserInviteTemplate";
@@ -169,7 +169,7 @@ const Mail = () => {
 	);
 };
 Mail.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 
 export default Mail;
