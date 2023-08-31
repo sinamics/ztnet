@@ -5,6 +5,8 @@ import Head from "next/head";
 import React, { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
 import RegisterForm from "~/components/modules/registerForm";
+import { prisma } from "~/server/db";
+import { api } from "~/utils/api";
 import { globalSiteTitle } from "~/utils/global";
 
 const Register = () => {
@@ -50,8 +52,19 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
+	const options = await prisma.globalOptions.findFirst({
+		where: {
+			id: 1,
+		},
+		select: {
+			enableRegistration: true,
+		},
+	});
+
 	const session = await getSession(context);
 	const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
+
+	// redirect user to 404 if registration is disabled
 
 	if (!session || !("user" in session)) {
 		return { props: { messages } };
