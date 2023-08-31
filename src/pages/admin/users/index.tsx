@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
 import UserInvitation from "~/components/admin/users/userInvitation";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { Accounts } from "~/components/modules/accountTable";
 import UserGroups from "~/components/modules/userGroups";
 import { api } from "~/utils/api";
@@ -69,7 +69,7 @@ const Users = () => {
 	);
 };
 Users.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 
 export default Users;

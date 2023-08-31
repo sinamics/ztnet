@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useState, type ReactElement } from "react";
 import EditableField from "~/components/elements/inputField";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import PrivateRoot from "~/components/admin/controller/privateRoot";
 import DebugMirror from "~/components/modules/debugController";
 import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
@@ -202,7 +202,7 @@ const Controller = () => {
 	);
 };
 Controller.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 
 export default Controller;
