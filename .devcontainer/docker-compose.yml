@@ -10,22 +10,12 @@ services:
       dockerfile: .devcontainer/Dockerfile.dev
       args:
         NEXT_PUBLIC_CLIENTVAR: "clientvar"
-
+      
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
-      - zerotier:/var/lib/zerotier-one
-    container_name: ztnet
     environment:
-      ZT_ADDR: http://zerotier:9993
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
-      NEXTAUTH_SECRET: "random_secret"
-      NEXT_PUBLIC_SITE_NAME: "ZTnet"
     networks:
       - app-network
     depends_on:
