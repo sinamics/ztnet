@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 // import { useTranslations } from "next-intl";
 
@@ -48,7 +48,7 @@ const Settings = () => {
 	);
 };
 Settings.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 
 export default Settings;
