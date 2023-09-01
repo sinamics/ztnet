@@ -38,12 +38,12 @@ export default function FourOhFour() {
 						>
 							<defs>
 								<style>
-									{/* .cls-10,.cls-13,.cls-14,.cls-15,.cls-17,.cls-5,.cls-6{stroke:"#000"}.cls-13,.cls-14,.cls-8{strokeLinecap:round;strokeLinejoin:round}.cls-10,.cls-12,.cls-13,.cls-14,.cls-15,.cls-17,.cls-3,.cls-5,.cls-6,.cls-7,.cls-8,.cls-9{stroke-width:3px}.cls-10,.cls-12,.cls-15,.cls-17,.cls-3,.cls-5,.cls-6,.cls-7,.cls-9{strokeMiterlimit:10}.cls-3{fill:#818181}.cls-12,.cls-3,.cls-7,.cls-8,.cls-9{stroke:#191818}.cls-5{fill:#4ea7f1}.cls-14,.cls-6{fill:#f8f3ed}.cls-7{fill:#333}.cls-13,.cls-8{fill:none}.cls-9{fill:#f8f59c}.cls-10{fill:#f3d2c9}.cls-15{fill:#8bb174}.cls-17{fill:#da4e22} */}
+									{/* .cls-10,.cls-13,.cls-14,.cls-15,.cls-17,.cls-5,.cls-6{stroke:"#000"}.cls-13,.cls-14,.cls-8{strokeLinecap:round;strokeLinejoin:round}.cls-10,.cls-12,.cls-13,.cls-14,.cls-15,.cls-17,.cls-3,.cls-5,.cls-6,.cls-7,.cls-8,.cls-9{strokeWidth:3px}.cls-10,.cls-12,.cls-15,.cls-17,.cls-3,.cls-5,.cls-6,.cls-7,.cls-9{strokeMiterlimit:10}.cls-3{fill:#818181}.cls-12,.cls-3,.cls-7,.cls-8,.cls-9{stroke:#191818}.cls-5{fill:#4ea7f1}.cls-14,.cls-6{fill:#f8f3ed}.cls-7{fill:#333}.cls-13,.cls-8{fill:none}.cls-9{fill:#f8f59c}.cls-10{fill:#f3d2c9}.cls-15{fill:#8bb174}.cls-17{fill:#da4e22} */}
 								</style>
 							</defs>
 							<path
 								d="M1073.3 1016.93c-43.75-72.44-119.63-96.48-144.56-103.2h0a121.1 121.1 0 01-6-58.67c5.65-38.81 14.87-101.89 15.77-106.5L750 821.89l-191.73 64.42c3.64 3 51.12 45.51 80.31 71.69a121.07 121.07 0 0133 48.89h0c-14.84 21.13-57.72 88.19-44.92 171.84 12.09 79 67.16 129 103.83 162.39a396.42 396.42 0 0088 60.44 121.54 121.54 0 0098.43 19.6c5.76-1.34 16.84-4.18 27.22-7.38 4.58-1.42 10.4-3.23 17.06-5.57v0l1.1-.41 1.1-.39h0c6.61-2.47 12.24-4.8 16.67-6.65 10-4.19 20.35-9.11 25.63-11.77a121.54 121.54 0 0063-78.09 396.28 396.28 0 0028.85-102.77c6.82-49.07 17.06-122.78-24.25-191.2z"
-								stroke-width="3"
+								strokeWidth="3"
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								stroke="#000"
@@ -57,7 +57,7 @@ export default function FourOhFour() {
 								transform="rotate(-19.91 748.327 816.983)"
 								strokeMiterlimit="10"
 								fill="#020202"
-								stroke-width="3"
+								strokeWidth="3"
 								stroke="#000"
 							/>
 							<path
@@ -68,7 +68,7 @@ export default function FourOhFour() {
 								d="M1825.5 1426.5H755.25a10.75 10.75 0 00-10.75 10.75h0a10.75 10.75 0 0010.75 10.75H1815a10.75 10.75 0 0010.74-11l-.24-10.5"
 								fill="#dcdbda"
 								strokeMiterlimit="10"
-								stroke-width="3"
+								strokeWidth="3"
 								stroke="#000"
 							/>
 							<path
@@ -113,7 +113,7 @@ export default function FourOhFour() {
 							<path
 								d="M1222.5 782.5s75.38 65.94 84.71 83.21c.55 1 2.89 5.62 1.16 7.71-3.3 4-17.41-6.08-23.87-.92a6.77 6.77 0 00-1.62 1.92 8 8 0 00.75 8.68c2.16 2.87 5 7.47 4.73 11.84a6.33 6.33 0 01-1.15 3.63c-1.93 2.36-5.52 2.38-6.51 2.38-6.55 0-10.09-6.31-10.25-6.6a4.65 4.65 0 00-6 .13 3.51 3.51 0 00-.94 2 8.85 8.85 0 00.82 5.06c2.17 4.39-.37 18.55-1.85 24.93a93.65 93.65 0 01-11 27c-9-19.66-21.15-51-27-89a326.82 326.82 0 01-3.49-62.74c.38-7.83 1.01-14.43 1.51-19.23z"
 								fill="#f3d2c9"
-								stroke-width="3"
+								strokeWidth="3"
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								stroke="#000"
@@ -149,7 +149,7 @@ export default function FourOhFour() {
 								d="M1173.28 1285.23l30.22-89.73a156.61 156.61 0 00-60 11 149.83 149.83 0 00-38 23c-1 .85-15 12.88-15.5 24.47v1.26c.23 9.77 7.33 16 10.06 18l.82.6c8.37 5.92 18.58 5.26 33.63 5.63 8.49.21 12.73.32 18 1a113.17 113.17 0 0120.77 4.77z"
 								fill="#333"
 								stroke="#191818"
-								stroke-width="3"
+								strokeWidth="3"
 								strokeLinecap="round"
 								strokeLinejoin="round"
 							/>
