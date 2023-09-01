@@ -7,18 +7,36 @@ sidebar_position: 3
 ### Install PostgreSQL and ZeroTier
 First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.
 ```bash
-pkg install zerotier
+pkg update
+pkg install zerotier protobuf curl git node
 pkg install postgresql13-server postgresql13-contrib
 sysrc postgresql_enable=yes
 service postgresql initdb
 service postgresql start
+zerotier-one -d
 ```
 
-### Install Node.js and npm
-Next, install Node.js version 18.
+### Build Prisma Binary
 ```bash
-curl -sL https://install-node.now.sh/lts | bash
+git clone https://github.com/prisma/prisma-engines.git
+cd prisma-engines
+
+# Build all workspace binaries
+cargo build --release
+
+# Set environment variables
+setenv PRISMA_CLI_QUERY_ENGINE_TYPE "binary"
+setenv PRISMA_QUERY_ENGINE_BINARY "/root/prisma-engines/target/release/query-engine"
+setenv PRISMA_FMT_BINARY "/root/prisma-engines/target/release/prisma-fmt"
+setenv PRISMA_SCHEMA_ENGINE_BINARY "/root/prisma-engines/target/release/schema-engine"
+
+# Rename libquery_engine.so to libquery_engine.node
+mv /root/prisma-engines/target/release/libquery_engine.so ./target/release/libquery_engine.node
+
+# set environment variable
+setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_engine.node
 ```
+
 
 ### Setup Ztnet
 
@@ -44,7 +62,7 @@ curl -sL https://install-node.now.sh/lts | bash
 
 5. Create a `.env` file in the root directory and populate it with the necessary environment variables. Make sure these match what you've set up in your PostgreSQL database.
     ```
-    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public
+    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ztnet?schema=public
     ZT_ADDR=http://localhost:9993
     NEXT_PUBLIC_SITE_NAME=ZTnet
     NEXTAUTH_URL="http://localhost:3000"
@@ -60,11 +78,11 @@ curl -sL https://install-node.now.sh/lts | bash
 7. Build Next.js production:
     ```bash
     npm run build
+    cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/
     ```
 
 8. Run server:
     ```bash
-    cd .next/standalone
-    node server.js
+    node .next/standalone/server.js
     ```
 

@@ -27,7 +27,7 @@ sudo apt-get install -y nodejs
 ### Copy necessary files
 Copy mkworld binary to `/usr/local/bin/`:
 ```bash
-cp ztnodeid/build/linux_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')/ztmkworld /usr/local/bin/ztmkworld
+cp ztnodeid/build/linux_$(uname -m)/ztmkworld /usr/local/bin/ztmkworld
 ```
 
 ### Setup Ztnet
