@@ -22,9 +22,6 @@ This script executes the following steps:
 ### Monitoring Service Status
 To check the status of the `ztnet` service, run the following command:
 
-### Monitoring Service Status
-To check the status of the `ztnet` service, run the following command:
-
 ```bash
 sudo systemctl status ztnet
 ```
