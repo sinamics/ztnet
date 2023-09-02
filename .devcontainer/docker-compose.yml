@@ -1,9 +1,15 @@
 version: "3.1"
 services:
+  # db
   postgres:
     ports:
       - 5432:5432
+      
+  # zt container
+  zerotier:
+    image: zyclonite/zerotier:1.12.1
 
+  # ztnet
   ztnet:
     build:
       context: .
