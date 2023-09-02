@@ -13,6 +13,7 @@ enum ConnectionStatus {
 	Relayed = 1,
 	DirectLAN = 2,
 	DirectWAN = 3,
+	Controller = 4,
 }
 
 interface IProp {
@@ -202,6 +203,17 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 								</span>
 							);
 						}
+					}
+					if (original.conStatus === ConnectionStatus.Controller) {
+						return (
+							<span
+								style={cursorStyle}
+								className="cursor-pointer text-warning"
+								title="Controller"
+							>
+								CONTROLLER
+							</span>
+						);
 					}
 					if (original.conStatus === ConnectionStatus.Relayed) {
 						return (
