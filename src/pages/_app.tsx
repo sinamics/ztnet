@@ -53,7 +53,7 @@ const App: AppType<{ session: Session | null }> = ({
 	const getLayout = Component.getLayout ?? ((page) => page);
 	return (
 		<ThemeProvider defaultTheme="system">
-			<NextIntlClientProvider messages={messages}>
+			<NextIntlClientProvider onError={() => {}} messages={messages}>
 				<Modal />
 				<ReactQueryDevtools initialIsOpen={false} />
 				<Toaster
