@@ -43,8 +43,9 @@ cp ztnodeid/build/linux_$(uname -m)/ztmkworld /usr/local/bin/ztmkworld
     ```
 
 3. Checkout version:
+    Change X with the latest version
     ```bash
-    git checkout tags/v0.3.6
+    git checkout tags/vX.X.X
     ````
 
 4. Install the Node.js dependencies:
