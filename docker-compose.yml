@@ -14,8 +14,8 @@ services:
       - app-network
 
   zerotier:
-#    image: zyclonite/zerotier:1.10.6
-    image: zyclonite/zerotier:1.12.1
+    image: zyclonite/zerotier:1.10.6
+    # image: zyclonite/zerotier:1.12.1
     hostname: zerotier
     container_name: zerotier
     restart: unless-stopped
@@ -32,7 +32,7 @@ services:
       - "9993:9993/udp"
     environment:
       - ZT_OVERRIDE_LOCAL_CONF=true
-      - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
+      - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29,10.121.15.0/24
 
   ztnet:
     image: sinamics/ztnet:latest
