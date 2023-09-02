@@ -38,6 +38,11 @@ export enum ConnectionStatus {
 }
 
 function determineConnectionStatus(peer: Peers): ConnectionStatus {
+	// fix for zt version 1.12. Return type of peer is object!.
+	if (!peer || Object.keys(peer).length === 0) {
+		return ConnectionStatus.Offline;
+	}
+
 	if (Array.isArray(peer) && peer.length === 0) {
 		return ConnectionStatus.Offline;
 	}
