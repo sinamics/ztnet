@@ -1,4 +1,4 @@
-name-template: 'Release $RESOLVED_VERSION'
+name-template: 'v$RESOLVED_VERSION'
 tag-template: '$RESOLVED_VERSION'
 categories:
   - title: '🚀 Features'
@@ -26,11 +26,12 @@ version-resolver:
   default: patch
 
 template: |
-  # Documentation
-  https://ztnet.network
-  
-  # 🖊 What's Changed
+  ## 📝 Release Notes
 
   $CHANGES
 
   **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...$RESOLVED_VERSION
+
+  ### Documentation
+  https://ztnet.network
+  
