@@ -210,12 +210,16 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// de-authorize all members before we delete network
-				const members = await ztController.network_members(ctx, input.nwid, false);
+				const members = await ztController.network_members(
+					ctx,
+					input.nwid,
+					input.central,
+				);
 				for (const member in members) {
 					await ztController.member_update({
 						ctx,
 						nwid: input.nwid,
-						central: false,
+						central: input.central,
 						memberId: member,
 						updateParams: {
 							authorized: false,
