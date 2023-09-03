@@ -2,82 +2,55 @@
 sidebar_position: 2
 ---
 
-# Standalone Debian 11
+# Standalone Debian & Ubuntu
 
-
-### Install PostgreSQL and ZeroTier
-First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.
+To install ztnet on Debian or Ubuntu, run the following command:
 ```bash
-curl -s https://install.zerotier.com | sudo bash
-sudo apt install postgresql postgresql-contrib
+curl -s http://install.ztnet.network | sudo bash
 ```
 
-Set a password for the PostgreSQL user. If you change the password, make sure to update the `DATABASE_URL` url variable in the `.env` file.
+## Script Functionality Overview
+
+This script executes the following steps:
+
+1. **Prerequisites**: Installs Node.js version 18 and PostgreSQL.
+2. **Clone Repository**: Clones the `ztnet` repository into a temporary directory (`/tmp/ztnet`).
+3. **Install Dependencies**: Installs the necessary package dependencies.
+4. **Build Artifacts**: Builds the required artifacts and copies them to `/opt/ztnet`.
+5. **Systemd Service**: Sets up a systemd service to auto-start `ztnet` during system boot.
+
+### Monitoring Service Status
+To check the status of the `ztnet` service, run the following command:
+
 ```bash
-sudo -u postgres psql
-\password postgres
+sudo systemctl status ztnet
 ```
-### Install Node.js and npm
-Next, install Node.js version 18.
+
+### Starting the Service
+To start the `ztnet` service, run the following command:
+
 ```bash
-curl -sL https://deb.nodesource.com/setup_18.x | sudo bash -
-sudo apt-get install -y nodejs
+sudo systemctl start ztnet
 ```
 
-### Copy necessary files
-Copy mkworld binary to `/usr/local/bin/`:
+### Stopping the Service
+To stop the `ztnet` service, run the following command:
+
 ```bash
-cp ztnodeid/build/linux_$(uname -m)/ztmkworld /usr/local/bin/ztmkworld
+sudo systemctl stop ztnet
 ```
 
-### Setup Ztnet
 
-1. Clone the Ztnet repository:
-    ```bash
-    git clone https://github.com/sinamics/ztnet.git
-    ```
+## Uninstalling ztnet
 
-2. Navigate into the directory:
-    ```bash
-    cd ztnet
-    ```
+Follow these steps to uninstall `ztnet` from your system:
 
-3. Checkout version:
-    ```bash
-    git checkout tags/v0.3.6
-    ````
+1. **Stop Service**: Stop the systemd service by running `sudo systemctl stop ztnet`.
+2. **Disable Service**: Disable the systemd service from auto-starting at boot by running `sudo systemctl disable ztnet`.
+3. **Remove Service File**: Delete the systemd service file, located in `/etc/systemd/system/ztnet.service`.
+4. **Delete Files**: Remove all `ztnet` files from `/opt/ztnet`.
+5. **Uninstall Dependencies**: Optionally, uninstall Node.js 18 and PostgreSQL if they were installed specifically for `ztnet`.
+6. **Reload Systemd**: Run `sudo systemctl daemon-reload` to reload systemd configurations.
 
-4. Install the Node.js dependencies:
-    ```bash
-    npm install
-    ```
-
-5. Create a `.env` file in the root directory and populate it with the necessary environment variables, Make sure these match what you've set up in your PostgreSQL database.
-    ```
-    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public
-    ZT_ADDR=http://localhost:9993
-    NEXT_PUBLIC_SITE_NAME=ZTnet
-    NEXTAUTH_URL="http://localhost:3000"
-    NEXTAUTH_SECRET="random_secret"
-    ```
-
-6. Populate the PostgreSQL database with the necessary tables:
-    ```bash
-    npx prisma migrate deploy
-    npx prisma db seed
-    ```
-    
-7. Build Next.js production:
-    ```bash
-    npm run build
-    ```
-
-8. Run server:
-   ```bash
-   cd .next/standalone
-   node server.js
-   ```
-
-
-
+After following these steps, `ztnet` should be completely uninstalled from your system.
 

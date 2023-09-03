@@ -51,7 +51,7 @@
 		"react-dom": "18.2.0",
 		"react-hot-toast": "^2.4.0",
 		"react-timeago": "^7.1.0",
-		"sharp": "^0.32.4",
+		"sharp": "0.32.3",
 		"superjson": "1.9.1",
 		"unique-names-generator": "^4.7.1",
 		"unzipper": "^0.10.14",
