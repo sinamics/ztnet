@@ -2,9 +2,9 @@
 sidebar_position: 2
 ---
 
-# Standalone Debian
+# Standalone Debian & Ubuntu
 
-To install ztnet on Debian, run the following command:
+To install ztnet on Debian or Ubuntu, run the following command:
 ```bash
 curl -s http://install.ztnet.network | sudo bash
 ```
