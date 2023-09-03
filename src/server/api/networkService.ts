@@ -43,6 +43,11 @@ function determineConnectionStatus(member: MemberEntity): ConnectionStatus {
 	if (regex.test(member.nwid)) {
 		return ConnectionStatus.Controller;
 	}
+	// fix for zt version 1.12. Return type of peer is object!.
+	if (!member?.peers || Object.keys(member?.peers).length === 0) {
+		return ConnectionStatus.Offline;
+	}
+
 	if (Array.isArray(member?.peers) && member?.peers.length === 0) {
 		return ConnectionStatus.Offline;
 	}
