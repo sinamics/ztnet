@@ -35,25 +35,30 @@ export enum ConnectionStatus {
 	Relayed = 1,
 	DirectLAN = 2,
 	DirectWAN = 3,
+	Controller = 4,
 }
 
-function determineConnectionStatus(peer: Peers): ConnectionStatus {
+function determineConnectionStatus(member: MemberEntity): ConnectionStatus {
+	const regex = new RegExp(`^${member.id}`);
+	if (regex.test(member.nwid)) {
+		return ConnectionStatus.Controller;
+	}
 	// fix for zt version 1.12. Return type of peer is object!.
-	if (!peer || Object.keys(peer).length === 0) {
+	if (!member?.peers || Object.keys(member?.peers).length === 0) {
 		return ConnectionStatus.Offline;
 	}
 
-	if (Array.isArray(peer) && peer.length === 0) {
+	if (Array.isArray(member?.peers) && member?.peers.length === 0) {
 		return ConnectionStatus.Offline;
 	}
 
-	if (peer?.latency === -1 || peer?.versionMajor === -1) {
+	if (member?.peers?.latency === -1 || member?.peers?.versionMajor === -1) {
 		return ConnectionStatus.Relayed;
 	}
 
 	// Check if at least one path has a private IP
-	if (peer?.paths && peer.paths.length > 0) {
-		for (const path of peer.paths) {
+	if (member?.peers?.paths && member?.peers.paths.length > 0) {
+		for (const path of member.peers.paths) {
 			const ip = path.address.split("/")[0];
 			if (isPrivateIP(ip)) {
 				return ConnectionStatus.DirectLAN;
@@ -160,7 +165,7 @@ export const updateNetworkMembers = async (
 
 	for (const member of members) {
 		member.peers = peersByAddress[member.address] || [];
-		member.conStatus = determineConnectionStatus(member.peers);
+		member.conStatus = determineConnectionStatus(member);
 	}
 
 	await psql_updateMember(members);
