@@ -64,7 +64,10 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 			columnHelper.accessor("creationTime", {
 				header: () => <span>Created</span>,
 				id: "creationTime",
-				cell: (info) => <TimeAgo date={info.getValue()} />,
+				cell: (info) => {
+					const creationDate = new Date(info.getValue());
+					return <TimeAgo date={creationDate} title={creationDate} />;
+				},
 			}),
 			columnHelper.accessor("conStatus", {
 				header: () => <span>Conn Status</span>,
