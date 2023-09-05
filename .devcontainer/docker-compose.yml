@@ -21,7 +21,6 @@ services:
     volumes:
       - .:/workspaces:cached
     environment:
-      TZ: Europe/Oslo
       NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
     networks:
       - app-network
