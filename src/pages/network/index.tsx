@@ -11,6 +11,17 @@ import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import { withAuth } from "~/components/auth/withAuth";
 
+const title = `${globalSiteTitle} - Local Controller`;
+
+const HeadSection = () => (
+	<Head>
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.ico" />
+		<meta property="og:title" content={title} key={title} />
+		<meta name="robots" content="nofollow" />
+	</Head>
+);
+
 const Networks: NextPageWithLayout = () => {
 	const t = useTranslations("networks");
 	const {
@@ -47,23 +58,20 @@ const Networks: NextPageWithLayout = () => {
 	if (isLoading) {
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56" />
-				</h1>
-			</div>
+			<>
+				<HeadSection />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56" />
+					</h1>
+				</div>
+			</>
 		);
 	}
 
-	const title = `${globalSiteTitle} - ${t("title")}`;
 	return (
 		<>
-			<Head>
-				<title>{title}</title>
-				<meta name="description" content={t("description")} />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
+			<HeadSection />
 			<main className="w-full bg-base-100">
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">{t("title")}</h5>
