@@ -8,7 +8,7 @@ import ForgotPasswordForm from "~/components/modules/forgotPasswordForm";
 import { globalSiteTitle } from "~/utils/global";
 
 const ForgotPassword = () => {
-	const title = `${globalSiteTitle} - Dashboard`;
+	const title = `${globalSiteTitle} - Forgot Password`;
 	return (
 		<div>
 			<Head>

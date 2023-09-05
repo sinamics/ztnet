@@ -9,7 +9,7 @@ import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
 
 const Register = () => {
-	const title = `${globalSiteTitle} - Dashboard`;
+	const title = `${globalSiteTitle} - Sign Up`;
 
 	return (
 		<div>
