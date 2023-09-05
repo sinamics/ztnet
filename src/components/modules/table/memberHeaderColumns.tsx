@@ -108,6 +108,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				header: () => <span>{t("networkById.networkMembersTable.column.created")}</span>,
 				id: "creationTime",
 				cell: (info) => {
+					const createdDate = new Date(info.getValue());
 					const formatTime = (value: string, unit: string) => {
 						// Map full unit names to their abbreviations
 						const unitAbbreviations: { [key: string]: string } = {
@@ -123,7 +124,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 
 						return `${value} ${abbreviation}`;
 					};
-					return <TimeAgo date={info.getValue()} formatter={formatTime} />;
+					return (
+						<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
+					);
 				},
 			}),
 			columnHelper.accessor("peers", {
@@ -160,6 +163,8 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				),
 				id: "conStatus",
 				cell: ({ row: { original } }) => {
+					const lastSeen = new Date(original?.lastSeen);
+
 					const formatTime = (value: string, unit: string) => {
 						// Map full unit names to their abbreviations
 						const unitAbbreviations: { [key: string]: string } = {
@@ -172,18 +177,17 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							year: "year",
 						};
 						const abbreviation = unitAbbreviations[unit] || unit;
-
 						return `${value} ${abbreviation}`;
 					};
 					const cursorStyle = { cursor: "pointer" };
 
 					if (central) {
-						const lastSeen = original?.lastSeen; // assuming lastSeen is a timestamp in milliseconds
+						// assuming lastSeen is a timestamp in milliseconds
 						const now = Date.now(); // current timestamp in milliseconds
 						const fiveMinutesAgo = now - 5 * 60 * 1000; // timestamp 5 minutes ago
 
 						// Check if lastSeen is within the last 5 minutes
-						if (lastSeen >= fiveMinutesAgo) {
+						if (lastSeen.getDate() >= fiveMinutesAgo) {
 							// The user is considered online
 							return (
 								<span
@@ -199,7 +203,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							return (
 								<span style={cursorStyle} className="text-error" title="User is offline">
 									{t("networkById.networkMembersTable.column.conStatus.offline")}
-									<TimeAgo date={lastSeen} formatter={formatTime} />
+									<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
 								</span>
 							);
 						}
@@ -239,6 +243,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							original.peers?.version && original.peers.version !== "-1.-1.-1"
 								? ` (v${original.peers.version})`
 								: "";
+
 						return (
 							<div style={cursorStyle} className="text-success " title={directTitle}>
 								{t("networkById.networkMembersTable.column.conStatus.direct", {
@@ -251,7 +256,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					return (
 						<span style={cursorStyle} className="text-error" title="User is offline">
 							{t("networkById.networkMembersTable.column.conStatus.offline")}
-							<TimeAgo date={original?.lastSeen} formatter={formatTime} />
+							<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
 						</span>
 					);
 				},
