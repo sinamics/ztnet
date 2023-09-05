@@ -9,7 +9,7 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import LoginForm from "~/components/modules/loginForm";
 
 const Login = ({ auth }) => {
-	const title = `${globalSiteTitle} - Dashboard`;
+	const title = `${globalSiteTitle} - Sign In`;
 	return (
 		<>
 			<Head>

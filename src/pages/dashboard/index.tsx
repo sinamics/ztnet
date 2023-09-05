@@ -13,8 +13,9 @@ const Dashboard: NextPageWithLayout = () => {
 		<>
 			<Head>
 				<title>{title}</title>
-				<meta name="description" content="UAV vpn dashboard" />
 				<link rel="icon" href="/favicon.ico" />
+				<meta property="og:title" content={title} key={title} />
+				<meta name="robots" content="nofollow" />
 			</Head>
 			<main className="my-10">
 				<div className="mx-auto max-w-6xl space-y-10 bg-cover bg-center bg-no-repeat">

@@ -23,6 +23,17 @@ import { GetServerSidePropsContext } from "next/types";
 import NetworkDescription from "../../components/modules/networkDescription";
 import NetworkName from "~/components/modules/networkName";
 import { withAuth } from "~/components/auth/withAuth";
+import Head from "next/head";
+import { globalSiteTitle } from "~/utils/global";
+
+const HeadSection = ({ title }: { title: string }) => (
+	<Head>
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.ico" />
+		<meta property="og:title" content={title} key={title} />
+		<meta name="robots" content="nofollow" />
+	</Head>
+);
 
 const CentralNetworkById = () => {
 	const t = useTranslations("networkById");
@@ -44,14 +55,19 @@ const CentralNetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 15000 },
 	);
 
+	const title = `${globalSiteTitle} - ${query.id as string}`;
+
 	if (loadingNetwork) {
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
+			<>
+				<HeadSection title={title} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56"></progress>
+					</h1>
+				</div>
+			</>
 		);
 	}
 
@@ -59,18 +75,22 @@ const CentralNetworkById = () => {
 
 	if (errorNetwork) {
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
-				<ul className="list-disc">
-					<li>{t("errorSteps.step1")}</li>
-					<li>{t("errorSteps.step2")}</li>
-				</ul>
-			</div>
+			<>
+				<HeadSection title={title} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
+					<ul className="list-disc">
+						<li>{t("errorSteps.step1")}</li>
+						<li>{t("errorSteps.step2")}</li>
+					</ul>
+				</div>
+			</>
 		);
 	}
 
 	return (
 		<div>
+			<HeadSection title={title} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
