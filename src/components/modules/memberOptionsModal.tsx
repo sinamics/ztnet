@@ -58,6 +58,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			{ enabled: !!query.id, networkMode: "online" },
 		);
+
 	useEffect(() => {
 		// Check if members is an array and the first member has an 'id' property
 		if (Array.isArray(networkById?.members) && networkById.members[0]?.id) {
@@ -532,7 +533,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								onClick={() =>
 									deleteMember({
 										central,
-										id: memberById?.id,
+										id: memberId,
 										nwid,
 									})
 								}
@@ -542,7 +543,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							</button>
 						) : (
 							<button
-								onClick={() => stashMember(memberById?.id)}
+								onClick={() => stashMember(memberId)}
 								className="btn btn-warning btn-outline btn-sm rounded-sm"
 							>
 								{t("networkById.memberOptionModal.userActions.stashBtn")}
