@@ -48,8 +48,6 @@ const sortingIpaddress = (
 	rowB: Row<MemberEntity>,
 	columnId: string,
 ): number => {
-	// Check if the ipAssignements property is emoty
-
 	const a = rowA.original[columnId] as string[];
 	const b = rowB.original[columnId] as string[];
 	const numA = a.length ? sortIP(a[0]) : 0;
