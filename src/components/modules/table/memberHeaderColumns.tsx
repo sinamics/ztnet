@@ -5,7 +5,7 @@ import { useModalStore } from "~/utils/store";
 import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
-import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
 
 enum ConnectionStatus {
@@ -20,6 +20,43 @@ interface IProp {
 	nwid: string;
 	central: boolean;
 }
+
+const sortingMemberHex = (
+	rowA: Row<MemberEntity>,
+	rowB: Row<MemberEntity>,
+	columnId: string,
+): number => {
+	const a = rowA.original[columnId] as string;
+	const b = rowB.original[columnId] as string;
+	const numA = BigInt(`0x${a}`);
+	const numB = BigInt(`0x${b}`);
+
+	if (numA > numB) return 1;
+	if (numA < numB) return -1;
+	return 0;
+};
+
+const sortIP = (ip: string) => {
+	return ip
+		.split(".")
+		.map(Number)
+		.reduce((acc, val) => acc * 256 + val);
+};
+
+const sortingIpaddress = (
+	rowA: Row<MemberEntity>,
+	rowB: Row<MemberEntity>,
+	columnId: string,
+): number => {
+	// Check if the ipAssignements property is emoty
+
+	const a = rowA.original[columnId] as string[];
+	const b = rowB.original[columnId] as string[];
+	const numA = a.length ? sortIP(a[0]) : 0;
+	const numB = b.length ? sortIP(b[0]) : 0;
+
+	return numA - numB;
+};
 
 export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 	const t = useTranslations();
@@ -92,6 +129,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			columnHelper.accessor("name", {
 				header: () => <span>{t("networkById.networkMembersTable.column.name")}</span>,
 				id: "name",
+				sortingFn: sortingMemberHex,
 			}),
 			columnHelper.accessor("id", {
 				header: () => <span>{t("networkById.networkMembersTable.column.id")}</span>,
@@ -103,6 +141,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					<span>{t("networkById.networkMembersTable.column.ipAssignments.header")}</span>
 				),
 				id: "ipAssignments",
+				sortingFn: sortingIpaddress,
 			}),
 			columnHelper.accessor("creationTime", {
 				header: () => <span>{t("networkById.networkMembersTable.column.created")}</span>,
