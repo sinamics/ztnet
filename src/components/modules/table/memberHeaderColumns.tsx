@@ -127,11 +127,11 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			columnHelper.accessor("name", {
 				header: () => <span>{t("networkById.networkMembersTable.column.name")}</span>,
 				id: "name",
-				sortingFn: sortingMemberHex,
 			}),
 			columnHelper.accessor("id", {
 				header: () => <span>{t("networkById.networkMembersTable.column.id")}</span>,
 				id: "id",
+				sortingFn: sortingMemberHex,
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("ipAssignments", {
