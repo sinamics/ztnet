@@ -176,9 +176,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 										key={row.original.id}
 										className={`items-center ${
 											// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-											!row.original.authorized
-												? "border-dotted bg-error bg-opacity-20"
-												: ""
+											!row.original.authorized ? "border-dotted bg-red-400/10" : ""
 										}`}
 										style={
 											!central &&
