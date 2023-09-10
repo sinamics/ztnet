@@ -486,7 +486,10 @@
 				"showMarkerInTable": "Show marker in Table",
 				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
 				"addBackgroundColorInTable": "Add background color in table",
-				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
+				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled.",
+				"memberTableTitle": "Member Table",
+				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
+				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations."
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
