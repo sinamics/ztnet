@@ -60,7 +60,7 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
 						);
 					}}
 				>
-					{[10, 20, 30, 40, 50].map((pageSize) => (
+					{[10, 20, 30, 40, 50, 100].map((pageSize) => (
 						<option key={pageSize} value={pageSize}>
 							{t("show")} {pageSize}
 						</option>
