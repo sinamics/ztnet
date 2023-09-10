@@ -1,37 +1,58 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore } from "~/utils/store";
 import { api } from "~/utils/api";
-// import type { ReactNode } from "react";
-// import Header from "./header";
 
-// interface Props {
-//   children: ReactNode;
-// }
+// Custom hook to check if the screen width is below the 'md' breakpoint
+const useIsBelowMd = () => {
+	const [isBelowMd, setIsBelowMd] = useState(false);
+
+	useEffect(() => {
+		const checkSize = () => {
+			setIsBelowMd(window.innerWidth < 768);
+		};
+
+		checkSize();
+		window.addEventListener("resize", checkSize);
+
+		return () => {
+			window.removeEventListener("resize", checkSize);
+		};
+	}, []);
+
+	return isBelowMd;
+};
 
 const Sidebar = (): JSX.Element => {
-	const { open, toggle } = useSidebarStore();
+	const { open, toggle, setOpenState } = useSidebarStore();
 	const { data: session } = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
-
+	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
 	const router = useRouter();
 
+	// Automatically close the sidebar if the screen size is below 'md'
 	useEffect(() => {
-		const handleClickOutside = (_event: MouseEvent) => {
-			if (open) {
-				if (!sidebarRef.current) return;
-				toggle();
-				// if (
-				//   sidebarRef.current &&
-				//   !sidebarRef.current?.contains(event.target as Node)
-				// ) {
-				//   toggle();
-				// }
+		if (isBelowMd && open) {
+			setOpenState(false);
+		} else if (!isBelowMd && !open) {
+			setOpenState(true);
+		}
+	}, [isBelowMd, toggle]);
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (isBelowMd && open) {
+				if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+					// called after the click event on hamburger menu to close sidebar
+					setTimeout(() => {
+						setOpenState(false);
+					}, 100);
+				}
 			}
 		};
 
@@ -39,12 +60,12 @@ const Sidebar = (): JSX.Element => {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [open, toggle, sidebarRef]);
+	}, [isBelowMd, open, setOpenState, sidebarRef]);
 	return (
 		<aside
 			ref={sidebarRef}
-			className={`fixed z-10 h-full w-64 -translate-x-full transform flex-row bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-    ${open ? "z-10  translate-x-0" : "md:translate-x-0"}`}
+			className={`overflow-y-auto fixed z-10 h-full w-64 -translate-x-full transform flex-row bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
+    ${open ? "z-10  translate-x-0" : "-translate-x-full"}`}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">
