@@ -42,7 +42,7 @@ const newNetwork = (): Network => {
 const newMembers = (): Partial<MemberEntity> => {
 	return {
 		nwid: faker.string.uuid(),
-		id: faker.string.uuid(),
+		id: faker.string.hexadecimal({ length: 10 }).substring(2),
 		// online: faker.datatype.boolean(),
 		name: faker.person.firstName(),
 		// age: faker.datatype.number(40),

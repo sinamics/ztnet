@@ -185,7 +185,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 					</tbody>
 				</table>
 				<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
-					<TableFooter table={table} />
+					<TableFooter table={table} page="centralNetworkTable" />
 				</div>
 			</div>
 		</div>

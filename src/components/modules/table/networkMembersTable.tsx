@@ -33,6 +33,7 @@ interface IProp {
 }
 
 export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
+	// makeNetworkMemberData
 	const t = useTranslations("networkById");
 	const { query } = useRouter();
 	const [globalFilter, setGlobalFilter] = useState("");
@@ -60,12 +61,11 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 		setData(networkById?.members ?? []);
 	}, [networkById?.members]);
 
-	// makeNetworkMemberData
+	// const [data, setData] = useState(() => makeNetworkMemberData(11));
 	const [data, setData] = useState(networkById?.members ?? []);
 	const columnsHeader = MemberHeaderColumns({ nwid, central });
 	const defaultColumn = MemberEditCell({ nwid, central });
 
-	// const [data, setData] = useState(() => makeNetworkMemberData(100));
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
 		data,
@@ -213,7 +213,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 				</tbody>
 			</table>
 			<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
-				<TableFooter table={table} />
+				<TableFooter table={table} page="NetworkMembersTable" />
 			</div>
 		</span>
 	);
