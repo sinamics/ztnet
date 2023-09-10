@@ -283,7 +283,7 @@ export const Accounts = () => {
 						</tbody>
 					</table>
 					<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
-						<TableFooter table={table} />
+						<TableFooter table={table} page="accountTable" />
 					</div>
 				</div>
 			</div>

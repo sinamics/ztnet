@@ -60,7 +60,7 @@ const sortingIpaddress = (
 export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 	const t = useTranslations();
 	const { callModal } = useModalStore((state) => state);
-
+	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -107,17 +107,36 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							<input
 								type="checkbox"
 								checked={getValue()}
-								onChange={(event) =>
-									updateMember(
-										{
-											nwid,
-											memberId: original.id,
-											central,
-											updateParams: { authorized: event.target.checked },
-										},
-										{ onSuccess: () => void refetchNetworkById() },
-									)
-								}
+								onChange={(event) => {
+									const authorized = event.target.checked;
+									if (me?.options?.deAuthorizeWarning && !authorized) {
+										callModal({
+											title: "Warning",
+											description: "Are you sure you want to deauthorize this member?",
+											yesAction: () => {
+												updateMember(
+													{
+														nwid,
+														memberId: original.id,
+														central,
+														updateParams: { authorized },
+													},
+													{ onSuccess: () => void refetchNetworkById() },
+												);
+											},
+										});
+									} else {
+										updateMember(
+											{
+												nwid,
+												memberId: original.id,
+												central,
+												updateParams: { authorized: event.target.checked },
+											},
+											{ onSuccess: () => void refetchNetworkById() },
+										);
+									}
+								}}
 								// className="checkbox-error checkbox"
 								className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
 							/>

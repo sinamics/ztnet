@@ -464,29 +464,22 @@ export const authRouter = createTRPCRouter({
 	 * - showMarkerInTable: an optional boolean that determines whether to show a marker in the table for the notation
 	 * @returns A Promise that resolves with the updated NetworkMemberNotation instance.
 	 */
-	updateUserNotation: protectedProcedure
+	updateUserOptions: protectedProcedure
 		.input(
 			z.object({
 				useNotationColorAsBg: z.boolean().optional(),
 				showNotationMarkerInTableRow: z.boolean().optional(),
+				deAuthorizeWarning: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			return await ctx.prisma.user.update({
-				where: {
-					id: ctx.session.user.id,
-				},
+				where: { id: ctx.session.user.id },
 				data: {
 					options: {
 						upsert: {
-							create: {
-								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
-							},
-							update: {
-								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
-							},
+							create: input,
+							update: input,
 						},
 					},
 				},
