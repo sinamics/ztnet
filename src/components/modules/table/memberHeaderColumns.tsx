@@ -28,8 +28,9 @@ const sortingMemberHex = (
 ): number => {
 	const a = rowA.original[columnId] as string;
 	const b = rowB.original[columnId] as string;
-	const numA = BigInt(`0x${a}`);
-	const numB = BigInt(`0x${b}`);
+
+	const numA = a ? BigInt(`0x${a}`) : a;
+	const numB = b ? BigInt(`0x${b}`) : b;
 
 	if (numA > numB) return 1;
 	if (numA < numB) return -1;
