@@ -5,7 +5,8 @@ import { useTranslations } from "use-intl";
 
 const UserNetworkSetting = () => {
 	const t = useTranslations("userSettings");
-	const { mutate: updateNotation } = api.auth.updateUserNotation.useMutation();
+	const { mutate: updateSettings } = api.auth.updateUserOptions.useMutation();
+
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
 	return (
@@ -29,7 +30,7 @@ const UserNetworkSetting = () => {
 						checked={me?.options?.showNotationMarkerInTableRow || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
-							updateNotation(
+							updateSettings(
 								{
 									showNotationMarkerInTableRow: e.target.checked,
 								},
@@ -54,9 +55,38 @@ const UserNetworkSetting = () => {
 						checked={me?.options?.useNotationColorAsBg || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
-							updateNotation(
+							updateSettings(
 								{
 									useNotationColorAsBg: e.target.checked,
+								},
+								{ onSuccess: () => void refetchMe() },
+							);
+						}}
+					/>
+				</div>
+			</div>
+			<div className="pb-10">
+				<p className="text-sm text-gray-400">
+					{t("account.networkSetting.memberTableTitle")}
+				</p>
+				<div className="divider mt-0 p-0 text-gray-500"></div>
+				<div className="flex justify-between py-2">
+					<div>
+						<p className="font-medium">
+							{t("account.networkSetting.deAuthorizationWarningTitle")}
+						</p>
+						<p className="text-sm text-gray-500">
+							{t("account.networkSetting.deAuthorizationWarningLabel")}
+						</p>
+					</div>
+					<input
+						type="checkbox"
+						checked={me?.options?.deAuthorizeWarning || false}
+						className="checkbox-primary checkbox checkbox-sm justify-self-end"
+						onChange={(e) => {
+							updateSettings(
+								{
+									deAuthorizeWarning: e.target.checked,
 								},
 								{ onSuccess: () => void refetchMe() },
 							);
