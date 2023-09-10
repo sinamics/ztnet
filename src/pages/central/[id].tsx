@@ -55,13 +55,14 @@ const CentralNetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 15000 },
 	);
 
-	const title = `${globalSiteTitle} - ${query.id as string}`;
+	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
 
 	if (loadingNetwork) {
 		// add loading progress bar to center of page, vertially and horizontally
+		const pageTitleLoading = `${globalSiteTitle}`;
 		return (
 			<>
-				<HeadSection title={title} />
+				<HeadSection title={pageTitleLoading} />
 				<div className="flex flex-col items-center justify-center">
 					<h1 className="text-center text-2xl font-semibold">
 						<progress className="progress progress-primary w-56"></progress>
@@ -76,7 +77,7 @@ const CentralNetworkById = () => {
 	if (errorNetwork) {
 		return (
 			<>
-				<HeadSection title={title} />
+				<HeadSection title={pageTitle} />
 				<div className="flex flex-col items-center justify-center">
 					<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 					<ul className="list-disc">
@@ -90,7 +91,7 @@ const CentralNetworkById = () => {
 
 	return (
 		<div>
-			<HeadSection title={title} />
+			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
