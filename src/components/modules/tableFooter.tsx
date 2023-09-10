@@ -1,5 +1,5 @@
 import { type Table } from "@tanstack/react-table";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
@@ -35,10 +35,34 @@ const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
 	</>
 );
 
+const MIN_COUNT_TO_SHOW_FOOTER = 11;
+
 // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-const TableFooter = ({ table }: { table: Table<any> }) => {
-	// In your component...
+const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	const t = useTranslations("tableFooter"); // use the 'footer' namespace
+	const [pageSize, setPageSize] = useState<string | number>(
+		table.getState().pagination.pageSize,
+	);
+	const totalMembersCount = table?.options?.data?.length || 0;
+
+	useEffect(() => {
+		const savedPageSize = localStorage.getItem(`pageSize-${page}`);
+		setPageSize(savedPageSize || 10);
+		if (savedPageSize !== null) {
+			table.setPageSize(
+				savedPageSize === "all" ? table?.options?.data?.length : Number(savedPageSize),
+			);
+		}
+	}, []);
+
+	const storeLocalState = (pageSize) => {
+		table.setPageSize(pageSize === "all" ? totalMembersCount : Number(pageSize));
+		setPageSize(pageSize);
+		localStorage.setItem(`pageSize-${page}`, String(pageSize));
+	};
+	// dont show footer if there is only one page
+	if (totalMembersCount < MIN_COUNT_TO_SHOW_FOOTER) return null;
+
 	return (
 		<>
 			<div className="space-x-3 p-2">
@@ -47,16 +71,17 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
 			<div className="space-x-3 p-2">
 				<select
 					className="select select-bordered select-sm"
-					value={table.getState().pagination.pageSize}
+					value={pageSize}
 					onChange={(e) => {
-						table.setPageSize(Number(e.target.value));
+						storeLocalState(e.target.value);
 					}}
 				>
-					{[10, 20, 30, 40, 50].map((pageSize) => (
+					{[10, 20, 30, 40, 50, 100].map((pageSize) => (
 						<option key={pageSize} value={pageSize}>
 							{t("show")} {pageSize}
 						</option>
 					))}
+					<option value="all">Show All</option>
 				</select>
 			</div>
 			<div className="space-x-3 p-2">
