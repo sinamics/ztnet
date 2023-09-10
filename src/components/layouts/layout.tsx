@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
 import { api } from "~/utils/api";
+import { useSidebarStore } from "~/utils/store";
 
 type TUser = {
 	user: User;
@@ -49,10 +50,11 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 };
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
+	const { open } = useSidebarStore();
 	return (
 		<div className="outer-content">
 			<Header />
-			<div className="grid md:grid-cols-[255px,minmax(0,1fr)]">
+			<div className={`grid md:grid-cols-[${open ? "255px" : "0px"},minmax(0,1fr)]`}>
 				<Sidebar />
 				<div className="custom-overflow custom-scrollbar">
 					{children}
