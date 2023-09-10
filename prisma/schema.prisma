@@ -151,6 +151,9 @@ model UserOptions {
   // local controller
   localControllerUrl             String?           @default("http://zerotier:9993")
   localControllerSecret          String?           @default("")
+
+  // member table
+  deAuthorizeWarning             Boolean?          @default(false)
 }
 
 enum AccessLevel {
