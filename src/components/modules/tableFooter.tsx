@@ -39,6 +39,7 @@ const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
 const TableFooter = ({ table }: { table: Table<any> }) => {
 	// In your component...
 	const t = useTranslations("tableFooter"); // use the 'footer' namespace
+
 	return (
 		<>
 			<div className="space-x-3 p-2">
@@ -47,9 +48,16 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
 			<div className="space-x-3 p-2">
 				<select
 					className="select select-bordered select-sm"
-					value={table.getState().pagination.pageSize}
+					value={
+						table.getState().pagination.pageSize === table?.options?.data?.length
+							? "all"
+							: table.getState().pagination.pageSize
+					}
 					onChange={(e) => {
-						table.setPageSize(Number(e.target.value));
+						const value = e.target.value;
+						table.setPageSize(
+							value === "all" ? table?.options?.data?.length : Number(value),
+						);
 					}}
 				>
 					{[10, 20, 30, 40, 50].map((pageSize) => (
@@ -57,6 +65,7 @@ const TableFooter = ({ table }: { table: Table<any> }) => {
 							{t("show")} {pageSize}
 						</option>
 					))}
+					<option value="all">All</option>
 				</select>
 			</div>
 			<div className="space-x-3 p-2">
