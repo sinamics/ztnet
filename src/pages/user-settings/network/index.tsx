@@ -65,15 +65,18 @@ const UserNetworkSetting = () => {
 					/>
 				</div>
 			</div>
-
 			<div className="pb-10">
-				<p className="text-sm text-gray-400">Member Table</p>
+				<p className="text-sm text-gray-400">
+					{t("account.networkSetting.memberTableTitle")}
+				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
-						<p className="font-medium">Display warning on member De-Authorization</p>
+						<p className="font-medium">
+							{t("account.networkSetting.deAuthorizationWarningTitle")}
+						</p>
 						<p className="text-sm text-gray-500">
-							Display a confirmation modal to prevent accidental de-authorizations.
+							{t("account.networkSetting.deAuthorizationWarningLabel")}
 						</p>
 					</div>
 					<input
