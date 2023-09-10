@@ -25,21 +25,6 @@ const Header = () => {
 	return (
 		<header className="header bg-base-200 px-4 py-1 shadow">
 			<div className="header-content flex flex-row items-center">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					strokeWidth="1.5"
-					stroke="currentColor"
-					className="h-8 w-8 sm:block md:hidden"
-					onClick={toggle}
-				>
-					<path
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-					/>
-				</svg>
 				<div className="hidden md:inline-flex">
 					<a href="#" className="inline-flex flex-row items-center gap-2">
 						<Image style={{ width: 25, height: 25 }} alt="ztnet logo" src={ZtnetLogo} />
@@ -47,6 +32,23 @@ const Header = () => {
 							{globalSiteTitle}
 						</span>
 					</a>
+				</div>
+				<div className="md:pl-12">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth="1.5"
+						stroke="currentColor"
+						className="h-8 w-8 sm:block cursor-pointer"
+						onClick={toggle}
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+						/>
+					</svg>
 				</div>
 				<div className="ml-auto flex">
 					{/* <div className="sidebar-header flex items-center justify-center py-4"> */}
