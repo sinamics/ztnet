@@ -81,7 +81,7 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 							{t("show")} {pageSize}
 						</option>
 					))}
-					<option value="all">Show All</option>
+					<option value="all">{t("show")} All</option>
 				</select>
 			</div>
 			<div className="space-x-3 p-2">
