@@ -66,6 +66,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 };
 
 export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
+	const { open } = useSidebarStore();
 	const isAdmin = props?.user?.role === "ADMIN";
 	if (!isAdmin) {
 		return <FourOhFour />;
@@ -73,7 +74,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	return (
 		<div className="outer-content">
 			<Header />
-			<div className="grid md:grid-cols-[255px,minmax(0,1fr)]">
+			<div className={`grid md:grid-cols-[${open ? "255px" : "0px"},minmax(0,1fr)]`}>
 				<Sidebar />
 				<div className="custom-overflow custom-scrollbar">
 					{children}

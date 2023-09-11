@@ -61,11 +61,12 @@ const Sidebar = (): JSX.Element => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [isBelowMd, open, setOpenState, sidebarRef]);
+
 	return (
 		<aside
 			ref={sidebarRef}
 			className={`overflow-y-auto fixed z-10 h-full w-64 -translate-x-full transform flex-row bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-    ${open ? "z-10  translate-x-0" : "-translate-x-full"}`}
+			${open ? "visible translate-x-0" : "-translate-x-64"}`}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">
