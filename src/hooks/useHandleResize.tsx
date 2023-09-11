@@ -1,11 +1,11 @@
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { useSidebarStore } from "~/utils/store";
 
 // Create a custom hook
 export const useHandleResize = () => {
 	const { setOpenState } = useSidebarStore();
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		const handleResize = () => {
 			if (window.innerWidth >= 768) return setOpenState(true);
 
