@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { type ReactElement, type ReactNode } from "react";
+import { useState, type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { api } from "~/utils/api";
@@ -14,6 +13,7 @@ import Modal from "~/components/elements/modal";
 import { useEffect } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
+import { useHandleResize } from "~/hooks/useHandleResize";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -29,6 +29,14 @@ const App: AppType<{ session: Session | null }> = ({
 	pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
 	const { asPath, locale, push } = useRouter();
+	const [isClient, setIsClient] = useState(false);
+
+	useHandleResize();
+
+	// just wait for the client to be ready. We check screen size in the useHandleResize hook
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
 
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage
@@ -51,6 +59,10 @@ const App: AppType<{ session: Session | null }> = ({
 		});
 	}, []);
 	const getLayout = Component.getLayout ?? ((page) => page);
+
+	if (!isClient) {
+		return null;
+	}
 	return (
 		<ThemeProvider defaultTheme="system">
 			<NextIntlClientProvider onError={() => {}} messages={messages}>
