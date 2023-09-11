@@ -18,6 +18,7 @@ import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { MemberHeaderColumns } from "./memberHeaderColumns";
 import MemberEditCell from "./memberEditCell";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
@@ -32,17 +33,19 @@ interface IProp {
 	central: boolean;
 }
 
+const LOCAL_STORAGE_KEY = "membersTableSorting";
+
 export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
+	// Load initial state from localStorage or set to default
+	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
+		{ id: "nwid", desc: true },
+	]);
+
 	// makeNetworkMemberData
 	const t = useTranslations("networkById");
 	const { query } = useRouter();
 	const [globalFilter, setGlobalFilter] = useState("");
-	const [sorting, setSorting] = useState<SortingState>([
-		{
-			id: "id",
-			desc: true,
-		},
-	]);
+	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
 	const { data: networkById, isLoading: loadingNetworks } =
 		api.network.getNetworkById.useQuery(
@@ -56,6 +59,10 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 		);
 
 	const { data: me } = api.auth.me.useQuery();
+	// Save to localStorage whenever sorting changes
+	useEffect(() => {
+		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
+	}, [sorting]);
 
 	useEffect(() => {
 		setData(networkById?.members ?? []);
