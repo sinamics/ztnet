@@ -1,6 +1,7 @@
 import { type Table } from "@tanstack/react-table";
 import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
 	<>
@@ -46,7 +47,7 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	const totalMembersCount = table?.options?.data?.length || 0;
 
 	useEffect(() => {
-		const savedPageSize = localStorage.getItem(`pageSize-${page}`);
+		const savedPageSize = getLocalStorageItem(`pageSize-${page}`, null);
 		setPageSize(savedPageSize || 10);
 		if (savedPageSize !== null) {
 			table.setPageSize(
@@ -58,7 +59,7 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	const storeLocalState = (pageSize) => {
 		table.setPageSize(pageSize === "all" ? totalMembersCount : Number(pageSize));
 		setPageSize(pageSize);
-		localStorage.setItem(`pageSize-${page}`, String(pageSize));
+		setLocalStorageItem(`pageSize-${page}`, String(pageSize));
 	};
 	// dont show footer if there is only one page
 	if (totalMembersCount < MIN_COUNT_TO_SHOW_FOOTER) return null;

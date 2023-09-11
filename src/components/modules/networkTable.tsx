@@ -15,10 +15,14 @@ import { useSkipper } from "../elements/useSkipper";
 import TableFooter from "./tableFooter";
 import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+
+const LOCAL_STORAGE_KEY = "networkTableSorting";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
 	if (!text) return null;
+
 	const shouldTruncate = text?.length > 100;
 	return (
 		<div
@@ -35,13 +39,13 @@ const TruncateText = ({ text }: { text: string }) => {
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
 	const t = useTranslations("networksTable");
-	const [globalFilter, setGlobalFilter] = useState("");
-	const [sorting, setSorting] = useState<SortingState>([
-		{
-			id: "nwid",
-			desc: true,
-		},
+
+	// Load initial state from localStorage or set to default
+	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
+		{ id: "nwid", desc: true },
 	]);
+	const [globalFilter, setGlobalFilter] = useState("");
+	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
 	type ColumnsType = {
 		name: string;
@@ -78,6 +82,11 @@ export const NetworkTable = ({ tableData = [] }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
+
+	// Save to localStorage whenever sorting changes
+	useEffect(() => {
+		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
+	}, [sorting]);
 
 	useEffect(() => {
 		setData(tableData);

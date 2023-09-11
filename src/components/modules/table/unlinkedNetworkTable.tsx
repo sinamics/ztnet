@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
 	useReactTable,
 	getCoreRowModel,
@@ -17,21 +17,25 @@ import { useTranslations } from "next-intl";
 import { type User } from "@prisma/client";
 import TimeAgo from "react-timeago";
 import { NetworkEntity } from "~/types/local/network";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 interface UnlinkedNetworkTableProps {
 	network: NetworkEntity;
 	members: User[];
 	role: string;
 }
+
+const LOCAL_STORAGE_KEY = "unlinkedTableSorting";
+
 export const UnlinkedNetwork = () => {
 	const t = useTranslations("admin");
 
-	const [sorting, setSorting] = useState<SortingState>([
-		{
-			id: "creationTime",
-			desc: false,
-		},
+	// Load initial state from localStorage or set to default
+	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
+		{ id: "creationTime", desc: true },
 	]);
+	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
+
 	const {
 		data: unlinkedNetworks,
 		refetch: refetchNetworks,
@@ -58,6 +62,11 @@ export const UnlinkedNetwork = () => {
 			void refetchNetworks();
 		},
 	});
+
+	// Save to localStorage whenever sorting changes
+	useEffect(() => {
+		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
+	}, [sorting]);
 
 	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps>();
 	const columns = useMemo<ColumnDef<UnlinkedNetworkTableProps>[]>(
