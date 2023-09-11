@@ -2,12 +2,19 @@ import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "use-intl";
+import { User, UserOptions } from "@prisma/client";
+
+interface UserExtended extends User {
+  options: UserOptions & {
+    deAuthorizeWarning: boolean;
+  };
+}
 
 const UserNetworkSetting = () => {
 	const t = useTranslations("userSettings");
 	const { mutate: updateSettings } = api.auth.updateUserOptions.useMutation();
 
-	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
+	const { data: me, refetch: refetchMe } = api.auth.me.useQuery<UserExtended>();
 
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
