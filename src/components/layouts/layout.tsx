@@ -54,9 +54,11 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	return (
 		<div className="outer-content">
 			<Header />
-			<div className={`grid md:grid-cols-[${open ? "255px" : "0px"},minmax(0,1fr)]`}>
-				<Sidebar />
-				<div className="custom-overflow custom-scrollbar">
+			<div className="flex">
+				<aside className={`transition-all duration-150 ease-in ${open ? "w-64" : "w-0 opacity-0"}`}>
+					<Sidebar />
+				</aside>
+				<div className={`flex-grow custom-overflow custom-scrollbar ${!open ? "flex-grow" : ""}`}>
 					{children}
 					<Footer />
 				</div>
@@ -74,9 +76,11 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	return (
 		<div className="outer-content">
 			<Header />
-			<div className={`grid md:grid-cols-[${open ? "255px" : "0px"},minmax(0,1fr)]`}>
-				<Sidebar />
-				<div className="custom-overflow custom-scrollbar">
+			<div className="flex">
+				<aside className={`transition-all duration-150 ease-in ${open ? "w-64" : "w-0 opacity-0"}`}>
+					<Sidebar />
+				</aside>
+				<div className={`flex-grow custom-overflow custom-scrollbar ${!open ? "flex-grow" : ""}`}>
 					{children}
 					<Footer />
 				</div>
