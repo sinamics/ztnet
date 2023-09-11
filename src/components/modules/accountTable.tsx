@@ -18,6 +18,7 @@ import { DebouncedInput } from "../elements/debouncedInput";
 import TableFooter from "./tableFooter";
 import { User } from "@prisma/client";
 import UserOptionsModal from "../admin/users/userOptionsModal";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 type ExtendedUser = {
 	action?: string;
@@ -29,16 +30,18 @@ type ExtendedUser = {
 	};
 } & Partial<User>;
 
+const LOCAL_STORAGE_KEY = "accountTableSorting";
+
 export const Accounts = () => {
+	// Load initial state from localStorage or set to default
+	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
+		{ id: "id", desc: true },
+	]);
+
 	const t = useTranslations("admin");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const { callModal } = useModalStore((state) => state);
-	const [sorting, setSorting] = useState<SortingState>([
-		{
-			id: "id",
-			desc: false,
-		},
-	]);
+	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 	const { data: users, isLoading: loadingUsers } = api.admin.getUsers.useQuery({
 		isAdmin: false,
 	});
@@ -131,6 +134,11 @@ export const Accounts = () => {
 		],
 		[],
 	);
+
+	// Save to localStorage whenever sorting changes
+	useEffect(() => {
+		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
+	}, [sorting]);
 
 	useEffect(() => {
 		setData(users ?? []);

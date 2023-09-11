@@ -15,6 +15,7 @@ import { useSkipper } from "../../elements/useSkipper";
 import TableFooter from "../tableFooter";
 import { useTranslations } from "next-intl";
 import { CentralMemberEntity } from "~/types/central/members";
+import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -32,16 +33,19 @@ const TruncateText = ({ text }: { text: string }) => {
 		</div>
 	);
 };
+
+const LOCAL_STORAGE_KEY = "centralNetworkTableSorting";
+
 export const CentralNetworkTable = ({ tableData = [] }) => {
+	// Load initial state from localStorage or set to default
+	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
+		{ id: "id", desc: true },
+	]);
+
 	const router = useRouter();
 	const t = useTranslations("networksTable");
 	const [globalFilter, setGlobalFilter] = useState("");
-	const [sorting, setSorting] = useState<SortingState>([
-		{
-			id: "nwid",
-			desc: true,
-		},
-	]);
+	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
 	const columnHelper = createColumnHelper<CentralMemberEntity>();
 	const columns = useMemo(
@@ -68,6 +72,11 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
+
+	// Save to localStorage whenever sorting changes
+	useEffect(() => {
+		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
+	}, [sorting]);
 
 	useEffect(() => {
 		setData(tableData);
