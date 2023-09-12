@@ -93,7 +93,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 				// Skip page index reset until after next rerender
 				skipAutoResetPageIndex();
 				setData((old) =>
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
@@ -101,7 +100,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 								[columnId]: value,
 							};
 						}
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 						return row;
 					}),
 				);
@@ -180,10 +178,8 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 								const notation = row.original?.notations || [];
 								return (
 									<tr
-										// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
 										key={row.original.id}
 										className={`items-center ${
-											// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
 											!row.original.authorized ? "border-dotted bg-red-400/10" : ""
 										}`}
 										style={

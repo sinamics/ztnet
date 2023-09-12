@@ -8,11 +8,26 @@ import { api } from "~/utils/api";
 import Input from "~/components/elements/input";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { type MemberEntity } from "~/types/local/member";
+import { toRfc4193Ip, sixPlane } from "~/utils/IPv6";
 
 interface IProp {
 	nwid: string;
 	central: boolean;
 }
+const generateClipboardElement = (hasIp: boolean, ip: string) => {
+	const t = useTranslations("networkById");
+	return hasIp ? (
+		<CopyToClipboard
+			text={ip}
+			onCopy={() => toast.success(t("copyToClipboard.success", { element: ip }))}
+			title={t("copyToClipboard.title")}
+		>
+			<div className="cursor-pointer">
+				<div className="badge badge-ghost rounded-md">{ip}</div>
+			</div>
+		</CopyToClipboard>
+	) : null;
+};
 
 const MemberEditCell = ({ nwid, central = false }: IProp) => {
 	const t = useTranslations("networkById");
@@ -94,7 +109,6 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				// updateMyData(index, id, value, original);
 			};
 			// If the initialValue is changed external, sync it up with our state
-			// eslint-disable-next-line react-hooks/rules-of-hooks
 			useEffect(() => {
 				setValue(initialValue);
 			}, [initialValue]);
@@ -133,14 +147,10 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				);
 			}
 			if (id === "ipAssignments") {
-				const hasRfc4193Assigned = original?.V6AssignMode?.rfc4193;
-				const has6planeAssigned = original?.V6AssignMode?.["6plane"];
+				const hasRfc4193 = networkById?.network?.v6AssignMode?.rfc4193;
+				const has6plane = networkById?.network?.v6AssignMode?.["6plane"];
 
-				if (
-					!original.ipAssignments?.length &&
-					!hasRfc4193Assigned &&
-					!has6planeAssigned
-				) {
+				if (!original.ipAssignments?.length && !hasRfc4193 && !has6plane) {
 					return (
 						<p className="text-gray-500">
 							{t("networkMembersTable.column.ipAssignments.notAssigned")}
@@ -148,46 +158,14 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 					);
 				}
 
+				const rfc4193Ip = hasRfc4193 ? toRfc4193Ip(nwid, original?.id) : undefined;
+				const sixPlaneIp = has6plane ? sixPlane(nwid, original?.id) : undefined;
+
 				return (
 					<div className="space-y-1">
-						{original?.V6AssignMode?.rfc4193 ? (
-							<CopyToClipboard
-								text={original?.V6AssignMode?.rfc4193}
-								onCopy={() =>
-									toast.success(
-										t("copyToClipboard.success", {
-											element: original?.V6AssignMode?.rfc4193,
-										}),
-									)
-								}
-								title={t("copyToClipboard.title")}
-							>
-								<div className="cursor-pointer">
-									<div className="badge badge-ghost  rounded-md">
-										{original?.V6AssignMode?.rfc4193}
-									</div>
-								</div>
-							</CopyToClipboard>
-						) : null}
-						{original?.V6AssignMode?.["6plane"] ? (
-							<CopyToClipboard
-								text={original?.V6AssignMode?.["6plane"]}
-								onCopy={() =>
-									toast.success(
-										t("copyToClipboard.success", {
-											element: original?.V6AssignMode?.["6plane"],
-										}),
-									)
-								}
-								title={t("copyToClipboard.title")}
-							>
-								<div className="cursor-pointer">
-									<div className="badge badge-ghost  rounded-md">
-										{original?.V6AssignMode?.["6plane"]}
-									</div>
-								</div>
-							</CopyToClipboard>
-						) : null}
+						{generateClipboardElement(hasRfc4193, rfc4193Ip)}
+						{generateClipboardElement(has6plane, sixPlaneIp)}
+
 						{original?.ipAssignments.map((assignedIp) => {
 							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);
 							return (
