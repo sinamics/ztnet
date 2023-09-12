@@ -47,7 +47,6 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 			if ((error.data as ErrorData)?.zodError) {
 				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
 				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
 					toast.error(`${fieldErrors[field].join(", ")}`);
 				}
 			} else if (error.message) {
@@ -60,7 +59,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	useEffect(() => {
 		if (getOptions) {
 			setWorld((prev) => ({
-				plRecommend: getOptions?.plRecommend || prev.plRecommend,
+				plRecommend: getOptions.plRecommend !== undefined ? getOptions.plRecommend : false,
 				plBirth: Number(getOptions?.plBirth) || prev.plBirth,
 				plID: Number(getOptions?.plID) || prev.plID,
 				endpoints: getOptions?.plEndpoints || `${getIdentity?.ip}/9993`,
@@ -95,20 +94,19 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		<>
 			{/* Display list of root nodes */}
 			<form className="pt-6 rounded-md space-y-4">
-				{!getOptions?.customPlanetUsed ? (
 					<div className="flex flex-col space-y-2">
 						<span className="label-text">
 							{t("controller.generatePlanet.plRecommend")}
 						</span>
 						<input
 							name="plRecommend"
+							disabled={getOptions?.customPlanetUsed}
 							type="checkbox"
 							checked={world.plRecommend}
 							className="checkbox checkbox-primary checkbox-sm"
 							onChange={inputChange}
 						/>
 					</div>
-				) : null}
 				<div className="flex justify-between gap-5">
 					<div className="w-full">
 						<label className="block text-gray-500 mb-2">
