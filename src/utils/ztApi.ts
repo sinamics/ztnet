@@ -438,6 +438,7 @@ export const local_network_detail = async function (
 
 			membersArr.push(memberDetails);
 		}
+
 		return {
 			network: { ...network },
 			members: [...membersArr],
@@ -482,7 +483,6 @@ export const central_network_detail = async function (
 		// Get available cidr options.
 		const ipAssignmentPools = IPv4gen(null);
 		const { cidrOptions } = ipAssignmentPools;
-
 		const { id: networkId, config: networkConfig, ...restData } = network;
 
 		return {
