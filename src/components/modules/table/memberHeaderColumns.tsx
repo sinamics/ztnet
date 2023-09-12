@@ -43,12 +43,22 @@ const sortingMemberHex = (
 	if (numA < numB) return -1;
 	return 0;
 };
-
+const hexToBigInt = (hex: string) => BigInt(`0x${hex}`);
 const sortIP = (ip: string) => {
-	return ip
-		.split(".")
-		.map(Number)
-		.reduce((acc, val) => acc * 256 + val);
+	if (ip.includes(":")) {
+		const fullAddress = ip
+			.split(":")
+			.map((hex) => hex.padStart(4, "0"))
+			.join("");
+		return hexToBigInt(fullAddress);
+	} else {
+		return BigInt(
+			ip
+				.split(".")
+				.map(Number)
+				.reduce((acc, val) => acc * 256 + val),
+		);
+	}
 };
 
 const sortingIpaddress = (
@@ -56,12 +66,26 @@ const sortingIpaddress = (
 	rowB: Row<MemberEntity>,
 	columnId: string,
 ): number => {
-	const a = rowA.original[columnId] as string[];
-	const b = rowB.original[columnId] as string[];
-	const numA = a.length ? sortIP(a[0]) : 0;
-	const numB = b.length ? sortIP(b[0]) : 0;
+	const a = rowA.original[columnId] as string | string[];
+	const b = rowB.original[columnId] as string | string[];
 
-	return numA - numB;
+	let numA: BigInt;
+	let numB: BigInt;
+
+	if (Array.isArray(a)) {
+		numA = a.length ? sortIP(a[0]) : BigInt(0);
+	} else {
+		numA = a?.length ? sortIP(a) : BigInt(0);
+	}
+
+	if (Array.isArray(b)) {
+		numB = b.length ? sortIP(b[0]) : BigInt(0);
+	} else {
+		numB = b?.length ? sortIP(b) : BigInt(0);
+	}
+	if (numA > numB) return 1;
+	if (numA < numB) return -1;
+	return 0;
 };
 
 export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
@@ -198,6 +222,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
 				),
 				id: "physicalAddress",
+				sortingFn: sortingIpaddress,
 				cell: ({ getValue, row: { original } }) => {
 					if (central) {
 						const val = original;
