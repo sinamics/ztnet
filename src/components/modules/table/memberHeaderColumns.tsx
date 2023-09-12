@@ -23,9 +23,9 @@ interface IProp {
 }
 
 interface UserExtended extends User {
-  options: UserOptions & {
-    deAuthorizeWarning: boolean;
-  };
+	options: UserOptions & {
+		deAuthorizeWarning: boolean;
+	};
 }
 
 const sortingMemberHex = (
@@ -249,9 +249,8 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						// assuming lastSeen is a timestamp in milliseconds
 						const now = Date.now(); // current timestamp in milliseconds
 						const fiveMinutesAgo = now - 5 * 60 * 1000; // timestamp 5 minutes ago
-
 						// Check if lastSeen is within the last 5 minutes
-						if (lastSeen.getDate() >= fiveMinutesAgo) {
+						if (lastSeen.getTime() >= fiveMinutesAgo) {
 							// The user is considered online
 							return (
 								<span
