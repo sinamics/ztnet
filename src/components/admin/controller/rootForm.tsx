@@ -59,7 +59,8 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	useEffect(() => {
 		if (getOptions) {
 			setWorld((prev) => ({
-				plRecommend: getOptions.plRecommend !== undefined ? getOptions.plRecommend : false,
+				plRecommend:
+					getOptions.plRecommend !== undefined ? getOptions.plRecommend : false,
 				plBirth: Number(getOptions?.plBirth) || prev.plBirth,
 				plID: Number(getOptions?.plID) || prev.plID,
 				endpoints: getOptions?.plEndpoints || `${getIdentity?.ip}/9993`,
@@ -94,9 +95,10 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		<>
 			{/* Display list of root nodes */}
 			<form className="pt-6 rounded-md space-y-4">
+				{!getOptions?.customPlanetUsed ? (
 					<div className="flex flex-col space-y-2">
 						<span className="label-text">
-							{t("controller.generatePlanet.plRecommend")}
+							{t("controller.generatePlanet.plRecommend")} (plRecommend)
 						</span>
 						<input
 							name="plRecommend"
@@ -107,6 +109,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							onChange={inputChange}
 						/>
 					</div>
+				) : null}
 				<div className="flex justify-between gap-5">
 					<div className="w-full">
 						<label className="block text-gray-500 mb-2">

@@ -911,7 +911,7 @@ export const adminRouter = createTRPCRouter({
 					plID: 0,
 					plEndpoints: "",
 					plComment: "",
-					plRecommend: false,
+					plRecommend: true,
 					plIdentity: "",
 				},
 			});
