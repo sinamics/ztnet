@@ -155,7 +155,6 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
-				ztControllerResponse?.network?.v6AssignMode,
 			);
 
 			// Generate CIDR options for IP configuration
