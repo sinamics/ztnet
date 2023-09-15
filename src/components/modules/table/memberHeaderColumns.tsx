@@ -71,7 +71,6 @@ const sortingIpaddress = (
 
 	let numA: BigInt;
 	let numB: BigInt;
-
 	if (Array.isArray(a)) {
 		numA = a.length ? sortIP(a[0]) : BigInt(0);
 	} else {
@@ -217,35 +216,69 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					);
 				},
 			}),
-			columnHelper.accessor("peers", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
-				),
-				id: "physicalAddress",
-				sortingFn: sortingIpaddress,
-				cell: ({ getValue, row: { original } }) => {
-					if (central) {
-						const val = original;
-						if (!val || typeof val.physicalAddress !== "string")
+			columnHelper.accessor(
+				(row) => {
+					return row?.peers?.physicalAddress;
+				},
+				{
+					header: () => (
+						<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
+					),
+					id: "physicalAddress",
+					sortingFn: sortingIpaddress,
+					cell: ({ getValue, row: { original } }) => {
+						if (central) {
+							const centralPhysicalAddress: string = original?.physicalAddress;
+							if (!centralPhysicalAddress || typeof centralPhysicalAddress !== "string")
+								return (
+									<span className="text-gray-400/50">
+										{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
+									</span>
+								);
+
+							return centralPhysicalAddress.split("/")[0];
+						}
+						const physicalAddress = getValue();
+						if (!physicalAddress || typeof physicalAddress !== "string")
 							return (
 								<span className="text-gray-400/50">
 									{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
 								</span>
 							);
 
-						return val.physicalAddress.split("/")[0];
-					}
-					const val = getValue();
-					if (!val || typeof val.physicalAddress !== "string")
-						return (
-							<span className="text-gray-400/50">
-								{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
-							</span>
-						);
-
-					return val.physicalAddress.split("/")[0];
+						return physicalAddress.split("/")[0];
+					},
 				},
-			}),
+			),
+			// columnHelper.accessor("peers.physicalAddress", {
+			// 	header: () => (
+			// 		<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
+			// 	),
+			// 	id: "physicalAddress",
+			// 	sortingFn: sortingIpaddress,
+			// 	cell: ({ getValue, row: { original } }) => {
+			// 		if (central) {
+			// 			const physicalAddress: string = original?.physicalAddress;
+			// 			if (!physicalAddress || typeof physicalAddress !== "string")
+			// 				return (
+			// 					<span className="text-gray-400/50">
+			// 						{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
+			// 					</span>
+			// 				);
+
+			// 			return physicalAddress.split("/")[0];
+			// 		}
+			// 		const physicalAddress = getValue();
+			// 		if (!physicalAddress || typeof physicalAddress !== "string")
+			// 			return (
+			// 				<span className="text-gray-400/50">
+			// 					{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
+			// 				</span>
+			// 			);
+
+			// 		return physicalAddress.split("/")[0];
+			// 	},
+			// }),
 			columnHelper.accessor("conStatus", {
 				header: () => (
 					<span>{t("networkById.networkMembersTable.column.conStatus.header")}</span>
