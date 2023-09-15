@@ -14,20 +14,6 @@ interface IProp {
 	nwid: string;
 	central: boolean;
 }
-const generateClipboardElement = (hasIp: boolean, ip: string) => {
-	const t = useTranslations("networkById");
-	return hasIp ? (
-		<CopyToClipboard
-			text={ip}
-			onCopy={() => toast.success(t("copyToClipboard.success", { element: ip }))}
-			title={t("copyToClipboard.title")}
-		>
-			<div className="cursor-pointer">
-				<div className="badge badge-ghost rounded-md">{ip}</div>
-			</div>
-		</CopyToClipboard>
-	) : null;
-};
 
 const MemberEditCell = ({ nwid, central = false }: IProp) => {
 	const t = useTranslations("networkById");
@@ -161,6 +147,19 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 				const rfc4193Ip = hasRfc4193 ? toRfc4193Ip(nwid, original?.id) : undefined;
 				const sixPlaneIp = has6plane ? sixPlane(nwid, original?.id) : undefined;
 
+				const generateClipboardElement = (hasIp: boolean, ip: string) => {
+					return hasIp ? (
+						<CopyToClipboard
+							text={ip}
+							onCopy={() => toast.success(t("copyToClipboard.success", { element: ip }))}
+							title={t("copyToClipboard.title")}
+						>
+							<div className="cursor-pointer">
+								<div className="badge badge-ghost rounded-md">{ip}</div>
+							</div>
+						</CopyToClipboard>
+					) : null;
+				};
 				return (
 					<div className="space-y-1">
 						{generateClipboardElement(hasRfc4193, rfc4193Ip)}
