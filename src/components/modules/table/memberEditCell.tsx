@@ -168,7 +168,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 						{original?.ipAssignments.map((assignedIp) => {
 							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);
 							return (
-								<div key={assignedIp} className="flex justify-center text-center">
+								<div key={assignedIp} className="flex">
 									<div
 										className={`${
 											subnetMatch
