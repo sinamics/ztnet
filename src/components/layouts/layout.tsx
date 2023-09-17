@@ -2,7 +2,7 @@ import { type ReactNode } from "react";
 import FourOhFour from "~/pages/404";
 import Header from "./header";
 import Sidebar from "./sidebar";
-import Footer from "../modules/footer";
+import Footer from "./footer";
 import { globalSiteTitle } from "~/utils/global";
 import Link from "next/link";
 import { useRouter } from "next/router";

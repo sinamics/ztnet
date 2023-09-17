@@ -13,7 +13,7 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { DebouncedInput } from "../../elements/debouncedInput";
 import { useSkipper } from "../../elements/useSkipper";
-import TableFooter from "../tableFooter";
+import TableFooter from "../../tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { MemberHeaderColumns } from "./memberHeaderColumns";
