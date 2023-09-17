@@ -38,7 +38,7 @@ const LOCAL_STORAGE_KEY = "membersTableSorting";
 export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
-		{ id: "nwid", desc: true },
+		{ id: "id", desc: true },
 	]);
 
 	// makeNetworkMemberData
@@ -72,7 +72,6 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 	const [data, setData] = useState(networkById?.members ?? []);
 	const columnsHeader = MemberHeaderColumns({ nwid, central });
 	const defaultColumn = MemberEditCell({ nwid, central });
-
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
 		data,
