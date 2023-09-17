@@ -4,8 +4,8 @@ import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import PrivateRoot from "~/components/adminPage/controller/privateRoot";
 import { api } from "~/utils/api";
-import { UnlinkedNetwork } from "~/components/networkByIdPage/table/unlinkedNetworkTable";
 import DebugMirror from "~/components/adminPage/controller/debugController";
+import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
 
 const Controller = () => {
 	const [error, setError] = useState(false);
