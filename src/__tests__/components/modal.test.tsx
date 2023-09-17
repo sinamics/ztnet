@@ -1,8 +1,8 @@
 import { render, fireEvent, screen } from "@testing-library/react";
-import Modal from "~/components/elements/modal";
 import { useModalStore } from "~/utils/store";
 import enTranslation from "~/locales/en/common.json";
 import { NextIntlProvider } from "next-intl";
+import Modal from "~/components/shared/modal";
 
 jest.mock("../../utils/store", () => ({
 	useModalStore: jest.fn(),

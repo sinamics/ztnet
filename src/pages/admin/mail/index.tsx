@@ -3,9 +3,9 @@ import { type ReactElement } from "react";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { type GlobalOptions } from "@prisma/client";
-import MailUserInviteTemplate from "~/components/modules/mailUserInviteTemplate";
-import ForgotPasswordMailTemplate from "~/components/modules/mailForgotPasswordTemplate";
-import NotificationTemplate from "~/components/modules/mailNotificationTemplate";
+import MailUserInviteTemplate from "~/components/adminPage/mail/mailUserInviteTemplate";
+import ForgotPasswordMailTemplate from "~/components/adminPage/mail/mailForgotPasswordTemplate";
+import NotificationTemplate from "~/components/adminPage/mail/mailNotificationTemplate";
 import { useTranslations } from "use-intl";
 
 const Mail = () => {

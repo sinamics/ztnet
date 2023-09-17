@@ -11,11 +11,11 @@ import {
 	createColumnHelper,
 	type SortingState,
 } from "@tanstack/react-table";
-import { useSkipper } from "../../elements/useSkipper";
-import TableFooter from "../tableFooter";
+import { useSkipper } from "../../hooks/useSkipper";
 import { useTranslations } from "next-intl";
 import { CentralMemberEntity } from "~/types/central/members";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+import TableFooter from "~/components/shared/tableFooter";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
