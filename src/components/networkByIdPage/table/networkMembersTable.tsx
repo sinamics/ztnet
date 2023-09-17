@@ -13,12 +13,12 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { DebouncedInput } from "../../elements/debouncedInput";
 import { useSkipper } from "../../../hooks/useSkipper";
-import TableFooter from "../../tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { MemberHeaderColumns } from "./memberHeaderColumns";
 import MemberEditCell from "./memberEditCell";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+import TableFooter from "~/components/shared/tableFooter";
 // import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {

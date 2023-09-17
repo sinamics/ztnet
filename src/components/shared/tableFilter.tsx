@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { DebouncedInput } from "./debouncedInput";
+import { DebouncedInput } from "../elements/debouncedInput";
 import { type Column, type Table } from "@tanstack/react-table";
 import { type MemberEntity } from "~/types/local/member";
 
