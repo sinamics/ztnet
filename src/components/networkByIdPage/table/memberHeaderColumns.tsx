@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { MemberOptionsModal } from "../memberOptionsModal";
+import { MemberOptionsModal } from "../../networkByIdPage/memberOptionsModal";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import toast from "react-hot-toast";

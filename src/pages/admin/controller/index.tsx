@@ -2,10 +2,10 @@ import { useTranslations } from "next-intl";
 import { useState, type ReactElement } from "react";
 import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
-import PrivateRoot from "~/components/admin/controller/privateRoot";
-import DebugMirror from "~/components/modules/debugController";
-import { UnlinkedNetwork } from "~/components/modules/table/unlinkedNetworkTable";
+import PrivateRoot from "~/components/adminPage/controller/privateRoot";
 import { api } from "~/utils/api";
+import DebugMirror from "~/components/adminPage/controller/debugController";
+import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
 
 const Controller = () => {
 	const [error, setError] = useState(false);

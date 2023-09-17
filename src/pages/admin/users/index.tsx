@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
-import UserInvitation from "~/components/admin/users/userInvitation";
+import { Accounts } from "~/components/adminPage/users/table/accounts";
+import UserInvitation from "~/components/adminPage/users/userInvitation";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
-import { Accounts } from "~/components/modules/accountTable";
-import UserGroups from "~/components/modules/userGroups";
+import UserGroups from "~/components/adminPage/users/userGroups";
 import { api } from "~/utils/api";
 
 const Users = () => {
