@@ -13,11 +13,11 @@ import {
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
-import { useSkipper } from "../elements/useSkipper";
-import { DebouncedInput } from "../elements/debouncedInput";
-import TableFooter from "./tableFooter";
+import { useSkipper } from "../../../elements/useSkipper";
+import { DebouncedInput } from "../../../elements/debouncedInput";
+import TableFooter from "../../../tableFooter";
 import { User } from "@prisma/client";
-import UserOptionsModal from "../admin/users/userOptionsModal";
+import UserOptionsModal from "../userOptionsModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 type ExtendedUser = {

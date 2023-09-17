@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
-import { NetworkTable } from "../../components/modules/networkTable";
+import { NetworkTable } from "../../components/networkPage/networkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { type GetServerSidePropsContext } from "next";

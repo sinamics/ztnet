@@ -11,18 +11,15 @@ import {
 	createColumnHelper,
 	type SortingState,
 } from "@tanstack/react-table";
-import { useSkipper } from "../elements/useSkipper";
-import TableFooter from "./tableFooter";
+import { useSkipper } from "../../elements/useSkipper";
+import TableFooter from "../../tableFooter";
 import { useTranslations } from "next-intl";
-import { type network_members } from "@prisma/client";
+import { CentralMemberEntity } from "~/types/central/members";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
-
-const LOCAL_STORAGE_KEY = "networkTableSorting";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
 	if (!text) return null;
-
 	const shouldTruncate = text?.length > 100;
 	return (
 		<div
@@ -36,25 +33,21 @@ const TruncateText = ({ text }: { text: string }) => {
 		</div>
 	);
 };
-export const NetworkTable = ({ tableData = [] }) => {
-	const router = useRouter();
-	const t = useTranslations("networksTable");
 
+const LOCAL_STORAGE_KEY = "centralNetworkTableSorting";
+
+export const CentralNetworkTable = ({ tableData = [] }) => {
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
-		{ id: "nwid", desc: true },
+		{ id: "id", desc: true },
 	]);
+
+	const router = useRouter();
+	const t = useTranslations("networksTable");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
-	type ColumnsType = {
-		name: string;
-		description: string;
-		nwid: string;
-		members: network_members[];
-		networkMembers: network_members[];
-	};
-	const columnHelper = createColumnHelper<ColumnsType>();
+	const columnHelper = createColumnHelper<CentralMemberEntity>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {
@@ -71,12 +64,9 @@ export const NetworkTable = ({ tableData = [] }) => {
 				header: () => <span>{t("networkId")}</span>,
 				// footer: (info) => info.column.id,
 			}),
-			columnHelper.accessor("members", {
+			columnHelper.accessor("totalMemberCount", {
 				header: () => <span>{t("members")}</span>,
-				cell: ({ row: { original } }) => {
-					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
-					return <span>{original.networkMembers.length}</span>;
-				},
+				cell: (info) => info.getValue(),
 			}),
 		],
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -106,7 +96,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 			updateData: (rowIndex, columnId, value) => {
 				// Skip page index reset until after next rerender
 				skipAutoResetPageIndex();
-				setData((old: ColumnsType[]) =>
+				setData((old: CentralMemberEntity[]) =>
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
@@ -129,7 +119,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 		debugTable: false,
 	});
 	const handleRowClick = (nwid: string) => {
-		void router.push(`/network/${nwid}`);
+		void router.push(`/central/${nwid}`);
 	};
 
 	return (
@@ -188,7 +178,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 								<tr
 									key={row.id}
 									// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-									onClick={() => handleRowClick(row?.original?.nwid as string)}
+									onClick={() => handleRowClick(row?.original?.id as string)}
 									className="cursor-pointer border-base-300/50 hover:bg-secondary hover:bg-opacity-25"
 								>
 									{row.getVisibleCells().map((cell) => {
@@ -204,7 +194,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 					</tbody>
 				</table>
 				<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
-					<TableFooter table={table} page="networkTable" />
+					<TableFooter table={table} page="centralNetworkTable" />
 				</div>
 			</div>
 		</div>

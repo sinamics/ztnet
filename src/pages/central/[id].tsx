@@ -1,30 +1,30 @@
 import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/modules/networkRoutes";
-import { NetworkMembersTable } from "~/components/modules/table/networkMembersTable";
+import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
-import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
-import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
-import { AddMemberById } from "~/components/modules/addMemberById";
+import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
+import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
+import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-// import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
+// import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
-import { CentralFlowRules } from "~/components/modules/ztCentral/centralFlowRules";
-import { NetworkDns } from "~/components/modules/networkDns";
-import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import { CentralFlowRules } from "~/components/networkByIdPage/ztCentral/centralFlowRules";
+import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 import cn from "classnames";
-import NetworkHelpText from "~/components/modules/networkHelp";
-import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
+import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
+import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
 import { GetServerSidePropsContext } from "next/types";
-import NetworkDescription from "../../components/modules/networkDescription";
-import NetworkName from "~/components/modules/networkName";
+import NetworkDescription from "../../components/networkByIdPage/networkDescription";
+import NetworkName from "~/components/networkByIdPage/networkName";
 import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
+import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
