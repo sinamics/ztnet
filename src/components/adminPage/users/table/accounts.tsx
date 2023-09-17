@@ -13,7 +13,7 @@ import {
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
-import { useSkipper } from "../../../elements/useSkipper";
+import { useSkipper } from "../../../../hooks/useSkipper";
 import { DebouncedInput } from "../../../elements/debouncedInput";
 import TableFooter from "../../../tableFooter";
 import { User } from "@prisma/client";
