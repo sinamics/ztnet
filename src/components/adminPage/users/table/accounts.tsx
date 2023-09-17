@@ -15,10 +15,10 @@ import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { useSkipper } from "../../../../hooks/useSkipper";
 import { DebouncedInput } from "../../../elements/debouncedInput";
-import TableFooter from "../../../tableFooter";
 import { User } from "@prisma/client";
 import UserOptionsModal from "../userOptionsModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+import TableFooter from "~/components/shared/tableFooter";
 
 type ExtendedUser = {
 	action?: string;

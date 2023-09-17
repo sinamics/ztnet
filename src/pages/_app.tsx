@@ -9,7 +9,7 @@ import { ThemeProvider } from "next-themes";
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Modal from "~/components/elements/modal";
+import Modal from "~/components/shared/modal";
 import { useEffect } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";

@@ -12,10 +12,10 @@ import {
 	type SortingState,
 } from "@tanstack/react-table";
 import { useSkipper } from "../../hooks/useSkipper";
-import TableFooter from "../tableFooter";
 import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+import TableFooter from "../shared/tableFooter";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
