@@ -11,7 +11,7 @@ import {
 	createColumnHelper,
 	type SortingState,
 } from "@tanstack/react-table";
-import { useSkipper } from "../../../hooks/useSkipper";
+import { useSkipper } from "../../hooks/useSkipper";
 import { useTranslations } from "next-intl";
 import { CentralMemberEntity } from "~/types/central/members";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
