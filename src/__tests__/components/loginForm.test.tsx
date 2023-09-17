@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import LoginForm from "~/components/modules/loginForm";
+import LoginForm from "~/components/auth/loginForm";
 
 jest.mock("next-auth/react", () => ({
 	signIn: jest.fn(),
