@@ -12,7 +12,7 @@ import {
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { DebouncedInput } from "../../elements/debouncedInput";
-import { useSkipper } from "../../elements/useSkipper";
+import { useSkipper } from "../../../hooks/useSkipper";
 import TableFooter from "../../tableFooter";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";

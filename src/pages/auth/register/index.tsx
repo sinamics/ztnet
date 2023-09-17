@@ -4,7 +4,7 @@ import { getSession } from "next-auth/react";
 import Head from "next/head";
 import React, { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
-import RegisterForm from "~/components/modules/registerForm";
+import RegisterForm from "~/components/auth/registerForm";
 import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
 

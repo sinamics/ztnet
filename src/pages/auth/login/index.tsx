@@ -6,7 +6,7 @@ import { ReactElement } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import Link from "next/link";
 import { LayoutPublic } from "~/components/layouts/layout";
-import LoginForm from "~/components/modules/loginForm";
+import LoginForm from "~/components/auth/loginForm";
 
 const Login = ({ auth }) => {
 	const title = `${globalSiteTitle} - Sign In`;

@@ -11,7 +11,7 @@ import {
 	createColumnHelper,
 	type SortingState,
 } from "@tanstack/react-table";
-import { useSkipper } from "../elements/useSkipper";
+import { useSkipper } from "../../hooks/useSkipper";
 import TableFooter from "../tableFooter";
 import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
