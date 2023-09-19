@@ -66,22 +66,29 @@ const sortingIpaddress = (
 	rowB: Row<MemberEntity>,
 	columnId: string,
 ): number => {
-	const a = rowA.original[columnId] as string | string[];
-	const b = rowB.original[columnId] as string | string[];
+	const stripPort = (ip: string) => ip.split("/")[0];
+	const a =
+		rowA.original.peers?.physicalAddress ??
+		(rowA.original[columnId] as string | string[]);
+	const b =
+		rowB.original?.peers?.physicalAddress ??
+		(rowB.original[columnId] as string | string[]);
 
 	let numA: BigInt;
 	let numB: BigInt;
+
 	if (Array.isArray(a)) {
-		numA = a.length ? sortIP(a[0]) : BigInt(0);
+		numA = a.length ? sortIP(stripPort(a[0])) : BigInt(0);
 	} else {
-		numA = a?.length ? sortIP(a) : BigInt(0);
+		numA = a?.length ? sortIP(stripPort(a)) : BigInt(0);
 	}
 
 	if (Array.isArray(b)) {
-		numB = b.length ? sortIP(b[0]) : BigInt(0);
+		numB = b.length ? sortIP(stripPort(b[0])) : BigInt(0);
 	} else {
-		numB = b?.length ? sortIP(b) : BigInt(0);
+		numB = b?.length ? sortIP(stripPort(b)) : BigInt(0);
 	}
+
 	if (numA > numB) return 1;
 	if (numA < numB) return -1;
 	return 0;
@@ -224,14 +231,16 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					header: () => (
 						<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
 					),
+					sortDescFirst: true,
 					id: "physicalAddress",
+					sortUndefined: -1,
 					sortingFn: sortingIpaddress,
 					cell: ({ getValue, row: { original } }) => {
 						if (central) {
 							const centralPhysicalAddress: string = original?.physicalAddress;
 							if (!centralPhysicalAddress || typeof centralPhysicalAddress !== "string")
 								return (
-									<span className="text-gray-400/50">
+									<span className="text-gray-400/50 text-sm">
 										{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
 									</span>
 								);
@@ -241,7 +250,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						const physicalAddress = getValue();
 						if (!physicalAddress || typeof physicalAddress !== "string")
 							return (
-								<span className="text-gray-400/50">
+								<span className="text-gray-400/50 text-sm">
 									{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
 								</span>
 							);
@@ -250,35 +259,6 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					},
 				},
 			),
-			// columnHelper.accessor("peers.physicalAddress", {
-			// 	header: () => (
-			// 		<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
-			// 	),
-			// 	id: "physicalAddress",
-			// 	sortingFn: sortingIpaddress,
-			// 	cell: ({ getValue, row: { original } }) => {
-			// 		if (central) {
-			// 			const physicalAddress: string = original?.physicalAddress;
-			// 			if (!physicalAddress || typeof physicalAddress !== "string")
-			// 				return (
-			// 					<span className="text-gray-400/50">
-			// 						{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
-			// 					</span>
-			// 				);
-
-			// 			return physicalAddress.split("/")[0];
-			// 		}
-			// 		const physicalAddress = getValue();
-			// 		if (!physicalAddress || typeof physicalAddress !== "string")
-			// 			return (
-			// 				<span className="text-gray-400/50">
-			// 					{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
-			// 				</span>
-			// 			);
-
-			// 		return physicalAddress.split("/")[0];
-			// 	},
-			// }),
 			columnHelper.accessor("conStatus", {
 				header: () => (
 					<span>{t("networkById.networkMembersTable.column.conStatus.header")}</span>
