@@ -29,22 +29,26 @@ export const encrypt = (text: string, secret: Buffer) => {
 
 // Decryption Function
 export const decrypt = (text: string, secret: Buffer) => {
-	if (!secret) {
-		throw new Error("Secret is empty");
+	try {
+		if (!secret) {
+			throw new Error("Secret is empty");
+		}
+
+		const secretBuffer = Buffer.from(secret);
+
+		if (secretBuffer.length !== 32) {
+			throw new Error(`Invalid key length: ${secretBuffer.length}, Secret: ${secret}`);
+		}
+
+		const textParts = text.split(":");
+		const iv = Buffer.from(textParts.shift()!, "hex");
+		const encryptedText = Buffer.from(textParts.join(":"), "hex");
+
+		const decipher = crypto.createDecipheriv("aes-256-cbc", secretBuffer, iv);
+
+		const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
+		return decrypted.toString();
+	} catch (err) {
+		throw new Error(err);
 	}
-
-	const secretBuffer = Buffer.from(secret);
-
-	if (secretBuffer.length !== 32) {
-		throw new Error(`Invalid key length: ${secretBuffer.length}, Secret: ${secret}`);
-	}
-
-	const textParts = text.split(":");
-	const iv = Buffer.from(textParts.shift()!, "hex");
-	const encryptedText = Buffer.from(textParts.join(":"), "hex");
-
-	const decipher = crypto.createDecipheriv("aes-256-cbc", secretBuffer, iv);
-
-	const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
-	return decrypted.toString();
 };
