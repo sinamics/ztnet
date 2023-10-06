@@ -20,6 +20,8 @@ import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
 import { networkRouter } from "./networkRouter";
+import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { SMTP_SECRET } from "~/utils/encryption";
 
 export const adminRouter = createTRPCRouter({
 	deleteUser: adminRoleProtectedRoute
@@ -191,11 +193,19 @@ export const adminRouter = createTRPCRouter({
 
 	// Set global options
 	getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		return await ctx.prisma.globalOptions.findFirst({
+		const options = await ctx.prisma.globalOptions.findFirst({
 			where: {
 				id: 1,
 			},
 		});
+
+		if (options?.smtpPassword) {
+			options.smtpPassword = decrypt(
+				options.smtpPassword,
+				generateInstanceSecret(SMTP_SECRET),
+			);
+		}
+		return options;
 	}),
 	// Set global options
 	changeRole: adminRoleProtectedRoute
@@ -291,6 +301,14 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input.smtpPassword) {
+				// Encrypt SMTP password before storing
+				input.smtpPassword = encrypt(
+					input.smtpPassword,
+					generateInstanceSecret(SMTP_SECRET),
+				);
+			}
+
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
