@@ -12,7 +12,7 @@ interface FieldConfig {
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
 	value?: string | number | boolean;
-	elementType?: "input" | "select";
+	elementType?: "input" | "select" | "textarea";
 	selectOptions?: { value: string; label: string }[];
 }
 
@@ -103,7 +103,9 @@ const InputField = ({
 
 	const handleEditClick = () => setShowInputs(!showInputs);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+	) => {
 		if (e.target.type === "checkbox") {
 			// Check for the type
 			const checked = (e.target as HTMLInputElement).checked;
@@ -242,7 +244,27 @@ const InputField = ({
 										</div>
 									);
 								}
-
+								if (field.elementType === "textarea") {
+									return (
+										<div key={field.name} className="form-control">
+											{field.description ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.description}
+												</label>
+											) : null}
+											<textarea
+												value={
+													String(formValues[field.name]).replace(/<br \/>/g, "\n") || ""
+												}
+												className="custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none"
+												placeholder={field.placeholder}
+												rows={10}
+												name={field.name}
+												onChange={handleChange}
+											/>
+										</div>
+									);
+								}
 								return (
 									<div key={field.name} className="form-control">
 										{field.description ? (

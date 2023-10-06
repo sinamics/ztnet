@@ -46,6 +46,10 @@ model GlobalOptions {
   plComment                             String?
   plIdentity                            String?
   plEndpoints                           String?
+
+  welcomeMessageEnabled                 Boolean             @default(false)
+  welcomeMessageTitle                   String?
+  welcomeMessageBody                    String?
 }
 
 enum Role {
