@@ -41,11 +41,18 @@ const Mail = () => {
 
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+			{options?.error ? (
+				<div className="alert alert-warning alert-sm">
+					<div className="flex-1">
+						<label className="font-medium">Action Required</label>
+						<p className="text-sm">{options?.message}</p>
+					</div>
+				</div>
+			) : null}
 			<div>
 				<p className="text-sm text-gray-400">{t("mail.mailSMTP")}</p>
 				<div className="divider mt-0 text-gray-500"></div>
 			</div>
-
 			<div className="space-y-5">
 				<div className="flex items-center justify-between">
 					<EditableField
@@ -115,6 +122,7 @@ const Mail = () => {
 						submitHandler={(params) => inputHandler(params)}
 					/>
 				</div>
+
 				<div className="flex items-center justify-between">
 					<EditableField
 						isLoading={false}
