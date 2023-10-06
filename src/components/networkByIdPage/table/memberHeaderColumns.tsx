@@ -60,34 +60,33 @@ const sortIP = (ip: string) => {
 		);
 	}
 };
-
-const sortingIpaddress = (
+const sortingIpAddress = (
 	rowA: Row<MemberEntity>,
 	rowB: Row<MemberEntity>,
-	columnId: string,
+	columnId?: string,
 ): number => {
 	const stripPort = (ip: string) => ip.split("/")[0];
-	const a =
-		rowA.original.peers?.physicalAddress ??
-		(rowA.original[columnId] as string | string[]);
-	const b =
-		rowB.original?.peers?.physicalAddress ??
-		(rowB.original[columnId] as string | string[]);
+	let a: string | string[] | undefined;
+	let b: string | string[] | undefined;
 
-	let numA: BigInt;
-	let numB: BigInt;
-
-	if (Array.isArray(a)) {
-		numA = a.length ? sortIP(stripPort(a[0])) : BigInt(0);
+	if (columnId) {
+		a = rowA.original[columnId] as string | string[];
+		b = rowB.original[columnId] as string | string[];
 	} else {
-		numA = a?.length ? sortIP(stripPort(a)) : BigInt(0);
+		a = rowA.original.peers?.physicalAddress;
+		b = rowB.original?.peers?.physicalAddress;
 	}
 
-	if (Array.isArray(b)) {
-		numB = b.length ? sortIP(stripPort(b[0])) : BigInt(0);
-	} else {
-		numB = b?.length ? sortIP(stripPort(b)) : BigInt(0);
-	}
+	const convertToBigInt = (value: string | string[] | undefined): BigInt => {
+		if (Array.isArray(value)) {
+			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
+		} else {
+			return value?.length ? sortIP(stripPort(value)) : BigInt(0);
+		}
+	};
+
+	const numA = convertToBigInt(a);
+	const numB = convertToBigInt(b);
 
 	if (numA > numB) return 1;
 	if (numA < numB) return -1;
@@ -196,7 +195,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					<span>{t("networkById.networkMembersTable.column.ipAssignments.header")}</span>
 				),
 				id: "ipAssignments",
-				sortingFn: sortingIpaddress,
+				sortingFn: sortingIpAddress,
 			}),
 			columnHelper.accessor("creationTime", {
 				header: () => <span>{t("networkById.networkMembersTable.column.created")}</span>,
@@ -234,7 +233,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					sortDescFirst: true,
 					id: "physicalAddress",
 					sortUndefined: -1,
-					sortingFn: sortingIpaddress,
+					sortingFn: sortingIpAddress,
 					cell: ({ getValue, row: { original } }) => {
 						if (central) {
 							const centralPhysicalAddress: string = original?.physicalAddress;
