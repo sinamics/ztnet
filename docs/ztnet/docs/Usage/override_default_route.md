@@ -9,7 +9,7 @@ This guide involves two Debian OS machines:
 2. Debian Client: This machine will act as the client through which all internet traffic will be routed.
 
 
-### Step 1: Enable IPv4 Forwarding ( Run on Debian Client Server )
+### Step 1: Enable IPv4 Forwarding ( Run on Debian Client )
 
 1. Open the sysctl configuration file by editing `/etc/sysctl.conf`.
 2. Find and uncomment the line `net.ipv4.ip_forward` to enable IP forwarding upon boot.
@@ -19,7 +19,7 @@ This guide involves two Debian OS machines:
 sudo sysctl -w net.ipv4.ip_forward=1
 ```
 
-### Step 2: Configure iptables for NAT and Forwarding ( Run on Debian Client Server )
+### Step 2: Configure iptables for NAT and Forwarding ( Run on Debian Client )
 Replace `PHY_IFACE` and `ZT_IFACE` with your actual physical and ZeroTier interface names.
 ```bash
 PHY_IFACE=eth0
