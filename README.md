@@ -32,7 +32,8 @@ ZTNET - Zerotier Controller Web UI, is a robust and versatile ZeroTier controlle
 
 With a rich palette of features, and an intuitive user interface, ZTNET embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
-
+### [See Installation Instruction](https://ztnet.network/Installation/docker-compose)
+<!-- 
 <details open="open" >
 <summary>Table of Contents</summary>
 
@@ -212,7 +213,7 @@ This project welcomes contributions. To ensure smooth collaboration, please foll
 8. Select **Start Development Server** to start the development server.
 9. Open browser and go to `http://localhost:3000`.
 
-**NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload.
+**NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload. -->
 
 ## 📷 Images
 View the following images for a visual overview of the ZTNet application:
@@ -267,8 +268,8 @@ View the following images for a visual overview of the ZTNet application:
 ## ⚠️ Disclaimer:
 
 Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
-
+<!-- 
 ## 📄 Attribution and Licensing Notice for Third-Party Components
 This project utilizes the **mkworld** tool, written in Go, to generate the custom planet file. While the original mkworld tool was developed by ZeroTier, the version we are using was adapted and re-implemented in Go by Patrick Young (@kmahyyg). This Go adaptation is licensed under the GNU General Public License v3.0. We would like to express our appreciation to Patrick Young (@kmahyyg) for his efforts in creating this Go version, which has benefited our project.
 
-Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file.
+Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file. -->
