@@ -56,6 +56,7 @@ services:
     restart: unless-stopped
     ports:
       - 3000:3000
+    # - 127.0.0.1:3000:3000  <--- Use / Uncomment this line to restrict access to localhost only
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
