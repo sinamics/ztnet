@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-const SECRET = process.env.NEXTAUTH_SECRET;
+const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const SMTP_SECRET = "_smtp";
 
@@ -8,7 +8,7 @@ export const SMTP_SECRET = "_smtp";
 export const generateInstanceSecret = (contextSuffix: string) => {
 	const salt = crypto
 		.createHash("sha256")
-		.update(String(SECRET))
+		.update(String(ZTNET_SECRET))
 		.update(String(contextSuffix))
 		.digest();
 
