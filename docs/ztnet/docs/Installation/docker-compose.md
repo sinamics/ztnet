@@ -9,9 +9,8 @@ sidebar_position: 1
 - **ZTNET**: Main app, depends on both `postgres` and `zerotier`.
 
 ### Setup
-Create a `docker-compose.yml` file on your machine and populate it as follows:
 
-```yml title="docker-compose.yml"
+```yml title="Create a docker-compose.yml file and populate it as follows:"
 version: "3.1"
 services:
   postgres:
