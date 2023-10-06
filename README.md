@@ -14,10 +14,10 @@
     ·
     <a href="https://github.com/sinamics/ztnet/discussions">Ask a Question</a>
   </p>
-  <p align="center">
-    <a href="https://ztnet.network">Documentation</a>
+  <h align="center">
+    <h3><a href="https://ztnet.network">Documentation</a></h3>
     <br />
-  </p>
+  </h>
   <div align="center">
 
   [![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
