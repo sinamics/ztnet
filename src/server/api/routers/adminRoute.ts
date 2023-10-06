@@ -9,7 +9,7 @@ import {
 } from "~/utils/mail";
 import { createTransporter, sendEmail } from "~/utils/mail";
 import type nodemailer from "nodemailer";
-import { Role } from "@prisma/client";
+import { GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
 import { NetworkAndMemberResponse } from "~/types/network";
@@ -20,6 +20,10 @@ import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
 import { networkRouter } from "./networkRouter";
+import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { SMTP_SECRET } from "~/utils/encryption";
+
+type WithError<T> = T & { error?: boolean; message?: string };
 
 export const adminRouter = createTRPCRouter({
 	deleteUser: adminRoleProtectedRoute
@@ -191,12 +195,28 @@ export const adminRouter = createTRPCRouter({
 
 	// Set global options
 	getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		return await ctx.prisma.globalOptions.findFirst({
+		let options = (await ctx.prisma.globalOptions.findFirst({
 			where: {
 				id: 1,
 			},
-		});
+		})) as WithError<GlobalOptions>;
+
+		if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
+			options = {
+				...options,
+				error: true,
+				message:
+					"Please re-enter your SMTP password to enhance security through database hashing.",
+			};
+		} else if (options?.smtpPassword) {
+			options.smtpPassword = decrypt(
+				options.smtpPassword,
+				generateInstanceSecret(SMTP_SECRET),
+			);
+		}
+		return options;
 	}),
+
 	// Set global options
 	changeRole: adminRoleProtectedRoute
 		.input(
@@ -291,6 +311,14 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input.smtpPassword) {
+				// Encrypt SMTP password before storing
+				input.smtpPassword = encrypt(
+					input.smtpPassword,
+					generateInstanceSecret(SMTP_SECRET),
+				);
+			}
+
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
