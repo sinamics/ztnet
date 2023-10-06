@@ -11,7 +11,7 @@ sidebar_position: 1
 ### Setup
 Create a `docker-compose.yml` file on your machine and populate it as follows:
 
-```yaml
+```yml title="docker-compose.yml"
 version: "3.1"
 services:
   postgres:
