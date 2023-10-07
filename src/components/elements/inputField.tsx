@@ -179,9 +179,9 @@ const InputField = ({
 					onSubmit={(event) => {
 						void handleSubmit(event);
 					}}
-					className={`flex w-full justify-between ${rootClassName}`}
+					className={`flex ${rootClassName}`}
 				>
-					<div>
+					<div className="flex-1">
 						<div className="flex font-medium">
 							<span>{label}</span>
 
@@ -256,9 +256,9 @@ const InputField = ({
 												value={
 													String(formValues[field.name]).replace(/<br \/>/g, "\n") || ""
 												}
-												className="custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none"
+												className="custom-scrollbar textarea textarea-bordered border-2 font-medium leading-snug focus:outline-none"
 												placeholder={field.placeholder}
-												rows={10}
+												rows={5}
 												name={field.name}
 												onChange={handleChange}
 											/>
@@ -280,14 +280,14 @@ const InputField = ({
 											value={String(formValues[field.name])}
 											onChange={handleChange}
 											name={field.name}
-											className={`input-bordered input-${size} w-full`}
+											className={`input-bordered input-${size}`}
 										/>
 									</div>
 								);
 							})}
 						</div>
 					</div>
-					<div className={cn("flex gap-3", { hidden: !showSubmitButtons })}>
+					<div className={cn("flex gap-3 justify-end", { hidden: !showSubmitButtons })}>
 						{isLoading ? (
 							renderLoading()
 						) : (
