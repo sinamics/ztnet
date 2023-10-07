@@ -85,7 +85,7 @@ const Settings = () => {
 						fields={[
 							{
 								name: "welcomeMessageBody",
-								description: "Max 250 Char",
+								description: "Max 350 Char",
 								placeholder: "Write something ....",
 								elementType: "textarea",
 								value: options?.welcomeMessageBody,
