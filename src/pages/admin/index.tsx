@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { GetServerSidePropsContext } from "next";
 import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
+import Settings from "./settings";
 
 const AdminSettings = () => {
 	const title = `${globalSiteTitle} - Admin Settings`;
@@ -24,11 +25,11 @@ const AdminSettings = () => {
 	}
 
 	const tabs: ITab[] = [
-		// {
-		// 	name: t("tabs.settings"),
-		// 	value: "site-setting",
-		// 	component: <Settings />,
-		// },
+		{
+			name: t("tabs.settings"),
+			value: "site-setting",
+			component: <Settings />,
+		},
 		{
 			name: t("tabs.mail"),
 			value: "mail-setting",

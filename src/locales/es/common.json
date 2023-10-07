@@ -268,6 +268,12 @@
 			"notification": "Notificación",
 			"controller": "Controlador"
 		},
+		"settings": {
+			"publicPages": {
+				"sectionTitle": "Páginas Públicas",
+				"description": "Personaliza el texto que se muestra en tus páginas de inicio de sesión y registro para alinearlo mejor con tu marca o proporcionar instrucciones específicas a tus usuarios."
+			}
+		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "Host SMTP",

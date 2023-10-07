@@ -54,92 +54,86 @@ const Mail = () => {
 				<div className="divider mt-0 text-gray-500"></div>
 			</div>
 			<div className="space-y-5">
-				<div className="flex items-center justify-between">
-					<EditableField
-						isLoading={false}
-						label={t("mail.smtpHost")}
-						// buttonClassName="hidden"
-						size="sm"
-						fields={[
-							{
-								name: "smtpHost",
-								type: "text",
-								placeholder: options?.smtpHost || "host.smtp.com",
-								value: options?.smtpHost,
-							},
-						]}
-						submitHandler={async (params) => await inputHandler(params)}
-					/>
-				</div>
-				<div className="flex items-center justify-between">
-					<EditableField
-						isLoading={false}
-						label={t("mail.smtpPort")}
-						// buttonClassName="hidden"
-						size="sm"
-						fields={[
-							{
-								name: "smtpPort",
-								type: "number",
-								placeholder: options?.smtpPort || "587",
-								value: options?.smtpPort,
-							},
-						]}
-						submitHandler={(params) => inputHandler(params)}
-					/>
-				</div>
-				<div className="flex items-center justify-between">
-					<EditableField
-						isLoading={false}
-						label={t("mail.senderEmail")}
-						// buttonClassName="hidden"
-						size="sm"
-						fields={[
-							{
-								name: "smtpEmail",
-								type: "text",
-								placeholder: options?.smtpEmail || t("mail.mailPlaceholder"),
-								value: options?.smtpEmail,
-							},
-						]}
-						submitHandler={(params) => inputHandler(params)}
-					/>
-				</div>
-				<div className="flex items-center justify-between">
-					<EditableField
-						isLoading={false}
-						label={t("mail.username")}
-						// buttonClassName="hidden"
-						size="sm"
-						fields={[
-							{
-								name: "smtpUsername",
-								type: "text",
-								placeholder: options?.smtpUsername || t("mail.username"),
-								value: options?.smtpUsername,
-							},
-						]}
-						submitHandler={(params) => inputHandler(params)}
-					/>
-				</div>
+				<EditableField
+					isLoading={false}
+					label={t("mail.smtpHost")}
+					// buttonClassName="hidden"
+					size="sm"
+					fields={[
+						{
+							name: "smtpHost",
+							type: "text",
+							placeholder: options?.smtpHost || "host.smtp.com",
+							value: options?.smtpHost,
+						},
+					]}
+					submitHandler={async (params) => await inputHandler(params)}
+				/>
 
-				<div className="flex items-center justify-between">
-					<EditableField
-						isLoading={false}
-						label={t("mail.password")}
-						// buttonClassName="hidden"
-						size="sm"
-						fields={[
-							{
-								name: "smtpPassword",
-								type: "password",
-								placeholder: "******",
-								value: options?.smtpPassword,
-							},
-						]}
-						submitHandler={(params) => inputHandler(params)}
-					/>
-				</div>
+				<EditableField
+					isLoading={false}
+					label={t("mail.smtpPort")}
+					// buttonClassName="hidden"
+					size="sm"
+					fields={[
+						{
+							name: "smtpPort",
+							type: "number",
+							placeholder: options?.smtpPort || "587",
+							value: options?.smtpPort,
+						},
+					]}
+					submitHandler={(params) => inputHandler(params)}
+				/>
+
+				<EditableField
+					isLoading={false}
+					label={t("mail.senderEmail")}
+					// buttonClassName="hidden"
+					size="sm"
+					fields={[
+						{
+							name: "smtpEmail",
+							type: "text",
+							placeholder: options?.smtpEmail || t("mail.mailPlaceholder"),
+							value: options?.smtpEmail,
+						},
+					]}
+					submitHandler={(params) => inputHandler(params)}
+				/>
+
+				<EditableField
+					isLoading={false}
+					label={t("mail.username")}
+					// buttonClassName="hidden"
+					size="sm"
+					fields={[
+						{
+							name: "smtpUsername",
+							type: "text",
+							placeholder: options?.smtpUsername || t("mail.username"),
+							value: options?.smtpUsername,
+						},
+					]}
+					submitHandler={(params) => inputHandler(params)}
+				/>
+
+				<EditableField
+					isLoading={false}
+					label={t("mail.password")}
+					// buttonClassName="hidden"
+					size="sm"
+					fields={[
+						{
+							name: "smtpPassword",
+							type: "password",
+							placeholder: "******",
+							value: options?.smtpPassword,
+						},
+					]}
+					submitHandler={(params) => inputHandler(params)}
+				/>
+
 				<div className="flex items-center justify-between pb-10">
 					<p className="font-medium">{t("mail.useSSL")}</p>
 					<input
