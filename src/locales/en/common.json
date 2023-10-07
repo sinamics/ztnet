@@ -268,6 +268,12 @@
 			"notification": "Notification",
 			"controller": "Controller"
 		},
+		"settings": {
+			"publicPages": {
+				"sectionTitle": "Public Pages",
+				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
+			}
+		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP Host",

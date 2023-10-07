@@ -4,10 +4,10 @@ import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
 import { api } from "~/utils/api";
-// import { useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const Settings = () => {
-	// const t = useTranslations("admin");
+	const t = useTranslations("admin");
 
 	const {
 		data: options,
@@ -47,13 +47,10 @@ const Settings = () => {
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
-				<p className="text-sm text-gray-400">Public Pages</p>
+				<p className="text-sm text-gray-400">{t("settings.publicPages.sectionTitle")}</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="text-sm text-gray-400 py-2">
-					<p>
-						Customize the text displayed on your login and registration pages to better
-						align with your brand or provide specific instructions to your users.
-					</p>
+					<p>{t("settings.publicPages.description")}</p>
 				</div>
 				<div className="space-y-5">
 					<EditableField
