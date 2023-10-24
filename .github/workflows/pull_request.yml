@@ -65,4 +65,4 @@ jobs:
           build-args: |
             "NEXT_PUBLIC_APP_VERSION=test"
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest-dev
+            sinamics/ztnet:latest-dev
