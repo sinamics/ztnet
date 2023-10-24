@@ -142,7 +142,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 			updateData: (rowIndex, columnId, value) => {
 				// Skip page index reset until after next rerender
 				// skipAutoResetPageIndex()
-				setData((old: MemberEntity[]) =>
+				setData((old: MemberEntity[] = []) =>
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {

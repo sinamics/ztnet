@@ -91,7 +91,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 			updateData: (rowIndex, columnId, value) => {
 				// Skip page index reset until after next rerender
 				skipAutoResetPageIndex();
-				setData((old) =>
+				setData((old = []) =>
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
@@ -136,7 +136,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 								<tr key={headerGroup.id}>
 									{
 										// Loop over the headers in each row
-										headerGroup.headers.map((header) => (
+										headerGroup.headers?.map((header) => (
 											<th
 												key={header.id}
 												colSpan={header.colSpan}
@@ -173,7 +173,7 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 						// Loop over the table rows
 						table
 							.getRowModel()
-							.rows.map((row) => {
+							.rows?.map((row) => {
 								const notation = row.original?.notations || [];
 								return (
 									<tr
