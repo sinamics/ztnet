@@ -165,7 +165,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 						{generateClipboardElement(hasRfc4193, rfc4193Ip)}
 						{generateClipboardElement(has6plane, sixPlaneIp)}
 
-						{original?.ipAssignments.map((assignedIp) => {
+						{original?.ipAssignments?.map((assignedIp) => {
 							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);
 							return (
 								<div key={assignedIp} className="flex">

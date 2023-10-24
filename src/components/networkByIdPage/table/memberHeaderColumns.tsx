@@ -45,6 +45,8 @@ const sortingMemberHex = (
 };
 const hexToBigInt = (hex: string) => BigInt(`0x${hex}`);
 const sortIP = (ip: string) => {
+	if (!ip) return BigInt(0);
+
 	if (ip.includes(":")) {
 		const fullAddress = ip
 			.split(":")
