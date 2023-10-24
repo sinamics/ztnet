@@ -5,9 +5,9 @@ export const WelcomeMessage = () => {
 
 	return (
 		<div className="z-10 sm:max-w-2xl md:p-10 xl:max-w-2xl">
-			<div className="hidden flex-col self-start text-white lg:flex">
+			<div className="hidden flex-col self-start lg:flex">
 				<div className="md:mb-10">
-					<h1 className="mb-3  text-5xl font-bold">
+					<h1 className="mb-3 text-5xl font-bold">
 						{options?.welcomeMessageTitle || <span>Hi, Welcome</span>}
 					</h1>
 				</div>
