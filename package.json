@@ -40,7 +40,7 @@
 		"formidable": "^3.5.0",
 		"ip-address": "^8.1.0",
 		"jsonwebtoken": "^9.0.1",
-		"next": "13.4.10",
+		"next": "13.5.0",
 		"next-auth": "4.22.1",
 		"next-intl": "^2.19.0",
 		"next-themes": "^0.2.1",
