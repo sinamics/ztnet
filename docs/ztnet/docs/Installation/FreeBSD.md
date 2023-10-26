@@ -13,6 +13,8 @@ pkg install postgresql13-server postgresql13-contrib
 sysrc postgresql_enable=yes
 service postgresql initdb
 service postgresql start
+
+# start zerotier as deamon
 zerotier-one -d
 ```
 
@@ -41,6 +43,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 ### Setup Ztnet
 
 1. Clone the Ztnet repository:
+
     ```bash
     git clone https://github.com/sinamics/ztnet.git
     ```
@@ -50,9 +53,12 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     cd ztnet
     ```
 
-3. Checkout version:
+3. Checkout latest version:
+    
+    Latest version can be found here: https://github.com/sinamics/ztnet/releases
+
     ```bash
-    git checkout tags/v0.3.6
+    git checkout tags/vx.x.x
     ```
 
 4. Install the Node.js dependencies:
@@ -81,7 +87,11 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/
     ```
 
-8. Run server:
+8. Copy mkworld binary to .next/standalone:
+    ```bash
+    cp ztnodeid/build/freebsd_amd64/ztmkworld /usr/local/bin/ztmkworld
+    ```
+9. Run server:
     ```bash
     node .next/standalone/server.js
     ```
