@@ -87,7 +87,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/
     ```
 
-8. Copy mkworld binary to .next/standalone:
+8. Copy mkworld binary:
     ```bash
     cp ztnodeid/build/freebsd_amd64/ztmkworld /usr/local/bin/ztmkworld
     ```
