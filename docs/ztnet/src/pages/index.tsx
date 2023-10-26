@@ -9,7 +9,7 @@ const LandingPage = (): JSX.Element => {
 	return (
 		<>
 			<Head>
-				<title>ZTNet Web UI Documentation</title>
+				<title>ZTNet - Zerotier Web UI Documentation</title>
 				<meta
 					name="description"
 					content="Official documentation for ZTNet Zerotier Web UI. Learn how to set up, manage, and troubleshoot your ZTNet Web UI."
