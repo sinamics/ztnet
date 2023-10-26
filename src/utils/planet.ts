@@ -1,4 +1,5 @@
 import fs from "fs";
+import { ZT_FOLDER } from "./ztApi";
 
 interface LocalConf {
 	settings?: {
@@ -13,10 +14,9 @@ interface LocalConf {
  * Update local.conf file with the new port number
  *
  */
-const zerotierOneDir = "/var/lib/zerotier-one";
 export const updateLocalConf = (portNumbers: number[]): Promise<boolean> => {
 	return new Promise((resolve, reject) => {
-		const localConfPath = `${zerotierOneDir}/local.conf`;
+		const localConfPath = `${ZT_FOLDER}/local.conf`;
 		let localConf: LocalConf;
 
 		try {
