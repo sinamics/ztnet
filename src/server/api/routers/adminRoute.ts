@@ -22,6 +22,8 @@ import jwt from "jsonwebtoken";
 import { networkRouter } from "./networkRouter";
 import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
+import { ZT_FOLDER } from "~/utils/ztApi";
+import { isRunningInDocker } from "~/utils/docker";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -745,7 +747,7 @@ export const adminRouter = createTRPCRouter({
 		}
 
 		// Get identity from the file system
-		const identityPath = "/var/lib/zerotier-one/identity.public";
+		const identityPath = `${ZT_FOLDER}/identity.public`;
 		const identity = fs.existsSync(identityPath)
 			? fs.readFileSync(identityPath, "utf-8").trim()
 			: "";
@@ -785,21 +787,28 @@ export const adminRouter = createTRPCRouter({
 			// data.plID  227883110  // reserved world for future
 			// data.plBirth 1567191349589
 			try {
-				const zerotierOneDir = "/var/lib/zerotier-one";
-				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
-				const planetPath = `${zerotierOneDir}/planet`;
-				const backupDir = `${zerotierOneDir}/planet_backup`;
+				const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
+				const planetPath = `${ZT_FOLDER}/planet`;
+				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
+
 				try {
-					fs.accessSync(zerotierOneDir, fs.constants.W_OK);
+					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
 				} catch (_err) {
-					throwError(
-						`Please remove the :ro flag from the docker volume mount for ${zerotierOneDir}`,
-					);
+					if (isRunningInDocker()) {
+						throwError(
+							`Please remove the :ro flag from the docker volume mount for ${ZT_FOLDER}`,
+						);
+					} else {
+						throwError(
+							`Permission error: cannot write to ${ZT_FOLDER}. Make sure the folder is writable.`,
+						);
+					}
 				}
+
 				// Check if identity.public exists
-				if (!fs.existsSync(`${zerotierOneDir}/identity.public`)) {
+				if (!fs.existsSync(`${ZT_FOLDER}/identity.public`)) {
 					throwError("identity.public file does NOT exist, cannot generate planet file.");
 				}
 
@@ -825,7 +834,7 @@ export const adminRouter = createTRPCRouter({
 				}
 				const identity =
 					input.identity ||
-					fs.readFileSync(`${zerotierOneDir}/identity.public`, "utf-8").trim();
+					fs.readFileSync(`${ZT_FOLDER}/identity.public`, "utf-8").trim();
 
 				/*
 				 *
@@ -885,11 +894,7 @@ export const adminRouter = createTRPCRouter({
 					);
 				}
 				// Copy generated planet file
-				fs.copyFileSync(
-					`${mkworldDir}/planet.custom`,
-					// "/var/lib/zerotier-one/planet",
-					planetPath,
-				);
+				fs.copyFileSync(`${mkworldDir}/planet.custom`, planetPath);
 
 				/*
 				 *
@@ -925,11 +930,10 @@ export const adminRouter = createTRPCRouter({
 			}
 		}),
 	resetWorld: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
-		const zerotierOneDir = "/var/lib/zerotier-one";
 		const paths = {
-			backupDir: `${zerotierOneDir}/planet_backup`,
-			planetPath: `${zerotierOneDir}/planet`,
-			mkworldDir: `${zerotierOneDir}/zt-mkworld`,
+			backupDir: `${ZT_FOLDER}/planet_backup`,
+			planetPath: `${ZT_FOLDER}/planet`,
+			mkworldDir: `${ZT_FOLDER}/zt-mkworld`,
 		};
 
 		const resetDatabase = async () => {
