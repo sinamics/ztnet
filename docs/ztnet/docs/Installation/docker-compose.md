@@ -1,4 +1,8 @@
 ---
+id: docker-compose
+title: Docker Compose
+slug: /installation/docker-compose
+description: Docker Compose installation instructions for ZTNET
 sidebar_position: 1
 ---
 

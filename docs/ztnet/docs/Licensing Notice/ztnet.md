@@ -1,4 +1,8 @@
 ---
+id: ztnet
+title: License Notice
+slug: /licensing/ztnet
+description: Attribution and Licensing Notice for Third-Party Components
 sidebar_position: 3
 ---
 
