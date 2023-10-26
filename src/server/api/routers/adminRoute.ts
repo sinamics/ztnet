@@ -792,19 +792,21 @@ export const adminRouter = createTRPCRouter({
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
-				if (isRunningInDocker) {
-					try {
-						fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
-					} catch (_err) {
+
+				try {
+					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
+				} catch (_err) {
+					if (isRunningInDocker()) {
 						throwError(
 							`Please remove the :ro flag from the docker volume mount for ${ZT_FOLDER}`,
 						);
+					} else {
+						throwError(
+							`Permission error: cannot write to ${ZT_FOLDER}. Make sure the folder is writable.`,
+						);
 					}
-				} else {
-					throwError(
-						`Permission error: cannot write to ${ZT_FOLDER}. Make sure the folder is writable.`,
-					);
 				}
+
 				// Check if identity.public exists
 				if (!fs.existsSync(`${ZT_FOLDER}/identity.public`)) {
 					throwError("identity.public file does NOT exist, cannot generate planet file.");
