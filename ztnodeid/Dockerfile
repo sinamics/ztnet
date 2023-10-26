@@ -19,6 +19,7 @@ RUN apt update -y && \
     apt install zip -y
 
 RUN go build -ldflags='-s -w' -trimpath -o binaries/ztmkworld cmd/mkworld/main.go
+# RUN GOOS=freebsd GOARCH=amd64 go build -ldflags='-s -w' -trimpath -o binaries/ztmkworld cmd/mkworld/main.go
 
 FROM scratch AS export-stage
 COPY --from=gobuilder /buildsrc/binaries .
