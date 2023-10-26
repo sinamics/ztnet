@@ -23,6 +23,7 @@ import { networkRouter } from "./networkRouter";
 import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
+import { isRunningInDocker } from "~/utils/docker";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -791,11 +792,17 @@ export const adminRouter = createTRPCRouter({
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
-				try {
-					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
-				} catch (_err) {
+				if (isRunningInDocker) {
+					try {
+						fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
+					} catch (_err) {
+						throwError(
+							`Please remove the :ro flag from the docker volume mount for ${ZT_FOLDER}`,
+						);
+					}
+				} else {
 					throwError(
-						`Please remove the :ro flag from the docker volume mount for ${ZT_FOLDER}`,
+						`Permission error: cannot write to ${ZT_FOLDER}. Make sure the folder is writable.`,
 					);
 				}
 				// Check if identity.public exists
