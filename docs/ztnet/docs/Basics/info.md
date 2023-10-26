@@ -1,4 +1,8 @@
 ---
+id: info
+title: How ZTNET Works
+slug: /how-ztnet-works
+description: How ZTNET works
 sidebar_position: 4
 ---
 

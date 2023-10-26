@@ -1,4 +1,8 @@
 ---
+id: mkworld
+title: Mkworld
+slug: /licensing/mkworld
+description: Attribution and Licensing Notice for Third-Party Components
 sidebar_position: 5
 ---
 # Mkworld Tool

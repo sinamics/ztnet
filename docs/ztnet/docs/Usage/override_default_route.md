@@ -1,3 +1,10 @@
+---
+id: override_default_route
+title: Routing all traffic through Home with ZeroTier
+slug: /usage/override_default_route
+description: Routing all traffic through Home with ZeroTier
+---
+
 # Routing all traffic through Home with ZeroTier
 
 This guide will walk you through the steps to route all your internet traffic through a ZeroTier client, effectively using it as a VPN gateway. This setup is particularly useful for securing your internet connection or bypassing geo-restrictions. 

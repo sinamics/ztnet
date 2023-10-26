@@ -1,4 +1,8 @@
 ---
+id: freebsd
+title: Standalone FreeBSD
+slug: /installation/freebsd
+description: FreeBSD installation instructions for ZTNET
 sidebar_position: 3
 ---
 

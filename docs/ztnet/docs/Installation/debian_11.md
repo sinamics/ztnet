@@ -1,4 +1,8 @@
 ---
+id: debian_11
+title: Standalone Debian & Ubuntu
+slug: /installation/debian_11
+description: Debian 11 installation instructions for ZTNET
 sidebar_position: 2
 ---
 
