@@ -32,7 +32,7 @@ ZTNET - Zerotier Controller Web UI, is a robust and versatile ZeroTier controlle
 
 With a rich palette of features, and an intuitive user interface, ZTNET embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
-### [See Installation Instruction](https://ztnet.network/Installation/docker-compose)
+### [See Installation Instruction](https://ztnet.network/installation/docker-compose)
 <!-- 
 <details open="open" >
 <summary>Table of Contents</summary>
