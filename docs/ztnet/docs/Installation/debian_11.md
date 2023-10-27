@@ -14,11 +14,7 @@ Login as **root** on your system, then install 'curl' and 'sudo' if it is not al
 apt update && apt install -y sudo curl
 ```
 
-:::info
-if you system does not have sudo installed, you will need to run the script as root and remove the "sudo" from the command below.
-:::
-
-To install ztnet on Debian or Ubuntu, run the following command:
+To continue install ztnet on Debian or Ubuntu, run the following command:
 
 ```bash
 curl -s http://install.ztnet.network | sudo bash
