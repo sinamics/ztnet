@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the script is run as root (sudo)
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root (sudo). Exiting."
+  exit 1
+fi
+
 # exit if any command fails
 set -e
 
@@ -46,7 +52,7 @@ fi
 printf "\n\n${YELLOW}Welcome to the installation script.${NC}\n"
 printf "${YELLOW}This script will perform the following actions:${NC}\n"
 printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
-printf "  2. Check if Node.js version 18 is installed. If not, it will be installed.\n"
+printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
 printf "  3. Clone ztnet repo into /tmp folder and build artifacts .\n"
 printf "  4. Copy artifacts to /opt/ztnet folder.\n"
 printf "${YELLOW}Please note:${NC}\n"
@@ -72,6 +78,7 @@ if ! command_exists openssl; then
     sudo apt install openssl -y
 fi
 
+
 # Remove directories and then recreate the target directory
 rm -rf "$INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
 mkdir -p "$TARGET_DIR"
@@ -95,12 +102,12 @@ if ! command_exists psql; then
     fi
 fi
 
-# Install Node.js if it's not installed or if installed version is not 18
+# Install Node.js if it's not installed or if installed version is not the number defined in 'NODE_MAJOR' variable
 if ! command_exists node; then
   INSTALL_NODE=true
 else
   NODE_VERSION=$(node -v | cut -d 'v' -f 2 | cut -d '.' -f 1)
-  if [ "$NODE_VERSION" -lt 18 ]; then
+  if [ $NODE_VERSION -lt $NODE_MAJOR ]; then
     INSTALL_NODE=true
   fi
 fi

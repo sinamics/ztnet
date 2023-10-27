@@ -5,11 +5,19 @@ This is the code and installation scripts running at install.ztnet.network.
 ### Installation Steps for Debian and Ubuntu
 
 1. Open a terminal window.
-2. Run the following command to download and execute the installation script:
+2. Install curl if it is not already installed:
+   ```bash
+   sudo apt update && sudo apt install curl
+   ```
+3. Run the following command to download and execute the installation script:
+
+   **!NOTE:** if you system does not have sudo installed, you will need to run the script as root and remove the sudo from the command below.
+
    ```bash
    curl -s http://install.ztnet.network | sudo bash
    ```
-3. Follow any on-screen instructions to complete the installation.
+
+4. Follow any on-screen instructions to complete the installation.
 
 After completing these steps, ztnet should be successfully installed on your system.
 
