@@ -8,10 +8,10 @@ sidebar_position: 2
 
 # Standalone Debian & Ubuntu
 
-Install curl if it is not already installed:
+Login as **root** on your system, then install 'curl' and 'sudo' if it is not already installed:
 
 ```bash
-sudo apt update && sudo apt install curl
+apt update && apt install -y sudo curl
 ```
 
 :::info
