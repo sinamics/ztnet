@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the script is run as root (sudo)
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root (sudo). Exiting."
+  exit 1
+fi
+
 # exit if any command fails
 set -e
 
@@ -71,6 +77,7 @@ fi
 if ! command_exists openssl; then
     sudo apt install openssl -y
 fi
+
 
 # Remove directories and then recreate the target directory
 rm -rf "$INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
