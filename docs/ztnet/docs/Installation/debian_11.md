@@ -8,7 +8,18 @@ sidebar_position: 2
 
 # Standalone Debian & Ubuntu
 
+Install curl if it is not already installed:
+
+```bash
+sudo apt update && sudo apt install curl
+```
+
+:::info
+if you system does not have sudo installed, you will need to run the script as root and remove the "sudo" from the command below.
+:::
+
 To install ztnet on Debian or Ubuntu, run the following command:
+
 ```bash
 curl -s http://install.ztnet.network | sudo bash
 ```
@@ -24,6 +35,7 @@ This script executes the following steps:
 5. **Systemd Service**: Sets up a systemd service to auto-start `ztnet` during system boot.
 
 ### Monitoring Service Status
+
 To check the status of the `ztnet` service, run the following command:
 
 ```bash
@@ -31,6 +43,7 @@ sudo systemctl status ztnet
 ```
 
 ### Starting the Service
+
 To start the `ztnet` service, run the following command:
 
 ```bash
@@ -38,12 +51,12 @@ sudo systemctl start ztnet
 ```
 
 ### Stopping the Service
+
 To stop the `ztnet` service, run the following command:
 
 ```bash
 sudo systemctl stop ztnet
 ```
-
 
 ## Uninstalling ztnet
 
@@ -58,3 +71,6 @@ Follow these steps to uninstall `ztnet` from your system:
 
 After following these steps, `ztnet` should be completely uninstalled from your system.
 
+### Development
+
+The installation scripts is available in the [install.ztnet](https://github.com/sinamics/ztnet/tree/main/install.ztnet) folder in main repository.
