@@ -3,10 +3,7 @@ import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
-
-const verifyApiKey = (key: string): boolean => {
-	return key === "secret";
-};
+import { decryptAndVerifyToken } from "~/utils/encryption";
 
 export default async function createUserHandler(
 	req: NextApiRequest,
@@ -15,8 +12,10 @@ export default async function createUserHandler(
 	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
 	const apiKey = req.headers["x-zt1-auth"] as string;
 
-	if (!apiKey || !verifyApiKey(apiKey)) {
-		return res.status(401).json({ error: "Unauthorized" });
+	try {
+		await decryptAndVerifyToken(apiKey);
+	} catch (error) {
+		return res.status(401).json({ error: error.message });
 	}
 
 	// Create context and caller
@@ -24,14 +23,14 @@ export default async function createUserHandler(
 	const caller = appRouter.createCaller(ctx);
 
 	// get data from the post request
-	const { email, password, name } = req.body;
+	const { email, password, name, expiresAt } = req.body;
 
-	// console.log(email, password);
 	try {
 		const user = await caller.auth.register({
 			email: email as string,
 			password: password as string,
 			name: name as string,
+			expiresAt: expiresAt as string,
 		});
 
 		return res.status(200).json(user);
