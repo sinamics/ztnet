@@ -1,4 +1,8 @@
 ---
+id: docker-compose
+title: Docker Compose
+slug: /installation/docker-compose
+description: Docker Compose installation instructions for ZTNET
 sidebar_position: 1
 ---
 
@@ -9,9 +13,8 @@ sidebar_position: 1
 - **ZTNET**: Main app, depends on both `postgres` and `zerotier`.
 
 ### Setup
-Create a `docker-compose.yml` file on your machine and populate it as follows:
 
-```yaml
+```yml title="Create a docker-compose.yml file and populate it as follows:"
 version: "3.1"
 services:
   postgres:
@@ -56,6 +59,7 @@ services:
     restart: unless-stopped
     ports:
       - 3000:3000
+    # - 127.0.0.1:3000:3000  <--- Use / Uncomment this line to restrict access to localhost only
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432

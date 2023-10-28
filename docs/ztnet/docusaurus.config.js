@@ -2,11 +2,12 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+// const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const darkCodeTheme = require("prism-react-renderer/themes/oceanicNext");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'ZTNET',
+  title: 'ZTNET - ZeroTier Web UI',
   tagline: 'Zerotier Controller Web UI',
   favicon: 'img/ztnet_16x16.png',
 
@@ -31,7 +32,6 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
   presets: [
     [
       'classic',
@@ -81,7 +81,7 @@ const config = {
       navbar: {
         title: 'ZTNET',
         logo: {
-          alt: 'ZTNET logo',
+          alt: 'ZTNET',
           src: 'img/ztnet_100x100.png',
           // height: '20px,
           width: '35px',

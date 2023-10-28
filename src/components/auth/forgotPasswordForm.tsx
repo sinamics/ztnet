@@ -54,10 +54,12 @@ const ForgotPasswordForm: React.FC = () => {
 	};
 	return (
 		<div className="z-10 flex justify-center  self-center">
-			<div className="w-100 mx-auto rounded-2xl bg-white p-12 ">
+			<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 bg-base-200 dark:bg-gray-100 p-12">
 				<div className="mb-4">
 					<h3 className="text-2xl font-semibold text-gray-800">Forgot Password </h3>
-					<p className="text-gray-500">Please sign up with your credentials</p>
+					<p className="text-gray-500">
+						We will send you a reset link if the email exist
+					</p>
 				</div>
 				<form className="space-y-5" onSubmit={submitHandler}>
 					<div className="space-y-2">
@@ -77,7 +79,7 @@ const ForgotPasswordForm: React.FC = () => {
 						<button
 							type="submit"
 							className={cn(
-								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100 shadow-lg",
+								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
 							)}
 						>
 							{loading ? <span className="loading loading-spinner"></span> : null}
