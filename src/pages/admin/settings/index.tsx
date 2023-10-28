@@ -5,6 +5,7 @@ import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import ApiToken from "~/components/adminPage/settings/apiToken";
 
 const Settings = () => {
 	const t = useTranslations("admin");
@@ -98,6 +99,16 @@ const Settings = () => {
 							})
 						}
 					/>
+				</div>
+			</div>
+			<div className="pb-10">
+				<p className="text-sm text-gray-400">API Access Tokens</p>
+				<div className="divider mt-0 p-0 text-gray-500"></div>
+				<div className="text-sm text-gray-400 py-2">
+					<p>API access tokens are used to access the ZTNET Public API.</p>
+				</div>
+				<div className="space-y-5">
+					<ApiToken />
 				</div>
 			</div>
 		</main>

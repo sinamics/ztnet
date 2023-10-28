@@ -6,5 +6,9 @@
     "[typescript]": {
         "editor.defaultFormatter": "rome.rome"
     },
-    "editor.tabSize": 2
+    "editor.defaultFormatter": "rome.rome",
+    "editor.tabSize": 2,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "rome.rome"
+    }
 }

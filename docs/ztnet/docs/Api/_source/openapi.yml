@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: ZeroTier Web API
+  version: 1.0.0
+paths:
+  /api/v1/users:
+    get:
+      summary: Get list of networks
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              example:
+                status: "ok"
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+    post:
+      summary: Create a new network
+      security:
+        - ApiKeyAuth: []
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              example:
+                networkID: "12345"
+                name: "My Network"
+                created_at: "2023-10-28T00:00:00Z"
+              schema:
+                type: object
+                properties:
+                  networkID:
+                    type: string
+                  name:
+                    type: string
+                  created_at:
+                    type: string
+    delete:
+      summary: Delete a specific network
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          description: No Content
+          content:
+            application/json:
+              schema:
+                type: string
+                enum:
+                - Alice
+                - Bob
+                - Carl
+  /board:
+    get:
+      summary: Get the whole board
+      description: Retrieves the current state of the board and the winner.
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    winner:
+                      type: string
+                      enum: [".", "X", "O"]
+                      description: |
+                        Winner of the game. `.` means nobody has won yet.
+                    board:
+                      type: array
+                      maxItems: 3
+                      minItems: 3
+                      items:
+                          type: array
+                          maxItems: 3
+                          minItems: 3
+                          items:
+                            type: string
+                            enum: [".", "X", "O"]
+                            description: |
+                              Possible values for a board square.
+                              `.` means empty square.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-zt1-auth
