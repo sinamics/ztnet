@@ -6,6 +6,9 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
+	experimental: {
+		instrumentationHook: true,
+	},
 	reactStrictMode: true,
 	swcMinify: true,
 	// https://nextjs.org/docs/advanced-features/output-file-tracing
