@@ -53,7 +53,7 @@ const ForgotPassword = () => {
 
 	return (
 		<div className="z-10 flex h-screen w-screen items-center justify-center">
-			<div className="w-100 mx-auto rounded-2xl bg-white p-12 ">
+			<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 bg-base-200 dark:bg-gray-100 p-12">
 				<div className="mb-4">
 					<h3 className="text-2xl font-semibold text-gray-800">Reset Password</h3>
 					<p className="text-gray-500">Please enter your new password</p>
@@ -89,7 +89,7 @@ const ForgotPassword = () => {
 						<button
 							type="submit"
 							onClick={handleSubmit}
-							className="btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide text-gray-100  shadow-lg"
+							className="btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg"
 						>
 							Reset Password
 						</button>

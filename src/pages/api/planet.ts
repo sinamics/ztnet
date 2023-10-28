@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
+import { ZT_FOLDER } from "~/utils/ztApi";
 
 export const config = {
 	api: {
@@ -11,7 +12,7 @@ export const config = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
 		try {
-			const folderPath = path.resolve("/var/lib/zerotier-one/zt-mkworld");
+			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
 			const filePath = path.join(folderPath, "planet.custom");
 
 			// Check if the directory and file exist

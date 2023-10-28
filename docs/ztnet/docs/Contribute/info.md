@@ -1,4 +1,8 @@
 ---
+id: developer
+title: Developer
+slug: /developer
+description: Developer instructions for ZTNET
 sidebar_position: 5
 ---
 

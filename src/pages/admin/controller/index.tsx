@@ -148,52 +148,49 @@ const Controller = () => {
 						})}
 						{t("controller.controllerConfig.modification_warning")}
 					</p>
-					<div className="flex items-center justify-between">
-						<EditableField
-							isLoading={false}
-							label={t("controller.controllerConfig.local_zerotier_url")}
-							description={t("controller.controllerConfig.submit_empty_field_default")}
-							size="sm"
-							fields={[
-								{
-									name: "localControllerUrl",
-									type: "text",
-									placeholder: me?.options?.localControllerUrl || "http://zerotier:9993",
-									value: me?.options?.localControllerUrl,
-								},
-							]}
-							submitHandler={(params) =>
-								new Promise((resolve) => {
-									setZtOptions(params);
-									refetchUnlinkedNetworks();
-									resolve(true);
-								})
-							}
-						/>
-					</div>
-					<div className="flex items-center justify-between">
-						<EditableField
-							isLoading={false}
-							label={t("controller.controllerConfig.zerotier_secret")}
-							description={t("controller.controllerConfig.submit_empty_field_default")}
-							size="sm"
-							fields={[
-								{
-									name: "localControllerSecret",
-									type: "text",
-									placeholder: me?.options?.localControllerSecret || "********",
-									value: me?.options?.localControllerSecret || "",
-								},
-							]}
-							submitHandler={(params) =>
-								new Promise((resolve) => {
-									setZtOptions(params);
-									refetchUnlinkedNetworks();
-									resolve(true);
-								})
-							}
-						/>
-					</div>
+
+					<EditableField
+						isLoading={false}
+						label={t("controller.controllerConfig.local_zerotier_url")}
+						description={t("controller.controllerConfig.submit_empty_field_default")}
+						size="sm"
+						fields={[
+							{
+								name: "localControllerUrl",
+								type: "text",
+								placeholder: me?.options?.localControllerUrl || "http://zerotier:9993",
+								value: me?.options?.localControllerUrl,
+							},
+						]}
+						submitHandler={(params) =>
+							new Promise((resolve) => {
+								setZtOptions(params);
+								refetchUnlinkedNetworks();
+								resolve(true);
+							})
+						}
+					/>
+					<EditableField
+						isLoading={false}
+						label={t("controller.controllerConfig.zerotier_secret")}
+						description={t("controller.controllerConfig.submit_empty_field_default")}
+						size="sm"
+						fields={[
+							{
+								name: "localControllerSecret",
+								type: "text",
+								placeholder: me?.options?.localControllerSecret || "********",
+								value: me?.options?.localControllerSecret || "",
+							},
+						]}
+						submitHandler={(params) =>
+							new Promise((resolve) => {
+								setZtOptions(params);
+								refetchUnlinkedNetworks();
+								resolve(true);
+							})
+						}
+					/>
 					<div className="divider mt-0 p-0 text-error"></div>
 					<PrivateRoot />
 				</div>

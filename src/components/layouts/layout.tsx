@@ -21,7 +21,7 @@ interface Props {
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	const router = useRouter();
 	const { data: options, isLoading: loadingRegistration } =
-		api.settings.registrationAllowed.useQuery();
+		api.public.registrationAllowed.useQuery();
 
 	const currentPath = router.pathname;
 	return (

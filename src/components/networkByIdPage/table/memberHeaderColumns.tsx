@@ -45,6 +45,8 @@ const sortingMemberHex = (
 };
 const hexToBigInt = (hex: string) => BigInt(`0x${hex}`);
 const sortIP = (ip: string) => {
+	if (!ip) return BigInt(0);
+
 	if (ip.includes(":")) {
 		const fullAddress = ip
 			.split(":")
@@ -59,6 +61,29 @@ const sortIP = (ip: string) => {
 				.reduce((acc, val) => acc * 256 + val),
 		);
 	}
+};
+const sortingPhysicalIpAddress = (
+	rowA: Row<MemberEntity>,
+	rowB: Row<MemberEntity>,
+): number => {
+	const stripPort = (ip: string) => ip.split("/")[0];
+	const a = rowA.original.peers?.physicalAddress;
+	const b = rowB.original?.peers?.physicalAddress;
+
+	const convertToBigInt = (value: string | string[] | undefined): BigInt => {
+		if (Array.isArray(value)) {
+			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
+		} else {
+			return value?.length ? sortIP(stripPort(value)) : BigInt(0);
+		}
+	};
+
+	const numA = convertToBigInt(a);
+	const numB = convertToBigInt(b);
+
+	if (numA > numB) return 1;
+	if (numA < numB) return -1;
+	return 0;
 };
 const sortingIpAddress = (
 	rowA: Row<MemberEntity>,
@@ -233,7 +258,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					sortDescFirst: true,
 					id: "physicalAddress",
 					sortUndefined: -1,
-					sortingFn: sortingIpAddress,
+					sortingFn: sortingPhysicalIpAddress,
 					cell: ({ getValue, row: { original } }) => {
 						if (central) {
 							const centralPhysicalAddress: string = original?.physicalAddress;

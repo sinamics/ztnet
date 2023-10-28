@@ -1,5 +1,8 @@
 ---
+id: features
 title: Features
+slug: /features
+description: ZTNET features
 ---
 
 

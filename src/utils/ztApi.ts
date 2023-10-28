@@ -24,13 +24,23 @@ import { type MemberEntity } from "~/types/local/member";
 import { type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
+import os from "os";
+
+export let ZT_FOLDER: string;
+export let ZT_FILE: string;
+
+if (os.platform() === "freebsd") {
+	ZT_FOLDER = "/var/db/zerotier-one";
+	ZT_FILE = `${ZT_FOLDER}/authtoken.secret`;
+} else {
+	ZT_FOLDER = "/var/lib/zerotier-one";
+	ZT_FILE = process.env.ZT_SECRET_FILE || `${ZT_FOLDER}/authtoken.secret`;
+}
 
 const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
 let ZT_SECRET = process.env.ZT_SECRET;
-
-const ZT_FILE = process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
 
 if (!ZT_SECRET) {
 	if (process.env.IS_GITHUB_ACTION !== "true") {

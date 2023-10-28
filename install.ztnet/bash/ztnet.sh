@@ -1,0 +1,232 @@
+#!/bin/bash
+
+# Check if the script is run as root (sudo)
+if [[ $EUID -ne 0 ]]; then
+  echo "This script must be run as root (sudo). Exiting."
+  exit 1
+fi
+
+# exit if any command fails
+set -e
+
+INSTALL_DIR="/tmp/ztnet"
+TARGET_DIR="/opt/ztnet"
+NODE_MAJOR=18
+
+ARCH=$(dpkg --print-architecture)
+OS=$(grep -Eoi 'Debian|Ubuntu' /etc/issue)
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+ARCH="$(uname -m)"
+case "$ARCH" in
+    "x86_64")
+        ARCH="amd64"
+        ;;
+    "aarch64")
+        ARCH="arm64"
+        ;;
+    *)
+        echo ">>> Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
+
+while getopts v: option 
+do 
+ case "${option}" 
+ in 
+ v) CUSTOM_VERSION=${OPTARG};;
+ esac 
+done 
+
+if [[ "$(lsb_release -is)" != "Debian" && "$(lsb_release -is)" != "Ubuntu" ]]; then
+  echo "This script is only for Debian and Ubuntu. Exiting."
+  exit 1
+fi
+
+# Show info text to user
+printf "\n\n${YELLOW}Welcome to the installation script.${NC}\n"
+printf "${YELLOW}This script will perform the following actions:${NC}\n"
+printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
+printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
+printf "  3. Clone ztnet repo into /tmp folder and build artifacts .\n"
+printf "  4. Copy artifacts to /opt/ztnet folder.\n"
+printf "${YELLOW}Please note:${NC}\n"
+printf "  - You will have the option to set a custom password for the PostgreSQL user 'postgres'.\n"
+printf "Press space to proceed with the installation..." >&2
+read -n1 -s < /dev/tty
+
+# Function to check if a command exists
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# install git curl openssl
+if ! command_exists git; then
+    sudo apt install git -y
+fi
+
+if ! command_exists curl; then
+    sudo apt install curl -y
+fi
+
+if ! command_exists openssl; then
+    sudo apt install openssl -y
+fi
+
+
+# Remove directories and then recreate the target directory
+rm -rf "$INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
+mkdir -p "$TARGET_DIR"
+
+POSTGRES_PASSWORD="postgres"
+
+# Install PostgreSQL
+if ! command_exists psql; then
+    sudo apt install postgresql postgresql-contrib -y
+    # Ask user if they want to set a custom password for PostgreSQL
+    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
+    printf "yes / no ==> " >&2
+    read setCustomPassword < /dev/tty
+
+    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
+    printf "Enter the custom password: " >&2
+    read POSTGRES_PASSWORD < /dev/tty
+    echo "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';" | sudo -u postgres psql
+    else
+    echo "ALTER USER postgres WITH PASSWORD 'postgres';" | sudo -u postgres psql
+    fi
+fi
+
+# Install Node.js if it's not installed or if installed version is not the number defined in 'NODE_MAJOR' variable
+if ! command_exists node; then
+  INSTALL_NODE=true
+else
+  NODE_VERSION=$(node -v | cut -d 'v' -f 2 | cut -d '.' -f 1)
+  if [ $NODE_VERSION -lt $NODE_MAJOR ]; then
+    INSTALL_NODE=true
+  fi
+fi
+
+if [ "$INSTALL_NODE" = true ]; then
+  sudo apt-get update
+  sudo apt-get install -y ca-certificates curl gnupg
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+  sudo apt-get update
+  sudo apt-get install nodejs -y
+fi
+
+# Install ZeroTier
+curl -s https://install.zerotier.com | sudo bash
+
+# Setup Ztnet
+# Clone Ztnet repository into /opt folder
+if [[ ! -d "$INSTALL_DIR" ]]; then
+  git clone https://github.com/sinamics/ztnet.git $INSTALL_DIR
+  echo "Cloned Ztnet repository."
+else
+  echo "$INSTALL_DIR already exists. Updating the repository."
+  cd $INSTALL_DIR
+  git pull origin main
+fi
+
+cd $INSTALL_DIR
+git fetch --tags
+latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
+git checkout ${CUSTOM_VERSION:-$latestTag}
+npm install
+
+# Copy mkworld binary
+cp "$INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
+
+# File path to the .env file
+env_file="$INSTALL_DIR/.env"
+
+# A function to set or update an environment variable in .env file
+set_env_var() {
+  local key="$1"
+  local value="$2"
+  if grep -qE "^$key=" "$env_file"; then
+    # If key exists, update it
+    sed -i "s|^$key=.*|$key=$value|" "$env_file"
+  else
+    # If key doesn't exist, append it
+    echo "$key=$value" >> "$env_file"
+  fi
+}
+
+# Check if .env file exists, if not create it
+[[ ! -f "$env_file" ]] && touch "$env_file" && echo "Created new .env file"
+
+# Variables with default values
+DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
+ZT_ADDR="http://127.0.0.1:9993"
+NEXT_PUBLIC_SITE_NAME="ZTnet"
+NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
+
+# Set or update environment variables
+set_env_var "DATABASE_URL" "$DATABASE_URL"
+set_env_var "ZT_ADDR" "$ZT_ADDR"
+set_env_var "NEXT_PUBLIC_SITE_NAME" "$NEXT_PUBLIC_SITE_NAME"
+set_env_var "NEXTAUTH_URL" "$NEXTAUTH_URL"
+set_env_var "NEXT_PUBLIC_APP_VERSION" "$NEXT_PUBLIC_APP_VERSION"
+
+# Handle NEXTAUTH_SECRET specifically to retain value
+if ! grep -q "NEXTAUTH_SECRET" "$env_file"; then
+  randomSecret=$(openssl rand -hex 32)
+  set_env_var "NEXTAUTH_SECRET" "$randomSecret"
+  echo "Generated and saved a new NEXTAUTH_SECRET"
+fi
+
+# Populate PostgreSQL and build Next.js
+npx prisma migrate deploy
+npx prisma db seed
+npm run build
+
+# Ensure the target directories exist
+mkdir -p "$TARGET_DIR"
+mkdir -p "$TARGET_DIR/.next/standalone"
+mkdir -p "$TARGET_DIR/prisma"
+
+# Copy relevant files and directories
+cp "$INSTALL_DIR/next.config.mjs" "$TARGET_DIR/"
+cp -r "$INSTALL_DIR/public" "$TARGET_DIR/public"
+cp "$INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
+
+# Copy .next and prisma directories
+cp -a "$INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
+cp -r "$INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
+cp -r "$INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
+
+# Setup systemd service for Ztnet
+cat > /etc/systemd/system/ztnet.service <<EOL
+[Unit]
+Description=ZTnet Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node "$TARGET_DIR/server.js"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOL
+
+# Enable and start the service
+sudo systemctl daemon-reload
+sudo systemctl enable ztnet
+sudo systemctl restart ztnet
+
+# Detect local IP address
+local_ip=$(hostname -I | awk '{print $1}')
+
+rm -rf "$INSTALL_DIR"
+printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${local_ip}:3000${NC}\n"

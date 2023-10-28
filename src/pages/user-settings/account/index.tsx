@@ -45,96 +45,93 @@ const Account = () => {
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
 				<div className="space-y-10">
-					<div>
-						<InputField
-							label={t("account.accountSettings.nameLabel")}
-							isLoading={!session?.user}
-							rootClassName=""
-							size="sm"
-							fields={[
-								{
-									name: "name",
-									type: "text",
-									placeholder: session?.user?.name,
-									value: session?.user?.name,
-								},
-							]}
-							submitHandler={async (params) =>
-								await sessionUpdate({ update: { ...params } })
-							}
-						/>
-					</div>
-					<div>
-						<InputField
-							label={t("account.accountSettings.emailLabel")}
-							isLoading={!session?.user}
-							rootClassName=""
-							size="sm"
-							// badge={
-							// 	session?.user?.emailVerified
-							// 		? {
-							// 				text: t("account.accountSettings.verifiedBadge"),
-							// 				color: "success",
-							// 		  }
-							// 		: {
-							// 				text: t("account.accountSettings.notVerifiedBadge"),
-							// 				color: "warning",
-							// 		  }
-							// }
-							fields={[
-								{
-									name: "email",
-									type: "text",
-									placeholder: session?.user?.email,
-									value: session?.user?.email,
-								},
-							]}
-							submitHandler={async (params) =>
-								await sessionUpdate({ update: { ...params } })
-							}
-						/>
-					</div>
-					<div>
-						<InputField
-							isLoading={!session?.user}
-							label={t("account.accountSettings.passwordLabel")}
-							placeholder="******"
-							size="sm"
-							rootFormClassName="space-y-3 pt-2"
-							fields={[
-								{
-									name: "password",
-									type: "password",
-									placeholder: t("account.accountSettings.currentPasswordPlaceholder"),
-								},
-								{
-									name: "newPassword",
-									type: "password",
-									placeholder: t("account.accountSettings.newPasswordPlaceholder"),
-								},
-								{
-									name: "repeatNewPassword",
-									type: "password",
-									placeholder: t("account.accountSettings.repeatNewPasswordPlaceholder"),
-								},
-							]}
-							submitHandler={(params) => {
-								return new Promise((resolve, reject) => {
-									userUpdate(
-										{ ...params },
-										{
-											onSuccess: () => {
-												resolve(true);
-											},
-											onError: () => {
-												reject(false);
-											},
+					<InputField
+						label={t("account.accountSettings.nameLabel")}
+						isLoading={!session?.user}
+						rootClassName=""
+						size="sm"
+						fields={[
+							{
+								name: "name",
+								type: "text",
+								placeholder: session?.user?.name,
+								value: session?.user?.name,
+							},
+						]}
+						submitHandler={async (params) =>
+							await sessionUpdate({ update: { ...params } })
+						}
+					/>
+
+					<InputField
+						label={t("account.accountSettings.emailLabel")}
+						isLoading={!session?.user}
+						rootClassName=""
+						size="sm"
+						// badge={
+						// 	session?.user?.emailVerified
+						// 		? {
+						// 				text: t("account.accountSettings.verifiedBadge"),
+						// 				color: "success",
+						// 		  }
+						// 		: {
+						// 				text: t("account.accountSettings.notVerifiedBadge"),
+						// 				color: "warning",
+						// 		  }
+						// }
+						fields={[
+							{
+								name: "email",
+								type: "text",
+								placeholder: session?.user?.email,
+								value: session?.user?.email,
+							},
+						]}
+						submitHandler={async (params) =>
+							await sessionUpdate({ update: { ...params } })
+						}
+					/>
+
+					<InputField
+						isLoading={!session?.user}
+						label={t("account.accountSettings.passwordLabel")}
+						placeholder="******"
+						size="sm"
+						rootFormClassName="space-y-3 pt-2"
+						fields={[
+							{
+								name: "password",
+								type: "password",
+								placeholder: t("account.accountSettings.currentPasswordPlaceholder"),
+							},
+							{
+								name: "newPassword",
+								type: "password",
+								placeholder: t("account.accountSettings.newPasswordPlaceholder"),
+							},
+							{
+								name: "repeatNewPassword",
+								type: "password",
+								placeholder: t("account.accountSettings.repeatNewPasswordPlaceholder"),
+							},
+						]}
+						submitHandler={(params) => {
+							return new Promise((resolve, reject) => {
+								userUpdate(
+									{ ...params },
+									{
+										onSuccess: () => {
+											resolve(true);
 										},
-									);
-								});
-							}}
-						/>
-					</div>
+										onError: () => {
+											reject(false);
+										},
+									},
+								);
+							});
+						}}
+					/>
+
 					<div className="flex justify-between">
 						<div>
 							<p className="font-medium">{t("account.accountSettings.role")}</p>
@@ -238,7 +235,7 @@ const Account = () => {
 					<select
 						defaultValue={locale} // use `defaultValue` here
 						onChange={(e) => void ChangeLanguage(e.target.value)}
-						className="select select-bordered"
+						className="select select-bordered select-sm"
 					>
 						{locales.map((language) => (
 							<option key={language} value={language}>
