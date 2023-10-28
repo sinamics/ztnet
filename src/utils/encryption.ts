@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { prisma } from "~/server/db";
 
 const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
@@ -53,3 +54,43 @@ export const decrypt = (text: string, secret: Buffer) => {
 		throw new Error(err);
 	}
 };
+
+type DecryptedTokenData = {
+	userId: number;
+	name: string;
+};
+
+export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTokenData> {
+	// Check if API key is provided
+	if (!apiKey) {
+		throw new Error("API key missing");
+	}
+
+	let decryptedData: DecryptedTokenData;
+
+	// Try decrypting the token
+	try {
+		const decryptedString = decrypt(apiKey, generateInstanceSecret(API_TOKEN_SECRET));
+		decryptedData = JSON.parse(decryptedString);
+	} catch (_error) {
+		throw new Error("Decryption failed");
+	}
+
+	// Validate the decrypted data structure (add more validations as necessary)
+	if (!decryptedData.userId) {
+		throw new Error("Invalid token structure");
+	}
+
+	// Verify if the user exists and has the required role
+	const user = await prisma.user.findFirst({
+		where: {
+			id: decryptedData.userId,
+		},
+	});
+
+	if (!user || user.role !== "ADMIN") {
+		throw new Error("Unauthorized");
+	}
+
+	return decryptedData;
+}

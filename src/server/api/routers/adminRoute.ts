@@ -20,7 +20,12 @@ import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
 import { networkRouter } from "./networkRouter";
-import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	API_TOKEN_SECRET,
+	decrypt,
+	encrypt,
+	generateInstanceSecret,
+} from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
@@ -1016,7 +1021,7 @@ export const adminRouter = createTRPCRouter({
 				userId: ctx.session.user.id,
 			});
 
-			const token_hash = encrypt(token_conent, generateInstanceSecret(SMTP_SECRET));
+			const token_hash = encrypt(token_conent, generateInstanceSecret(API_TOKEN_SECRET));
 			const token = await ctx.prisma.aPIToken.create({
 				data: {
 					token: token_hash,

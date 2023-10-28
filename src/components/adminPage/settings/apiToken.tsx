@@ -7,7 +7,7 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 
 // type UserGroupWithCount = UserGroup & {
 // 	_count: {
@@ -118,7 +118,7 @@ const ApiLables = ({ tokens }) => {
 const ApiToken = () => {
 	const callModal = useModalStore((state) => state.callModal);
 
-	const t = useTranslations("admin");
+	// const t = useTranslations("admin");
 	const { data: apiTokens, refetch } = api.admin.getApiToken.useQuery();
 
 	const { mutate: addToken } = api.admin.addApiToken.useMutation({
