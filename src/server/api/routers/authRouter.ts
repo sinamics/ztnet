@@ -185,6 +185,13 @@ export const authRouter = createTRPCRouter({
 						create: {}, // empty object will make Prisma use the default values from the model
 					},
 				},
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					expiresAt: true,
+					role: true,
+				},
 			});
 
 			// Send admin notification
