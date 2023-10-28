@@ -32,12 +32,37 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+  plugins: [
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: "api", // plugin id
+        docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
+        config: {
+          openapi: { // the <id> referenced when running CLI commands
+            specPath: "docs/Api/_source/openapi.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Api" // output directory for generated files
+            // sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+            //   groupPathsBy: "tag", // group sidebar items by operation "tag"
+            // },
+          },
+          // burgers: {
+          //   specPath: "examples/food/burgers/openapi.yaml",
+          //   outputDir: "api/food/burgers",
+          // }
+        }
+      },
+    ]
+  ],
+  themes: ["docusaurus-theme-openapi-docs"], // export theme components
   presets: [
     [
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          docLayoutComponent: "@theme/DocPage",
+          docItemComponent: "@theme/ApiItem",
           routeBasePath: '/', // Set this value to '/'.
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.

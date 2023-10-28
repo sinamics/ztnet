@@ -997,4 +997,48 @@ export const adminRouter = createTRPCRouter({
 			}
 		}
 	}),
+	getApiToken: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.aPIToken.findMany({
+			where: {
+				userId: ctx.session.user.id,
+			},
+		});
+	}),
+	addApiToken: adminRoleProtectedRoute
+		.input(
+			z.object({
+				name: z.string().min(5).max(50),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const token_conent: string = JSON.stringify({
+				name: input.name,
+				userId: ctx.session.user.id,
+			});
+
+			const token_hash = encrypt(token_conent, generateInstanceSecret(SMTP_SECRET));
+			const token = await ctx.prisma.aPIToken.create({
+				data: {
+					token: token_hash,
+					name: input.name,
+					userId: ctx.session.user.id,
+				},
+			});
+			return token;
+		}),
+
+	deleteApiToken: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.aPIToken.delete({
+				where: {
+					id: input.id,
+					userId: ctx.session.user.id,
+				},
+			});
+		}),
 });

@@ -3,6 +3,7 @@ import crypto from "crypto";
 const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const SMTP_SECRET = "_smtp";
+export const API_TOKEN_SECRET = "_ztnet_api_token";
 
 // Generate instance specific auth secret using salt
 export const generateInstanceSecret = (contextSuffix: string) => {
