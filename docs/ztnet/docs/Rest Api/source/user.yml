@@ -3,13 +3,17 @@ info:
   title: ZTNet Web API
   info_path: restapi/ztnet-web-api
   version: 1.0.0
-  description: Public API for ZTNet application.
+  description: |
+    Public API for ZTNet application.
+    
+    This API is rate-limited to 10 requests per minute
 paths:
   /api/v1/user:
     post:
       summary: Create a new user
       description: |
         If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
+        Keep in mind that first user created will be the admin user.
       security:
         - x-ztnet-auth: []
       requestBody:
@@ -34,6 +38,8 @@ paths:
                   description: |
                     The date and time at which the user's account will expire. If null, the account will never expire.
                     Must be in ISO 8601 format (e.g. 2023-10-28T00:00:00Z).
+
+                    Not applicable if the user is an admin (first user). Admin accounts never expire.
             example:
               email: "test@example.com"
               password: "password123"
@@ -103,4 +109,4 @@ components:
       required: true
       in: header
       name: x-ztnet-auth
-      description: API key required if any users have been created.
+      description: API key can be generated from the ZTNet admin section.
