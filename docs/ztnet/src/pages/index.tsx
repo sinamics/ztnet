@@ -37,7 +37,7 @@ const LandingPage = (): JSX.Element => {
 								<a
 									className="bg-primary bg-primary-outline main-button"
 									title="Goto github project"
-									href="/Installation/docker-compose"
+									href="/installation/docker-compose"
 								>
 									Get Started
 								</a>
