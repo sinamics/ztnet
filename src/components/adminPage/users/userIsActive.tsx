@@ -64,64 +64,51 @@ const UserIsActive = ({ user }: Iuser) => {
 	});
 
 	return (
-		<div className="form-control grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-			<div>
-				<header className="text-sm">
-					{t("users.users.userOptionModal.userAccountLabel")}
-				</header>
-				<select
-					value={user?.isActive ? "Active" : "Disabled"}
-					onChange={(e) => {
-						updateUser(
-							{
-								id: user?.id,
-								params: { isActive: e.target.value === "Active" ? true : false },
-							},
-							{
-								onSuccess: () => {
-									toast.success("User updated successfully");
-								},
-							},
-						);
-					}}
-					className="select select-sm select-bordered select-ghost max-w-xs"
-				>
-					<option value="Active">Active</option>
-					<option value="Disabled">Disabled</option>
-				</select>
-			</div>
-			<div className="col-span-2">
-				<p className="text-sm">{t("users.users.userOptionModal.userExpireLabel")}</p>
-				<div className="flex gap-5">
-					<DatePicker
-						className="bg-gray-500"
-						selected={user.expiresAt}
-						popperPlacement="bottom-start"
-						// popperClassName="absolute"
-						onChange={(date) =>
+		<div>
+			<p className="text-sm text-gray-500">
+				{t("users.users.userOptionModal.account.title")}
+			</p>
+			<div className="form-control grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+				<div>
+					<header className="text-sm">
+						{t("users.users.userOptionModal.account.userAccountLabel")}
+					</header>
+					<select
+						value={user?.isActive ? "Active" : "Disabled"}
+						onChange={(e) => {
 							updateUser(
 								{
 									id: user?.id,
-									params: { expiresAt: date },
+									params: { isActive: e.target.value === "Active" ? true : false },
 								},
 								{
 									onSuccess: () => {
 										toast.success("User updated successfully");
 									},
 								},
-							)
-						}
-						calendarContainer={DateContainer}
-						customInput={<DateButton />}
-					/>
-					{user.expiresAt ? (
-						<button
-							className="btn btn-sm"
-							onClick={() =>
+							);
+						}}
+						className="select select-sm select-bordered select-ghost max-w-xs"
+					>
+						<option value="Active">Active</option>
+						<option value="Disabled">Disabled</option>
+					</select>
+				</div>
+				<div className="col-span-2">
+					<p className="text-sm">
+						{t("users.users.userOptionModal.account.userExpireLabel")}
+					</p>
+					<div className="flex gap-5">
+						<DatePicker
+							className="bg-gray-500"
+							selected={user.expiresAt}
+							popperPlacement="bottom-start"
+							// popperClassName="absolute"
+							onChange={(date) =>
 								updateUser(
 									{
 										id: user?.id,
-										params: { expiresAt: null },
+										params: { expiresAt: date },
 									},
 									{
 										onSuccess: () => {
@@ -130,10 +117,30 @@ const UserIsActive = ({ user }: Iuser) => {
 									},
 								)
 							}
-						>
-							Reset
-						</button>
-					) : null}
+							calendarContainer={DateContainer}
+							customInput={<DateButton />}
+						/>
+						{user.expiresAt ? (
+							<button
+								className="btn btn-sm"
+								onClick={() =>
+									updateUser(
+										{
+											id: user?.id,
+											params: { expiresAt: null },
+										},
+										{
+											onSuccess: () => {
+												toast.success("User updated successfully");
+											},
+										},
+									)
+								}
+							>
+								Reset
+							</button>
+						) : null}
+					</div>
 				</div>
 			</div>
 		</div>

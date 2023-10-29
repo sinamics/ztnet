@@ -367,8 +367,11 @@
 				"userOptionModal": {
 					"userGroupLabel": "Brukergruppe",
 					"userRoleLabel": "Brukerrolle",
-					"userAccountLabel": "Brukerkonto",
-					"userExpireLabel": "Utløpsdato",
+					"account": {
+						"title": "ZTNet utfører en daglig sjekk for utløpte brukere. Hvis en bruker blir funnet å ha utløpt, vil alle tilknyttede noder bli deautorisert, og brukerens konto vil bli deaktivert.",
+						"userAccountLabel": "Kontostatus",
+						"userExpireLabel": "Konto Utløp"
+					},
 					"userActionsLabel": "Brukerhandlinger",
 					"typeUserName": "Skriv inn brukerens navn.",
 					"buttons": {

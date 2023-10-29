@@ -367,8 +367,11 @@
 				"userOptionModal": {
 					"userGroupLabel": "用户组",
 					"userRoleLabel": "用户角色",
-					"userAccountLabel": "用户帐户",
-					"userExpireLabel": "用户过期",
+					"account": {
+						"title": "ZTNet 每天进行一次检查，查找是否有用户已过期。如果发现用户已过期，所有相关的节点将被取消授权，用户帐户将被停用。",
+						"userAccountLabel": "账户状态",
+						"userExpireLabel": "账户到期"
+					},
 					"userActionsLabel": "用户操作",
 					"typeUserName": "输入用户的名称。",
 					"buttons": {
