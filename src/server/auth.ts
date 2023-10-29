@@ -79,6 +79,12 @@ export const authOptions: NextAuthOptions = {
 					throw new Error("email or password is wrong!");
 				}
 
+				if (!user.isActive) {
+					throw new Error(
+						"Account has been disabled. Contact an administrator to reactivate your account.",
+					);
+				}
+
 				return {
 					...user,
 					hash: null,
@@ -171,7 +177,7 @@ export const authOptions: NextAuthOptions = {
 				where: { id: token.id },
 			});
 
-			if (!user) {
+			if (!user || !user.isActive) {
 				// If the user does not exist, set user to null
 				return { ...session, user: null };
 			}

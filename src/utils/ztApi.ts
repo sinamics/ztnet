@@ -25,6 +25,7 @@ import { type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
 import os from "os";
+import { prisma } from "~/server/db";
 
 export let ZT_FOLDER: string;
 export let ZT_FILE: string;
@@ -64,7 +65,7 @@ const getApiCredentials = async (
 	localControllerSecret: string | null;
 	localControllerUrl: string | null;
 }> => {
-	const userWithOptions = await ctx.prisma.user.findFirst({
+	const userWithOptions = await prisma.user.findFirst({
 		where: {
 			id: ctx.session.user.id,
 		},
