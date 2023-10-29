@@ -10,7 +10,7 @@ type FakeContext = {
 	};
 };
 
-const CheckExpiredUsers = async () => {
+export const CheckExpiredUsers = async () => {
 	new cron.CronJob(
 		// "*/10 * * * * *", // every 10 seconds ( testing )
 		"0 0 0 * * *", // 12:00:00 AM (midnight) every day
@@ -87,5 +87,3 @@ const CheckExpiredUsers = async () => {
 		"America/Los_Angeles",
 	);
 };
-
-await CheckExpiredUsers();

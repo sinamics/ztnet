@@ -1,5 +1,8 @@
 export async function register() {
 	if (process.env.NEXT_RUNTIME === "nodejs") {
-		await import("./cronTasks");
+		const cronTasksModule = await import("./cronTasks");
+		if (cronTasksModule.CheckExpiredUsers) {
+			cronTasksModule.CheckExpiredUsers();
+		}
 	}
 }
