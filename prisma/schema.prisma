@@ -176,6 +176,17 @@ model UserGroup {
   users         User[] 
 }
 
+model APIToken {
+  id          Int       @id @default(autoincrement())
+  name        String
+  token       String    @unique
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime? // null means it never expires
+  isActive    Boolean   @default(true)
+}
+
 model User {
     id                                    Int               @id @default(autoincrement())
     name                                  String
@@ -196,12 +207,15 @@ model User {
     tempPassword                          String?
     firstTime                             Boolean           @default(true)
     userGroupId                           Int?
+    expiresAt                             DateTime? // null means it never expires
+    isActive                              Boolean           @default(true)
 
     userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
     options         UserOptions?
     accounts        Account[]
     sessions        Session[]
     network         network[]
+    apiTokens       APIToken[]
 }
 
 model VerificationToken {

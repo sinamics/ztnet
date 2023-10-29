@@ -193,7 +193,7 @@ const UserGroups = () => {
 
 	return (
 		<div className="space-y-5">
-			<div className="">
+			<div>
 				<p className="text-sm text-gray-500">{t("users.groups.description")}</p>
 			</div>
 			<InputFields

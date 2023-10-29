@@ -272,6 +272,30 @@
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
 				"description": "Tilpass teksten som vises på innloggings- og registreringssidene dine for å bedre samsvare med merkevaren din eller gi spesifikke instruksjoner til brukerne dine."
+			},
+			"restapi": {
+				"sectionTitle": "API-tilgangstokens",
+				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Legg til et meningsfylt navn på tokenet ditt",
+						"placeholder": "Mitt fantastiske token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generer token",
+					"cancle": "Slett token"
+				},
+				"response": {
+					"title": "Klikk på tokenet for å kopiere det",
+					"info": "Dette tokenet vil bare vises en gang. Vennligst kopier det nå!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Slett token",
+						"description": "Er du sikker på at du vil slette dette tokenet? Dette kan ikke angres."
+					}
+				}
 			}
 		},
 		"mail": {
@@ -343,6 +367,8 @@
 				"userOptionModal": {
 					"userGroupLabel": "Brukergruppe",
 					"userRoleLabel": "Brukerrolle",
+					"userAccountLabel": "Brukerkonto",
+					"userExpireLabel": "Utløpsdato",
 					"userActionsLabel": "Brukerhandlinger",
 					"typeUserName": "Skriv inn brukerens navn.",
 					"buttons": {

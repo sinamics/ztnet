@@ -135,7 +135,7 @@ const Account = () => {
 					<div className="flex justify-between">
 						<div>
 							<p className="font-medium">{t("account.accountSettings.role")}</p>
-							<p className="text-gray-500">{session?.user.role}</p>
+							<p className="text-gray-500">{session?.user?.role}</p>
 						</div>
 					</div>
 				</div>

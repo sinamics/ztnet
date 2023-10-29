@@ -51,12 +51,13 @@ export const authRouter = createTRPCRouter({
 					.transform((val) => val.trim()),
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3).max(40),
+				expiresAt: z.string().optional(),
 				code: z.string().optional(),
 				token: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name, code, token } = input;
+			const { email, password, name, code, token, expiresAt } = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
@@ -175,6 +176,7 @@ export const authRouter = createTRPCRouter({
 				data: {
 					name,
 					email,
+					expiresAt,
 					lastLogin: new Date().toISOString(),
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
@@ -182,6 +184,13 @@ export const authRouter = createTRPCRouter({
 					options: {
 						create: {}, // empty object will make Prisma use the default values from the model
 					},
+				},
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					expiresAt: true,
+					role: true,
 				},
 			});
 
