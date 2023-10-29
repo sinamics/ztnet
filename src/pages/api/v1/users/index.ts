@@ -3,19 +3,41 @@ import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
+import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import rateLimit from "~/utils/rateLimit";
+
+// Number of allowed requests per minute
+const limiter = rateLimit({
+	interval: 60 * 1000, // 60 seconds
+	uniqueTokenPerInterval: 500, // Max 500 users per second
+});
+
+const REQUEST_PR_MINUTE = 10;
 
 export default async function createUserHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
-	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
-	const apiKey = req.headers["x-zt1-auth"] as string;
-
 	try {
-		await decryptAndVerifyToken(apiKey);
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
+		await limiter.check(res, REQUEST_PR_MINUTE, "CREATE_USER_CACHE_TOKEN"); // 10 requests per minute
+	} catch {
+		res.status(429).json({ error: "Rate limit exceeded" });
+	}
+
+	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
+	const apiKey = req.headers["x-ztnet-auth"] as string;
+
+	// Count the number of users in database
+	const userCount = await prisma.user.count();
+
+	if (userCount > 0) {
+		// If there are users, verify the API key
+		try {
+			await decryptAndVerifyToken(apiKey);
+		} catch (error) {
+			return res.status(401).json({ error: error.message });
+		}
 	}
 
 	// Create context and caller
