@@ -367,8 +367,11 @@
 				"userOptionModal": {
 					"userGroupLabel": "Grupo de usuarios",
 					"userRoleLabel": "Rol de usuario",
-					"userAccountLabel": "Cuenta de usuario",
-					"userExpireLabel": "Expirar usuario",
+					"account": {
+						"title": "ZTNet realiza una revisión diaria para encontrar usuarios expirados. Si se encuentra que un usuario ha expirado, todos los pares asociados serán desautorizados y la cuenta del usuario se desactivará.",
+						"userAccountLabel": "Estado de la Cuenta",
+						"userExpireLabel": "Expiración de la Cuenta"
+					},
 					"userActionsLabel": "Acciones del usuario",
 					"typeUserName": "Escribe el nombre del usuario.",
 					"buttons": {

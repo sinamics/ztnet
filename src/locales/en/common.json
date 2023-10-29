@@ -367,8 +367,11 @@
 				"userOptionModal": {
 					"userGroupLabel": "User Group",
 					"userRoleLabel": "User Role",
-					"userAccountLabel": "Account Status",
-					"userExpireLabel": "Account Expiration",
+					"account": {
+						"title": "ZTNet performs a daily check for expired users. If a user is found to be expired, all associated peers will be de-authorized, and the user's account will be deactivated.",
+						"userAccountLabel": "Account Status",
+						"userExpireLabel": "Account Expiration"
+					},
 					"userActionsLabel": "User Actions",
 					"typeUserName": "Type the name of the user.",
 					"buttons": {
