@@ -272,6 +272,30 @@
 			"publicPages": {
 				"sectionTitle": "Public Pages",
 				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
+			},
+			"restapi": {
+				"sectionTitle": "API Access Tokens",
+				"description": "API access tokens are used to access the ZTNET Public API.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Add a meaningful name to your token",
+						"placeholder": "My awesome token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generate Token",
+					"cancle": "Delete Token"
+				},
+				"response": {
+					"title": "Click the token to Copy",
+					"info": "This token will only be shown once. Please copy it now!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Delete Token",
+						"description": "Are you sure you want to delete this token? This cannot be undone."
+					}
+				}
 			}
 		},
 		"mail": {
@@ -343,6 +367,8 @@
 				"userOptionModal": {
 					"userGroupLabel": "User Group",
 					"userRoleLabel": "User Role",
+					"userAccountLabel": "Account Status",
+					"userExpireLabel": "Account Expiration",
 					"userActionsLabel": "User Actions",
 					"typeUserName": "Type the name of the user.",
 					"buttons": {

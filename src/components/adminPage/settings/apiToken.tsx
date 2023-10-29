@@ -6,18 +6,11 @@ import toast from "react-hot-toast";
 import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
-// import { useTranslations } from "next-intl";
-
-// type UserGroupWithCount = UserGroup & {
-// 	_count: {
-// 		users: number;
-// 	};
-// };
+import { useTranslations } from "next-intl";
 
 const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
-	// const t = useTranslations("admin");
+	const t = useTranslations("admin");
 
 	const { refetch } = api.admin.getApiToken.useQuery();
 
@@ -27,7 +20,6 @@ const ApiLables = ({ tokens }) => {
 			if ((error.data as ErrorData)?.zodError) {
 				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
 				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
 					toast.error(`${fieldErrors[field].join(", ")}`);
 				}
 			} else if (error.message) {
@@ -37,7 +29,7 @@ const ApiLables = ({ tokens }) => {
 			}
 		},
 		onSuccess: () => {
-			toast.success("Group deleted successfully");
+			toast.success("Token deleted successfully");
 			refetch();
 		},
 	});
@@ -51,7 +43,6 @@ const ApiLables = ({ tokens }) => {
 					>
 						<div
 							onClick={() => {
-								// open modal
 								callModal({
 									title: <p>Token Info</p>,
 									rootStyle: "text-left",
@@ -92,8 +83,8 @@ const ApiLables = ({ tokens }) => {
 								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
 								onClick={() => {
 									callModal({
-										title: "Delete Token",
-										description: "Are you sure you want to delete this API token?",
+										title: t("settings.restapi.modals.deleteToken.title"),
+										description: t("settings.restapi.modals.deleteToken.description"),
 										yesAction: () => {
 											deleteToken({
 												id: token.id,
@@ -118,7 +109,7 @@ const ApiLables = ({ tokens }) => {
 const ApiToken = () => {
 	const callModal = useModalStore((state) => state.callModal);
 
-	// const t = useTranslations("admin");
+	const t = useTranslations("admin");
 	const { data: apiTokens, refetch } = api.admin.getApiToken.useQuery();
 
 	const { mutate: addToken } = api.admin.addApiToken.useMutation({
@@ -142,22 +133,19 @@ const ApiToken = () => {
 
 	return (
 		<div className="space-y-5">
-			{/* <div className="">
-				<p className="text-sm text-gray-500">TEst</p>
-			</div> */}
 			<InputFields
 				label="Api Token"
 				rootFormClassName="flex flex-col space-y-2"
 				size="sm"
 				placeholder=""
-				buttonText="Create Token"
+				buttonText={t("settings.restapi.buttons.submitToken")}
 				fields={[
 					{
 						name: "name",
 						type: "text",
 						elementType: "input",
-						placeholder: "my awesome token",
-						description: "Add a meaningful name to your token",
+						placeholder: t("settings.restapi.inputFields.tokenName.placeholder"),
+						description: t("settings.restapi.inputFields.tokenName.label"),
 					},
 				]}
 				submitHandler={(params) =>
@@ -169,8 +157,6 @@ const ApiToken = () => {
 							{
 								onSuccess: (response) => {
 									callModal({
-										// title: "Token Created",
-										// description: "This will only be shown once. Please copy it now!",
 										content: (
 											<CopyToClipboard
 												text={response.token}
@@ -179,9 +165,11 @@ const ApiToken = () => {
 											>
 												<div className="flex flex-col items-center space-y-2 max-w-3/6">
 													<p className="text-sm text-gray-300">
-														This token will only be shown once. Please copy it now!
+														{t("settings.restapi.response.info")}
 													</p>
-													<p className="text-sm text-gray-300">Click the token to Copy</p>
+													<p className="text-sm text-gray-300">
+														{t("settings.restapi.response.title")}
+													</p>
 													<p className="text-sm text-gray-500 break-all">
 														<span className="text-primary cursor-pointer">
 															{response.token}

@@ -40,8 +40,8 @@ const config = {
         docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
         config: {
           user: { // the <id> referenced when running CLI commands
-            specPath: "docs/Api/user/api.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Api" // output directory for generated files
+            specPath: "docs/Rest Api/source/user.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api" // output directory for generated files
           },
         }
       },
