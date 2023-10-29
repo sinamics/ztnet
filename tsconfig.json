@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "docs",
+    "install.ztnet",
     ".next"
   ]
 }

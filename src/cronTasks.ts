@@ -12,8 +12,8 @@ type FakeContext = {
 
 const CheckExpiredUsers = async () => {
 	new cron.CronJob(
-		"*/10 * * * * *",
-		// "0 0 0 * * *",
+		// "*/10 * * * * *", // every 10 seconds ( testing )
+		"0 0 0 * * *", // 12:00:00 AM (midnight) every day
 		async () => {
 			const expUsers = await prisma.user.findMany({
 				where: {
