@@ -21,9 +21,12 @@ import Export from "@theme/ApiDemoPanel/Export";
 
 Public API for ZTNet application.
 
+This API is rate-limited to 10 requests per minute
+
+
 <div style={{"marginBottom":"2rem"}}><h2 id={"authentication"} style={{"marginBottom":"1rem"}}>Authentication</h2><SchemaTabs className={"openapi-tabs__security-schemes"}><TabItem label={"API Key: x-ztnet-auth"} value={"x-ztnet-auth"}>
 
-API key required if any users have been created.
+API key can be generated from the ZTNet admin section.
 
 <div><table><tbody><tr><th>Security Scheme Type:</th><td>apiKey</td></tr><tr><th>Header parameter name:</th><td>x-ztnet-auth</td></tr></tbody></table></div></TabItem></SchemaTabs></div>
       
