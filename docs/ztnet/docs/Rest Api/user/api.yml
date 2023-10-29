@@ -1,0 +1,105 @@
+openapi: 3.1.0
+info:
+  title: ZTNet Web API
+  version: 1.0.0
+  description: API for managing users in a ZTNet application.
+paths:
+  /api/v1/user:
+    post:
+      summary: Create a new user
+      description: |
+        If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
+      security:
+        - x-ztnet-auth: []
+      requestBody:
+        # required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                expiresAt:
+                  type: string | null
+                  description: |
+                    The date and time at which the user's account will expire. If null, the account will never expire.
+                    Must be in ISO 8601 format (e.g. 2023-10-28T00:00:00Z).
+            example:
+              email: "test@example.com"
+              password: "password123"
+              name: "Test User"
+              expiresAt: "2023-10-28T00:00:00Z"
+      # parameters:
+      #   - name: x-ztnet-auth
+      #     in: header
+      #     required: true
+      #     schema:
+      #       type: string
+      #     description: API key required if any users have been created.
+          
+      responses:
+        200:
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  expiresAt:
+                    type: string
+                example:
+                  id: "12345"
+                  email: "test@example.com"
+                  name: "Test User"
+                  expiresAt: "2023-10-28T00:00:00Z"
+
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  securitySchemes:
+    x-ztnet-auth:
+      type: apiKey
+      required: true
+      in: header
+      name: x-ztnet-auth
+      description: API key required if any users have been created.

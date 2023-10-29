@@ -10,5 +10,8 @@
     "editor.tabSize": 2,
     "[typescriptreact]": {
         "editor.defaultFormatter": "rome.rome"
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json": "file:///workspaces/docs/ztnet/docs/Api/user/api.yml"
     }
 }
