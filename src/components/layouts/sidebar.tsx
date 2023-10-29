@@ -156,7 +156,7 @@ const Sidebar = (): JSX.Element => {
 							</Link>
 						</li>
 					) : null}
-					{session?.user.role === "ADMIN" ? (
+					{session?.user?.role === "ADMIN" ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">

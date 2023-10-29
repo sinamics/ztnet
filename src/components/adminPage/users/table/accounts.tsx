@@ -94,6 +94,14 @@ export const Accounts = () => {
 					return userGroup?.name ?? "None";
 				},
 			}),
+			columnHelper.accessor("isActive", {
+				header: () => <span>Account</span>,
+				id: "isActive",
+				minSize: 80,
+				cell: ({ getValue }) => {
+					return getValue() ? "Active" : "Disabled";
+				},
+			}),
 			columnHelper.accessor("role", {
 				header: () => <span>{t("users.users.table.role")}</span>,
 				id: "role",

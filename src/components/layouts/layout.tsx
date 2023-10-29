@@ -50,6 +50,7 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 };
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
+	// if not session.user redirect to login
 	const { open } = useSidebarStore();
 	return (
 		<div className="outer-content">

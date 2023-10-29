@@ -33,6 +33,40 @@ import { isRunningInDocker } from "~/utils/docker";
 type WithError<T> = T & { error?: boolean; message?: string };
 
 export const adminRouter = createTRPCRouter({
+	updateUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+				params: z.object({
+					isActive: z.boolean().optional(),
+					expiresAt: z.date().nullable().optional(),
+				}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.id) {
+				throwError("You can't change your own status");
+			}
+
+			// get user and validate that is not a admin user
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+			if (user.role === "ADMIN") {
+				throwError("You can't change the status of admin users");
+			}
+
+			return await ctx.prisma.user.update({
+				where: {
+					id: input.id,
+				},
+				data: {
+					...input.params,
+				},
+			});
+		}),
 	deleteUser: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -89,6 +123,8 @@ export const adminRouter = createTRPCRouter({
 					},
 					userGroup: true,
 					userGroupId: true,
+					isActive: true,
+					expiresAt: true,
 				},
 
 				where: {
@@ -120,6 +156,7 @@ export const adminRouter = createTRPCRouter({
 					},
 					userGroup: true,
 					userGroupId: true,
+					isActive: true,
 				},
 
 				where: input.isAdmin ? { role: "ADMIN" } : undefined,
@@ -248,6 +285,8 @@ export const adminRouter = createTRPCRouter({
 					? {
 							role: role as Role,
 							userGroupId: null,
+							expiresAt: null,
+							isActive: true,
 					  }
 					: {
 							role: role as Role,
