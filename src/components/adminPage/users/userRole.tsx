@@ -59,9 +59,6 @@ const UserRole = ({ user }: Iuser) => {
 
 	return (
 		<div className="form-control w-full max-w-xs">
-			{/* <label className="label">
-				<span className="label-text text-gray-500">Change the user Role</span>
-			</label> */}
 			<select
 				value={user?.role as string}
 				onChange={(e) => dropDownHandler(e, user?.id)}

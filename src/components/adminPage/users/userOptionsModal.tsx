@@ -7,6 +7,7 @@ import UserRole from "./userRole";
 import UserGroup from "./userGroup";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
+import UserIsActive from "./userIsActive";
 
 interface Iprops {
 	userId: number;
@@ -85,15 +86,24 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 			<div className={cn({ "opacity-30": userDeleteLoading })}>
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-4">
-						<header>{t("users.users.userOptionModal.userGroupLabel")}</header>
+						<header className="text-sm">
+							{t("users.users.userOptionModal.userGroupLabel")}
+						</header>
 						<UserGroup user={user} />
 					</div>
 					<div className="col-span-4">
-						<header>{t("users.users.userOptionModal.userRoleLabel")}</header>
+						<header className="text-sm">
+							{t("users.users.userOptionModal.userRoleLabel")}
+						</header>
 						<UserRole user={user} />
 					</div>
-					<div className="col-span-4 space-y-4">
-						<header>{t("users.users.userOptionModal.userActionsLabel")}</header>
+					<div className="col-span-4">
+						<UserIsActive user={user} />
+					</div>
+					<div className="col-span-4 ">
+						<header className="text-sm">
+							{t("users.users.userOptionModal.userActionsLabel")}
+						</header>
 						{deleted ? (
 							<form>
 								<input

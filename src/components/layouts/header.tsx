@@ -84,10 +84,10 @@ const Header = () => {
 					</div>
 					<span className="ml-2 flex flex-col justify-center">
 						<span className="truncate font-semibold leading-none tracking-wide">
-							{session.data?.user.name}
+							{session.data?.user?.name}
 						</span>
 						<span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-							{session.data?.user.role}
+							{session.data?.user?.role}
 						</span>
 					</span>
 					{/* </a> */}
