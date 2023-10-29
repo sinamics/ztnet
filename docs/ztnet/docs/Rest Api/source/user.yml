@@ -1,8 +1,9 @@
 openapi: 3.1.0
 info:
   title: ZTNet Web API
+  info_path: restapi/ztnet-web-api
   version: 1.0.0
-  description: API for managing users in a ZTNet application.
+  description: Public API for ZTNet application.
 paths:
   /api/v1/user:
     post:

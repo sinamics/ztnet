@@ -1,11 +1,10 @@
 import { User } from "@prisma/client";
-// import { useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import React, { ForwardedRef, forwardRef, MouseEvent } from "react";
 import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import DatePicker from "react-datepicker";
-// import { useModalStore } from "~/utils/store";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface Iuser {
@@ -35,7 +34,7 @@ const DateButton = forwardRef<HTMLButtonElement, DateButtonProps>(
 );
 
 const UserIsActive = ({ user }: Iuser) => {
-	// const t = useTranslations("admin");
+	const t = useTranslations("admin");
 	// Updates this modal as it uses key "getUser"
 	// !TODO should rework to update local cache instead.. but this works for now
 	const { refetch: refetchUser } = api.admin.getUser.useQuery({
@@ -67,7 +66,9 @@ const UserIsActive = ({ user }: Iuser) => {
 	return (
 		<div className="form-control grid grid-cols-1 md:grid-cols-3 gap-10 relative">
 			<div>
-				<header className="text-sm">Account Active</header>
+				<header className="text-sm">
+					{t("users.users.userOptionModal.userAccountLabel")}
+				</header>
 				<select
 					value={user?.isActive ? "Active" : "Disabled"}
 					onChange={(e) => {
@@ -90,7 +91,7 @@ const UserIsActive = ({ user }: Iuser) => {
 				</select>
 			</div>
 			<div className="col-span-2">
-				<p className="text-sm">Expire date</p>
+				<p className="text-sm">{t("users.users.userOptionModal.userExpireLabel")}</p>
 				<div className="flex gap-5">
 					<DatePicker
 						className="bg-gray-500"
