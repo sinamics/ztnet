@@ -27,5 +27,5 @@ export async function seedUserOptions() {
 		}
 	}
 	// rome-ignore lint/nursery/noConsoleLog: <explanation>
-	console.log("Seeding User Options complete!");
+	console.log("Seeding:: User Options complete!");
 }
