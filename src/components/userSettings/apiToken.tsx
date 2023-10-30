@@ -160,7 +160,7 @@ const ApiToken = () => {
 										content: (
 											<CopyToClipboard
 												text={response.token}
-												onCopy={() => toast.success("successfully copied")}
+												onCopy={() => toast.success("Token copied")}
 												title="Copied to clipboard"
 											>
 												<div className="flex flex-col items-center space-y-2 max-w-3/6">

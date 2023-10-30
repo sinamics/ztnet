@@ -39,10 +39,27 @@ const config = {
         id: "api", // plugin id
         docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
         config: {
+          // info: { // the <id> referenced when running CLI commands
+          //   specPath: "docs/Rest Api/info.yml", // path to OpenAPI spec, URLs supported
+          //   outputDir: "docs/Rest Api", // output directory for generated files
+          //   sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+          //     groupPathsBy: "tag", // group sidebar items by operation "tag"
+          //   },
+          // },
           user: { // the <id> referenced when running CLI commands
-            specPath: "docs/Rest Api/source/user.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api" // output directory for generated files
+            specPath: "docs/Rest Api/_source/User.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/user", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
           },
+          network: { // the <id> for network
+            specPath: "docs/Rest Api/_source/Network.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/network", // output directory for network files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          }
         }
       },
     ]

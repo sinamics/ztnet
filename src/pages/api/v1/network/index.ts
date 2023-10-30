@@ -1,8 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { appRouter } from "~/server/api/root";
-import { createTRPCContext } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
@@ -15,7 +13,7 @@ const limiter = rateLimit({
 
 const REQUEST_PR_MINUTE = 10;
 
-export default async function createUserHandler(
+export default async function createNetworkHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
@@ -25,37 +23,35 @@ export default async function createUserHandler(
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
 
-	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
+	if (req.method !== "GET") return res.status(405).end(); // Method Not Allowed
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	// Count the number of users in database
-	const userCount = await prisma.user.count();
-
-	if (userCount > 0) {
-		// If there are users, verify the API key
-		try {
-			await decryptAndVerifyToken(apiKey);
-		} catch (error) {
-			return res.status(401).json({ error: error.message });
-		}
+	let decryptedData;
+	// If there are users, verify the API key
+	try {
+		decryptedData = await decryptAndVerifyToken(apiKey);
+	} catch (error) {
+		return res.status(401).json({ error: error.message });
 	}
 
-	// Create context and caller
-	const ctx = await createTRPCContext({ req, res });
-	const caller = appRouter.createCaller(ctx);
-
-	// get data from the post request
-	const { email, password, name, expiresAt } = req.body;
-
 	try {
-		const user = await caller.auth.register({
-			email: email as string,
-			password: password as string,
-			name: name as string,
-			expiresAt: expiresAt as string,
+		const user = await prisma.user.findFirst({
+			where: {
+				id: decryptedData.userId,
+			},
+			select: {
+				network: {
+					select: {
+						nwid: true,
+					},
+				},
+			},
 		});
 
-		return res.status(200).json(user);
+		// create array of only the nwid values
+		const nwids = user?.network.map((nw) => nw.nwid);
+
+		return res.status(200).json(nwids);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);

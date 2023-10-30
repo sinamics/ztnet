@@ -1067,7 +1067,6 @@ export const adminRouter = createTRPCRouter({
 			const token_content: string = JSON.stringify({
 				name: input.name,
 				userId: ctx.session.user.id,
-				issuedAt: Date.now(),
 			});
 
 			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
