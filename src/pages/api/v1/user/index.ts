@@ -25,7 +25,18 @@ export default async function createUserHandler(
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
 
-	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
+	// create a switch based on the HTTP method
+	switch (req.method) {
+		case "POST":
+			await createUserPostSchema(req, res);
+			break;
+		default: // Method Not Allowed
+			res.status(405).end();
+			break;
+	}
+}
+
+const createUserPostSchema = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	// Count the number of users in database
@@ -68,4 +79,4 @@ export default async function createUserHandler(
 		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
-}
+};
