@@ -23,6 +23,18 @@ export default async function createNetworkHandler(
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
 
+	// create a switch based on the HTTP method
+	switch (req.method) {
+		case "GET":
+			await getUserNetworks(req, res);
+			break;
+		default: // Method Not Allowed
+			res.status(405).end();
+			break;
+	}
+}
+
+const getUserNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method !== "GET") return res.status(405).end(); // Method Not Allowed
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
@@ -64,4 +76,4 @@ export default async function createNetworkHandler(
 		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
-}
+};
