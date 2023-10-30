@@ -55,9 +55,9 @@ paths:
 
                     Not applicable if the user is an admin (first user). Admin accounts never expire.
             example:
-              email: "test@example.com"
-              password: "password123"
-              name: "Test User"
+              email: "post@ztnet.network"
+              password: "strong_password"
+              name: "Ztnet User"
               expiresAt: "2023-10-28T00:00:00Z"
       # parameters:
       #   - name: x-ztnet-auth

@@ -40,10 +40,17 @@ paths:
                 properties:
                   error:
                     type: string
-        405:
-          description: Method Not Allowed
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         500:
-          description: Internal Server Error
+          description: Internal server error
           content:
             application/json:
               schema:
@@ -68,9 +75,13 @@ paths:
           application/json:
             schema:
               type: object
+              # required:
+              #   - name
               properties:
                 name:
-                  type: string | null
+                  type:
+                    - string
+                  required: false
                   description: Name of the network. If not provided, a random name will be generated.
       responses:
         200:
@@ -91,8 +102,17 @@ paths:
                 properties:
                   error:
                     type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
         500:
-          description: Internal Server Error
+          description: Internal server error
           content:
             application/json:
               schema:

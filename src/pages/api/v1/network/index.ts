@@ -45,7 +45,7 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 
 	// If there are users, verify the API key
 	try {
-		decryptedData = await decryptAndVerifyToken(apiKey);
+		decryptedData = await decryptAndVerifyToken({ apiKey });
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
@@ -71,10 +71,11 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 const GET_userNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	let decryptedData;
+	let decryptedData: { userId: string; name?: string };
 	// If there are users, verify the API key
+
 	try {
-		decryptedData = await decryptAndVerifyToken(apiKey);
+		decryptedData = await decryptAndVerifyToken({ apiKey });
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}

@@ -60,7 +60,15 @@ type DecryptedTokenData = {
 	name: string;
 };
 
-export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTokenData> {
+type VerifyToken = {
+	apiKey: string;
+	requireAdmin?: boolean;
+};
+
+export async function decryptAndVerifyToken({
+	apiKey,
+	requireAdmin = false,
+}: VerifyToken): Promise<DecryptedTokenData> {
 	// Check if API key is provided
 	if (!apiKey) {
 		throw new Error("API key missing");
@@ -88,7 +96,11 @@ export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTo
 		},
 	});
 
-	if (!user || user.role !== "ADMIN") {
+	if (!user) {
+		throw new Error("Unauthorized");
+	}
+
+	if (user.role !== "ADMIN" && requireAdmin) {
 		throw new Error("Unauthorized");
 	}
 

@@ -12,10 +12,10 @@ const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
 	const t = useTranslations("userSettings");
 
-	const { refetch } = api.admin.getApiToken.useQuery();
+	const { refetch } = api.auth.getApiToken.useQuery();
 
 	const { callModal } = useModalStore((state) => state);
-	const { mutate: deleteToken } = api.admin.deleteApiToken.useMutation({
+	const { mutate: deleteToken } = api.auth.deleteApiToken.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
 				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
@@ -110,9 +110,9 @@ const ApiToken = () => {
 	const callModal = useModalStore((state) => state.callModal);
 
 	const t = useTranslations("userSettings");
-	const { data: apiTokens, refetch } = api.admin.getApiToken.useQuery();
+	const { data: apiTokens, refetch } = api.auth.getApiToken.useQuery();
 
-	const { mutate: addToken } = api.admin.addApiToken.useMutation({
+	const { mutate: addToken } = api.auth.addApiToken.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
 				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;

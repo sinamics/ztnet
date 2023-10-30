@@ -39,13 +39,15 @@ export default async function createUserHandler(
 const createUserPostSchema = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
+	const NEEDS_ADMIN = true;
+
 	// Count the number of users in database
 	const userCount = await prisma.user.count();
 
 	if (userCount > 0) {
 		// If there are users, verify the API key
 		try {
-			await decryptAndVerifyToken(apiKey);
+			await decryptAndVerifyToken({ apiKey, requireAdmin: NEEDS_ADMIN });
 		} catch (error) {
 			return res.status(401).json({ error: error.message });
 		}
