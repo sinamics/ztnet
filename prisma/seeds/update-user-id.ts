@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 export async function updateUserId() {
 	const users = await prisma.user.findMany();
 	for (const user of users) {
-		if (Number.isInteger(Number(user.id))) {
+		if (Number.isInteger(Number(user.id.trim()))) {
 			const newId = createId();
 			// Create temporary unique email
 			const newEmail = `${user.email}_temp`;
