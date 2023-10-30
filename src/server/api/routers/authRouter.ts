@@ -428,7 +428,7 @@ export const authRouter = createTRPCRouter({
 
 			try {
 				interface IJwt {
-					id: number;
+					id: string;
 					token: string;
 				}
 				const { id } = jwt.decode(token) as IJwt;

@@ -36,7 +36,7 @@ export const adminRouter = createTRPCRouter({
 	updateUser: adminRoleProtectedRoute
 		.input(
 			z.object({
-				id: z.number(),
+				id: z.string(),
 				params: z.object({
 					isActive: z.boolean().optional(),
 					expiresAt: z.date().nullable().optional(),
@@ -70,16 +70,17 @@ export const adminRouter = createTRPCRouter({
 	deleteUser: adminRoleProtectedRoute
 		.input(
 			z.object({
-				id: z.number(),
+				id: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			if (ctx.session.user.id === input.id) {
 				throwError("You can't delete your own account");
 			}
-			if (input.id === 1) {
-				throwError("You can't delete the user who created the first account");
-			}
+			//!TODO add creator to db
+			// if (input.id === 1) {
+			// 	throwError("You can't delete the user who created the first account");
+			// }
 			// get user networks
 			const userNetworks = await ctx.prisma.network.findMany({
 				where: {
@@ -102,7 +103,7 @@ export const adminRouter = createTRPCRouter({
 	getUser: adminRoleProtectedRoute
 		.input(
 			z.object({
-				userId: z.number(),
+				userId: z.string(),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -269,7 +270,7 @@ export const adminRouter = createTRPCRouter({
 					message: "Role is not valid",
 					path: ["role"],
 				}),
-				id: z.number(),
+				id: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -636,7 +637,7 @@ export const adminRouter = createTRPCRouter({
 				// Use upsert to either update or create a new userGroup
 				return await ctx.prisma.userGroup.upsert({
 					where: {
-						id: input.id || -1, // If no ID is provided, it assumes -1 which likely doesn't exist (assuming positive autoincrementing IDs)
+						id: input.id || -1,
 					},
 					create: {
 						name: input.groupName,
@@ -718,7 +719,7 @@ export const adminRouter = createTRPCRouter({
 	assignUserGroup: adminRoleProtectedRoute
 		.input(
 			z.object({
-				userid: z.number(),
+				userid: z.string(),
 				userGroupId: z.string().nullable(), // Allow null value for userGroupId
 			}),
 		)
@@ -1055,12 +1056,13 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const token_conent: string = JSON.stringify({
+			const token_content: string = JSON.stringify({
 				name: input.name,
 				userId: ctx.session.user.id,
+				issuedAt: Date.now(),
 			});
 
-			const token_hash = encrypt(token_conent, generateInstanceSecret(API_TOKEN_SECRET));
+			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
 			const token = await ctx.prisma.aPIToken.create({
 				data: {
 					token: token_hash,
