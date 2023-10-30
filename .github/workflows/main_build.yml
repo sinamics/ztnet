@@ -12,9 +12,7 @@ on:
       - "public/**"
 
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to checkout'
+
 jobs:
   web_lint_test:
     name: Web - Lint - Format - Test
@@ -22,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
@@ -54,7 +52,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ github.ref }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
