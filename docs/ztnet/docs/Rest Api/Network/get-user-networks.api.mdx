@@ -7,7 +7,7 @@ hide_title: true
 hide_table_of_contents: true
 api: {"operationId":"getUserNetworks","parameters":[{"name":"x-ztnet-auth","in":"header","required":true,"schema":{"type":"string"},"description":"API Key for the user"}],"responses":{"200":{"description":"An array of Network IDs","content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}},"examples":{"example1":{"value":["networkid#1","networkid#2"]}}}}},"401":{"description":"Unauthorized","content":{"application/json":{"schema":{"type":"object","properties":{"error":{"type":"string"}}}}}},"405":{"description":"Method Not Allowed"},"500":{"description":"Internal Server Error","content":{"application/json":{"schema":{"type":"object","properties":{"message":{"type":"string"}}}}}}},"description":"Returns a list of Networks you have access to","method":"get","path":"/network","info":{"title":"ZTNet Web API","info_path":"restapi/ztnet-web-api","version":"1.0.0","description":"Public API for ZTNet. Available from ztnet version 0.4.0 onwards.\n\nThis API is rate-limited to 10 requests per minute\n"},"postman":{"name":"Returns a list of Networks you have access to","description":{"type":"text/plain"},"url":{"path":["network"],"host":["{{baseUrl}}"],"query":[],"variable":[]},"header":[{"disabled":false,"description":{"content":"(Required) API Key for the user","type":"text/plain"},"key":"x-ztnet-auth","value":""},{"key":"Accept","value":"application/json"}],"method":"GET"}}
 sidebar_class_name: "get api-method"
-info_path: Rest Api/network/ztnet-web-api
+info_path: Rest Api/Network/ztnet-web-api
 custom_edit_url: null
 ---
 
