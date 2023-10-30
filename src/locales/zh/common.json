@@ -272,30 +272,6 @@
 			"publicPages": {
 				"sectionTitle": "公共页面",
 				"description": "自定义登录和注册页面上显示的文本，以更好地与您的品牌保持一致或向您的用户提供具体说明。"
-			},
-			"restapi": {
-				"sectionTitle": "API访问令牌",
-				"description": "API访问令牌用于访问ZTNET公共API。",
-				"inputFields": {
-					"tokenName": {
-						"label": "为您的令牌添加有意义的名称",
-						"placeholder": "我的超棒令牌"
-					}
-				},
-				"buttons": {
-					"submitToken": "生成令牌",
-					"cancle": "删除令牌"
-				},
-				"response": {
-					"title": "点击令牌以复制",
-					"info": "此令牌只会显示一次。请立即复制它！"
-				},
-				"modals": {
-					"deleteToken": {
-						"title": "删除令牌",
-						"description": "您确定要删除此令牌吗？此操作无法撤消。"
-					}
-				}
 			}
 		},
 		"mail": {
@@ -516,15 +492,29 @@
 				"repeatNewPasswordPlaceholder": "重复新密码",
 				"role": "角色"
 			},
-			"networkSetting": {
-				"memberAnotations": "成员注释",
-				"showMarkerInTable": "在表格中显示标记",
-				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
-				"addBackgroundColorInTable": "在表格中添加背景颜色",
-				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。",
-				"memberTableTitle": "成员表格",
-				"deAuthorizationWarningTitle": "在取消成员授权时显示警告",
-				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。"
+			"restapi": {
+				"sectionTitle": "API访问令牌",
+				"description": "API访问令牌用于访问ZTNET公共API。",
+				"inputFields": {
+					"tokenName": {
+						"label": "为您的令牌添加有意义的名称",
+						"placeholder": "我的超棒令牌"
+					}
+				},
+				"buttons": {
+					"submitToken": "生成令牌",
+					"cancle": "删除令牌"
+				},
+				"response": {
+					"title": "点击令牌以复制",
+					"info": "此令牌只会显示一次。请立即复制它！"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "删除令牌",
+						"description": "您确定要删除此令牌吗？此操作无法撤消。"
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -541,6 +531,18 @@
 				"title": "应用",
 				"version": "版本",
 				"developerMode": "开发者模式"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "成员注释",
+				"showMarkerInTable": "在表格中显示标记",
+				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
+				"addBackgroundColorInTable": "在表格中添加背景颜色",
+				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。",
+				"memberTableTitle": "成员表格",
+				"deAuthorizationWarningTitle": "在取消成员授权时显示警告",
+				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。"
 			}
 		}
 	}
