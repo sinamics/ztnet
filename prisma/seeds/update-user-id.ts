@@ -7,20 +7,22 @@ export async function updateUserId() {
 	const users = await prisma.user.findMany();
 
 	for (const user of users) {
-		if (Number.isInteger(user.id)) {
+		if (Number.isInteger(Number(user.id))) {
 			const newId = createId();
-			// Steps to update primary key
-			// 1. Insert a new row with a new id
-			// 2. Delete the old row
-			// 3. Note that related tables will also need their foreign keys updated
+			// Create temporary unique email
+			const newEmail = `${user.email}_temp`;
 
-			// For the sake of this example, we are not dealing with foreign keys
 			await prisma.user.create({
-				data: { ...user, id: newId },
+				data: { ...user, id: newId, email: newEmail },
 			});
 
 			await prisma.user.delete({
 				where: { id: user.id },
+			});
+
+			await prisma.user.update({
+				where: { id: newId },
+				data: { email: user.email }, // Update back to original email
 			});
 		}
 	}
