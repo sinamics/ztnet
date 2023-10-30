@@ -47,15 +47,15 @@ const config = {
           //   },
           // },
           user: { // the <id> referenced when running CLI commands
-            specPath: "docs/Rest Api/_source/User.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api/user", // output directory for generated files
+            specPath: "docs/Rest Api/_source/user.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/User", // output directory for generated files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
           },
           network: { // the <id> for network
-            specPath: "docs/Rest Api/_source/Network.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api/network", // output directory for network files
+            specPath: "docs/Rest Api/_source/network.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Network", // output directory for network files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },

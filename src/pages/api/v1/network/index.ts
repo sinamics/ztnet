@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { createNetworkService } from "~/server/api/services/networkService";
 import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
@@ -26,7 +27,10 @@ export default async function createNetworkHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "GET":
-			await getUserNetworks(req, res);
+			await GET_userNetworks(req, res);
+			break;
+		case "POST":
+			await POST_createNewNetwork(req, res);
 			break;
 		default: // Method Not Allowed
 			res.status(405).end();
@@ -34,8 +38,37 @@ export default async function createNetworkHandler(
 	}
 }
 
-const getUserNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
-	if (req.method !== "GET") return res.status(405).end(); // Method Not Allowed
+const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) => {
+	const apiKey = req.headers["x-ztnet-auth"] as string;
+
+	let decryptedData: { userId: string; name: string };
+
+	// If there are users, verify the API key
+	try {
+		decryptedData = await decryptAndVerifyToken(apiKey);
+	} catch (error) {
+		return res.status(401).json({ error: error.message });
+	}
+	const { name } = req.body;
+
+	const ctx = {
+		session: {
+			user: {
+				id: decryptedData.userId as string,
+			},
+		},
+		prisma,
+	};
+
+	const newNetworkId = await createNetworkService({
+		ctx,
+		input: { central: false, name },
+	});
+
+	return res.status(200).json(newNetworkId);
+};
+
+const GET_userNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	let decryptedData;
