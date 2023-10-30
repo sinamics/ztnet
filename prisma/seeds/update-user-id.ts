@@ -8,6 +8,7 @@ export async function updateUserId() {
 		include: {
 			network: true,
 			options: true,
+			userGroup: true,
 		},
 	});
 
@@ -20,7 +21,7 @@ export async function updateUserId() {
 
 			// Create a new user record with new ID
 			// Create new user
-			const { options, network, ...otherUserFields } = user;
+			const { options, network, userGroup, ...otherUserFields } = user;
 			await prisma.user.create({
 				data: {
 					...otherUserFields,
@@ -37,10 +38,19 @@ export async function updateUserId() {
 				});
 			}
 
-			// Transfer UserOptions to the new user
+			// Transfer UserOptions to the new user, if they exist
 			if (options) {
+				// rome-ignore lint/correctness/noUnusedVariables: <explanation>
+				const { id, userId, ...otherOptionsFields } = options; // Exclude id and userId
 				await prisma.userOptions.create({
-					data: { ...options, userId: newId },
+					data: { ...otherOptionsFields, userId: newId },
+				});
+			}
+			// Transfer UserGroup to the new user, if it exists
+			if (userGroup) {
+				await prisma.user.update({
+					where: { id: newId },
+					data: { userGroupId: user.userGroupId },
 				});
 			}
 

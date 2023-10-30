@@ -140,7 +140,7 @@ model Session {
 
 model UserOptions {
   id                   Int       @id @default(autoincrement())
-  userId               String       @unique
+  userId               String    @unique
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
