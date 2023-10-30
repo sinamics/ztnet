@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export async function updateUserId() {
 	const users = await prisma.user.findMany();
-
 	for (const user of users) {
 		if (Number.isInteger(Number(user.id))) {
 			const newId = createId();
@@ -29,4 +28,6 @@ export async function updateUserId() {
 			});
 		}
 	}
+	// rome-ignore lint/nursery/noConsoleLog: <explanation>
+	console.log("Seeding:: Updating user ID complete!");
 }
