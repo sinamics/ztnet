@@ -7,8 +7,6 @@ const prisma = new PrismaClient();
 async function main() {
 	await seedUserOptions();
 	await updateUserId();
-	// rome-ignore lint/nursery/noConsoleLog: <explanation>
-	console.log("Seeding User Options complete!");
 }
 
 main()
