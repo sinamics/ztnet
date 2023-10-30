@@ -85,7 +85,6 @@ model network {
   authorId                    String
   tagsByName                  Json?
   capabilitiesByName          Json?
-
   networkMembers              network_members[]
   notations                   Notation[]
 }
