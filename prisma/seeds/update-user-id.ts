@@ -12,17 +12,20 @@ export async function updateUserId() {
 			// Create temporary unique email
 			const newEmail = `${user.email}_temp`;
 
+			// Create new user with new id and temporary email
 			await prisma.user.create({
 				data: { ...user, id: newId, email: newEmail },
 			});
 
+			// Delete original user
 			await prisma.user.delete({
 				where: { id: user.id },
 			});
 
+			// Update back to original email
 			await prisma.user.update({
 				where: { id: newId },
-				data: { email: user.email }, // Update back to original email
+				data: { email: user.email },
 			});
 		}
 	}
