@@ -5,9 +5,9 @@ import { useTranslations } from "use-intl";
 import { User, UserOptions } from "@prisma/client";
 
 interface UserExtended extends User {
-  options: UserOptions & {
-    deAuthorizeWarning: boolean;
-  };
+	options: UserOptions & {
+		deAuthorizeWarning: boolean;
+	};
 }
 
 const UserNetworkSetting = () => {
@@ -20,14 +20,14 @@ const UserNetworkSetting = () => {
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
 				<p className="text-sm text-gray-400">
-					{t("account.networkSetting.memberAnotations")}
+					{t("network.annotations.memberAnotations")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
-						<p className="font-medium">{t("account.networkSetting.showMarkerInTable")}</p>
+						<p className="font-medium">{t("network.annotations.showMarkerInTable")}</p>
 						<p className="text-sm text-gray-500">
-							{t.rich("account.networkSetting.showMarkerInTableDescription", {
+							{t.rich("network.annotations.showMarkerInTableDescription", {
 								br: () => <br />,
 							})}
 						</p>
@@ -49,10 +49,10 @@ const UserNetworkSetting = () => {
 				<div className="flex justify-between py-1">
 					<div>
 						<p className="font-medium">
-							{t("account.networkSetting.addBackgroundColorInTable")}
+							{t("network.annotations.addBackgroundColorInTable")}
 						</p>
 						<p className="text-sm text-gray-500">
-							{t.rich("account.networkSetting.addBackgroundColorInTableDescription", {
+							{t.rich("network.annotations.addBackgroundColorInTableDescription", {
 								br: () => <br />,
 							})}
 						</p>
@@ -74,16 +74,16 @@ const UserNetworkSetting = () => {
 			</div>
 			<div className="pb-10">
 				<p className="text-sm text-gray-400">
-					{t("account.networkSetting.memberTableTitle")}
+					{t("network.annotations.memberTableTitle")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
 						<p className="font-medium">
-							{t("account.networkSetting.deAuthorizationWarningTitle")}
+							{t("network.annotations.deAuthorizationWarningTitle")}
 						</p>
 						<p className="text-sm text-gray-500">
-							{t("account.networkSetting.deAuthorizationWarningLabel")}
+							{t("network.annotations.deAuthorizationWarningLabel")}
 						</p>
 					</div>
 					<input

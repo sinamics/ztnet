@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 
 const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
-	const t = useTranslations("admin");
+	const t = useTranslations("userSettings");
 
 	const { refetch } = api.admin.getApiToken.useQuery();
 
@@ -83,8 +83,8 @@ const ApiLables = ({ tokens }) => {
 								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
 								onClick={() => {
 									callModal({
-										title: t("settings.restapi.modals.deleteToken.title"),
-										description: t("settings.restapi.modals.deleteToken.description"),
+										title: t("account.restapi.modals.deleteToken.title"),
+										description: t("account.restapi.modals.deleteToken.description"),
 										yesAction: () => {
 											deleteToken({
 												id: token.id,
@@ -109,7 +109,7 @@ const ApiLables = ({ tokens }) => {
 const ApiToken = () => {
 	const callModal = useModalStore((state) => state.callModal);
 
-	const t = useTranslations("admin");
+	const t = useTranslations("userSettings");
 	const { data: apiTokens, refetch } = api.admin.getApiToken.useQuery();
 
 	const { mutate: addToken } = api.admin.addApiToken.useMutation({
@@ -138,14 +138,14 @@ const ApiToken = () => {
 				rootFormClassName="flex flex-col space-y-2"
 				size="sm"
 				placeholder=""
-				buttonText={t("settings.restapi.buttons.submitToken")}
+				buttonText={t("account.restapi.buttons.submitToken")}
 				fields={[
 					{
 						name: "name",
 						type: "text",
 						elementType: "input",
-						placeholder: t("settings.restapi.inputFields.tokenName.placeholder"),
-						description: t("settings.restapi.inputFields.tokenName.label"),
+						placeholder: t("account.restapi.inputFields.tokenName.placeholder"),
+						description: t("account.restapi.inputFields.tokenName.label"),
 					},
 				]}
 				submitHandler={(params) =>
@@ -165,10 +165,10 @@ const ApiToken = () => {
 											>
 												<div className="flex flex-col items-center space-y-2 max-w-3/6">
 													<p className="text-sm text-gray-300">
-														{t("settings.restapi.response.info")}
+														{t("account.restapi.response.info")}
 													</p>
 													<p className="text-sm text-gray-300">
-														{t("settings.restapi.response.title")}
+														{t("account.restapi.response.title")}
 													</p>
 													<p className="text-sm text-gray-500 break-all">
 														<span className="text-primary cursor-pointer">
