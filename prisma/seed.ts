@@ -1,3 +1,4 @@
+import { updateUserId } from "./seeds/update-user-id";
 import { seedUserOptions } from "./seeds/user-option.seed";
 import { PrismaClient } from "@prisma/client";
 
@@ -5,6 +6,7 @@ const prisma = new PrismaClient();
 
 async function main() {
 	await seedUserOptions();
+	await updateUserId();
 	// rome-ignore lint/nursery/noConsoleLog: <explanation>
 	console.log("Seeding User Options complete!");
 }
