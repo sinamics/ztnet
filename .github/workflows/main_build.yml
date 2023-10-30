@@ -12,12 +12,19 @@ on:
       - "public/**"
 
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main'
 jobs:
   web_lint_test:
     name: Web - Lint - Format - Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch }}
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
@@ -48,7 +55,8 @@ jobs:
     needs: web_lint_test
     steps:
       - uses: actions/checkout@v3
-
+        with:
+          ref: ${{ github.event.inputs.branch }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
