@@ -77,10 +77,18 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === input.id) {
 				throwError("You can't delete your own account");
 			}
-			//!TODO add creator to db
-			// if (input.id === 1) {
-			// 	throwError("You can't delete the user who created the first account");
-			// }
+
+			// check if user is admin user
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+
+			if (user.role === "ADMIN") {
+				throwError("You can't delete admin users");
+			}
+
 			// get user networks
 			const userNetworks = await ctx.prisma.network.findMany({
 				where: {

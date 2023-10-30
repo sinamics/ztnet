@@ -26,7 +26,7 @@ declare module "next-auth" {
 	}
 
 	interface User {
-		id?: number;
+		id?: string;
 		name: string;
 		role: string;
 		// ...other properties
@@ -146,7 +146,7 @@ export const authOptions: NextAuthOptions = {
 					// update user with new values
 					await prisma.user.update({
 						where: {
-							id: token.id as number,
+							id: token.id as string,
 						},
 						data: {
 							email: session.update.email || user.email,
