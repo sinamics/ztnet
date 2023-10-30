@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import UserIsActive from "./userIsActive";
 
 interface Iprops {
-	userId: number;
+	userId: string;
 }
 
 const UserOptionsModal = ({ userId }: Iprops) => {

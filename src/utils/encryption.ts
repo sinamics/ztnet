@@ -56,7 +56,7 @@ export const decrypt = (text: string, secret: Buffer) => {
 };
 
 type DecryptedTokenData = {
-	userId: number;
+	userId: string;
 	name: string;
 };
 
@@ -77,7 +77,7 @@ export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTo
 	}
 
 	// Validate the decrypted data structure (add more validations as necessary)
-	if (!decryptedData.userId) {
+	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
 		throw new Error("Invalid token structure");
 	}
 
