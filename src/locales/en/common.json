@@ -494,7 +494,7 @@
 			},
 			"restapi": {
 				"sectionTitle": "API Access Tokens",
-				"description": "API access tokens are used to access the ZTNET Public API.",
+				"description": "This allows you to generate an API token that you can use to authenticate and gain access to our application's API services. With a valid token, you can make requests to the API and interact with the application's features programmatically.",
 				"inputFields": {
 					"tokenName": {
 						"label": "Add a meaningful name to your token",

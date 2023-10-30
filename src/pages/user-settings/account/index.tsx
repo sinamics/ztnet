@@ -40,7 +40,7 @@ const Account = () => {
 	}
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-16 bg-base-100 p-3 sm:w-6/12">
+		<main className="mx-auto flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
 			<div>
 				<p className="text-[0.7rem] text-gray-400">
 					{t("account.accountSettings.title").toUpperCase()}
@@ -144,37 +144,35 @@ const Account = () => {
 			</div>
 
 			<div>
-				<div className="py-10">
-					<p className="text-gray-400 uppercase text-[0.7rem]">
-						{t("account.restapi.sectionTitle")}
+				<div className="text-gray-400 uppercase text-[0.7rem]">
+					{t("account.restapi.sectionTitle")}
+				</div>
+				<div className="divider m-0 p-0 text-gray-500" />
+				<div>
+					<p className="text-sm text-gray-500">
+						{t("account.restapi.description")}
+						<br />
+						<Link
+							className="link"
+							target="_blank"
+							href="https://ztnet.network/Rest%20Api/ztnet-web-api"
+						>
+							https://ztnet.network/Rest%20Api/ztnet-web-api
+						</Link>
 					</p>
-					<div className="divider mt-0 p-0 text-gray-500"></div>
-					<div className="text-sm text-gray-400 py-2">
-						<p>
-							{t("account.restapi.description")}
-							<br />
-							<Link
-								className="link"
-								target="_blank"
-								href="https://ztnet.network/Rest%20Api/ztnet-web-api"
-							>
-								https://ztnet.network/Rest%20Api/ztnet-web-api
-							</Link>
-						</p>
-					</div>
-					<div className="space-y-5">
-						<ApiToken />
-					</div>
+				</div>
+				<div className="space-y-5">
+					<ApiToken />
 				</div>
 			</div>
 
 			<div>
 				<div className="pt-10 text-[0.7rem] text-gray-400">
-					{t("account.zerotierCentral.title").toUpperCase()}{" "}
+					{t("account.zerotierCentral.title").toUpperCase()}
 					<div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
 				</div>
 				<div className="divider m-0 p-0 text-gray-500" />
-				<div className="form-control w-full">
+				<div>
 					<p className="text-sm text-gray-500">
 						{t.rich("account.zerotierCentral.description", {
 							br: () => <br />,
