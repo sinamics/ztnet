@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
@@ -48,6 +50,8 @@ jobs:
     needs: web_lint_test
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
         # checkout dev branch
         with:
           ref: main
