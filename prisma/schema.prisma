@@ -82,7 +82,7 @@ model network {
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
   nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId                    Int
+  authorId                    String
   tagsByName                  Json?
   capabilitiesByName          Json?
 
@@ -119,7 +119,7 @@ model NetworkMemberNotation {
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
-    userId            Int
+    userId            String
     type              String
     refresh_token     String? // @db.Text
     access_token      String? // @db.Text
@@ -134,14 +134,14 @@ model Account {
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    userId       Int
+    userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserOptions {
   id                   Int       @id @default(autoincrement())
-  userId               Int       @unique
+  userId               String       @unique
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
@@ -180,7 +180,7 @@ model APIToken {
   id          Int       @id @default(autoincrement())
   name        String
   token       String    @unique
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   expiresAt   DateTime? // null means it never expires
@@ -188,7 +188,7 @@ model APIToken {
 }
 
 model User {
-    id                                    Int               @id @default(autoincrement())
+    id                                    String               @id @default(cuid())
     name                                  String
     email                                 String            @unique
     emailVerified                         DateTime?
@@ -236,7 +236,7 @@ model UserInvitation {
   expires         DateTime 
   timesCanUse     Int       @default(1)
   timesUsed       Int       @default(0)
-  createdBy       Int      
+  createdBy       String      
   createdAt       DateTime  @default(now())
 }
 
