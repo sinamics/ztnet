@@ -187,7 +187,7 @@ model APIToken {
 }
 
 model User {
-    id                                    String               @id @default(cuid())
+    id                                    String            @id @default(cuid())
     name                                  String
     email                                 String            @unique
     emailVerified                         DateTime?
