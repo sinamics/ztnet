@@ -15,6 +15,9 @@ export async function updateUserId() {
 		if (Number.isInteger(Number(user.id.trim()))) {
 			const newId = createId();
 
+			// Create temporary unique email
+			const newEmail = `${user.email}_temp`;
+
 			// Create a new user record with new ID
 			// Create new user
 			const { options, network, ...otherUserFields } = user;
@@ -22,6 +25,7 @@ export async function updateUserId() {
 				data: {
 					...otherUserFields,
 					id: newId,
+					email: newEmail,
 				},
 			});
 
@@ -43,6 +47,12 @@ export async function updateUserId() {
 			// Delete the old user record
 			await prisma.user.delete({
 				where: { id: user.id },
+			});
+
+			// Update back to original email
+			await prisma.user.update({
+				where: { id: newId },
+				data: { email: user.email },
 			});
 		}
 	}
