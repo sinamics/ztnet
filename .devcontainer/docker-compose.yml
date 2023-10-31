@@ -1,9 +1,9 @@
 version: "3.1"
 services:
   # db
-  postgres:
-    ports:
-      - 5432:5432
+  # postgres:
+  #   ports:
+  #     - 5432:5432
       
   # zt container
   zerotier:
@@ -25,5 +25,4 @@ services:
     networks:
       - app-network
     depends_on:
-      - postgres
       - zerotier

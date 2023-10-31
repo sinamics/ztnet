@@ -4,6 +4,9 @@ set -e
 
 cmd="$@"
 
+# init db 
+service postgresql start
+
 # Create .env file
 cat << EOF > .env
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public

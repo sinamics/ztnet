@@ -1,17 +1,17 @@
 version: "3.1"
 services:
-  postgres:
-    image: postgres:15.2-alpine
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ztnet
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - app-network
+  # postgres:
+  #   image: postgres:15.2-alpine
+  #   container_name: postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: ztnet
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - app-network
 
   zerotier:
     image: zyclonite/zerotier:1.10.6
@@ -39,21 +39,22 @@ services:
     working_dir: /app
     volumes:
       - zerotier:/var/lib/zerotier-one
+      # - postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     ports:
       - 3000:3000
     environment:
-      POSTGRES_HOST: postgres
+      # PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ztnet
       POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000" # change localhost to your domain or server ip address if hosting on a server.
       NEXTAUTH_SECRET: "random_secret" # change this to a random string of characters.
     networks:
       - app-network
     depends_on:
-      - postgres
       - zerotier
 
 volumes:

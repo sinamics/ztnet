@@ -68,7 +68,34 @@ ENV NEXTAUTH_URL_INTERNAL http://localhost:3000
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+##
+# Install PostgreSQL
+##
+# Create the file repository configuration:
+RUN sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+# Import the repository signing key:
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+
+RUN apt update && apt install -y \
+    locales curl sudo postgresql-client-15.2 postgresql-15.2 postgresql-contrib-15.2 \
+    && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
+RUN set -eux; \
+    if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then \
+    # if this file exists, we're likely in "debian:xxx-slim", and locales are thus being excluded so we need to remove that exclusion (since we need locales)
+    grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+    sed -ri '/\/usr\/share\/locale/d' /etc/dpkg/dpkg.cfg.d/docker; \
+    ! grep -q '/usr/share/locale' /etc/dpkg/dpkg.cfg.d/docker; \
+    fi; \
+    apt-get update; apt-get install -y --no-install-recommends locales; rm -rf /var/lib/apt/lists/*; \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+ENV LANG en_US.utf8
+
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2
 RUN npm install -g prisma ts-node
