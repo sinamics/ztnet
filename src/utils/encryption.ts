@@ -81,7 +81,7 @@ export async function decryptAndVerifyToken({
 		const decryptedString = decrypt(apiKey, generateInstanceSecret(API_TOKEN_SECRET));
 		decryptedData = JSON.parse(decryptedString);
 	} catch (_error) {
-		throw new Error("Decryption failed");
+		throw new Error("Invalid token");
 	}
 
 	// Validate the decrypted data structure (add more validations as necessary)
