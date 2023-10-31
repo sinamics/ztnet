@@ -7,6 +7,8 @@ import InputField from "~/components/elements/inputField";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { globalSiteVersion } from "~/utils/global";
+import Link from "next/link";
+import ApiToken from "~/components/userSettings/apiToken";
 
 const languageNames = {
 	en: "English",
@@ -38,13 +40,13 @@ const Account = () => {
 	}
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
-			<div className="pb-10">
+		<main className="mx-auto flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
+			<div>
 				<p className="text-[0.7rem] text-gray-400">
 					{t("account.accountSettings.title").toUpperCase()}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
-				<div className="space-y-10">
+				<div className="space-y-5">
 					<InputField
 						label={t("account.accountSettings.nameLabel")}
 						isLoading={!session?.user}
@@ -139,13 +141,38 @@ const Account = () => {
 						</div>
 					</div>
 				</div>
+			</div>
 
+			<div>
+				<div className="text-gray-400 uppercase text-[0.7rem]">
+					{t("account.restapi.sectionTitle")}
+				</div>
+				<div className="divider m-0 p-0 text-gray-500" />
+				<div>
+					<p className="text-sm text-gray-500">
+						{t("account.restapi.description")}
+						<br />
+						<Link
+							className="link"
+							target="_blank"
+							href="https://ztnet.network/Rest%20Api/ztnet-web-api"
+						>
+							https://ztnet.network/Rest%20Api/ztnet-web-api
+						</Link>
+					</p>
+				</div>
+				<div className="space-y-5">
+					<ApiToken />
+				</div>
+			</div>
+
+			<div>
 				<div className="pt-10 text-[0.7rem] text-gray-400">
-					{t("account.zerotierCentral.title").toUpperCase()}{" "}
+					{t("account.zerotierCentral.title").toUpperCase()}
 					<div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
 				</div>
 				<div className="divider m-0 p-0 text-gray-500" />
-				<div className="form-control w-full">
+				<div>
 					<p className="text-sm text-gray-500">
 						{t.rich("account.zerotierCentral.description", {
 							br: () => <br />,
@@ -222,7 +249,9 @@ const Account = () => {
 						/>
 					</div>
 				</div>
-				<p className="pt-10 text-[0.7rem] text-gray-400">
+			</div>
+			<div>
+				<p className="pt-10 text-[0.7rem] text-gray-400 uppercase">
 					{t("account.accountPreferences.title")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
@@ -244,8 +273,13 @@ const Account = () => {
 						))}
 					</select>
 				</div>
+			</div>
+
+			<div>
 				<div className="py-10">
-					<p className="text-sm text-gray-400">{t("account.application.title")}</p>
+					<p className="text-gray-400 text-[0.7rem] uppercase">
+						{t("account.application.title")}
+					</p>
 					<div className="divider mt-0 p-0 text-gray-500"></div>
 					<div className="flex items-center justify-between">
 						<p>{t("account.application.version")}</p>

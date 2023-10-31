@@ -56,11 +56,19 @@ export const decrypt = (text: string, secret: Buffer) => {
 };
 
 type DecryptedTokenData = {
-	userId: number;
+	userId: string;
 	name: string;
 };
 
-export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTokenData> {
+type VerifyToken = {
+	apiKey: string;
+	requireAdmin?: boolean;
+};
+
+export async function decryptAndVerifyToken({
+	apiKey,
+	requireAdmin = false,
+}: VerifyToken): Promise<DecryptedTokenData> {
 	// Check if API key is provided
 	if (!apiKey) {
 		throw new Error("API key missing");
@@ -73,11 +81,11 @@ export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTo
 		const decryptedString = decrypt(apiKey, generateInstanceSecret(API_TOKEN_SECRET));
 		decryptedData = JSON.parse(decryptedString);
 	} catch (_error) {
-		throw new Error("Decryption failed");
+		throw new Error("Invalid token");
 	}
 
 	// Validate the decrypted data structure (add more validations as necessary)
-	if (!decryptedData.userId) {
+	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
 		throw new Error("Invalid token structure");
 	}
 
@@ -88,7 +96,11 @@ export async function decryptAndVerifyToken(apiKey: string): Promise<DecryptedTo
 		},
 	});
 
-	if (!user || user.role !== "ADMIN") {
+	if (!user) {
+		throw new Error("Unauthorized");
+	}
+
+	if (user.role !== "ADMIN" && requireAdmin) {
 		throw new Error("Unauthorized");
 	}
 

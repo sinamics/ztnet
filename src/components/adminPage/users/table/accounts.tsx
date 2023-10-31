@@ -49,11 +49,11 @@ export const Accounts = () => {
 	const columnHelper = createColumnHelper<ExtendedUser>();
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
-			columnHelper.accessor("id", {
-				header: () => <span>{t("users.users.table.id")}</span>,
-				id: "id",
-				minSize: 70,
-			}),
+			// columnHelper.accessor("id", {
+			// 	header: () => <span>{t("users.users.table.id")}</span>,
+			// 	id: "id",
+			// 	minSize: 70,
+			// }),
 			columnHelper.accessor("name", {
 				header: () => <span>{t("users.users.table.memberName")}</span>,
 				id: "name",

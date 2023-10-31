@@ -26,7 +26,7 @@ declare module "next-auth" {
 	}
 
 	interface User {
-		id?: number;
+		id?: string;
 		name: string;
 		role: string;
 		// ...other properties
@@ -124,6 +124,12 @@ export const authOptions: NextAuthOptions = {
 							lastseen: true,
 						},
 					});
+
+					// Number(user.id.trim()) checks if the user session has the old int as the User id
+					if (Number.isInteger(Number(token.id))) {
+						return undefined;
+					}
+
 					// session update => https://github.com/nextauthjs/next-auth/discussions/3941
 					// verify that name has at least one character
 					if (typeof session.update.name === "string") {
@@ -137,16 +143,14 @@ export const authOptions: NextAuthOptions = {
 					// verify that email is valid
 					if (typeof session.update.email === "string") {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-						// if (!session.update.email.includes("@")) {
-						//   throw new Error("Email must be a valid email address.");
-						// }
+
 						token.email = session.update.email;
 					}
 
 					// update user with new values
 					await prisma.user.update({
 						where: {
-							id: token.id as number,
+							id: token.id as string,
 						},
 						data: {
 							email: session.update.email || user.email,
@@ -177,7 +181,8 @@ export const authOptions: NextAuthOptions = {
 				where: { id: token.id },
 			});
 
-			if (!user || !user.isActive) {
+			// Number(user.id.trim()) checks if the user session has the old int as the User id
+			if (!user || !user.isActive || Number.isInteger(Number(token.id))) {
 				// If the user does not exist, set user to null
 				return { ...session, user: null };
 			}

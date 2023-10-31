@@ -4,7 +4,6 @@ import React from "react";
 import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
-// import { useModalStore } from "~/utils/store";
 
 interface Iuser {
 	user: Partial<User>;
@@ -42,7 +41,7 @@ const UserRole = ({ user }: Iuser) => {
 			}
 		},
 	});
-	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: number) => {
+	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: string) => {
 		let description = "";
 
 		if (e.target.value === "ADMIN") {

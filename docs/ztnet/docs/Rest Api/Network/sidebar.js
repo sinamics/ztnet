@@ -1,0 +1,1 @@
+module.exports = [{"type":"doc","id":"Rest Api/Network/ztnet-web-api"},{"type":"category","label":"UNTAGGED","items":[{"type":"doc","id":"Rest Api/Network/get-user-networks","label":"Returns a list of Networks you have access to","className":"api-method get"},{"type":"doc","id":"Rest Api/Network/create-new-network","label":"Create New Network","className":"api-method post"}]}];

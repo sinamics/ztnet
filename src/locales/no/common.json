@@ -272,30 +272,6 @@
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
 				"description": "Tilpass teksten som vises på innloggings- og registreringssidene dine for å bedre samsvare med merkevaren din eller gi spesifikke instruksjoner til brukerne dine."
-			},
-			"restapi": {
-				"sectionTitle": "API-tilgangstokens",
-				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
-				"inputFields": {
-					"tokenName": {
-						"label": "Legg til et meningsfylt navn på tokenet ditt",
-						"placeholder": "Mitt fantastiske token"
-					}
-				},
-				"buttons": {
-					"submitToken": "Generer token",
-					"cancle": "Slett token"
-				},
-				"response": {
-					"title": "Klikk på tokenet for å kopiere det",
-					"info": "Dette tokenet vil bare vises en gang. Vennligst kopier det nå!"
-				},
-				"modals": {
-					"deleteToken": {
-						"title": "Slett token",
-						"description": "Er du sikker på at du vil slette dette tokenet? Dette kan ikke angres."
-					}
-				}
 			}
 		},
 		"mail": {
@@ -516,15 +492,29 @@
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
 				"role": "Rolle"
 			},
-			"networkSetting": {
-				"memberAnotations": "Medlemsanmerkninger",
-				"showMarkerInTable": "Vis markør i tabellen",
-				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
-				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
-				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
-				"memberTableTitle": "Medlems Liste",
-				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
-				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
+			"restapi": {
+				"sectionTitle": "API-tilgangstokens",
+				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Legg til et meningsfylt navn på tokenet ditt",
+						"placeholder": "Mitt fantastiske token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generer token",
+					"cancle": "Slett token"
+				},
+				"response": {
+					"title": "Klikk på tokenet for å kopiere det",
+					"info": "Dette tokenet vil bare vises en gang. Vennligst kopier det nå!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Slett token",
+						"description": "Er du sikker på at du vil slette dette tokenet? Dette kan ikke angres."
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -541,6 +531,18 @@
 				"title": "Applikasjon",
 				"version": "Versjon",
 				"developerMode": "utviklermodus"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Medlemsanmerkninger",
+				"showMarkerInTable": "Vis markør i tabellen",
+				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
+				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"memberTableTitle": "Medlems Liste",
+				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
+				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
 			}
 		}
 	}
