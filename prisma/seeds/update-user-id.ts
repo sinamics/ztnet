@@ -1,3 +1,8 @@
+/*
+Change user ID in database from int to 25char id
+https://github.com/sinamics/ztnet/pull/191
+*/
+
 import { PrismaClient } from "@prisma/client";
 import { createId } from "@paralleldrive/cuid2";
 
