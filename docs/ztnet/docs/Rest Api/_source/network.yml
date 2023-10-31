@@ -6,7 +6,7 @@ info:
   description: |
     Public API for ZTNet. Available from ztnet version 0.4.0 onwards.
     
-    This API is rate-limited to 10 requests per minute
+    This API is rate-limited to 50 requests per minute
 paths:
   /network:
     get:
