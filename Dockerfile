@@ -72,16 +72,64 @@ RUN adduser --system --uid 1001 nextjs
 ##
 # Install PostgreSQL
 ##
-# Create the file repository configuration:
-RUN sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+
+######################################
+#
+#  POSTGRES
+#
+#####################################
+
+RUN apt update && apt install -y \
+    locales wget curl sudo lsb-release postgresql-client-15.2 postgresql-15.2 postgresql-contrib-15.2 \
+    && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Import the repository signing key:
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
+# Create the file repository configuration:
+RUN sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
-RUN apt update && apt install -y \
-    locales curl sudo postgresql-client-15.2 postgresql-15.2 postgresql-contrib-15.2 \
-    && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# explicitly set user/group IDs
+RUN set -eux; \
+    groupadd -r postgres --gid=999; \
+    # https://salsa.debian.org/postgresql/postgresql-common/blob/997d842ee744687d99a2b2d95c1083a2615c79e8/debian/postgresql-common.postinst#L32-35
+    useradd -r -g postgres --uid=999 --home-dir=/var/lib/postgresql --shell=/bin/bash postgres; \
+    # also create the postgres user's home directory with appropriate permissions
+    # see https://github.com/docker-library/postgres/issues/274
+    mkdir -p /var/lib/postgresql; \
+    chown -R postgres:postgres /var/lib/postgresql
+
+# Import PostgreSQL signing key and add PostgreSQL APT repository
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - && \
+    sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+# Install PostgreSQL 15.2
+RUN apt-get update && \
+    apt-get install -y postgresql-client-15 postgresql-15 postgresql-contrib-15
+
+# grab gosu for easy step-down from root
+# https://github.com/tianon/gosu/releases
+ENV GOSU_VERSION 1.16
+RUN set -eux; \
+    savedAptMark="$(apt-mark showmanual)"; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates wget; \
+    rm -rf /var/lib/apt/lists/*; \
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+    wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+    gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+    gpgconf --kill all; \
+    rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+    apt-mark auto '.*' > /dev/null; \
+    [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark > /dev/null; \
+    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+    chmod +x /usr/local/bin/gosu; \
+    gosu --version; \
+    gosu nobody true
 
 # make the "en_US.UTF-8" locale so postgres will be utf-8 enabled by default
 RUN set -eux; \
@@ -95,6 +143,31 @@ RUN set -eux; \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ENV LANG en_US.utf8
+ENV PGDATA /var/lib/postgresql/data
+RUN set -ex; \
+    # pub   4096R/ACCC4CF8 2011-10-13 [expires: 2019-07-02]
+    #       Key fingerprint = B97B 0AFC AA1A 47F0 44F2  44A0 7FCC 7D46 ACCC 4CF8
+    # uid                  PostgreSQL Debian Repository
+    key='B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8'; \
+    export GNUPGHOME="$(mktemp -d)"; \
+    mkdir -p /usr/local/share/keyrings/; \
+    gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
+    gpg --batch --export --armor "$key" > /usr/local/share/keyrings/postgres.gpg.asc; \
+    gpgconf --kill all; \
+    rm -rf "$GNUPGHOME"
+
+ENV PG_MAJOR 15
+ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
+
+RUN mkdir /docker-entrypoint-initdb.d
+
+#################################
+#
+# NextJS
+#
+################################
+
+
 
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2

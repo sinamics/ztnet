@@ -4,8 +4,9 @@ set -e
 
 cmd="$@"
 
-# init db 
-service postgresql start
+# https://hub.docker.com/_/postgres/
+# https://github.com/docker-library/postgres/blob/master/15/bullseye/Dockerfile
+./init-postgres.sh postgres
 
 # Create .env file
 cat << EOF > .env

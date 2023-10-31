@@ -6,7 +6,7 @@ cmd="$@"
 
 # https://hub.docker.com/_/postgres/
 # https://github.com/docker-library/postgres/blob/master/15/bullseye/Dockerfile
-./.devcontainer/init-postgres.sh postgres
+./init-postgres.sh postgres
 
 # # Read environment variables
 POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -14,7 +14,8 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
 POSTGRES_DB=${POSTGRES_DB:-$POSTGRES_USER}
 
 # # Start PostgreSQL
-service postgresql start
+# service postgresql start
+# sudo -u postgres /usr/lib/postgresql/15/bin/postgres -D /var/lib/postgresql/data &
 
 # Create .env file
 cat << EOF > .env
@@ -36,7 +37,6 @@ elif [ "$ARCH" = "aarch64" ] && [ -f "/workspaces/ztnodeid/build/linux_arm64/ztm
 		cp /workspaces/ztnodeid/build/linux_arm64/ztmkworld /usr/local/bin/ztmkworld
 fi
 chmod +x /usr/local/bin/ztmkworld
-
 
 # apply migrations to the database
 echo "Applying migrations to the database..."
