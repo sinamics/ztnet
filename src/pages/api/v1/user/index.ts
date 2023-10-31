@@ -28,7 +28,7 @@ export default async function createUserHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "POST":
-			await createUserPostSchema(req, res);
+			await POST_createUser(req, res);
 			break;
 		default: // Method Not Allowed
 			res.status(405).end();
@@ -36,7 +36,7 @@ export default async function createUserHandler(
 	}
 }
 
-const createUserPostSchema = async (req: NextApiRequest, res: NextApiResponse) => {
+const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	const NEEDS_ADMIN = true;
@@ -60,6 +60,23 @@ const createUserPostSchema = async (req: NextApiRequest, res: NextApiResponse) =
 	// get data from the post request
 	const { email, password, name, expiresAt } = req.body;
 
+	if (userCount === 0 && expiresAt !== undefined) {
+		return res.status(400).json({ message: "Cannot add expiresAt for Admin user!" });
+	}
+	// Check if expiresAt is a valid date
+	if (expiresAt !== undefined) {
+		try {
+			const date = new Date(expiresAt);
+			const isoString = date.toISOString();
+
+			if (expiresAt !== isoString) {
+				return res.status(400).json({ message: "Invalid expiresAt date" });
+			}
+		} catch (error) {
+			return res.status(400).json({ message: error.message });
+		}
+	}
+
 	try {
 		const user = await caller.auth.register({
 			email: email as string,
@@ -76,7 +93,7 @@ const createUserPostSchema = async (req: NextApiRequest, res: NextApiResponse) =
 				const parsedErrors = JSON.parse(cause.message);
 				return res.status(httpCode).json({ cause: parsedErrors });
 			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
+				return res.status(httpCode).json({ error: cause.message.trim() });
 			}
 		}
 		return res.status(500).json({ message: "Internal server error" });

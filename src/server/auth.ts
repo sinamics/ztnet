@@ -177,7 +177,8 @@ export const authOptions: NextAuthOptions = {
 				where: { id: token.id },
 			});
 
-			if (!user || !user.isActive) {
+			// Number(user.id.trim()) checks if the user session has the old int as the User id
+			if (!user || !user.isActive || Number.isInteger(Number(token.id))) {
 				// If the user does not exist, set user to null
 				return { ...session, user: null };
 			}
