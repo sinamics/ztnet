@@ -4,6 +4,8 @@ set -e
 
 cmd="$@"
 
+# https://hub.docker.com/_/postgres/
+# https://github.com/docker-library/postgres/blob/master/15/bullseye/Dockerfile
 ./.devcontainer/init-postgres.sh postgres
 
 # # Read environment variables
