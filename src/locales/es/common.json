@@ -272,30 +272,6 @@
 			"publicPages": {
 				"sectionTitle": "Páginas Públicas",
 				"description": "Personaliza el texto que se muestra en tus páginas de inicio de sesión y registro para alinearlo mejor con tu marca o proporcionar instrucciones específicas a tus usuarios."
-			},
-			"restapi": {
-				"sectionTitle": "Tokens de Acceso a la API",
-				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
-				"inputFields": {
-					"tokenName": {
-						"label": "Agrega un nombre significativo a tu token",
-						"placeholder": "Mi token asombroso"
-					}
-				},
-				"buttons": {
-					"submitToken": "Generar Token",
-					"cancle": "Eliminar Token"
-				},
-				"response": {
-					"title": "Haz clic en el token para copiarlo",
-					"info": "Este token solo se mostrará una vez. ¡Cópialo ahora!"
-				},
-				"modals": {
-					"deleteToken": {
-						"title": "Eliminar toke",
-						"description": "¿Estás seguro de que quieres eliminar este token? Esto no se puede deshacer."
-					}
-				}
 			}
 		},
 		"mail": {
@@ -516,15 +492,29 @@
 				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
 				"role": "Rol"
 			},
-			"networkSetting": {
-				"memberAnotations": "Anotaciones de miembro",
-				"showMarkerInTable": "Mostrar marcador en la tabla",
-				"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
-				"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
-				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
-				"memberTableTitle": "Tabla de Miembros",
-				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
-				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales."
+			"restapi": {
+				"sectionTitle": "Tokens de Acceso a la API",
+				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Agrega un nombre significativo a tu token",
+						"placeholder": "Mi token asombroso"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generar Token",
+					"cancle": "Eliminar Token"
+				},
+				"response": {
+					"title": "Haz clic en el token para copiarlo",
+					"info": "Este token solo se mostrará una vez. ¡Cópialo ahora!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Eliminar toke",
+						"description": "¿Estás seguro de que quieres eliminar este token? Esto no se puede deshacer."
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -541,6 +531,18 @@
 				"title": "Aplicación",
 				"version": "Versión",
 				"developerMode": "modo de desarrollador"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Anotaciones de miembro",
+				"showMarkerInTable": "Mostrar marcador en la tabla",
+				"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+				"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
+				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+				"memberTableTitle": "Tabla de Miembros",
+				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
+				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales."
 			}
 		}
 	}

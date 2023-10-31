@@ -13,7 +13,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 10;
+const REQUEST_PR_MINUTE = 50;
 
 export default async function createUserHandler(
 	req: NextApiRequest,
@@ -22,11 +22,24 @@ export default async function createUserHandler(
 	try {
 		await limiter.check(res, REQUEST_PR_MINUTE, "CREATE_USER_CACHE_TOKEN"); // 10 requests per minute
 	} catch {
-		res.status(429).json({ error: "Rate limit exceeded" });
+		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
 
-	if (req.method !== "POST") return res.status(405).end(); // Method Not Allowed
+	// create a switch based on the HTTP method
+	switch (req.method) {
+		case "POST":
+			await POST_createUser(req, res);
+			break;
+		default: // Method Not Allowed
+			res.status(405).end();
+			break;
+	}
+}
+
+const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
+
+	const NEEDS_ADMIN = true;
 
 	// Count the number of users in database
 	const userCount = await prisma.user.count();
@@ -34,7 +47,7 @@ export default async function createUserHandler(
 	if (userCount > 0) {
 		// If there are users, verify the API key
 		try {
-			await decryptAndVerifyToken(apiKey);
+			await decryptAndVerifyToken({ apiKey, requireAdmin: NEEDS_ADMIN });
 		} catch (error) {
 			return res.status(401).json({ error: error.message });
 		}
@@ -46,6 +59,23 @@ export default async function createUserHandler(
 
 	// get data from the post request
 	const { email, password, name, expiresAt } = req.body;
+
+	if (userCount === 0 && expiresAt !== undefined) {
+		return res.status(400).json({ message: "Cannot add expiresAt for Admin user!" });
+	}
+	// Check if expiresAt is a valid date
+	if (expiresAt !== undefined) {
+		try {
+			const date = new Date(expiresAt);
+			const isoString = date.toISOString();
+
+			if (expiresAt !== isoString) {
+				return res.status(400).json({ message: "Invalid expiresAt date" });
+			}
+		} catch (error) {
+			return res.status(400).json({ message: error.message });
+		}
+	}
 
 	try {
 		const user = await caller.auth.register({
@@ -63,9 +93,9 @@ export default async function createUserHandler(
 				const parsedErrors = JSON.parse(cause.message);
 				return res.status(httpCode).json({ cause: parsedErrors });
 			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
+				return res.status(httpCode).json({ error: cause.message.trim() });
 			}
 		}
-		res.status(500).json({ message: "Internal server error" });
+		return res.status(500).json({ message: "Internal server error" });
 	}
-}
+};

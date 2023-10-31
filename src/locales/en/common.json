@@ -272,30 +272,6 @@
 			"publicPages": {
 				"sectionTitle": "Public Pages",
 				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
-			},
-			"restapi": {
-				"sectionTitle": "API Access Tokens",
-				"description": "API access tokens are used to access the ZTNET Public API.",
-				"inputFields": {
-					"tokenName": {
-						"label": "Add a meaningful name to your token",
-						"placeholder": "My awesome token"
-					}
-				},
-				"buttons": {
-					"submitToken": "Generate Token",
-					"cancle": "Delete Token"
-				},
-				"response": {
-					"title": "Click the token to Copy",
-					"info": "This token will only be shown once. Please copy it now!"
-				},
-				"modals": {
-					"deleteToken": {
-						"title": "Delete Token",
-						"description": "Are you sure you want to delete this token? This cannot be undone."
-					}
-				}
 			}
 		},
 		"mail": {
@@ -516,15 +492,29 @@
 				"repeatNewPasswordPlaceholder": "Repeat New Password",
 				"role": "Role"
 			},
-			"networkSetting": {
-				"memberAnotations": "Member Anotations",
-				"showMarkerInTable": "Show marker in Table",
-				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
-				"addBackgroundColorInTable": "Add background color in table",
-				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled.",
-				"memberTableTitle": "Member Table",
-				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
-				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations."
+			"restapi": {
+				"sectionTitle": "API Access Tokens",
+				"description": "This allows you to generate an API token that you can use to authenticate and gain access to our application's API services. With a valid token, you can make requests to the API and interact with the application's features programmatically.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Add a meaningful name to your token",
+						"placeholder": "My awesome token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generate Token",
+					"cancle": "Delete Token"
+				},
+				"response": {
+					"title": "Click the token to Copy",
+					"info": "This token will only be shown once. Please copy it now!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Delete Token",
+						"description": "Are you sure you want to delete this token? This cannot be undone."
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -541,6 +531,18 @@
 				"title": "Application",
 				"version": "Version",
 				"developerMode": "developer mode"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Member Annotations",
+				"showMarkerInTable": "Show marker in Table",
+				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
+				"addBackgroundColorInTable": "Add background color in table",
+				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled.",
+				"memberTableTitle": "Member Table",
+				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
+				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations."
 			}
 		}
 	}

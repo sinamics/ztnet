@@ -5,7 +5,7 @@ import * as ztController from "~/utils/ztApi";
 type FakeContext = {
 	session: {
 		user: {
-			id: number;
+			id: string;
 		};
 	};
 };

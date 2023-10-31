@@ -32,7 +32,7 @@ interface Ivalidate {
 	token: string;
 }
 interface IJwt {
-	id: number;
+	id: string;
 	token: string;
 }
 /**

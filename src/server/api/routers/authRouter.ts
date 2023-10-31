@@ -17,6 +17,7 @@ import {
 } from "~/utils/mail";
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
+import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -428,7 +429,7 @@ export const authRouter = createTRPCRouter({
 
 			try {
 				interface IJwt {
-					id: number;
+					id: string;
 					token: string;
 				}
 				const { id } = jwt.decode(token) as IJwt;
@@ -574,5 +575,49 @@ export const authRouter = createTRPCRouter({
 			});
 
 			return updated;
+		}),
+	getApiToken: protectedProcedure.query(async ({ ctx }) => {
+		return await ctx.prisma.aPIToken.findMany({
+			where: {
+				userId: ctx.session.user.id,
+			},
+		});
+	}),
+	addApiToken: protectedProcedure
+		.input(
+			z.object({
+				name: z.string().min(5).max(50),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const token_content: string = JSON.stringify({
+				name: input.name,
+				userId: ctx.session.user.id,
+			});
+
+			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
+			const token = await ctx.prisma.aPIToken.create({
+				data: {
+					token: token_hash,
+					name: input.name,
+					userId: ctx.session.user.id,
+				},
+			});
+			return token;
+		}),
+
+	deleteApiToken: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.aPIToken.delete({
+				where: {
+					id: input.id,
+					userId: ctx.session.user.id,
+				},
+			});
 		}),
 });

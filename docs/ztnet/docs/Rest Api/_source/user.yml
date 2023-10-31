@@ -6,11 +6,25 @@ info:
   description: |
     Public API for ZTNet. Available from ztnet version 0.4.0 onwards.
     
-    This API is rate-limited to 10 requests per minute
+    This API is rate-limited to 50 requests per minute
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+tags:
+  - name: user
+    description: Users API
+    x-displayName: Users dsd s
 paths:
-  /api/v1/user:
+  /user:
     post:
+      tags:
+        - user
       summary: Create a new user
+      operationId: postNewUser
       description: |
         If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
         Keep in mind that first user created will be the admin user.
@@ -41,9 +55,9 @@ paths:
 
                     Not applicable if the user is an admin (first user). Admin accounts never expire.
             example:
-              email: "test@example.com"
-              password: "password123"
-              name: "Test User"
+              email: "post@ztnet.network"
+              password: "strong_password"
+              name: "Ztnet User"
               expiresAt: "2023-10-28T00:00:00Z"
       # parameters:
       #   - name: x-ztnet-auth
@@ -102,11 +116,12 @@ paths:
                 properties:
                   message:
                     type: string
-components:
-  securitySchemes:
-    x-ztnet-auth:
-      type: apiKey
-      required: true
-      in: header
-      name: x-ztnet-auth
-      description: API key can be generated from the ZTNet admin section.
+    components:
+      operationId: postNewUser
+      securitySchemes:
+        x-ztnet-auth:
+          type: apiKey
+          required: true
+          in: header
+          name: x-ztnet-auth
+          description: API key can be generated from the ZTNet admin section.
