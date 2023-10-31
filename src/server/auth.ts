@@ -124,6 +124,12 @@ export const authOptions: NextAuthOptions = {
 							lastseen: true,
 						},
 					});
+
+					// Number(user.id.trim()) checks if the user session has the old int as the User id
+					if (Number.isInteger(Number(token.id))) {
+						return undefined;
+					}
+
 					// session update => https://github.com/nextauthjs/next-auth/discussions/3941
 					// verify that name has at least one character
 					if (typeof session.update.name === "string") {
@@ -137,9 +143,7 @@ export const authOptions: NextAuthOptions = {
 					// verify that email is valid
 					if (typeof session.update.email === "string") {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-						// if (!session.update.email.includes("@")) {
-						//   throw new Error("Email must be a valid email address.");
-						// }
+
 						token.email = session.update.email;
 					}
 
