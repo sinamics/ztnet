@@ -18,6 +18,7 @@ import {
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { isRunningInDocker } from "~/utils/docker";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -183,7 +184,11 @@ export const authRouter = createTRPCRouter({
 					hash,
 					userGroupId: defaultUserGroup?.id,
 					options: {
-						create: {}, // empty object will make Prisma use the default values from the model
+						create: {
+							localControllerUrl: isRunningInDocker()
+								? "http://zerotier:9993"
+								: "http://127.0.0.1:9993",
+						},
 					},
 				},
 				select: {
