@@ -253,7 +253,7 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.prisma.user.findFirst({
+		const user = await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
 			},
@@ -261,6 +261,14 @@ export const authRouter = createTRPCRouter({
 				options: true,
 			},
 		});
+
+		// update placeholder url based on docker or standalone version
+		if (user?.options?.localControllerUrl) return user;
+
+		const url = isRunningInDocker() ? "http://zerotier:9993" : "http://127.0.0.1:9993";
+		user.options.localControllerUrl = url;
+
+		return user;
 	}),
 	update: protectedProcedure
 		.input(
