@@ -261,7 +261,8 @@ export const authRouter = createTRPCRouter({
 		interface ExtendedUser extends User {
 			options?: ExtendedUserOptions;
 		}
-		// add ttype that extend the user type with urlFromEnv
+
+		// add type that extend the user type with urlFromEnv
 		const user = (await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
@@ -270,7 +271,6 @@ export const authRouter = createTRPCRouter({
 				options: true,
 			},
 		})) as ExtendedUser;
-
 		if (process.env.ZT_ADDR) {
 			user.options.localControllerUrl = process.env.ZT_ADDR;
 			user.options.urlFromEnv = true;
@@ -578,6 +578,12 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input?.localControllerUrl && process.env.ZT_ADDR) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Remove the ZT_ADDR environment variable to use this feature!",
+				});
+			}
 			// we use upsert in case the user has no options yet
 			const updated = await ctx.prisma.user.update({
 				where: {
