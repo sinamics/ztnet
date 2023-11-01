@@ -19,6 +19,7 @@ import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
+import { User, UserOptions } from "@prisma/client";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -253,14 +254,28 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		const user = await ctx.prisma.user.findFirst({
+		interface ExtendedUserOptions extends UserOptions {
+			urlFromEnv?: boolean;
+		}
+
+		interface ExtendedUser extends User {
+			options?: ExtendedUserOptions;
+		}
+		// add ttype that extend the user type with urlFromEnv
+		const user = (await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
 			},
 			include: {
 				options: true,
 			},
-		});
+		})) as ExtendedUser;
+
+		if (process.env.ZT_ADDR) {
+			user.options.localControllerUrl = process.env.ZT_ADDR;
+			user.options.urlFromEnv = true;
+			return user;
+		}
 
 		// update placeholder url based on docker or standalone version
 		if (user?.options?.localControllerUrl) return user;
