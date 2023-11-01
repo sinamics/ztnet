@@ -26,6 +26,8 @@ jobs:
       run: npm install tailwindcss
     - name: Build website
       run: npm run build
+    - name: Build API docs
+      run: npx docusaurus gen-api-docs all
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v2
       with:
