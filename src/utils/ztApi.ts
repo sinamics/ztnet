@@ -26,6 +26,7 @@ import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
 import os from "os";
 import { prisma } from "~/server/db";
+import { isRunningInDocker } from "./docker";
 
 export let ZT_FOLDER: string;
 export let ZT_FILE: string;
@@ -38,7 +39,11 @@ if (os.platform() === "freebsd") {
 	ZT_FILE = process.env.ZT_SECRET_FILE || `${ZT_FOLDER}/authtoken.secret`;
 }
 
-const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
+const LOCAL_ZT_ADDR =
+	process.env.ZT_ADDR || isRunningInDocker()
+		? "http://zerotier:9993"
+		: "http://127.0.0.1:9993";
+
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
 let ZT_SECRET = process.env.ZT_SECRET;
