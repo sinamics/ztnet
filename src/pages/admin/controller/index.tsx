@@ -6,6 +6,8 @@ import PrivateRoot from "~/components/adminPage/controller/privateRoot";
 import { api } from "~/utils/api";
 import DebugMirror from "~/components/adminPage/controller/debugController";
 import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
+import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
+import toast from "react-hot-toast";
 
 const Controller = () => {
 	const [error, setError] = useState(false);
@@ -25,8 +27,20 @@ const Controller = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
 		onSuccess: () => {
+			toast.success("Successfully updated ZeroTier options");
 			void refetchMe();
 			void refetchStats();
+		},
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError
+					.fieldErrors as ZodErrorFieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			}
 		},
 	});
 	const { networkCount, totalMembers, controllerStatus } = controllerData || {};
@@ -163,8 +177,9 @@ const Controller = () => {
 									/>
 								</svg>
 								<span className="font-medium">
-									The ZT_ENV environment variable is active, preventing URL changes from
-									the UI. To modify the URL, you must first remove ZT_ENV.
+									The <span className="font-bold">ZT_ADDR</span> environment variable
+									takes precedence and overrides any URL changes made through the UI. To
+									update the URL via the UI, you must first remove ZT_ADDR.
 								</span>
 							</div>
 						) : (
