@@ -254,14 +254,6 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		interface ExtendedUserOptions extends UserOptions {
-			urlFromEnv?: boolean;
-		}
-
-		interface ExtendedUser extends User {
-			options?: ExtendedUserOptions;
-		}
-
 		// add type that extend the user type with urlFromEnv
 		const user = (await ctx.prisma.user.findFirst({
 			where: {
@@ -270,19 +262,22 @@ export const authRouter = createTRPCRouter({
 			include: {
 				options: true,
 			},
-		})) as ExtendedUser;
+		})) as User & {
+			options?: UserOptions & { urlFromEnv?: boolean; secretFromEnv?: boolean };
+		};
+
+		// Set URL from environment or use existing setting
 		if (process.env.ZT_ADDR) {
 			user.options.localControllerUrl = process.env.ZT_ADDR;
-			user.options.urlFromEnv = true;
-			return user;
+		} else if (!user.options.localControllerUrl) {
+			user.options.localControllerUrl = isRunningInDocker()
+				? "http://zerotier:9993"
+				: "http://127.0.0.1:9993";
 		}
 
-		// update placeholder url based on docker or standalone version
-		if (user?.options?.localControllerUrl) return user;
-
-		const url = isRunningInDocker() ? "http://zerotier:9993" : "http://127.0.0.1:9993";
-		user.options.localControllerUrl = url;
-
+		// Set secret environment status
+		user.options.urlFromEnv = !!process.env.ZT_ADDR;
+		user.options.secretFromEnv = !!process.env.ZT_SECRET;
 		return user;
 	}),
 	update: protectedProcedure

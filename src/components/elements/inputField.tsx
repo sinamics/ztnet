@@ -101,7 +101,7 @@ const InputField = ({
 		}
 	}, [showInputs, fields]);
 
-	const handleEditClick = () => setShowInputs(!showInputs);
+	const handleEditClick = () => !disabled && setShowInputs(!showInputs);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
