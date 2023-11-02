@@ -434,7 +434,8 @@
 				"modification_warning": "Modificar la URL del controlador ZeroTier afecta a todos los usuarios. Aunque esto ofrece flexibilidad para aquellos que quieren un controlador personalizado, ten en cuenta las posibles interrupciones y problemas de compatibilidad. Siempre realiza una copia de seguridad de las configuraciones antes de hacer cambios.",
 				"local_zerotier_url": "URL local de Zerotier",
 				"zerotier_secret": "Secreto de Zerotier",
-				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado."
+				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado.",
+				"isUsingEnvVariablesAlert": "La variable de entorno <span>ZT_ADDR o ZT_SECRET</span> tiene prioridad y anula cualquier cambio de URL realizado a través de la interfaz de usuario. Para actualizar los campos respectivos a través de la interfaz de usuario, primero debe eliminar las variables de entorno ZT_ADDR o ZT_SECRET."
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",

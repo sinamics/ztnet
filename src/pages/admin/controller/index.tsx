@@ -24,7 +24,7 @@ const Controller = () => {
 		});
 	const { data: unlinkedNetworks, refetch: refetchUnlinkedNetworks } =
 		api.admin.unlinkedNetwork.useQuery();
-	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
+	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
 		onSuccess: () => {
 			toast.success("Successfully updated ZeroTier options");
@@ -49,6 +49,8 @@ const Controller = () => {
 		controllerStatus?.config?.settings || {};
 
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
+
+	if (meLoading) return null;
 
 	return (
 		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12 pb-80">
@@ -161,7 +163,7 @@ const Controller = () => {
 							span: (content) => <span className="text-error">{content} </span>,
 						})}
 						{t("controller.controllerConfig.modification_warning")}
-						{"urlFromEnv" in (me?.options ?? {}) ? (
+						{me?.options.urlFromEnv || me?.options.secretFromEnv ? (
 							<div className="alert alert-warning my-5">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -177,9 +179,9 @@ const Controller = () => {
 									/>
 								</svg>
 								<span className="font-medium">
-									The <span className="font-bold">ZT_ADDR</span> environment variable
-									takes precedence and overrides any URL changes made through the UI. To
-									update the URL via the UI, you must first remove ZT_ADDR.
+									{t.rich("controller.controllerConfig.isUsingEnvVariablesAlert", {
+										span: (content) => <span className="font-bold">{content} </span>,
+									})}
 								</span>
 							</div>
 						) : (
@@ -192,6 +194,7 @@ const Controller = () => {
 						label={t("controller.controllerConfig.local_zerotier_url")}
 						description={t("controller.controllerConfig.submit_empty_field_default")}
 						size="sm"
+						disabled={me?.options.urlFromEnv}
 						fields={[
 							{
 								name: "localControllerUrl",
@@ -213,6 +216,7 @@ const Controller = () => {
 						label={t("controller.controllerConfig.zerotier_secret")}
 						description={t("controller.controllerConfig.submit_empty_field_default")}
 						size="sm"
+						disabled={me?.options.secretFromEnv}
 						fields={[
 							{
 								name: "localControllerSecret",
