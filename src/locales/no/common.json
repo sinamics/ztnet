@@ -434,7 +434,8 @@
 				"modification_warning": "Å endre ZeroTier-kontrollerens URL påvirker alle brukere. Selv om dette gir fleksibilitet for de som ønsker en tilpasset kontroller, vær oppmerksom på potensielle avbrudd og kompatibilitetsproblemer. Ta alltid sikkerhetskopi av konfigurasjoner før endringer.",
 				"local_zerotier_url": "Lokal Zerotier URL",
 				"zerotier_secret": "Zerotier Hemmelighet",
-				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen."
+				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen.",
+				"isUsingEnvVariablesAlert": "Miljøvariabelen <span>ZT_ADDR eller ZT_SECRET</span> har forrang og overstyrer eventuelle URL-endringer gjort gjennom brukergrensesnittet. For å oppdatere de respektive feltene via brukergrensesnittet, må du først fjerne ZT_ADDR eller ZT_SECRET miljøvariablene."
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "Oppdatering av planetfilen vil endre kjernestrukturen i ZeroTier-nettverket ditt, påvirke ruter, fleksibilitet og potensielt tilgjengelighet. Fortsett med forsiktighet, og forstå konsekvensene.",

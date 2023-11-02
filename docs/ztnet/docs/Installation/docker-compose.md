@@ -101,3 +101,16 @@ As an administrator, you possess unique capabilities not available to regular us
 
 Please note that while admins have visibility over registered accounts, they **cannot** interact with or modify other users' networks directly. Each network's configuration and data remain exclusive to the respective user account, maintaining privacy and security for all users.
 
+## Ztnet Environment Variables
+The following environment variables are available for configuration. They can be set in the `.env` file or passed directly to the docker-compose.yml file.
+
+- **ZT_ADDR**  zerotier controller address. Defaults to `http://zerotier:9993` for docker environment, and `http://127.0.0.1:9993` for standalone.
+- **ZT_SECRET** zerotier controller secret. Defaults to the content of `/var/lib/zerotier-one/authtoken.secret`.
+- **NEXT_PUBLIC_SITE_NAME** Site name. Defaults to `ZTNET`.
+- **POSTGRES_HOST** Default: postgres
+- **POSTGRES_PORT** Default: 5432
+- **POSTGRES_USER** Default: postgres
+- **POSTGRES_PASSWORD** Default: postgres
+- **POSTGRES_DB** Default: ztnet
+- **NEXTAUTH_URL** Default: "http://localhost:3000" # Change `localhost` to your production domain when deploying.
+- **NEXTAUTH_SECRET** Default: "random_secret", change this to a random string for security.

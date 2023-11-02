@@ -434,7 +434,8 @@
 				"modification_warning": "修改ZeroTier控制器URL会影响所有用户。虽然这为想要自定义控制器的人提供了灵活性，但请注意可能的中断和兼容性问题。更改前始终备份配置。",
 				"local_zerotier_url": "本地Zerotier URL",
 				"zerotier_secret": "Zerotier密码",
-				"submit_empty_field_default": "提交空字段以使用默认值。"
+				"submit_empty_field_default": "提交空字段以使用默认值。",
+				"isUsingEnvVariablesAlert": "环境变量<span>ZT_ADDR 或 ZT_SECRET</span>将优先覆盖通过用户界面所做的任何URL更改。要通过用户界面更新相应字段，您必须先删除ZT_ADDR或ZT_SECRET环境变量。"
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
