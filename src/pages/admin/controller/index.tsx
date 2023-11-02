@@ -199,7 +199,8 @@ const Controller = () => {
 							{
 								name: "localControllerUrl",
 								type: "text",
-								placeholder: me?.options?.localControllerUrl || "http://zerotier:9993",
+								placeholder:
+									me?.options?.localControllerUrlPlaceholder || "http://zerotier:9993",
 								value: me?.options?.localControllerUrl,
 							},
 						]}
