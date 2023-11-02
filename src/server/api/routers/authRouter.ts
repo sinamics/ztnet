@@ -263,17 +263,16 @@ export const authRouter = createTRPCRouter({
 				options: true,
 			},
 		})) as User & {
-			options?: UserOptions & { urlFromEnv?: boolean; secretFromEnv?: boolean };
+			options?: UserOptions & {
+				urlFromEnv?: boolean;
+				secretFromEnv?: boolean;
+				localControllerUrlPlaceholder?: string;
+			};
 		};
 
-		// Set URL from environment or use existing setting
-		if (process.env.ZT_ADDR) {
-			user.options.localControllerUrl = process.env.ZT_ADDR;
-		} else if (!user.options.localControllerUrl) {
-			user.options.localControllerUrl = isRunningInDocker()
-				? "http://zerotier:9993"
-				: "http://127.0.0.1:9993";
-		}
+		user.options.localControllerUrlPlaceholder = isRunningInDocker()
+			? "http://zerotier:9993"
+			: "http://127.0.0.1:9993";
 
 		// Set secret environment status
 		user.options.urlFromEnv = !!process.env.ZT_ADDR;
