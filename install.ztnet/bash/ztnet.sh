@@ -128,7 +128,6 @@ fi
 
 # Install ZeroTier
 if ! command_exists zerotier-cli; then
-then
     echo "ZeroTier not found, installing..."
     curl -s https://install.zerotier.com | sudo bash
 else
