@@ -578,6 +578,11 @@ export const authRouter = createTRPCRouter({
 					message: "Remove the ZT_ADDR environment variable to use this feature!",
 				});
 			}
+
+			const defaultLocalZtUrl = isRunningInDocker()
+				? "http://zerotier:9993"
+				: "http://127.0.0.1:9993";
+
 			// we use upsert in case the user has no options yet
 			const updated = await ctx.prisma.user.update({
 				where: {
@@ -587,11 +592,11 @@ export const authRouter = createTRPCRouter({
 					options: {
 						upsert: {
 							create: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 							update: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 						},
