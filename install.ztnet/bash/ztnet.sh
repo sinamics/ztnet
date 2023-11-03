@@ -53,8 +53,9 @@ printf "\n\n${YELLOW}Welcome to the installation script.${NC}\n"
 printf "${YELLOW}This script will perform the following actions:${NC}\n"
 printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
 printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
-printf "  3. Clone ztnet repo into /tmp folder and build artifacts .\n"
-printf "  4. Copy artifacts to /opt/ztnet folder.\n"
+printf "  3. Check if Zerotier is installed, If not, it will be installed.\n"
+printf "  4. Clone ztnet repo into /tmp folder and build artifacts .\n"
+printf "  5. Copy artifacts to /opt/ztnet folder.\n"
 printf "${YELLOW}Please note:${NC}\n"
 printf "  - You will have the option to set a custom password for the PostgreSQL user 'postgres'.\n"
 printf "Press space to proceed with the installation..." >&2
@@ -64,6 +65,9 @@ read -n1 -s < /dev/tty
 command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
+
+# update apt
+sudo apt update
 
 # install git curl openssl
 if ! command_exists git; then
@@ -123,7 +127,14 @@ if [ "$INSTALL_NODE" = true ]; then
 fi
 
 # Install ZeroTier
-curl -s https://install.zerotier.com | sudo bash
+if ! command_exists zerotier-cli; then
+then
+    echo "ZeroTier not found, installing..."
+    curl -s https://install.zerotier.com | sudo bash
+else
+    echo "ZeroTier is already installed."
+fi
+
 
 # Setup Ztnet
 # Clone Ztnet repository into /opt folder
@@ -225,8 +236,14 @@ sudo systemctl daemon-reload
 sudo systemctl enable ztnet
 sudo systemctl restart ztnet
 
+# Note for the user regarding systemd service management
+echo -e "Note: You can check the status of the service with '\e[93msystemctl status ztnet\e[0m'."
+echo -e "To stop the ZTnet service, use '\e[93msudo systemctl stop ztnet\e[0m'."
+echo -e "If you do not want ZTnet to start on boot, you can disable it with '\e[93msudo systemctl disable ztnet\e[0m'."
+
 # Detect local IP address
 local_ip=$(hostname -I | awk '{print $1}')
 
 rm -rf "$INSTALL_DIR"
-printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${local_ip}:3000${NC}\n"
+
+printf "\n\nYou can now open ZTnet at: \e[93mhttp://${local_ip}:3000\e[0m\n"
