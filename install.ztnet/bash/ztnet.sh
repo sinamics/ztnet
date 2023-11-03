@@ -35,13 +35,14 @@ case "$ARCH" in
         ;;
 esac
 
-while getopts v: option 
+while getopts v:b: option 
 do 
  case "${option}" 
  in 
  v) CUSTOM_VERSION=${OPTARG};;
+ b) USE_MAIN_BRANCH=${OPTARG};;
  esac 
-done 
+done
 
 if [[ "$(lsb_release -is)" != "Debian" && "$(lsb_release -is)" != "Ubuntu" ]]; then
   echo "This script is only for Debian and Ubuntu. Exiting."
@@ -147,10 +148,15 @@ else
 fi
 
 cd $INSTALL_DIR
-git fetch --tags
-latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
-git checkout ${CUSTOM_VERSION:-$latestTag}
+if [[ $USE_MAIN_BRANCH == "true" ]]; then
+  echo "Checking out the main branch"
+  git checkout main
+else
+  git fetch --tags
+  latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
+  echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
+  git checkout ${CUSTOM_VERSION:-$latestTag}
+fi
 npm install
 
 # Copy mkworld binary
@@ -177,7 +183,8 @@ set_env_var() {
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
-ZT_ADDR="http://127.0.0.1:9993"
+ZT_ADDR=
+ZT_SECRET=
 NEXT_PUBLIC_SITE_NAME="ZTnet"
 NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
