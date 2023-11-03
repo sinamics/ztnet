@@ -40,7 +40,7 @@ do
  case "${option}" 
  in 
  v) CUSTOM_VERSION=${OPTARG};;
- b) USE_MAIN_BRANCH=${OPTARG};;
+ b) USE_MAIN_BRANCH=true;;
  esac 
 done
 
