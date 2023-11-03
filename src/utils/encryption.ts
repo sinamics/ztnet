@@ -89,15 +89,28 @@ export async function decryptAndVerifyToken({
 		throw new Error("Invalid token structure");
 	}
 
-	// Verify if the user exists and has the required role
-	const user = await prisma.user.findFirst({
+	// Verify if the user exists and has the required token
+	const user = await prisma.user.findUnique({
 		where: {
 			id: decryptedData.userId,
+		},
+		select: {
+			id: true,
+			role: true,
+			apiTokens: {
+				where: {
+					token: apiKey,
+				},
+			},
 		},
 	});
 
 	if (!user) {
 		throw new Error("Unauthorized");
+	}
+
+	if (user.apiTokens.length === 0) {
+		throw new Error("Invalid or expired token");
 	}
 
 	if (user.role !== "ADMIN" && requireAdmin) {
