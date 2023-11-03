@@ -16,10 +16,10 @@ NODE_MAJOR=18
 ARCH=$(dpkg --print-architecture)
 OS=$(grep -Eoi 'Debian|Ubuntu' /etc/issue)
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+NC=$(tput sgr0) # No Color
 
 ARCH="$(uname -m)"
 case "$ARCH" in
@@ -236,9 +236,9 @@ sudo systemctl enable ztnet
 sudo systemctl restart ztnet
 
 # Note for the user regarding systemd service management
-echo -e "Note: You can check the status of the service with $(tput setaf 3)systemctl status ztnet$(tput sgr0)."
-echo -e "To stop the ZTnet service, use $(tput setaf 3)sudo systemctl stop ztnet$(tput sgr0)."
-echo -e "If you do not want ZTnet to start on boot, you can disable it with $(tput setaf 3)sudo systemctl disable ztnet$(tput sgr0)."
+echo -e "Note: You can check the status of the service with ${YELLOW}systemctl status ztnet${NC}."
+echo -e "To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}."
+echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
 
 
 # Detect local IP address
@@ -246,4 +246,4 @@ local_ip=$(hostname -I | awk '{print $1}')
 
 rm -rf "$INSTALL_DIR"
 
-printf "\n\nYou can now open ZTnet at: $(tput setaf 3)http://${local_ip}:3000$(tput sgr0)\n"
+printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${local_ip}:3000${NC}\n"
