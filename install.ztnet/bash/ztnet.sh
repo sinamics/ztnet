@@ -236,13 +236,14 @@ sudo systemctl enable ztnet
 sudo systemctl restart ztnet
 
 # Note for the user regarding systemd service management
-echo -e "Note: You can check the status of the service with '\e[93msystemctl status ztnet\e[0m'."
-echo -e "To stop the ZTnet service, use '\e[93msudo systemctl stop ztnet\e[0m'."
-echo -e "If you do not want ZTnet to start on boot, you can disable it with '\e[93msudo systemctl disable ztnet\e[0m'."
+echo -e "Note: You can check the status of the service with $(tput setaf 3)systemctl status ztnet$(tput sgr0)."
+echo -e "To stop the ZTnet service, use $(tput setaf 3)sudo systemctl stop ztnet$(tput sgr0)."
+echo -e "If you do not want ZTnet to start on boot, you can disable it with $(tput setaf 3)sudo systemctl disable ztnet$(tput sgr0)."
+
 
 # Detect local IP address
 local_ip=$(hostname -I | awk '{print $1}')
 
 rm -rf "$INSTALL_DIR"
 
-printf "\n\nYou can now open ZTnet at: \e[93mhttp://${local_ip}:3000\e[0m\n"
+printf "\n\nYou can now open ZTnet at: $(tput setaf 3)http://${local_ip}:3000$(tput sgr0)\n"
