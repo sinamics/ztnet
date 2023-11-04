@@ -33,6 +33,7 @@ const config = {
     locales: ['en'],
   },
   plugins: [
+    '@stackql/docusaurus-plugin-structured-data',
     [
       'docusaurus-plugin-openapi-docs',
       {
@@ -197,6 +198,71 @@ const config = {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+      structuredData: {
+        excludedRoutes: [
+          '/providers',
+        ],
+        verbose: true,
+        featuredImageDimensions: {
+          width: 1200,
+          height: 627,
+        },
+        authors:{
+          'Bernt Christian Egeland': {
+            authorId: '1',
+            url: 'https://www.linkedin.com/in/bernt-christian-egeland/',
+            imageUrl: 'https://2.gravatar.com/avatar/231d0674ec90dab3e28b61a55b81d615dd2657f6daa34a4cf897f65e00e1167d?size=128',
+            sameAs: [
+              'https://egeland.io',
+              'https://github.com/sinamics',
+              'https://twitter.com/BerntChris',
+              'https://www.linkedin.com/in/bernt-christian-egeland/',
+              // Add any other sameAs links relevant to you
+            ],
+          },
+        },
+        // organization: {
+        //   sameAs: [
+        //     'https://twitter.com/your-org-twitter',
+        //     'https://www.linkedin.com/company/your-org-linkedin',
+        //     'https://github.com/your-org-github',
+        //     // Add any other sameAs links relevant to your organization
+        //   ],
+        //   contactPoint: {
+        //     '@type': 'ContactPoint',
+        //     email: 'info@your-org-email.com',
+        //   },
+        //   logo: {
+        //     '@type': 'ImageObject',
+        //     inLanguage: 'en-US',
+        //     '@id': 'https://your-org-website.com/#logo',
+        //     url: 'https://your-org-website.com/logo.png',
+        //     contentUrl: 'https://your-org-website.com/logo.png',
+        //     width: 1200,
+        //     height: 627,
+        //     caption: 'Your Organization - Caption Here',
+        //   },
+        //   address: {
+        //     '@type': 'PostalAddress',
+        //     addressCountry: 'NO',
+        //     postalCode: 'Your Postal Code',
+        //     streetAddress: 'Your Street Address',
+        //   },
+        //   duns: 'Your DUNS Number',
+        //   taxID: 'Your Tax ID',
+        // },
+        website: {
+          inLanguage: 'en-US',
+        },
+        webpage: {
+          inLanguage: 'en-US',
+          datePublished: '2023-11.04',
+        },
+        // breadcrumbLabelMap: {
+        //   // Update this map to reflect the structure and labels of your Docusaurus site
+        // }
+      },
+      
     }),
 };
 
