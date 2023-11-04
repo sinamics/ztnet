@@ -258,9 +258,9 @@ const config = {
           inLanguage: 'en-US',
           datePublished: '2023-11.04',
         },
-        // breadcrumbLabelMap: {
-        //   // Update this map to reflect the structure and labels of your Docusaurus site
-        // }
+        breadcrumbLabelMap: {
+          // Update this map to reflect the structure and labels of your Docusaurus site
+        }
       },
       
     }),
