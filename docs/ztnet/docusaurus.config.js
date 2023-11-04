@@ -202,7 +202,7 @@ const config = {
         excludedRoutes: [
           '/providers',
         ],
-        verbose: true,
+        verbose: false,
         featuredImageDimensions: {
           width: 1200,
           height: 627,

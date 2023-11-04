@@ -2,7 +2,7 @@
 id: ztnet
 title: License Notice
 slug: /licensing/ztnet
-description: Attribution and Licensing Notice for Third-Party Components
+description: ZTNET Licensing Notice - Detailed information on the GNU General Public License v3.0 (GPL-3.0) for ZTNET, including usage rights, obligations, and the full license text link.
 sidebar_position: 3
 ---
 
