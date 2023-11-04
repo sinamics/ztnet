@@ -2,7 +2,7 @@
 id: mkworld
 title: Mkworld
 slug: /licensing/mkworld
-description: Attribution and Licensing Notice for Third-Party Components
+description: Comprehensive licensing information and attribution for Mkworld's Go adaptation used in ZTNET.
 sidebar_position: 5
 ---
 
