@@ -20,9 +20,10 @@ const config = {
 	 * @see https://github.com/vercel/next.js/issues/41980
 	 */
 	i18n: {
-		defaultLocale: "en",
-		locales: ["en", "no", "zh", "es"],
+		defaultLocale: "default",
+		locales: ["default", "en", "no", "zh", "es"],
 	},
+	trailingSlash: true,
 	images: {
 		domains: ["pbs.twimg.com"],
 	},
