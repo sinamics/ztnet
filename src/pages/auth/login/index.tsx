@@ -38,10 +38,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
 	const session = await getSession(context);
-	const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
+	// const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
 
 	if (!session || !("user" in session)) {
-		return { props: { messages } };
+		return { props: {} };
 	}
 
 	if (session.user) {
@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user, messages },
+		props: { auth: session.user },
 	};
 };
 

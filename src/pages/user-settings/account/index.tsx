@@ -11,6 +11,7 @@ import Link from "next/link";
 import ApiToken from "~/components/userSettings/apiToken";
 
 const languageNames = {
+	default: "System",
 	en: "English",
 	no: "Norwegian",
 	zh: "Chinese",
