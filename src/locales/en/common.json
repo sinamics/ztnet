@@ -257,6 +257,28 @@
 				"header": "User Actions",
 				"stashBtn": "Stash"
 			}
+		},
+		"networkHelp": {
+			"title": "Network Help",
+			"networkID": "Network ID",
+			"networkIDText": "The network's globally unique 16-digit ID. This cannot currently be changed.",
+			"networkName": "Network Name",
+			"networkNameText": "A user-defined short name for this network that is visible to members. We recommend using something like a domain name (e.g., zerotier.com) or an email address.",
+			"accessControl": "Access Control",
+			"accessControlText": "How is membership controlled? This should be left on its default setting unless you want to create a totally open network for testing, gaming, etc.",
+			"multicastRecipientLimit": "Multicast Recipient Limit",
+			"multicastRecipientLimitText": "The maximum number of recipients that can receive an Ethernet multicast or broadcast. If the number of recipients exceeds this limit, a random subset will receive the announcement. Setting this higher makes multicasts more reliable on large networks at the expense of bandwidth.",
+			"multicastRecipientLimitText2": "Setting to 0 disables multicast, but be aware that only IPv6 with NDP emulation (RFC4193 or 6PLANE addressing modes) or other unicast-only protocols will work without multicast.",
+			"managedRoutes": "Managed Routes",
+			"managedRoutesText": "IPv4 routes to be published to network members. This can be used to create routes to other networks via gateways on a ZeroTier network. Note that for security reasons most clients will not use default routes or routes that overlap with public IP address space unless this is specifically allowed by the user. Public IP ranges are marked with an icon:",
+			"ipv4AutoAssign": "IPv4 Auto-Assign",
+			"ipv4AutoAssignText": "IPv4 range from which to auto-assign IPs. Note that IPs will only be assigned if they also fall within a defined route. Easy mode allows users to pick an IP range and a route and pool definition will automatically be created.",
+			"dnsPush": "DNS Push",
+			"dnsPushText1": "Requires ZeroTier version 1.6 or newer.",
+			"dnsPushText2": "Older versions of ZeroTier will ignore these settings.",
+			"dnsPushText3": "On macOS, iOS, Windows, and Android, ZeroTier can automatically add DNS servers for a specific domain. It does not set up or host a DNS server. You must host your own.",
+			"dnsPushText4": "If you configure zt.example.com as your search domain, and 10.147.20.1 as a server address, then your computer will ask 10.147.20.1 to look up IP addresses for hostnames ending in zt.example.com.",
+			"dnsPushText5": "This must be enabled on each client with the allowDNS option. There is a checkbox in the UI in each network's details, near the Allow Managed checkbox."
 		}
 	},
 	"admin": {
