@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { globalSiteVersion } from "~/utils/global";
 import Link from "next/link";
 import ApiToken from "~/components/userSettings/apiToken";
+import { supportedLocales } from "~/locales/lang";
 
 const languageNames = {
 	default: "System",
@@ -17,6 +18,7 @@ const languageNames = {
 	zh: "Chinese",
 	es: "Spanish",
 };
+const defaultLocale = "en";
 
 const Account = () => {
 	const { asPath, locale, locales, push } = useRouter();
@@ -33,9 +35,22 @@ const Account = () => {
 	});
 
 	const ChangeLanguage = async (locale: string) => {
-		await push(asPath, asPath, { locale });
-		localStorage.setItem("ztnet-language", locale);
+		if (locale === "default") {
+			localStorage.removeItem("ztnet-language"); // Remove the local storage value for 'default' selection
+
+			// Detect the browser locale and fallback to the defaultLocale if it's not supported
+			const browserLocale = navigator.language.split("-")[0];
+			const isLocaleSupported = supportedLocales.includes(browserLocale);
+
+			await push(asPath, asPath, {
+				locale: isLocaleSupported ? browserLocale : defaultLocale,
+			});
+		} else {
+			localStorage.setItem("ztnet-language", locale); // Save the selected locale in local storage
+			await push(asPath, asPath, { locale }); // Navigate to the current path with the new locale
+		}
 	};
+
 	if (userError) {
 		toast.error(userError.message);
 	}
