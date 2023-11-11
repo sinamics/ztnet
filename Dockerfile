@@ -131,7 +131,27 @@ RUN set -eux; \
     localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ENV LANG en_US.utf8
-ENV PGDATA /var/lib/postgresql/data
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+    libnss-wrapper \
+    xz-utils \
+    zstd \
+    ; \
+    rm -rf /var/lib/apt/lists/*
+
+ENV PG_MAJOR 15
+# make the sample config easier to munge (and "correct by default")
+RUN set -eux; \
+    dpkg-divert --add --rename --divert "/usr/share/postgresql/postgresql.conf.sample.dpkg" "/usr/share/postgresql/$PG_MAJOR/postgresql.conf.sample"; \
+    cp -v /usr/share/postgresql/postgresql.conf.sample.dpkg /usr/share/postgresql/postgresql.conf.sample; \
+    ln -sv ../postgresql.conf.sample "/usr/share/postgresql/$PG_MAJOR/"; \
+    sed -ri "s!^#?(listen_addresses)\s*=\s*\S+.*!\1 = '*'!" /usr/share/postgresql/postgresql.conf.sample; \
+    grep -F "listen_addresses = '*'" /usr/share/postgresql/postgresql.conf.sample
+
+RUN mkdir -p /var/run/postgresql && chown -R postgres:postgres /var/run/postgresql && chmod 2777 /var/run/postgresql
+
 RUN set -ex; \
     # pub   4096R/ACCC4CF8 2011-10-13 [expires: 2019-07-02]
     #       Key fingerprint = B97B 0AFC AA1A 47F0 44F2  44A0 7FCC 7D46 ACCC 4CF8
@@ -144,7 +164,9 @@ RUN set -ex; \
     gpgconf --kill all; \
     rm -rf "$GNUPGHOME"
 
-ENV PG_MAJOR 15
+
+ENV PGDATA /var/lib/postgresql/data
+VOLUME /var/lib/postgresql/data
 ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 
 RUN mkdir /docker-entrypoint-initdb.d
