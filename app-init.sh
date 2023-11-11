@@ -6,7 +6,6 @@ cmd="$@"
 
 # https://hub.docker.com/_/postgres/
 # https://github.com/docker-library/postgres/blob/master/15/bullseye/Dockerfile
-./app-postgres-init.sh postgres
 
 # # Read environment variables
 POSTGRES_USER=${POSTGRES_USER:-postgres}
@@ -14,6 +13,11 @@ POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-}
 POSTGRES_DB=${POSTGRES_DB:-$POSTGRES_USER}
 POSTGRES_HOST=${POSTGRES_HOST:-"localhost"}
 POSTGRES_PORT=${POSTGRES_PORT:-"5432"}
+
+# Run the init script only if POSTGRES_HOST is "localhost"
+if [ "$POSTGRES_HOST" == "localhost" ]; then
+  ./app-postgres-init.sh postgres
+fi
 
 # Create .env file
 cat << EOF > .env
