@@ -69,10 +69,6 @@ ENV NEXTAUTH_URL_INTERNAL http://localhost:3000
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-##
-# Install PostgreSQL
-##
-
 
 ######################################
 #
@@ -80,15 +76,7 @@ RUN adduser --system --uid 1001 nextjs
 #
 #####################################
 
-RUN apt update && apt install -y \
-    locales wget curl sudo lsb-release postgresql-client-15.2 postgresql-15.2 postgresql-contrib-15.2 \
-    && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Import the repository signing key:
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-
-# Create the file repository configuration:
-RUN sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+RUN apt update && apt install -y wget sudo gnupg2 lsb-release
 
 # explicitly set user/group IDs
 RUN set -eux; \
@@ -161,13 +149,13 @@ ENV PATH $PATH:/usr/lib/postgresql/$PG_MAJOR/bin
 
 RUN mkdir /docker-entrypoint-initdb.d
 
+
+
 #################################
 #
 # NextJS
 #
 ################################
-
-
 
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2
@@ -197,5 +185,5 @@ EXPOSE 3000
 
 ENV PORT 3000
 
-ENTRYPOINT ["/app/init-db.sh"]
+ENTRYPOINT ["/app/app-init.sh"]
 CMD ["node", "server.js"]

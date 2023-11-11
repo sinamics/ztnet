@@ -80,4 +80,4 @@ RUN mkdir /docker-entrypoint-initdb.d
 EXPOSE 3000 5555
 
 ENV PORT 3000
-ENTRYPOINT ["/workspaces/.devcontainer/init-cmd.sh"]
+ENTRYPOINT ["/workspaces/.devcontainer/app-init.sh"]

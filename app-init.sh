@@ -6,7 +6,7 @@ cmd="$@"
 
 # https://hub.docker.com/_/postgres/
 # https://github.com/docker-library/postgres/blob/master/15/bullseye/Dockerfile
-./init-postgres.sh postgres
+./app-postgres-init.sh postgres
 
 # Create .env file
 cat << EOF > .env
