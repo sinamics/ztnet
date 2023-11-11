@@ -6,7 +6,15 @@ info:
     Access the ZTNet suite through our RESTful Web API, compatible with version 0.4.0 and beyond. 
     
     This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
-    
+
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+
 paths:
   /network:
     get:
