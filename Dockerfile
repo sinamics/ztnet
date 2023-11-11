@@ -181,9 +181,8 @@ RUN touch .env && chown nextjs:nodejs .env
 RUN chmod u+x app-init.sh
 RUN chmod u+x app-postgres-init.sh
 
-# USER nextjs
-
 EXPOSE 3000
+EXPOSE 5432
 
 ENV PORT 3000
 
