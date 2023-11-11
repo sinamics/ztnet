@@ -1,12 +1,9 @@
 openapi: 3.1.0
 info:
-  title: ZTNet Web API
-  info_path: restapi/ztnet-web-api
+  title: ZTNet User Rest API
   version: 1.0.0
   description: |
-    Public API for ZTNet. Available from ztnet version 0.4.0 onwards.
-    
-    This API is rate-limited to 50 requests per minute
+      The official ZTNet Web API, beginning with version 0.4.0, provides public access with a rate limit of 50 requests per minute to maintain optimal service performance.
 servers:
   - url: https://ztnet.network/api/v1
     description: ZTNet API
@@ -51,14 +48,14 @@ paths:
                   type: string | null
                   description: |
                     The date and time at which the user's account will expire. If null, the account will never expire.
-                    Must be in ISO 8601 format (e.g. 2023-10-28T00:00:00Z).
+                    Must be in ISO 8601 format (e.g. 2023-11-03T00:00:00.000Z).
 
                     Not applicable if the user is an admin (first user). Admin accounts never expire.
             example:
               email: "post@ztnet.network"
               password: "strong_password"
               name: "Ztnet User"
-              expiresAt: "2023-10-28T00:00:00Z"
+              expiresAt: "2023-11-03T00:00:00.000Z"
       # parameters:
       #   - name: x-ztnet-auth
       #     in: header

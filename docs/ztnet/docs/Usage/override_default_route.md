@@ -2,19 +2,19 @@
 id: override_default_route
 title: Routing all traffic through Home with ZeroTier
 slug: /usage/override_default_route
-description: Routing all traffic through Home with ZeroTier
+description: Detailed guide on setting up ZeroTier to route all internet traffic through a home network, effectively using it as a secure VPN gateway. Covers Debian OS configuration, IP forwarding, and iptables.
 ---
 
 # Routing all traffic through Home with ZeroTier
 
-This guide will walk you through the steps to route all your internet traffic through a ZeroTier client, effectively using it as a VPN gateway. This setup is particularly useful for securing your internet connection or bypassing geo-restrictions. 
+This guide will walk you through the steps to route all your internet traffic through a ZeroTier client, effectively using it as a VPN gateway. This setup is particularly useful for securing your internet connection or bypassing geo-restrictions.
 
 ## Overview
+
 This guide involves two Debian OS machines:
 
 1. ZeroTier Web UI Server: This machine hosts Ztnet and serves as the ZeroTier Web UI for managing network configurations.
 2. Debian Client: This machine will act as the client through which all internet traffic will be routed.
-
 
 ### Step 1: Enable IPv4 Forwarding ( Run on Debian Client )
 
@@ -27,7 +27,9 @@ sudo sysctl -w net.ipv4.ip_forward=1
 ```
 
 ### Step 2: Configure iptables for NAT and Forwarding ( Run on Debian Client )
+
 Replace `PHY_IFACE` and `ZT_IFACE` with your actual physical and ZeroTier interface names.
+
 ```bash
 PHY_IFACE=eth0
 ZT_IFACE=ztxxxxxxx
@@ -46,8 +48,7 @@ sudo sh -c 'iptables-save > /etc/iptables/rules.v4'
 
 ### Step 3: Update ZeroTier Network Configuration
 
-In the Ztnet Managed network settings, add `0.0.0.0/0` via your ZeroTier Server node IP address. 
-
+In the Ztnet Managed network settings, add `0.0.0.0/0` via your ZeroTier Server node IP address.
 
 After completing these steps, you'll be able to route your internet traffic through the zerotier client. You can verify this by visiting [https://whatismyipaddress.com/](https://whatismyipaddress.com/) and checking that your IP address matches the IP address of your ZeroTier Server node.
 
@@ -57,7 +58,4 @@ All the above commands has been exectued on the `218 PVE VPN passtrough` node in
 
 Now every member in this network will be able to route their internet traffic through the "218 PVE VPN passtrough" as long as they have selected "Allow default route override" or on mobile "Route all traffic through Zerotier" in their client settings.
 
-
 ![VPN Passthrough](/img/usage/vpn_passthrough.png)
-
-

@@ -24,6 +24,8 @@ jobs:
       run: npm install
     - name: Install Tailwind CSS
       run: npm install tailwindcss
+    - name: Build API docs
+      run: npx docusaurus gen-api-docs all
     - name: Build website
       run: npm run build
     - name: Upload artifact

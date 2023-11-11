@@ -21,6 +21,9 @@ export const CheckExpiredUsers = async () => {
 						lt: new Date(),
 					},
 					isActive: true,
+					NOT: {
+						role: "ADMIN",
+					},
 				},
 				select: {
 					network: true,

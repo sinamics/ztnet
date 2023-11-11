@@ -18,6 +18,8 @@ import {
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { isRunningInDocker } from "~/utils/docker";
+import { User, UserOptions } from "@prisma/client";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -183,7 +185,11 @@ export const authRouter = createTRPCRouter({
 					hash,
 					userGroupId: defaultUserGroup?.id,
 					options: {
-						create: {}, // empty object will make Prisma use the default values from the model
+						create: {
+							localControllerUrl: isRunningInDocker()
+								? "http://zerotier:9993"
+								: "http://127.0.0.1:9993",
+						},
 					},
 				},
 				select: {
@@ -248,14 +254,30 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.prisma.user.findFirst({
+		// add type that extend the user type with urlFromEnv
+		const user = (await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
 			},
 			include: {
 				options: true,
 			},
-		});
+		})) as User & {
+			options?: UserOptions & {
+				urlFromEnv?: boolean;
+				secretFromEnv?: boolean;
+				localControllerUrlPlaceholder?: string;
+			};
+		};
+
+		user.options.localControllerUrlPlaceholder = isRunningInDocker()
+			? "http://zerotier:9993"
+			: "http://127.0.0.1:9993";
+
+		// Set secret environment status
+		user.options.urlFromEnv = !!process.env.ZT_ADDR;
+		user.options.secretFromEnv = !!process.env.ZT_SECRET;
+		return user;
 	}),
 	update: protectedProcedure
 		.input(
@@ -550,6 +572,17 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input?.localControllerUrl && process.env.ZT_ADDR) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Remove the ZT_ADDR environment variable to use this feature!",
+				});
+			}
+
+			const defaultLocalZtUrl = isRunningInDocker()
+				? "http://zerotier:9993"
+				: "http://127.0.0.1:9993";
+
 			// we use upsert in case the user has no options yet
 			const updated = await ctx.prisma.user.update({
 				where: {
@@ -559,11 +592,11 @@ export const authRouter = createTRPCRouter({
 					options: {
 						upsert: {
 							create: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 							update: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 						},

@@ -257,6 +257,28 @@
 				"header": "Acciones del Usuario",
 				"stashBtn": "Almacenar"
 			}
+		},
+		"networkHelp": {
+			"title": "Ayuda de la red",
+			"networkID": "ID de la red",
+			"networkIDText": "El ID único global de 16 dígitos de la red. Actualmente esto no se puede cambiar.",
+			"networkName": "Nombre de la red",
+			"networkNameText": "Un nombre corto definido por el usuario para esta red que es visible para los miembros. Recomendamos usar algo como un nombre de dominio (por ejemplo, zerotier.com) o una dirección de correo electrónico.",
+			"accessControl": "Control de acceso",
+			"accessControlText": "¿Cómo se controla la membresía? Esto se debe dejar en su configuración predeterminada a menos que desee crear una red totalmente abierta para pruebas, juegos, etc.",
+			"multicastRecipientLimit": "Límite de destinatarios de multidifusión",
+			"multicastRecipientLimitText": "El número máximo de destinatarios que pueden recibir una multidifusión o difusión de Ethernet. Si el número de destinatarios excede este límite, un subconjunto aleatorio recibirá el anuncio. Establecer esto más alto hace que las multidifusiones sean más confiables en redes grandes a expensas del ancho de banda.",
+			"multicastRecipientLimitText2": "Establecer en 0 desactiva la multidifusión, pero tenga en cuenta que solo IPv6 con emulación NDP (modos de direccionamiento RFC4193 o 6PLANE) u otros protocolos solo unidifusión funcionarán sin multidifusión.",
+			"managedRoutes": "Rutas administradas",
+			"managedRoutesText": "Rutas IPv4 que se publicarán a los miembros de la red. Esto se puede usar para crear rutas a otras redes a través de puertas de enlace en una red ZeroTier. Tenga en cuenta que por razones de seguridad, la mayoría de los clientes no utilizarán rutas predeterminadas o rutas que se superpongan con el espacio de direcciones IP públicas a menos que esto sea específicamente permitido por el usuario. Las gamas de IP públicas están marcadas con un icono:",
+			"ipv4AutoAssign": "Asignación automática de IPv4",
+			"ipv4AutoAssignText": "Rango de IPv4 del cual asignar IPs automáticamente. Tenga en cuenta que las IPs solo se asignarán si también caen dentro de una ruta definida. El modo fácil permite a los usuarios elegir un rango de IP y se creará automáticamente una definición de ruta y de grupo.",
+			"dnsPush": "Impulsión de DNS",
+			"dnsPushText1": "Requiere la versión 1.6 o más nueva de ZeroTier.",
+			"dnsPushText2": "Las versiones anteriores de ZeroTier ignorarán estos ajustes.",
+			"dnsPushText3": "En macOS, iOS, Windows y Android, ZeroTier puede agregar automáticamente servidores DNS para un dominio específico. No configura ni aloja un servidor DNS. Debe alojar el suyo propio.",
+			"dnsPushText4": "Si configura zt.example.com como su dominio de búsqueda y 10.147.20.1 como dirección del servidor, entonces su computadora pedirá a 10.147.20.1 que busque direcciones IP para nombres de host que terminen en zt.example.com.",
+			"dnsPushText5": "Esto debe estar habilitado en cada cliente con la opción allowDNS. Hay una casilla de verificación en la interfaz de usuario en los detalles de cada red, cerca de la casilla de verificación Permitir administrado."
 		}
 	},
 	"admin": {
@@ -434,7 +456,8 @@
 				"modification_warning": "Modificar la URL del controlador ZeroTier afecta a todos los usuarios. Aunque esto ofrece flexibilidad para aquellos que quieren un controlador personalizado, ten en cuenta las posibles interrupciones y problemas de compatibilidad. Siempre realiza una copia de seguridad de las configuraciones antes de hacer cambios.",
 				"local_zerotier_url": "URL local de Zerotier",
 				"zerotier_secret": "Secreto de Zerotier",
-				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado."
+				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado.",
+				"isUsingEnvVariablesAlert": "La variable de entorno <span>ZT_ADDR o ZT_SECRET</span> tiene prioridad y anula cualquier cambio de URL realizado a través de la interfaz de usuario. Para actualizar los campos respectivos a través de la interfaz de usuario, primero debe eliminar las variables de entorno ZT_ADDR o ZT_SECRET."
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",

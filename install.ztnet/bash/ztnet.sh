@@ -16,10 +16,10 @@ NODE_MAJOR=18
 ARCH=$(dpkg --print-architecture)
 OS=$(grep -Eoi 'Debian|Ubuntu' /etc/issue)
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+NC=$(tput sgr0) # No Color
 
 ARCH="$(uname -m)"
 case "$ARCH" in
@@ -35,13 +35,16 @@ case "$ARCH" in
         ;;
 esac
 
-while getopts v: option 
+USE_MAIN_BRANCH=false
+
+while getopts v:b option 
 do 
  case "${option}" 
  in 
  v) CUSTOM_VERSION=${OPTARG};;
+ b) USE_MAIN_BRANCH=true;;
  esac 
-done 
+done
 
 if [[ "$(lsb_release -is)" != "Debian" && "$(lsb_release -is)" != "Ubuntu" ]]; then
   echo "This script is only for Debian and Ubuntu. Exiting."
@@ -53,8 +56,9 @@ printf "\n\n${YELLOW}Welcome to the installation script.${NC}\n"
 printf "${YELLOW}This script will perform the following actions:${NC}\n"
 printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
 printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
-printf "  3. Clone ztnet repo into /tmp folder and build artifacts .\n"
-printf "  4. Copy artifacts to /opt/ztnet folder.\n"
+printf "  3. Check if Zerotier is installed, If not, it will be installed.\n"
+printf "  4. Clone ztnet repo into /tmp folder and build artifacts from latest tag version.\n"
+printf "  5. Copy artifacts to /opt/ztnet folder.\n"
 printf "${YELLOW}Please note:${NC}\n"
 printf "  - You will have the option to set a custom password for the PostgreSQL user 'postgres'.\n"
 printf "Press space to proceed with the installation..." >&2
@@ -64,6 +68,9 @@ read -n1 -s < /dev/tty
 command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
+
+# update apt
+sudo apt update
 
 # install git curl openssl
 if ! command_exists git; then
@@ -123,7 +130,13 @@ if [ "$INSTALL_NODE" = true ]; then
 fi
 
 # Install ZeroTier
-curl -s https://install.zerotier.com | sudo bash
+if ! command_exists zerotier-cli; then
+    echo "ZeroTier not found, installing..."
+    curl -s https://install.zerotier.com | sudo bash
+else
+    echo "ZeroTier is already installed."
+fi
+
 
 # Setup Ztnet
 # Clone Ztnet repository into /opt folder
@@ -137,10 +150,15 @@ else
 fi
 
 cd $INSTALL_DIR
-git fetch --tags
-latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
-echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
-git checkout ${CUSTOM_VERSION:-$latestTag}
+if [[ $USE_MAIN_BRANCH == "true" ]]; then
+  echo "Checking out the main branch"
+  git checkout main
+else
+  git fetch --tags
+  latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
+  echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
+  git checkout ${CUSTOM_VERSION:-$latestTag}
+fi
 npm install
 
 # Copy mkworld binary
@@ -167,7 +185,8 @@ set_env_var() {
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
-ZT_ADDR="http://127.0.0.1:9993"
+ZT_ADDR=
+ZT_SECRET=
 NEXT_PUBLIC_SITE_NAME="ZTnet"
 NEXTAUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
@@ -225,8 +244,15 @@ sudo systemctl daemon-reload
 sudo systemctl enable ztnet
 sudo systemctl restart ztnet
 
+# Note for the user regarding systemd service management
+echo -e "Note: You can check the status of the service with ${YELLOW}systemctl status ztnet${NC}."
+echo -e "To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}."
+echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
+
+
 # Detect local IP address
 local_ip=$(hostname -I | awk '{print $1}')
 
 rm -rf "$INSTALL_DIR"
+
 printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${local_ip}:3000${NC}\n"

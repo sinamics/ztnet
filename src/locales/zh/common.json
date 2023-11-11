@@ -257,6 +257,28 @@
 				"header": "用户操作",
 				"stashBtn": "隐藏"
 			}
+		},
+		"networkHelp": {
+			"title": "网络帮助",
+			"networkID": "网络 ID",
+			"networkIDText": "网络的全球唯一16位 ID。目前这不能被更改。",
+			"networkName": "网络名称",
+			"networkNameText": "用户为这个网络定义的简短名称，对成员可见。我们建议使用类似域名（例如，zerotier.com）或电子邮件地址。",
+			"accessControl": "访问控制",
+			"accessControlText": "如何控制成员资格？除非您想创建一个完全开放的网络用于测试、游戏等，否则应保留其默认设置。",
+			"multicastRecipientLimit": "多播接收者限制",
+			"multicastRecipientLimitText": "可以接收以太网多播或广播的最大接收者数量。如果接收者数量超过此限制，则随机子集将接收通告。提高此设置会使多播在大型网络上更可靠，但代价是带宽。",
+			"multicastRecipientLimitText2": "设置为0将禁用多播，但请注意，只有IPv6与NDP模拟（RFC4193或6PLANE寻址模式）或其他仅单播协议在没有多播的情况下才能工作。",
+			"managedRoutes": "管理路由",
+			"managedRoutesText": "将发布给网络成员的IPv4路由。这可用于通过ZeroTier网络上的网关创建到其他网络的路由。请注意，出于安全原因，除非用户特别允许，大多数客户端不会使用默认路由或与公共IP地址空间重叠的路由。公共IP范围标有图标：",
+			"ipv4AutoAssign": "IPv4 自动分配",
+			"ipv4AutoAssignText": "用于自动分配 IP 的 IPv4 范围。请注意，只有当 IP 也位于定义的路由内时，才会分配 IP。简易模式允许用户选择 IP 范围，并且路由和池定义将自动创建。",
+			"dnsPush": "DNS 推送",
+			"dnsPushText1": "需要 ZeroTier 1.6 版或更新版本。",
+			"dnsPushText2": "旧版本的 ZeroTier 将忽略这些设置。",
+			"dnsPushText3": "在 macOS、iOS、Windows 和 Android 上，ZeroTier 可以自动为特定域添加 DNS 服务器。它不设置或托管 DNS 服务器。您必须托管您自己的服务器。",
+			"dnsPushText4": "如果您将 zt.example.com 配置为您的搜索域，并且将 10.147.20.1 配置为服务器地址，那么您的计算机将要求 10.147.20.1 查找以 zt.example.com 结尾的主机名的 IP 地址。",
+			"dnsPushText5": "必须在每个客户端上启用 allowDNS 选项。在每个网络详情的 UI 中，靠近允许管理复选框附近有一个复选框。"
 		}
 	},
 	"admin": {
@@ -434,7 +456,8 @@
 				"modification_warning": "修改ZeroTier控制器URL会影响所有用户。虽然这为想要自定义控制器的人提供了灵活性，但请注意可能的中断和兼容性问题。更改前始终备份配置。",
 				"local_zerotier_url": "本地Zerotier URL",
 				"zerotier_secret": "Zerotier密码",
-				"submit_empty_field_default": "提交空字段以使用默认值。"
+				"submit_empty_field_default": "提交空字段以使用默认值。",
+				"isUsingEnvVariablesAlert": "环境变量<span>ZT_ADDR 或 ZT_SECRET</span>将优先覆盖通过用户界面所做的任何URL更改。要通过用户界面更新相应字段，您必须先删除ZT_ADDR或ZT_SECRET环境变量。"
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",

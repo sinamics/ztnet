@@ -28,34 +28,32 @@ import os from "os";
 import { prisma } from "~/server/db";
 
 export let ZT_FOLDER: string;
-export let ZT_FILE: string;
 
 if (os.platform() === "freebsd") {
 	ZT_FOLDER = "/var/db/zerotier-one";
-	ZT_FILE = `${ZT_FOLDER}/authtoken.secret`;
 } else {
 	ZT_FOLDER = "/var/lib/zerotier-one";
-	ZT_FILE = process.env.ZT_SECRET_FILE || `${ZT_FOLDER}/authtoken.secret`;
 }
 
-const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
+export const ZT_FILE: string =
+	process.env.ZT_SECRET_FILE || `${ZT_FOLDER}/authtoken.secret`;
+
+const LOCAL_ZT_ADDR = process.env.ZT_ADDR;
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
-let ZT_SECRET = process.env.ZT_SECRET;
-
-if (!ZT_SECRET) {
-	if (process.env.IS_GITHUB_ACTION !== "true") {
-		try {
-			ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
-		} catch (error) {
-			console.error("an error occurred while reading the ZT_SECRET");
-			console.error(error);
-		}
-	} else {
-		// GitHub Actions
-		ZT_SECRET = "dummy_text_to_skip_gh";
-	}
-}
+const ZT_SECRET =
+	process.env.ZT_SECRET ||
+	(process.env.IS_GITHUB_ACTION === "true"
+		? "dummy_text_to_skip_gh"
+		: (() => {
+				try {
+					return fs.readFileSync(ZT_FILE, "utf8");
+				} catch (error) {
+					console.error("An error occurred while reading the ZT_SECRET");
+					console.error(error);
+					return null; // or appropriate fallback value
+				}
+		  })());
 
 const getApiCredentials = async (
 	ctx: UserContext,
@@ -120,7 +118,7 @@ const getOptions = async (
 	}
 
 	return {
-		localControllerUrl: localControllerUrl || LOCAL_ZT_ADDR,
+		localControllerUrl: LOCAL_ZT_ADDR || localControllerUrl,
 		headers: {
 			"X-ZT1-Auth": localControllerSecret || ZT_SECRET,
 			"Content-Type": "application/json",

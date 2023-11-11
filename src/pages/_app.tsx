@@ -44,7 +44,6 @@ const App: AppType<{ session: Session | null }> = ({
 		if (storedLocale && storedLocale !== locale) {
 			void push(asPath, asPath, { locale: storedLocale });
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
