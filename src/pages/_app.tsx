@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
+import { supportedLocales } from "~/locales/lang";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -41,7 +42,11 @@ const App: AppType<{ session: Session | null }> = ({
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage
 		const storedLocale = localStorage.getItem("ztnet-language");
-		if (storedLocale && storedLocale !== locale) {
+		if (
+			storedLocale &&
+			storedLocale !== locale &&
+			supportedLocales.includes(storedLocale)
+		) {
 			void push(asPath, asPath, { locale: storedLocale });
 		}
 	}, []);
