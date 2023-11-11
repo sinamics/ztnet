@@ -21,7 +21,7 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo 
 RUN apt-get update && \
   apt-get install -y postgresql-client-15 postgresql-15 postgresql-contrib-15
 
-# RUN chmod +x .devcontainer/init-cmd.sh
+# RUN chmod +x .devcontainer/app-init.sh
 
 # USER nextjs
 # grab gosu for easy step-down from root

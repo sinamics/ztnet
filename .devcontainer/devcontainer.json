@@ -49,7 +49,7 @@
   // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
   // "shutdownAction": "none",
   // Uncomment the next line to run commands after the container is created.
-  // "postCreateCommand": "chmod +x .devcontainer/init-cmd.sh"
+  // "postCreateCommand": "chmod +x .devcontainer/app-init.sh"
   // Configure tool-specific properties.
   // "customizations": {},
   // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.

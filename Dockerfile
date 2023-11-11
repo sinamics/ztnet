@@ -51,7 +51,7 @@ FROM $NODEJS_IMAGE AS runner
 WORKDIR /app
 
 # set the app version as an environment variable. Used in the github action
-# used in the init-db.sh script
+# used in the app-init.sh script
 ARG NEXTAUTH_URL
 ARG NEXTAUTH_SECRET
 
@@ -171,13 +171,15 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
+COPY --from=builder --chown=nextjs:nodejs /app/app-init.sh ./app-init.sh
+COPY --from=builder --chown=nextjs:nodejs /app/app-postgres-init.sh ./app-postgres-init.sh
 COPY --from=ztmkworld_builder /usr/local/bin/ztmkworld /usr/local/bin/ztmkworld
 
-# prepeare .env file for the init-db.sh script
+# prepeare .env file for the app-init.sh script
 RUN touch .env && chown nextjs:nodejs .env
 
-RUN chmod u+x init-db.sh
+RUN chmod u+x app-init.sh
+RUN chmod u+x app-postgres-init.sh
 
 # USER nextjs
 
