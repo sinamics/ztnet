@@ -1,10 +1,17 @@
 version: "3.1"
 services:
-  # db
-  # postgres:
-  #   ports:
-  #     - 5432:5432
-      
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ztnet_dev
+      POSTGRES_PASSWORD: ztnet_dev
+      POSTGRES_DB: ztnet_dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
   # zt container
   zerotier:
     image: zyclonite/zerotier:1.12.1
@@ -22,6 +29,10 @@ services:
       - .:/workspaces:cached
     environment:
       NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: ztnet_dev
+      POSTGRES_PASSWORD: ztnet_dev
+      POSTGRES_DB: ztnet_dev
     networks:
       - app-network
     depends_on:
