@@ -775,7 +775,7 @@ accept;`;
 			// define mail options
 			const mailOptions = {
 				from: globalOptions.smtpEmail,
-				to: ctx.session.user.email,
+				to: email,
 				subject: parsedTemplate.subject,
 				html: parsedTemplate.body,
 			};
