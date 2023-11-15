@@ -36,18 +36,23 @@ const Account = () => {
 
 	const ChangeLanguage = async (locale: string) => {
 		if (locale === "default") {
-			localStorage.removeItem("ztnet-language"); // Remove the local storage value for 'default' selection
+			localStorage.removeItem("ztnet-language");
 
-			// Detect the browser locale and fallback to the defaultLocale if it's not supported
-			const browserLocale = navigator.language.split("-")[0];
-			const isLocaleSupported = supportedLocales.includes(browserLocale);
+			// Use navigator.languages for better cross-browser support
+			const browserLocales = navigator.languages.map((lang) => lang.split("-")[0]);
+			const isLocaleSupported = browserLocales.some((lang) =>
+				supportedLocales.includes(lang),
+			);
+			// Find the first supported locale or fallback to defaultLocale
+			const matchedLocale =
+				browserLocales.find((lang) => supportedLocales.includes(lang)) || defaultLocale;
 
 			await push(asPath, asPath, {
-				locale: isLocaleSupported ? browserLocale : defaultLocale,
+				locale: isLocaleSupported ? matchedLocale : defaultLocale,
 			});
 		} else {
-			localStorage.setItem("ztnet-language", locale); // Save the selected locale in local storage
-			await push(asPath, asPath, { locale }); // Navigate to the current path with the new locale
+			localStorage.setItem("ztnet-language", locale);
+			await push(asPath, asPath, { locale });
 		}
 	};
 
