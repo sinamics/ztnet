@@ -51,7 +51,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	const isJwt = !!context.query?.invite && context.query?.invite.length > 50;
 
 	const session = await getSession(context);
-	const messages = (await import(`~/locales/${context.locale}/common.json`)).default;
 
 	// redirect user to 404 if registration is disabled
 	if (!options?.enableRegistration && !isJwt) {
@@ -63,7 +62,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 		};
 	}
 	if (!session || !("user" in session)) {
-		return { props: { messages } };
+		return { props: {} };
 	}
 
 	if (session.user) {
@@ -76,7 +75,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user, messages },
+		props: { auth: session.user },
 	};
 };
 
