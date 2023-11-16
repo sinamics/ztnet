@@ -1,17 +1,17 @@
 ---
 id: debian_11
 title: Standalone Debian & Ubuntu
-slug: /installation/debian_11
+slug: /installation/linux
 description: Debian 11 installation instructions for ZTNET
 sidebar_position: 2
 ---
 
 # Standalone Debian & Ubuntu
 
-Login as **root** on your system, then install 'curl' and 'sudo' if it is not already installed:
+Login as **root** on your system, then install `curl`, `lsb-release` and `sudo` if it is not already installed:
 
 ```bash
-apt update && apt install -y sudo curl
+apt update && apt install -y sudo curl lsb-release
 ```
 
 To continue install ztnet on Debian or Ubuntu, run the following command:
