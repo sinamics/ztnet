@@ -57,24 +57,23 @@ export function createTransporter(globalOptions: GlobalOptions) {
 			generateInstanceSecret(SMTP_SECRET),
 		);
 	}
-
 	return nodemailer.createTransport({
 		host: globalOptions.smtpHost,
 		port: globalOptions.smtpPort,
-		secure: globalOptions.smtpSecure,
+		secure: globalOptions.smtpUseSSL,
 		auth: {
-			user: globalOptions.smtpEmail,
+			user: globalOptions.smtpUsername,
 			pass: globalOptions.smtpPassword,
 		},
 		tls: {
-			rejectUnauthorized: false,
+			rejectUnauthorized: true,
+			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
 }
 
 interface SendMailResult {
 	accepted: string[];
-	// add other properties as needed
 }
 
 export async function sendEmail(
