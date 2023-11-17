@@ -18,10 +18,10 @@ body:
     validations:
       required: true
   - type: textarea
-    id: logs
+    id: docker-logs
     attributes:
-      label: "📋 Relevant Log Output"
-      description: "Please copy and paste any relevant log output here. This will be automatically formatted into code, so no need for backticks."
+      label: "📋 Docker Logs"
+      description: "Please include Docker logs. Run `docker logs ztnet` and copy and paste the output here. This will be automatically formatted into code, so no need for backticks."
       render: shell
     validations:
       required: false

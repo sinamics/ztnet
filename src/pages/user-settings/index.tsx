@@ -1,12 +1,15 @@
 import React, { type ReactElement } from "react";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Account from "./account";
 import { type GetServerSidePropsContext } from "next";
 import { useTranslations } from "next-intl";
 import UserNetworkSetting from "./network";
+import { globalSiteTitle } from "~/utils/global";
 
 const UserSettings = () => {
+	const title = `${globalSiteTitle} - User Settings`;
 	const router = useRouter();
 	const t = useTranslations("userSettings");
 	const { tab = "members" } = router.query;
@@ -37,20 +40,30 @@ const UserSettings = () => {
 		});
 	};
 	return (
-		<div className="py-5">
-			<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
-				{tabs.map((t) => (
-					<a
-						key={t.value}
-						onClick={() => void changeTab(t)}
-						className={`text-md tab tab-bordered ${t.value === tab ? "tab-active" : ""}`}
-					>
-						{t.name}
-					</a>
-				))}
+		<>
+			<Head>
+				<title>{title}</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta property="og:title" content={title} key={title} />
+				<meta name="robots" content="nofollow" />
+			</Head>
+			<div className="py-5">
+				<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
+					{tabs.map((t) => (
+						<a
+							key={t.value}
+							onClick={() => void changeTab(t)}
+							className={`text-md tab tab-bordered ${
+								t.value === tab ? "tab-active" : ""
+							}`}
+						>
+							{t.name}
+						</a>
+					))}
+				</div>
+				{tabs.find((t) => t.value === tab)?.component}
 			</div>
-			{tabs.find((t) => t.value === tab)?.component}
-		</div>
+		</>
 	);
 };
 

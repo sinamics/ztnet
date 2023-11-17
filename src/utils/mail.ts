@@ -1,6 +1,7 @@
 import { type GlobalOptions } from "@prisma/client";
 import nodemailer, { type TransportOptions } from "nodemailer";
 import { throwError } from "~/server/helpers/errorHandler";
+import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 
 export const inviteUserTemplate = () => {
 	return {
@@ -49,23 +50,30 @@ export function createTransporter(globalOptions: GlobalOptions) {
 			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",
 		);
 	}
+
+	if (globalOptions.smtpPassword) {
+		globalOptions.smtpPassword = decrypt(
+			globalOptions.smtpPassword,
+			generateInstanceSecret(SMTP_SECRET),
+		);
+	}
 	return nodemailer.createTransport({
 		host: globalOptions.smtpHost,
 		port: globalOptions.smtpPort,
-		secure: globalOptions.smtpSecure,
+		secure: globalOptions.smtpUseSSL,
 		auth: {
-			user: globalOptions.smtpEmail,
+			user: globalOptions.smtpUsername,
 			pass: globalOptions.smtpPassword,
 		},
 		tls: {
-			rejectUnauthorized: false,
+			rejectUnauthorized: true,
+			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
 }
 
 interface SendMailResult {
 	accepted: string[];
-	// add other properties as needed
 }
 
 export async function sendEmail(

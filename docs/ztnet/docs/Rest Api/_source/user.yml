@@ -1,0 +1,131 @@
+openapi: 3.1.0
+info:
+  title: ZTNet User Rest API
+  version: 1.0.0
+  description: |
+      The official ZTNet Web API, beginning with version 0.4.0, provides public access with a rate limit of 50 requests per minute to maintain optimal service performance.
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+tags:
+  - name: user
+    description: Users API
+    x-displayName: Users dsd s
+paths:
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create a new user
+      operationId: postNewUser
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+      description: |
+        If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
+        Keep in mind that first user created will be the admin user.
+      security:
+        - x-ztnet-auth: []
+      requestBody:
+        # required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                expiresAt:
+                  type: string | null
+                  description: |
+                    The date and time at which the user's account will expire. If null, the account will never expire.
+                    Must be in ISO 8601 format (e.g. 2023-11-03T00:00:00.000Z).
+
+                    Not applicable if the user is an admin (first user). Admin accounts never expire.
+            example:
+              email: "post@ztnet.network"
+              password: "strong_password"
+              name: "Ztnet User"
+              expiresAt: "2023-11-03T00:00:00.000Z"
+      # parameters:
+      #   - name: x-ztnet-auth
+      #     in: header
+      #     required: true
+      #     schema:
+      #       type: string
+      #     description: API key required if any users have been created.
+          
+      responses:
+        200:
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  expiresAt:
+                    type: string
+                example:
+                  id: "12345"
+                  email: "test@example.com"
+                  name: "Test User"
+                  expiresAt: "2023-10-28T00:00:00Z"
+
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    components:
+      operationId: postNewUser
+      securitySchemes:
+        x-ztnet-auth:
+          type: apiKey
+          required: true
+          in: header
+          name: x-ztnet-auth
+          description: API key can be generated from the ZTNet admin section.

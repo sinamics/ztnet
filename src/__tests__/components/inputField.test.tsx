@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
 import InputField from "~/components/elements/inputField";

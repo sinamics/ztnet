@@ -3,10 +3,22 @@ import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
-import { CentralNetworkTable } from "../../components/modules/ztCentral/centralNetworkTable";
+import { CentralNetworkTable } from "../../components/networkPage/centralNetworkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { type GetServerSidePropsContext } from "next";
+import { withAuth } from "~/components/auth/withAuth";
+
+const title = `${globalSiteTitle} - Zerotier Central`;
+
+const HeadSection = () => (
+	<Head>
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.ico" />
+		<meta property="og:title" content={title} key={title} />
+		<meta name="robots" content="nofollow" />
+	</Head>
+);
 
 const CentralNetworks: NextPageWithLayout = () => {
 	const t = useTranslations("networks");
@@ -23,26 +35,23 @@ const CentralNetworks: NextPageWithLayout = () => {
 		createNetwork({ central: true }, { onSuccess: () => void refetch() });
 	};
 
-	const title = `${globalSiteTitle} - ${t("title")}`;
 	if (isLoading) {
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
+			<>
+				<HeadSection />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56"></progress>
+					</h1>
+				</div>
+			</>
 		);
 	}
 
 	return (
 		<>
-			<Head>
-				<title>{title}</title>
-				<meta name="description" content="ZT Central Network" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
+			<HeadSection />
 			<main className="w-full bg-base-100">
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">ZT Central Networks</h5>
@@ -100,7 +109,7 @@ const CentralNetworks: NextPageWithLayout = () => {
 CentralNetworks.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -110,5 +119,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default CentralNetworks;

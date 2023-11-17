@@ -1,28 +1,39 @@
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/modules/networkRoutes";
-import { NetworkMembersTable } from "~/components/modules/table/networkMembersTable";
+import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
-import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
-import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
-import { AddMemberById } from "~/components/modules/addMemberById";
+import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
+import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
+import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
+import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/table/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
-import { NetworkFlowRules } from "~/components/modules/networkFlowRules";
-import { NetworkDns } from "~/components/modules/networkDns";
-import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import { NetworkFlowRules } from "~/components/networkByIdPage/networkFlowRules";
+import { NetworkDns } from "~/components/networkByIdPage/networkDns";
+import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 import cn from "classnames";
-import NetworkHelpText from "~/components/modules/networkHelp";
-import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
+import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
+import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next/types";
-import NetworkName from "~/components/modules/networkName";
-import NetworkDescription from "~/components/modules/networkDescription";
-// import DebugMirror from "~/components/modules/debugController";
+import { GetServerSidePropsContext } from "next/types";
+import NetworkName from "~/components/networkByIdPage/networkName";
+import NetworkDescription from "~/components/networkByIdPage/networkDescription";
+import { withAuth } from "~/components/auth/withAuth";
+import Head from "next/head";
+import { globalSiteTitle } from "~/utils/global";
+
+const HeadSection = ({ title }: { title: string }) => (
+	<Head>
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.ico" />
+		<meta property="og:title" content={title} key={title} />
+		<meta name="robots" content="nofollow" />
+	</Head>
+);
 
 const NetworkById = () => {
 	const t = useTranslations("networkById");
@@ -45,56 +56,65 @@ const NetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
 	const { network, members = [] } = networkById || {};
+	const pageTitle = `${globalSiteTitle} - ${network?.name}`;
 
 	if (errorNetwork) {
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
-				<ul className="list-disc">
-					<li>{t("errorSteps.step1")}</li>
-					<li>{t("errorSteps.step2")}</li>
-				</ul>
-				<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-					Network Actions
-				</div>
-				<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
-					<div className="flex items-end md:justify-end">
-						<button
-							onClick={() =>
-								callModal({
-									title: `Delete network ${query.id as string}`,
-									description:
-										"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
-									yesAction: () => {
-										deleteNetwork(
-											{ nwid: query.id as string },
-											{ onSuccess: () => void router("/network") },
-										);
-									},
-								})
-							}
-							className="btn btn-error btn-outline btn-wide"
-						>
-							Delete network
-						</button>
+			<>
+				<HeadSection title={pageTitle} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
+					<ul className="list-disc">
+						<li>{t("errorSteps.step1")}</li>
+						<li>{t("errorSteps.step2")}</li>
+					</ul>
+					<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+						Network Actions
+					</div>
+					<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+						<div className="flex items-end md:justify-end">
+							<button
+								onClick={() =>
+									callModal({
+										title: `Delete network ${query.id as string}`,
+										description:
+											"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+										yesAction: () => {
+											deleteNetwork(
+												{ nwid: query.id as string },
+												{ onSuccess: () => void router("/network") },
+											);
+										},
+									})
+								}
+								className="btn btn-error btn-outline btn-wide"
+							>
+								Delete network
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
+			</>
 		);
 	}
 	if (loadingNetwork) {
+		const pageTitleLoading = `${globalSiteTitle}`;
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56" />
-				</h1>
-			</div>
+			<>
+				<HeadSection title={pageTitleLoading} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56" />
+					</h1>
+				</div>
+			</>
 		);
 	}
 
 	return (
 		<div>
+			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
@@ -127,7 +147,7 @@ const NetworkById = () => {
 				<NetworkPrivatePublic />
 			</div>
 			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-				<div className="flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
+				<div className="hidden lg:flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
 						<span className="text-muted font-medium">{t("networkStart")}</span>{" "}
 						<span
@@ -299,7 +319,7 @@ NetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getServerSideProps(context: GetStaticPropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -309,5 +329,5 @@ export async function getServerSideProps(context: GetStaticPropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default NetworkById;

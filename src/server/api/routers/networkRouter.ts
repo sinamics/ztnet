@@ -1,12 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
-import {
-	type Config,
-	adjectives,
-	animals,
-	uniqueNamesGenerator,
-} from "unique-names-generator";
+import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import {
 	enrichMembers,
@@ -17,18 +12,15 @@ import {
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
-import {
-	throwError,
-	type APIError,
-	CustomLimitError,
-} from "~/server/helpers/errorHandler";
+import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
+import { createNetworkService } from "../services/networkService";
 
-const customConfig: Config = {
+export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
 	separator: "-",
 	length: 2,
@@ -155,7 +147,6 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
-				ztControllerResponse?.network?.v6AssignMode,
 			);
 
 			// Generate CIDR options for IP configuration
@@ -210,13 +201,16 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			try {
 				// de-authorize all members before we delete network
-				const members = await ztController.network_members(ctx, input.nwid, false);
-
+				const members = await ztController.network_members(
+					ctx,
+					input.nwid,
+					input.central,
+				);
 				for (const member in members) {
 					await ztController.member_update({
 						ctx,
 						nwid: input.nwid,
-						central: false,
+						central: input.central,
 						memberId: member,
 						updateParams: {
 							authorized: false,
@@ -585,75 +579,9 @@ export const networkRouter = createTRPCRouter({
 				central: z.boolean().optional().default(false),
 			}),
 		)
-		.mutation(async ({ ctx, input }) => {
-			try {
-				// 1. Fetch the user with its related UserGroup
-				const userWithGroup = await ctx.prisma.user.findUnique({
-					where: { id: ctx.session.user.id },
-					select: {
-						userGroup: true,
-					},
-				});
-
-				if (userWithGroup?.userGroup) {
-					// 2. Fetch the current number of networks linked to the user
-					const currentNetworksCount = await ctx.prisma.network.count({
-						where: { authorId: ctx.session.user.id },
-					});
-
-					// Check against the defined limit
-					const networkLimit = userWithGroup.userGroup.maxNetworks;
-					if (currentNetworksCount >= networkLimit) {
-						throw new CustomLimitError(
-							"You have reached the maximum number of networks allowed for your user group.",
-						);
-					}
-				}
-
-				// Generate ipv4 address, cidr, start & end
-				const ipAssignmentPools = IPv4gen(null);
-
-				// Generate adjective and noun word
-				const networkName: string = uniqueNamesGenerator(customConfig);
-
-				// Create ZT network
-				const newNw = await ztController.network_create(
-					ctx,
-					networkName,
-					ipAssignmentPools,
-					input.central,
-				);
-
-				if (input.central) return newNw;
-
-				// Store the created network in the database
-				const updatedUser = await ctx.prisma.user.update({
-					where: {
-						id: ctx.session.user.id,
-					},
-					data: {
-						network: {
-							create: {
-								name: newNw.name,
-								nwid: newNw.nwid,
-							},
-						},
-					},
-					select: {
-						network: true,
-					},
-				});
-				return updatedUser;
-			} catch (err: unknown) {
-				if (err instanceof CustomLimitError) {
-					throwError(err.message);
-				} else if (err instanceof Error) {
-					console.error(err);
-					throwError("Could not create network! Please try again");
-				} else {
-					throwError("An unknown error occurred");
-				}
-			}
+		.mutation(async (props) => {
+			// abstracted due to pages/api/v1/network/index.ts
+			await createNetworkService(props);
 		}),
 	setFlowRule: protectedProcedure
 		.input(
@@ -847,7 +775,7 @@ accept;`;
 			// define mail options
 			const mailOptions = {
 				from: globalOptions.smtpEmail,
-				to: ctx.session.user.email,
+				to: email,
 				subject: parsedTemplate.subject,
 				html: parsedTemplate.body,
 			};

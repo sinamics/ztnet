@@ -1,16 +1,21 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
 import Controller from "./controller";
-import Settings from "./settings";
+import { globalSiteTitle } from "~/utils/global";
 import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next";
 import Organization from "./organization";
+import { GetServerSidePropsContext } from "next";
+import { withAuth } from "~/components/auth/withAuth";
+import Head from "next/head";
+import Settings from "./settings";
 
 const AdminSettings = () => {
+	const title = `${globalSiteTitle} - Admin Settings`;
+
 	const router = useRouter();
 	const { tab = "members" } = router.query;
 	const t = useTranslations("admin");
@@ -61,6 +66,12 @@ const AdminSettings = () => {
 	};
 	return (
 		<div className="py-5">
+			<Head>
+				<title>{title}</title>
+				<link rel="icon" href="/favicon.ico" />
+				<meta property="og:title" content={title} key={title} />
+				<meta name="robots" content="nofollow" />
+			</Head>
 			<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
 				{tabs.map((t) => (
 					<a
@@ -78,9 +89,9 @@ const AdminSettings = () => {
 };
 
 AdminSettings.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated props={page?.props}>{page}</LayoutAdminAuthenticated>;
 };
-export async function getStaticProps(context: GetStaticPropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -90,5 +101,5 @@ export async function getStaticProps(context: GetStaticPropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default AdminSettings;

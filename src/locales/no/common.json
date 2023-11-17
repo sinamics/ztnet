@@ -6,7 +6,8 @@
 		"change": "Endre",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
-		"delete": "Slett"
+		"delete": "Slett",
+		"generate": "Generer"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -256,6 +257,28 @@
 				"header": "Brukerhandlinger",
 				"stashBtn": "Arkiver"
 			}
+		},
+		"networkHelp": {
+			"title": "Nettverkshjelp",
+			"networkID": "Nettverks-ID",
+			"networkIDText": "Det globalt unike 16-sifrede ID-en til nettverket. Dette kan for øyeblikket ikke endres.",
+			"networkName": "Nettverksnavn",
+			"networkNameText": "Et kort navn definert av brukeren for dette nettverket som er synlig for medlemmer. Vi anbefaler å bruke noe som et domenenavn (f.eks. zerotier.com) eller en e-postadresse.",
+			"accessControl": "Tilgangskontroll",
+			"accessControlText": "Hvordan kontrolleres medlemskap? Dette bør være igjen på standardinnstillingen med mindre du vil opprette et helt åpent nettverk for testing, spill osv.",
+			"multicastRecipientLimit": "Mottaksgrense for Multicast",
+			"multicastRecipientLimitText": "Maksimalt antall mottakere som kan motta en Ethernet-multicast eller broadcast. Hvis antall mottakere overskrider denne grensen, vil et tilfeldig utvalg motta kunngjøringen. Å sette denne høyere gjør multicasts mer pålitelige på store nettverk på bekostning av båndbredde.",
+			"multicastRecipientLimitText2": "Å sette til 0 deaktiverer multicast, men vær oppmerksom på at bare IPv6 med NDP-emulering (RFC4193 eller 6PLANE adresseringsmoduser) eller andre protokoller som kun bruker unicast vil fungere uten multicast.",
+			"managedRoutes": "Administrerte Ruter",
+			"managedRoutesText": "IPv4-ruter som skal publiseres til nettverksmedlemmer. Dette kan brukes til å opprette ruter til andre nettverk via gatewayer på et ZeroTier-nettverk. Merk at av sikkerhetsgrunner vil de fleste klienter ikke bruke standardruter eller ruter som overlapper med offentlig IP-adresserom med mindre dette spesifikt tillates av brukeren. Offentlige IP-områder er merket med et ikon:",
+			"ipv4AutoAssign": "IPv4 Auto-Tildeling",
+			"ipv4AutoAssignText": "IPv4-område som skal brukes til automatisk tildeling av IP-adresser. Merk at IP-adresser bare vil bli tildelt hvis de også faller innenfor en definert rute. Enkel modus lar brukere velge et IP-område, og en rute- og bassengdefinisjon vil automatisk bli opprettet.",
+			"dnsPush": "DNS Push",
+			"dnsPushText1": "Krever ZeroTier versjon 1.6.",
+			"dnsPushText2": "Eldre versjoner av ZeroTier vil ignorere disse innstillingene.",
+			"dnsPushText3": "På macOS, iOS, Windows og Android kan ZeroTier automatisk legge til DNS-servere for et spesifikt domene. Det setter ikke opp eller hoster en DNS-server. Du må hoste din egen.",
+			"dnsPushText4": "Hvis du konfigurerer zt.example.com som søkedomenet ditt, og 10.147.20.1 som en serveradresse, vil datamaskinen din spørre 10.147.20.1 for å slå opp IP-adresser for vertsnavn som slutter på zt.example.com.",
+			"dnsPushText5": "Dette må aktiveres på hver klient med alternativet allowDNS. Det er en avkrysningsboks i brukergrensesnittet i hver nettverksdetaljer, nær avkrysningsboksen Tillat Administrert."
 		}
 	},
 	"admin": {
@@ -268,8 +291,10 @@
 			"controller": "Kontroller"
 		},
 		"settings": {
-			"authentication": "Autentisering",
-			"enableUserRegistration": "Aktiver brukerregistrering?"
+			"publicPages": {
+				"sectionTitle": "Offentlige Sider",
+				"description": "Tilpass teksten som vises på innloggings- og registreringssidene dine for å bedre samsvare med merkevaren din eller gi spesifikke instruksjoner til brukerne dine."
+			}
 		},
 		"mail": {
 			"mailSMTP": "Mail SMTP",
@@ -299,6 +324,30 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "Autentisering",
+				"enableUserRegistration": "Aktiver brukerregistrering?",
+				"generateInvitation": {
+					"header": "Generer invitasjonslenke",
+					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",
+					"secretMessagePlaceholder": "Legg til hemmelig melding",
+					"expireTimeLabel": "Invitasjonslenken vil utløpe etter denne tiden",
+					"expireTimePlaceholder": "Utløp tid i minutter",
+					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
+					"timeUsedPlaceholder": "Ganger kan brukes",
+					"activeInvitationsLabel": "Aktive invitasjoner (klikk for mer info)",
+					"invitationModal": {
+						"header": "Invitasjonsdetaljer",
+						"secretLabel": "Hemmelighet:",
+						"expiresLabel": "Status:",
+						"timesUsedLabel": "Ganger brukt:",
+						"invitationLinkLabel": "Invitasjonslenke:",
+						"clickToCopyLabel": "klikk for å kopiere",
+						"linkCopiedToast": "lenke kopiert til utklippstavle",
+						"deleteButton": "Slett"
+					}
+				}
+			},
 			"users": {
 				"sectionTitle": "Brukere",
 				"description": "Alle registrerte brukere på plattformen.",
@@ -312,6 +361,25 @@
 					"group": "Gruppe",
 					"emailVerifiedYes": "Ja",
 					"emailVerifiedNo": "Nei"
+				},
+				"userOptionModal": {
+					"userGroupLabel": "Brukergruppe",
+					"userRoleLabel": "Brukerrolle",
+					"account": {
+						"title": "ZTNet utfører en daglig sjekk for utløpte brukere. Hvis en bruker blir funnet å ha utløpt, vil alle tilknyttede noder bli deautorisert, og brukerens konto vil bli deaktivert.",
+						"userAccountLabel": "Kontostatus",
+						"userExpireLabel": "Konto Utløp"
+					},
+					"userActionsLabel": "Brukerhandlinger",
+					"typeUserName": "Skriv inn brukerens navn.",
+					"buttons": {
+						"deleteUser": "Slett bruker",
+						"cancle": "Avbryt"
+					},
+					"toast": {
+						"deleteUserSuccess": "Bruker slettet vellykket",
+						"nameNotEqual": "Brukernavnet du skrev inn er ikke det samme som brukeren."
+					}
 				},
 				"roleDescriptions": {
 					"admin": "Som en administrator vil denne brukeren ha fulle tillatelser, inkludert tilgang til administrasjonspanelet.",
@@ -353,6 +421,7 @@
 				"title": "Nettverk & Medlemmer",
 				"totalNetworks": "Totalt nettverk:",
 				"totalMembers": "Totalt medlemmer:",
+				"totalUnlinkedNetworks": "Totalt Uknyttede Nettverk:",
 				"unlinkedNetworks": {
 					"title": "Ikke linket nettverk",
 					"description": "Denne delen gir en tabell over alle nettverkene som for øyeblikket ikke er knyttet til noen bruker i ztnet-databasen. Disse stammer typisk fra tilpassede ZeroTier-kontrollere som har blitt lagt til av brukere, men som ennå ikke er administrert innen ZTNET. Tabellen gir deg muligheten til å tildele disse uadministrerte nettverkene til bestemte admin-brukere. Dette kan være spesielt nyttig hvis en bruker har lagt til en tilpasset ZeroTier-kontroller som ennå ikke er administrert av ZTNET.",
@@ -387,7 +456,8 @@
 				"modification_warning": "Å endre ZeroTier-kontrollerens URL påvirker alle brukere. Selv om dette gir fleksibilitet for de som ønsker en tilpasset kontroller, vær oppmerksom på potensielle avbrudd og kompatibilitetsproblemer. Ta alltid sikkerhetskopi av konfigurasjoner før endringer.",
 				"local_zerotier_url": "Lokal Zerotier URL",
 				"zerotier_secret": "Zerotier Hemmelighet",
-				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen."
+				"submit_empty_field_default": "Send inn tomt felt for å bruke standardinnstillingen.",
+				"isUsingEnvVariablesAlert": "Miljøvariabelen <span>ZT_ADDR eller ZT_SECRET</span> har forrang og overstyrer eventuelle URL-endringer gjort gjennom brukergrensesnittet. For å oppdatere de respektive feltene via brukergrensesnittet, må du først fjerne ZT_ADDR eller ZT_SECRET miljøvariablene."
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "Oppdatering av planetfilen vil endre kjernestrukturen i ZeroTier-nettverket ditt, påvirke ruter, fleksibilitet og potensielt tilgjengelighet. Fortsett med forsiktighet, og forstå konsekvensene.",
@@ -445,12 +515,29 @@
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
 				"role": "Rolle"
 			},
-			"networkSetting": {
-				"memberAnotations": "Medlemsanmerkninger",
-				"showMarkerInTable": "Vis markør i tabellen",
-				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
-				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
-				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
+			"restapi": {
+				"sectionTitle": "API-tilgangstokens",
+				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Legg til et meningsfylt navn på tokenet ditt",
+						"placeholder": "Mitt fantastiske token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generer token",
+					"cancle": "Slett token"
+				},
+				"response": {
+					"title": "Klikk på tokenet for å kopiere det",
+					"info": "Dette tokenet vil bare vises en gang. Vennligst kopier det nå!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Slett token",
+						"description": "Er du sikker på at du vil slette dette tokenet? Dette kan ikke angres."
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -467,6 +554,18 @@
 				"title": "Applikasjon",
 				"version": "Versjon",
 				"developerMode": "utviklermodus"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Medlemsanmerkninger",
+				"showMarkerInTable": "Vis markør i tabellen",
+				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
+				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"memberTableTitle": "Medlems Liste",
+				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
+				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
 			}
 		}
 	}

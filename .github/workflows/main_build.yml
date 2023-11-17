@@ -12,12 +12,15 @@ on:
       - "public/**"
 
   workflow_dispatch:
+
 jobs:
   web_lint_test:
     name: Web - Lint - Format - Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
@@ -47,11 +50,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: web_lint_test
     steps:
-      - uses: actions/checkout@v2
-        # checkout dev branch
+      - uses: actions/checkout@v3
         with:
-          ref: main
-
+          ref: ${{ github.ref }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 

@@ -6,7 +6,8 @@
 		"change": "更改",
 		"submit": "提交",
 		"cancel": "取消",
-		"delete": "删除"
+		"delete": "删除",
+		"generate": "生成"
 	},
 	"sidebar": {
 		"navigation": "导航",
@@ -256,6 +257,28 @@
 				"header": "用户操作",
 				"stashBtn": "隐藏"
 			}
+		},
+		"networkHelp": {
+			"title": "网络帮助",
+			"networkID": "网络 ID",
+			"networkIDText": "网络的全球唯一16位 ID。目前这不能被更改。",
+			"networkName": "网络名称",
+			"networkNameText": "用户为这个网络定义的简短名称，对成员可见。我们建议使用类似域名（例如，zerotier.com）或电子邮件地址。",
+			"accessControl": "访问控制",
+			"accessControlText": "如何控制成员资格？除非您想创建一个完全开放的网络用于测试、游戏等，否则应保留其默认设置。",
+			"multicastRecipientLimit": "多播接收者限制",
+			"multicastRecipientLimitText": "可以接收以太网多播或广播的最大接收者数量。如果接收者数量超过此限制，则随机子集将接收通告。提高此设置会使多播在大型网络上更可靠，但代价是带宽。",
+			"multicastRecipientLimitText2": "设置为0将禁用多播，但请注意，只有IPv6与NDP模拟（RFC4193或6PLANE寻址模式）或其他仅单播协议在没有多播的情况下才能工作。",
+			"managedRoutes": "管理路由",
+			"managedRoutesText": "将发布给网络成员的IPv4路由。这可用于通过ZeroTier网络上的网关创建到其他网络的路由。请注意，出于安全原因，除非用户特别允许，大多数客户端不会使用默认路由或与公共IP地址空间重叠的路由。公共IP范围标有图标：",
+			"ipv4AutoAssign": "IPv4 自动分配",
+			"ipv4AutoAssignText": "用于自动分配 IP 的 IPv4 范围。请注意，只有当 IP 也位于定义的路由内时，才会分配 IP。简易模式允许用户选择 IP 范围，并且路由和池定义将自动创建。",
+			"dnsPush": "DNS 推送",
+			"dnsPushText1": "需要 ZeroTier 1.6 版或更新版本。",
+			"dnsPushText2": "旧版本的 ZeroTier 将忽略这些设置。",
+			"dnsPushText3": "在 macOS、iOS、Windows 和 Android 上，ZeroTier 可以自动为特定域添加 DNS 服务器。它不设置或托管 DNS 服务器。您必须托管您自己的服务器。",
+			"dnsPushText4": "如果您将 zt.example.com 配置为您的搜索域，并且将 10.147.20.1 配置为服务器地址，那么您的计算机将要求 10.147.20.1 查找以 zt.example.com 结尾的主机名的 IP 地址。",
+			"dnsPushText5": "必须在每个客户端上启用 allowDNS 选项。在每个网络详情的 UI 中，靠近允许管理复选框附近有一个复选框。"
 		}
 	},
 	"admin": {
@@ -268,8 +291,10 @@
 			"controller": "控制器"
 		},
 		"settings": {
-			"authentication": "身份验证",
-			"enableUserRegistration": "启用用户注册？"
+			"publicPages": {
+				"sectionTitle": "公共页面",
+				"description": "自定义登录和注册页面上显示的文本，以更好地与您的品牌保持一致或向您的用户提供具体说明。"
+			}
 		},
 		"mail": {
 			"mailSMTP": "邮件SMTP",
@@ -299,6 +324,30 @@
 			}
 		},
 		"users": {
+			"authentication": {
+				"header": "身份验证",
+				"enableUserRegistration": "启用用户注册？",
+				"generateInvitation": {
+					"header": "生成邀请链接",
+					"secretMessageLabel": "用户注册时将被要求输入此消息（区分大小写）",
+					"secretMessagePlaceholder": "添加秘密消息",
+					"expireTimeLabel": "邀请链接将在此时间后过期",
+					"expireTimePlaceholder": "过期时间（分钟）",
+					"timeUsedLabel": "此链接可以使用多少次？（可选，默认1次）",
+					"timeUsedPlaceholder": "可使用次数",
+					"activeInvitationsLabel": "有效邀请（点击获取更多信息）",
+					"invitationModal": {
+						"header": "邀请详情",
+						"secretLabel": "密钥:",
+						"expiresLabel": "状态:",
+						"timesUsedLabel": "使用次数:",
+						"invitationLinkLabel": "邀请链接:",
+						"clickToCopyLabel": "点击复制",
+						"linkCopiedToast": "链接已复制到剪贴板",
+						"deleteButton": "删除"
+					}
+				}
+			},
 			"users": {
 				"sectionTitle": "用户",
 				"description": "平台上的所有已注册用户。",
@@ -312,6 +361,25 @@
 					"group": "组",
 					"emailVerifiedYes": "是",
 					"emailVerifiedNo": "否"
+				},
+				"userOptionModal": {
+					"userGroupLabel": "用户组",
+					"userRoleLabel": "用户角色",
+					"account": {
+						"title": "ZTNet 每天进行一次检查，查找是否有用户已过期。如果发现用户已过期，所有相关的节点将被取消授权，用户帐户将被停用。",
+						"userAccountLabel": "账户状态",
+						"userExpireLabel": "账户到期"
+					},
+					"userActionsLabel": "用户操作",
+					"typeUserName": "输入用户的名称。",
+					"buttons": {
+						"deleteUser": "删除用户",
+						"cancle": "取消"
+					},
+					"toast": {
+						"deleteUserSuccess": "用户删除成功",
+						"nameNotEqual": "您输入的用户名与用户的用户名不同。"
+					}
 				},
 				"roleDescriptions": {
 					"admin": "作为管理员，此用户将拥有完全的权限，包括访问管理面板的权限。",
@@ -353,6 +421,7 @@
 				"title": "网络和成员",
 				"totalNetworks": "总网络数：",
 				"totalMembers": "总成员数：",
+				"totalUnlinkedNetworks": "总未链接网络：",
 				"unlinkedNetworks": {
 					"title": "未链接的网络",
 					"description": "此部分提供了ztnet数据库中所有尚未链接到任何用户的网络的表格。这些网络通常源自用户添加的但尚未在ZTNET中管理的定制ZeroTier控制器。该表格使您有机会将这些未管理的网络分配给特定的管理员用户。如果用户添加了一个尚未被ZTNET管理的定制ZeroTier控制器，这可能特别有帮助。",
@@ -387,7 +456,8 @@
 				"modification_warning": "修改ZeroTier控制器URL会影响所有用户。虽然这为想要自定义控制器的人提供了灵活性，但请注意可能的中断和兼容性问题。更改前始终备份配置。",
 				"local_zerotier_url": "本地Zerotier URL",
 				"zerotier_secret": "Zerotier密码",
-				"submit_empty_field_default": "提交空字段以使用默认值。"
+				"submit_empty_field_default": "提交空字段以使用默认值。",
+				"isUsingEnvVariablesAlert": "环境变量<span>ZT_ADDR 或 ZT_SECRET</span>将优先覆盖通过用户界面所做的任何URL更改。要通过用户界面更新相应字段，您必须先删除ZT_ADDR或ZT_SECRET环境变量。"
 			},
 			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
@@ -445,12 +515,29 @@
 				"repeatNewPasswordPlaceholder": "重复新密码",
 				"role": "角色"
 			},
-			"networkSetting": {
-				"memberAnotations": "成员注释",
-				"showMarkerInTable": "在表格中显示标记",
-				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
-				"addBackgroundColorInTable": "在表格中添加背景颜色",
-				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。"
+			"restapi": {
+				"sectionTitle": "API访问令牌",
+				"description": "API访问令牌用于访问ZTNET公共API。",
+				"inputFields": {
+					"tokenName": {
+						"label": "为您的令牌添加有意义的名称",
+						"placeholder": "我的超棒令牌"
+					}
+				},
+				"buttons": {
+					"submitToken": "生成令牌",
+					"cancle": "删除令牌"
+				},
+				"response": {
+					"title": "点击令牌以复制",
+					"info": "此令牌只会显示一次。请立即复制它！"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "删除令牌",
+						"description": "您确定要删除此令牌吗？此操作无法撤消。"
+					}
+				}
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
@@ -467,6 +554,18 @@
 				"title": "应用",
 				"version": "版本",
 				"developerMode": "开发者模式"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "成员注释",
+				"showMarkerInTable": "在表格中显示标记",
+				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
+				"addBackgroundColorInTable": "在表格中添加背景颜色",
+				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。",
+				"memberTableTitle": "成员表格",
+				"deAuthorizationWarningTitle": "在取消成员授权时显示警告",
+				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。"
 			}
 		}
 	}
