@@ -34,10 +34,12 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
+    "**/*.mjs",
   ],
   "exclude": [
     "node_modules",
+    "docs",
+    "install.ztnet",
     ".next"
   ]
 }

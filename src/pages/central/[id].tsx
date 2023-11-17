@@ -1,27 +1,39 @@
 import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/modules/networkRoutes";
-import { NetworkMembersTable } from "~/components/modules/table/networkMembersTable";
+import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
-import { NetworkIpAssignment } from "~/components/modules/networkIpAssignments";
-import { NetworkPrivatePublic } from "~/components/modules/networkPrivatePublic";
-import { AddMemberById } from "~/components/modules/addMemberById";
+import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
+import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
+import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-// import { DeletedNetworkMembersTable } from "~/components/modules/deletedNetworkMembersTable";
+// import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/deletedNetworkMembersTable";
 import { useModalStore } from "~/utils/store";
-import { CentralFlowRules } from "~/components/modules/ztCentral/centralFlowRules";
-import { NetworkDns } from "~/components/modules/networkDns";
-import { NetworkMulticast } from "~/components/modules/networkMulticast";
+import { CentralFlowRules } from "~/components/networkByIdPage/ztCentral/centralFlowRules";
+import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 import cn from "classnames";
-import NetworkHelpText from "~/components/modules/networkHelp";
-import { InviteMemberByMail } from "~/components/modules/inviteMemberbyMail";
+import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
+import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { type GetStaticPropsContext } from "next/types";
-import NetworkDescription from "../../components/modules/networkDescription";
-import NetworkName from "~/components/modules/networkName";
+import { GetServerSidePropsContext } from "next/types";
+import NetworkDescription from "../../components/networkByIdPage/networkDescription";
+import NetworkName from "~/components/networkByIdPage/networkName";
+import { withAuth } from "~/components/auth/withAuth";
+import Head from "next/head";
+import { globalSiteTitle } from "~/utils/global";
+import { NetworkDns } from "~/components/networkByIdPage/networkDns";
+
+const HeadSection = ({ title }: { title: string }) => (
+	<Head>
+		<title>{title}</title>
+		<link rel="icon" href="/favicon.ico" />
+		<meta property="og:title" content={title} key={title} />
+		<meta name="robots" content="nofollow" />
+	</Head>
+);
 
 const CentralNetworkById = () => {
 	const t = useTranslations("networkById");
@@ -43,14 +55,20 @@ const CentralNetworkById = () => {
 		{ enabled: !!query.id, refetchInterval: 15000 },
 	);
 
+	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
+
 	if (loadingNetwork) {
 		// add loading progress bar to center of page, vertially and horizontally
+		const pageTitleLoading = `${globalSiteTitle}`;
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
+			<>
+				<HeadSection title={pageTitleLoading} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56"></progress>
+					</h1>
+				</div>
+			</>
 		);
 	}
 
@@ -58,18 +76,22 @@ const CentralNetworkById = () => {
 
 	if (errorNetwork) {
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
-				<ul className="list-disc">
-					<li>{t("errorSteps.step1")}</li>
-					<li>{t("errorSteps.step2")}</li>
-				</ul>
-			</div>
+			<>
+				<HeadSection title={pageTitle} />
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
+					<ul className="list-disc">
+						<li>{t("errorSteps.step1")}</li>
+						<li>{t("errorSteps.step2")}</li>
+					</ul>
+				</div>
+			</>
 		);
 	}
 
 	return (
 		<div>
+			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
@@ -266,7 +288,7 @@ CentralNetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getServerSideProps(context: GetStaticPropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -276,5 +298,5 @@ export async function getServerSideProps(context: GetStaticPropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default CentralNetworkById;

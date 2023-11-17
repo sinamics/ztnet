@@ -14,6 +14,10 @@
     ·
     <a href="https://github.com/sinamics/ztnet/discussions">Ask a Question</a>
   </p>
+  <h3 align="center">
+    <a href="https://ztnet.network">Documentation</a>
+    <br />
+  </h3>
   <div align="center">
 
   [![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
@@ -24,11 +28,12 @@
 </p>
 <br />
 
-ZTNET is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
+ZTNET - Zerotier Controller Web UI, is a robust and versatile ZeroTier controller application designed to ease the management of ZeroTier networks. Crafted with state-of-the-art technologies like T3-Stack with Next.js, Prisma, tRPC, TypeScript, Tailwind CSS, and DaisyUI, it streamlines the process of creating, updating, and overseeing your ZeroTier networks.
 
 With a rich palette of features, and an intuitive user interface, ZTNET embodies a paradigm shift in network management experience. It elegantly handles the complexity, letting you focus on what you do best.
 
-
+### [See Installation Instruction](https://ztnet.network/installation/docker-compose)
+<!-- 
 <details open="open" >
 <summary>Table of Contents</summary>
 
@@ -133,7 +138,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
     networks:
@@ -189,7 +194,7 @@ These are system environment variables used by the ZeroTier service and should n
 
 To change any of these values, update the corresponding environment variable in the `docker-compose.yml` file.
 
-# Development
+# 🛠️Development
 
 This project welcomes contributions. To ensure smooth collaboration, please follow the steps below:
 
@@ -208,45 +213,63 @@ This project welcomes contributions. To ensure smooth collaboration, please foll
 8. Select **Start Development Server** to start the development server.
 9. Open browser and go to `http://localhost:3000`.
 
-**NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload.
+**NOTE:** Hot reloading on Windows may not be as performant as on other operating systems. If you encounter sluggish hot reloading, consider setting the environment variable WATCHPACK_POLLING=true. However, for optimal performance, we strongly suggest utilizing the **Windows Subsystem for Linux (WSL)** to develop your application. This approach will provide a swift and seamless hot reload experience, allowing you to focus on coding rather than waiting for the application to reload. -->
 
-## The traditional way
+## 📷 Images
+View the following images for a visual overview of the ZTNet application:
+<details>
+<summary>Network Page</summary>
 
-To start development, first, clone the repository:
+![Networks](docs/images/showcase/network_local.jpg)
 
-`git clone https://github.com/yourusername/ztnet.git
-cd ztnet`
+</summary>
+</details>
 
-### Setup Environment Variables
+<details>
+<summary>Network Member Options</summary>
 
-Create a `.env` file in the root of the project and set the necessary environment variables:
+![Networks](docs/images/showcase/member_options.jpg)
 
-- `POSTGRES_HOST`=localhost
-- `POSTGRES_PORT`=5432
-- `POSTGRES_USER`=postgres
-- `POSTGRES_PASSWORD`=postgres
-- `POSTGRES_DB`=ztnet
-- `NEXTAUTH_URL`=http://localhost:3000
-- `NEXTAUTH_SECRET`="your_nextauth_secret"
-- `MIGRATE_POSTGRES_DB`="shaddow_ztnet"
-- `MIGRATE_DATABASE_URL`="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${MIGRATE_POSTGRES_DB}?schema=public"
-  You need to run the following command to create the database:
+</summary>
+</details>
 
-`npx prisma db push`
+<details>
+<summary>Mail Settings</summary>
 
-Now start the development server:
+![Networks](docs/images/showcase/admin_mail.jpg)
 
-`npm run dev`
+</summary>
+</details>
 
-## Network page layout
+<details>
+<summary>Platform Users</summary>
 
-![Networks](docs/images/showcase/ztnet_network.jpg)
+![Networks](docs/images/showcase/admin_users.jpg)
 
-### ⚠️ Disclaimer:
+</summary>
+</details>
+
+<details>
+<summary>Controller</summary>
+
+![Networks](docs/images/showcase/admin_controller.jpg)
+
+</summary>
+</details>
+
+<details>
+<summary>User Profile</summary>
+
+![Networks](docs/images/showcase/profile.jpg)
+
+</summary>
+</details>
+
+## ⚠️ Disclaimer:
 
 Please note that while this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As the user, you assume all responsibility for its use. Always ensure you have adequate backups and understanding of any changes you make to your network configurations. This includes understanding that the first registered user will be granted administrative privileges.
-
-### Attribution and Licensing Notice for Third-Party Components
+<!-- 
+## 📄 Attribution and Licensing Notice for Third-Party Components
 This project utilizes the **mkworld** tool, written in Go, to generate the custom planet file. While the original mkworld tool was developed by ZeroTier, the version we are using was adapted and re-implemented in Go by Patrick Young (@kmahyyg). This Go adaptation is licensed under the GNU General Public License v3.0. We would like to express our appreciation to Patrick Young (@kmahyyg) for his efforts in creating this Go version, which has benefited our project.
 
-Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file.
+Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file. -->

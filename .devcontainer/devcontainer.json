@@ -35,7 +35,8 @@
         "bourhaouta.tailwindshades",
         "Gruntfuggly.todo-tree",
         "yoavbls.pretty-ts-errors",
-        "rome.rome"
+        "rome.rome",
+        "GitHub.copilot"
       ]
     }
   }

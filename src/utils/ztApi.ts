@@ -24,27 +24,36 @@ import { type MemberEntity } from "~/types/local/member";
 import { type NetworkEntity } from "~/types/local/network";
 import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
+import os from "os";
+import { prisma } from "~/server/db";
 
-const LOCAL_ZT_ADDR = process.env.ZT_ADDR || "http://zerotier:9993";
+export let ZT_FOLDER: string;
+
+if (os.platform() === "freebsd") {
+	ZT_FOLDER = "/var/db/zerotier-one";
+} else {
+	ZT_FOLDER = "/var/lib/zerotier-one";
+}
+
+export const ZT_FILE: string =
+	process.env.ZT_SECRET_FILE || `${ZT_FOLDER}/authtoken.secret`;
+
+const LOCAL_ZT_ADDR = process.env.ZT_ADDR;
 const CENTRAL_ZT_ADDR = "https://api.zerotier.com/api/v1";
 
-let ZT_SECRET = process.env.ZT_SECRET;
-
-const ZT_FILE = process.env.ZT_SECRET_FILE || "/var/lib/zerotier-one/authtoken.secret";
-
-if (!ZT_SECRET) {
-	if (process.env.IS_GITHUB_ACTION !== "true") {
-		try {
-			ZT_SECRET = fs.readFileSync(ZT_FILE, "utf8");
-		} catch (error) {
-			console.error("an error occurred while reading the ZT_SECRET");
-			console.error(error);
-		}
-	} else {
-		// GitHub Actions
-		ZT_SECRET = "dummy_text_to_skip_gh";
-	}
-}
+const ZT_SECRET =
+	process.env.ZT_SECRET ||
+	(process.env.IS_GITHUB_ACTION === "true"
+		? "dummy_text_to_skip_gh"
+		: (() => {
+				try {
+					return fs.readFileSync(ZT_FILE, "utf8");
+				} catch (error) {
+					console.error("An error occurred while reading the ZT_SECRET");
+					console.error(error);
+					return null; // or appropriate fallback value
+				}
+		  })());
 
 const getApiCredentials = async (
 	ctx: UserContext,
@@ -54,7 +63,7 @@ const getApiCredentials = async (
 	localControllerSecret: string | null;
 	localControllerUrl: string | null;
 }> => {
-	const userWithOptions = await ctx.prisma.user.findFirst({
+	const userWithOptions = await prisma.user.findFirst({
 		where: {
 			id: ctx.session.user.id,
 		},
@@ -109,7 +118,7 @@ const getOptions = async (
 	}
 
 	return {
-		localControllerUrl: localControllerUrl || LOCAL_ZT_ADDR,
+		localControllerUrl: LOCAL_ZT_ADDR || localControllerUrl,
 		headers: {
 			"X-ZT1-Auth": localControllerSecret || ZT_SECRET,
 			"Content-Type": "application/json",
@@ -369,7 +378,19 @@ export const network_members = async function (
 		: `${localControllerUrl}/controller/network/${nwid}/member`;
 
 	// fetch members
-	return await getData<MemberEntity[]>(addr, headers);
+	const fetchedMembers = await getData<MemberEntity[]>(addr, headers);
+	// fix bug in zerotier version 1.12.1
+	// https://github.com/zerotier/ZeroTierOne/issues/2114
+	if (!isCentral && Array.isArray(fetchedMembers)) {
+		const convertedMembers: { [key: string]: number } = {};
+		for (const obj of fetchedMembers) {
+			const key = Object.keys(obj)[0];
+			convertedMembers[key] = obj[key];
+		}
+		return convertedMembers;
+	}
+
+	return fetchedMembers;
 };
 
 export const get_network = async function (
@@ -409,6 +430,14 @@ export const local_network_detail = async function (
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
+		let memberIds: string[] = [];
+
+		if (Array.isArray(members)) {
+			memberIds = members.map((obj) => Object.keys(obj)[0]);
+		} else if (typeof members === "object") {
+			memberIds = Object.keys(members);
+		}
+
 		const membersArr: MemberEntity[] = [];
 		for (const [memberId] of Object.entries(members)) {
 			const memberDetails = await getData<MemberEntity>(
@@ -449,16 +478,20 @@ export const central_network_detail = async function (
 		const members = await network_members(ctx, nwid, isCentral);
 		const network = await getData<CentralNetwork>(addr, headers);
 
-		const membersArr = await Promise.all(
-			members?.map(async (member) => {
-				return await getData<MemberEntity>(`${addr}/member/${member?.nodeId}`, headers);
-			}),
-		);
+		const membersArr = Array.isArray(members)
+			? await Promise.all(
+					members?.map(async (member) => {
+						return await getData<MemberEntity>(
+							`${addr}/member/${member?.nodeId}`,
+							headers,
+						);
+					}),
+			  )
+			: [];
 
 		// Get available cidr options.
 		const ipAssignmentPools = IPv4gen(null);
 		const { cidrOptions } = ipAssignmentPools;
-
 		const { id: networkId, config: networkConfig, ...restData } = network;
 
 		return {

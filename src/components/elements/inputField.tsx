@@ -12,7 +12,7 @@ interface FieldConfig {
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
 	value?: string | number | boolean;
-	elementType?: "input" | "select";
+	elementType?: "input" | "select" | "textarea";
 	selectOptions?: { value: string; label: string }[];
 }
 
@@ -23,6 +23,7 @@ interface FormProps {
 	labelClassName?: string;
 	isLoading?: boolean;
 	placeholder?: string;
+	disabled?: boolean;
 	description?: string;
 	fields: FieldConfig[];
 	size?: "xs" | "sm" | "md" | "lg";
@@ -48,6 +49,7 @@ interface FormProps {
 const InputField = ({
 	label,
 	labelClassName,
+	disabled,
 	placeholder,
 	description,
 	fields,
@@ -99,9 +101,11 @@ const InputField = ({
 		}
 	}, [showInputs, fields]);
 
-	const handleEditClick = () => setShowInputs(!showInputs);
+	const handleEditClick = () => !disabled && setShowInputs(!showInputs);
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+	) => {
 		if (e.target.type === "checkbox") {
 			// Check for the type
 			const checked = (e.target as HTMLInputElement).checked;
@@ -162,6 +166,7 @@ const InputField = ({
 					<div>
 						<button
 							data-testid="view-form"
+							disabled={disabled}
 							onClick={handleEditClick}
 							className={cn(`btn btn-${size}`, { hidden: !showSubmitButtons })}
 						>
@@ -174,9 +179,9 @@ const InputField = ({
 					onSubmit={(event) => {
 						void handleSubmit(event);
 					}}
-					className={`flex w-full justify-between ${rootClassName}`}
+					className={`flex ${rootClassName}`}
 				>
-					<div>
+					<div className="flex-1">
 						<div className="flex font-medium">
 							<span>{label}</span>
 
@@ -239,7 +244,27 @@ const InputField = ({
 										</div>
 									);
 								}
-
+								if (field.elementType === "textarea") {
+									return (
+										<div key={field.name} className="form-control">
+											{field.description ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.description}
+												</label>
+											) : null}
+											<textarea
+												value={
+													String(formValues[field.name]).replace(/<br \/>/g, "\n") || ""
+												}
+												className="custom-scrollbar textarea textarea-bordered border-2 font-medium leading-snug focus:outline-none"
+												placeholder={field.placeholder}
+												rows={5}
+												name={field.name}
+												onChange={handleChange}
+											/>
+										</div>
+									);
+								}
 								return (
 									<div key={field.name} className="form-control">
 										{field.description ? (
@@ -255,14 +280,14 @@ const InputField = ({
 											value={String(formValues[field.name])}
 											onChange={handleChange}
 											name={field.name}
-											className={`input-bordered input-${size} w-full`}
+											className={`input-bordered input-${size}`}
 										/>
 									</div>
 								);
 							})}
 						</div>
 					</div>
-					<div className={cn("flex gap-3", { hidden: !showSubmitButtons })}>
+					<div className={cn("flex gap-3 justify-end", { hidden: !showSubmitButtons })}>
 						{isLoading ? (
 							renderLoading()
 						) : (

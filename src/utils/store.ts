@@ -3,11 +3,13 @@ import { create } from "zustand";
 interface StoreI {
 	open: boolean;
 	toggle: () => void;
+	setOpenState: (state: boolean) => void;
 }
 
 export const useSidebarStore = create<StoreI>((set) => ({
 	open: false,
 	toggle: () => set((state) => ({ open: !state.open })),
+	setOpenState: (state: boolean) => set(() => ({ open: state })),
 }));
 
 type IcallModal = {

@@ -1,0 +1,49 @@
+name: Deploy to install.ztnet.network
+
+# Controls when the workflow will run
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'install.ztnet/**'
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  prepear:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: install.ztnet
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          clean: false
+      - name: Enviorment
+        run: |
+          touch .env
+          echo NODE_ENV="production" >> .env
+          echo NODE_MAILER_USER="${{ secrets.NODE_MAILER_USER }}" >> .env
+          echo NODE_MAILER_PASSWORD="${{ secrets.NODE_MAILER_PASSWORD }}" >> .env
+
+      - name: install dependencies
+        run: npm install
+
+  deploy:
+    runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: install.ztnet
+    needs: prepear
+    steps:
+      - name: Build Application
+        run: npm run build
+
+      - name: Restart Server
+        run: pm2 restart ecosystem.config.js
+
+      - name: Sleep 10sec
+        run: sleep 10s

@@ -9,7 +9,7 @@ import {
 } from "~/utils/mail";
 import { createTransporter, sendEmail } from "~/utils/mail";
 import type nodemailer from "nodemailer";
-import { Role } from "@prisma/client";
+import { GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
 import { NetworkAndMemberResponse } from "~/types/network";
@@ -18,8 +18,124 @@ import fs from "fs";
 import { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
+import jwt from "jsonwebtoken";
+import { networkRouter } from "./networkRouter";
+import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { SMTP_SECRET } from "~/utils/encryption";
+import { ZT_FOLDER } from "~/utils/ztApi";
+import { isRunningInDocker } from "~/utils/docker";
+
+type WithError<T> = T & { error?: boolean; message?: string };
 
 export const adminRouter = createTRPCRouter({
+	updateUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.string(),
+				params: z.object({
+					isActive: z.boolean().optional(),
+					expiresAt: z.date().nullable().optional(),
+				}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.id) {
+				throwError("You can't change your own status");
+			}
+
+			// get user and validate that is not a admin user
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+			if (user.role === "ADMIN") {
+				throwError("You can't change the status of admin users");
+			}
+
+			return await ctx.prisma.user.update({
+				where: {
+					id: input.id,
+				},
+				data: {
+					...input.params,
+				},
+			});
+		}),
+	deleteUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.session.user.id === input.id) {
+				throwError("You can't delete your own account");
+			}
+
+			// check if user is admin user
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.id,
+				},
+			});
+
+			if (user.role === "ADMIN") {
+				throwError("You can't delete admin users");
+			}
+
+			// get user networks
+			const userNetworks = await ctx.prisma.network.findMany({
+				where: {
+					authorId: input.id,
+				},
+			});
+
+			// delete user networks
+			const caller = networkRouter.createCaller(ctx);
+			for (const network of userNetworks) {
+				caller.deleteNetwork({ nwid: network.nwid, central: false });
+			}
+
+			return await ctx.prisma.user.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
+	getUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				userId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			return await ctx.prisma.user.findFirst({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					emailVerified: true,
+					lastLogin: true,
+					lastseen: true,
+					online: true,
+					role: true,
+					_count: {
+						select: {
+							network: true,
+						},
+					},
+					userGroup: true,
+					userGroupId: true,
+					isActive: true,
+					expiresAt: true,
+				},
+
+				where: {
+					id: input.userId,
+				},
+			});
+		}),
 	getUsers: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -44,13 +160,61 @@ export const adminRouter = createTRPCRouter({
 					},
 					userGroup: true,
 					userGroupId: true,
+					isActive: true,
 				},
 
 				where: input.isAdmin ? { role: "ADMIN" } : undefined,
 			});
 			return users;
 		}),
+	generateInviteLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				secret: z.string(),
+				expireTime: z.string(),
+				timesCanUse: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { secret, expireTime, timesCanUse } = input;
+			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
+				expiresIn: `${expireTime}m`,
+			});
+			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
+			// Store the token, email, createdBy, and expiration in the UserInvitation table
+			await ctx.prisma.userInvitation.create({
+				data: {
+					token,
+					url,
+					secret,
+					timesCanUse: parseInt(timesCanUse) || 1,
+					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					createdBy: ctx.session.user.id,
+				},
+			});
 
+			return token;
+		}),
+	getInvitationLink: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.userInvitation.findMany({
+			where: {
+				createdBy: ctx.session.user.id,
+			},
+		});
+	}),
+	deleteInvitationLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.userInvitation.delete({
+				where: {
+					id: input.id,
+				},
+			});
+		}),
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
 			const isCentral = false;
@@ -79,12 +243,28 @@ export const adminRouter = createTRPCRouter({
 
 	// Set global options
 	getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		return await ctx.prisma.globalOptions.findFirst({
+		let options = (await ctx.prisma.globalOptions.findFirst({
 			where: {
 				id: 1,
 			},
-		});
+		})) as WithError<GlobalOptions>;
+
+		if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
+			options = {
+				...options,
+				error: true,
+				message:
+					"Please re-enter your SMTP password to enhance security through database hashing.",
+			};
+		} else if (options?.smtpPassword) {
+			options.smtpPassword = decrypt(
+				options.smtpPassword,
+				generateInstanceSecret(SMTP_SECRET),
+			);
+		}
+		return options;
 	}),
+
 	// Set global options
 	changeRole: adminRoleProtectedRoute
 		.input(
@@ -93,7 +273,7 @@ export const adminRouter = createTRPCRouter({
 					message: "Role is not valid",
 					path: ["role"],
 				}),
-				id: z.number(),
+				id: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -109,6 +289,8 @@ export const adminRouter = createTRPCRouter({
 					? {
 							role: role as Role,
 							userGroupId: null,
+							expiresAt: null,
+							isActive: true,
 					  }
 					: {
 							role: role as Role,
@@ -127,6 +309,8 @@ export const adminRouter = createTRPCRouter({
 				enableRegistration: z.boolean().optional(),
 				firstUserRegistration: z.boolean().optional(),
 				userRegistrationNotification: z.boolean().optional(),
+				welcomeMessageTitle: z.string().max(50).optional(),
+				welcomeMessageBody: z.string().max(350).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -179,6 +363,14 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input.smtpPassword) {
+				// Encrypt SMTP password before storing
+				input.smtpPassword = encrypt(
+					input.smtpPassword,
+					generateInstanceSecret(SMTP_SECRET),
+				);
+			}
+
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
@@ -448,7 +640,7 @@ export const adminRouter = createTRPCRouter({
 				// Use upsert to either update or create a new userGroup
 				return await ctx.prisma.userGroup.upsert({
 					where: {
-						id: input.id || -1, // If no ID is provided, it assumes -1 which likely doesn't exist (assuming positive autoincrementing IDs)
+						id: input.id || -1,
 					},
 					create: {
 						name: input.groupName,
@@ -530,7 +722,7 @@ export const adminRouter = createTRPCRouter({
 	assignUserGroup: adminRoleProtectedRoute
 		.input(
 			z.object({
-				userid: z.number(),
+				userid: z.string(),
 				userGroupId: z.string().nullable(), // Allow null value for userGroupId
 			}),
 		)
@@ -538,6 +730,19 @@ export const adminRouter = createTRPCRouter({
 			if (ctx.session.user.id === input.userid) {
 				throwError("You can't change your own Group");
 			}
+
+			// Check if the user and the user group exist
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userid,
+				},
+			});
+
+			// do not add usergroup if admin user
+			if (user.role === "ADMIN" && input.userGroupId !== "none") {
+				throwError("You can't add groups to admin users");
+			}
+
 			try {
 				// If "none" is selected, remove the user from the group
 				if (input.userGroupId === "none") {
@@ -550,13 +755,6 @@ export const adminRouter = createTRPCRouter({
 						},
 					});
 				}
-
-				// Check if the user and the user group exist
-				const user = await ctx.prisma.user.findUnique({
-					where: {
-						id: input.userid,
-					},
-				});
 
 				const userGroup = await ctx.prisma.userGroup.findUnique({
 					where: {
@@ -597,7 +795,7 @@ export const adminRouter = createTRPCRouter({
 		}
 
 		// Get identity from the file system
-		const identityPath = "/var/lib/zerotier-one/identity.public";
+		const identityPath = `${ZT_FOLDER}/identity.public`;
 		const identity = fs.existsSync(identityPath)
 			? fs.readFileSync(identityPath, "utf-8").trim()
 			: "";
@@ -629,46 +827,36 @@ export const adminRouter = createTRPCRouter({
 							"If plRecommend is false, both plID and plBirth need to be provided.",
 						path: ["plID", "plBirth"], // Path of the fields the error refers to
 					},
-				)
-				.refine(
-					(data) => {
-						if (
-							data.plID === 149604618 || // official world in production ZeroTier Cloud
-							data.plID === 227883110 || // reserved world for future
-							data.plBirth === 1567191349589
-						) {
-							return false;
-						}
-						if (!data.plRecommend && data.plBirth <= 1567191349589) {
-							return false;
-						}
-						return true;
-					},
-					{
-						message:
-							"Invalid Planet ID / Birth values provided. Consider using recommended values.",
-						path: ["plID", "plBirth"],
-					},
 				),
 		)
 
 		.mutation(async ({ ctx, input }) => {
+			// data.plID 149604618 // official world in production ZeroTier Cloud
+			// data.plID  227883110  // reserved world for future
+			// data.plBirth 1567191349589
 			try {
-				const zerotierOneDir = "/var/lib/zerotier-one";
-				const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
-				const planetPath = `${zerotierOneDir}/planet`;
-				const backupDir = `${zerotierOneDir}/planet_backup`;
+				const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
+				const planetPath = `${ZT_FOLDER}/planet`;
+				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
+
 				try {
-					fs.accessSync(zerotierOneDir, fs.constants.W_OK);
+					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
 				} catch (_err) {
-					throwError(
-						`Please remove the :ro flag from the docker volume mount for ${zerotierOneDir}`,
-					);
+					if (isRunningInDocker()) {
+						throwError(
+							`Please remove the :ro flag from the docker volume mount for ${ZT_FOLDER}`,
+						);
+					} else {
+						throwError(
+							`Permission error: cannot write to ${ZT_FOLDER}. Make sure the folder is writable.`,
+						);
+					}
 				}
+
 				// Check if identity.public exists
-				if (!fs.existsSync(`${zerotierOneDir}/identity.public`)) {
+				if (!fs.existsSync(`${ZT_FOLDER}/identity.public`)) {
 					throwError("identity.public file does NOT exist, cannot generate planet file.");
 				}
 
@@ -694,7 +882,7 @@ export const adminRouter = createTRPCRouter({
 				}
 				const identity =
 					input.identity ||
-					fs.readFileSync(`${zerotierOneDir}/identity.public`, "utf-8").trim();
+					fs.readFileSync(`${ZT_FOLDER}/identity.public`, "utf-8").trim();
 
 				/*
 				 *
@@ -727,12 +915,12 @@ export const adminRouter = createTRPCRouter({
 				const portNumbers = input.endpoints
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-				if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-					throwError("Error: Port numbers are not equal in the provided endpoints");
-				}
+				// if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
+				// 	throwError("Error: Port numbers are not equal in the provided endpoints");
+				// }
 
 				try {
-					await updateLocalConf(portNumbers[0]);
+					await updateLocalConf(portNumbers);
 				} catch (error) {
 					throwError(error);
 				}
@@ -754,11 +942,7 @@ export const adminRouter = createTRPCRouter({
 					);
 				}
 				// Copy generated planet file
-				fs.copyFileSync(
-					`${mkworldDir}/planet.custom`,
-					// "/var/lib/zerotier-one/planet",
-					planetPath,
-				);
+				fs.copyFileSync(`${mkworldDir}/planet.custom`, planetPath);
 
 				/*
 				 *
@@ -794,11 +978,10 @@ export const adminRouter = createTRPCRouter({
 			}
 		}),
 	resetWorld: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
-		const zerotierOneDir = "/var/lib/zerotier-one";
 		const paths = {
-			backupDir: `${zerotierOneDir}/planet_backup`,
-			planetPath: `${zerotierOneDir}/planet`,
-			mkworldDir: `${zerotierOneDir}/zt-mkworld`,
+			backupDir: `${ZT_FOLDER}/planet_backup`,
+			planetPath: `${ZT_FOLDER}/planet`,
+			mkworldDir: `${ZT_FOLDER}/zt-mkworld`,
 		};
 
 		const resetDatabase = async () => {
@@ -810,7 +993,7 @@ export const adminRouter = createTRPCRouter({
 					plID: 0,
 					plEndpoints: "",
 					plComment: "",
-					plRecommend: false,
+					plRecommend: true,
 					plIdentity: "",
 				},
 			});
@@ -847,7 +1030,7 @@ export const adminRouter = createTRPCRouter({
 			 *
 			 */
 			try {
-				await updateLocalConf(9993);
+				await updateLocalConf([9993]);
 			} catch (error) {
 				throwError(error);
 			}

@@ -46,6 +46,10 @@ model GlobalOptions {
   plComment                             String?
   plIdentity                            String?
   plEndpoints                           String?
+
+  welcomeMessageEnabled                 Boolean             @default(false)
+  welcomeMessageTitle                   String?
+  welcomeMessageBody                    String?
 }
 
 enum Role {
@@ -77,8 +81,8 @@ model network {
   lastModifiedTime            DateTime?
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User              @relation(fields: [authorId], references: [id])
-  authorId                    Int
+  nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId                    String
   tagsByName                  Json?
   capabilitiesByName          Json?
 
@@ -118,7 +122,7 @@ model NetworkMemberNotation {
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
-    userId            Int
+    userId            String
     type              String
     refresh_token     String? // @db.Text
     access_token      String? // @db.Text
@@ -133,15 +137,15 @@ model Account {
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    userId       Int
+    userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserOptions {
   id                   Int       @id @default(autoincrement())
-  userId               Int       @unique
-  user                 User      @relation(fields: [userId], references: [id])
+  userId               String    @unique
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
   useNotationColorAsBg           Boolean?          @default(false)
@@ -154,6 +158,9 @@ model UserOptions {
   // local controller
   localControllerUrl             String?           @default("http://zerotier:9993")
   localControllerSecret          String?           @default("")
+
+  // member table
+  deAuthorizeWarning             Boolean?          @default(false)
 }
 
 enum AccessLevel {
@@ -172,8 +179,19 @@ model UserGroup {
   users         User[] 
 }
 
+model APIToken {
+  id          Int       @id @default(autoincrement())
+  name        String
+  token       String    @unique
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime? // null means it never expires
+  isActive    Boolean   @default(true)
+}
+
 model User {
-    id                                    Int               @id @default(autoincrement())
+    id                                    String            @id @default(cuid())
     name                                  String
     email                                 String            @unique
     emailVerified                         DateTime?
@@ -195,19 +213,22 @@ model User {
     
     adminOrgs       Organization[] @relation("AdminRelation")
     organizations   Organization[] @relation("MemberRelation")
+    expiresAt                             DateTime? // null means it never expires
+    isActive                              Boolean           @default(true)
 
     userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
     options         UserOptions?
     accounts        Account[]
     sessions        Session[]
     network         network[]
+    apiTokens       APIToken[]
 }
 
 model Organization {
   id             Int          @id @default(autoincrement())
   name           String
   description    String?
-  adminId        Int
+  adminId        String
   admin          User         @relation("AdminRelation", fields: [adminId], references: [id])
   members        User[]       @relation("MemberRelation")
   networks       network[]
@@ -220,6 +241,21 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model UserInvitation {
+  id              Int       @id @default(autoincrement())
+  token           String    @unique
+  used            Boolean   @default(false)
+  email           String?   
+  secret          String    
+  url             String    
+  expires         DateTime 
+  timesCanUse     Int       @default(1)
+  timesUsed       Int       @default(0)
+  createdBy       String      
+  createdAt       DateTime  @default(now())
+}
+
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
 // npx prisma migrate dev --name (NAME)

@@ -5,7 +5,8 @@
 	},
 	"files": {
 		"ignore": [
-			"**/*.js"
+			"**/*.js",
+			"install.ztnet/**/*"
 		]
 	},
 	"formatter": {

@@ -9,6 +9,7 @@ import unzipper from "unzipper";
 import { PassThrough } from "stream";
 import { execSync } from "child_process";
 import { updateLocalConf } from "~/utils/planet";
+import { ZT_FOLDER } from "~/utils/ztApi";
 
 export const config = {
 	api: {
@@ -19,7 +20,7 @@ export const config = {
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
 		try {
-			const folderPath = path.resolve("/var/lib/zerotier-one/zt-mkworld");
+			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
 
 			// Check if the directory exists
 			if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
@@ -63,11 +64,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 	if (req.method === "POST") {
 		return new Promise<void>((resolve, reject) => {
-			const zerotierOneDir = "/var/lib/zerotier-one";
-			const mkworldDir = `${zerotierOneDir}/zt-mkworld`;
+			const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
 			const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
-			const planetPath = `${zerotierOneDir}/planet`;
-			const backupDir = `${zerotierOneDir}/planet_backup`;
+			const planetPath = `${ZT_FOLDER}/planet`;
+			const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 			const form = formidable({
 				uploadDir: "/tmp",
@@ -134,13 +134,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 												 *
 												 */
 												// Extract the port number from the endpoint string
-												const portNumber = parseInt(
-													plEndpoints.split("/").pop() || "",
-													10,
-												);
-
+												const portNumbers = plEndpoints
+													.split(",")
+													.map((endpoint) =>
+														parseInt(endpoint.split("/").pop() || "", 10),
+													);
 												try {
-													await updateLocalConf(portNumber);
+													await updateLocalConf(portNumbers);
 												} catch (_error) {
 													res.status(400).json({
 														error: "Error parsing mkworld.config.json",

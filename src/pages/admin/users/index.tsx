@@ -1,13 +1,54 @@
 import { useTranslations } from "next-intl";
 import { type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { Accounts } from "~/components/modules/accountTable";
-import UserGroups from "~/components/modules/userGroups";
+import { Accounts } from "~/components/adminPage/users/table/accounts";
+import UserInvitation from "~/components/adminPage/users/userInvitation";
+import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
+import UserGroups from "~/components/adminPage/users/userGroups";
+import { api } from "~/utils/api";
 
 const Users = () => {
 	const t = useTranslations("admin");
+	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation();
+
+	const {
+		data: options,
+		refetch: refetchOptions,
+		isLoading: loadingOptions,
+	} = api.admin.getAllOptions.useQuery();
+
+	if (loadingOptions) {
+		return (
+			<div className="flex flex-col items-center justify-center">
+				<h1 className="text-center text-2xl font-semibold">
+					<progress className="progress progress-primary w-56"></progress>
+				</h1>
+			</div>
+		);
+	}
+
 	return (
 		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-6/12">
+			<div className="pb-10">
+				<p className="text-sm text-gray-400 ">{t("users.authentication.header")}</p>
+				<div className="divider mt-0 p-0 text-gray-500"></div>
+				<div className="flex items-center justify-between">
+					<p className="font-medium">
+						{t("users.authentication.enableUserRegistration")}
+					</p>
+					<input
+						type="checkbox"
+						checked={options?.enableRegistration}
+						className="checkbox-primary checkbox checkbox-sm"
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							setRegistration(
+								{ enableRegistration: e.target.checked },
+								{ onSuccess: () => void refetchOptions() },
+							);
+						}}
+					/>
+				</div>
+				<UserInvitation />
+			</div>
 			<div>
 				<p className="text-sm text-gray-400">{t("users.groups.sectionTitle")}</p>
 				<div className="divider mt-0 text-gray-500"></div>
@@ -28,7 +69,7 @@ const Users = () => {
 	);
 };
 Users.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
 
 export default Users;

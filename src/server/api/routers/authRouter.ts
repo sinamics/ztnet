@@ -17,6 +17,9 @@ import {
 } from "~/utils/mail";
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
+import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import { isRunningInDocker } from "~/utils/docker";
+import { User, UserOptions } from "@prisma/client";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -44,27 +47,78 @@ const passwordSchema = (errorMessage: string) =>
 export const authRouter = createTRPCRouter({
 	register: publicProcedure
 		.input(
-			z
-				.object({
-					email: z
-						.string()
-						.email()
-						.transform((val) => val.trim()),
-					password: passwordSchema("password does not meet the requirements!"),
-					name: z.string().min(3).max(40),
-				})
-				.required(),
+			z.object({
+				email: z
+					.string()
+					.email()
+					.transform((val) => val.trim()),
+				password: passwordSchema("password does not meet the requirements!"),
+				name: z.string().min(3).max(40),
+				expiresAt: z.string().optional(),
+				code: z.string().optional(),
+				token: z.string().optional(),
+			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name } = input;
+			const { email, password, name, code, token, expiresAt } = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
 				},
 			});
+			const invitationToken = code?.trim() || token?.trim();
+
+			const hasValidCode =
+				invitationToken &&
+				(await (async () => {
+					if (!code.trim()) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: "No invitation code provided",
+						});
+					}
+					const invitation = await ctx.prisma.userInvitation.findUnique({
+						where: { token: token.trim(), secret: code.trim() },
+					});
+
+					if (
+						!invitation ||
+						invitation.used ||
+						invitation.timesUsed >= invitation.timesCanUse
+					) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: invitation
+								? "Code has already been used"
+								: "Invalid code provided",
+						});
+					}
+
+					// Validate the token using jwt
+					try {
+						jwt.verify(token.trim(), process.env.NEXTAUTH_SECRET);
+					} catch (_e) {
+						throw new TRPCError({
+							code: "BAD_REQUEST",
+							message: "Invitation has expired or is invalid",
+						});
+					}
+
+					await ctx.prisma.userInvitation.update({
+						where: { token: token.trim() },
+						data: {
+							used: invitation.timesUsed + 1 >= invitation.timesCanUse,
+							timesUsed: {
+								increment: 1,
+							},
+						},
+					});
+
+					return true;
+				})());
 
 			// check if enableRegistration is true
-			if (!settings.enableRegistration) {
+			if (!settings.enableRegistration && !hasValidCode) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "Registration is disabled! Please contact the administrator.",
@@ -125,13 +179,25 @@ export const authRouter = createTRPCRouter({
 				data: {
 					name,
 					email,
+					expiresAt,
 					lastLogin: new Date().toISOString(),
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
 					userGroupId: defaultUserGroup?.id,
 					options: {
-						create: {}, // empty object will make Prisma use the default values from the model
+						create: {
+							localControllerUrl: isRunningInDocker()
+								? "http://zerotier:9993"
+								: "http://127.0.0.1:9993",
+						},
 					},
+				},
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					expiresAt: true,
+					role: true,
 				},
 			});
 
@@ -188,14 +254,30 @@ export const authRouter = createTRPCRouter({
 			};
 		}),
 	me: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.prisma.user.findFirst({
+		// add type that extend the user type with urlFromEnv
+		const user = (await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
 			},
 			include: {
 				options: true,
 			},
-		});
+		})) as User & {
+			options?: UserOptions & {
+				urlFromEnv?: boolean;
+				secretFromEnv?: boolean;
+				localControllerUrlPlaceholder?: string;
+			};
+		};
+
+		user.options.localControllerUrlPlaceholder = isRunningInDocker()
+			? "http://zerotier:9993"
+			: "http://127.0.0.1:9993";
+
+		// Set secret environment status
+		user.options.urlFromEnv = !!process.env.ZT_ADDR;
+		user.options.secretFromEnv = !!process.env.ZT_SECRET;
+		return user;
 	}),
 	update: protectedProcedure
 		.input(
@@ -318,7 +400,7 @@ export const authRouter = createTRPCRouter({
 				},
 			);
 
-			const forgotLink = `${process.env.NEXTAUTH_URL}/login/forgotpassword?token=${validationToken}`;
+			const forgotLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
 			const globalOptions = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
@@ -369,7 +451,7 @@ export const authRouter = createTRPCRouter({
 
 			try {
 				interface IJwt {
-					id: number;
+					id: string;
 					token: string;
 				}
 				const { id } = jwt.decode(token) as IJwt;
@@ -414,29 +496,22 @@ export const authRouter = createTRPCRouter({
 	 * - showMarkerInTable: an optional boolean that determines whether to show a marker in the table for the notation
 	 * @returns A Promise that resolves with the updated NetworkMemberNotation instance.
 	 */
-	updateUserNotation: protectedProcedure
+	updateUserOptions: protectedProcedure
 		.input(
 			z.object({
 				useNotationColorAsBg: z.boolean().optional(),
 				showNotationMarkerInTableRow: z.boolean().optional(),
+				deAuthorizeWarning: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			return await ctx.prisma.user.update({
-				where: {
-					id: ctx.session.user.id,
-				},
+				where: { id: ctx.session.user.id },
 				data: {
 					options: {
 						upsert: {
-							create: {
-								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
-							},
-							update: {
-								useNotationColorAsBg: input.useNotationColorAsBg,
-								showNotationMarkerInTableRow: input.showNotationMarkerInTableRow,
-							},
+							create: input,
+							update: input,
 						},
 					},
 				},
@@ -497,6 +572,17 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input?.localControllerUrl && process.env.ZT_ADDR) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Remove the ZT_ADDR environment variable to use this feature!",
+				});
+			}
+
+			const defaultLocalZtUrl = isRunningInDocker()
+				? "http://zerotier:9993"
+				: "http://127.0.0.1:9993";
+
 			// we use upsert in case the user has no options yet
 			const updated = await ctx.prisma.user.update({
 				where: {
@@ -506,11 +592,11 @@ export const authRouter = createTRPCRouter({
 					options: {
 						upsert: {
 							create: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 							update: {
-								localControllerUrl: input.localControllerUrl,
+								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
 								localControllerSecret: input.localControllerSecret,
 							},
 						},
@@ -522,5 +608,49 @@ export const authRouter = createTRPCRouter({
 			});
 
 			return updated;
+		}),
+	getApiToken: protectedProcedure.query(async ({ ctx }) => {
+		return await ctx.prisma.aPIToken.findMany({
+			where: {
+				userId: ctx.session.user.id,
+			},
+		});
+	}),
+	addApiToken: protectedProcedure
+		.input(
+			z.object({
+				name: z.string().min(5).max(50),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const token_content: string = JSON.stringify({
+				name: input.name,
+				userId: ctx.session.user.id,
+			});
+
+			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
+			const token = await ctx.prisma.aPIToken.create({
+				data: {
+					token: token_hash,
+					name: input.name,
+					userId: ctx.session.user.id,
+				},
+			});
+			return token;
+		}),
+
+	deleteApiToken: protectedProcedure
+		.input(
+			z.object({
+				id: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			return await ctx.prisma.aPIToken.delete({
+				where: {
+					id: input.id,
+					userId: ctx.session.user.id,
+				},
+			});
 		}),
 });

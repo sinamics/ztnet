@@ -1,18 +1,21 @@
 import Head from "next/head";
-import type { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { globalSiteTitle } from "~/utils/global";
 import { type GetServerSidePropsContext } from "next";
+import { withAuth } from "~/components/auth/withAuth";
 
 const Dashboard: NextPageWithLayout = () => {
 	const title = `${globalSiteTitle} - Dashboard`;
+
 	return (
 		<>
 			<Head>
 				<title>{title}</title>
-				<meta name="description" content="UAV vpn dashboard" />
 				<link rel="icon" href="/favicon.ico" />
+				<meta property="og:title" content={title} key={title} />
+				<meta name="robots" content="nofollow" />
 			</Head>
 			<main className="my-10">
 				<div className="mx-auto max-w-6xl space-y-10 bg-cover bg-center bg-no-repeat">
@@ -57,7 +60,7 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
 	return {
 		props: {
 			// You can get the messages from anywhere you like. The recommended
@@ -67,5 +70,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
 		},
 	};
-}
+});
 export default Dashboard;

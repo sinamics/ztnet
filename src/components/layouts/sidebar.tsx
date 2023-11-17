@@ -1,37 +1,49 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore } from "~/utils/store";
 import { api } from "~/utils/api";
-// import type { ReactNode } from "react";
-// import Header from "./header";
 
-// interface Props {
-//   children: ReactNode;
-// }
+// Custom hook to check if the screen width is below the 'md' breakpoint
+const useIsBelowMd = () => {
+	const [isBelowMd, setIsBelowMd] = useState(false);
+
+	useEffect(() => {
+		const checkSize = () => {
+			setIsBelowMd(window.innerWidth < 768);
+		};
+
+		checkSize();
+		window.addEventListener("resize", checkSize);
+
+		return () => {
+			window.removeEventListener("resize", checkSize);
+		};
+	}, []);
+
+	return isBelowMd;
+};
 
 const Sidebar = (): JSX.Element => {
-	const { open, toggle } = useSidebarStore();
+	const { open, setOpenState } = useSidebarStore();
 	const { data: session } = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
-
+	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
 	const router = useRouter();
 
 	useEffect(() => {
-		const handleClickOutside = (_event: MouseEvent) => {
-			if (open) {
-				if (!sidebarRef.current) return;
-				toggle();
-				// if (
-				//   sidebarRef.current &&
-				//   !sidebarRef.current?.contains(event.target as Node)
-				// ) {
-				//   toggle();
-				// }
+		const handleClickOutside = (event: MouseEvent) => {
+			if (isBelowMd && open) {
+				if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+					// called after the click event on hamburger menu to close sidebar
+					setTimeout(() => {
+						setOpenState(false);
+					}, 100);
+				}
 			}
 		};
 
@@ -39,12 +51,13 @@ const Sidebar = (): JSX.Element => {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [open, toggle, sidebarRef]);
+	}, [isBelowMd, open, setOpenState, sidebarRef]);
+
 	return (
 		<aside
 			ref={sidebarRef}
-			className={`fixed z-10 h-full w-64 -translate-x-full transform flex-row bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-    ${open ? "z-10  translate-x-0" : "md:translate-x-0"}`}
+			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
+			${open ? "w-64" : "w-0"}`}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">
@@ -143,7 +156,7 @@ const Sidebar = (): JSX.Element => {
 							</Link>
 						</li>
 					) : null}
-					{session?.user.role === "ADMIN" ? (
+					{session?.user?.role === "ADMIN" ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">
@@ -167,7 +180,7 @@ const Sidebar = (): JSX.Element => {
 											viewBox="0 0 24 24"
 											strokeWidth="1.5"
 											stroke="currentColor"
-											className="h-6 w-6"
+											className="w-6 h-6"
 										>
 											<path
 												strokeLinecap="round"

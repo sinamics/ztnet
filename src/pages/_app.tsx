@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { type ReactElement, type ReactNode } from "react";
+import { useState, type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { api } from "~/utils/api";
@@ -10,10 +9,12 @@ import { ThemeProvider } from "next-themes";
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Modal from "~/components/elements/modal";
+import Modal from "~/components/shared/modal";
 import { useEffect } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
+import { useHandleResize } from "~/hooks/useHandleResize";
+import { supportedLocales } from "~/locales/lang";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -29,14 +30,25 @@ const App: AppType<{ session: Session | null }> = ({
 	pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
 	const { asPath, locale, push } = useRouter();
+	const [isClient, setIsClient] = useState(false);
+
+	useHandleResize();
+
+	// just wait for the client to be ready. We check screen size in the useHandleResize hook
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
 
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage
 		const storedLocale = localStorage.getItem("ztnet-language");
-		if (storedLocale && storedLocale !== locale) {
+		if (
+			storedLocale &&
+			storedLocale !== locale &&
+			supportedLocales.includes(storedLocale)
+		) {
 			void push(asPath, asPath, { locale: storedLocale });
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
@@ -51,9 +63,13 @@ const App: AppType<{ session: Session | null }> = ({
 		});
 	}, []);
 	const getLayout = Component.getLayout ?? ((page) => page);
+
+	if (!isClient) {
+		return null;
+	}
 	return (
 		<ThemeProvider defaultTheme="system">
-			<NextIntlClientProvider messages={messages}>
+			<NextIntlClientProvider onError={() => {}} messages={messages}>
 				<Modal />
 				<ReactQueryDevtools initialIsOpen={false} />
 				<Toaster

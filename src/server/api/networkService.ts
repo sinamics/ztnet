@@ -1,16 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import { network_members } from "@prisma/client";
 import { UserContext } from "~/types/ctx";
-import { V6AssignMode } from "~/types/local/network";
-import { sixPlane, toRfc4193Ip } from "~/utils/IPv6";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -35,20 +27,30 @@ export enum ConnectionStatus {
 	Relayed = 1,
 	DirectLAN = 2,
 	DirectWAN = 3,
+	Controller = 4,
 }
 
-function determineConnectionStatus(peer: Peers): ConnectionStatus {
-	if (Array.isArray(peer) && peer.length === 0) {
+function determineConnectionStatus(member: MemberEntity): ConnectionStatus {
+	const regex = new RegExp(`^${member.id}`);
+	if (regex.test(member.nwid)) {
+		return ConnectionStatus.Controller;
+	}
+	// fix for zt version 1.12. Return type of peer is object!.
+	if (!member?.peers || Object.keys(member?.peers).length === 0) {
 		return ConnectionStatus.Offline;
 	}
 
-	if (peer?.latency === -1 || peer?.versionMajor === -1) {
+	if (Array.isArray(member?.peers) && member?.peers.length === 0) {
+		return ConnectionStatus.Offline;
+	}
+
+	if (member?.peers?.latency === -1 || member?.peers?.versionMajor === -1) {
 		return ConnectionStatus.Relayed;
 	}
 
 	// Check if at least one path has a private IP
-	if (peer?.paths && peer.paths.length > 0) {
-		for (const path of peer.paths) {
+	if (member?.peers?.paths && member?.peers.paths.length > 0) {
+		for (const path of member.peers.paths) {
 			const ip = path.address.split("/")[0];
 			if (isPrivateIP(ip)) {
 				return ConnectionStatus.DirectLAN;
@@ -81,7 +83,6 @@ export const enrichMembers = async (
 	nwid: string,
 	controllerMembers: MemberEntity[],
 	peersByAddress: Peers[],
-	v6AssignMode: V6AssignMode,
 ) => {
 	const memberPromises = controllerMembers.map(async (member) => {
 		const dbMember = await prisma.network_members.findFirst({
@@ -98,18 +99,6 @@ export const enrichMembers = async (
 			activePreferredPath = peers.paths.find(
 				(path: Paths) => path.active && path.preferred,
 			);
-		}
-
-		if (v6AssignMode) {
-			member.V6AssignMode = {};
-
-			if (v6AssignMode.rfc4193) {
-				member.V6AssignMode.rfc4193 = toRfc4193Ip(nwid, member.id);
-			}
-
-			if (v6AssignMode["6plane"]) {
-				member.V6AssignMode["6plane"] = sixPlane(nwid, member.id);
-			}
 		}
 
 		if (!activePreferredPath) return { ...dbMember, ...member, peers: {} };
@@ -155,7 +144,7 @@ export const updateNetworkMembers = async (
 
 	for (const member of members) {
 		member.peers = peersByAddress[member.address] || [];
-		member.conStatus = determineConnectionStatus(member.peers);
+		member.conStatus = determineConnectionStatus(member);
 	}
 
 	await psql_updateMember(members);
@@ -242,70 +231,3 @@ export function getNextIP(
 	// If we haven't returned by now, then there are no available IPs in the range
 	return null;
 }
-
-/**
- * Checks and manages the auto-assignment of IP addresses to network members.
- *
- * The function receives a boolean `autoAssignIp`. If `autoAssignIp` is not set or false, it will
- * clear any existing IP assignment pools for network members. This is achieved by setting the
- * `ipAssignmentPools` of the ztControllerUpdates to an empty array.
- *
- * If `autoAssignIp` is true, the function will create a new IP assignment pool, update the network
- * with the new pool, fetch network details, and assign IPs to members without an assigned IP.
- *
- * The function first gathers all assigned IPs in the network. Then, for each member without an IP,
- * it tries to assign an available IP from the pool.
- *
- */
-// export async function handleAutoAssignIP(
-//   ztControllerUpdates: Partial<ZtControllerNetwork>,
-//   ztControllerResponse,
-//   nwid: string
-// ) {
-//   // get the last route from the controller response
-//   const routes = ztControllerResponse.network.routes.pop();
-
-//   // we cannot assign ip if no routes are found
-//   if (!Array.isArray(routes)) {
-//     return;
-//   }
-//   // else update network with new ipAssignmentPools
-//   const pool = IPv4gen(routes["target"]);
-//   ztControllerUpdates.ipAssignmentPools =
-//     pool.ipAssignmentPools as IpAssignmentPoolsEntity[];
-
-//   const controller = await ztController
-//     .network_detail(nwid)
-//     .catch((err: APIError) => {
-//       throw new TRPCError({
-//         message: `${err.cause.toString()} --- ${err.message}`,
-//         code: "BAD_REQUEST",
-//         cause: err.cause,
-//       });
-//     });
-
-//   // First, gather all assigned IPs in the network
-//   let allAssignedIPs: string[] = [];
-//   for (const member of controller?.members) {
-//     allAssignedIPs = [...allAssignedIPs, ...member.ipAssignments];
-//   }
-
-//   // Then, for each member without an IP, try to assign one
-//   for (const member of controller?.members) {
-//     if (member.noAutoAssignIps) continue;
-
-//     if (member.ipAssignments.length === 0) {
-//       // Get next available IP from the pool
-//       const nextIP = getNextIP(pool.ipAssignmentPools, allAssignedIPs);
-
-//       if (nextIP !== null) {
-//         // If a next IP is available, assign it to the member
-//         await ztController.member_update(nwid, member.id, {
-//           ipAssignments: [nextIP],
-//         });
-//         // Add this newly assigned IP to the allAssignedIPs array, to keep it up-to-date
-//         allAssignedIPs.push(nextIP);
-//       }
-//     }
-//   }
-// }
