@@ -10,7 +10,7 @@ const Organization = () => {
 	return (
 		<main className="mx-auto flex w-full flex-col space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10 w-full">
-				<p className="text-sm text-gray-400">Org</p>
+				<p className="text-sm text-gray-400">Organization</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<AddOrgForm />
 			</div>
