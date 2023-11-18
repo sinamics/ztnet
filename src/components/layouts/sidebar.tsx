@@ -52,7 +52,6 @@ const Sidebar = (): JSX.Element => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [isBelowMd, open, setOpenState, sidebarRef]);
-
 	return (
 		<aside
 			ref={sidebarRef}
@@ -121,6 +120,45 @@ const Sidebar = (): JSX.Element => {
 							<span className="ml-3">{t("networks")}</span>
 						</Link>
 					</li>
+					{me?.memberOfOrgs?.length > 0 ? (
+						<>
+							<li className="my-px">
+								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
+									Organiszation
+								</span>
+							</li>
+							{me?.memberOfOrgs.map((org) => (
+								<li key={org.orgName} className="my-px">
+									<Link
+										href={`/organization/${org.orgName}`}
+										className={`flex h-10 flex-row items-center rounded-lg px-3 
+								${
+									router.pathname.includes("/network")
+										? "bg-gray-100 text-gray-700"
+										: "hover:bg-slate-700"
+								}`}
+									>
+										<span className="flex items-center justify-center text-lg text-gray-400">
+											{/* https://heroicons.com/  */}
+											<svg
+												fill="none"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												viewBox="0 0 24 24"
+												stroke="currentColor"
+												className="h-6 w-6"
+											>
+												<path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+											</svg>
+										</span>
+										<span className="ml-3">{org.orgName}</span>
+									</Link>
+								</li>
+							))}
+						</>
+					) : null}
+
 					{me?.options?.ztCentralApiKey ? (
 						<li className="my-px">
 							<Link

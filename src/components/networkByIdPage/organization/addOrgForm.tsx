@@ -28,7 +28,7 @@ const AddOrgForm = () => {
 			refetch();
 		},
 	});
-
+	// console.log(userOrgs);
 	return (
 		<div className="space-y-10">
 			<div className="pb-5">

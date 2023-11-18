@@ -12,6 +12,12 @@ datasource db {
   shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
 }
 
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
 model GlobalOptions {
   id                    Int                               @id @default(autoincrement())
 
@@ -52,11 +58,6 @@ model GlobalOptions {
   welcomeMessageBody                    String?
 }
 
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-}
 
 model network_members {
   nodeid               Int       @id @default(autoincrement())
@@ -86,8 +87,9 @@ model network {
   tagsByName                  Json?
   capabilitiesByName          Json?
 
-  organizationId  Int?
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  organizationId              String?
+  organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  networkAccesses             NetworkAccess[]
 
   networkMembers              network_members[]
   notations                   Notation[]
@@ -191,48 +193,42 @@ model APIToken {
 }
 
 model User {
-    id                                    String            @id @default(cuid())
+    id                                    String                  @id @default(cuid())
     name                                  String
-    email                                 String            @unique
+    email                                 String                  @unique
     emailVerified                         DateTime?
     lastLogin                             DateTime
     lastseen                              DateTime?
-    expirationDate                        String            @default("")
-    online                                Boolean?          @default(false)
-    role                                  Role              @default(USER)
+    expirationDate                        String                  @default("")
+    online                                Boolean?                @default(false)
+    role                                  Role                    @default(USER)
     image                                 String?
     hash                                  String
     licenseStatus                         String?
     orderStatus                           String?
-    orderId                               Int               @default(0)
-    product_id                            Int?              @default(0)
-    licenseKey                            String?           @default("")
+    orderId                               Int                     @default(0)
+    product_id                            Int?                    @default(0)
+    licenseKey                            String?                 @default("")
     tempPassword                          String?
-    firstTime                             Boolean           @default(true)
+    firstTime                             Boolean                 @default(true)
     userGroupId                           Int?
     
-    adminOrgs       Organization[] @relation("AdminRelation")
-    organizations   Organization[] @relation("MemberRelation")
+    memberOfOrgs                          Organization[]          @relation("MemberRelation") // user can be member of multiple organizations
+    organizationRoles                     UserOrganizationRole[]
+    membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
+    networkAccesses                       NetworkAccess[] 
     expiresAt                             DateTime? // null means it never expires
-    isActive                              Boolean           @default(true)
+    isActive                              Boolean                 @default(true)
 
-    userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-    options         UserOptions?
-    accounts        Account[]
-    sessions        Session[]
-    network         network[]
-    apiTokens       APIToken[]
+    userGroup                             UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+    options                               UserOptions?
+    accounts                              Account[]
+    sessions                              Session[]
+    network                               network[]
+    apiTokens                             APIToken[]
 }
 
-model Organization {
-  id             Int          @id @default(autoincrement())
-  name           String
-  description    String?
-  adminId        String
-  admin          User         @relation("AdminRelation", fields: [adminId], references: [id])
-  members        User[]       @relation("MemberRelation")
-  networks       network[]
-}
+
 
 model VerificationToken {
     identifier String
@@ -254,6 +250,69 @@ model UserInvitation {
   timesUsed       Int       @default(0)
   createdBy       String      
   createdAt       DateTime  @default(now())
+}
+
+
+//
+// ORGANIZATION
+//
+
+model Organization {
+  id                        String                      @id @default(cuid())
+  ownerId                   String
+  orgName                   String 
+  description               String?
+  users                     User[]                      @relation("MemberRelation")
+  networks                  network[]
+  settings                  OrganizationSettings?       
+  invitations               OrganizationInvitation[]    
+  membershipRequests        MembershipRequest[] @relation("MembershipRequestsForOrganization")     
+  isActive                  Boolean                     @default(true) 
+  userRoles                 UserOrganizationRole[]
+  networkAccesses           NetworkAccess[]
+}
+
+model UserOrganizationRole {
+  userId         String
+  organizationId String
+  role           Role
+  user           User             @relation(fields: [userId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+
+  @@id([userId, organizationId])
+}
+
+model NetworkAccess {
+  userId         String
+  networkId      String
+  organizationId String
+  user           User             @relation(fields: [userId], references: [id])
+  network        network          @relation(fields: [networkId], references: [nwid])
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+
+  @@id([userId, networkId, organizationId])
+}
+
+model OrganizationSettings {
+  id                Int                         @id @default(autoincrement())
+  organizationId    String                      @unique
+  organization      Organization                @relation(fields: [organizationId], references: [id])
+  // Add specific settings fields here
+}
+
+model OrganizationInvitation {
+  id                Int                         @id @default(autoincrement())
+  token             String                      @unique
+  organizationId    String
+  organization      Organization                @relation(fields: [organizationId], references: [id])
+}
+
+model MembershipRequest {
+  id             Int                            @id @default(autoincrement())
+  userId         String
+  organizationId String
+  user           User                           @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser")
+  organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization")
 }
 
 

@@ -261,6 +261,7 @@ export const authRouter = createTRPCRouter({
 			},
 			include: {
 				options: true,
+				memberOfOrgs: true,
 			},
 		})) as User & {
 			options?: UserOptions & {
@@ -268,8 +269,14 @@ export const authRouter = createTRPCRouter({
 				secretFromEnv?: boolean;
 				localControllerUrlPlaceholder?: string;
 			};
+			memberOfOrgs?: {
+				id: string;
+				ownerId: string;
+				orgName: string;
+				description: string | null;
+				isActive: boolean;
+			}[];
 		};
-
 		user.options.localControllerUrlPlaceholder = isRunningInDocker()
 			? "http://zerotier:9993"
 			: "http://127.0.0.1:9993";

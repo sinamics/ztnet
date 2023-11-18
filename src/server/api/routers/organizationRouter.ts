@@ -9,23 +9,45 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// create organization
-			return await ctx.prisma.user.update({
-				where: { id: ctx.session.user.id },
-				data: {
-					adminOrgs: {
-						create: {
-							name: input.orgName,
+			return await ctx.prisma.$transaction(async (prisma) => {
+				// Step 1: Create the organization and add the user as a member
+				const newOrg = await prisma.organization.create({
+					data: {
+						orgName: input.orgName,
+						ownerId: ctx.session.user.id, // Set the current user as the owner
+						users: {
+							connect: { id: ctx.session.user.id }, // Connect the user as a member
 						},
 					},
-				},
+				});
+
+				// Step 2: Set the user's role in the organization
+				await prisma.userOrganizationRole.create({
+					data: {
+						userId: ctx.session.user.id,
+						organizationId: newOrg.id,
+						role: "ADMIN",
+					},
+				});
+
+				// Optionally, return the updated user with memberOfOrgs included
+				return await prisma.user.findUnique({
+					where: { id: ctx.session.user.id },
+					include: {
+						memberOfOrgs: true,
+					},
+				});
 			});
 		}),
 	getOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		// get all organizations related to the user
 		return await ctx.prisma.organization.findMany({
 			where: {
-				adminId: ctx.session.user.id,
+				ownerId: ctx.session.user.id,
+			},
+			include: {
+				userRoles: true,
+				users: true,
 			},
 		});
 	}),
