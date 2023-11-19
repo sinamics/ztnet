@@ -10,6 +10,10 @@ export const config = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+	// download planet file.
+	// The files is signed by the server, so it can be trusted.
+	// No authentication is required.
+
 	if (req.method === "GET") {
 		try {
 			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
