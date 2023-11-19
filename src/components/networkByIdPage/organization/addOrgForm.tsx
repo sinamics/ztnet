@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 
 const AddOrgForm = () => {
 	const t = useTranslations("admin");
-	const { data: userOrgs, refetch } = api.org.getOrg.useQuery();
+	const { data: userOrgs, refetch } = api.org.getAllOrg.useQuery();
 
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
 		onError: (error) => {
