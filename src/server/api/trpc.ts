@@ -37,6 +37,7 @@ type CreateContextOptions = {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 	return {
 		session: opts.session,
+		ws: opts.ws,
 		prisma,
 	};
 };
@@ -49,12 +50,13 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 	const { req, res } = opts;
-
+	const ws = res.socket.server.io;
 	// Get the session from the server using the getServerSession wrapper function
 	const session = await getServerAuthSession({ req, res });
 
 	return createInnerTRPCContext({
 		session,
+		ws,
 	});
 };
 
