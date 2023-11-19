@@ -1,9 +1,14 @@
 import { create } from "zustand";
-
+import { Socket, io } from "socket.io-client";
 interface StoreI {
 	open: boolean;
 	toggle: () => void;
 	setOpenState: (state: boolean) => void;
+}
+interface SocketStore {
+	socket: Socket | null;
+	initializeSocket: () => void;
+	// Add more methods as needed
 }
 
 export const useSidebarStore = create<StoreI>((set) => ({
@@ -58,4 +63,36 @@ export const useModalStore = create<ModalStore>((set, get) => ({
 		toggleModal();
 		set({ ...data });
 	},
+}));
+
+export const useSocketStore = create<SocketStore>((set) => ({
+	socket: null,
+
+	initializeSocket: async () => {
+		await fetch("/api/websocket");
+		const socket = io();
+
+		socket.on("connect", () => {
+			// rome-ignore lint/nursery/noConsoleLog: <explanation>
+			console.log("connected from zustand store");
+			// Handle connection established
+		});
+
+		socket.on("disconnect", () => {
+			// rome-ignore lint/nursery/noConsoleLog: <explanation>
+			console.log("disconnected from zustand store");
+			// Handle disconnection
+		});
+
+		socket.on("trpc", (msg) => {
+			// rome-ignore lint/nursery/noConsoleLog: <explanation>
+			console.log(msg);
+			// Handle custom event
+		});
+
+		// Update the store with the socket instance
+		set({ socket });
+	},
+
+	// Additional methods can be added here
 }));
