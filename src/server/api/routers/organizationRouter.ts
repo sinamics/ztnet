@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
+import {
+	createTRPCRouter,
+	adminRoleProtectedRoute,
+	protectedProcedure,
+} from "~/server/api/trpc";
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -39,7 +43,7 @@ export const organizationRouter = createTRPCRouter({
 				});
 			});
 		}),
-	getOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
+	getAllOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		// get all organizations related to the user
 		return await ctx.prisma.organization.findMany({
 			where: {
@@ -51,4 +55,22 @@ export const organizationRouter = createTRPCRouter({
 			},
 		});
 	}),
+	getOrgById: protectedProcedure
+		.input(
+			z.object({
+				orgId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// get all organizations related to the user
+			return await ctx.prisma.organization.findUnique({
+				where: {
+					id: input.orgId,
+				},
+				include: {
+					userRoles: true,
+					users: true,
+				},
+			});
+		}),
 });
