@@ -19,10 +19,8 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 		return;
 	}
 
-	// console.log(roomIdToSocketId.entries());
-	if (res.socket.server.io) {
-		console.log("Socket is already running");
-	} else {
+	if (!res.socket.server.io) {
+		// rome-ignore lint/nursery/noConsoleLog: <explanation>
 		console.log("Socket is initializing");
 
 		//@ts-expect-error assinging to a property that doesn't exist
@@ -31,7 +29,6 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 		});
 		res.socket.server.io = io;
 
-		// server-side (in SocketHandler)
 		io.on("connection", (socket) => {
 			socket.on("join", ({ roomId }) => {
 				socket.join(roomId);

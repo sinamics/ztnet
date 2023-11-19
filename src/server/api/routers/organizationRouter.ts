@@ -45,10 +45,6 @@ export const organizationRouter = createTRPCRouter({
 		}),
 	getAllOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		// get all organizations related to the user
-		// ctx.ws.emit("trpc", "Hello from trpc router");
-		ctx.ws.on(ctx.session.user.id, () => {
-			console.log("User connected to websocket");
-		});
 
 		return await ctx.prisma.organization.findMany({
 			where: {
@@ -67,6 +63,9 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// setTimeout(() => {
+			// 	ctx.ws.emit(ctx.session.user.id, "Hello from trpc router");
+			// }, 5000);
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
 				where: {

@@ -15,8 +15,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
-import io from "socket.io-client";
-let socket;
+import { useSocketStore } from "~/utils/store";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -33,25 +32,13 @@ const App: AppType<{ session: Session | null }> = ({
 }: AppPropsWithLayout) => {
 	const { asPath, locale, push } = useRouter();
 	const [isClient, setIsClient] = useState(false);
+	const { initializeSocket } = useSocketStore();
 
 	useHandleResize();
 
 	// just wait for the client to be ready. We check screen size in the useHandleResize hook
 	useEffect(() => {
-		const socketInitializer = async () => {
-			await fetch("/api/websocket");
-			socket = io();
-
-			socket.on("connect", () => {
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
-				console.log("connected from browser");
-			});
-			socket.on("trpc", (msg) => {
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
-				console.log(msg);
-			});
-		};
-		socketInitializer();
+		initializeSocket();
 		setIsClient(true);
 	}, []);
 
