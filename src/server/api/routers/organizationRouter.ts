@@ -133,50 +133,88 @@ export const organizationRouter = createTRPCRouter({
 			});
 			return newNw;
 		}),
-	getNetworkById: protectedProcedure
+	sendMessage: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string(),
+				message: z.string().optional(),
+				orgId: z.string(),
 			}),
 		)
-		.query(async ({ ctx, input }) => {
-			const user = ctx.session.user;
+		.mutation(async ({ ctx, input }) => {
+			// Ensure a message was provided
+			if (!input.message) {
+				throw new Error("Message content cannot be empty.");
+			}
 
-			// Retrieve the network with the organization details
-			const network = await ctx.prisma.network.findUnique({
-				where: {
-					nwid: input.nwid,
+			// Get the current user's ID
+			const userId = ctx.session.user.id;
+
+			// Create a new message in the database
+			const newMessage = await ctx.prisma.messages.create({
+				data: {
+					content: input.message,
+					userId, // Associate the message with the current user
+					organizationId: input.orgId, // Associate the message with the specified organization
 				},
 				include: {
-					organization: true,
+					user: true, // Include user details in the response
 				},
 			});
 
-			// Check if the network exists
-			if (!network) {
-				throw new Error("Network not found");
-			}
+			// emit to other users in the same organization
+			ctx.wss.emit(input.orgId, newMessage);
 
-			// If the network is associated with an organization, verify the user's membership
-			if (network.organizationId) {
-				const isMember = await ctx.prisma.organization.findFirst({
-					where: {
-						id: network.organizationId,
-						users: {
-							some: { id: user.id },
+			// Return the newly created message
+			return newMessage;
+		}),
+	getMessages: protectedProcedure
+		.input(
+			z.object({
+				orgId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// Get all messages associated with the current user
+			const message = await ctx.prisma.messages.findMany({
+				where: {
+					organizationId: input.orgId,
+				},
+				take: 20,
+				orderBy: {
+					createdAt: "desc",
+				},
+				include: {
+					user: true,
+				},
+			});
+
+			return message.reverse();
+		}),
+	addUser: protectedProcedure
+		.input(
+			z.object({
+				orgId: z.string(),
+				userId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Add user to the organization
+			const updatedOrganization = await ctx.prisma.organization.update({
+				where: {
+					id: input.orgId,
+				},
+				data: {
+					users: {
+						connect: {
+							id: input.userId,
 						},
 					},
-				});
+				},
+				include: {
+					users: true, // Assuming you want to return the updated list of users
+				},
+			});
 
-				// If the user is not a member of the organization, throw an error
-				if (!isMember) {
-					throw new Error(
-						"Access denied: User is not a member of the organization associated with this network",
-					);
-				}
-			}
-
-			// Return the network if all checks pass
-			return network;
+			return updatedOrganization;
 		}),
 });
