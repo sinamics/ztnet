@@ -1,5 +1,6 @@
 -- AlterTable
-ALTER TABLE "network" ADD COLUMN     "organizationId" TEXT;
+ALTER TABLE "network" ADD COLUMN     "organizationId" TEXT,
+ALTER COLUMN "authorId" DROP NOT NULL;
 
 -- CreateTable
 CREATE TABLE "Organization" (

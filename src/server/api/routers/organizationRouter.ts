@@ -1,9 +1,13 @@
+import { uniqueNamesGenerator } from "unique-names-generator";
 import { z } from "zod";
 import {
 	createTRPCRouter,
 	adminRoleProtectedRoute,
 	protectedProcedure,
 } from "~/server/api/trpc";
+import { IPv4gen } from "~/utils/IPv4gen";
+import { customConfig } from "./networkRouter";
+import * as ztController from "~/utils/ztApi";
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -74,7 +78,105 @@ export const organizationRouter = createTRPCRouter({
 				include: {
 					userRoles: true,
 					users: true,
+					networks: true,
 				},
 			});
+		}),
+	createOrgNetwork: protectedProcedure
+		.input(
+			z.object({
+				networkName: z.string().optional(),
+				orgName: z.string().optional(),
+				orgId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// 1. Fetch the user with its related UserGroup
+			// const userWithGroup = await ctx.prisma.user.findUnique({
+			// 	where: { id: ctx.session.user.id },
+			// 	select: {
+			// 		userGroup: true,
+			// 	},
+			// });
+
+			// Generate ipv4 address, cidr, start & end
+			const ipAssignmentPools = IPv4gen(null);
+
+			if (!input?.networkName) {
+				// Generate adjective and noun word
+				input.networkName = uniqueNamesGenerator(customConfig);
+			}
+
+			// Create ZT network
+			const newNw = await ztController.network_create(
+				ctx,
+				input.networkName,
+				ipAssignmentPools,
+				false, // central
+			);
+
+			// Store the created network in the database
+			await ctx.prisma.organization.update({
+				where: { id: input.orgId },
+				data: {
+					networks: {
+						create: {
+							name: input.networkName,
+							nwid: newNw.nwid,
+							description: input.orgName,
+						},
+					},
+				},
+				include: {
+					networks: true, // Optionally include the updated list of networks in the response
+				},
+			});
+			return newNw;
+		}),
+	getNetworkById: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const user = ctx.session.user;
+
+			// Retrieve the network with the organization details
+			const network = await ctx.prisma.network.findUnique({
+				where: {
+					nwid: input.nwid,
+				},
+				include: {
+					organization: true,
+				},
+			});
+
+			// Check if the network exists
+			if (!network) {
+				throw new Error("Network not found");
+			}
+
+			// If the network is associated with an organization, verify the user's membership
+			if (network.organizationId) {
+				const isMember = await ctx.prisma.organization.findFirst({
+					where: {
+						id: network.organizationId,
+						users: {
+							some: { id: user.id },
+						},
+					},
+				});
+
+				// If the user is not a member of the organization, throw an error
+				if (!isMember) {
+					throw new Error(
+						"Access denied: User is not a member of the organization associated with this network",
+					);
+				}
+			}
+
+			// Return the network if all checks pass
+			return network;
 		}),
 });

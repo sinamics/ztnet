@@ -107,18 +107,36 @@ export const networkRouter = createTRPCRouter({
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
 
-			const psqlNetworkData = await ctx.prisma.network.findFirst({
+			// First, retrieve the network with organization details
+			const psqlNetworkData = await ctx.prisma.network.findUnique({
 				where: {
-					AND: [
-						{
-							authorId: { equals: ctx.session.user.id },
-							nwid: { equals: input.nwid },
-						},
-					],
+					nwid: input.nwid,
+				},
+				include: {
+					organization: true,
 				},
 			});
 
-			if (!psqlNetworkData) return throwError("You are not the Author of this network!");
+			if (!psqlNetworkData) {
+				return throwError("Network not found!");
+			}
+
+			// Check if the user is the author of the network or part of the associated organization
+			const isAuthor = psqlNetworkData.authorId === ctx.session.user.id;
+			const isMemberOfOrganization =
+				psqlNetworkData.organizationId &&
+				(await ctx.prisma.organization.findFirst({
+					where: {
+						id: psqlNetworkData.organizationId,
+						users: {
+							some: { id: ctx.session.user.id },
+						},
+					},
+				}));
+
+			if (!isAuthor && !isMemberOfOrganization) {
+				return throwError("You do not have access to this network!");
+			}
 
 			const ztControllerResponse = await ztController
 				.local_network_detail(ctx, psqlNetworkData.nwid, false)
