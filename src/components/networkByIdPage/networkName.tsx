@@ -128,7 +128,7 @@ const NetworkName = ({ central = false }: IProp) => {
 	return (
 		<div className="flex flex-col justify-between sm:flex-row">
 			<span className="font-medium">{t("networkName")}</span>
-			<span className="relative left-7 flex items-center gap-2">
+			<span className="flex items-center gap-2">
 				{state.editNetworkName ? (
 					<form onSubmit={changeNameHandler}>
 						<Input

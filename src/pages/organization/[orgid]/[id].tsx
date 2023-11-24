@@ -114,37 +114,46 @@ const OrganizationNetworkById = () => {
 	return (
 		<div>
 			<HeadSection title={pageTitle} />
-			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
-				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
-					<div className="flex flex-col space-y-3 sm:space-y-0">
-						<div className="flex flex-col justify-between sm:flex-row">
-							<span className="font-semibold">{t("networkId")}</span>
-							<span className="relative left-7 flex items-center gap-2">
-								<CopyToClipboard
-									text={network?.nwid}
-									onCopy={() =>
-										toast.success(
-											t("copyToClipboard.success", { element: network?.nwid }),
-											{
-												id: "copyNwid",
-											},
-										)
-									}
-									title={t("copyToClipboard.title")}
-								>
-									<div className="flex cursor-pointer items-center gap-2">
-										{network?.nwid}
-										<CopyIcon />
-									</div>
-								</CopyToClipboard>
-							</span>
+			<div className="mx-auto text-sm sm:w-4/5 sm:p-10 md:text-base">
+				<div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+					{/* Left section with network ID, name, and description */}
+					<div className="xl:col-span-1">
+						<div className="space-y-1">
+							{/* Network ID */}
+							<div className="flex flex-col sm:flex-row justify-between">
+								<span className="font-semibold">{t("networkId")}</span>
+								<span className="flex items-center">
+									<CopyToClipboard
+										text={network?.nwid}
+										onCopy={() =>
+											toast.success(
+												t("copyToClipboard.success", { element: network?.nwid }),
+												{ id: "copyNwid" },
+											)
+										}
+										title={t("copyToClipboard.title")}
+									>
+										<div className="flex cursor-pointer items-center">
+											{network?.nwid}
+											<CopyIcon />
+										</div>
+									</CopyToClipboard>
+								</span>
+							</div>
+							{/* Network Name */}
+							<NetworkName />
+							{/* Network Description */}
+							<NetworkDescription />
 						</div>
-						<NetworkName />
-						<NetworkDescription />
+					</div>
+
+					{/* Right section with NetworkPrivatePublic */}
+					<div className="xl:col-span-1">
+						<NetworkPrivatePublic />
 					</div>
 				</div>
-				<NetworkPrivatePublic />
 			</div>
+
 			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 				<div className="hidden lg:flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
