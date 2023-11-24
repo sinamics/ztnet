@@ -69,7 +69,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 
 				{/* Main Content */}
 				<div
-					className={`flex-grow custom-scrollbar transition-all duration-150 ${
+					className={`flex-grow custom-scrollbar custom-overflow transition-all duration-150 ${
 						asideOpen ? "mr-64" : ""
 					}`}
 				>

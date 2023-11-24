@@ -69,7 +69,7 @@ const App: AppType<{ session: Session | null }> = ({
 	}
 	return (
 		<ThemeProvider defaultTheme="system">
-			<NextIntlClientProvider onError={() => {}} messages={messages}>
+			<NextIntlClientProvider locale={locale} onError={() => {}} messages={messages}>
 				<Modal />
 				<ReactQueryDevtools initialIsOpen={false} />
 				<Toaster

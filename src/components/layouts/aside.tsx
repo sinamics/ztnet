@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
 import { useAsideStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
 
 const TimeAgoFormatter = (value: string, unit: string) => {
 	// Map full unit names to their abbreviations
@@ -70,21 +71,28 @@ const ChatAside = () => {
 	const { data: orgMessages } = api.org.getMessages.useQuery({ orgId });
 
 	useEffect(() => {
-		let socket;
+		let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+
 		const handleNewMessage = (message) => {
-			setMessages((prevMessages) => [...prevMessages, message]);
+			// Add a check to ensure the message doesn't already exist
+			setMessages((prevMessages) => {
+				if (!prevMessages.some((msg) => msg.id === message.id)) {
+					return [...prevMessages, message];
+				}
+				return prevMessages;
+			});
 		};
+
 		const initializeSocket = async () => {
 			await fetch("/api/websocket");
 			socket = io();
+
 			// Listen for new messages on the socket
 			if (socket) {
-				socket.on(orgId, handleNewMessage);
+				socket.on("connect", () => {
+					socket.on(orgId, handleNewMessage);
+				});
 			}
-			socket.on("connect", () => {
-				console.log("connected from component");
-				// Handle connection established
-			});
 		};
 
 		initializeSocket();
@@ -92,6 +100,7 @@ const ChatAside = () => {
 		// Cleanup function to be called when the component unmounts
 		return () => {
 			if (socket) {
+				socket.off(orgId, handleNewMessage);
 				socket.disconnect();
 			}
 		};
