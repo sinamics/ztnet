@@ -17,6 +17,12 @@ export const useSidebarStore = create<StoreI>((set) => ({
 	setOpenState: (state: boolean) => set(() => ({ open: state })),
 }));
 
+export const useAsideStore = create<StoreI>((set) => ({
+	open: false,
+	toggle: () => set((state) => ({ open: !state.open })),
+	setOpenState: (state: boolean) => set(() => ({ open: state })),
+}));
+
 type IcallModal = {
 	title: string;
 	description: string;
@@ -70,7 +76,7 @@ export const useSocketStore = create<SocketStore>((set) => ({
 
 	initializeSocket: async () => {
 		await fetch("/api/websocket");
-		const socket = io();
+		const socket = io({ transports: ["websocket"] });
 
 		socket.on("connect", () => {
 			// rome-ignore lint/nursery/noConsoleLog: <explanation>
@@ -82,12 +88,6 @@ export const useSocketStore = create<SocketStore>((set) => ({
 			// rome-ignore lint/nursery/noConsoleLog: <explanation>
 			console.log("disconnected from zustand store");
 			// Handle disconnection
-		});
-
-		socket.on("trpc", (msg) => {
-			// rome-ignore lint/nursery/noConsoleLog: <explanation>
-			console.log(msg);
-			// Handle custom event
 		});
 
 		// Update the store with the socket instance

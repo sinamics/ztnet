@@ -217,6 +217,7 @@ model User {
     organizationRoles                     UserOrganizationRole[]
     membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
     networkAccesses                       NetworkAccess[] 
+    messages                              Messages[]
     expiresAt                             DateTime? // null means it never expires
     isActive                              Boolean                 @default(true)
 
@@ -270,6 +271,7 @@ model Organization {
   isActive                  Boolean                     @default(true) 
   userRoles                 UserOrganizationRole[]
   networkAccesses           NetworkAccess[]
+  messages                  Messages[]
 }
 
 model UserOrganizationRole {
@@ -280,6 +282,16 @@ model UserOrganizationRole {
   organization   Organization     @relation(fields: [organizationId], references: [id])
 
   @@id([userId, organizationId])
+}
+
+model Messages {
+  id              Int          @id @default(autoincrement())
+  content         String
+  createdAt       DateTime     @default(now())
+  userId          String       // Reference to the User model
+  user            User         @relation(fields: [userId], references: [id])
+  organizationId  String       // Reference to the Organization model
+  organization    Organization @relation(fields: [organizationId], references: [id])
 }
 
 model NetworkAccess {

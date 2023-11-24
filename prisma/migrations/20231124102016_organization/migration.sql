@@ -23,6 +23,17 @@ CREATE TABLE "UserOrganizationRole" (
 );
 
 -- CreateTable
+CREATE TABLE "Messages" (
+    "id" SERIAL NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+
+    CONSTRAINT "Messages_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "NetworkAccess" (
     "userId" TEXT NOT NULL,
     "networkId" TEXT NOT NULL,
@@ -83,6 +94,12 @@ ALTER TABLE "UserOrganizationRole" ADD CONSTRAINT "UserOrganizationRole_userId_f
 
 -- AddForeignKey
 ALTER TABLE "UserOrganizationRole" ADD CONSTRAINT "UserOrganizationRole_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Messages" ADD CONSTRAINT "Messages_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Messages" ADD CONSTRAINT "Messages_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "NetworkAccess" ADD CONSTRAINT "NetworkAccess_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

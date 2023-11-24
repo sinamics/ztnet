@@ -3,6 +3,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 
 // import { useTranslations } from "next-intl";
 import AddOrgForm from "~/components/networkByIdPage/organization/addOrgForm";
+import OrgUsers from "~/components/networkByIdPage/organization/orgUsers";
 
 const Organization = () => {
 	// const t = useTranslations("admin");
@@ -13,6 +14,7 @@ const Organization = () => {
 				<p className="text-sm text-gray-400">Organization</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<AddOrgForm />
+				<OrgUsers />
 			</div>
 		</main>
 	);
