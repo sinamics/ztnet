@@ -16,13 +16,13 @@ const OrganizationById = () => {
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
 
 	return (
-		<main className="bg-base-100 text-gray-100 min-h-screen p-5">
+		<main className="bg-base-100 min-h-screen p-5">
 			<div className="max-w-7xl mx-auto">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
 						<p className="text-center text-xl">Organization Dashboard</p>
-						<span className="bg-red-600 text-white px-4 py-1 rounded-lg shadow-lg text-sm font-medium">
+						<span className="bg-red-600/30 text-white px-4 py-1 rounded-lg shadow-lg text-xs font-medium opacity-75">
 							Beta Version - Not for production use!
 						</span>
 					</div>
