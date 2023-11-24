@@ -82,8 +82,8 @@ model network {
   lastModifiedTime            DateTime?
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId                    String
+  nw_userid                   User?              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId                    String?
   tagsByName                  Json?
   capabilitiesByName          Json?
 
