@@ -190,10 +190,7 @@ const Sidebar = (): JSX.Element => {
 										/>
 									</svg>
 								</span>
-								<span className="ml-3">
-									{`${t("ztCentral")} `}
-									<div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
-								</span>
+								<span className="ml-3">{`${t("ztCentral")}`}</span>
 							</Link>
 						</li>
 					) : null}

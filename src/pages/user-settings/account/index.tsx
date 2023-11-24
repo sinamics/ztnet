@@ -190,7 +190,6 @@ const Account = () => {
 			<div>
 				<div className="pt-10 text-[0.7rem] text-gray-400">
 					{t("account.zerotierCentral.title").toUpperCase()}
-					<div className="badge badge-primary p-1 text-[0.6rem]">BETA</div>
 				</div>
 				<div className="divider m-0 p-0 text-gray-500" />
 				<div>
