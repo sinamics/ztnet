@@ -66,7 +66,7 @@ const ChatAside = () => {
 	const query = useRouter().query;
 	const orgId = query.orgid as string;
 	const messageEndRef = useRef(null);
-	console.log(query);
+
 	const { mutate: emitChatMsg } = api.org.sendMessage.useMutation();
 	const { data: orgMessages } = api.org.getMessages.useQuery({ orgId });
 
