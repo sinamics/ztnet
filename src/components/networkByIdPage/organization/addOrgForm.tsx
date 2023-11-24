@@ -3,11 +3,11 @@ import InputFields from "~/components/elements/inputField";
 import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 
 const AddOrgForm = () => {
-	const t = useTranslations("admin");
-	const { data: userOrgs, refetch } = api.org.getAllOrg.useQuery();
+	// const t = useTranslations("admin");
+	const { refetch } = api.org.getAllOrg.useQuery();
 
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
 		onError: (error) => {
