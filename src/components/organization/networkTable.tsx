@@ -119,7 +119,8 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 		debugTable: false,
 	});
 	const handleRowClick = (nwid: string) => {
-		void router.push(`/organization/network/${nwid}`);
+		const orgId = router.query.orgid as string;
+		void router.push(`/organization/${orgId}/${nwid}`);
 	};
 
 	return (

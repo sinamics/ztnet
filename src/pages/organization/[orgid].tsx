@@ -9,7 +9,7 @@ import { OrganizationNetworkTable } from "~/components/organization/networkTable
 
 const OrganizationById = () => {
 	const query = useRouter().query;
-	const orgId = query.id as string;
+	const orgId = query.orgid as string;
 	const { data: orgData } = api.org.getOrgById.useQuery({
 		orgId,
 	});
