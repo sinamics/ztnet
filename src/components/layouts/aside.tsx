@@ -68,7 +68,12 @@ const ChatAside = () => {
 	const messageEndRef = useRef(null);
 
 	const { mutate: emitChatMsg } = api.org.sendMessage.useMutation();
-	const { data: orgMessages } = api.org.getMessages.useQuery({ orgId });
+	const { data: orgMessages } = api.org.getMessages.useQuery(
+		{ orgId },
+		{
+			enabled: !!orgId,
+		},
+	);
 
 	useEffect(() => {
 		let socket: Socket<DefaultEventsMap, DefaultEventsMap>;

@@ -260,6 +260,7 @@ model UserInvitation {
 
 model Organization {
   id                        String                      @id @default(cuid())
+  createdAt                 DateTime                    @default(now())
   ownerId                   String
   orgName                   String 
   description               String?

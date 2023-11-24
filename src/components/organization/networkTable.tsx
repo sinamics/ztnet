@@ -51,7 +51,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {
-				cell: (info) => info.getValue(),
+				cell: (info) => <span className="truncate">{info.getValue()}</span>,
 				header: () => <span>{t("name")}</span>,
 			}),
 			columnHelper.accessor("description", {
@@ -59,11 +59,11 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 				cell: (info) => <TruncateText text={info.getValue()} />,
 				header: () => <span>{t("description")}</span>,
 			}),
-			columnHelper.accessor("nwid", {
-				cell: (info) => info.getValue(),
-				header: () => <span>{t("networkId")}</span>,
-				// footer: (info) => info.column.id,
-			}),
+			// columnHelper.accessor("nwid", {
+			// 	cell: (info) => info.getValue(),
+			// 	header: () => <span>{t("networkId")}</span>,
+			// 	// footer: (info) => info.column.id,
+			// }),
 			columnHelper.accessor("totalMemberCount", {
 				header: () => <span>{t("members")}</span>,
 				cell: (info) => info.getValue(),
