@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
 import { api } from "~/utils/api";
-import { useSidebarStore, useAsideStore, useLogAsideStore } from "~/utils/store";
+import { useSidebarStore, useAsideStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 

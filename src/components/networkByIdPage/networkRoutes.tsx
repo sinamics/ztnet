@@ -13,9 +13,10 @@ const initialRouteInput = {
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
-export const NettworkRoutes = ({ central = false }: IProp) => {
+export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
@@ -50,7 +51,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 
 		updateManageRoutes(
 			{
-				updateParams: { routes: [...newRouteArr] },
+				updateParams: { routes: [...newRouteArr], organizationId },
 				nwid: query.id as string,
 				central,
 			},
@@ -70,6 +71,7 @@ export const NettworkRoutes = ({ central = false }: IProp) => {
 			{
 				updateParams: {
 					routes: [...network.routes, { ...routeInput }],
+					organizationId,
 				},
 				nwid: query.id as string,
 				central,
