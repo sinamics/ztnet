@@ -23,6 +23,12 @@ export const useAsideStore = create<StoreI>((set) => ({
 	setOpenState: (state: boolean) => set(() => ({ open: state })),
 }));
 
+export const useLogAsideStore = create<StoreI>((set) => ({
+	open: false,
+	toggle: () => set((state) => ({ open: !state.open })),
+	setOpenState: (state: boolean) => set(() => ({ open: state })),
+}));
+
 type IcallModal = {
 	title: string;
 	description: string;

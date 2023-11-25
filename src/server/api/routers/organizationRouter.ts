@@ -217,4 +217,31 @@ export const organizationRouter = createTRPCRouter({
 
 			return updatedOrganization;
 		}),
+	getLogs: protectedProcedure
+		.input(
+			z.object({
+				orgId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// Get all messages associated with the current user
+			const logs = await ctx.prisma.activityLog.findMany({
+				where: {
+					organizationId: input.orgId,
+				},
+				take: 20,
+				orderBy: {
+					createdAt: "desc",
+				},
+				include: {
+					performedBy: {
+						select: {
+							name: true,
+						},
+					},
+				},
+			});
+
+			return logs;
+		}),
 });

@@ -14,6 +14,7 @@ import { type NetworkEntity } from "~/types/local/network";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
 const updateCache = ({
@@ -43,7 +44,7 @@ const updateCache = ({
 	);
 };
 
-const NetworkName = ({ central = false }: IProp) => {
+const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const client = useQueryClient();
 	const [state, setState] = useState({
@@ -88,7 +89,7 @@ const NetworkName = ({ central = false }: IProp) => {
 			{
 				nwid: networkById?.network?.id,
 				central,
-				updateParams: { name: state?.networkName },
+				updateParams: { name: state?.networkName, organizationId },
 			},
 			{
 				onSuccess: () => {

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
@@ -43,6 +43,8 @@ const OrganizationNetworkById = () => {
 	});
 	const { callModal } = useModalStore((state) => state);
 	const { query, push: router } = useRouter();
+	const organizationId = query.orgid as string;
+
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
@@ -141,15 +143,15 @@ const OrganizationNetworkById = () => {
 								</span>
 							</div>
 							{/* Network Name */}
-							<NetworkName />
+							<NetworkName organizationId={organizationId} />
 							{/* Network Description */}
-							<NetworkDescription />
+							<NetworkDescription organizationId={organizationId} />
 						</div>
 					</div>
 
 					{/* Right section with NetworkPrivatePublic */}
 					<div className="xl:col-span-1">
-						<NetworkPrivatePublic />
+						<NetworkPrivatePublic organizationId={organizationId} />
 					</div>
 				</div>
 			</div>
@@ -194,7 +196,7 @@ const OrganizationNetworkById = () => {
 			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
-					<NetworkIpAssignment />
+					<NetworkIpAssignment organizationId={organizationId} />
 				</div>
 
 				<div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex" />
@@ -324,7 +326,7 @@ const OrganizationNetworkById = () => {
 };
 
 OrganizationNetworkById.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
 };
 
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {

@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
+import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { GetServerSidePropsContext } from "next/types";
 import { withAuth } from "~/components/auth/withAuth";
@@ -124,7 +124,7 @@ const OrganizationById = () => {
 };
 
 OrganizationById.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
+	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
 };
 
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {

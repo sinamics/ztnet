@@ -31,11 +31,6 @@ const AddOrgForm = () => {
 	// console.log(userOrgs);
 	return (
 		<div className="space-y-10">
-			<div className="pb-5">
-				<p className="text-sm text-gray-500">
-					Colaborate with other users within your organization
-				</p>
-			</div>
 			<InputFields
 				isLoading={false}
 				label="Add Organization"

@@ -6,9 +6,10 @@ import { api } from "~/utils/api";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
-export const Ipv6assignment = ({ central = false }: IProp) => {
+export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const { query } = useRouter();
@@ -44,6 +45,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 							{
 								nwid: query.id as string,
 								central,
+								organizationId,
 								v6AssignMode: {
 									rfc4193: e.target.checked,
 								},
@@ -69,6 +71,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 							{
 								nwid: query.id as string,
 								central,
+								organizationId,
 								v6AssignMode: {
 									"6plane": e.target.checked,
 								},

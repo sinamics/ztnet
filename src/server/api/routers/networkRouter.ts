@@ -268,9 +268,20 @@ export const networkRouter = createTRPCRouter({
 					rfc4193: z.boolean().optional(),
 					zt: z.boolean().optional(),
 				}),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IPv6 auto-assign to ${JSON.stringify(
+						input.v6AssignMode,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const network = await ztController.get_network(ctx, input.nwid, input.central);
 			// prepare update params
 			const updateParams = input.central
@@ -301,10 +312,19 @@ export const networkRouter = createTRPCRouter({
 					v4AssignMode: z.object({
 						zt: z.boolean(),
 					}),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IPv4 auto-assign to ${input.updateParams.v4AssignMode.zt}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			// if central is true, send the request to the central API and return the response
 			const { v4AssignMode } = input.updateParams;
 			// prepare update params
@@ -350,10 +370,20 @@ export const networkRouter = createTRPCRouter({
 				central: z.boolean().default(false),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IP assignment to ${JSON.stringify(
+						input.updateParams.routes,
+					)})}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
@@ -386,10 +416,21 @@ export const networkRouter = createTRPCRouter({
 							}),
 						)
 						.optional(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IP assignment pools to ${JSON.stringify(
+						input.updateParams.ipAssignmentPools,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const { ipAssignmentPools } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central
@@ -410,11 +451,21 @@ export const networkRouter = createTRPCRouter({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
 				updateParams: z.object({
-					private: z.boolean().optional(),
+					private: z.boolean(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} privacy to ${input.updateParams.private}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
 				: { private: input.updateParams.private };
@@ -437,14 +488,24 @@ export const networkRouter = createTRPCRouter({
 	networkName: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
 				updateParams: z.object({
-					name: z.string().nonempty(),
+					name: z.string(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} name to ${input.updateParams.name}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -479,10 +540,19 @@ export const networkRouter = createTRPCRouter({
 				central: z.boolean().default(false),
 				updateParams: z.object({
 					description: z.string(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} description to ${input.updateParams.description}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			// if central is true, send the request to the central API and return the response
 			if (input.central) {
 				const updated = await ztController.network_update({

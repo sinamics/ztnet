@@ -13,6 +13,7 @@ import { type CentralNetwork } from "~/types/central/network";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
 const updateCache = ({
@@ -42,7 +43,7 @@ const updateCache = ({
 	);
 };
 
-export const NetworkPrivatePublic = ({ central = false }: IProp) => {
+export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const { query } = useRouter();
 	const client = useQueryClient();
@@ -61,7 +62,7 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 	const privateHandler = (privateNetwork: boolean) => {
 		privatePublicNetwork(
 			{
-				updateParams: { private: privateNetwork },
+				updateParams: { private: privateNetwork, organizationId },
 				nwid: query.id as string,
 				central,
 			},

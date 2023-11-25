@@ -60,7 +60,7 @@ const MessagesList = ({ messages }) => {
 };
 
 const ChatAside = () => {
-	const { open: asideOpen } = useAsideStore();
+	const { open: asideOpen, toggle: toggleAside } = useAsideStore();
 	const [messages, setMessages] = useState([]);
 	const [inputMsg, setInputMsg] = useState({ chatMessage: "" });
 	const query = useRouter().query;
@@ -142,43 +142,74 @@ const ChatAside = () => {
 		);
 	};
 	return (
-		<div
-			className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
-				asideOpen ? "w-72" : "w-0"
-			}`}
-		>
-			{/* Chat Header */}
-			<div className="p-4 border-b border-gray-200">
-				<h2 className="text-lg font-semibold">Organization Messages</h2>
-			</div>
-
-			{/* Chat List with Scrollable Area */}
-			<div className="overflow-y-auto h-[calc(100%-20rem)] custom-scrollbar pb-5">
-				{/* Repeat for other chats */}
-				{messages?.map((msg) => {
-					return <MessagesList key={msg.id} messages={msg} />;
-				})}
-				<div ref={messageEndRef} />
-			</div>
-
-			{/* Fixed Message Input at Bottom */}
-			<div className="p-4 border-t border-gray-200 mt-auto">
-				<form className="space-y-5">
-					<p className="text-xs">
-						Everyone in the Organization will be able to see your message.
-					</p>
-					<input
-						type="text"
-						value={inputMsg.chatMessage}
-						onChange={eventHandler}
-						name="chatMessage"
-						className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-						placeholder="Type a message..."
+		<>
+			{/* Chat Toggle Button */}
+			<button
+				className="fixed right-0 top-20 mr-4 z-10"
+				aria-label="Toggle chat"
+				onClick={() => toggleAside()}
+			>
+				{/* Replace with an actual chat icon */}
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					strokeWidth="1.5"
+					stroke="currentColor"
+					className="w-6 h-6"
+				>
+					<path
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
 					/>
-					<button type="submit" className="hidden" onClick={sendMessage} />
-				</form>
-			</div>
-		</div>
+				</svg>
+			</button>
+			{/* Chat Aside Panel */}
+			<aside
+				className={`fixed h-full right-0 bg-base-200 shadow-md transition-all duration-150 ${
+					asideOpen ? "w-72" : "w-0 opacity-0"
+				}`}
+			>
+				<div
+					className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
+						asideOpen ? "w-72" : "w-0"
+					}`}
+				>
+					{/* Chat Header */}
+					<div className="p-4 border-b border-gray-200">
+						<h2 className="text-lg font-semibold">Organization Messages</h2>
+					</div>
+
+					{/* Chat List with Scrollable Area */}
+					<div className="overflow-y-auto h-[calc(100%-20rem)] custom-scrollbar pb-5">
+						{/* Repeat for other chats */}
+						{messages?.map((msg) => {
+							return <MessagesList key={msg.id} messages={msg} />;
+						})}
+						<div ref={messageEndRef} />
+					</div>
+
+					{/* Fixed Message Input at Bottom */}
+					<div className="p-4 border-t border-gray-200 mt-auto">
+						<form className="space-y-5">
+							<p className="text-xs">
+								Everyone in the Organization will be able to see your message.
+							</p>
+							<input
+								type="text"
+								value={inputMsg.chatMessage}
+								onChange={eventHandler}
+								name="chatMessage"
+								className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+								placeholder="Type a message..."
+							/>
+							<button type="submit" className="hidden" onClick={sendMessage} />
+						</form>
+					</div>
+				</div>
+			</aside>
+		</>
 	);
 };
 
