@@ -216,7 +216,7 @@ const OrganizationNetworkById = () => {
 
 				{/* Manged broadcast section */}
 				<div className="w-6/6 xl:w-3/6">
-					<NetworkMulticast />
+					<NetworkMulticast organizationId={organizationId} />
 				</div>
 			</div>
 			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
@@ -309,8 +309,8 @@ const OrganizationNetworkById = () => {
 									"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 								yesAction: () => {
 									deleteNetwork(
-										{ nwid: network.nwid },
-										{ onSuccess: () => void router("/network") },
+										{ nwid: network.nwid, organizationId },
+										{ onSuccess: () => void router(`/organization/${organizationId}`) },
 									);
 								},
 							})

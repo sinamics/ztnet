@@ -7,9 +7,10 @@ import { useTranslations } from "use-intl";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
-export const NetworkMulticast = ({ central = false }: IProp) => {
+export const NetworkMulticast = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		multicastLimit: "",
@@ -74,6 +75,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 				central,
 				updateParams: {
 					multicastLimit: parseInt(state.multicastLimit),
+					organizationId,
 				},
 			},
 			{
@@ -152,6 +154,7 @@ export const NetworkMulticast = ({ central = false }: IProp) => {
 											central,
 											updateParams: {
 												enableBroadcast: e.target.checked,
+												organizationId,
 											},
 										},
 										{
