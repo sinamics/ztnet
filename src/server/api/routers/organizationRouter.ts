@@ -229,7 +229,7 @@ export const organizationRouter = createTRPCRouter({
 				where: {
 					organizationId: input.orgId,
 				},
-				take: 20,
+				take: 100,
 				orderBy: {
 					createdAt: "desc",
 				},

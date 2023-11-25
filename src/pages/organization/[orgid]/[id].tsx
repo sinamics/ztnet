@@ -203,13 +203,13 @@ const OrganizationNetworkById = () => {
 
 				{/* Manged routes section */}
 				<div className="w-6/6 xl:w-3/6 ">
-					<NettworkRoutes />
+					<NettworkRoutes organizationId={organizationId} />
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
-					<NetworkDns />
+					<NetworkDns organizationId={organizationId} />
 				</div>
 
 				<div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex" />

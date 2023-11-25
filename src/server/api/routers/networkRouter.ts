@@ -347,10 +347,21 @@ export const networkRouter = createTRPCRouter({
 				central: z.boolean().default(false),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} managed routes to ${JSON.stringify(
+						input.updateParams.routes,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const { routes } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
@@ -585,32 +596,42 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
-				clearDns: z.boolean().optional(),
-				updateParams: z
-					.object({
-						dns: z
-							.object({
-								domain: z.string().refine(isValidDomain, {
-									message: "Invalid DNS domain provided",
-								}),
-								servers: z.array(
-									z.string().refine(isValidIP, {
-										message: "Invalid DNS server provided",
-									}),
-								),
-							})
-							.refine((dns) => dns === undefined || (dns?.domain && dns.servers), {
-								message: "Both domain and servers must be provided if dns is defined",
+				updateParams: z.object({
+					organizationId: z.string().optional(),
+					clearDns: z.boolean().optional(),
+					dns: z
+						.object({
+							domain: z.string().refine(isValidDomain, {
+								message: "Invalid DNS domain provided",
 							}),
-					})
-					.optional(),
+							servers: z.array(
+								z.string().refine(isValidIP, {
+									message: "Invalid DNS server provided",
+								}),
+							),
+						})
+						.refine((dns) => dns === undefined || (dns?.domain && dns.servers), {
+							message: "Both domain and servers must be provided if dns is defined",
+						})
+						.optional(),
+				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} DNS to ${JSON.stringify(
+						input.updateParams,
+					)})}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			let ztControllerUpdates = {};
 
 			// If clearDns is true, set DNS to an empty object
-			if (input.clearDns) {
+			if (input.updateParams?.clearDns) {
 				ztControllerUpdates = { dns: { domain: "", servers: [] } };
 			} else {
 				ztControllerUpdates = { ...input.updateParams };
