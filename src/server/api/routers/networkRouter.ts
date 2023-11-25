@@ -214,9 +214,19 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Deleted network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+			// if organizationId then delete the network from the organization
 			try {
 				// de-authorize all members before we delete network
 				const members = await ztController.network_members(
@@ -250,6 +260,22 @@ export const networkRouter = createTRPCRouter({
 						nwid: input.nwid,
 					},
 				});
+
+				// Delete network from organization
+				if (input.organizationId) {
+					await ctx.prisma.organization.update({
+						where: {
+							id: input.organizationId,
+						},
+						data: {
+							networks: {
+								delete: {
+									nwid: input.nwid,
+								},
+							},
+						},
+					});
+				}
 			} catch (error) {
 				if (error instanceof z.ZodError) {
 					return throwError(`Invalid routes provided ${error.message}`);
@@ -658,11 +684,22 @@ export const networkRouter = createTRPCRouter({
 				updateParams: z.object({
 					multicastLimit: z.number().optional(),
 					enableBroadcast: z.boolean().optional(),
+					organizationId: z.string().optional(),
 					// changeCidr: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} multicast to ${JSON.stringify(
+						input.updateParams,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
