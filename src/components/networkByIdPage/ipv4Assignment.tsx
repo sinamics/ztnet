@@ -8,9 +8,10 @@ import { useTranslations } from "next-intl";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
-export const Ipv4Assignment = ({ central = false }: IProp) => {
+export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const { query } = useRouter();
@@ -60,6 +61,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 			{
 				updateParams: {
 					ipAssignmentPools: newIpAssignmentPools,
+					organizationId,
 				},
 				nwid: query.id as string,
 				central,
@@ -132,6 +134,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 								central,
 								updateParams: {
 									v4AssignMode: { zt: e.target.checked },
+									organizationId,
 								},
 							},
 							{
@@ -205,6 +208,7 @@ export const Ipv4Assignment = ({ central = false }: IProp) => {
 											{
 												updateParams: {
 													routes: [{ target: cidr, via: "" }],
+													organizationId,
 												},
 												nwid: query.id as string,
 												central,

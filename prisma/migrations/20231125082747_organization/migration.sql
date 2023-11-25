@@ -1,3 +1,6 @@
+-- AlterEnum
+ALTER TYPE "Role" ADD VALUE 'READ_ONLY';
+
 -- AlterTable
 ALTER TABLE "network" ADD COLUMN     "organizationId" TEXT,
 ALTER COLUMN "authorId" DROP NOT NULL;
@@ -5,6 +8,7 @@ ALTER COLUMN "authorId" DROP NOT NULL;
 -- CreateTable
 CREATE TABLE "Organization" (
     "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ownerId" TEXT NOT NULL,
     "orgName" TEXT NOT NULL,
     "description" TEXT,
@@ -69,6 +73,17 @@ CREATE TABLE "MembershipRequest" (
 );
 
 -- CreateTable
+CREATE TABLE "ActivityLog" (
+    "id" SERIAL NOT NULL,
+    "action" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "performedById" TEXT NOT NULL,
+    "organizationId" TEXT,
+
+    CONSTRAINT "ActivityLog_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_MemberRelation" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
@@ -121,6 +136,12 @@ ALTER TABLE "MembershipRequest" ADD CONSTRAINT "MembershipRequest_userId_fkey" F
 
 -- AddForeignKey
 ALTER TABLE "MembershipRequest" ADD CONSTRAINT "MembershipRequest_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_performedById_fkey" FOREIGN KEY ("performedById") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ActivityLog" ADD CONSTRAINT "ActivityLog_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_MemberRelation" ADD CONSTRAINT "_MemberRelation_A_fkey" FOREIGN KEY ("A") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;

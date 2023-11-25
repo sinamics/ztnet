@@ -13,6 +13,7 @@ datasource db {
 }
 
 enum Role {
+  READ_ONLY
   USER
   MODERATOR
   ADMIN
@@ -218,6 +219,7 @@ model User {
     membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
     networkAccesses                       NetworkAccess[] 
     messages                              Messages[]
+    ActivityLog                           ActivityLog[]
     expiresAt                             DateTime? // null means it never expires
     isActive                              Boolean                 @default(true)
 
@@ -273,6 +275,7 @@ model Organization {
   userRoles                 UserOrganizationRole[]
   networkAccesses           NetworkAccess[]
   messages                  Messages[]
+  ActivityLog               ActivityLog[]
 }
 
 model UserOrganizationRole {
@@ -326,6 +329,16 @@ model MembershipRequest {
   organizationId String
   user           User                           @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser")
   organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization")
+}
+
+model ActivityLog {
+  id              Int         @id @default(autoincrement())
+  action          String      
+  createdAt       DateTime    @default(now())
+  performedById   String      
+  performedBy     User        @relation(fields: [performedById], references: [id])
+  organizationId  String?     // Make this optional
+  organization    Organization? @relation(fields: [organizationId], references: [id])
 }
 
 

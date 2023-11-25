@@ -5,9 +5,10 @@ import { Ipv6assignment } from "./ipv6assignment";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
-export const NetworkIpAssignment = ({ central = false }: IProp) => {
+export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	// State to keep track of the active tab
@@ -35,12 +36,12 @@ export const NetworkIpAssignment = ({ central = false }: IProp) => {
 
 				{activeTab === "IPv4" ? (
 					// Show ipv4 assignment content here
-					<Ipv4Assignment central={central} />
+					<Ipv4Assignment central={central} organizationId={organizationId} />
 				) : null}
 
 				{activeTab === "IPv6" ? (
 					// Show ipv6 assignment content here
-					<Ipv6assignment central={central} />
+					<Ipv6assignment central={central} organizationId={organizationId} />
 				) : null}
 			</div>
 		</div>

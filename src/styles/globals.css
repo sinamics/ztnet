@@ -23,21 +23,23 @@
   height: calc(var(--vh, 1vh) * 100 - 48px);
 }
 
-.custom-scrollbar::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar, .cm-scroller::-webkit-scrollbar {
   width: 8px; /* width of the entire scrollbar */
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track, .cm-scroller::-webkit-scrollbar-track {
   background: #bbbbbb; /* color of the tracking area */
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
+.custom-scrollbar::-webkit-scrollbar-thumb, .cm-scroller::-webkit-scrollbar-thumb {
   background: #2e2e2e; /* color of the scroll thumb */
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+.custom-scrollbar::-webkit-scrollbar-thumb:hover, .cm-scroller::-webkit-scrollbar-thumb:hover {
   background: #555; /* color of the scroll thumb on hover */
 }
+
+
 /* table,
 th,
 td {
