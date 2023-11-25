@@ -5,6 +5,7 @@ import { useAsideStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
 import { Socket, io } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
+import { stringToColor } from "~/utils/randomColor";
 
 const TimeAgoFormatter = (value: string, unit: string) => {
 	// Map full unit names to their abbreviations
@@ -20,16 +21,6 @@ const TimeAgoFormatter = (value: string, unit: string) => {
 	const abbreviation = unitAbbreviations[unit] || unit;
 
 	return `${value} ${abbreviation}`;
-};
-
-const stringToColor = (str) => {
-	let hash = 0;
-	for (let i = 0; i < str.length; i++) {
-		hash = str.charCodeAt(i) + ((hash << 5) - hash);
-	}
-
-	const h = hash % 360;
-	return `hsl(${h}, 100%, 30%)`; // Using 100% saturation and 30% lightness for deep colors
 };
 
 const MessagesList = ({ messages }) => {

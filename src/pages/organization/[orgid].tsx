@@ -6,6 +6,7 @@ import { GetServerSidePropsContext } from "next/types";
 import { withAuth } from "~/components/auth/withAuth";
 import { getSession } from "next-auth/react";
 import { OrganizationNetworkTable } from "~/components/organization/networkTable";
+import { stringToColor } from "~/utils/randomColor";
 
 const OrganizationById = () => {
 	const query = useRouter().query;
@@ -36,22 +37,28 @@ const OrganizationById = () => {
 								Members
 							</h2>
 							<ul className="divide-y divide-gray-700">
-								{orgData?.users.map((user) => (
-									<li
-										key={user.id}
-										className="py-2 px-3 hover:bg-gray-700 transition duration-150"
-									>
-										<div className="flex items-center space-x-3">
-											<div className="bg-blue-500 h-10 w-10 rounded-full flex items-center justify-center text-lg font-semibold uppercase">
-												{user.name[0]}
+								{orgData?.users.map((user) => {
+									const userColor = stringToColor(user.name);
+									return (
+										<li
+											key={user.id}
+											className="py-2 px-3 hover:bg-gray-700 transition duration-150"
+										>
+											<div className="flex items-center space-x-3">
+												<div
+													style={{ backgroundColor: userColor }}
+													className="h-9 w-9 rounded-full flex items-center justify-center text-lg font-semibold uppercase opacity-70"
+												>
+													{user.name[0]}
+												</div>
+												<div>
+													<p className="font-medium">{user.name}</p>
+													<p className="text-sm text-gray-400">{user.role}</p>
+												</div>
 											</div>
-											<div>
-												<p className="font-medium">{user.name}</p>
-												<p className="text-sm text-gray-400">{user.role}</p>
-											</div>
-										</div>
-									</li>
-								))}
+										</li>
+									);
+								})}
 							</ul>
 						</div>
 					</section>
