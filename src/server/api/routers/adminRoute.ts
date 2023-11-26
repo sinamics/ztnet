@@ -4,6 +4,7 @@ import * as ztController from "~/utils/ztApi";
 import ejs from "ejs";
 import {
 	forgotPasswordTemplate,
+	inviteOrganizationTemplate,
 	inviteUserTemplate,
 	notificationTemplate,
 } from "~/utils/mail";
@@ -343,6 +344,8 @@ export const adminRouter = createTRPCRouter({
 					return templates?.forgotPasswordTemplate ?? forgotPasswordTemplate();
 				case "notificationTemplate":
 					return templates?.notificationTemplate ?? notificationTemplate();
+				case "inviteOrganizationTemplate":
+					return templates?.inviteOrganizationTemplate ?? inviteOrganizationTemplate();
 				default:
 					return {};
 			}
@@ -415,6 +418,15 @@ export const adminRouter = createTRPCRouter({
 						},
 						data: {
 							notificationTemplate: templateObj,
+						},
+					});
+				case "inviteOrganizationTemplate":
+					return await ctx.prisma.globalOptions.update({
+						where: {
+							id: 1,
+						},
+						data: {
+							inviteOrganizationTemplate: templateObj,
 						},
 					});
 				default:
