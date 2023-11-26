@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supportedLocales } from "./locales/lang";
+
+// run middleware on these paths
 export const config = {
 	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - api (API routes)
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 */
-		"/((?!api|_next/static|_next/image|favicon.ico).*)",
-		"/",
+		"/organization/:path*",
+		"/dashboard/:path*", // user are redirected to dashboard
 	],
 };
 
@@ -49,7 +44,6 @@ export async function middleware(req: NextRequest) {
 				preferredLocale = matchedLocale.locale;
 			}
 		}
-
 		// Redirect to the preferred locale if it's different from the current one
 		if (preferredLocale !== req.nextUrl.locale) {
 			return NextResponse.redirect(
