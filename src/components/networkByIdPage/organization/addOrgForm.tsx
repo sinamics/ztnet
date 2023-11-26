@@ -46,6 +46,14 @@ const AddOrgForm = () => {
 						description: "Name of the organization",
 						defaultValue: "",
 					},
+					{
+						name: "orgDescription",
+						type: "text",
+						elementType: "textarea",
+						placeholder: "Organization Description",
+						description: "Organization Description",
+						defaultValue: "",
+					},
 				]}
 				submitHandler={(params) =>
 					new Promise((resolve) => {

@@ -28,7 +28,10 @@ const MessagesList = ({ messages }) => {
 	const userColor = stringToColor(messages.user.name);
 
 	return (
-		<div className="flex items-start p-4 hover:bg-gray-700 cursor-pointer space-x-3">
+		<div
+			title={messages.user.email}
+			className="flex items-start p-4 hover:bg-gray-700 cursor-pointer space-x-3"
+		>
 			{/* User icon */}
 			<div
 				className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-white uppercase"
