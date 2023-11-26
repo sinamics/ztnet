@@ -38,6 +38,7 @@ model GlobalOptions {
   smtpIgnoreTLS                         Boolean             @default(false)
   inviteUserTemplate                    Json?
   inviteAdminTemplate                   Json?
+  inviteOrganizationTemplate            Json?
   forgotPasswordTemplate                Json?
   verifyEmailTemplate                   Json?
   notificationTemplate                  Json?
@@ -319,6 +320,7 @@ model OrganizationSettings {
 model OrganizationInvitation {
   id                Int                         @id @default(autoincrement())
   token             String                      @unique
+  email             String
   organizationId    String
   organization      Organization                @relation(fields: [organizationId], references: [id])
 }

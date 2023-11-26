@@ -8,12 +8,20 @@ import {
 import { IPv4gen } from "~/utils/IPv4gen";
 import { customConfig } from "./networkRouter";
 import * as ztController from "~/utils/ztApi";
+import {
+	ORG_INVITE_TOKEN_SECRET,
+	encrypt,
+	generateInstanceSecret,
+} from "~/utils/encryption";
+import { createTransporter, inviteOrganizationTemplate, sendEmail } from "~/utils/mail";
+import ejs from "ejs";
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
 		.input(
 			z.object({
 				orgName: z.string(),
+				orgDescription: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -22,6 +30,7 @@ export const organizationRouter = createTRPCRouter({
 				const newOrg = await prisma.organization.create({
 					data: {
 						orgName: input.orgName,
+						description: input.orgDescription,
 						ownerId: ctx.session.user.id, // Set the current user as the owner
 						users: {
 							connect: { id: ctx.session.user.id }, // Connect the user as a member
@@ -57,6 +66,7 @@ export const organizationRouter = createTRPCRouter({
 			include: {
 				userRoles: true,
 				users: true,
+				invitations: true,
 			},
 		});
 	}),
@@ -191,7 +201,7 @@ export const organizationRouter = createTRPCRouter({
 
 			return message.reverse();
 		}),
-	addUser: protectedProcedure
+	addUser: adminRoleProtectedRoute
 		.input(
 			z.object({
 				orgId: z.string(),
@@ -244,5 +254,79 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			return logs;
+		}),
+	generateInviteLink: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+				email: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const payload = {
+				email: input.email,
+				organizationId: input.organizationId,
+				expires: Date.now() + 3600000, // Current time + 1 hour
+			};
+
+			// Encrypt the payload
+			const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET); // Use SMTP_SECRET or any other relevant context
+			const encryptedToken = encrypt(JSON.stringify(payload), secret);
+
+			// Store the token in the database
+			const invitation = await ctx.prisma.organizationInvitation.create({
+				data: {
+					token: encryptedToken,
+					organizationId: input.organizationId,
+					email: input.email,
+				},
+			});
+
+			const invitationLink = `${process.env.NEXTAUTH_URL}/organization/invite/${invitation.token}`;
+
+			// Return the invitation link
+			return invitationLink;
+		}),
+	inviteUserByMail: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+				email: z.string().email(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { organizationId, email } = input;
+			const globalOptions = await ctx.prisma.globalOptions.findFirst({
+				where: {
+					id: 1,
+				},
+			});
+
+			const defaultTemplate = inviteOrganizationTemplate();
+			const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+
+			const renderedTemplate = await ejs.render(
+				JSON.stringify(template),
+				{
+					toEmail: email,
+					fromAdmin: ctx.session.user.name,
+					fromOrganization: organizationId,
+				},
+				{ async: true },
+			);
+			// create transporter
+			const transporter = createTransporter(globalOptions);
+			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+
+			// define mail options
+			const mailOptions = {
+				from: globalOptions.smtpEmail,
+				to: email,
+				subject: parsedTemplate.subject,
+				html: parsedTemplate.body,
+			};
+
+			// send test mail to user
+			await sendEmail(transporter, mailOptions);
 		}),
 });

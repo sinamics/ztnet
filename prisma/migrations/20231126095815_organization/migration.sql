@@ -2,6 +2,9 @@
 ALTER TYPE "Role" ADD VALUE 'READ_ONLY';
 
 -- AlterTable
+ALTER TABLE "GlobalOptions" ADD COLUMN     "inviteOrganizationTemplate" JSONB;
+
+-- AlterTable
 ALTER TABLE "network" ADD COLUMN     "organizationId" TEXT,
 ALTER COLUMN "authorId" DROP NOT NULL;
 
@@ -58,6 +61,7 @@ CREATE TABLE "OrganizationSettings" (
 CREATE TABLE "OrganizationInvitation" (
     "id" SERIAL NOT NULL,
     "token" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "organizationId" TEXT NOT NULL,
 
     CONSTRAINT "OrganizationInvitation_pkey" PRIMARY KEY ("id")
