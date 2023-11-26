@@ -130,6 +130,7 @@ const Sidebar = (): JSX.Element => {
 							{me?.memberOfOrgs.map((org) => (
 								<li key={org.orgName} className="my-px">
 									<Link
+										shallow
 										href={`/organization/${org.id}`}
 										className={`flex h-10 flex-row items-center rounded-lg px-3 
 								${

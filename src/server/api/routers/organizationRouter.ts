@@ -63,7 +63,7 @@ export const organizationRouter = createTRPCRouter({
 	getOrgById: protectedProcedure
 		.input(
 			z.object({
-				orgId: z.string(),
+				organizationId: z.string(),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -73,7 +73,7 @@ export const organizationRouter = createTRPCRouter({
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
 				where: {
-					id: input.orgId,
+					id: input.organizationId,
 				},
 				include: {
 					userRoles: true,
@@ -87,18 +87,10 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				networkName: z.string().optional(),
 				orgName: z.string().optional(),
-				orgId: z.string(),
+				organizationId: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// 1. Fetch the user with its related UserGroup
-			// const userWithGroup = await ctx.prisma.user.findUnique({
-			// 	where: { id: ctx.session.user.id },
-			// 	select: {
-			// 		userGroup: true,
-			// 	},
-			// });
-
 			// Generate ipv4 address, cidr, start & end
 			const ipAssignmentPools = IPv4gen(null);
 
@@ -117,7 +109,7 @@ export const organizationRouter = createTRPCRouter({
 
 			// Store the created network in the database
 			await ctx.prisma.organization.update({
-				where: { id: input.orgId },
+				where: { id: input.organizationId },
 				data: {
 					networks: {
 						create: {
@@ -129,6 +121,15 @@ export const organizationRouter = createTRPCRouter({
 				},
 				include: {
 					networks: true, // Optionally include the updated list of networks in the response
+				},
+			});
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Created a new network: ${newNw.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 			return newNw;

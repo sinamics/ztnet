@@ -10,9 +10,9 @@ import { stringToColor } from "~/utils/randomColor";
 
 const OrganizationById = () => {
 	const query = useRouter().query;
-	const orgId = query.orgid as string;
+	const organizationId = query.orgid as string;
 	const { data: orgData } = api.org.getOrgById.useQuery({
-		orgId,
+		organizationId,
 	});
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
 
@@ -95,7 +95,12 @@ const OrganizationById = () => {
 							<h2 className="text-xl font-semibold">Networks</h2>
 							<button
 								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
-								onClick={() => createNetwork({ orgId, orgName: orgData?.orgName })}
+								onClick={() =>
+									createNetwork({
+										orgName: orgData?.orgName,
+										organizationId,
+									})
+								}
 							>
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
