@@ -5,7 +5,7 @@ import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 
 export const inviteOrganizationTemplate = () => {
 	return {
-		subject: "Invitation to Join Our ZTNET Organization",
+		subject: "Invitation to join ZTNET Organization <%= fromOrganization %>",
 		body:
 			"Hello <%= toEmail %>,<br /><br />" +
 			"You have been invited by <%= fromAdmin %> to join our ZTNET organization, '<%= fromOrganization %>'. We are excited to potentially have you on board and look forward to collaborating with you.<br /><br />" +
