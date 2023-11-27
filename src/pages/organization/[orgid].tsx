@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { type ReactElement } from "react";
+import { useEffect, type ReactElement, useState } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { GetServerSidePropsContext } from "next/types";
@@ -8,20 +8,40 @@ import { getSession } from "next-auth/react";
 import { OrganizationNetworkTable } from "~/components/organization/networkTable";
 import { stringToColor } from "~/utils/randomColor";
 import { useModalStore } from "~/utils/store";
+import TimeAgo from "react-timeago";
 
 const OrganizationById = ({ user }) => {
+	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
 	const { mutate: leaveOrg } = api.org.leave.useMutation();
 
-	const { data: orgData } = api.org.getOrgById.useQuery({
+	const { data: orgData, refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
+
+	useEffect(() => {
+		const calculateMaxHeight = () => {
+			const offset = 400;
+			const calculatedHeight = window.innerHeight - offset;
+			setMaxHeight(`${calculatedHeight}px`);
+		};
+
+		// Calculate on mount
+		calculateMaxHeight();
+
+		// Recalculate on window resize
+		window.addEventListener("resize", calculateMaxHeight);
+
+		// Cleanup listener
+		return () => window.removeEventListener("resize", calculateMaxHeight);
+	}, []);
+
 	return (
-		<main className="bg-base-100 min-h-screen p-5 flex flex-col">
-			<div className="max-w-7xl mx-auto flex-grow">
+		<main className="bg-base-100 p-5">
+			<div className="max-w-7xl mx-auto">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
@@ -32,14 +52,17 @@ const OrganizationById = ({ user }) => {
 					</div>
 				</header>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="col-span-1 md:col-span-1 bg-base-200 rounded-lg shadow-lg overflow-hidden">
 						<div className="p-4">
 							<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
 								Members
 							</h2>
-							<ul className="divide-y divide-gray-700">
+							<ul
+								style={{ maxHeight: maxHeight }}
+								className="divide-y divide-gray-700 overflow-auto custom-scrollbar"
+							>
 								{orgData?.users.map((user) => {
 									const userColor = stringToColor(user.name);
 									const userRole = orgData?.userRoles.find(
@@ -70,7 +93,6 @@ const OrganizationById = ({ user }) => {
 					</section>
 
 					{/* Organization Information */}
-					{/* Organization Information */}
 					<section className="col-span-1 md:col-span-1 bg-base-200 rounded-lg shadow-lg p-4">
 						<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
 							Information
@@ -80,10 +102,12 @@ const OrganizationById = ({ user }) => {
 								<span className="font-medium">Name:</span>
 								<span>{orgData?.orgName}</span>
 							</li>
-							{/* <li className="flex justify-between">
+							<li className="flex justify-between">
 								<span className="font-medium">Created:</span>
-								<span>{orgData?.createdAt}</span>
-							</li> */}
+								<span>
+									<TimeAgo date={orgData?.createdAt} />
+								</span>
+							</li>
 							<li className="flex justify-between">
 								<span className="font-medium">Members:</span>
 								<span>{orgData?.users.length}</span>
@@ -102,10 +126,17 @@ const OrganizationById = ({ user }) => {
 							<button
 								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
 								onClick={() =>
-									createNetwork({
-										orgName: orgData?.orgName,
-										organizationId,
-									})
+									createNetwork(
+										{
+											orgName: orgData?.orgName,
+											organizationId,
+										},
+										{
+											onSuccess: () => {
+												refecthOrg();
+											},
+										},
+									)
 								}
 							>
 								<svg
