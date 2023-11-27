@@ -48,12 +48,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 		},
 	});
 	// easy check to see if the invite probably is a jwt token
-	const isJwt = !!context.query?.invite && context.query?.invite.length > 50;
-
+	const ztnetInvite = !!context.query?.invite && context.query?.invite.length > 50;
 	const session = await getSession(context);
-
 	// redirect user to 404 if registration is disabled
-	if (!options?.enableRegistration && !isJwt) {
+	if (!options?.enableRegistration && !ztnetInvite) {
 		return {
 			redirect: {
 				destination: "/404",

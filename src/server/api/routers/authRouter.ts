@@ -55,30 +55,31 @@ export const authRouter = createTRPCRouter({
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3).max(40),
 				expiresAt: z.string().optional(),
-				code: z.string().optional(),
+				ztnetToken: z.string().optional(),
 				token: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name, code, token, expiresAt } = input;
+			const { email, password, name, ztnetToken, token, expiresAt } = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
 				},
 			});
-			const invitationToken = code?.trim() || token?.trim();
+			const invitationToken = ztnetToken?.trim() || token?.trim();
 
+			// ztnet user invitation
 			const hasValidCode =
 				invitationToken &&
 				(await (async () => {
-					if (!code.trim()) {
+					if (!ztnetToken.trim()) {
 						throw new TRPCError({
 							code: "BAD_REQUEST",
 							message: "No invitation code provided",
 						});
 					}
 					const invitation = await ctx.prisma.userInvitation.findUnique({
-						where: { token: token.trim(), secret: code.trim() },
+						where: { token: token.trim(), secret: ztnetToken.trim() },
 					});
 
 					if (

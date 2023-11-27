@@ -29,9 +29,27 @@ const ListOrganizations = () => {
 								<strong>Pending Invitations:</strong>
 								<div className="flex gap-3">
 									{org?.invitations?.map((invite) => (
-										<div className="badge badge-primary cursor-pointer" key={invite.id}>
+										<button
+											onClick={() =>
+												callModal({
+													title: (
+														<p>
+															<span>Organization Invites</span>
+														</p>
+													),
+													content: (
+														<OrganizationInviteModal
+															organizationId={org.id}
+															// invite={invite}
+														/>
+													),
+												})
+											}
+											className="badge badge-primary cursor-pointer"
+											key={invite.id}
+										>
 											{invite.email}
-										</div>
+										</button>
 									))}
 								</div>
 							</div>
@@ -42,6 +60,7 @@ const ListOrganizations = () => {
 							<button
 								onClick={() =>
 									callModal({
+										rootStyle: "h-3/6",
 										title: (
 											<p>
 												<span>Organization Invites</span>

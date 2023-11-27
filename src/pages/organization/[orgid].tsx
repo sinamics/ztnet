@@ -7,18 +7,21 @@ import { withAuth } from "~/components/auth/withAuth";
 import { getSession } from "next-auth/react";
 import { OrganizationNetworkTable } from "~/components/organization/networkTable";
 import { stringToColor } from "~/utils/randomColor";
+import { useModalStore } from "~/utils/store";
 
-const OrganizationById = () => {
-	const query = useRouter().query;
+const OrganizationById = ({ user }) => {
+	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
+	const { callModal } = useModalStore((state) => state);
+	const { mutate: leaveOrg } = api.org.leave.useMutation();
+
 	const { data: orgData } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
-
 	return (
-		<main className="bg-base-100 min-h-screen p-5">
-			<div className="max-w-7xl mx-auto">
+		<main className="bg-base-100 min-h-screen p-5 flex flex-col">
+			<div className="max-w-7xl mx-auto flex-grow">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
@@ -39,6 +42,9 @@ const OrganizationById = () => {
 							<ul className="divide-y divide-gray-700">
 								{orgData?.users.map((user) => {
 									const userColor = stringToColor(user.name);
+									const userRole = orgData?.userRoles.find(
+										(userRole) => userRole.userId === user.id,
+									);
 									return (
 										<li
 											key={user.id}
@@ -53,7 +59,7 @@ const OrganizationById = () => {
 												</div>
 												<div>
 													<p className="font-medium">{user.name}</p>
-													<p className="text-sm text-gray-400">{user.role}</p>
+													<p className="text-sm text-gray-400">{userRole.role}</p>
 												</div>
 											</div>
 										</li>
@@ -129,6 +135,39 @@ const OrganizationById = () => {
 							)}
 						</div>
 					</section>
+
+					<div className="col-start-4 justify-end flex">
+						{/* Footer content */}
+						<button
+							onClick={() =>
+								callModal({
+									title: <p>Leave Organization?</p>,
+									content: (
+										<div>
+											<p>Are you sure you want to leave the organization?</p>
+											<p className="mt-2 text-sm text-gray-500">
+												Note: If you decide to rejoin this organization in the future, an
+												admin will need to send you a new invitation.
+											</p>
+										</div>
+									),
+									yesAction: () => {
+										return leaveOrg(
+											{ organizationId, userId: user.id },
+											{
+												onSuccess: () => {
+													push("/dashboard");
+												},
+											},
+										);
+									},
+								})
+							}
+							className="btn btn-sm btn-error btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
+						>
+							Leave Organization
+						</button>
+					</div>
 				</div>
 			</div>
 		</main>
