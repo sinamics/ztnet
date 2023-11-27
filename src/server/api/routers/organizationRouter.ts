@@ -222,10 +222,19 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				userId: z.string(),
+				userName: z.string(),
 				organizationRole: z.enum(["READ_ONLY", "USER"]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Added user ${input.userName} to organization.`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId, // Use null if organizationId is not provided
+				},
+			});
 			// Add user to the organization
 			const updatedOrganization = await ctx.prisma.organization.update({
 				where: {

@@ -13,6 +13,7 @@ interface Iprops {
 const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 	const [state, setState] = useState({
 		userId: null,
+		name: "",
 		role: Role.USER,
 	});
 
@@ -41,7 +42,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 						valueField="id"
 						placeholder="Search User"
 						onOptionSelect={(selectedItem) =>
-							setState({ ...state, userId: selectedItem.id })
+							setState({ ...state, userId: selectedItem.id, name: selectedItem.name })
 						}
 					/>
 				</div>
@@ -67,6 +68,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 								{
 									organizationId,
 									userId: state.userId,
+									userName: state.name,
 									organizationRole: state.role,
 								},
 								{
