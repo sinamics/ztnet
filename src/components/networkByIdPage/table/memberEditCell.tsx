@@ -81,9 +81,9 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 						nwid,
 						id: original.id,
 						central,
+						organizationId,
 						updateParams: {
 							name: value as string,
-							organizationId,
 						},
 					},
 					{

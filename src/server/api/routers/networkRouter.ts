@@ -212,7 +212,7 @@ export const networkRouter = createTRPCRouter({
 	deleteNetwork: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 			}),
@@ -260,22 +260,6 @@ export const networkRouter = createTRPCRouter({
 						nwid: input.nwid,
 					},
 				});
-
-				// Delete network from organization
-				if (input.organizationId) {
-					await ctx.prisma.organization.update({
-						where: {
-							id: input.organizationId,
-						},
-						data: {
-							networks: {
-								delete: {
-									nwid: input.nwid,
-								},
-							},
-						},
-					});
-				}
 			} catch (error) {
 				if (error instanceof z.ZodError) {
 					return throwError(`Invalid routes provided ${error.message}`);

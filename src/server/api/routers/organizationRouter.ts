@@ -6,7 +6,7 @@ import {
 	protectedProcedure,
 } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
-import { customConfig } from "./networkRouter";
+import { customConfig, networkRouter } from "./networkRouter";
 import * as ztController from "~/utils/ztApi";
 import {
 	ORG_INVITE_TOKEN_SECRET,
@@ -52,6 +52,47 @@ export const organizationRouter = createTRPCRouter({
 					where: { id: ctx.session.user.id },
 					include: {
 						memberOfOrgs: true,
+					},
+				});
+			});
+		}),
+	deleteOrg: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const caller = networkRouter.createCaller(ctx);
+			// make sure the user is the owner of the organization
+			const org = await ctx.prisma.organization.findUnique({
+				where: {
+					id: input.organizationId,
+				},
+				include: {
+					networks: true,
+				},
+			});
+			if (org?.ownerId !== ctx.session.user.id) {
+				throw new Error("You are not the owner of this organization.");
+			}
+			// delete all networks on the controller
+			org.networks.forEach(async (nw) => {
+				await caller.deleteNetwork({ nwid: nw.nwid });
+			});
+
+			return await ctx.prisma.$transaction(async (prisma) => {
+				// Delete all activity logs related to the organization
+				await prisma.activityLog.deleteMany({
+					where: {
+						organizationId: input.organizationId,
+					},
+				});
+
+				// Finally, delete the organization itself
+				return await prisma.organization.deleteMany({
+					where: {
+						id: input.organizationId,
 					},
 				});
 			});
@@ -161,6 +202,7 @@ export const organizationRouter = createTRPCRouter({
 			});
 			return newNw;
 		}),
+
 	sendMessage: protectedProcedure
 		.input(
 			z.object({
@@ -269,6 +311,15 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// make sure the user is not the owner of the organization
+			const org = await ctx.prisma.organization.findUnique({
+				where: {
+					id: input.organizationId,
+				},
+			});
+			if (org?.ownerId === input.userId) {
+				throw new Error("You cannot leave an organization you own.");
+			}
 			// leave organization
 			return await ctx.prisma.organization.update({
 				where: {

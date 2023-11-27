@@ -296,10 +296,10 @@ export const networkMemberRouter = createTRPCRouter({
 				nwid: z.string(),
 				id: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					deleted: z.boolean().optional(),
 					name: z.string().optional(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -311,7 +311,7 @@ export const networkMemberRouter = createTRPCRouter({
 						input.updateParams,
 					)}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 			// if central is true, send the request to the central API and return the response

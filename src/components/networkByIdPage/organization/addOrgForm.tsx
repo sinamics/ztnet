@@ -7,8 +7,8 @@ import toast from "react-hot-toast";
 
 const AddOrgForm = () => {
 	// const t = useTranslations("admin");
-	const { refetch } = api.org.getAllOrg.useQuery();
-
+	const { refetch: refecthOrg } = api.org.getAllOrg.useQuery();
+	const { refetch: refetchMe } = api.auth.me.useQuery();
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -24,8 +24,9 @@ const AddOrgForm = () => {
 			}
 		},
 		onSuccess: () => {
-			toast.success("Group added successfully");
-			refetch();
+			toast.success("Organization added successfully");
+			refetchMe();
+			refecthOrg();
 		},
 	});
 	// console.log(userOrgs);

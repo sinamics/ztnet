@@ -6,7 +6,7 @@ interface Iprops {
 	items: Record<any, any>[];
 	placeholder: string;
 	displayField: string;
-	valueField: string;
+	idField: string;
 	className?: string;
 	// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onOptionSelect?: (value: any) => void;
@@ -16,11 +16,11 @@ const ScrollableDropdown = ({
 	items,
 	placeholder,
 	displayField,
-	valueField,
+	idField,
 	className,
 	onOptionSelect,
 }: Iprops) => {
-	const [inputValue, setInputValue] = useState({});
+	const [inputValue, setInputValue] = useState("");
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 	const dropdownRef = useRef(null);
 	const inputRef = useRef(null);
@@ -45,13 +45,18 @@ const ScrollableDropdown = ({
 		setIsDropdownVisible(true);
 	};
 
-	const handleOptionClick = (value) => {
-		setInputValue(value);
+	const handleOptionClick = (item) => {
+		setInputValue(item[displayField]);
 		setIsDropdownVisible(false);
 		if (onOptionSelect) {
-			onOptionSelect(value);
+			onOptionSelect(item);
 		}
 	};
+
+	// Filter items based on inputValue
+	const filteredItems = items?.filter((item) =>
+		item[displayField].toLowerCase().includes(inputValue.toLowerCase()),
+	);
 	return (
 		<form
 			className={cn("flex justify-between", className)}
@@ -63,7 +68,7 @@ const ScrollableDropdown = ({
 					type="text"
 					className="input-bordered input-sm w-full"
 					placeholder={placeholder}
-					value={inputValue[displayField]}
+					value={inputValue}
 					onChange={handleInputChange}
 					onFocus={() => setIsDropdownVisible(true)}
 				/>
@@ -75,9 +80,10 @@ const ScrollableDropdown = ({
 							width: containerRef.current ? containerRef.current.offsetWidth : "auto",
 						}}
 					>
-						{items.map((item) => (
+						{filteredItems.map((item) => (
 							<li
-								key={item[valueField]}
+								key={item[idField]}
+								tabIndex={0}
 								className="p-2 cursor-pointer hover:bg-gray-800"
 								onClick={() => handleOptionClick(item)}
 							>

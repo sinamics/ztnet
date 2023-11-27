@@ -90,7 +90,7 @@ model network {
   capabilitiesByName          Json?
 
   organizationId              String?
-  organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   networkAccesses             NetworkAccess[]
 
   networkMembers              network_members[]
@@ -271,7 +271,7 @@ model Organization {
   networks                  network[]
   settings                  OrganizationSettings?       
   invitations               OrganizationInvitation[]    
-  membershipRequests        MembershipRequest[] @relation("MembershipRequestsForOrganization")     
+  membershipRequests        MembershipRequest[]         @relation("MembershipRequestsForOrganization")     
   isActive                  Boolean                     @default(true) 
   userRoles                 UserOrganizationRole[]
   networkAccesses           NetworkAccess[]
@@ -284,7 +284,7 @@ model UserOrganizationRole {
   organizationId String
   role           Role
   user           User             @relation(fields: [userId], references: [id])
-  organization   Organization     @relation(fields: [organizationId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@id([userId, organizationId])
 }
@@ -296,7 +296,7 @@ model Messages {
   userId          String       // Reference to the User model
   user            User         @relation(fields: [userId], references: [id])
   organizationId  String       // Reference to the Organization model
-  organization    Organization @relation(fields: [organizationId], references: [id])
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model NetworkAccess {
@@ -305,7 +305,7 @@ model NetworkAccess {
   organizationId String
   user           User             @relation(fields: [userId], references: [id])
   network        network          @relation(fields: [networkId], references: [nwid])
-  organization   Organization     @relation(fields: [organizationId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@id([userId, networkId, organizationId])
 }
@@ -313,7 +313,7 @@ model NetworkAccess {
 model OrganizationSettings {
   id                Int                         @id @default(autoincrement())
   organizationId    String                      @unique
-  organization      Organization                @relation(fields: [organizationId], references: [id])
+  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   // Add specific settings fields here
 }
 
@@ -322,7 +322,7 @@ model OrganizationInvitation {
   token             String                      @unique
   email             String
   organizationId    String
-  organization      Organization                @relation(fields: [organizationId], references: [id])
+  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model MembershipRequest {
@@ -330,7 +330,7 @@ model MembershipRequest {
   userId         String
   organizationId String
   user           User                           @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser")
-  organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization")
+  organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization", onDelete: Cascade)
 }
 
 model ActivityLog {
