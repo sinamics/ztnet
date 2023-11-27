@@ -39,11 +39,11 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 					<ScrollableDropdown
 						items={allUsers}
 						displayField="name"
-						valueField="id"
+						idField="id"
 						placeholder="Search User"
-						onOptionSelect={(selectedItem) =>
-							setState({ ...state, userId: selectedItem.id, name: selectedItem.name })
-						}
+						onOptionSelect={(selectedItem) => {
+							setState({ ...state, userId: selectedItem.id, name: selectedItem.name });
+						}}
 					/>
 				</div>
 				<div className="form-control max-w-xs">

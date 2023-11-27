@@ -1,4 +1,5 @@
 import React from "react";
+import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
@@ -6,10 +7,7 @@ import { useModalStore } from "~/utils/store";
 const ListOrganizations = () => {
 	const { data: userOrgs } = api.org.getAllOrg.useQuery();
 	const { callModal } = useModalStore((state) => state);
-	// const { data: users } = api.admin.getUsers.useQuery({
-	// 	isAdmin: false,
-	// });
-	// console.log(userOrgs);
+
 	return (
 		<div className="space-y-10">
 			{userOrgs?.map((org) => (
@@ -37,12 +35,7 @@ const ListOrganizations = () => {
 															<span>Organization Invites</span>
 														</p>
 													),
-													content: (
-														<OrganizationInviteModal
-															organizationId={org.id}
-															// invite={invite}
-														/>
-													),
+													content: <OrganizationInviteModal organizationId={org.id} />,
 												})
 											}
 											className="badge badge-primary cursor-pointer"
@@ -75,7 +68,20 @@ const ListOrganizations = () => {
 							</button>
 							<button className="btn btn-sm">Edit Organization</button>
 						</div>
-						<button className="btn btn-sm btn-error btn-outline">
+						<button
+							onClick={() =>
+								callModal({
+									title: (
+										<p>
+											<span>Delete Organization </span>
+											<span className="text-primary">{org.orgName}</span>
+										</p>
+									),
+									content: <DeleteOrganizationModal org={org} />,
+								})
+							}
+							className="btn btn-sm btn-error btn-outline"
+						>
 							Delete Organization
 						</button>
 					</div>

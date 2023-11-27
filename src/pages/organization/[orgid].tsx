@@ -46,7 +46,7 @@ const OrganizationById = ({ user }) => {
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
 						<p className="text-center text-xl">Organization Dashboard</p>
 						<span className="bg-red-600/30 text-white px-4 py-1 rounded-lg shadow-lg text-xs font-medium opacity-75">
-							Beta Version - Not for production use!
+							Beta version - use at your own risk!
 						</span>
 					</div>
 				</header>
