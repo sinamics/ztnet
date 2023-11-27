@@ -19,6 +19,8 @@ import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { createNetworkService } from "../services/networkService";
+import { checkUserOrganizationRole } from "~/utils/role";
+import { Role } from "@prisma/client";
 
 export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -226,6 +228,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.MODERATOR,
+				});
+			}
 			// if organizationId then delete the network from the organization
 			try {
 				// de-authorize all members before we delete network
@@ -292,6 +303,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const network = await ztController.get_network(ctx, input.nwid, input.central);
 			// prepare update params
 			const updateParams = input.central
@@ -335,6 +355,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// if central is true, send the request to the central API and return the response
 			const { v4AssignMode } = input.updateParams;
 			// prepare update params
@@ -372,6 +401,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { routes } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
@@ -405,6 +443,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
@@ -452,6 +499,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { ipAssignmentPools } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central
@@ -486,7 +542,14 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
 				: { private: input.updateParams.private };
@@ -527,6 +590,14 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -574,6 +645,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// if central is true, send the request to the central API and return the response
 			if (input.central) {
 				const updated = await ztController.network_update({
@@ -638,6 +718,16 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+
 			let ztControllerUpdates = {};
 
 			// If clearDns is true, set DNS to an empty object
@@ -684,6 +774,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -733,6 +832,15 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			// Check if the user has permission to update the network
+			if (input.updateParams.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.updateParams.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { flowRoute } = input.updateParams;
 
 			const rules = [];
