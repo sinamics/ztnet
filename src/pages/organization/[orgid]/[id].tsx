@@ -225,7 +225,11 @@ const OrganizationNetworkById = () => {
 			<div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 				{members.length ? (
 					<div className="membersTable-wrapper">
-						<NetworkMembersTable nwid={network.nwid} central={false} />
+						<NetworkMembersTable
+							nwid={network.nwid}
+							central={false}
+							organizationId={organizationId}
+						/>
 					</div>
 				) : (
 					<div className="alert alert-warning flex justify-center shadow-lg">
@@ -286,7 +290,7 @@ const OrganizationNetworkById = () => {
 			</div>
 
 			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-				<NetworkFlowRules />
+				<NetworkFlowRules organizationId={organizationId} />
 			</div>
 			{/* <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 				DEBUG

@@ -732,14 +732,23 @@ export const networkRouter = createTRPCRouter({
 	setFlowRule: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
 				updateParams: z.object({
-					flowRoute: z.string().nonempty(),
+					flowRoute: z.string(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated flow route for network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const { flowRoute } = input.updateParams;
 
 			const rules = [];

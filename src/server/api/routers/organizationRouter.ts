@@ -93,9 +93,6 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// setTimeout(() => {
-			// 	ctx.ws.emit(ctx.session.user.id, "Hello from trpc router");
-			// }, 5000);
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
 				where: {
@@ -104,7 +101,11 @@ export const organizationRouter = createTRPCRouter({
 				include: {
 					userRoles: true,
 					users: true,
-					networks: true,
+					networks: {
+						include: {
+							networkMembers: true,
+						},
+					},
 				},
 			});
 		}),

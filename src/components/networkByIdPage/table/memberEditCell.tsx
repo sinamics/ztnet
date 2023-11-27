@@ -13,9 +13,10 @@ import { toRfc4193Ip, sixPlane } from "~/utils/IPv6";
 interface IProp {
 	nwid: string;
 	central: boolean;
+	organizationId?: string;
 }
 
-const MemberEditCell = ({ nwid, central = false }: IProp) => {
+const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const { data: networkById, refetch: refetchNetworkById } =
@@ -45,6 +46,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 			{
 				updateParams: { ipAssignments: [...newIpPool] },
 				memberId: id,
+				organizationId,
 				nwid,
 				central,
 			},
@@ -81,6 +83,7 @@ const MemberEditCell = ({ nwid, central = false }: IProp) => {
 						central,
 						updateParams: {
 							name: value as string,
+							organizationId,
 						},
 					},
 					{

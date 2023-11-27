@@ -31,11 +31,11 @@ declare module "@tanstack/react-table" {
 interface IProp {
 	nwid: string;
 	central: boolean;
+	organizationId?: string;
 }
-
 const LOCAL_STORAGE_KEY = "membersTableSorting";
 
-export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
+export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
 		{ id: "id", desc: true },
@@ -70,8 +70,8 @@ export const NetworkMembersTable = ({ nwid, central = false }: IProp) => {
 
 	// const [data, setData] = useState(() => makeNetworkMemberData(11));
 	const [data, setData] = useState(networkById?.members ?? []);
-	const columnsHeader = MemberHeaderColumns({ nwid, central });
-	const defaultColumn = MemberEditCell({ nwid, central });
+	const columnsHeader = MemberHeaderColumns({ nwid, central, organizationId });
+	const defaultColumn = MemberEditCell({ nwid, central, organizationId });
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
 	const table = useReactTable({
 		data,
