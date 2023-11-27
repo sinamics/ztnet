@@ -5,6 +5,21 @@ enum Role {
 	ADMIN = 3,
 }
 
+/**
+ * Checks if a user's role within a specific organization meets or exceeds a required role level.
+ *
+ * @param {Object} params - The parameters for the function.
+ * @param {Object} params.ctx - The context object containing the user session and other relevant data.
+ * @param {String} params.organizationId - The ID of the organization for which the role check is being performed.
+ * @param {String} params.requiredRole - The required role level that the user's role is being compared against.
+ *
+ * @returns {Boolean} - Returns `true` if the user's role is equal to or higher than the required role.
+ *                               Throws an error if the user's role is lower than the required level or if the user does not have a role in the specified organization.
+ *
+ * The function first retrieves the user's role within the given organization from the database.
+ * It directly allows access for users with the 'ADMIN' role. For other roles, it compares the numerical value
+ * of the user's role with the required role's numerical value, based on a predefined 'Role' enum.
+ */
 export const checkUserOrganizationRole = async ({
 	ctx,
 	organizationId,
