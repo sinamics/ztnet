@@ -134,7 +134,7 @@ const Sidebar = (): JSX.Element => {
 										href={`/organization/${org.id}`}
 										className={`flex h-10 flex-row items-center rounded-lg px-3 
 								${
-									router.pathname.includes("/network")
+									router.query.orgid?.includes(org.id)
 										? "bg-gray-100 text-gray-700"
 										: "hover:bg-slate-700"
 								}`}
