@@ -116,6 +116,7 @@ export const networkMemberRouter = createTRPCRouter({
 				nwid: z.string({ required_error: "No network id provided!" }),
 				memberId: z.string({ required_error: "No member id provided!" }),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					activeBridge: z.boolean().optional(),
 					noAutoAssignIps: z.boolean().optional(),
@@ -131,6 +132,16 @@ export const networkMemberRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated member ${input.memberId} in network ${
+						input.nwid
+					}. ${JSON.stringify(input.updateParams)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			const payload: Partial<MemberEntity> = {};
 
 			// update capabilities
@@ -286,15 +297,23 @@ export const networkMemberRouter = createTRPCRouter({
 				id: z.string(),
 				central: z.boolean().default(false),
 				updateParams: z.object({
-					// ipAssignments: z
-					//   .array(z.string({ required_error: "No Ip assignment provided!" }))
-					//   .optional(),
 					deleted: z.boolean().optional(),
 					name: z.string().optional(),
+					organizationId: z.string().optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated member ${input.id} in network ${input.nwid}. ${JSON.stringify(
+						input.updateParams,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
 			// if central is true, send the request to the central API and return the response
 			if (input.central && input?.updateParams?.name) {
 				return await ztController

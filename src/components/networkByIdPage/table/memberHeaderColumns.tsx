@@ -20,6 +20,7 @@ enum ConnectionStatus {
 interface IProp {
 	nwid: string;
 	central: boolean;
+	organizationId?: string;
 }
 
 interface UserExtended extends User {
@@ -118,7 +119,7 @@ const sortingIpAddress = (
 	return 0;
 };
 
-export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
+export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const { callModal } = useModalStore((state) => state);
 	const { data: me } = api.auth.me.useQuery<UserExtended>();
@@ -180,6 +181,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 														nwid,
 														memberId: original.id,
 														central,
+														organizationId,
 														updateParams: { authorized },
 													},
 													{ onSuccess: () => void refetchNetworkById() },
@@ -192,6 +194,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 												nwid,
 												memberId: original.id,
 												central,
+												organizationId,
 												updateParams: { authorized: event.target.checked },
 											},
 											{ onSuccess: () => void refetchNetworkById() },
@@ -411,6 +414,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 												nwid={original.nwid}
 												memberId={original.id}
 												central={central}
+												organizationId={organizationId}
 											/>
 										),
 									})

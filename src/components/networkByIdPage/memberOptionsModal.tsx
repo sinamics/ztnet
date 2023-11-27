@@ -20,14 +20,16 @@ interface ModalContentProps {
 	nwid: string;
 	memberId: string;
 	central: boolean;
-	// ipAssignments: string[];
+	organizationId?: string;
 }
+
 const initialIpState = { ipInput: "", isValid: false };
 
 export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	nwid,
 	memberId,
 	central = false,
+	organizationId,
 }) => {
 	const t = useTranslations();
 	const { closeModal } = useModalStore((state) => state);
@@ -119,6 +121,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		updateMember(
 			{
 				updateParams: { ipAssignments: [...newIpPool] },
+				organizationId,
 				memberId: id,
 				central,
 				nwid,
@@ -175,6 +178,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		updateMember(
 			{
 				updateParams: { ipAssignments: [...ipAssignments, ipInput] },
+				organizationId,
 				memberId,
 				central,
 				nwid,
@@ -213,6 +217,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					updateParams: {
 						capabilities,
 					},
+					organizationId,
 					memberId,
 					central,
 					nwid,
@@ -456,6 +461,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 									updateParams: {
 										activeBridge: e.target.checked,
 									},
+									organizationId,
 									memberId,
 									central,
 									nwid,
@@ -488,6 +494,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 									updateParams: {
 										noAutoAssignIps: e.target.checked,
 									},
+									organizationId,
 									memberId,
 									central,
 									nwid,

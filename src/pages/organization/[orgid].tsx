@@ -38,7 +38,6 @@ const OrganizationById = ({ user }) => {
 		// Cleanup listener
 		return () => window.removeEventListener("resize", calculateMaxHeight);
 	}, []);
-
 	return (
 		<main className="bg-base-100 p-5">
 			<div className="max-w-7xl mx-auto">

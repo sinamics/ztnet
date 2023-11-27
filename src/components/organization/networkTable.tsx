@@ -36,6 +36,10 @@ const TruncateText = ({ text }: { text: string }) => {
 
 const LOCAL_STORAGE_KEY = "centralNetworkTableSorting";
 
+interface OrgMemberEntity extends CentralMemberEntity {
+	networkMembers: string[];
+}
+
 export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
@@ -47,7 +51,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
-	const columnHelper = createColumnHelper<CentralMemberEntity>();
+	const columnHelper = createColumnHelper<OrgMemberEntity>();
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {
@@ -64,12 +68,14 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 			// 	header: () => <span>{t("networkId")}</span>,
 			// 	// footer: (info) => info.column.id,
 			// }),
-			columnHelper.accessor("totalMemberCount", {
+			columnHelper.accessor("networkMembers", {
 				header: () => <span>{t("members")}</span>,
-				cell: (info) => info.getValue(),
+				cell: (info) => {
+					const data = info.getValue();
+					return data.length;
+				},
 			}),
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
 
