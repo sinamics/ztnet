@@ -59,7 +59,8 @@ export const organizationRouter = createTRPCRouter({
 	getAllOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		// get all organizations related to the user
 
-		return await ctx.prisma.organization.findMany({
+		// get all organizations related to the user
+		const organizations = await ctx.prisma.organization.findMany({
 			where: {
 				ownerId: ctx.session.user.id,
 			},
@@ -69,6 +70,21 @@ export const organizationRouter = createTRPCRouter({
 				invitations: true,
 			},
 		});
+
+		// Add URL to each invitation
+		const organizationsWithInvitationLinks = organizations?.map((org) => {
+			return {
+				...org,
+				invitations: org.invitations.map((invitation) => {
+					return {
+						...invitation,
+						tokenUrl: `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`,
+					};
+				}),
+			};
+		});
+
+		return organizationsWithInvitationLinks;
 	}),
 	getOrgById: protectedProcedure
 		.input(
@@ -204,17 +220,24 @@ export const organizationRouter = createTRPCRouter({
 	addUser: adminRoleProtectedRoute
 		.input(
 			z.object({
-				orgId: z.string(),
+				organizationId: z.string(),
 				userId: z.string(),
+				organizationRole: z.enum(["READ_ONLY", "USER"]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Add user to the organization
 			const updatedOrganization = await ctx.prisma.organization.update({
 				where: {
-					id: input.orgId,
+					id: input.organizationId,
 				},
 				data: {
+					userRoles: {
+						create: {
+							userId: input.userId,
+							role: input.organizationRole,
+						},
+					},
 					users: {
 						connect: {
 							id: input.userId,
@@ -227,6 +250,34 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			return updatedOrganization;
+		}),
+	leave: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				userId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// leave organization
+			return await ctx.prisma.organization.update({
+				where: {
+					id: input.organizationId,
+				},
+				data: {
+					users: {
+						disconnect: {
+							id: input.userId,
+						},
+					},
+					userRoles: {
+						deleteMany: {
+							userId: input.userId,
+							organizationId: input.organizationId,
+						},
+					},
+				},
+			});
 		}),
 	getLogs: protectedProcedure
 		.input(
@@ -263,6 +314,12 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (!input.email) {
+				throw new Error("Email cannot be empty.");
+			}
+			if (!input.organizationId) {
+				throw new Error("Organization ID cannot be empty.");
+			}
 			const payload = {
 				email: input.email,
 				organizationId: input.organizationId,
@@ -282,10 +339,10 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			const invitationLink = `${process.env.NEXTAUTH_URL}/organization/invite/${invitation.token}`;
+			const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
 
 			// Return the invitation link
-			return invitationLink;
+			return { invitationLink, encryptedToken };
 		}),
 	inviteUserByMail: adminRoleProtectedRoute
 		.input(
@@ -328,5 +385,22 @@ export const organizationRouter = createTRPCRouter({
 
 			// send test mail to user
 			await sendEmail(transporter, mailOptions);
+		}),
+	deleteInvite: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+				token: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { organizationId, token } = input;
+			const invite = await ctx.prisma.organizationInvitation.deleteMany({
+				where: {
+					organizationId,
+					token,
+				},
+			});
+			return invite;
 		}),
 });
