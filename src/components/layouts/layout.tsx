@@ -81,7 +81,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	const { open: asideOpen } = useAsideStore();
 
 	return (
-		<div className="outer-content grid grid-rows-[auto_1fr] min-h-screen">
+		<div className="outer-content">
 			{/* Header */}
 			<Modal />
 			<Header />
