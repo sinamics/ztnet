@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent, screen } from "@testing-library/react";
 import InputField from "~/components/elements/inputField";
-import { NextIntlProvider } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 
 describe("InputField", () => {
@@ -20,9 +20,9 @@ describe("InputField", () => {
 		const submitHandler = jest.fn();
 
 		const { container } = render(
-			<NextIntlProvider locale="en" messages={enTranslation}>
+			<NextIntlClientProvider locale="en" messages={enTranslation}>
 				<InputField label="Test Label" fields={fields} submitHandler={submitHandler} />
-			</NextIntlProvider>,
+			</NextIntlClientProvider>,
 		);
 
 		// Click the edit icon to render the inputs
