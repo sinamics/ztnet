@@ -11,6 +11,7 @@ import { api } from "~/utils/api";
 import { useSidebarStore, useAsideStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
+import Modal from "../shared/modal";
 
 type TUser = {
 	user: User;
@@ -56,6 +57,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
 	return (
 		<div className="outer-content">
+			<Modal />
 			<Header />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
@@ -81,6 +83,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	return (
 		<div className="outer-content grid grid-rows-[auto_1fr] min-h-screen">
 			{/* Header */}
+			<Modal />
 			<Header />
 
 			{/* Main Content including Sidebar, Content, and Chat Aside */}
@@ -116,6 +119,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	}
 	return (
 		<div className="outer-content">
+			<Modal />
 			<Header />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>

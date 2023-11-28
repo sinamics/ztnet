@@ -9,7 +9,6 @@ import { ThemeProvider } from "next-themes";
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import Modal from "~/components/shared/modal";
 import { useEffect } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
@@ -69,8 +68,11 @@ const App: AppType<{ session: Session | null }> = ({
 	}
 	return (
 		<ThemeProvider defaultTheme="system">
-			<NextIntlClientProvider locale={locale} messages={messages}>
-				<Modal />
+			<NextIntlClientProvider
+				locale={locale}
+				onError={(err) => console.warn(err)}
+				messages={messages}
+			>
 				<ReactQueryDevtools initialIsOpen={false} />
 				<Toaster
 					position="bottom-right"
