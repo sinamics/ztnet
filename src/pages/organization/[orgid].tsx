@@ -40,7 +40,7 @@ const OrganizationById = ({ user }) => {
 	}, []);
 	return (
 		<main className="bg-base-100 p-5">
-			<div className="max-w-7xl mx-auto">
+			<div className="">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
@@ -53,7 +53,7 @@ const OrganizationById = ({ user }) => {
 
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
-					<section className="col-span-1 md:col-span-1 bg-base-200 rounded-lg shadow-lg overflow-hidden">
+					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
 						<div className="p-4">
 							<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
 								Members
@@ -92,7 +92,7 @@ const OrganizationById = ({ user }) => {
 					</section>
 
 					{/* Organization Information */}
-					<section className="col-span-1 md:col-span-1 bg-base-200 rounded-lg shadow-lg p-4">
+					<section className="bg-base-200 rounded-lg shadow-lg p-4">
 						<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
 							Information
 						</h2>
@@ -119,7 +119,7 @@ const OrganizationById = ({ user }) => {
 					</section>
 
 					{/* Network Table and Add Network Button */}
-					<section className="col-span-2 bg-base-200 rounded-lg shadow-lg">
+					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg">
 						<div className="px-4 py-1 flex justify-between items-center border-b border-gray-700">
 							<h2 className="text-xl font-semibold">Networks</h2>
 							<button
