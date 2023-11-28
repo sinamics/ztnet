@@ -6,7 +6,7 @@ import NetworkById from "~/pages/network/[id]";
 import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";
-import { NextIntlProvider } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -43,9 +43,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		// expect(screen.getByText(/loading/i)).toBeInTheDocument();
@@ -73,9 +73,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		// await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
@@ -89,9 +89,9 @@ describe("NetworkById component", () => {
 	test("renders Network Settings divider", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		expect(screen.getByText(/Network Settings/i)).toBeInTheDocument();
@@ -100,9 +100,9 @@ describe("NetworkById component", () => {
 	test("renders Network Members divider", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		const matches = screen.getAllByText(/Network Members/i);
@@ -112,9 +112,9 @@ describe("NetworkById component", () => {
 	test("renders Network Start, Network End, and Network Cidr labels", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		expect(screen.getByText(/Network Start:/i)).toBeInTheDocument();
@@ -125,9 +125,9 @@ describe("NetworkById component", () => {
 	test("renders warning message", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		expect(
@@ -141,9 +141,9 @@ describe("NetworkById component", () => {
 		// screen.debug();
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		const editIcon = screen.getByTestId("changeNetworkName");
@@ -195,9 +195,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		// await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
@@ -241,9 +241,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		await waitFor(
@@ -280,9 +280,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		await waitFor(
@@ -319,9 +319,9 @@ describe("NetworkById component", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkById />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		await waitFor(
