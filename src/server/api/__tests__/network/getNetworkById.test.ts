@@ -16,7 +16,7 @@ const mockSession: PartialDeep<Session> = {
 };
 
 it("should throw an error if the user is not the author of the network", async () => {
-	prisma.network.findFirst = jest.fn().mockRejectedValue(
+	prisma.network.findUnique = jest.fn().mockRejectedValue(
 		new TRPCError({
 			message: "Network not found!",
 			code: "BAD_REQUEST",
