@@ -8,7 +8,7 @@ const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
 	update: { name: "test" },
 	user: {
-		id: 1,
+		id: "userid",
 		name: "Bernt Christian",
 		email: "mail@gmail.com",
 	},
@@ -53,6 +53,7 @@ test("getUserNetworks", async () => {
 
 	const caller = appRouter.createCaller({
 		session: mockSession as Session,
+		wss: null,
 		prisma: prismaMock,
 	});
 
