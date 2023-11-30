@@ -9,7 +9,7 @@ import OrgUserRole from "./orgUserRole";
 import { User } from "@prisma/client";
 
 interface Iprops {
-	user: User;
+	user: Partial<User>;
 	organizationId: string;
 }
 
@@ -22,6 +22,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
+
 	const { mutate: kickUser, isLoading: kickUserLoading } = api.org.leave.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -41,7 +42,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 			toast.success(t("users.users.userOptionModal.toast.deleteUserSuccess"));
 		},
 	});
-	const deleteUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+	const kickUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		// check if input name is the same as the user name
 		if (input.name !== user?.name) {
@@ -92,7 +93,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 								/>
 								<div className="flex gap-5">
 									<button
-										onClick={deleteUserById}
+										onClick={kickUserById}
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>

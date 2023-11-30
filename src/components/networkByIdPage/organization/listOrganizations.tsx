@@ -1,14 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "~/components/organization/editOrgModal";
+import { OrganizationUserTable } from "~/components/organization/userTable";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const ListOrganizations = () => {
+	const [openOrgId, setOpenOrgId] = useState(null);
 	const { data: userOrgs } = api.org.getAllOrg.useQuery();
 	const { callModal } = useModalStore((state) => state);
 
+	const toggleUsersTable = (orgId) => {
+		if (openOrgId === orgId) {
+			// If the table for this org is already open, close it
+			setOpenOrgId(null);
+		} else {
+			// Open the table for the clicked org
+			setOpenOrgId(orgId);
+		}
+	};
 	return (
 		<div className="space-y-10">
 			{userOrgs?.map((org) => (
@@ -81,7 +92,10 @@ const ListOrganizations = () => {
 								}}
 								className="btn btn-sm"
 							>
-								Edit Meta
+								Meta
+							</button>
+							<button onClick={() => toggleUsersTable(org.id)} className="btn btn-sm">
+								Users
 							</button>
 						</div>
 						<button
@@ -101,6 +115,9 @@ const ListOrganizations = () => {
 							Delete Organization
 						</button>
 					</div>
+					{openOrgId === org.id ? (
+						<OrganizationUserTable organizationId={org.id} />
+					) : null}
 				</div>
 			))}
 		</div>

@@ -12,9 +12,10 @@ interface Iuser {
 const OrgUserRole = ({ user, organizationId }: Iuser) => {
 	const t = useTranslations("admin");
 
-	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
+	const { refetch: refecthOrg } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
+
 	const { data: orgUserRole, refetch: refetchUserRole } =
 		api.org.getOrgUserRoleById.useQuery({
 			organizationId,

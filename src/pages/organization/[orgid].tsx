@@ -48,6 +48,9 @@ const OrganizationById = ({ user }) => {
 		organizationId,
 	});
 
+	const { data: orgUsers } = api.org.getOrgUsers.useQuery({
+		organizationId,
+	});
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
 
 	useEffect(() => {
@@ -115,11 +118,8 @@ const OrganizationById = ({ user }) => {
 								style={{ maxHeight: maxHeight }}
 								className="divide-y divide-gray-700 overflow-auto custom-scrollbar"
 							>
-								{orgData?.users.map((user) => {
+								{orgUsers?.map((user) => {
 									const userColor = stringToColor(user.name);
-									const userRole = orgData?.userRoles.find(
-										(userRole) => userRole.userId === user.id,
-									);
 									return (
 										<li
 											key={user.id}
@@ -150,7 +150,7 @@ const OrganizationById = ({ user }) => {
 												</div>
 												<div>
 													<p className="font-medium">{user.name}</p>
-													<p className="text-sm text-gray-400">{userRole.role}</p>
+													<p className="text-sm text-gray-400">{user?.role}</p>
 												</div>
 											</div>
 										</li>
