@@ -9,13 +9,29 @@ import { OrganizationNetworkTable } from "~/components/organization/networkTable
 import { stringToColor } from "~/utils/randomColor";
 import { useModalStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
+import { ErrorData } from "~/types/errorHandling";
+import toast from "react-hot-toast";
 
 const OrganizationById = ({ user }) => {
 	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
-	const { mutate: leaveOrg } = api.org.leave.useMutation();
+
+	const { mutate: leaveOrg } = api.org.leave.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+	});
 
 	const { data: orgData, refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
