@@ -24,7 +24,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 		refetch: refetchLogs,
 		isLoading: logsLoading,
 	} = api.org.getLogs.useQuery({
-		orgId,
+		organizationId: orgId,
 	});
 	return (
 		<>

@@ -6,6 +6,8 @@ import TimeAgo from "react-timeago";
 import { Socket, io } from "socket.io-client";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { stringToColor } from "~/utils/randomColor";
+import { ErrorData } from "~/types/errorHandling";
+import toast from "react-hot-toast";
 
 const TimeAgoFormatter = (value: string, unit: string) => {
 	// Map full unit names to their abbreviations
@@ -63,7 +65,7 @@ const ChatAside = () => {
 
 	const { mutate: emitChatMsg } = api.org.sendMessage.useMutation();
 	const { data: orgMessages } = api.org.getMessages.useQuery(
-		{ orgId },
+		{ organizationId: orgId },
 		{
 			enabled: !!orgId,
 		},
@@ -127,10 +129,22 @@ const ChatAside = () => {
 		e.preventDefault();
 
 		emitChatMsg(
-			{ orgId, message: inputMsg.chatMessage },
+			{ organizationId: orgId, message: inputMsg.chatMessage },
 			{
 				onSuccess: () => {
 					setInputMsg({ chatMessage: "" });
+				},
+				onError: (error) => {
+					if ((error.data as ErrorData)?.zodError) {
+						const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+						for (const field in fieldErrors) {
+							toast.error(`${fieldErrors[field].join(", ")}`);
+						}
+					} else if (error.message) {
+						toast.error(error.message);
+					} else {
+						toast.error("An unknown error occurred");
+					}
 				},
 			},
 		);

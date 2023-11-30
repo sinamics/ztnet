@@ -23,7 +23,9 @@ const Organization = () => {
 						refine the experience.
 					</p>
 				</div>
-				<AddOrgForm />
+				<div className="py-5">
+					<AddOrgForm />
+				</div>
 				<ListOrganizations />
 			</div>
 		</main>
