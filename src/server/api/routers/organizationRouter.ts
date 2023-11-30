@@ -190,6 +190,41 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getOrgUsers: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// get all organizations related to the user
+			const organization = await ctx.prisma.organization.findUnique({
+				where: {
+					id: input.organizationId,
+				},
+				select: {
+					userRoles: true,
+					users: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+						},
+					},
+				},
+			});
+
+			// return user with role flatten
+			const users = organization?.users.map((user) => {
+				const role = organization.userRoles.find((role) => role.userId === user.id);
+				return {
+					...user,
+					role: role?.role,
+				};
+			});
+
+			return users;
+		}),
 	getOrgById: protectedProcedure
 		.input(
 			z.object({
