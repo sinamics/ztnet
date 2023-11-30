@@ -33,6 +33,10 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 		<div className="grid grid-cols-4 items-start gap-4">
 			<div className="col-span-4 space-y-10">
 				<div className="form-control max-w-xs">
+					<p className="text-sm text-gray-400">
+						Before you can add users to your organization, it's important to note that
+						they must already be registered in the application
+					</p>
 					<label className="label">
 						<span className="label-text">Search the user you want to add</span>
 					</label>
