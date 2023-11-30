@@ -89,7 +89,8 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 			{
 				nwid: networkById?.network?.id,
 				central,
-				updateParams: { name: state?.networkName, organizationId },
+				organizationId,
+				updateParams: { name: state?.networkName },
 			},
 			{
 				onSuccess: () => {

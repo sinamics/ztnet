@@ -338,11 +338,11 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					v4AssignMode: z.object({
 						zt: z.boolean(),
 					}),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -352,15 +352,15 @@ export const networkRouter = createTRPCRouter({
 				data: {
 					action: `Changed network ${input.nwid} IPv4 auto-assign to ${input.updateParams.v4AssignMode.zt}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams?.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams?.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -384,9 +384,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -398,15 +398,15 @@ export const networkRouter = createTRPCRouter({
 						input.updateParams.routes,
 					)}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams?.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams?.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -427,9 +427,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -440,15 +440,15 @@ export const networkRouter = createTRPCRouter({
 						input.updateParams.routes,
 					)})}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams?.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams?.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -475,6 +475,7 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					ipAssignmentPools: z
 						.array(
@@ -484,7 +485,6 @@ export const networkRouter = createTRPCRouter({
 							}),
 						)
 						.optional(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -496,15 +496,15 @@ export const networkRouter = createTRPCRouter({
 						input.updateParams.ipAssignmentPools,
 					)}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams?.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams?.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -527,9 +527,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					private: z.boolean(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -539,14 +539,14 @@ export const networkRouter = createTRPCRouter({
 				data: {
 					action: `Changed network ${input.nwid} privacy to ${input.updateParams.private}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -574,9 +574,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					name: z.string(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -586,15 +586,15 @@ export const networkRouter = createTRPCRouter({
 				data: {
 					action: `Changed network ${input.nwid} name to ${input.updateParams.name}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -630,9 +630,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					description: z.string(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -642,15 +642,15 @@ export const networkRouter = createTRPCRouter({
 				data: {
 					action: `Changed network ${input.nwid} description to ${input.updateParams.description}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -686,8 +686,8 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
-					organizationId: z.string().optional(),
 					clearDns: z.boolean().optional(),
 					dns: z
 						.object({
@@ -715,15 +715,15 @@ export const networkRouter = createTRPCRouter({
 						input.updateParams,
 					)})}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -755,10 +755,10 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					multicastLimit: z.number().optional(),
 					enableBroadcast: z.boolean().optional(),
-					organizationId: z.string().optional(),
 					// changeCidr: z.string().optional(),
 				}),
 			}),
@@ -771,15 +771,15 @@ export const networkRouter = createTRPCRouter({
 						input.updateParams,
 					)}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
@@ -817,9 +817,9 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					flowRoute: z.string(),
-					organizationId: z.string().optional(),
 				}),
 			}),
 		)
@@ -829,15 +829,15 @@ export const networkRouter = createTRPCRouter({
 				data: {
 					action: `Updated flow route for network ${input.nwid}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.updateParams?.organizationId || null, // Use null if organizationId is not provided
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
 
 			// Check if the user has permission to update the network
-			if (input.updateParams.organizationId) {
+			if (input?.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.updateParams.organizationId,
+					organizationId: input?.organizationId,
 					requiredRole: Role.USER,
 				});
 			}
