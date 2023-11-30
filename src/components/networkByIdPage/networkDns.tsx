@@ -74,12 +74,12 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 			{
 				nwid: network.nwid,
 				central,
+				organizationId,
 				updateParams: {
 					dns: {
 						domain: state.domain,
 						servers,
 					},
-					organizationId,
 				},
 			},
 			{
@@ -161,9 +161,9 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 												{
 													nwid: network.nwid,
 													central,
+													organizationId,
 													updateParams: {
 														clearDns: true,
-														organizationId,
 													},
 												},
 												{

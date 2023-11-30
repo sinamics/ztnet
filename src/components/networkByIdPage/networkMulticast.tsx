@@ -73,9 +73,9 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 			{
 				nwid: network.nwid,
 				central,
+				organizationId,
 				updateParams: {
 					multicastLimit: parseInt(state.multicastLimit),
-					organizationId,
 				},
 			},
 			{
@@ -152,9 +152,9 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 										{
 											nwid: network.nwid,
 											central,
+											organizationId,
 											updateParams: {
 												enableBroadcast: e.target.checked,
-												organizationId,
 											},
 										},
 										{

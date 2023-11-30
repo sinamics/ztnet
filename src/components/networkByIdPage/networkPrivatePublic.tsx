@@ -62,7 +62,8 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 	const privateHandler = (privateNetwork: boolean) => {
 		privatePublicNetwork(
 			{
-				updateParams: { private: privateNetwork, organizationId },
+				updateParams: { private: privateNetwork },
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},

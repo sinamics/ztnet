@@ -61,8 +61,8 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 			{
 				updateParams: {
 					ipAssignmentPools: newIpAssignmentPools,
-					organizationId,
 				},
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},
@@ -104,6 +104,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 						{ ipRangeStart: ipRange.rangeStart, ipRangeEnd: ipRange.rangeEnd },
 					],
 				},
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},
@@ -132,9 +133,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 							{
 								nwid: query.id as string,
 								central,
+								organizationId,
 								updateParams: {
 									v4AssignMode: { zt: e.target.checked },
-									organizationId,
 								},
 							},
 							{
@@ -208,8 +209,8 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 											{
 												updateParams: {
 													routes: [{ target: cidr, via: "" }],
-													organizationId,
 												},
+												organizationId,
 												nwid: query.id as string,
 												central,
 											},

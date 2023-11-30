@@ -51,7 +51,8 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 
 		updateManageRoutes(
 			{
-				updateParams: { routes: [...newRouteArr], organizationId },
+				updateParams: { routes: [...newRouteArr] },
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},
@@ -71,8 +72,8 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 			{
 				updateParams: {
 					routes: [...network.routes, { ...routeInput }],
-					organizationId,
 				},
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},

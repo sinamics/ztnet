@@ -181,7 +181,8 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 										{
 											nwid: network.id,
 											central,
-											updateParams: { description: target.value, organizationId },
+											organizationId,
+											updateParams: { description: target.value },
 										},
 										{
 											onSuccess: () => {

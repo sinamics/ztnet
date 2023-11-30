@@ -107,9 +107,9 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 						onClick={() =>
 							void updateFlowRoute({
 								nwid: query.id as string,
+								organizationId,
 								updateParams: {
 									flowRoute: flowRoute || "#",
-									organizationId,
 								},
 							})
 						}
