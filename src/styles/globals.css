@@ -39,7 +39,9 @@
   background: #555; /* color of the scroll thumb on hover */
 }
 
-
+.glow {
+  box-shadow: 0 0 2px 2px rgb(189, 93, 93);
+}
 /* table,
 th,
 td {

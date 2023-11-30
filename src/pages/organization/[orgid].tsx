@@ -39,8 +39,8 @@ const OrganizationById = ({ user }) => {
 		return () => window.removeEventListener("resize", calculateMaxHeight);
 	}, []);
 	return (
-		<main className="bg-base-100 p-5">
-			<div className="">
+		<main className="w-full bg-base-100 p-5">
+			<div className="max-w-7xl mx-auto">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
@@ -51,7 +51,7 @@ const OrganizationById = ({ user }) => {
 					</div>
 				</header>
 
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
 						<div className="p-4">
@@ -166,7 +166,7 @@ const OrganizationById = ({ user }) => {
 						</div>
 					</section>
 
-					<div className="col-start-4 justify-end flex">
+					<div className="col-start-1 lg:col-start-4 justify-end flex">
 						{/* Footer content */}
 						<button
 							onClick={() =>
