@@ -145,7 +145,7 @@ const ChatAside = () => {
 				aria-label="Toggle chat"
 				onClick={() => toggleAside()}
 			>
-				<div className="flex items-center">
+				<div className="flex items-center relative">
 					{/* Replace with an actual chat icon */}
 					{asideOpen ? (
 						<svg
@@ -178,7 +178,10 @@ const ChatAside = () => {
 							/>
 						</svg>
 					)}
-					<span className="text-xs">MSG</span>
+					<div className="relative">
+						<span className="text-xs">MSG</span>
+						{/* <span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" /> */}
+					</div>
 				</div>
 			</button>
 			{/* Chat Aside Panel */}
