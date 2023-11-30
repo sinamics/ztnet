@@ -11,12 +11,18 @@ import { useModalStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
+import EditOrganizationUserModal from "~/components/organization/editUserModal";
 
 const OrganizationById = ({ user }) => {
 	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
+
+	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
+		organizationId,
+		userId: user.id,
+	});
 
 	const { mutate: leaveOrg } = api.org.leave.useMutation({
 		onError: (error) => {
@@ -33,9 +39,15 @@ const OrganizationById = ({ user }) => {
 		},
 	});
 
-	const { data: orgData, refetch: refecthOrg } = api.org.getOrgById.useQuery({
+	const {
+		data: orgData,
+		refetch: refecthOrg,
+		isLoading: orgLoading,
+		error: getOrgError,
+	} = api.org.getOrgById.useQuery({
 		organizationId,
 	});
+
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
 
 	useEffect(() => {
@@ -54,6 +66,31 @@ const OrganizationById = ({ user }) => {
 		// Cleanup listener
 		return () => window.removeEventListener("resize", calculateMaxHeight);
 	}, []);
+
+	if (getOrgError) {
+		return (
+			<>
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">{getOrgError.message}</h1>
+					<ul className="list-disc">
+						<li>Contact organization admin to make sure you have proper permissions</li>
+					</ul>
+				</div>
+			</>
+		);
+	}
+	if (orgLoading) {
+		// add loading progress bar to center of page, vertially and horizontally
+		return (
+			<>
+				<div className="flex flex-col items-center justify-center">
+					<h1 className="text-center text-2xl font-semibold">
+						<progress className="progress progress-primary w-56" />
+					</h1>
+				</div>
+			</>
+		);
+	}
 	return (
 		<main className="w-full bg-base-100 p-5">
 			<div className="max-w-7xl mx-auto">
@@ -87,6 +124,22 @@ const OrganizationById = ({ user }) => {
 										<li
 											key={user.id}
 											className="py-2 px-3 hover:bg-gray-700 transition duration-150"
+											onClick={() => {
+												if (meOrgRole.role !== "ADMIN") return;
+												callModal({
+													title: (
+														<p>
+															Edit User <span className="text-primary">{user.name}</span>
+														</p>
+													),
+													content: (
+														<EditOrganizationUserModal
+															user={user}
+															organizationId={organizationId}
+														/>
+													),
+												});
+											}}
 										>
 											<div className="flex items-center space-x-3">
 												<div

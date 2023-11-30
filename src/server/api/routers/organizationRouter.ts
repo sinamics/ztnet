@@ -15,6 +15,8 @@ import {
 } from "~/utils/encryption";
 import { createTransporter, inviteOrganizationTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
+import { Role } from "@prisma/client";
+import { checkUserOrganizationRole } from "~/utils/role";
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -63,6 +65,12 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
 			const caller = networkRouter.createCaller(ctx);
 			// make sure the user is the owner of the organization
 			const org = await ctx.prisma.organization.findUnique({
@@ -97,9 +105,42 @@ export const organizationRouter = createTRPCRouter({
 				});
 			});
 		}),
+	updateMeta: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+				orgName: z.string().optional(),
+				orgDescription: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+			// make sure the user is the owner of the organization
+			const org = await ctx.prisma.organization.findUnique({
+				where: {
+					id: input.organizationId,
+				},
+			});
+			if (org?.ownerId !== ctx.session.user.id) {
+				throw new Error("You are not the owner of this organization.");
+			}
+			// update the organization
+			return await ctx.prisma.organization.update({
+				where: {
+					id: input.organizationId,
+				},
+				data: {
+					orgName: input.orgName,
+					description: input.orgDescription,
+				},
+			});
+		}),
 	getAllOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		// get all organizations related to the user
-
 		// get all organizations related to the user
 		const organizations = await ctx.prisma.organization.findMany({
 			where: {
@@ -109,6 +150,10 @@ export const organizationRouter = createTRPCRouter({
 				userRoles: true,
 				users: true,
 				invitations: true,
+			},
+			//order by desc
+			orderBy: {
+				createdAt: "desc",
 			},
 		});
 
@@ -127,6 +172,24 @@ export const organizationRouter = createTRPCRouter({
 
 		return organizationsWithInvitationLinks;
 	}),
+	getOrgUserRoleById: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				userId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// get all organizations related to the user
+			return await ctx.prisma.userOrganizationRole.findUnique({
+				where: {
+					userId_organizationId: {
+						organizationId: input.organizationId,
+						userId: input.userId,
+					},
+				},
+			});
+		}),
 	getOrgById: protectedProcedure
 		.input(
 			z.object({
@@ -134,6 +197,12 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.READ_ONLY,
+			});
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
 				where: {
@@ -202,12 +271,44 @@ export const organizationRouter = createTRPCRouter({
 			});
 			return newNw;
 		}),
-
+	changeUserRole: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				userId: z.string(),
+				role: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (input.userId === ctx.session.user.id) {
+				throw new Error("You cannot change your own role.");
+			}
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.ADMIN,
+				});
+			}
+			// chagne the user's role in the organization
+			return await ctx.prisma.userOrganizationRole.update({
+				where: {
+					userId_organizationId: {
+						organizationId: input.organizationId,
+						userId: input.userId,
+					},
+				},
+				data: {
+					role: input.role as Role,
+				},
+			});
+		}),
 	sendMessage: protectedProcedure
 		.input(
 			z.object({
 				message: z.string().optional(),
-				orgId: z.string(),
+				organizationId: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -215,7 +316,12 @@ export const organizationRouter = createTRPCRouter({
 			if (!input.message) {
 				throw new Error("Message content cannot be empty.");
 			}
-
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.READ_ONLY,
+			});
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
 
@@ -224,7 +330,7 @@ export const organizationRouter = createTRPCRouter({
 				data: {
 					content: input.message,
 					userId, // Associate the message with the current user
-					organizationId: input.orgId, // Associate the message with the specified organization
+					organizationId: input.organizationId, // Associate the message with the specified organization
 				},
 				include: {
 					user: true, // Include user details in the response
@@ -232,7 +338,7 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			// emit to other users in the same organization
-			ctx.wss.emit(input.orgId, newMessage);
+			ctx.wss.emit(input.organizationId, newMessage);
 
 			// Return the newly created message
 			return newMessage;
@@ -240,14 +346,20 @@ export const organizationRouter = createTRPCRouter({
 	getMessages: protectedProcedure
 		.input(
 			z.object({
-				orgId: z.string(),
+				organizationId: z.string(),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.READ_ONLY,
+			});
 			// Get all messages associated with the current user
 			const message = await ctx.prisma.messages.findMany({
 				where: {
-					organizationId: input.orgId,
+					organizationId: input.organizationId,
 				},
 				take: 20,
 				orderBy: {
@@ -343,14 +455,20 @@ export const organizationRouter = createTRPCRouter({
 	getLogs: protectedProcedure
 		.input(
 			z.object({
-				orgId: z.string(),
+				organizationId: z.string(),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.READ_ONLY,
+			});
 			// Get all messages associated with the current user
 			const logs = await ctx.prisma.activityLog.findMany({
 				where: {
-					organizationId: input.orgId,
+					organizationId: input.organizationId,
 				},
 				take: 100,
 				orderBy: {

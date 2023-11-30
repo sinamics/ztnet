@@ -1,6 +1,7 @@
 import React from "react";
 import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
+import EditOrganizationModal from "~/components/organization/editOrgModal";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
@@ -66,7 +67,22 @@ const ListOrganizations = () => {
 							>
 								Invite user
 							</button>
-							<button className="btn btn-sm">Edit Organization</button>
+							<button
+								onClick={() => {
+									callModal({
+										title: (
+											<p>
+												<span>Edit Meta</span>
+												<span className="text-primary">{org.orgName}</span>
+											</p>
+										),
+										content: <EditOrganizationModal organizationId={org.id} />,
+									});
+								}}
+								className="btn btn-sm"
+							>
+								Edit Meta
+							</button>
 						</div>
 						<button
 							onClick={() =>

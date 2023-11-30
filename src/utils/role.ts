@@ -1,3 +1,5 @@
+import { TRPCClientError } from "@trpc/client";
+
 enum Role {
 	READ_ONLY = 0,
 	USER = 1,
@@ -26,6 +28,7 @@ export const checkUserOrganizationRole = async ({
 	requiredRole,
 }) => {
 	const userId = ctx.session.user.id;
+
 	// get the role of the user in the organization
 	const orgUserRole = await ctx.prisma.userOrganizationRole.findFirst({
 		where: {
@@ -39,7 +42,7 @@ export const checkUserOrganizationRole = async ({
 
 	// If user role is not found, deny access
 	if (!orgUserRole) {
-		return false;
+		throw new TRPCClientError("You don't have permission to perform this action");
 	}
 	// Directly return true for admin role
 	if (orgUserRole.role === "ADMIN") {
