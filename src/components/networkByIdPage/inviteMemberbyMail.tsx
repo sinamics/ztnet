@@ -16,7 +16,11 @@ interface ZodErrorFieldErrors {
 	[key: string]: ZodErrorIssue[];
 }
 
-export const InviteMemberByMail = () => {
+interface IProps {
+	organizationId?: string;
+}
+
+export const InviteMemberByMail = ({ organizationId }: IProps) => {
 	const t = useTranslations("networkById");
 	const [user, setUser] = useState<User>({ email: "" });
 	const { query } = useRouter();
@@ -70,6 +74,7 @@ export const InviteMemberByMail = () => {
 								{
 									email: user.email,
 									nwid: query.id as string,
+									organizationId,
 								},
 								{
 									onSuccess: () => {

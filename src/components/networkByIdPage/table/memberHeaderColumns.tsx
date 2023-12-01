@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
 import { type ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
-import { User, UserOptions } from "@prisma/client";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -21,12 +20,6 @@ interface IProp {
 	nwid: string;
 	central: boolean;
 	organizationId?: string;
-}
-
-interface UserExtended extends User {
-	options: UserOptions & {
-		deAuthorizeWarning: boolean;
-	};
 }
 
 const sortingMemberHex = (
@@ -122,7 +115,7 @@ const sortingIpAddress = (
 export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const { callModal } = useModalStore((state) => state);
-	const { data: me } = api.auth.me.useQuery<UserExtended>();
+	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{

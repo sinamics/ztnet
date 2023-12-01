@@ -1000,9 +1000,27 @@ accept;`;
 			z.object({
 				nwid: z.string().nonempty(),
 				email: z.string().email(),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Invited user ${input.email} to network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { nwid, email } = input;
 			const globalOptions = await ctx.prisma.globalOptions.findFirst({
 				where: {
@@ -1047,9 +1065,28 @@ accept;`;
 				description: z.string().optional(),
 				showMarkerInTable: z.boolean().optional(),
 				useAsTableBackground: z.boolean().optional(),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Added annotation ${input.name} to network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+
 			const notation = await ctx.prisma.notation.upsert({
 				where: {
 					name_nwid: {
