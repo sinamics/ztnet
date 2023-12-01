@@ -282,7 +282,7 @@ export const organizationRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.MODERATOR,
+					requiredRole: Role.USER,
 				});
 			}
 
