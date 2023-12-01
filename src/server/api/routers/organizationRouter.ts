@@ -278,6 +278,23 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.MODERATOR,
+				});
+			}
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Created a new network: ${input.networkName}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
+				},
+			});
+
 			// Generate ipv4 address, cidr, start & end
 			const ipAssignmentPools = IPv4gen(null);
 
