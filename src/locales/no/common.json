@@ -7,7 +7,10 @@
 		"submit": "Send inn",
 		"cancel": "Avbryt",
 		"delete": "Slett",
-		"generate": "Generer"
+		"generate": "Generer",
+		"addNetworkButton": "Opprett et nettverk",
+		"yesButton": "Ja",
+		"closeButton": "Lukk"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -28,7 +31,6 @@
 		"loading": "Laster",
 		"title": "Nettverk",
 		"description": "VPN-nettverk",
-		"addNetworkButton": "Opprett et nettverk",
 		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
 	},
 	"networksTable": {
@@ -42,11 +44,6 @@
 		"show": "Vis",
 		"page": "Side",
 		"of": "av"
-	},
-	"modalLayout": {
-		"yesButton": "Ja",
-		"cancelButton": "Avbryt",
-		"closeButton": "Lukk"
 	},
 	"networkById": {
 		"loading": "Laster...",

@@ -7,7 +7,10 @@
 		"submit": "提交",
 		"cancel": "取消",
 		"delete": "删除",
-		"generate": "生成"
+		"generate": "生成",
+		"addNetworkButton": "创建网络",
+		"yesButton": "是",
+		"closeButton": "关闭"
 	},
 	"sidebar": {
 		"navigation": "导航",
@@ -28,7 +31,6 @@
 		"loading": "加载中",
 		"title": "网络",
 		"description": "VPN网络",
-		"addNetworkButton": "创建网络",
 		"noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。"
 	},
 	"networksTable": {
@@ -42,11 +44,6 @@
 		"show": "展示",
 		"page": "页面",
 		"of": "的"
-	},
-	"modalLayout": {
-		"yesButton": "是",
-		"cancelButton": "取消",
-		"closeButton": "关闭"
 	},
 	"networkById": {
 		"loading": "加载中...",

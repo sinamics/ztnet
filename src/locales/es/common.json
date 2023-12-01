@@ -7,7 +7,10 @@
 		"submit": "Enviar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
-		"generate": "Generar"
+		"generate": "Generar",
+		"addNetworkButton": "Crear una red",
+		"yesButton": "Sí",
+		"closeButton": "Cerrar"
 	},
 	"sidebar": {
 		"navigation": "Navegación",
@@ -28,7 +31,6 @@
 		"loading": "Cargando",
 		"title": "Redes",
 		"description": "Redes VPN",
-		"addNetworkButton": "Crear una red",
 		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí."
 	},
 	"networksTable": {
@@ -42,11 +44,6 @@
 		"show": "Mostrar",
 		"page": "Página",
 		"of": "de"
-	},
-	"modalLayout": {
-		"yesButton": "Sí",
-		"cancelButton": "Cancelar",
-		"closeButton": "Cerrar"
 	},
 	"networkById": {
 		"loading": "Cargando...",

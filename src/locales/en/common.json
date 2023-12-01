@@ -2,12 +2,15 @@
 	"input": {
 		"enterToSave": "Hit Enter to save"
 	},
-	"changeButton": {
+	"buttons": {
 		"change": "Change",
 		"submit": "Submit",
 		"cancel": "Cancel",
 		"delete": "Delete",
-		"generate": "Generate"
+		"generate": "Generate",
+		"addNetworkButton": "Create a network",
+		"yesButton": "Yes",
+		"closeButton": "Close"
 	},
 	"sidebar": {
 		"navigation": "Navigation",
@@ -28,7 +31,6 @@
 		"loading": "Loading",
 		"title": "Networks",
 		"description": "VPN Networks",
-		"addNetworkButton": "Create a network",
 		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here."
 	},
 	"networksTable": {
@@ -42,11 +44,6 @@
 		"show": "Show",
 		"page": "Page",
 		"of": "of"
-	},
-	"modalLayout": {
-		"yesButton": "Yes",
-		"cancelButton": "Cancel",
-		"closeButton": "Close"
 	},
 	"networkById": {
 		"loading": "Loading...",
