@@ -130,7 +130,6 @@ interface SocketStoreState {
 	}) => void;
 	// rome-ignore lint/suspicious/noRedeclare: <explanation>
 	hasNewMessages: { [key: string]: boolean };
-	updateNotifications: (orgId: string, data: { hasUnreadMessages: boolean }) => void;
 	resetHasNewMessages: (orgId: string) => void;
 	addMessage: (orgId: string, message: Message) => void;
 	setupSocket: (orgId: IOrgId[]) => void;
@@ -158,24 +157,18 @@ export const useSocketStore = create<SocketStoreState>((set, get) => ({
 	setBulkNewMessages: (notifications: {
 		[orgId: string]: { hasUnreadMessages: boolean };
 	}) => {
+		const asideState = useAsideChatStore.getState();
 		set((state) => ({
 			...state,
 			hasNewMessages: Object.keys(notifications).reduce(
 				(acc, orgId) => {
-					acc[orgId] = notifications[orgId].hasUnreadMessages;
+					acc[orgId] =
+						!asideState.openChats.includes(orgId) &&
+						notifications[orgId].hasUnreadMessages;
 					return acc;
 				},
 				{ ...state.hasNewMessages },
 			),
-		}));
-	},
-	updateNotifications: (orgId: string, data: { hasUnreadMessages: boolean }) => {
-		set((state) => ({
-			...state,
-			notifications: {
-				...state.notifications,
-				[orgId]: data,
-			},
 		}));
 	},
 	addMessage: (orgId: string, message: Message) => {
