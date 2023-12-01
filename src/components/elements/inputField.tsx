@@ -67,7 +67,7 @@ const InputField = ({
 	showSubmitButtons = true,
 	showCancelButton = true,
 }: FormProps) => {
-	const t = useTranslations("changeButton");
+	const t = useTranslations("buttons");
 	const [showInputs, setShowInputs] = useState(openByDefault);
 	const [formValues, setFormValues] = useState<Record<string, string | boolean>>({});
 

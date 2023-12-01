@@ -561,7 +561,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								}
 								className="btn btn-error btn-outline btn-sm rounded-sm"
 							>
-								{t("changeButton.delete")}
+								{t("buttons.delete")}
 							</button>
 						) : (
 							<button
