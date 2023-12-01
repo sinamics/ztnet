@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
@@ -15,6 +14,7 @@ import {
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
 import { useModalStore } from "~/utils/store";
+import { ErrorData } from "~/types/errorHandling";
 
 interface ModalContentProps {
 	nwid: string;
@@ -39,9 +39,33 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const { query } = useRouter();
 	const { mutate: stashUser } = api.networkMember.stash.useMutation({
 		onSuccess: () => void refetchNetworkById(),
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("Unknown error");
+			}
+		},
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
 		onSuccess: () => void refetchNetworkById(),
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("Unknown error");
+			}
+		},
 	});
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
@@ -75,18 +99,12 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const { mutate: updateMember, isLoading: updateMemberLoading } =
 		api.networkMember.Update.useMutation({
 			onError: (e) => {
-				// zod error
-				// console.log(shape?.data?.zodError.fieldErrors);
-				// custom error
 				void toast.error(e?.message);
 			},
 			onSuccess: () => refetchNetworkById(),
 		});
 	const { mutate: updateTags } = api.networkMember.Tags.useMutation({
 		onError: (e) => {
-			// zod error
-			// console.log(shape?.data?.zodError.fieldErrors);
-			// custom error
 			void toast.error(e?.message);
 		},
 		onSuccess: () => refetchNetworkById(),
@@ -94,6 +112,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const stashMember = (id: string) => {
 		stashUser(
 			{
+				organizationId,
 				nwid,
 				id,
 			},
@@ -137,16 +156,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		e.preventDefault();
 		const { ipInput } = state;
 		const { target } = networkById?.network?.routes[0] || {};
-		// const subnetMatch = isIPInSubnet(ipInput, networkById?.network?.routes);
-
-		// if (!subnetMatch) {
-		//   void toast.error(
-		//     `IP needs to be within any of the routes subnet ${JSON.stringify(
-		//       networkById?.network?.routes.map((r) => r.target)
-		//     )}`
-		//   );
-		//   return;
-		// }
 		if (!ipInput) {
 			return;
 		}
@@ -294,6 +303,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					updateParams: {
 						tags,
 					},
+					organizationId,
 					memberId,
 					central,
 					nwid,
@@ -525,8 +535,12 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				{!central ? (
 					<div className="grid grid-cols-4 items-start gap-4 py-3">
 						<div className="col-span-4">
-							{/* @ts-expect-error as nodeid is not part of central api */}
-							<Anotation nwid={nwid} nodeid={memberById?.nodeid} />
+							<Anotation
+								nwid={nwid}
+								//@ts-expect-error
+								nodeid={memberById?.nodeid}
+								organizationId={organizationId}
+							/>
 						</div>
 					</div>
 				) : null}
@@ -539,6 +553,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							<button
 								onClick={() =>
 									deleteMember({
+										organizationId,
 										central,
 										id: memberId,
 										nwid,
