@@ -51,7 +51,23 @@ const OrganizationById = ({ user }) => {
 	const { data: orgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
-	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation();
+	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+		onSuccess: () => {
+			refecthOrg();
+		},
+	});
 
 	useEffect(() => {
 		const calculateMaxHeight = () => {
