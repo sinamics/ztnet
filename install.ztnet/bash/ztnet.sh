@@ -35,7 +35,7 @@ case "$ARCH" in
         ;;
 esac
 
-BRANCH=false
+BRANCH=""
 
 while getopts v:b option 
 do 
