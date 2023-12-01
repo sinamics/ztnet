@@ -220,15 +220,6 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Log the action
-			await ctx.prisma.activityLog.create({
-				data: {
-					action: `Deleted network ${input.nwid}`,
-					performedById: ctx.session.user.id,
-					organizationId: input.organizationId || null, // Use null if organizationId is not provided
-				},
-			});
-
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
@@ -237,9 +228,18 @@ export const networkRouter = createTRPCRouter({
 					requiredRole: Role.MODERATOR,
 				});
 			}
-			// if organizationId then delete the network from the organization
+
 			try {
-				// de-authorize all members before we delete network
+				// Log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `Deleted network ${input.nwid}`,
+						performedById: ctx.session.user.id,
+						organizationId: input.organizationId || null,
+					},
+				});
+
+				// De-authorize all members before deleting the network
 				const members = await ztController.network_members(
 					ctx,
 					input.nwid,
@@ -251,34 +251,41 @@ export const networkRouter = createTRPCRouter({
 						nwid: input.nwid,
 						central: input.central,
 						memberId: member,
-						updateParams: {
-							authorized: false,
-						},
+						updateParams: { authorized: false },
 					});
 				}
 
 				// Delete ZT network
-				const createCentralNw = await ztController
-					.network_delete(ctx, input.nwid, input.central)
-					.catch(() => []); // Ignore errors
+				await ztController.network_delete(ctx, input.nwid, input.central);
 
-				if (input.central) return createCentralNw;
+				// If the network is not central, delete it from the organization
+				if (!input.central && input.organizationId) {
+					await ctx.prisma.network.deleteMany({
+						where: {
+							organizationId: input.organizationId,
+							nwid: input.nwid,
+						},
+					});
+				}
 
-				// Delete network
-				await ctx.prisma.network.deleteMany({
-					where: {
-						authorId: ctx.session.user.id,
-						nwid: input.nwid,
-					},
-				});
+				// If no organizationId is provided, delete network owned by the user
+				if (!input.organizationId) {
+					await ctx.prisma.network.deleteMany({
+						where: {
+							authorId: ctx.session.user.id,
+							nwid: input.nwid,
+						},
+					});
+				}
 			} catch (error) {
 				if (error instanceof z.ZodError) {
-					return throwError(`Invalid routes provided ${error.message}`);
+					throw new Error(`Invalid routes provided: ${error.message}`);
 				} else {
 					throw error;
 				}
 			}
 		}),
+
 	ipv6: protectedProcedure
 		.input(
 			z.object({
