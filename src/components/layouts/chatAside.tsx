@@ -1,10 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { api } from "~/utils/api";
-import { useAsideStore } from "~/utils/store";
+import { useAsideChatStore, useSocketStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
-import { Socket, io } from "socket.io-client";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { stringToColor } from "~/utils/randomColor";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
@@ -56,13 +54,16 @@ const MessagesList = ({ messages }) => {
 };
 
 const ChatAside = () => {
-	const { open: asideOpen, toggle: toggleAside } = useAsideStore();
+	const { openChats, toggleChat } = useAsideChatStore();
 	const [messages, setMessages] = useState([]);
+	const { messages: newMessages, hasNewMessages } = useSocketStore();
+
 	const [inputMsg, setInputMsg] = useState({ chatMessage: "" });
 	const query = useRouter().query;
 	const orgId = query.orgid as string;
 	const messageEndRef = useRef(null);
 
+	const { mutate: markMessagesAsRead } = api.org.markMessagesAsRead.useMutation();
 	const { mutate: emitChatMsg } = api.org.sendMessage.useMutation();
 	const { data: orgMessages } = api.org.getMessages.useQuery(
 		{ organizationId: orgId },
@@ -72,51 +73,46 @@ const ChatAside = () => {
 	);
 
 	useEffect(() => {
-		let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+		if (!orgMessages) return;
+		setMessages(orgMessages);
+	}, [orgMessages]);
 
-		const handleNewMessage = (message) => {
-			// Add a check to ensure the message doesn't already exist
-			setMessages((prevMessages) => {
-				if (!prevMessages.some((msg) => msg.id === message.id)) {
-					return [...prevMessages, message];
-				}
-				return prevMessages;
-			});
-		};
+	// Effect to handle new messages from the store
+	useEffect(() => {
+		// Merge new messages with existing messages in state
+		setMessages((currentMessages) => {
+			// Create a map to track seen message IDs
+			const seen = new Set();
+			if (!newMessages[orgId]) return;
+			// Combine current and new messages and filter out duplicates
+			const mergedMessages = [...currentMessages, ...newMessages[orgId]].filter(
+				(message) => {
+					const duplicate = seen.has(message.id);
+					seen.add(message.id);
+					return !duplicate;
+				},
+			);
 
-		const initializeSocket = async () => {
-			await fetch("/api/websocket");
-			socket = io();
+			return mergedMessages;
+		});
+	}, [newMessages]);
 
-			// Listen for new messages on the socket
-			if (socket) {
-				socket.on("connect", () => {
-					socket.on(orgId, handleNewMessage);
-				});
-			}
-		};
-
-		initializeSocket();
-
-		// Cleanup function to be called when the component unmounts
-		return () => {
-			if (socket) {
-				socket.off(orgId, handleNewMessage);
-				socket.disconnect();
-			}
-		};
-	}, [orgId]);
-
+	// Scroll to the bottom of the chat when new messages are added
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
 
+	// Mark messages as read when the aside is opened
 	useEffect(() => {
-		setMessages(orgMessages);
-	}, [orgMessages]);
+		if (openChats.includes(orgId)) {
+			markMessagesAsRead({
+				organizationId: orgId,
+			});
+		}
+	}, [openChats, orgId]);
 
 	const scrollToBottom = () => {
-		messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		messageEndRef.current?.scrollIntoView({ behavior: "instant" });
 	};
 
 	const eventHandler = (e) => {
@@ -154,14 +150,14 @@ const ChatAside = () => {
 			{/* Chat Toggle Button */}
 			<button
 				className={`w-14 z-10 fixed right-2 top-20 transition-all duration-150 ${
-					asideOpen ? "mr-72" : "w-0"
+					openChats.includes(orgId) ? "mr-72" : "w-0"
 				}`}
 				aria-label="Toggle chat"
-				onClick={() => toggleAside()}
+				onClick={() => toggleChat(orgId)}
 			>
 				<div className="flex items-center relative">
 					{/* Replace with an actual chat icon */}
-					{asideOpen ? (
+					{openChats.includes(orgId) ? (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -194,19 +190,21 @@ const ChatAside = () => {
 					)}
 					<div className="relative">
 						<span className="text-xs">MSG</span>
-						{/* <span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" /> */}
+						{hasNewMessages[orgId] ? (
+							<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
+						) : null}
 					</div>
 				</div>
 			</button>
 			{/* Chat Aside Panel */}
 			<aside
 				className={`fixed h-full right-0 bg-base-200 shadow-md transition-all duration-150 ${
-					asideOpen ? "w-72" : "w-0 opacity-0"
+					openChats.includes(orgId) ? "w-72" : "w-0 opacity-0"
 				}`}
 			>
 				<div
 					className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
-						asideOpen ? "w-72" : "w-0"
+						openChats.includes(orgId) ? "w-72" : "w-0"
 					}`}
 				>
 					{/* Chat Header */}

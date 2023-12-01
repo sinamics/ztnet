@@ -220,6 +220,7 @@ model User {
     membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
     networkAccesses                       NetworkAccess[] 
     messages                              Messages[]
+    lastReadByUsers                       LastReadMessage[]
     ActivityLog                           ActivityLog[]
     expiresAt                             DateTime? // null means it never expires
     isActive                              Boolean                 @default(true)
@@ -276,6 +277,7 @@ model Organization {
   userRoles                 UserOrganizationRole[]
   networkAccesses           NetworkAccess[]
   messages                  Messages[]
+  lastReadByUsers           LastReadMessage[]
   ActivityLog               ActivityLog[]
 }
 
@@ -297,6 +299,20 @@ model Messages {
   user            User         @relation(fields: [userId], references: [id])
   organizationId  String       // Reference to the Organization model
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lastReadByUsers LastReadMessage[]
+}
+
+model LastReadMessage {
+  id              Int          @id @default(autoincrement())
+  lastMessageId   Int          // ID of the last read message
+  userId          String
+  organizationId  String
+
+  lastMessage     Messages     @relation(fields: [lastMessageId], references: [id])
+  user            User         @relation(fields: [userId], references: [id])
+  organization    Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([userId, organizationId])
 }
 
 model NetworkAccess {

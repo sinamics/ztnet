@@ -14,8 +14,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
+import { useSocketStore } from "~/utils/store";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 	getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -28,8 +28,10 @@ const App: AppType<{ session: Session | null }> = ({
 	Component,
 	pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
+	const { setupSocket, cleanupSocket } = useSocketStore();
 	const { asPath, locale, push } = useRouter();
 	const [isClient, setIsClient] = useState(false);
+	const { data: orgData } = api.org.getOrgIdbyUserid.useQuery();
 
 	useHandleResize();
 
@@ -37,6 +39,14 @@ const App: AppType<{ session: Session | null }> = ({
 	useEffect(() => {
 		setIsClient(true);
 	}, []);
+
+	useEffect(() => {
+		if (!orgData) return;
+		setupSocket(orgData);
+		return () => {
+			cleanupSocket();
+		};
+	}, [orgData]);
 
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage

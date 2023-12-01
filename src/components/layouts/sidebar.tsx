@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useSidebarStore } from "~/utils/store";
+import { useSidebarStore, useSocketStore } from "~/utils/store";
 import { api } from "~/utils/api";
 
 // Custom hook to check if the screen width is below the 'md' breakpoint
@@ -28,12 +28,25 @@ const useIsBelowMd = () => {
 
 const Sidebar = (): JSX.Element => {
 	const { open, setOpenState } = useSidebarStore();
+	const {setBulkNewMessages} = useSocketStore();
+	const { hasNewMessages } = useSocketStore();
 	const { data: session } = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
 	const router = useRouter();
+	const orgId = router.query.orgid as string;
+
+	const { data: orgNotification } = api.org.getOrgNotifications.useQuery({
+		organizationId: orgId,
+	});
+	
+	useEffect(() => {
+		if (orgNotification) {
+			setBulkNewMessages(orgNotification);
+		}
+	}, [setBulkNewMessages, orgNotification]);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -157,6 +170,11 @@ const Sidebar = (): JSX.Element => {
 											</svg>
 										</span>
 										<span className="ml-3">{org.orgName}</span>
+										<div className="relative">
+											{hasNewMessages[org.id] ? (
+												<span className="absolute bg-red-400 w-2 h-2 rounded-lg left-1 -top-2 glow" />
+											) : null}
+										</div>
 									</Link>
 								</li>
 							))}
