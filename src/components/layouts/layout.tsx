@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
 import { api } from "~/utils/api";
-import { useSidebarStore, useAsideStore } from "~/utils/store";
+import { useSidebarStore, useAsideChatStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
@@ -78,7 +78,10 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Element => {
 	// if not session.user redirect to login
 	const { open: sidebarOpen } = useSidebarStore();
-	const { open: asideOpen } = useAsideStore();
+	const { openChats } = useAsideChatStore();
+
+	const router = useRouter();
+	const orgId = router.query.orgid as string;
 
 	return (
 		<div className="outer-content">
@@ -96,12 +99,12 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 				{/* Main Content */}
 				<div
 					className={`flex-grow custom-scrollbar custom-overflow transition-all duration-150 ${
-						asideOpen ? "mr-72" : ""
+						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>
 					{children}
 					{/* Logs Footer */}
-					<LogsFooter sidebarOpen={sidebarOpen} asideOpen={asideOpen} />
+					<LogsFooter sidebarOpen={sidebarOpen} asideOpen={openChats.includes(orgId)} />
 				</div>
 
 				{/* Chat Aside */}

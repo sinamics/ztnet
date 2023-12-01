@@ -140,6 +140,21 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getOrgIdbyUserid: protectedProcedure.query(async ({ ctx }) => {
+		// get all organizations this user is a member of
+		return await ctx.prisma.organization.findMany({
+			where: {
+				users: {
+					some: {
+						id: ctx.session.user.id,
+					},
+				},
+			},
+			select: {
+				id: true,
+			},
+		});
+	}),
 	getAllOrg: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		// get all organizations related to the user
 		const organizations = await ctx.prisma.organization.findMany({
@@ -368,7 +383,31 @@ export const organizationRouter = createTRPCRouter({
 					organizationId: input.organizationId, // Associate the message with the specified organization
 				},
 				include: {
-					user: true, // Include user details in the response
+					user: {
+						select: {
+							name: true,
+							email: true,
+							id: true,
+						},
+					},
+				},
+			});
+
+			// Update LastReadMessage for the sender
+			await ctx.prisma.lastReadMessage.upsert({
+				where: {
+					userId_organizationId: {
+						userId: userId,
+						organizationId: input.organizationId,
+					},
+				},
+				update: {
+					lastMessageId: newMessage.id,
+				},
+				create: {
+					userId: userId,
+					organizationId: input.organizationId,
+					lastMessageId: newMessage.id,
 				},
 			});
 
@@ -391,22 +430,137 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				requiredRole: Role.READ_ONLY,
 			});
-			// Get all messages associated with the current user
-			const message = await ctx.prisma.messages.findMany({
+
+			const userId = ctx.session.user.id;
+
+			// Get the ID of the last message read by the current user
+			const lastRead = await ctx.prisma.lastReadMessage.findUnique({
+				where: {
+					userId_organizationId: {
+						userId: userId,
+						organizationId: input.organizationId,
+					},
+				},
+			});
+
+			// Get all messages associated with the current organization
+			const messages = await ctx.prisma.messages.findMany({
 				where: {
 					organizationId: input.organizationId,
 				},
-				take: 20,
+				take: 30,
 				orderBy: {
 					createdAt: "desc",
 				},
 				include: {
-					user: true,
+					user: {
+						select: {
+							name: true,
+							email: true,
+							id: true,
+						},
+					},
 				},
 			});
 
-			return message.reverse();
+			// Optionally, mark messages as read/unread based on the lastReadMessageId
+			const processedMessages = messages.reverse().map((message) => {
+				return {
+					...message,
+					isRead: lastRead ? message.id <= lastRead.lastMessageId : false,
+				};
+			});
+
+			return processedMessages;
 		}),
+	markMessagesAsRead: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Get the current user's ID
+			const userId = ctx.session.user.id;
+			// Find the latest message in the organization
+			const latestMessage = await ctx.prisma.messages.findFirst({
+				where: {
+					organizationId: input.organizationId,
+				},
+				orderBy: {
+					createdAt: "desc",
+				},
+			});
+
+			// Check if there's a latest message
+			if (!latestMessage) {
+				return null; // or handle the case where there are no messages
+			}
+			// Get the ID of the last message read by the current user
+			return await ctx.prisma.lastReadMessage.upsert({
+				where: {
+					userId_organizationId: {
+						userId: userId,
+						organizationId: input.organizationId,
+					},
+				},
+				update: {
+					lastMessageId: latestMessage.id,
+				},
+				create: {
+					userId: userId,
+					organizationId: input.organizationId,
+					lastMessageId: latestMessage.id,
+				},
+			});
+		}),
+		getOrgNotifications: protectedProcedure
+		.input(z.object({})) // No input required if fetching for all organizations
+		.query(async ({ ctx }) => {
+			// Get the current user's ID
+			const userId = ctx.session.user.id;
+	
+			// Get a list of organizations associated with the user through UserOrganizationRole
+			const userOrganizations = await ctx.prisma.userOrganizationRole.findMany({
+				where: { userId: userId },
+				select: { organizationId: true }
+			});
+	
+			// Initialize an object to hold the notification status for each organization
+			let notifications = {};
+	
+			// Check unread messages for each organization
+			for (const userOrg of userOrganizations) {
+				const lastRead = await ctx.prisma.lastReadMessage.findUnique({
+					where: {
+						userId_organizationId: {
+							userId: userId,
+							organizationId: userOrg.organizationId,
+						},
+					},
+				});
+	
+				const latestMessage = await ctx.prisma.messages.findFirst({
+					where: {
+						organizationId: userOrg.organizationId,
+					},
+					orderBy: {
+						createdAt: "desc",
+					},
+				});
+	
+				const hasUnreadMessages = latestMessage && (!lastRead || latestMessage.id > lastRead.lastMessageId);
+	
+				// Add the unread message status to the notifications object
+				notifications[userOrg.organizationId] = { hasUnreadMessages: hasUnreadMessages };
+			}
+	
+			// Return the notifications object
+			return notifications;
+		}),
+	
+	
+
 	addUser: adminRoleProtectedRoute
 		.input(
 			z.object({

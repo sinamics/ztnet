@@ -1,33 +1,74 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Socket, io } from "socket.io-client";
 interface StoreI {
 	open: boolean;
-	toggle: () => void;
+	toggle: (orgId?: string) => void;
 	setOpenState: (state: boolean) => void;
 }
-interface SocketStore {
-	socket: Socket | null;
-	initializeSocket: () => void;
-	// Add more methods as needed
+
+export const useSidebarStore = create(
+	persist<StoreI>(
+		(set) => ({
+			open: false,
+			toggle: () => set((state) => ({ open: !state.open })),
+			setOpenState: (state: boolean) => set(() => ({ open: state })),
+		}),
+		{
+			name: "menu-sidebar",
+		},
+	),
+);
+
+interface IChat {
+	openChats: string[];
+	toggleChat: (orgId?: string) => void;
+	closeChat: (orgId: string) => void;
 }
 
-export const useSidebarStore = create<StoreI>((set) => ({
-	open: false,
-	toggle: () => set((state) => ({ open: !state.open })),
-	setOpenState: (state: boolean) => set(() => ({ open: state })),
-}));
+export const useAsideChatStore = create(
+	persist<IChat>(
+		(set) => ({
+			openChats: [],
+			toggleChat: (orgId: string) => {
+				set((state) => {
+					const isOpen = state.openChats.includes(orgId);
+					const newOpenChats = isOpen
+						? state.openChats.filter((id) => id !== orgId)
+						: [...state.openChats, orgId];
 
-export const useAsideStore = create<StoreI>((set) => ({
-	open: false,
-	toggle: () => set((state) => ({ open: !state.open })),
-	setOpenState: (state: boolean) => set(() => ({ open: state })),
-}));
+					// If opening the chat, reset hasNewMessages for this organization in useSocketStore
+					if (!isOpen) {
+						useSocketStore.getState().resetHasNewMessages(orgId);
+					}
 
-export const useLogAsideStore = create<StoreI>((set) => ({
-	open: false,
-	toggle: () => set((state) => ({ open: !state.open })),
-	setOpenState: (state: boolean) => set(() => ({ open: state })),
-}));
+					return { openChats: newOpenChats };
+				});
+			},
+			closeChat: (orgId: string) => {
+				set((state) => ({
+					openChats: state.openChats.filter((id) => id !== orgId),
+				}));
+			},
+		}),
+		{
+			name: "chat-aside",
+		},
+	),
+);
+
+export const useLogAsideStore = create(
+	persist<StoreI>(
+		(set) => ({
+			open: false,
+			toggle: () => set((state) => ({ open: !state.open })),
+			setOpenState: (state: boolean) => set(() => ({ open: state })),
+		}),
+		{
+			name: "log-footer",
+		},
+	),
+);
 
 type IcallModal = {
 	title: string;
@@ -77,28 +118,106 @@ export const useModalStore = create<ModalStore>((set, get) => ({
 	},
 }));
 
-export const useSocketStore = create<SocketStore>((set) => ({
-	socket: null,
+interface Message {
+	id: string;
+	organizationId: string; // Add this line
+}
+interface SocketStoreState {
+	messages: { [orgId: string]: Message[] };
+	notifications: { [key: string]: { hasUnreadMessages: boolean } };
+	setBulkNewMessages: (notifications: {
+		[orgId: string]: { hasUnreadMessages: boolean };
+	}) => void;
+	// rome-ignore lint/suspicious/noRedeclare: <explanation>
+	hasNewMessages: { [key: string]: boolean };
+	updateNotifications: (orgId: string, data: { hasUnreadMessages: boolean }) => void;
+	resetHasNewMessages: (orgId: string) => void;
+	addMessage: (orgId: string, message: Message) => void;
+	setupSocket: (orgId: IOrgId[]) => void;
+	cleanupSocket: () => void;
+	socket?: Socket; // Optional, if you want to keep a reference to the socket in the store
+}
 
-	initializeSocket: async () => {
+interface IOrgId {
+	id: string;
+}
+
+export const useSocketStore = create<SocketStoreState>((set, get) => ({
+	messages: {},
+	notifications: {},
+	hasNewMessages: {},
+	resetHasNewMessages: (orgId: string) => {
+		set((state) => ({
+			...state,
+			hasNewMessages: {
+				...state.hasNewMessages,
+				[orgId]: false,
+			},
+		}));
+	},
+	setBulkNewMessages: (notifications: {
+		[orgId: string]: { hasUnreadMessages: boolean };
+	}) => {
+		set((state) => ({
+			...state,
+			hasNewMessages: Object.keys(notifications).reduce(
+				(acc, orgId) => {
+					acc[orgId] = notifications[orgId].hasUnreadMessages;
+					return acc;
+				},
+				{ ...state.hasNewMessages },
+			),
+		}));
+	},
+	updateNotifications: (orgId: string, data: { hasUnreadMessages: boolean }) => {
+		set((state) => ({
+			...state,
+			notifications: {
+				...state.notifications,
+				[orgId]: data,
+			},
+		}));
+	},
+	addMessage: (orgId: string, message: Message) => {
+		const asideState = useAsideChatStore.getState();
+
+		set((state) => {
+			const orgMessages = state.messages[orgId] || [];
+			if (!orgMessages.some((msg) => msg.id === message.id)) {
+				return {
+					...state,
+					messages: {
+						...state.messages,
+						[orgId]: [...orgMessages, message],
+					},
+					hasNewMessages: {
+						...state.hasNewMessages,
+						[orgId]: !asideState.openChats.includes(orgId),
+					},
+				};
+			} else {
+				return state; // No change if message already exists
+			}
+		});
+	},
+	setupSocket: async (orgIds: IOrgId[]) => {
 		await fetch("/api/websocket");
-		const socket = io({ transports: ["websocket"] });
+		const socket = io();
 
 		socket.on("connect", () => {
-			// rome-ignore lint/nursery/noConsoleLog: <explanation>
-			console.log("connected from zustand store");
-			// Handle connection established
+			orgIds?.forEach((org) => {
+				socket.on(org.id, (message) => {
+					get().addMessage(org.id, message);
+				});
+			});
 		});
 
-		socket.on("disconnect", () => {
-			// rome-ignore lint/nursery/noConsoleLog: <explanation>
-			console.log("disconnected from zustand store");
-			// Handle disconnection
-		});
-
-		// Update the store with the socket instance
 		set({ socket });
 	},
-
-	// Additional methods can be added here
+	cleanupSocket: () => {
+		const { socket } = get();
+		if (socket) {
+			socket.disconnect();
+		}
+	},
 }));

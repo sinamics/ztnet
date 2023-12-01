@@ -41,6 +41,16 @@ CREATE TABLE "Messages" (
 );
 
 -- CreateTable
+CREATE TABLE "LastReadMessage" (
+    "id" SERIAL NOT NULL,
+    "lastMessageId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
+
+    CONSTRAINT "LastReadMessage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "NetworkAccess" (
     "userId" TEXT NOT NULL,
     "networkId" TEXT NOT NULL,
@@ -94,6 +104,9 @@ CREATE TABLE "_MemberRelation" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "LastReadMessage_userId_organizationId_key" ON "LastReadMessage"("userId", "organizationId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "OrganizationSettings_organizationId_key" ON "OrganizationSettings"("organizationId");
 
 -- CreateIndex
@@ -119,6 +132,15 @@ ALTER TABLE "Messages" ADD CONSTRAINT "Messages_userId_fkey" FOREIGN KEY ("userI
 
 -- AddForeignKey
 ALTER TABLE "Messages" ADD CONSTRAINT "Messages_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_lastMessageId_fkey" FOREIGN KEY ("lastMessageId") REFERENCES "Messages"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "NetworkAccess" ADD CONSTRAINT "NetworkAccess_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
