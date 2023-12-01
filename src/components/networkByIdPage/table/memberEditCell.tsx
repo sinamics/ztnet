@@ -9,6 +9,7 @@ import Input from "~/components/elements/input";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { type MemberEntity } from "~/types/local/member";
 import { toRfc4193Ip, sixPlane } from "~/utils/IPv6";
+import { ErrorData } from "~/types/errorHandling";
 
 interface IProp {
 	nwid: string;
@@ -30,10 +31,34 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 	const { data: me } = api.auth.me.useQuery();
 	const { mutate: updateMemberDatabaseOnly } =
-		api.networkMember.UpdateDatabaseOnly.useMutation();
+		api.networkMember.UpdateDatabaseOnly.useMutation({
+			onError: (error) => {
+				if ((error.data as ErrorData)?.zodError) {
+					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+					for (const field in fieldErrors) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
+						toast.error(`${fieldErrors[field].join(", ")}`);
+					}
+				} else if (error.message) {
+					toast.error(error.message);
+				} else {
+					toast.error(t("addMemberById.error.unknown"));
+				}
+			},
+		});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error(t("addMemberById.error.unknown"));
+			}
 		},
 		onSuccess: () => refetchNetworkById(),
 	});
