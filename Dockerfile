@@ -63,9 +63,6 @@ ENV NODE_ENV production
 # Disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-# adding internal url. https://github.com/sinamics/ztnet/issues/105
-ENV NEXTAUTH_URL_INTERNAL http://localhost:3000
-
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
