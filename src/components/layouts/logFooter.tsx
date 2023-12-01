@@ -35,7 +35,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 					logsOpen ? "bottom-[calc(350px/2+2.5rem)]" : "bottom-[0px]"
 				} rounded-full p-2 shadow-md transition-all duration-150`}
 				aria-label="Toggle logs"
-				onClick={toggleLogs}
+				onClick={() => toggleLogs()}
 			>
 				{logsOpen ? (
 					<svg
