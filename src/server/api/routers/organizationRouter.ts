@@ -514,21 +514,21 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
-		getOrgNotifications: protectedProcedure
+	getOrgNotifications: protectedProcedure
 		.input(z.object({})) // No input required if fetching for all organizations
 		.query(async ({ ctx }) => {
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
-	
+
 			// Get a list of organizations associated with the user through UserOrganizationRole
 			const userOrganizations = await ctx.prisma.userOrganizationRole.findMany({
 				where: { userId: userId },
-				select: { organizationId: true }
+				select: { organizationId: true },
 			});
-	
+
 			// Initialize an object to hold the notification status for each organization
-			let notifications = {};
-	
+			const notifications = {};
+
 			// Check unread messages for each organization
 			for (const userOrg of userOrganizations) {
 				const lastRead = await ctx.prisma.lastReadMessage.findUnique({
@@ -539,7 +539,7 @@ export const organizationRouter = createTRPCRouter({
 						},
 					},
 				});
-	
+
 				const latestMessage = await ctx.prisma.messages.findFirst({
 					where: {
 						organizationId: userOrg.organizationId,
@@ -548,18 +548,17 @@ export const organizationRouter = createTRPCRouter({
 						createdAt: "desc",
 					},
 				});
-	
-				const hasUnreadMessages = latestMessage && (!lastRead || latestMessage.id > lastRead.lastMessageId);
-	
+
+				const hasUnreadMessages =
+					latestMessage && (!lastRead || latestMessage.id > lastRead.lastMessageId);
+
 				// Add the unread message status to the notifications object
 				notifications[userOrg.organizationId] = { hasUnreadMessages: hasUnreadMessages };
 			}
-	
+
 			// Return the notifications object
 			return notifications;
 		}),
-	
-	
 
 	addUser: adminRoleProtectedRoute
 		.input(
