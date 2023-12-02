@@ -53,14 +53,13 @@ const sortIP = (ip: string) => {
 			.map((hex) => hex.padStart(4, "0"))
 			.join("");
 		return hexToBigInt(fullAddress);
-	} else {
-		return BigInt(
-			ip
-				.split(".")
-				.map(Number)
-				.reduce((acc, val) => acc * 256 + val),
-		);
 	}
+	return BigInt(
+		ip
+			.split(".")
+			.map(Number)
+			.reduce((acc, val) => acc * 256 + val),
+	);
 };
 const sortingPhysicalIpAddress = (
 	rowA: Row<MemberEntity>,
@@ -70,12 +69,11 @@ const sortingPhysicalIpAddress = (
 	const a = rowA.original.peers?.physicalAddress;
 	const b = rowB.original?.peers?.physicalAddress;
 
-	const convertToBigInt = (value: string | string[] | undefined): BigInt => {
+	const convertToBigInt = (value: string | string[] | undefined): bigint => {
 		if (Array.isArray(value)) {
 			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
-		} else {
-			return value?.length ? sortIP(stripPort(value)) : BigInt(0);
 		}
+		return value?.length ? sortIP(stripPort(value)) : BigInt(0);
 	};
 
 	const numA = convertToBigInt(a);
@@ -102,12 +100,11 @@ const sortingIpAddress = (
 		b = rowB.original?.peers?.physicalAddress;
 	}
 
-	const convertToBigInt = (value: string | string[] | undefined): BigInt => {
+	const convertToBigInt = (value: string | string[] | undefined): bigint => {
 		if (Array.isArray(value)) {
 			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
-		} else {
-			return value?.length ? sortIP(stripPort(value)) : BigInt(0);
 		}
+		return value?.length ? sortIP(stripPort(value)) : BigInt(0);
 	};
 
 	const numA = convertToBigInt(a);
@@ -139,11 +136,12 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 	});
 
 	const columnHelper = createColumnHelper<MemberEntity>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<MemberEntity>[]>(
 		() => [
 			columnHelper.accessor(
 				(row) => {
-					// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					const notations = (row as any)?.notations as NetworkMemberNotation[];
 					const output: string[] = [];
 					notations?.map((tag) => {
@@ -323,15 +321,14 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 									ONLINE
 								</span>
 							);
-						} else {
-							// The user is considered offline
-							return (
-								<span style={cursorStyle} className="text-error" title="User is offline">
-									{t("networkById.networkMembersTable.column.conStatus.offline")}
-									<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
-								</span>
-							);
 						}
+						// The user is considered offline
+						return (
+							<span style={cursorStyle} className="text-error" title="User is offline">
+								{t("networkById.networkMembersTable.column.conStatus.offline")}
+								<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+							</span>
+						);
 					}
 					if (original.conStatus === ConnectionStatus.Controller) {
 						return (

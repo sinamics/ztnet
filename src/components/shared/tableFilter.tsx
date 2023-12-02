@@ -14,12 +14,12 @@ export const TableFilter = ({
 
 	const columnFilterValue = column.getFilterValue();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const sortedUniqueValues = useMemo(
 		() =>
 			typeof firstValue === "number"
 				? []
 				: (Array.from(column.getFacetedUniqueValues().keys()).sort() as string[]),
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[column.getFacetedUniqueValues()],
 	);
 
