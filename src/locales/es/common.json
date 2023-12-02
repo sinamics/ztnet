@@ -3,6 +3,7 @@
 		"enterToSave": "Pulsa Enter para guardar"
 	},
 	"changeButton": {
+		"add": "Añadir",
 		"change": "Cambiar",
 		"submit": "Enviar",
 		"cancel": "Cancelar",
@@ -116,9 +117,7 @@
 			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta correspondiente.",
 			"noManagedRoutesDescription2": "Si no tienes requerimientos específicos, prueba el modo Fácil de Auto-Asignación IPv4.",
 			"destinationPlaceholder": "Destino",
-			"viaPlaceholder": "objetivo",
-			"addButtonText": "Añadir",
-			"cancelButtonText": "Cancelar"
+			"viaPlaceholder": "objetivo"
 		},
 		"networkDns": {
 			"DNS": "DNS",

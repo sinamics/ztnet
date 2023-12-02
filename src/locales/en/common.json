@@ -3,6 +3,7 @@
 		"enterToSave": "Hit Enter to save"
 	},
 	"buttons": {
+		"add": "Add",
 		"change": "Change",
 		"submit": "Submit",
 		"cancel": "Cancel",
@@ -116,9 +117,7 @@
 			"noManagedRoutesDescription1": "Devices will not get an IP address without a matching route.",
 			"noManagedRoutesDescription2": "If you do not have specific requirements, try the IPv4 Auto-Assign Easy mode.",
 			"destinationPlaceholder": "Destination",
-			"viaPlaceholder": "target",
-			"addButtonText": "Add",
-			"cancelButtonText": "Cancel"
+			"viaPlaceholder": "target"
 		},
 		"networkDns": {
 			"DNS": "DNS",

@@ -17,6 +17,7 @@ interface IProp {
 }
 
 export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
+	const b = useTranslations("buttons");
 	const t = useTranslations("networkById");
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
@@ -167,13 +168,13 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 							className="input input-bordered input-primary input-xs w-3/6 rounded-md"
 						/>
 						<button type="submit" className="btn btn-success btn-xs ml-4 rounded-md">
-							{t("nettworkRoutes.addButtonText")}
+							{b("add")}
 						</button>
 						<button
 							onClick={() => setShowRouteInput(!showRouteInput)}
 							className="btn btn-outline btn-xs ml-4 rounded-md"
 						>
-							{t("nettworkRoutes.cancelButtonText")}
+							{b("cancel")}
 						</button>
 					</form>
 				) : null}
