@@ -63,11 +63,11 @@ function isValidCIDR(cidr: string): boolean {
 
 	if (isIPv4) {
 		return prefixNumber >= 0 && prefixNumber <= 32;
-	} else if (isIPv6) {
-		return prefixNumber >= 0 && prefixNumber <= 128;
-	} else {
-		return false;
 	}
+	if (isIPv6) {
+		return prefixNumber >= 0 && prefixNumber <= 128;
+	}
+	return false;
 }
 const RoutesArraySchema = z.array(RouteSchema);
 
@@ -279,10 +279,9 @@ export const networkRouter = createTRPCRouter({
 				}
 			} catch (error) {
 				if (error instanceof z.ZodError) {
-					throw new Error(`Invalid routes provided: ${error.message}`);
-				} else {
-					throw error;
+					return throwError(`Invalid routes provided ${error.message}`);
 				}
+				throw error;
 			}
 		}),
 
@@ -572,9 +571,8 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
 				return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
-			} else {
-				return updated as NetworkEntity;
 			}
+			return updated as NetworkEntity;
 		}),
 	networkName: protectedProcedure
 		.input(
@@ -620,17 +618,16 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
 				return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
-			} else {
-				// Update network in prisma as description is not part of the local controller network object.
-				await ctx.prisma.network.update({
-					where: { nwid: input.nwid },
-					data: {
-						...input.updateParams,
-					},
-				});
-
-				return updated;
 			}
+			// Update network in prisma as description is not part of the local controller network object.
+			await ctx.prisma.network.update({
+				where: { nwid: input.nwid },
+				data: {
+					...input.updateParams,
+				},
+			});
+
+			return updated;
 		}),
 	networkDescription: protectedProcedure
 		.input(
@@ -875,6 +872,7 @@ export const networkRouter = createTRPCRouter({
 			const tagsArray = [];
 			for (const n in tags) {
 				const t = tags[n];
+				// biome-ignore lint/complexity/useLiteralKeys: <explanation>
 				const dfl = t["default"] as unknown;
 				tagsArray.push({
 					id: t.id,

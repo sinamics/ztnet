@@ -129,6 +129,7 @@ export const fetchPeersForAllMembers = async (
 	const peers = await Promise.all(peerPromises);
 	const peersByAddress: Peers[] = [];
 
+	// biome-ignore lint/complexity/noForEach: <explanation>
 	memberAddresses.forEach((address, index) => {
 		peersByAddress[address] = peers[index];
 	});
@@ -170,7 +171,7 @@ const psql_updateMember = async (members: MemberEntity[]): Promise<void> => {
 			try {
 				await psql_addMember(member);
 			} catch (error) {
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
+				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				console.log(error);
 			}
 		}

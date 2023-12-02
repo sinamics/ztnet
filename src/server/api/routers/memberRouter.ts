@@ -435,7 +435,7 @@ export const networkMemberRouter = createTRPCRouter({
 						},
 					},
 				})
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
+				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				.catch((err: string) => console.log(err));
 		}),
 	delete: protectedProcedure

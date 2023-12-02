@@ -42,14 +42,6 @@ const UserRole = ({ user }: Iuser) => {
 		},
 	});
 	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: string) => {
-		let description = "";
-
-		if (e.target.value === "ADMIN") {
-			description = t("users.users.roleDescriptions.admin");
-		} else if (e.target.value === "USER") {
-			description = t("users.users.roleDescriptions.user");
-		}
-
 		changeRole({
 			id,
 			role: e.target.value,
