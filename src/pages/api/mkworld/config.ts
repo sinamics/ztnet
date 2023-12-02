@@ -41,7 +41,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 			// Catch warnings (e.g. stat failures and other non-blocking errors)
-			archive.on("warning", function (err) {
+			archive.on("warning", (err) => {
 				if (err.code === "ENOENT") {
 					console.warn(err);
 				} else {
@@ -50,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 
 			// Catch any other error
-			archive.on("error", function (err) {
+			archive.on("error", (err) => {
 				throw err;
 			});
 
@@ -104,7 +104,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 					fs.createReadStream(uploadedFilePath)
 						.pipe(unzipper.Parse())
-						.on("entry", function (entry) {
+						.on("entry", (entry) => {
 							const fileName = entry.path;
 							let jsonContent = "";
 
@@ -173,7 +173,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 								entry.autodrain();
 							}
 						})
-						.on("close", async function () {
+						.on("close", async () => {
 							if (requiredFiles.every((file) => foundFiles.includes(file))) {
 								try {
 									// Backup existing planet file if it exists

@@ -71,6 +71,6 @@ export async function updateUserId() {
 			});
 		}
 	}
-	// rome-ignore lint/nursery/noConsoleLog: <explanation>
+	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 	console.log("Seeding:: Updating user ID complete!");
 }

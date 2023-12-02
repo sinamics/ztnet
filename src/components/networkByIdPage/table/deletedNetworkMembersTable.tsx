@@ -44,6 +44,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 		},
 	});
 	const columnHelper = createColumnHelper<MemberEntity>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<MemberEntity>[]>(
 		() => [
 			columnHelper.accessor("authorized", {
@@ -123,7 +124,6 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 				},
 			}),
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
 	const [data, setData] = useState(networkById.zombieMembers);

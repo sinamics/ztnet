@@ -50,7 +50,7 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 				setRuleError({ error: err.error, line: err.line });
 				void toast.error(err.error);
 			} catch (error) {
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
+				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				console.log(error);
 			}
 		},

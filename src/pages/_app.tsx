@@ -16,8 +16,7 @@ import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
 };
 
@@ -49,7 +48,7 @@ const App: AppType<{ session: Session | null }> = ({
 		) {
 			void push(asPath, asPath, { locale: storedLocale });
 		}
-	}, []);
+	}, [asPath, locale, push]);
 
 	useEffect(() => {
 		// Set a CSS variable to hold the window height

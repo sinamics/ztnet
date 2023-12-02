@@ -48,6 +48,7 @@ const NetworkDescription = ({ central = false }: IProp) => {
 		description: "",
 	});
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (state.toggleDescriptionInput && textareaRef.current) {
 			textareaRef.current.focus(); // <-- Programmatically set focus when toggleDescriptionInput is true
