@@ -3,6 +3,7 @@
 		"enterToSave": "Trykk Enter for å lagre"
 	},
 	"changeButton": {
+		"add": "Legg til",
 		"change": "Endre",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
@@ -116,9 +117,7 @@
 			"noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
 			"noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
 			"destinationPlaceholder": "Destinasjon",
-			"viaPlaceholder": "mål",
-			"addButtonText": "Legg til",
-			"cancelButtonText": "Avbryt"
+			"viaPlaceholder": "mål"
 		},
 		"networkDns": {
 			"DNS": "DNS",

@@ -3,6 +3,7 @@
 		"enterToSave": "按 Enter 保存"
 	},
 	"changeButton": {
+		"add": "添加",
 		"change": "更改",
 		"submit": "提交",
 		"cancel": "取消",
@@ -116,9 +117,7 @@
 			"noManagedRoutesDescription1": "没有匹配路由的设备将无法获得 IP 地址。",
 			"noManagedRoutesDescription2": "如果您没有特殊要求，尝试 IPv4 自动分配简单模式。",
 			"destinationPlaceholder": "目的地",
-			"viaPlaceholder": "目标",
-			"addButtonText": "添加",
-			"cancelButtonText": "取消"
+			"viaPlaceholder": "目标"
 		},
 		"networkDns": {
 			"DNS": "域名系统",
