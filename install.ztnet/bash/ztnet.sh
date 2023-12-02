@@ -35,14 +35,12 @@ case "$ARCH" in
         ;;
 esac
 
-USE_MAIN_BRANCH=false
-
-while getopts v:b option 
+while getopts v:b: option 
 do 
  case "${option}" 
  in 
  v) CUSTOM_VERSION=${OPTARG};;
- b) USE_MAIN_BRANCH=true;;
+ b) BRANCH=${OPTARG};;
  esac 
 done
 
@@ -150,15 +148,18 @@ else
 fi
 
 cd $INSTALL_DIR
-if [[ $USE_MAIN_BRANCH == "true" ]]; then
-  echo "Checking out the main branch"
-  git checkout main
-else
+if [[ -z "$BRANCH" ]]; then
+  # If BRANCH is empty or not set, checkout the latest tag or a custom version
   git fetch --tags
   latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
   echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
-  git checkout ${CUSTOM_VERSION:-$latestTag}
+  git checkout "${CUSTOM_VERSION:-$latestTag}"
+else
+  # If BRANCH is not empty, checkout the specified branch
+  echo "Checking out branch: $BRANCH"
+  git checkout "$BRANCH"
 fi
+
 npm install
 
 # Copy mkworld binary
