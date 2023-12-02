@@ -91,7 +91,6 @@ model network {
 
   organizationId              String?
   organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  networkAccesses             NetworkAccess[]
 
   networkMembers              network_members[]
   notations                   Notation[]
@@ -218,7 +217,6 @@ model User {
     memberOfOrgs                          Organization[]          @relation("MemberRelation") // user can be member of multiple organizations
     organizationRoles                     UserOrganizationRole[]
     membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
-    networkAccesses                       NetworkAccess[] 
     messages                              Messages[]
     lastReadByUsers                       LastReadMessage[]
     ActivityLog                           ActivityLog[]
@@ -275,7 +273,6 @@ model Organization {
   membershipRequests        MembershipRequest[]         @relation("MembershipRequestsForOrganization")     
   isActive                  Boolean                     @default(true) 
   userRoles                 UserOrganizationRole[]
-  networkAccesses           NetworkAccess[]
   messages                  Messages[]
   lastReadByUsers           LastReadMessage[]
   ActivityLog               ActivityLog[]
@@ -313,17 +310,6 @@ model LastReadMessage {
   organization    Organization @relation(fields: [organizationId], references: [id])
 
   @@unique([userId, organizationId])
-}
-
-model NetworkAccess {
-  userId         String
-  networkId      String
-  organizationId String
-  user           User             @relation(fields: [userId], references: [id])
-  network        network          @relation(fields: [networkId], references: [nwid])
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@id([userId, networkId, organizationId])
 }
 
 model OrganizationSettings {
