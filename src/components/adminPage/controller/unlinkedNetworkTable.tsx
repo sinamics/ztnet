@@ -69,6 +69,7 @@ export const UnlinkedNetwork = () => {
 	}, [sorting]);
 
 	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<UnlinkedNetworkTableProps>[]>(
 		() => [
 			columnHelper.accessor("network.nwid", {

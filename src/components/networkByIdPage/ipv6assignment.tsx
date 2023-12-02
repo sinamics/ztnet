@@ -37,6 +37,7 @@ export const Ipv6assignment = ({ central = false }: IProp) => {
 				<input
 					type="checkbox"
 					name="rfc4193"
+					// biome-ignore lint/complexity/useLiteralKeys: <explanation>
 					checked={network?.v6AssignMode?.["rfc4193"]}
 					className="checkbox checkbox-primary checkbox-sm"
 					onChange={(e) => {

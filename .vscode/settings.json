@@ -1,20 +1,17 @@
 {
-    // "editor.defaultFormatter": "<other formatter>",
     "[javascript]": {
-        "editor.defaultFormatter": "rome.rome"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[typescript]": {
-        "editor.defaultFormatter": "rome.rome"
+        "editor.defaultFormatter": "biomejs.biome"
     },
-    "editor.defaultFormatter": "rome.rome",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.tabSize": 2,
     "[typescriptreact]": {
-        "editor.defaultFormatter": "rome.rome"
+        "editor.defaultFormatter": "biomejs.biome"
     },
-    "yaml.schemas": {
-        "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json": "file:///workspaces/docs/ztnet/docs/Api/user/api.yml"
-    },
-    "[markdown]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.codeActionsOnSave": {
+        "quickfix.biome": true,
+        "source.organizeImports.biome": true
     }
 }

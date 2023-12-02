@@ -55,6 +55,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 		networkMembers: network_members[];
 	};
 	const columnHelper = createColumnHelper<ColumnsType>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {

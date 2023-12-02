@@ -38,7 +38,7 @@ const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
 
 const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
-// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	const t = useTranslations("tableFooter"); // use the 'footer' namespace
 	const [pageSize, setPageSize] = useState<string | number>(
@@ -46,6 +46,7 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	);
 	const totalMembersCount = table?.options?.data?.length || 0;
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const savedPageSize = getLocalStorageItem(`pageSize-${page}`, null);
 		setPageSize(savedPageSize || 10);

@@ -42,7 +42,7 @@ export const updateLocalConf = (portNumbers: number[]): Promise<boolean> => {
 				localConf.settings.allowSecondaryPort = true;
 			} else {
 				// remove the secondaryPort and allowSecondaryPort keys from local.conf
-				// rome-ignore lint/correctness/noUnusedVariables: <explanation>
+				// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 				const { secondaryPort, allowSecondaryPort, ...restSettings } = localConf.settings;
 				localConf.settings = restSettings;
 			}
