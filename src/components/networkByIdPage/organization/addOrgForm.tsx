@@ -37,13 +37,14 @@ const AddOrgForm = () => {
 				label="Add Organization"
 				size="sm"
 				buttonText="Create"
+				description="Create a new organization"
 				rootClassName="w-full"
 				rootFormClassName=""
 				fields={[
 					{
 						name: "orgName",
 						type: "text",
-						placeholder: "Organization Name",
+						placeholder: "",
 						description: "Name of the organization",
 						defaultValue: "",
 					},
@@ -51,8 +52,8 @@ const AddOrgForm = () => {
 						name: "orgDescription",
 						type: "text",
 						elementType: "textarea",
-						placeholder: "Organization Description",
-						description: "Organization Description",
+						placeholder: "",
+						description: "Organization Description (Optional)",
 						defaultValue: "",
 					},
 				]}
