@@ -140,7 +140,6 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
-								// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 								...old[rowIndex]!,
 								[columnId]: value,
 							};
@@ -166,7 +165,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("networkSearchPlaceholder")}
+					placeholder="Search users"
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">
