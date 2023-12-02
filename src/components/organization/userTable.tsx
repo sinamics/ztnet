@@ -56,6 +56,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
 	const columnHelper = createColumnHelper<User & { action: string }>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {

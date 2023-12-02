@@ -20,7 +20,7 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 	}
 
 	if (!res.socket.server.io) {
-		// rome-ignore lint/nursery/noConsoleLog: <explanation>
+		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 		console.log("Socket is initializing");
 
 		//@ts-expect-error assinging to a property that doesn't exist

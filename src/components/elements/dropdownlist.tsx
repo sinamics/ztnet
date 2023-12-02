@@ -2,13 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import cn from "classnames";
 
 interface Iprops {
-	// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	items: Record<any, any>[];
 	placeholder: string;
 	displayField: string;
 	idField: string;
 	className?: string;
-	// rome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onOptionSelect?: (value: any) => void;
 }
 
