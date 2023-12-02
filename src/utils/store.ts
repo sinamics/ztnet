@@ -16,7 +16,7 @@ type IcallModal = {
 	title: string;
 	description: string;
 	content: JSX.Element;
-	yesAction: () => void | null;
+	yesAction: () => null;
 	disableClickOutside: boolean;
 };
 

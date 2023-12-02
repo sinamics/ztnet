@@ -1140,7 +1140,7 @@ function compile(src, rules, caps, tags) {
 
 		return null;
 	} catch (e) {
-		// rome-ignore lint/nursery/noConsoleLog: <explanation>
+		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 		console.log(e.stack);
 		return [0, 0, "Unexpected exception: " + e.toString()];
 	}

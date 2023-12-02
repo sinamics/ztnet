@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { type GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -192,8 +190,7 @@ export const authOptions: NextAuthOptions = {
 		redirect({ url, baseUrl }) {
 			// Allows relative callback URLs
 			if (url.startsWith("/")) return `${baseUrl}${url}`;
-			// Allows callback URLs on the same origin
-			else if (new URL(url).origin === baseUrl) return url;
+			if (new URL(url).origin === baseUrl) return url;
 			return baseUrl;
 		},
 	},

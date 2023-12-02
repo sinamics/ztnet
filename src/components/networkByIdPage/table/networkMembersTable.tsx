@@ -19,10 +19,9 @@ import { MemberHeaderColumns } from "./memberHeaderColumns";
 import MemberEditCell from "./memberEditCell";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
-// import { makeNetworkMemberData } from "~/utils/fakeData";
 
 declare module "@tanstack/react-table" {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 	interface TableMeta<TData extends RowData> {
 		updateData: (rowIndex: number, columnId: string, value: unknown) => void;
 	}

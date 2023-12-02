@@ -47,6 +47,7 @@ export const Accounts = () => {
 	});
 
 	const columnHelper = createColumnHelper<ExtendedUser>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
 			// columnHelper.accessor("id", {

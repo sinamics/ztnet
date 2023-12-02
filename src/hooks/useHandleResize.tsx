@@ -5,6 +5,7 @@ import { useSidebarStore } from "~/utils/store";
 export const useHandleResize = () => {
 	const { setOpenState } = useSidebarStore();
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleResize = () => {
 			if (window.innerWidth >= 768) return setOpenState(true);

@@ -6,7 +6,6 @@ import { classname } from "@uiw/codemirror-extensions-classname";
 import { python } from "@codemirror/lang-python";
 import { useEffect, useState } from "react";
 import { EditorView } from "@codemirror/view";
-// import { useDebounce } from "usehooks-ts";
 import { type CustomBackendError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
 
@@ -35,7 +34,7 @@ export const NetworkFlowRules = () => {
 				setRuleError({ error: err.error, line: err.line });
 				void toast.error(err.error);
 			} catch (error) {
-				// rome-ignore lint/nursery/noConsoleLog: <explanation>
+				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				console.log(error);
 			}
 		},
@@ -48,13 +47,15 @@ export const NetworkFlowRules = () => {
 	useEffect(() => {
 		setFlowRoute(defaultFlowRoute);
 	}, [defaultFlowRoute]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchFlowRoute({
 			nwid: query.id as string,
 			reset: false,
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
 	// Handle changes in CodeMirror
 	const handleFlowRouteChange = (value: string) => {
 		setFlowRoute(value);
