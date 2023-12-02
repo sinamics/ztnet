@@ -128,7 +128,6 @@ interface SocketStoreState {
 	setBulkNewMessages: (notifications: {
 		[orgId: string]: { hasUnreadMessages: boolean };
 	}) => void;
-	// rome-ignore lint/suspicious/noRedeclare: <explanation>
 	hasNewMessages: { [key: string]: boolean };
 	resetHasNewMessages: (orgId: string) => void;
 	addMessage: (orgId: string, message: Message) => void;
@@ -188,9 +187,8 @@ export const useSocketStore = create<SocketStoreState>((set, get) => ({
 						[orgId]: !asideState.openChats.includes(orgId),
 					},
 				};
-			} else {
-				return state; // No change if message already exists
 			}
+			return state; // No change if message already exists
 		});
 	},
 	setupSocket: async (orgIds: IOrgId[]) => {
@@ -198,11 +196,13 @@ export const useSocketStore = create<SocketStoreState>((set, get) => ({
 		const socket = io();
 
 		socket.on("connect", () => {
-			orgIds?.forEach((org) => {
-				socket.on(org.id, (message) => {
-					get().addMessage(org.id, message);
-				});
-			});
+			if (orgIds) {
+				for (const org of orgIds) {
+					socket.on(org.id, (message) => {
+						get().addMessage(org.id, message);
+					});
+				}
+			}
 		});
 
 		set({ socket });

@@ -52,6 +52,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
 	const columnHelper = createColumnHelper<OrgMemberEntity>();
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo(
 		() => [
 			columnHelper.accessor("name", {

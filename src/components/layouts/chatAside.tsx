@@ -95,9 +95,10 @@ const ChatAside = () => {
 
 			return mergedMessages;
 		});
-	}, [newMessages]);
+	}, [newMessages, orgId]);
 
 	// Scroll to the bottom of the chat when new messages are added
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
@@ -109,7 +110,7 @@ const ChatAside = () => {
 				organizationId: orgId,
 			});
 		}
-	}, [openChats, orgId]);
+	}, [openChats, orgId, markMessagesAsRead]);
 
 	const scrollToBottom = () => {
 		messageEndRef.current?.scrollIntoView({ behavior: "instant" });

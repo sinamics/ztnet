@@ -85,9 +85,9 @@ export const organizationRouter = createTRPCRouter({
 				throw new Error("You are not the owner of this organization.");
 			}
 			// delete all networks on the controller
-			org.networks.forEach(async (nw) => {
+			for (const nw of org.networks) {
 				await caller.deleteNetwork({ nwid: nw.nwid });
-			});
+			}
 
 			return await ctx.prisma.$transaction(async (prisma) => {
 				// Delete all activity logs related to the organization
