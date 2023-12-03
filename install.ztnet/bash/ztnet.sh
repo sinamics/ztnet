@@ -69,7 +69,9 @@ printf "Press space to proceed with the installation..." >&2
 read -n1 -s < /dev/tty
 
 # Inform the user about the default IP and ask if they want to change it
-printf "\nThe default server IP address is ${YELLOW}$local_ip${NC}. Press Enter to use it, or type a new IP address and then press Enter.\n"
+printf "\nThe current default server IP address is ${YELLOW}$local_ip${NC}.\n"
+printf "Press Enter to use this default IP, or enter a new IP address or domain name pointing to this installation, then press Enter:\n"
+printf "You can change this value later in the ${YELLOW}/opt/ztnet/.env${NC} file. If you make changes, restart the server with '${YELLOW}systemctl restart ztnet${NC}'.\n"
 printf "==> " >&2
 # Read the user input
 read input_ip < /dev/tty
