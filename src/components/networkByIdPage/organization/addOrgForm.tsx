@@ -10,6 +10,8 @@ const AddOrgForm = () => {
 	const t = useTranslations("admin");
 	const { refetch: refecthOrg } = api.org.getAllOrg.useQuery();
 	const { refetch: refetchMe } = api.auth.me.useQuery();
+	const { refetch: refetchUserOrg } = api.org.getOrgIdbyUserid.useQuery();
+
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -28,6 +30,8 @@ const AddOrgForm = () => {
 			toast.success("Organization added successfully");
 			refetchMe();
 			refecthOrg();
+			// will load websocket in _app.tsx
+			refetchUserOrg();
 		},
 	});
 	return (
@@ -45,7 +49,9 @@ const AddOrgForm = () => {
 						name: "orgName",
 						type: "text",
 						placeholder: "",
-						description: t("organization.addOrganization.inputFields.organizationName.description"),
+						description: t(
+							"organization.addOrganization.inputFields.organizationName.description",
+						),
 						defaultValue: "",
 					},
 					{
@@ -53,7 +59,9 @@ const AddOrgForm = () => {
 						type: "text",
 						elementType: "textarea",
 						placeholder: "",
-						description:  t("organization.addOrganization.inputFields.organizationDescription.description"),
+						description: t(
+							"organization.addOrganization.inputFields.organizationDescription.description",
+						),
 						defaultValue: "",
 					},
 				]}

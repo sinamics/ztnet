@@ -342,7 +342,7 @@ model ActivityLog {
   performedById   String      
   performedBy     User        @relation(fields: [performedById], references: [id])
   organizationId  String?     // Make this optional
-  organization    Organization? @relation(fields: [organizationId], references: [id])
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 

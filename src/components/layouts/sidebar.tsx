@@ -138,7 +138,7 @@ const Sidebar = (): JSX.Element => {
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
-								{t("organization")}
+									{t("organization")}
 								</span>
 							</li>
 							{me?.memberOfOrgs.map((org) => (
