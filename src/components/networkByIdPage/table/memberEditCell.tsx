@@ -18,6 +18,7 @@ interface IProp {
 }
 
 const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
+	const c = useTranslations("commonTable");
 	const t = useTranslations("networkById");
 
 	const { data: networkById, refetch: refetchNetworkById } =
@@ -165,11 +166,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				const has6plane = networkById?.network?.v6AssignMode?.["6plane"];
 
 				if (!original.ipAssignments?.length && !hasRfc4193 && !has6plane) {
-					return (
-						<p className="text-gray-500">
-							{t("networkMembersTable.column.ipAssignments.notAssigned")}
-						</p>
-					);
+					return <p className="text-gray-500">{c("header.ipAssignments.notAssigned")}</p>;
 				}
 
 				const rfc4193Ip = hasRfc4193 ? toRfc4193Ip(nwid, original?.id) : undefined;

@@ -18,7 +18,8 @@
 		"meta": "Meta",
 		"users": "Brukere",
 		"deleteOrganization": "Slett Organisasjon",
-		"userActions": "Brukerhandlinger"
+		"userActions": "Brukerhandlinger",
+		"options": "Alternativer"
 	},
 	"commonTable": {
 		"header": {
@@ -28,7 +29,28 @@
 			"members": "Medlemmer",
 			"actions": "Handlinger",
 			"role": "Rolle",
-			"email": "E-post"
+			"email": "E-post",
+			"authorized": "Aut.",
+			"id": "ID",
+			"created": "Opprettet",
+			"ipAssignments": {
+				"header": "Administrert IP / Latens",
+				"notAssigned": "Ikke Tildelt"
+			},
+			"physicalIp": {
+				"header": "Fysisk IP",
+				"unknownValue": "Ukjent"
+			},
+			"conStatus": {
+				"header": "Status",
+				"toolTip": "Kunne ikke etablere direkteforbindelse og blir for øyeblikket videresendt gjennom zerotier servere med høyere latens",
+				"relayed": "VIDERESENDT",
+				"directLan": "Direkte LAN-forbindelse etablert",
+				"directWan": "Direkte WAN-forbindelse etablert",
+				"direct": "DIREKTE{versjon}",
+				"offline": "frakoblet"
+			},
+			"status": "Status"
 		},
 		"search": {
 			"networkSearchPlaceholder": "Søk etter et nettverk",
@@ -158,35 +180,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "Søk etter noe...",
-			"column": {
-				"authorized": "Auth",
-				"name": "Navn",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "Administrert IP / Latency",
-					"notAssigned": "Ikke tildelt"
-				},
-				"created": "Opprettet",
-				"physicalIp": {
-					"header": "Fysisk IP",
-					"unknownValue": "Ukjent"
-				},
-				"conStatus": {
-					"header": "Status",
-					"toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
-					"relayed": "VIDEREFORMIDLET",
-					"directLan": "Direkte LAN-tilkobling opprettet",
-					"directWan": "Direkte WAN-tilkobling opprettet",
-					"direct": "DIREKTE{version}",
-					"offline": "offline "
-				},
-				"email": "E-post",
-				"status": "Status",
-				"actions": {
-					"header": "Handlinger",
-					"optionBtn": "alternativer"
-				}
-			},
 			"optionModalTitle": "Alternativer for medlem",
 			"tableRow": {
 				"updateName": "Klikk for å endre navn"

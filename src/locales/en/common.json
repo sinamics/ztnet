@@ -18,7 +18,8 @@
 		"meta": "Meta",
 		"users": "Users",
 		"deleteOrganization": "Delete Organization",
-		"userActions": "User Actions"
+		"userActions": "User Actions",
+		"options": "Options"
 	},
 	"commonTable": {
 		"header": {
@@ -28,7 +29,28 @@
 			"members": "Members",
 			"actions": "Actions",
 			"role": "Role",
-			"email": "Email"
+			"email": "Email",
+			"authorized": "Auth",
+			"id": "ID",
+			"created": "Created",
+			"ipAssignments": {
+				"header": "Managed IP / Latency",
+				"notAssigned": "Not Assigned"
+			},
+			"physicalIp": {
+				"header": "Physical IP",
+				"unknownValue": "Unknown"
+			},
+			"conStatus": {
+				"header": "Status",
+				"toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
+				"relayed": "RELAYED",
+				"directLan": "Direct LAN connection established",
+				"directWan": "Direct WAN connection established",
+				"direct": "DIRECT{version}",
+				"offline": "offline "
+			},
+			"status": "Status"
 		},
 		"search": {
 			"networkSearchPlaceholder": "Search for a network",
@@ -158,35 +180,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "Search anything...",
-			"column": {
-				"authorized": "Auth",
-				"name": "Name",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "Managed IP / Latency",
-					"notAssigned": "Not Assigned"
-				},
-				"created": "Created",
-				"physicalIp": {
-					"header": "Physical IP",
-					"unknownValue": "Unknown"
-				},
-				"conStatus": {
-					"header": "Status",
-					"toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
-					"relayed": "RELAYED",
-					"directLan": "Direct LAN connection established",
-					"directWan": "Direct WAN connection established",
-					"direct": "DIRECT{version}",
-					"offline": "offline "
-				},
-				"email": "Email",
-				"status": "Status",
-				"actions": {
-					"header": "Actions",
-					"optionBtn": "options"
-				}
-			},
 			"optionModalTitle": "Options for member",
 			"tableRow": {
 				"updateName": "Click to change name"

@@ -18,7 +18,8 @@
 		"meta": "元数据",
 		"users": "用户",
 		"deleteOrganization": "删除组织",
-		"userActions": "用户操作"
+		"userActions": "用户操作",
+		"options": "选项"
 	},
 	"commonTable": {
 		"header": {
@@ -28,7 +29,28 @@
 			"members": "成员",
 			"actions": "操作",
 			"role": "角色",
-			"email": "电子邮件"
+			"email": "电子邮件",
+			"authorized": "授权",
+			"id": "ID",
+			"created": "创建时间",
+			"ipAssignments": {
+				"header": "管理的IP / 延迟",
+				"notAssigned": "未分配"
+			},
+			"physicalIp": {
+				"header": "物理IP",
+				"unknownValue": "未知"
+			},
+			"conStatus": {
+				"header": "状态",
+				"toolTip": "无法建立直接连接，目前通过zerotier服务器中继，延迟更高",
+				"relayed": "中继",
+				"directLan": "已建立直接LAN连接",
+				"directWan": "已建立直接WAN连接",
+				"direct": "直接连接{版本}",
+				"offline": "离线"
+			},
+			"status": "状态"
 		},
 		"search": {
 			"networkSearchPlaceholder": "搜索网络",
@@ -37,7 +59,7 @@
 		"tableFooter": {
 			"show": "显示",
 			"page": "页",
-			"of": "的"
+			"of": "共"
 		}
 	},
 	"commonToast": {
@@ -158,35 +180,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "搜索任何东西...",
-			"column": {
-				"authorized": "授权",
-				"name": "名字",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "管理 IP / 延迟",
-					"notAssigned": "未分配"
-				},
-				"created": "已创建",
-				"physicalIp": {
-					"header": "物理 IP",
-					"unknownValue": "未知"
-				},
-				"conStatus": {
-					"header": "连接状态",
-					"toolTip": "无法建立直接连接，当前通过 zerotier 服务器中继，延迟较高",
-					"relayed": "中继",
-					"directLan": "已建立直接 LAN 连接",
-					"directWan": "已建立直接 WAN 连接",
-					"direct": "直接{version}",
-					"offline": "离线 "
-				},
-				"email": "电子邮件",
-				"status": "状态",
-				"actions": {
-					"header": "操作",
-					"optionBtn": "选项"
-				}
-			},
 			"optionModalTitle": "成员选项",
 			"tableRow": {
 				"updateName": "点击更改名称"
