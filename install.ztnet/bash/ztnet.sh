@@ -273,4 +273,4 @@ echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YE
 
 rm -rf "$INSTALL_DIR"
 
-printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${server_ip}:3000${NC}\n"
+printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n"
