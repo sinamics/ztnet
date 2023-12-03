@@ -64,7 +64,7 @@ printf "Press space to proceed with the installation..." >&2
 read -n1 -s < /dev/tty
 
 # Inform the user about the default IP and ask if they want to change it
-printf "The default IP address is $local_ip. Press Enter to use it, or type a new IP address and then press Enter.\n"
+printf "The default IP address is ${YELLOW}$local_ip${NC}. Press Enter to use it, or type a new IP address and then press Enter.\n"
 
 # Read the user input
 read -r input_ip
