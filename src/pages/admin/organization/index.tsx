@@ -14,7 +14,7 @@ const Organization = () => {
 				<div className="divider m-0 p-0 text-gray-500"></div>
 				<div className="pb-5">
 					<p className="text-sm text-gray-500">
-					{t("organization.addOrganization.description")}
+						{t("organization.addOrganization.description")}
 					</p>
 				</div>
 				<div className="py-5">
