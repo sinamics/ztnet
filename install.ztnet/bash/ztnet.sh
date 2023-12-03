@@ -59,9 +59,22 @@ printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
 printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
 printf "  3. Check if Zerotier is installed, If not, it will be installed.\n"
 printf "  4. Clone ztnet repo into /tmp folder and build artifacts from latest tag version.\n"
-printf "  5. Copy artifacts to /opt/ztnet folder.\n"
+printf "  5. Copy artifacts to /opt/ztnet folder.\n\n"
 printf "Press space to proceed with the installation..." >&2
 read -n1 -s < /dev/tty
+
+# Inform the user about the default IP and ask if they want to change it
+printf "The default IP address is $local_ip. Press Enter to use it, or type a new IP address and then press Enter.\n"
+
+# Read the user input
+read -r input_ip
+
+# Use the default local_ip if the user pressed Enter without typing anything
+if [[ -z $input_ip ]]; then
+    server_ip=$local_ip
+else
+    server_ip=$input_ip
+fi
 
 POSTGRES_PASSWORD="postgres"
 
@@ -190,7 +203,7 @@ DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?sche
 ZT_ADDR=
 ZT_SECRET=
 NEXT_PUBLIC_SITE_NAME="ZTnet"
-NEXTAUTH_URL="http://${local_ip:-localhost}:3000"
+NEXTAUTH_URL="http://${server_ip:-localhost}:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
 
 # Set or update environment variables
@@ -256,4 +269,4 @@ echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YE
 
 rm -rf "$INSTALL_DIR"
 
-printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${local_ip}:3000${NC}\n"
+printf "\n\nYou can now open ZTnet at: ${YELLOW}http://${server_ip}:3000${NC}\n"
