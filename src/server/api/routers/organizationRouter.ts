@@ -86,7 +86,10 @@ export const organizationRouter = createTRPCRouter({
 			}
 			// delete all networks on the controller
 			for (const nw of org.networks) {
-				await caller.deleteNetwork({ nwid: nw.nwid });
+				await caller.deleteNetwork({
+					nwid: nw.nwid,
+					organizationId: input.organizationId,
+				});
 			}
 
 			return await ctx.prisma.$transaction(async (prisma) => {
