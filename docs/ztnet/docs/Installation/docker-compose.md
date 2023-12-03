@@ -66,7 +66,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
-      NEXTAUTH_URL: "http://localhost:3000"
+      NEXTAUTH_URL: "http://localhost:3000" # !! Important !! Set the NEXTAUTH_URL environment variable to the canonical URL or IP of your site with port 3000
       NEXTAUTH_SECRET: "random_secret"
     networks:
       - app-network
@@ -113,7 +113,9 @@ POSTGRES_PORT  #Default: 5432
 POSTGRES_USER  #Default: postgres
 POSTGRES_PASSWORD  #Default: postgres
 POSTGRES_DB  #Default: ztnet
-NEXTAUTH_URL  #Default: "http://localhost:3000" # Change `localhost` to your production domain when deploying.
-NEXTAUTH_URL_INTERNAL #Default: "http://localhost:3000" # Change `localhost` to your production domain when deploying.
+NEXTAUTH_URL  #Default: "http://localhost:3000" # Set the NEXTAUTH_URL environment variable to the canonical URL of your site.
+NEXTAUTH_URL_INTERNAL # If provided, server-side calls will use this instead of NEXTAUTH_URL. Useful in environments when the server doesn't have access to the canonical URL of your site. Defaults to NEXTAUTH_URL.
 NEXTAUTH_SECRET  #Default: "random_secret", change this to a random string for security.
 ```
+
+For more information on NEXTAUTH environment variables, see [NEXTAUTH Environment Variables](https://next-auth.js.org/configuration/options#environment-variables).
