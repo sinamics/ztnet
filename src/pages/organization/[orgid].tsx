@@ -12,8 +12,11 @@ import TimeAgo from "react-timeago";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import EditOrganizationUserModal from "~/components/organization/editUserModal";
+import { useTranslations } from "next-intl";
 
 const OrganizationById = ({ user }) => {
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("organization");
 	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
@@ -92,7 +95,7 @@ const OrganizationById = ({ user }) => {
 				<div className="flex flex-col items-center justify-center">
 					<h1 className="text-center text-2xl font-semibold">{getOrgError.message}</h1>
 					<ul className="list-disc">
-						<li>Contact organization admin to make sure you have proper permissions</li>
+						<li>{t("errors.getOrgError")}</li>
 					</ul>
 				</div>
 			</>
@@ -116,10 +119,8 @@ const OrganizationById = ({ user }) => {
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
 						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
-						<p className="text-center text-xl">Organization Dashboard</p>
-						<span className="bg-red-600/30 text-white px-4 py-1 rounded-lg shadow-lg text-xs font-medium opacity-75">
-							Beta version - use at your own risk!
-						</span>
+						<p className="text-center text-sm font-bold">{orgData?.description}</p>
+						<p className="text-center text-xl">{t("organizationDashboard.header")}</p>
 					</div>
 				</header>
 
@@ -128,7 +129,7 @@ const OrganizationById = ({ user }) => {
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
 						<div className="p-4">
 							<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
-								Members
+								{t("membersSection.title")}
 							</h2>
 							<ul
 								style={{ maxHeight: maxHeight }}
@@ -145,7 +146,8 @@ const OrganizationById = ({ user }) => {
 												callModal({
 													title: (
 														<p>
-															Edit User <span className="text-primary">{user.name}</span>
+															{t("membersSection.editUser")}
+															<span className="text-primary">{user.name}</span>
 														</p>
 													),
 													content: (
@@ -179,21 +181,21 @@ const OrganizationById = ({ user }) => {
 					{/* Organization Information */}
 					<section className="bg-base-200 rounded-lg shadow-lg p-4">
 						<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
-							Information
+						{t("informationSection.title")}
 						</h2>
 						<ul className="space-y-2">
 							<li className="flex justify-between">
-								<span className="font-medium">Name:</span>
+								<span className="font-medium">{t("informationSection.name")}</span>
 								<span>{orgData?.orgName}</span>
 							</li>
 							<li className="flex justify-between">
-								<span className="font-medium">Created:</span>
+								<span className="font-medium">{t("informationSection.created")}</span>
 								<span>
 									<TimeAgo date={orgData?.createdAt} />
 								</span>
 							</li>
 							<li className="flex justify-between">
-								<span className="font-medium">Members:</span>
+								<span className="font-medium">{t("informationSection.members")}</span>
 								<span>{orgData?.users.length}</span>
 							</li>
 							{/* <li className="flex justify-between">
@@ -206,7 +208,7 @@ const OrganizationById = ({ user }) => {
 					{/* Network Table and Add Network Button */}
 					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg">
 						<div className="px-4 py-1 flex justify-between items-center border-b border-gray-700">
-							<h2 className="text-xl font-semibold">Networks</h2>
+							<h2 className="text-xl font-semibold">{t("networkSection.title")}</h2>
 							<button
 								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
 								onClick={() =>
@@ -237,7 +239,7 @@ const OrganizationById = ({ user }) => {
 										d="M12 4.5v15m7.5-7.5h-15"
 									/>
 								</svg>
-								Add Network
+								{b("addNetwork")}
 							</button>
 						</div>
 						<div className="p-1">
@@ -245,7 +247,7 @@ const OrganizationById = ({ user }) => {
 								<OrganizationNetworkTable tableData={orgData.networks} />
 							) : (
 								<div className="text-center text-gray-500 py-10">
-									<p>No networks to display.</p>
+									<p>{t("networkSection.noNetworksToShow")}</p>
 								</div>
 							)}
 						</div>
@@ -256,13 +258,12 @@ const OrganizationById = ({ user }) => {
 						<button
 							onClick={() =>
 								callModal({
-									title: <p>Leave Organization?</p>,
+									title: <p>{t("leaveOrganization.confirmationTitle")}</p>,
 									content: (
 										<div>
-											<p>Are you sure you want to leave the organization?</p>
+											<p>{t("leaveOrganization.confirmationMessage")}</p>
 											<p className="mt-2 text-sm text-gray-500">
-												Note: If you decide to rejoin this organization in the future, an
-												admin will need to send you a new invitation.
+											{t("leaveOrganization.note")}
 											</p>
 										</div>
 									),
@@ -280,7 +281,7 @@ const OrganizationById = ({ user }) => {
 							}
 							className="btn btn-sm btn-error btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
 						>
-							Leave Organization
+							{b("leaveOrganization")}
 						</button>
 					</div>
 				</div>

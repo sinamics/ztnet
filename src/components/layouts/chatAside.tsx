@@ -6,6 +6,7 @@ import TimeAgo from "react-timeago";
 import { stringToColor } from "~/utils/randomColor";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
+import { useTranslations } from "next-intl";
 
 const TimeAgoFormatter = (value: string, unit: string) => {
 	// Map full unit names to their abbreviations
@@ -54,6 +55,8 @@ const MessagesList = ({ messages }) => {
 };
 
 const ChatAside = () => {
+	const t = useTranslations("organization");
+
 	const { openChats, toggleChat } = useAsideChatStore();
 	const [messages, setMessages] = useState([]);
 	const { messages: newMessages, hasNewMessages } = useSocketStore();
@@ -190,7 +193,7 @@ const ChatAside = () => {
 						</svg>
 					)}
 					<div className="relative">
-						<span className="text-xs">MSG</span>
+						<span className="text-xs">{t("chatSidebar.toggleChatLabel")}</span>
 						{hasNewMessages[orgId] ? (
 							<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
 						) : null}
@@ -210,11 +213,17 @@ const ChatAside = () => {
 				>
 					{/* Chat Header */}
 					<div className="p-4 border-b border-gray-200">
-						<h2 className="text-lg font-semibold">Organization Messages</h2>
+						<h2 className="text-lg font-semibold">{t("chatSidebar.chatHeader")}</h2>
 					</div>
 
 					{/* Chat List with Scrollable Area */}
 					<div className="overflow-y-auto h-[calc(100%-20rem)] custom-scrollbar pb-5">
+						{/* Return No Messages if there is none */}
+						{messages?.length === 0 ? (
+							<div className="p-4 border-t border-gray-200 mt-auto">
+								<p className="text-xs">{t("chatSidebar.noMessages")}</p>
+							</div>
+						) : null}
 						{/* Repeat for other chats */}
 						{messages?.map((msg) => {
 							return <MessagesList key={msg.id} messages={msg} />;
@@ -226,7 +235,7 @@ const ChatAside = () => {
 					<div className="p-4 border-t border-gray-200 mt-auto">
 						<form className="space-y-5">
 							<p className="text-xs">
-								Everyone in the Organization will be able to see your message.
+							{t("chatSidebar.chatInfo")}
 							</p>
 							<input
 								type="text"
@@ -234,7 +243,7 @@ const ChatAside = () => {
 								onChange={eventHandler}
 								name="chatMessage"
 								className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-								placeholder="Type a message..."
+								placeholder={t("chatSidebar.messageInputPlaceholder")}
 							/>
 							<button type="submit" className="hidden" onClick={sendMessage} />
 						</form>

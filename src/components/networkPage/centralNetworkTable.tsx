@@ -43,7 +43,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 	]);
 
 	const router = useRouter();
-	const t = useTranslations("networksTable");
+	const t = useTranslations("commonTable");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
@@ -53,20 +53,20 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("name")}</span>,
+				header: () => <span>{t("header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("description")}</span>,
+				header: () => <span>{t("header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("networkId")}</span>,
+				header: () => <span>{t("header.networkId")}</span>,
 				// footer: (info) => info.column.id,
 			}),
 			columnHelper.accessor("totalMemberCount", {
-				header: () => <span>{t("members")}</span>,
+				header: () => <span>{t("header.members")}</span>,
 				cell: (info) => info.getValue(),
 			}),
 		],
@@ -130,7 +130,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("networkSearchPlaceholder")}
+					placeholder={t("search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">

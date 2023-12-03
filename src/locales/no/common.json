@@ -2,16 +2,34 @@
 	"input": {
 		"enterToSave": "Trykk Enter for å lagre"
 	},
-	"changeButton": {
+	"commonButtons": {
 		"add": "Legg til",
 		"change": "Endre",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
 		"delete": "Slett",
-		"generate": "Generer",
-		"addNetworkButton": "Opprett et nettverk",
-		"yesButton": "Ja",
-		"closeButton": "Lukk"
+		"close": "Lukk",
+		"yes": "Ja",
+		"generate": "Generere",
+		"addNetwork": "Opprett et nettverk",
+		"leaveOrganization": "Forlat Organisasjon"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Navn",
+			"description": "Beskrivelse",
+			"networkId": "Nettverks-ID",
+			"members": "Medlemmer",
+			"actions": "Handlinger"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Søk etter et nettverk"
+		},
+		"tableFooter": {
+			"show": "Vis",
+			"page": "Side",
+			"of": "av"
+		}
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -25,6 +43,7 @@
 		"notification": "Varsling",
 		"controller": "ZT Kontroller",
 		"account": "Konto",
+		"organization": "Organisasjon",
 		"user-settings": "Brukerinnstillinger",
 		"logout": "Logg ut"
 	},
@@ -33,18 +52,6 @@
 		"title": "Nettverk",
 		"description": "VPN-nettverk",
 		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
-	},
-	"networksTable": {
-		"name": "Navn",
-		"description": "Beskrivelse",
-		"networkId": "Nettverk ID",
-		"members": "Medlemmer",
-		"networkSearchPlaceholder": "Søk etter nettverk"
-	},
-	"tableFooter": {
-		"show": "Vis",
-		"page": "Side",
-		"of": "av"
 	},
 	"networkById": {
 		"loading": "Laster...",
@@ -563,6 +570,47 @@
 				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
 				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
 			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Kontakt organisasjonsadmin for å forsikre deg om at du har riktige tillatelser"
+		},
+		"loading": "Laster...",
+		"organizationDashboard": {
+			"header": "Organisasjonspanel"
+		},
+		"membersSection": {
+			"title": "Medlemmer",
+			"editUser": "Rediger bruker",
+			"role": "Rolle"
+		},
+		"informationSection": {
+			"title": "Informasjon",
+			"name": "Navn:",
+			"created": "Opprettet:",
+			"members": "Medlemmer:"
+		},
+		"networkSection": {
+			"title": "Nettverk",
+			"noNetworksToShow": "Ingen nettverk å vise."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Forlate organisasjonen?",
+			"confirmationMessage": "Er du sikker på at du vil forlate organisasjonen?",
+			"note": "Merk: Hvis du bestemmer deg for å bli med i organisasjonen igjen senere, må en administrator sende deg en ny invitasjon."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Organisasjonsmeldinger",
+			"chatInfo": "Alle i organisasjonen vil kunne se meldingen din.",
+			"messageInputPlaceholder": "Skriv en melding...",
+			"noMessages": "Ingen meldinger enda."
+		},
+		"logFooter": {
+			"toggleLogLabel": "LOGG",
+			"logHeader": "Siste 100 aktivitetslogger",
+			"loading": "Henter logger..."
 		}
 	}
 }
