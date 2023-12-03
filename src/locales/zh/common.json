@@ -31,7 +31,8 @@
 			"email": "电子邮件"
 		},
 		"search": {
-			"networkSearchPlaceholder": "搜索网络"
+			"networkSearchPlaceholder": "搜索网络",
+			"searchUserPlaceholder": "搜索用户"
 		},
 		"tableFooter": {
 			"show": "显示",
@@ -302,7 +303,8 @@
 			"mail": "邮件",
 			"users": "用户",
 			"notification": "通知",
-			"controller": "控制器"
+			"controller": "控制器",
+			"organization": "组织"
 		},
 		"settings": {
 			"publicPages": {
@@ -508,6 +510,52 @@
 			},
 			"yes": "是",
 			"no": "否"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "组织",
+				"description": "探索组织以开始塑造团队的合作方式。分配角色，邀请新成员，并监督组织内的基本权限。此beta功能为团队协作提供了基础，设计简单易用。我们将继续开发和完善这些设置，邀请您提供反馈，以帮助我们完善体验。",
+				"inputFields": {
+					"label": "添加组织",
+					"description": "创建一个新的组织",
+					"organizationName": {
+						"description": "组织名称"
+					},
+					"organizationDescription": {
+						"description": "组织描述（可选）"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "删除组织",
+					"description": "你确定要删除这个组织吗？",
+					"description2": "此操作将永久删除该组织及其所有网络、成员和相关数据。此操作无法撤销。",
+					"confirmation": "请确认你想继续删除组织。",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "输入组织名称以确认"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "组织名称：",
+				"description": "描述：",
+				"numberOfMembers": "成员数量：",
+				"pendingInvitations": "待处理的邀请：",
+				"invitationModal": {
+					"title": "组织邀请",
+					"description": "在将用户添加到你的组织之前，请注意他们必须已经在应用中注册",
+					"inputFields": {
+						"searchUser": {
+							"title": "搜索你想添加的用户",
+							"placeholder": "搜索用户"
+						},
+						"userRole": {
+							"title": "选择用户角色"
+						}
+					}
+				}
+			}
 		}
 	},
 	"userSettings": {

@@ -307,7 +307,7 @@ model LastReadMessage {
 
   lastMessage     Messages     @relation(fields: [lastMessageId], references: [id])
   user            User         @relation(fields: [userId], references: [id])
-  organization    Organization @relation(fields: [organizationId], references: [id])
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
 }

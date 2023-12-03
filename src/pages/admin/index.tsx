@@ -52,7 +52,7 @@ const AdminSettings = () => {
 			component: <Controller />,
 		},
 		{
-			name: "Organization",
+			name: t("tabs.organization"),
 			value: "organization",
 			component: <Organization />,
 		},
