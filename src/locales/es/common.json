@@ -5,6 +5,7 @@
 	"commonButtons": {
 		"add": "Añadir",
 		"change": "Cambiar",
+		"create": "Crear",
 		"submit": "Enviar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
@@ -12,7 +13,12 @@
 		"yes": "Sí",
 		"generate": "Generar",
 		"addNetwork": "Crear una red",
-		"leaveOrganization": "Dejar la organización"
+		"leaveOrganization": "Dejar la organización",
+		"inviteUser": "Invitar usuario",
+		"meta": "Meta",
+		"users": "Usuarios",
+		"deleteOrganization": "Eliminar organización",
+		"userActions": "Acciones del usuario"
 	},
 	"commonTable": {
 		"header": {
@@ -20,7 +26,9 @@
 			"description": "Descripción",
 			"networkId": "ID de la Red",
 			"members": "Miembros",
-			"actions": "Acciones"
+			"actions": "Acciones",
+			"role": "Rol",
+			"email": "Email"
 		},
 		"search": {
 			"networkSearchPlaceholder": "Buscar una red"
@@ -30,6 +38,9 @@
 			"page": "Página",
 			"of": "de"
 		}
+	},
+	"commonToast": {
+		"organizationDeleted": "Organización eliminada"
 	},
 	"sidebar": {
 		"navigation": "Navegación",

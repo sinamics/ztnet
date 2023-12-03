@@ -5,6 +5,7 @@
 	"commonButtons": {
 		"add": "Legg til",
 		"change": "Endre",
+		"create": "Opprett",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
 		"delete": "Slett",
@@ -12,7 +13,12 @@
 		"yes": "Ja",
 		"generate": "Generere",
 		"addNetwork": "Opprett et nettverk",
-		"leaveOrganization": "Forlat Organisasjon"
+		"leaveOrganization": "Forlat Organisasjon",
+		"inviteUser": "Inviter Bruker",
+		"meta": "Meta",
+		"users": "Brukere",
+		"deleteOrganization": "Slett Organisasjon",
+		"userActions": "Brukerhandlinger"
 	},
 	"commonTable": {
 		"header": {
@@ -20,7 +26,9 @@
 			"description": "Beskrivelse",
 			"networkId": "Nettverks-ID",
 			"members": "Medlemmer",
-			"actions": "Handlinger"
+			"actions": "Handlinger",
+			"role": "Rolle",
+			"email": "E-post"
 		},
 		"search": {
 			"networkSearchPlaceholder": "Søk etter et nettverk"
@@ -30,6 +38,9 @@
 			"page": "Side",
 			"of": "av"
 		}
+	},
+	"commonToast": {
+		"organizationDeleted": "Organisasjon slettet"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",

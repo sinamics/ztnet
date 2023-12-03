@@ -51,7 +51,8 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 		{ id: "id", desc: true },
 	]);
 
-	const t = useTranslations("networksTable");
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("commonTable");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
@@ -61,20 +62,20 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => <span className="truncate">{info.getValue()}</span>,
-				header: () => <span>{t("name")}</span>,
+				header: () => <span>{t("header.name")}</span>,
 			}),
 			columnHelper.accessor("email", {
 				cell: (info) => <span className="truncate">{info.getValue()}</span>,
-				header: () => <span>Email</span>,
+				header: () => <span>{t("header.email")}</span>,
 			}),
 			columnHelper.accessor("role", {
 				// size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>Role</span>,
+				header: () => <span>{t("header.role")}</span>,
 			}),
 			columnHelper.accessor("action", {
 				size: 300,
-				header: () => <span>Action</span>,
+				header: () => <span>{t("header.actions")}</span>,
 				id: "action",
 				cell: ({ row: { original } }) => {
 					return (
@@ -101,7 +102,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 								}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								User Actions
+								{b("userActions")}
 							</button>
 						</div>
 					);

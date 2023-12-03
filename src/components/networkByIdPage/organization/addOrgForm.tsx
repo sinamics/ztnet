@@ -3,10 +3,11 @@ import InputFields from "~/components/elements/inputField";
 import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
-// import { useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 
 const AddOrgForm = () => {
-	// const t = useTranslations("admin");
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("admin");
 	const { refetch: refecthOrg } = api.org.getAllOrg.useQuery();
 	const { refetch: refetchMe } = api.auth.me.useQuery();
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
@@ -29,15 +30,14 @@ const AddOrgForm = () => {
 			refecthOrg();
 		},
 	});
-	// console.log(userOrgs);
 	return (
 		<div className="space-y-10">
 			<InputFields
 				isLoading={false}
-				label="Add Organization"
+				label={t("organization.addOrganization.inputFields.label")}
 				size="sm"
-				buttonText="Create"
-				description="Create a new organization"
+				buttonText={b("create")}
+				description={t("organization.addOrganization.inputFields.description")}
 				rootClassName="w-full"
 				rootFormClassName=""
 				fields={[
@@ -45,7 +45,7 @@ const AddOrgForm = () => {
 						name: "orgName",
 						type: "text",
 						placeholder: "",
-						description: "Name of the organization",
+						description: t("organization.addOrganization.inputFields.organizationName.description"),
 						defaultValue: "",
 					},
 					{
@@ -53,7 +53,7 @@ const AddOrgForm = () => {
 						type: "text",
 						elementType: "textarea",
 						placeholder: "",
-						description: "Organization Description (Optional)",
+						description:  t("organization.addOrganization.inputFields.organizationDescription.description"),
 						defaultValue: "",
 					},
 				]}
