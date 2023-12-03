@@ -38,7 +38,7 @@ To check the status of the `ztnet` service, run the following command:
 sudo systemctl status ztnet
 ```
 
-### Starting the Service
+### Starting the Service (default)
 
 To start the `ztnet` service, run the following command:
 
@@ -51,7 +51,30 @@ sudo systemctl start ztnet
 To stop the `ztnet` service, run the following command:
 
 ```bash
-sudo systemctl stop ztnet
+sudo systemctl stop ztnet 
+```
+
+### Enable at boot (default)
+
+To stop the `ztnet` service, run the following command:
+
+```bash
+sudo systemctl enable ztnet
+```
+
+### Disable at boot
+
+To stop the `ztnet` service, run the following command:
+
+```bash
+sudo systemctl disable ztnet
+```
+
+## Testing other branches
+If you want to test out a specific branch of ztnet, you can specify the branch like this, change `main` to the branch you want to test:
+
+```bash
+curl http://install.ztnet.network | sudo bash -s -- -b main
 ```
 
 ## Uninstalling ztnet
