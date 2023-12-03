@@ -8,9 +8,9 @@ import { useTranslations } from "next-intl";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
-
-export const NetworkDns = ({ central = false }: IProp) => {
+export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		address: "",
@@ -74,6 +74,7 @@ export const NetworkDns = ({ central = false }: IProp) => {
 			{
 				nwid: network.nwid,
 				central,
+				organizationId,
 				updateParams: {
 					dns: {
 						domain: state.domain,
@@ -160,7 +161,10 @@ export const NetworkDns = ({ central = false }: IProp) => {
 												{
 													nwid: network.nwid,
 													central,
-													clearDns: true,
+													organizationId,
+													updateParams: {
+														clearDns: true,
+													},
 												},
 												{
 													onSuccess: () => {

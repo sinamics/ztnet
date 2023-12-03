@@ -9,8 +9,7 @@ interface FormData {
 	email: string;
 	password: string;
 	name: string;
-	code?: string;
-	token?: string;
+	ztnetToken?: string;
 }
 
 const RegisterForm: React.FC = () => {
@@ -22,8 +21,7 @@ const RegisterForm: React.FC = () => {
 		email: "",
 		password: "",
 		name: "",
-		code: "",
-		token: invite?.toString(),
+		ztnetToken: "",
 	});
 
 	const { mutate: register } = api.auth.register.useMutation();
@@ -74,10 +72,10 @@ const RegisterForm: React.FC = () => {
 							</label>
 							<input
 								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
-								value={formData.code}
+								value={formData.ztnetToken}
 								onChange={handleChange}
 								type=""
-								name="code"
+								name="ztnetToken"
 								placeholder="Inviation code"
 							/>
 						</div>

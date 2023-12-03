@@ -2,12 +2,73 @@
 	"input": {
 		"enterToSave": "Trykk Enter for å lagre"
 	},
-	"changeButton": {
+	"commonButtons": {
+		"add": "Legg til",
 		"change": "Endre",
+		"create": "Opprett",
 		"submit": "Send inn",
 		"cancel": "Avbryt",
 		"delete": "Slett",
-		"generate": "Generer"
+		"close": "Lukk",
+		"stash": "Stash",
+		"yes": "Ja",
+		"generate": "Generere",
+		"addNetwork": "Opprett et nettverk",
+		"leaveOrganization": "Forlat Organisasjon",
+		"inviteUser": "Inviter Bruker",
+		"meta": "Meta",
+		"users": "Brukere",
+		"kickUser": "Spark Bruker",
+		"deleteOrganization": "Slett Organisasjon",
+		"userActions": "Brukerhandlinger",
+		"options": "Alternativer"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Navn",
+			"description": "Beskrivelse",
+			"networkId": "Nettverks-ID",
+			"members": "Medlemmer",
+			"actions": "Handlinger",
+			"role": "Rolle",
+			"email": "E-post",
+			"authorized": "Aut.",
+			"id": "ID",
+			"created": "Opprettet",
+			"networks": "Nettverk",
+			"group": "Gruppe",
+			"account": "Konto",
+			"ipAssignments": {
+				"header": "Administrert IP / Latens",
+				"notAssigned": "Ikke Tildelt"
+			},
+			"physicalIp": {
+				"header": "Fysisk IP",
+				"unknownValue": "Ukjent"
+			},
+			"conStatus": {
+				"header": "Status",
+				"toolTip": "Kunne ikke etablere direkteforbindelse og blir for øyeblikket videresendt gjennom zerotier servere med høyere latens",
+				"relayed": "VIDERESENDT",
+				"directLan": "Direkte LAN-forbindelse etablert",
+				"directWan": "Direkte WAN-forbindelse etablert",
+				"direct": "DIREKTE{version}",
+				"offline": "frakoblet"
+			},
+			"status": "Status"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Søk etter et nettverk",
+			"searchUserPlaceholder": "Søk etter en bruker"
+		},
+		"tableFooter": {
+			"show": "Vis",
+			"page": "Side",
+			"of": "av"
+		}
+	},
+	"commonToast": {
+		"organizationDeleted": "Organisasjon slettet"
 	},
 	"sidebar": {
 		"navigation": "Navigasjon",
@@ -21,6 +82,7 @@
 		"notification": "Varsling",
 		"controller": "ZT Kontroller",
 		"account": "Konto",
+		"organization": "Organisasjon",
 		"user-settings": "Brukerinnstillinger",
 		"logout": "Logg ut"
 	},
@@ -28,25 +90,7 @@
 		"loading": "Laster",
 		"title": "Nettverk",
 		"description": "VPN-nettverk",
-		"addNetworkButton": "Opprett et nettverk",
 		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
-	},
-	"networksTable": {
-		"name": "Navn",
-		"description": "Beskrivelse",
-		"networkId": "Nettverk ID",
-		"members": "Medlemmer",
-		"networkSearchPlaceholder": "Søk etter nettverk"
-	},
-	"tableFooter": {
-		"show": "Vis",
-		"page": "Side",
-		"of": "av"
-	},
-	"modalLayout": {
-		"yesButton": "Ja",
-		"cancelButton": "Avbryt",
-		"closeButton": "Lukk"
 	},
 	"networkById": {
 		"loading": "Laster...",
@@ -119,9 +163,7 @@
 			"noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
 			"noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
 			"destinationPlaceholder": "Destinasjon",
-			"viaPlaceholder": "mål",
-			"addButtonText": "Legg til",
-			"cancelButtonText": "Avbryt"
+			"viaPlaceholder": "mål"
 		},
 		"networkDns": {
 			"DNS": "DNS",
@@ -143,35 +185,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "Søk etter noe...",
-			"column": {
-				"authorized": "Auth",
-				"name": "Navn",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "Administrert IP / Latency",
-					"notAssigned": "Ikke tildelt"
-				},
-				"created": "Opprettet",
-				"physicalIp": {
-					"header": "Fysisk IP",
-					"unknownValue": "Ukjent"
-				},
-				"conStatus": {
-					"header": "Status",
-					"toolTip": "Kunne ikke opprette direkte tilkobling og blir for øyeblikket formidlet gjennom zerotier-servere med høyere latenstid",
-					"relayed": "VIDEREFORMIDLET",
-					"directLan": "Direkte LAN-tilkobling opprettet",
-					"directWan": "Direkte WAN-tilkobling opprettet",
-					"direct": "DIREKTE{version}",
-					"offline": "offline "
-				},
-				"email": "E-post",
-				"status": "Status",
-				"actions": {
-					"header": "Handlinger",
-					"optionBtn": "alternativer"
-				}
-			},
 			"optionModalTitle": "Alternativer for medlem",
 			"tableRow": {
 				"updateName": "Klikk for å endre navn"
@@ -252,10 +265,6 @@
 				"header": "Anotasjon",
 				"description": "Forbedre din medlemsorganisasjon ved å legge til notater",
 				"placeholder": "Legg til Notat"
-			},
-			"userActions": {
-				"header": "Brukerhandlinger",
-				"stashBtn": "Arkiver"
 			}
 		},
 		"networkHelp": {
@@ -288,7 +297,8 @@
 			"mail": "Post",
 			"users": "Brukere",
 			"notification": "Varsling",
-			"controller": "Kontroller"
+			"controller": "Kontroller",
+			"organization": "Organisasjon"
 		},
 		"settings": {
 			"publicPages": {
@@ -308,6 +318,7 @@
 			"inviteUserTemplate": "Inviter bruker mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
+			"organizationInviteTemplate": "Organisasjonsinvitasjonsmal",
 			"templates": {
 				"availableTags": "Tilgjengelige merker:",
 				"subject": "Emne",
@@ -351,17 +362,6 @@
 			"users": {
 				"sectionTitle": "Brukere",
 				"description": "Alle registrerte brukere på plattformen.",
-				"table": {
-					"id": "ID",
-					"memberName": "Medlemsnavn",
-					"email": "E-post",
-					"emailVerified": "E-post bekreftet",
-					"role": "Rolle",
-					"networks": "Nettverk",
-					"group": "Gruppe",
-					"emailVerifiedYes": "Ja",
-					"emailVerifiedNo": "Nei"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "Brukergruppe",
 					"userRoleLabel": "Brukerrolle",
@@ -494,6 +494,52 @@
 			},
 			"yes": "Ja",
 			"no": "Nei"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "organisasjon",
+				"description": "Utforsk Organisasjonen for å begynne å forme måten teamet ditt jobber sammen. Tildel roller, inviter nye medlemmer, og ha tilsyn med grunnleggende tillatelser i organisasjonen din. Designet for enkelhet og brukervennlighet, gir denne beta-funksjonen en grunnlag for teamets samarbeid. Ettersom vi fortsetter å utvikle og forbedre disse innstillingene, inviterer vi deg til å gi tilbakemeldinger for å hjelpe oss med å forbedre opplevelsen.",
+				"inputFields": {
+					"label": "Legg til Organisasjon",
+					"description": "Opprett en ny organisasjon",
+					"organizationName": {
+						"description": "Navn på organisasjonen"
+					},
+					"organizationDescription": {
+						"description": "Organisasjonsbeskrivelse (Valgfritt)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Slett Organisasjon",
+					"description": "Er du sikker på at du vil slette denne organisasjonen?",
+					"description2": "Denne handlingen vil permanent slette organisasjonen sammen med alle dens nettverk, medlemmer og relaterte data. Denne handlingen kan ikke angres.",
+					"confirmation": "Vennligst bekreft at du vil fortsette med å slette organisasjonen.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Skriv navnet på organisasjonen for å bekrefte"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Organisasjonsnavn:",
+				"description": "Beskrivelse:",
+				"numberOfMembers": "Antall Medlemmer:",
+				"pendingInvitations": "Ventende Invitasjoner:",
+				"invitationModal": {
+					"title": "Organisasjonsinvitasjoner",
+					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
+					"inputFields": {
+						"searchUser": {
+							"title": "Søk etter brukeren du ønsker å legge til",
+							"placeholder": "Søk Bruker"
+						},
+						"userRole": {
+							"title": "Velg brukerens rolle"
+						}
+					}
+				}
+			}
 		}
 	},
 	"userSettings": {
@@ -567,6 +613,47 @@
 				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
 				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
 			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Kontakt organisasjonsadmin for å forsikre deg om at du har riktige tillatelser"
+		},
+		"loading": "Laster...",
+		"organizationDashboard": {
+			"header": "Organisasjonspanel"
+		},
+		"membersSection": {
+			"title": "Medlemmer",
+			"editUser": "Rediger bruker",
+			"role": "Rolle"
+		},
+		"informationSection": {
+			"title": "Informasjon",
+			"name": "Navn:",
+			"created": "Opprettet:",
+			"members": "Medlemmer:"
+		},
+		"networkSection": {
+			"title": "Nettverk",
+			"noNetworksToShow": "Ingen nettverk å vise."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Forlate organisasjonen?",
+			"confirmationMessage": "Er du sikker på at du vil forlate organisasjonen?",
+			"note": "Merk: Hvis du bestemmer deg for å bli med i organisasjonen igjen senere, må en administrator sende deg en ny invitasjon."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Organisasjonsmeldinger",
+			"chatInfo": "Alle i organisasjonen vil kunne se meldingen din.",
+			"messageInputPlaceholder": "Skriv en melding...",
+			"noMessages": "Ingen meldinger enda."
+		},
+		"logFooter": {
+			"toggleLogLabel": "LOGG",
+			"logHeader": "Siste 100 aktivitetslogger",
+			"loading": "Henter logger..."
 		}
 	}
 }

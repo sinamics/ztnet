@@ -19,6 +19,8 @@ import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { createNetworkService } from "../services/networkService";
+import { checkUserOrganizationRole } from "~/utils/role";
+import { Role } from "@prisma/client";
 
 export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -107,18 +109,36 @@ export const networkRouter = createTRPCRouter({
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
 
-			const psqlNetworkData = await ctx.prisma.network.findFirst({
+			// First, retrieve the network with organization details
+			const psqlNetworkData = await ctx.prisma.network.findUnique({
 				where: {
-					AND: [
-						{
-							authorId: { equals: ctx.session.user.id },
-							nwid: { equals: input.nwid },
-						},
-					],
+					nwid: input.nwid,
+				},
+				include: {
+					organization: true,
 				},
 			});
 
-			if (!psqlNetworkData) return throwError("You are not the Author of this network!");
+			if (!psqlNetworkData) {
+				return throwError("Network not found!");
+			}
+
+			// Check if the user is the author of the network or part of the associated organization
+			const isAuthor = psqlNetworkData.authorId === ctx.session.user.id;
+			const isMemberOfOrganization =
+				psqlNetworkData.organizationId &&
+				(await ctx.prisma.organization.findFirst({
+					where: {
+						id: psqlNetworkData.organizationId,
+						users: {
+							some: { id: ctx.session.user.id },
+						},
+					},
+				}));
+
+			if (!isAuthor && !isMemberOfOrganization) {
+				return throwError("You do not have access to this network!");
+			}
 
 			const ztControllerResponse = await ztController
 				.local_network_detail(ctx, psqlNetworkData.nwid, false)
@@ -194,13 +214,32 @@ export const networkRouter = createTRPCRouter({
 	deleteNetwork: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+
 			try {
-				// de-authorize all members before we delete network
+				// Log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `Deleted network ${input.nwid}`,
+						performedById: ctx.session.user.id,
+						organizationId: input.organizationId || null,
+					},
+				});
+
+				// De-authorize all members before deleting the network
 				const members = await ztController.network_members(
 					ctx,
 					input.nwid,
@@ -212,26 +251,32 @@ export const networkRouter = createTRPCRouter({
 						nwid: input.nwid,
 						central: input.central,
 						memberId: member,
-						updateParams: {
-							authorized: false,
-						},
+						updateParams: { authorized: false },
 					});
 				}
 
 				// Delete ZT network
-				const createCentralNw = await ztController
-					.network_delete(ctx, input.nwid, input.central)
-					.catch(() => []); // Ignore errors
+				await ztController.network_delete(ctx, input.nwid, input.central);
 
-				if (input.central) return createCentralNw;
+				// If the network is not central, delete it from the organization
+				if (!input.central && input.organizationId) {
+					await ctx.prisma.network.deleteMany({
+						where: {
+							organizationId: input.organizationId,
+							nwid: input.nwid,
+						},
+					});
+				}
 
-				// Delete network
-				await ctx.prisma.network.deleteMany({
-					where: {
-						authorId: ctx.session.user.id,
-						nwid: input.nwid,
-					},
-				});
+				// If no organizationId is provided, delete network owned by the user
+				if (!input.organizationId) {
+					await ctx.prisma.network.deleteMany({
+						where: {
+							authorId: ctx.session.user.id,
+							nwid: input.nwid,
+						},
+					});
+				}
 			} catch (error) {
 				if (error instanceof z.ZodError) {
 					return throwError(`Invalid routes provided ${error.message}`);
@@ -239,6 +284,7 @@ export const networkRouter = createTRPCRouter({
 				throw error;
 			}
 		}),
+
 	ipv6: protectedProcedure
 		.input(
 			z.object({
@@ -249,9 +295,29 @@ export const networkRouter = createTRPCRouter({
 					rfc4193: z.boolean().optional(),
 					zt: z.boolean().optional(),
 				}),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IPv6 auto-assign to ${JSON.stringify(
+						input.v6AssignMode,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const network = await ztController.get_network(ctx, input.nwid, input.central);
 			// prepare update params
 			const updateParams = input.central
@@ -278,6 +344,7 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					v4AssignMode: z.object({
 						zt: z.boolean(),
@@ -286,6 +353,23 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IPv4 auto-assign to ${input.updateParams.v4AssignMode.zt}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// if central is true, send the request to the central API and return the response
 			const { v4AssignMode } = input.updateParams;
 			// prepare update params
@@ -306,12 +390,32 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} managed routes to ${JSON.stringify(
+						input.updateParams.routes,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { routes } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
@@ -329,12 +433,31 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IP assignment to ${JSON.stringify(
+						input.updateParams.routes,
+					)})}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
@@ -358,6 +481,7 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					ipAssignmentPools: z
 						.array(
@@ -371,6 +495,25 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} IP assignment pools to ${JSON.stringify(
+						input.updateParams.ipAssignmentPools,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { ipAssignmentPools } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central
@@ -390,12 +533,29 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
-					private: z.boolean().optional(),
+					private: z.boolean(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} privacy to ${input.updateParams.private}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
 				: { private: input.updateParams.private };
@@ -417,14 +577,32 @@ export const networkRouter = createTRPCRouter({
 	networkName: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
-					name: z.string().nonempty(),
+					name: z.string(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} name to ${input.updateParams.name}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -456,12 +634,30 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					description: z.string(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} description to ${input.updateParams.description}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			// if central is true, send the request to the central API and return the response
 			if (input.central) {
 				const updated = await ztController.network_update({
@@ -494,32 +690,52 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string(),
 				central: z.boolean().default(false),
-				clearDns: z.boolean().optional(),
-				updateParams: z
-					.object({
-						dns: z
-							.object({
-								domain: z.string().refine(isValidDomain, {
-									message: "Invalid DNS domain provided",
-								}),
-								servers: z.array(
-									z.string().refine(isValidIP, {
-										message: "Invalid DNS server provided",
-									}),
-								),
-							})
-							.refine((dns) => dns === undefined || (dns?.domain && dns.servers), {
-								message: "Both domain and servers must be provided if dns is defined",
+				organizationId: z.string().optional(),
+				updateParams: z.object({
+					clearDns: z.boolean().optional(),
+					dns: z
+						.object({
+							domain: z.string().refine(isValidDomain, {
+								message: "Invalid DNS domain provided",
 							}),
-					})
-					.optional(),
+							servers: z.array(
+								z.string().refine(isValidIP, {
+									message: "Invalid DNS server provided",
+								}),
+							),
+						})
+						.refine((dns) => dns === undefined || (dns?.domain && dns.servers), {
+							message: "Both domain and servers must be provided if dns is defined",
+						})
+						.optional(),
+				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} DNS to ${JSON.stringify(
+						input.updateParams,
+					)})}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+
 			let ztControllerUpdates = {};
 
 			// If clearDns is true, set DNS to an empty object
-			if (input.clearDns) {
+			if (input.updateParams?.clearDns) {
 				ztControllerUpdates = { dns: { domain: "", servers: [] } };
 			} else {
 				ztControllerUpdates = { ...input.updateParams };
@@ -543,6 +759,7 @@ export const networkRouter = createTRPCRouter({
 			z.object({
 				nwid: z.string().nonempty(),
 				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
 					multicastLimit: z.number().optional(),
 					enableBroadcast: z.boolean().optional(),
@@ -551,6 +768,25 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} multicast to ${JSON.stringify(
+						input.updateParams,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -583,14 +819,32 @@ export const networkRouter = createTRPCRouter({
 	setFlowRule: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
+				organizationId: z.string().optional(),
 				updateParams: z.object({
-					flowRoute: z.string().nonempty(),
+					flowRoute: z.string(),
 				}),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated flow route for network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { flowRoute } = input.updateParams;
 
 			const rules = [];
@@ -744,9 +998,27 @@ accept;`;
 			z.object({
 				nwid: z.string().nonempty(),
 				email: z.string().email(),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Invited user ${input.email} to network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
 			const { nwid, email } = input;
 			const globalOptions = await ctx.prisma.globalOptions.findFirst({
 				where: {
@@ -791,9 +1063,28 @@ accept;`;
 				description: z.string().optional(),
 				showMarkerInTable: z.boolean().optional(),
 				useAsTableBackground: z.boolean().optional(),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Added annotation ${input.name} to network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+
 			const notation = await ctx.prisma.notation.upsert({
 				where: {
 					name_nwid: {

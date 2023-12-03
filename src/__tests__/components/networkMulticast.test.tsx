@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { NextIntlProvider } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 
@@ -54,9 +54,9 @@ describe("<NetworkMulticast />", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkMulticast />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 
@@ -103,9 +103,9 @@ describe("<NetworkMulticast />", () => {
 		});
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkMulticast />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 

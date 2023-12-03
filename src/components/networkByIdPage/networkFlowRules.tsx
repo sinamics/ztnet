@@ -10,7 +10,11 @@ import { type CustomBackendError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
 
 const initialErrorState = { error: null, line: null };
-export const NetworkFlowRules = () => {
+interface IProps {
+	organizationId?: string;
+}
+
+export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	const { query } = useRouter();
 	// Local state to store changes to the flow route
 	const {
@@ -104,6 +108,7 @@ export const NetworkFlowRules = () => {
 						onClick={() =>
 							void updateFlowRoute({
 								nwid: query.id as string,
+								organizationId,
 								updateParams: {
 									flowRoute: flowRoute || "#",
 								},

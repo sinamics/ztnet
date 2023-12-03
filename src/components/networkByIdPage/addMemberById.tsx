@@ -10,8 +10,9 @@ type User = {
 };
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
-export const AddMemberById = ({ central = false }: IProp) => {
+export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const [user, setUser] = useState<User>({ memberid: "" });
 	const { query } = useRouter();
@@ -72,6 +73,7 @@ export const AddMemberById = ({ central = false }: IProp) => {
 								{
 									id: user.memberid,
 									nwid: query.id as string,
+									organizationId,
 									central,
 								},
 								{ onSuccess: () => setUser({ memberid: "" }) },

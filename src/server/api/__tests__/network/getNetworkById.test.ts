@@ -9,31 +9,30 @@ const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
 	update: { name: "test" },
 	user: {
-		id: 1,
+		id: "userid",
 		name: "Bernt Christian",
 		email: "mail@gmail.com",
 	},
 };
 
 it("should throw an error if the user is not the author of the network", async () => {
-	prisma.network.findFirst = jest.fn().mockRejectedValue(
+	prisma.network.findUnique = jest.fn().mockRejectedValue(
 		new TRPCError({
-			message: "You are not the Author of this network!",
-			code: "FORBIDDEN",
+			message: "Network not found!",
+			code: "BAD_REQUEST",
 		}),
 	);
 
 	const caller = appRouter.createCaller({
 		session: mockSession as Session,
+		wss: null,
 		prisma: prisma,
 	});
 	try {
 		await caller.network.getNetworkById({ nwid: "test_nw_id" });
 	} catch (error) {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		expect(error.message).toBe("You are not the Author of this network!");
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		expect(error.code).toBe("FORBIDDEN");
+		expect(error.message).toBe("Network not found!");
+		expect(error.code).toBe("BAD_REQUEST");
 	}
 });
 

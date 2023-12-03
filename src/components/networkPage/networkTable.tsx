@@ -38,7 +38,7 @@ const TruncateText = ({ text }: { text: string }) => {
 };
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
-	const t = useTranslations("networksTable");
+	const t = useTranslations("commonTable");
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
@@ -60,20 +60,20 @@ export const NetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("name")}</span>,
+				header: () => <span>{t("header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("description")}</span>,
+				header: () => <span>{t("header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("networkId")}</span>,
+				header: () => <span>{t("header.networkId")}</span>,
 				// footer: (info) => info.column.id,
 			}),
 			columnHelper.accessor("members", {
-				header: () => <span>{t("members")}</span>,
+				header: () => <span>{t("header.members")}</span>,
 				cell: ({ row: { original } }) => {
 					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
 					return <span>{original.networkMembers.length}</span>;
@@ -140,7 +140,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("networkSearchPlaceholder")}
+					placeholder={t("search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">

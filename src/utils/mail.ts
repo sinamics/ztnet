@@ -3,6 +3,20 @@ import nodemailer, { type TransportOptions } from "nodemailer";
 import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 
+export const inviteOrganizationTemplate = () => {
+	return {
+		subject: "Invitation to join ZTNET Organization <%= fromOrganization %>",
+		body:
+			"Hello <%= toEmail %>,<br /><br />" +
+			"You have been invited by <%= fromAdmin %> to join our ZTNET organization, '<%= fromOrganization %>'. We are excited to potentially have you on board and look forward to collaborating with you.<br /><br />" +
+			"To accept this invitation, please follow the link provided.<br /><br />" +
+			"If you are not familiar with '<%= fromAdmin %>' or '<%= fromOrganization %>', please disregard this message for your security.<br /><br />" +
+			"Warm regards,<br />" +
+			"<%= fromOrganization %><br />" +
+			"ZTNET Team",
+	};
+};
+
 export const inviteUserTemplate = () => {
 	return {
 		subject: "ZTNET -- Invitation to join network: <%= nwid %>",

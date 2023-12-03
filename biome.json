@@ -6,7 +6,8 @@
 	"files": {
 		"ignore": [
 			"**/*.js",
-			"install.ztnet/**/*"
+			"install.ztnet/**/*",
+			".devcontainer/**/*"
 		]
 	},
 	"formatter": {

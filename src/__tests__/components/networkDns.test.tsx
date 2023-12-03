@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { NextRouter, useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { NextIntlProvider } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 
@@ -55,9 +55,9 @@ describe("<NetworkDns />", () => {
 
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<NetworkDns />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 

@@ -40,7 +40,7 @@ const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
-	const t = useTranslations("tableFooter"); // use the 'footer' namespace
+	const t = useTranslations("commonTable"); // use the 'footer' namespace
 	const [pageSize, setPageSize] = useState<string | number>(
 		table.getState().pagination.pageSize,
 	);
@@ -80,17 +80,18 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 				>
 					{[10, 20, 30, 40, 50, 100].map((pageSize) => (
 						<option key={pageSize} value={pageSize}>
-							{t("show")} {pageSize}
+							{t("tableFooter.show")} {pageSize}
 						</option>
 					))}
-					<option value="all">{t("show")} All</option>
+					<option value="all">{t("tableFooter.show")} All</option>
 				</select>
 			</div>
 			<div className="space-x-3 p-2">
 				<span className="flex items-center gap-1 text-xs">
-					<div>{t("page")}</div>
+					<div>{t("tableFooter.page")}</div>
 					<strong>
-						{table.getState().pagination.pageIndex + 1} {t("of")} {table.getPageCount()}
+						{table.getState().pagination.pageIndex + 1} {t("tableFooter.of")}{" "}
+						{table.getPageCount()}
 					</strong>
 				</span>
 			</div>

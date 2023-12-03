@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
 import { type ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
-import { User, UserOptions } from "@prisma/client";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -20,12 +19,7 @@ enum ConnectionStatus {
 interface IProp {
 	nwid: string;
 	central: boolean;
-}
-
-interface UserExtended extends User {
-	options: UserOptions & {
-		deAuthorizeWarning: boolean;
-	};
+	organizationId?: string;
 }
 
 const sortingMemberHex = (
@@ -115,10 +109,12 @@ const sortingIpAddress = (
 	return 0;
 };
 
-export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
+export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: IProp) => {
+	const b = useTranslations("commonButtons");
+	const c = useTranslations("commonTable");
 	const t = useTranslations();
 	const { callModal } = useModalStore((state) => state);
-	const { data: me } = api.auth.me.useQuery<UserExtended>();
+	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -156,9 +152,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				},
 			),
 			columnHelper.accessor("authorized", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.authorized")}</span>
-				),
+				header: () => <span>{c("header.authorized")}</span>,
 				id: "authorized",
 				cell: ({ getValue, row: { original } }) => {
 					return (
@@ -178,6 +172,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 														nwid,
 														memberId: original.id,
 														central,
+														organizationId,
 														updateParams: { authorized },
 													},
 													{ onSuccess: () => void refetchNetworkById() },
@@ -190,13 +185,13 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 												nwid,
 												memberId: original.id,
 												central,
+												organizationId,
 												updateParams: { authorized: event.target.checked },
 											},
 											{ onSuccess: () => void refetchNetworkById() },
 										);
 									}
 								}}
-								// className="checkbox-error checkbox"
 								className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
 							/>
 						</label>
@@ -204,24 +199,22 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				},
 			}),
 			columnHelper.accessor("name", {
-				header: () => <span>{t("networkById.networkMembersTable.column.name")}</span>,
+				header: () => <span>{c("header.name")}</span>,
 				id: "name",
 			}),
 			columnHelper.accessor("id", {
-				header: () => <span>{t("networkById.networkMembersTable.column.id")}</span>,
+				header: () => <span>{c("header.id")}</span>,
 				id: "id",
 				sortingFn: sortingMemberHex,
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("ipAssignments", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.ipAssignments.header")}</span>
-				),
+				header: () => <span>{c("header.ipAssignments.header")}</span>,
 				id: "ipAssignments",
 				sortingFn: sortingIpAddress,
 			}),
 			columnHelper.accessor("creationTime", {
-				header: () => <span>{t("networkById.networkMembersTable.column.created")}</span>,
+				header: () => <span>{c("header.created")}</span>,
 				id: "creationTime",
 				cell: (info) => {
 					const createdDate = new Date(info.getValue());
@@ -250,9 +243,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					return row?.peers?.physicalAddress;
 				},
 				{
-					header: () => (
-						<span>{t("networkById.networkMembersTable.column.physicalIp.header")}</span>
-					),
+					header: () => <span>{c("header.physicalIp.header")}</span>,
 					sortDescFirst: true,
 					id: "physicalAddress",
 					sortUndefined: -1,
@@ -263,7 +254,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							if (!centralPhysicalAddress || typeof centralPhysicalAddress !== "string")
 								return (
 									<span className="text-gray-400/50 text-sm">
-										{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
+										{c("header.physicalIp.unknownValue")}
 									</span>
 								);
 
@@ -273,7 +264,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						if (!physicalAddress || typeof physicalAddress !== "string")
 							return (
 								<span className="text-gray-400/50 text-sm">
-									{t("networkById.networkMembersTable.column.physicalIp.unknownValue")}
+									{c("header.physicalIp.unknownValue")}
 								</span>
 							);
 
@@ -282,9 +273,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 				},
 			),
 			columnHelper.accessor("conStatus", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.conStatus.header")}</span>
-				),
+				header: () => <span>{c("header.conStatus.header")}</span>,
 				id: "conStatus",
 				cell: ({ row: { original } }) => {
 					const lastSeen = new Date(original?.lastSeen);
@@ -325,7 +314,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 						// The user is considered offline
 						return (
 							<span style={cursorStyle} className="text-error" title="User is offline">
-								{t("networkById.networkMembersTable.column.conStatus.offline")}
+								{c("header.conStatus.offline")}
 								<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
 							</span>
 						);
@@ -346,9 +335,9 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 							<span
 								style={cursorStyle}
 								className="cursor-pointer text-warning"
-								title={t("networkById.networkMembersTable.column.conStatus.toolTip")}
+								title={c("header.conStatus.toolTip")}
 							>
-								{t("networkById.networkMembersTable.column.conStatus.relayed")}
+								{c("header.conStatus.relayed")}
 							</span>
 						);
 					}
@@ -359,8 +348,8 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 					) {
 						const directTitle =
 							original.conStatus === ConnectionStatus.DirectLAN
-								? t("networkById.networkMembersTable.column.conStatus.directLan")
-								: t("networkById.networkMembersTable.column.conStatus.directWan");
+								? c("header.conStatus.directLan")
+								: c("header.conStatus.directWan");
 						const versionInfo =
 							original.peers?.version && original.peers.version !== "-1.-1.-1"
 								? ` (v${original.peers.version})`
@@ -368,7 +357,7 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 
 						return (
 							<div style={cursorStyle} className="text-success " title={directTitle}>
-								{t("networkById.networkMembersTable.column.conStatus.direct", {
+								{c("header.conStatus.direct", {
 									version: versionInfo,
 								})}{" "}
 							</div>
@@ -377,16 +366,14 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 
 					return (
 						<span style={cursorStyle} className="text-error" title="User is offline">
-							{t("networkById.networkMembersTable.column.conStatus.offline")}
+							{c("header.conStatus.offline")}
 							<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
 						</span>
 					);
 				},
 			}),
 			columnHelper.accessor("action", {
-				header: () => (
-					<span>{t("networkById.networkMembersTable.column.actions.header")}</span>
-				),
+				header: () => <span>{c("header.actions")}</span>,
 				id: "action",
 				cell: ({ row: { original } }) => {
 					return (
@@ -408,13 +395,14 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 												nwid={original.nwid}
 												memberId={original.id}
 												central={central}
+												organizationId={organizationId}
 											/>
 										),
 									})
 								}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								{t("networkById.networkMembersTable.column.actions.optionBtn")}
+								{b("options")}
 							</button>
 						</div>
 					);
@@ -422,7 +410,6 @@ export const MemberHeaderColumns = ({ nwid, central = false }: IProp) => {
 			}),
 		],
 		// this is needed so the ip in table is updated accordingly
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[networkById?.network],
 	);
 

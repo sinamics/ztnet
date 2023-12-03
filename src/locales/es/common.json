@@ -2,12 +2,73 @@
 	"input": {
 		"enterToSave": "Pulsa Enter para guardar"
 	},
-	"changeButton": {
+	"commonButtons": {
+		"add": "Añadir",
 		"change": "Cambiar",
+		"create": "Crear",
 		"submit": "Enviar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
-		"generate": "Generar"
+		"close": "Cerrar",
+		"stash": "Guardar",
+		"yes": "Sí",
+		"generate": "Generar",
+		"addNetwork": "Crear una red",
+		"leaveOrganization": "Dejar la organización",
+		"inviteUser": "Invitar usuario",
+		"meta": "Meta",
+		"users": "Usuarios",
+		"kickUser": "Expulsar usuario",
+		"deleteOrganization": "Eliminar organización",
+		"userActions": "Acciones del usuario",
+		"options": "Opciones"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"networkId": "ID de Red",
+			"members": "Miembros",
+			"actions": "Acciones",
+			"role": "Rol",
+			"email": "Correo electrónico",
+			"authorized": "Auth",
+			"id": "ID",
+			"created": "Creado",
+			"networks": "Redes",
+			"group": "Grupo",
+			"account": "Cuenta",
+			"ipAssignments": {
+				"header": "IP Administrada / Latencia",
+				"notAssigned": "No Asignado"
+			},
+			"physicalIp": {
+				"header": "IP Física",
+				"unknownValue": "Desconocido"
+			},
+			"conStatus": {
+				"header": "Estado",
+				"toolTip": "No se pudo establecer conexión directa y actualmente se está retransmitiendo a través de servidores zerotier con mayor latencia",
+				"relayed": "RETRANSMITIDO",
+				"directLan": "Conexión LAN directa establecida",
+				"directWan": "Conexión WAN directa establecida",
+				"direct": "DIRECTO{version}",
+				"offline": "desconectado"
+			},
+			"status": "Estado"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Buscar una red",
+			"searchUserPlaceholder": "Buscar un usuario"
+		},
+		"tableFooter": {
+			"show": "Mostrar",
+			"page": "Página",
+			"of": "de"
+		}
+	},
+	"commonToast": {
+		"organizationDeleted": "Organización eliminada"
 	},
 	"sidebar": {
 		"navigation": "Navegación",
@@ -20,6 +81,7 @@
 		"users": "Usuarios",
 		"notification": "Notificación",
 		"controller": "Controlador",
+		"organization": "Organización",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -28,25 +90,7 @@
 		"loading": "Cargando",
 		"title": "Redes",
 		"description": "Redes VPN",
-		"addNetworkButton": "Crear una red",
 		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí."
-	},
-	"networksTable": {
-		"name": "Nombre",
-		"description": "Descripción",
-		"networkId": "ID de red",
-		"members": "Miembros",
-		"networkSearchPlaceholder": "Buscar una red"
-	},
-	"tableFooter": {
-		"show": "Mostrar",
-		"page": "Página",
-		"of": "de"
-	},
-	"modalLayout": {
-		"yesButton": "Sí",
-		"cancelButton": "Cancelar",
-		"closeButton": "Cerrar"
 	},
 	"networkById": {
 		"loading": "Cargando...",
@@ -119,9 +163,7 @@
 			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta correspondiente.",
 			"noManagedRoutesDescription2": "Si no tienes requerimientos específicos, prueba el modo Fácil de Auto-Asignación IPv4.",
 			"destinationPlaceholder": "Destino",
-			"viaPlaceholder": "objetivo",
-			"addButtonText": "Añadir",
-			"cancelButtonText": "Cancelar"
+			"viaPlaceholder": "objetivo"
 		},
 		"networkDns": {
 			"DNS": "DNS",
@@ -143,35 +185,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "Buscar cualquier cosa...",
-			"column": {
-				"authorized": "Auth",
-				"name": "Nombre",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "IP administrada / Latencia",
-					"notAssigned": "No asignado"
-				},
-				"created": "Creado",
-				"physicalIp": {
-					"header": "IP física",
-					"unknownValue": "Desconocido"
-				},
-				"conStatus": {
-					"header": "Estado",
-					"toolTip": "No se pudo establecer una conexión directa y actualmente se está retransmitiendo a través de los servidores zerotier con mayor latencia",
-					"relayed": "REENVIADO",
-					"directLan": "Conexión directa LAN establecida",
-					"directWan": "Conexión directa WAN establecida",
-					"direct": "DIRECTO{version}",
-					"offline": "desconectado "
-				},
-				"email": "Correo electrónico",
-				"status": "Estado",
-				"actions": {
-					"header": "Acciones",
-					"optionBtn": "opciones"
-				}
-			},
 			"optionModalTitle": "Opciones para miembro",
 			"tableRow": {
 				"updateName": "Haz clic para cambiar el nombre"
@@ -252,10 +265,6 @@
 				"header": "Anotación",
 				"description": "Mejore la organización de su miembro añadiendo anotaciones",
 				"placeholder": "Agregar Anotación"
-			},
-			"userActions": {
-				"header": "Acciones del Usuario",
-				"stashBtn": "Almacenar"
 			}
 		},
 		"networkHelp": {
@@ -288,7 +297,8 @@
 			"mail": "Correo",
 			"users": "Usuarios",
 			"notification": "Notificación",
-			"controller": "Controlador"
+			"controller": "Controlador",
+			"organization": "Organización"
 		},
 		"settings": {
 			"publicPages": {
@@ -308,6 +318,7 @@
 			"inviteUserTemplate": "Plantilla de invitación de usuario",
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
+			"organizationInviteTemplate": "Plantilla de invitación de organización",
 			"templates": {
 				"availableTags": "Etiquetas disponibles:",
 				"subject": "Asunto",
@@ -351,17 +362,6 @@
 			"users": {
 				"sectionTitle": "Usuarios",
 				"description": "Todos los usuarios registrados en la plataforma.",
-				"table": {
-					"id": "ID",
-					"memberName": "Nombre del miembro",
-					"email": "Correo electrónico",
-					"emailVerified": "Correo verificado",
-					"role": "Rol",
-					"networks": "Redes",
-					"group": "Grupo",
-					"emailVerifiedYes": "Sí",
-					"emailVerifiedNo": "No"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "Grupo de usuarios",
 					"userRoleLabel": "Rol de usuario",
@@ -494,6 +494,52 @@
 			},
 			"yes": "Sí",
 			"no": "No"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "organización",
+				"description": "Explora la Organización para comenzar a dar forma a la forma en que tu equipo trabaja junto. Asigna roles, invita a nuevos miembros y supervisa los permisos básicos dentro de tu organización. Diseñada para la simplicidad y facilidad de uso, esta característica beta proporciona una base para la colaboración de tu equipo. A medida que continuamos desarrollando y mejorando estos ajustes, te invitamos a proporcionar comentarios para ayudarnos a refinar la experiencia.",
+				"inputFields": {
+					"label": "Añadir Organización",
+					"description": "Crea una nueva organización",
+					"organizationName": {
+						"description": "Nombre de la organización"
+					},
+					"organizationDescription": {
+						"description": "Descripción de la Organización (Opcional)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Eliminar Organización",
+					"description": "¿Estás seguro de que quieres eliminar esta organización?",
+					"description2": "Esta acción eliminará permanentemente la organización junto con todas sus redes, miembros y datos relacionados. Esta acción no se puede deshacer.",
+					"confirmation": "Por favor, confirma que deseas proceder con la eliminación de la organización.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Escribe el nombre de la organización para confirmar"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Nombre de la Organización:",
+				"description": "Descripción:",
+				"numberOfMembers": "Número de Miembros:",
+				"pendingInvitations": "Invitaciones Pendientes:",
+				"invitationModal": {
+					"title": "Invitaciones de la Organización",
+					"description": "Antes de que puedas agregar usuarios a tu organización, es importante tener en cuenta que deben estar ya registrados en la aplicación",
+					"inputFields": {
+						"searchUser": {
+							"title": "Busca el usuario que deseas añadir",
+							"placeholder": "Buscar Usuario"
+						},
+						"userRole": {
+							"title": "Selecciona el rol del usuario"
+						}
+					}
+				}
+			}
 		}
 	},
 	"userSettings": {
@@ -567,6 +613,47 @@
 				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
 				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales."
 			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Contacta al administrador de la organización para asegurarte de tener los permisos adecuados"
+		},
+		"loading": "Cargando...",
+		"organizationDashboard": {
+			"header": "Panel de Organización"
+		},
+		"membersSection": {
+			"title": "Miembros",
+			"editUser": "Editar Usuario",
+			"role": "Rol"
+		},
+		"informationSection": {
+			"title": "Información",
+			"name": "Nombre:",
+			"created": "Creado:",
+			"members": "Miembros:"
+		},
+		"networkSection": {
+			"title": "Redes",
+			"noNetworksToShow": "No hay redes para mostrar."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "¿Abandonar la Organización?",
+			"confirmationMessage": "¿Estás seguro de querer abandonar la organización?",
+			"note": "Nota: Si decides volver a unirte a esta organización en el futuro, un administrador necesitará enviarte una nueva invitación."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Mensajes de la Organización",
+			"chatInfo": "Todos en la Organización podrán ver tu mensaje.",
+			"messageInputPlaceholder": "Escribe un mensaje...",
+			"noMessages": "Aún no hay mensajes."
+		},
+		"logFooter": {
+			"toggleLogLabel": "REG",
+			"logHeader": "Últimos 100 registros de actividad",
+			"loading": "Cargando registros..."
 		}
 	}
 }

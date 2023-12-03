@@ -13,6 +13,7 @@ import { type CentralNetwork } from "~/types/central/network";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
 const updateCache = ({
@@ -42,7 +43,7 @@ const updateCache = ({
 	);
 };
 
-export const NetworkPrivatePublic = ({ central = false }: IProp) => {
+export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const { query } = useRouter();
 	const client = useQueryClient();
@@ -62,6 +63,7 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 		privatePublicNetwork(
 			{
 				updateParams: { private: privateNetwork },
+				organizationId,
 				nwid: query.id as string,
 				central,
 			},
@@ -89,25 +91,23 @@ export const NetworkPrivatePublic = ({ central = false }: IProp) => {
 	if (isLoading) return <div>Loading</div>;
 
 	return (
-		<div className="">
-			<div className="flex flex-wrap gap-3">
-				<CardComponent
-					onClick={() => privateHandler(true)}
-					faded={!network.private}
-					title={t("networkById.privatePublicSwitch.privateCardTitle")}
-					rootClassName="min-w-full sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit flex-1 "
-					iconClassName="text-green-500"
-					content={t("networkById.privatePublicSwitch.privateCardContent")}
-				/>
-				<CardComponent
-					onClick={() => privateHandler(false)}
-					faded={network.private}
-					title={t("networkById.privatePublicSwitch.publicCardTitle")}
-					rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit flex-1"
-					iconClassName="text-warning"
-					content={t("networkById.privatePublicSwitch.publicCardContent")}
-				/>
-			</div>
+		<div className="flex gap-3">
+			<CardComponent
+				onClick={() => privateHandler(true)}
+				faded={!network.private}
+				title={t("networkById.privatePublicSwitch.privateCardTitle")}
+				rootClassName="sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
+				iconClassName="text-green-500"
+				content={t("networkById.privatePublicSwitch.privateCardContent")}
+			/>
+			<CardComponent
+				onClick={() => privateHandler(false)}
+				faded={network.private}
+				title={t("networkById.privatePublicSwitch.publicCardTitle")}
+				rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
+				iconClassName="text-warning"
+				content={t("networkById.privatePublicSwitch.publicCardContent")}
+			/>
 		</div>
 	);
 };

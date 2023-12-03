@@ -39,3 +39,26 @@ export const getRandomColor = () => {
 export const convertRGBtoRGBA = (rgb: string, alpha: number) => {
 	return rgb.replace(")", `, ${alpha})`).replace("rgb", "rgba");
 };
+
+/**
+ * Generates a consistent HSL color based on the input string.
+ * This function calculates a unique hash from the given string and then converts this hash into a hue value.
+ * The function always uses 100% saturation and 30% lightness, resulting in deep, vivid colors.
+ *
+ * @param {string} str - The input string from which the color is generated.
+ * @returns {string} The HSL color string corresponding to the input string.
+ */
+export const stringToColor = (str) => {
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+		hash = hash & hash; // Convert to 32bit integer
+	}
+
+	let color = "#";
+	for (let i = 0; i < 3; i++) {
+		const value = (hash >> (i * 8)) & 0xff;
+		color += `00${value.toString(16)}`.substr(-2);
+	}
+	return color;
+};

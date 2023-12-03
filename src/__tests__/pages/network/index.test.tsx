@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import userEvent from "@testing-library/user-event";
 import { api } from "../../../utils/api";
 import Networks from "~/pages/network";
-import { NextIntlProvider } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -46,9 +46,9 @@ describe("Networks page", () => {
 		});
 		render(
 			<QueryClientProvider client={queryClient}>
-				<NextIntlProvider locale="en" messages={enTranslation}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
 					<Networks />
-				</NextIntlProvider>
+				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 		expect(screen.getByRole("progressbar")).toBeInTheDocument();
@@ -77,9 +77,9 @@ describe("Networks page", () => {
 		// });
 
 		render(
-			<NextIntlProvider locale="en" messages={enTranslation}>
+			<NextIntlClientProvider locale="en" messages={enTranslation}>
 				<Networks />
-			</NextIntlProvider>,
+			</NextIntlClientProvider>,
 		);
 
 		expect(screen.getByText("Network 1")).toBeInTheDocument();
