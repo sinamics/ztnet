@@ -80,22 +80,22 @@ const ChatAside = () => {
 		setMessages(orgMessages);
 	}, [orgMessages]);
 
-	// Effect to handle new messages from the store
 	useEffect(() => {
-		// Merge new messages with existing messages in state
+		if (!newMessages[orgId] || newMessages[orgId].length === 0) {
+			return;
+		}
+
 		setMessages((currentMessages) => {
-			// Create a map to track seen message IDs
-			const seen = new Set();
-			if (!newMessages[orgId]) return;
-			// Combine current and new messages and filter out duplicates
-			const mergedMessages = [...currentMessages, ...newMessages[orgId]].filter(
-				(message) => {
-					const duplicate = seen.has(message.id);
-					seen.add(message.id);
-					return !duplicate;
-				},
+			const currentMessageIds = new Set(currentMessages.map((message) => message.id));
+			const newUniqueMessages = newMessages[orgId].filter(
+				(message) => !currentMessageIds.has(message.id),
 			);
 
+			if (newUniqueMessages.length === 0) {
+				return currentMessages; // No new unique messages, no state update needed
+			}
+
+			const mergedMessages = [...currentMessages, ...newUniqueMessages];
 			return mergedMessages;
 		});
 	}, [newMessages, orgId]);
@@ -103,7 +103,7 @@ const ChatAside = () => {
 	// Scroll to the bottom of the chat when new messages are added
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		scrollToBottom();
+		messageEndRef.current?.scrollIntoView({ behavior: "instant" });
 	}, [messages]);
 
 	// Mark messages as read when the aside is opened
@@ -114,10 +114,6 @@ const ChatAside = () => {
 			});
 		}
 	}, [openChats, orgId, markMessagesAsRead]);
-
-	const scrollToBottom = () => {
-		messageEndRef.current?.scrollIntoView({ behavior: "instant" });
-	};
 
 	const eventHandler = (e) => {
 		setInputMsg({
@@ -234,9 +230,7 @@ const ChatAside = () => {
 					{/* Fixed Message Input at Bottom */}
 					<div className="p-4 border-t border-gray-200 mt-auto">
 						<form className="space-y-5">
-							<p className="text-xs">
-							{t("chatSidebar.chatInfo")}
-							</p>
+							<p className="text-xs">{t("chatSidebar.chatInfo")}</p>
 							<input
 								type="text"
 								value={inputMsg.chatMessage}
