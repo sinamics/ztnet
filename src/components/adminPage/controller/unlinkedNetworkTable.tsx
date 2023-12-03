@@ -68,7 +68,7 @@ export const UnlinkedNetwork = () => {
 		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
 	}, [sorting]);
 
-	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps>();
+	const columnHelper = createColumnHelper<UnlinkedNetworkTableProps & { role: string }>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<UnlinkedNetworkTableProps>[]>(
 		() => [
