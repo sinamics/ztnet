@@ -187,8 +187,10 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				};
 				return (
 					<div className="space-y-1">
-						{generateClipboardElement(hasRfc4193, rfc4193Ip)}
-						{generateClipboardElement(has6plane, sixPlaneIp)}
+						<div className="text-left">
+							{generateClipboardElement(hasRfc4193, rfc4193Ip)}
+							{generateClipboardElement(has6plane, sixPlaneIp)}
+						</div>
 
 						{original?.ipAssignments?.map((assignedIp) => {
 							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);

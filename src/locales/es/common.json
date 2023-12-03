@@ -34,6 +34,9 @@
 			"authorized": "Auth",
 			"id": "ID",
 			"created": "Creado",
+			"networks": "Redes",
+			"group": "Grupo",
+			"account": "Cuenta",
 			"ipAssignments": {
 				"header": "IP Administrada / Latencia",
 				"notAssigned": "No Asignado"
@@ -48,7 +51,7 @@
 				"relayed": "RETRANSMITIDO",
 				"directLan": "Conexión LAN directa establecida",
 				"directWan": "Conexión WAN directa establecida",
-				"direct": "DIRECTO{versión}",
+				"direct": "DIRECTO{version}",
 				"offline": "desconectado"
 			},
 			"status": "Estado"
@@ -314,6 +317,7 @@
 			"inviteUserTemplate": "Plantilla de invitación de usuario",
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
+			"organizationInviteTemplate": "Plantilla de invitación de organización",
 			"templates": {
 				"availableTags": "Etiquetas disponibles:",
 				"subject": "Asunto",
@@ -357,17 +361,6 @@
 			"users": {
 				"sectionTitle": "Usuarios",
 				"description": "Todos los usuarios registrados en la plataforma.",
-				"table": {
-					"id": "ID",
-					"memberName": "Nombre del miembro",
-					"email": "Correo electrónico",
-					"emailVerified": "Correo verificado",
-					"role": "Rol",
-					"networks": "Redes",
-					"group": "Grupo",
-					"emailVerifiedYes": "Sí",
-					"emailVerifiedNo": "No"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "Grupo de usuarios",
 					"userRoleLabel": "Rol de usuario",

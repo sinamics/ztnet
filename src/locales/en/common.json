@@ -34,6 +34,9 @@
 			"authorized": "Auth",
 			"id": "ID",
 			"created": "Created",
+			"networks": "Networks",
+			"group": "Group",
+			"account": "Account",
 			"ipAssignments": {
 				"header": "Managed IP / Latency",
 				"notAssigned": "Not Assigned"
@@ -314,6 +317,7 @@
 			"inviteUserTemplate": "Invite user template",
 			"forgotPasswordTemplate": "Forgot Password template",
 			"notificationTemplate": "Notification template",
+			"organizationInviteTemplate": "Organization Invite template",
 			"templates": {
 				"availableTags": "Available tags:",
 				"subject": "Subject",
@@ -357,17 +361,6 @@
 			"users": {
 				"sectionTitle": "Users",
 				"description": "All registered users on the platform.",
-				"table": {
-					"id": "ID",
-					"memberName": "Member name",
-					"email": "Email",
-					"emailVerified": "Email Verified",
-					"role": "Role",
-					"networks": "Networks",
-					"group": "Group",
-					"emailVerifiedYes": "Yes",
-					"emailVerifiedNo": "No"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "User Group",
 					"userRoleLabel": "User Role",
