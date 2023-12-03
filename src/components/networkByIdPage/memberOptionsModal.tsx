@@ -31,6 +31,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	central = false,
 	organizationId,
 }) => {
+	const b = useTranslations("commonButtons");
 	const t = useTranslations();
 	const { closeModal } = useModalStore((state) => state);
 	const [state, setState] = useState(initialIpState);
@@ -547,7 +548,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4 space-y-4">
-						<p>{t("networkById.memberOptionModal.userActions.header")}</p>
+						<p>{b("userActions")}</p>
 
 						{central ? (
 							<button
@@ -561,14 +562,14 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								}
 								className="btn btn-error btn-outline btn-sm rounded-sm"
 							>
-								{t("buttons.delete")}
+								{b("delete")}
 							</button>
 						) : (
 							<button
 								onClick={() => stashMember(memberId)}
 								className="btn btn-warning btn-outline btn-sm rounded-sm"
 							>
-								{t("networkById.memberOptionModal.userActions.stashBtn")}
+								{b("stash")}
 							</button>
 						)}
 					</div>
