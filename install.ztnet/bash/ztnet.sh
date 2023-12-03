@@ -24,6 +24,11 @@ NC=$(tput sgr0) # No Color
 # Detect local IP address
 local_ip=$(hostname -I | awk '{print $1}')
 
+# Function to check if a command exists
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
 ARCH="$(uname -m)"
 case "$ARCH" in
     "x86_64")
@@ -64,7 +69,7 @@ printf "Press space to proceed with the installation..." >&2
 read -n1 -s < /dev/tty
 
 # Inform the user about the default IP and ask if they want to change it
-printf "The default IP address is ${YELLOW}$local_ip${NC}. Press Enter to use it, or type a new IP address and then press Enter.\n"
+printf "\nThe default IP address is ${YELLOW}$local_ip${NC}. Press Enter to use it, or type a new IP address and then press Enter.\n"
 
 # Read the user input
 read -r input_ip
@@ -95,10 +100,6 @@ if ! command_exists psql; then
     fi
 fi
 
-# Function to check if a command exists
-command_exists() {
-  command -v "$1" >/dev/null 2>&1
-}
 
 # update apt
 sudo apt update
