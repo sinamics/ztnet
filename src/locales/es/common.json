@@ -18,17 +18,39 @@
 		"meta": "Meta",
 		"users": "Usuarios",
 		"deleteOrganization": "Eliminar organización",
-		"userActions": "Acciones del usuario"
+		"userActions": "Acciones del usuario",
+		"options": "Opciones"
 	},
 	"commonTable": {
 		"header": {
 			"name": "Nombre",
 			"description": "Descripción",
-			"networkId": "ID de la Red",
+			"networkId": "ID de Red",
 			"members": "Miembros",
 			"actions": "Acciones",
 			"role": "Rol",
-			"email": "Email"
+			"email": "Correo electrónico",
+			"authorized": "Auth",
+			"id": "ID",
+			"created": "Creado",
+			"ipAssignments": {
+				"header": "IP Administrada / Latencia",
+				"notAssigned": "No Asignado"
+			},
+			"physicalIp": {
+				"header": "IP Física",
+				"unknownValue": "Desconocido"
+			},
+			"conStatus": {
+				"header": "Estado",
+				"toolTip": "No se pudo establecer conexión directa y actualmente se está retransmitiendo a través de servidores zerotier con mayor latencia",
+				"relayed": "RETRANSMITIDO",
+				"directLan": "Conexión LAN directa establecida",
+				"directWan": "Conexión WAN directa establecida",
+				"direct": "DIRECTO{versión}",
+				"offline": "desconectado"
+			},
+			"status": "Estado"
 		},
 		"search": {
 			"networkSearchPlaceholder": "Buscar una red",
@@ -158,35 +180,6 @@
 		},
 		"networkMembersTable": {
 			"searchPlaceholder": "Buscar cualquier cosa...",
-			"column": {
-				"authorized": "Auth",
-				"name": "Nombre",
-				"id": "ID",
-				"ipAssignments": {
-					"header": "IP administrada / Latencia",
-					"notAssigned": "No asignado"
-				},
-				"created": "Creado",
-				"physicalIp": {
-					"header": "IP física",
-					"unknownValue": "Desconocido"
-				},
-				"conStatus": {
-					"header": "Estado",
-					"toolTip": "No se pudo establecer una conexión directa y actualmente se está retransmitiendo a través de los servidores zerotier con mayor latencia",
-					"relayed": "REENVIADO",
-					"directLan": "Conexión directa LAN establecida",
-					"directWan": "Conexión directa WAN establecida",
-					"direct": "DIRECTO{version}",
-					"offline": "desconectado "
-				},
-				"email": "Correo electrónico",
-				"status": "Estado",
-				"actions": {
-					"header": "Acciones",
-					"optionBtn": "opciones"
-				}
-			},
 			"optionModalTitle": "Opciones para miembro",
 			"tableRow": {
 				"updateName": "Haz clic para cambiar el nombre"
