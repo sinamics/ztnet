@@ -181,7 +181,7 @@ const OrganizationById = ({ user }) => {
 					{/* Organization Information */}
 					<section className="bg-base-200 rounded-lg shadow-lg p-4">
 						<h2 className="text-xl font-semibold mb-4 border-b border-gray-700 pb-2">
-						{t("informationSection.title")}
+							{t("informationSection.title")}
 						</h2>
 						<ul className="space-y-2">
 							<li className="flex justify-between">
@@ -263,7 +263,7 @@ const OrganizationById = ({ user }) => {
 										<div>
 											<p>{t("leaveOrganization.confirmationMessage")}</p>
 											<p className="mt-2 text-sm text-gray-500">
-											{t("leaveOrganization.note")}
+												{t("leaveOrganization.note")}
 											</p>
 										</div>
 									),
