@@ -77,11 +77,13 @@ printf "==> " >&2
 read input_ip < /dev/tty
 
 # Use the default local_ip if the user pressed Enter without typing anything
-if [[ -z $input_ip ]]; then
-    server_ip=$local_ip
-else
-    server_ip=$input_ip
+server_ip=${input_ip:-$local_ip}
+
+# Check if http:// is already included in the server_ip
+if [[ $server_ip != http://* ]]; then
+    server_ip="http://${server_ip}"
 fi
+
 
 POSTGRES_PASSWORD="postgres"
 
@@ -206,7 +208,7 @@ DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?sche
 ZT_ADDR=
 ZT_SECRET=
 NEXT_PUBLIC_SITE_NAME="ZTnet"
-NEXTAUTH_URL="http://${server_ip:-localhost}:3000"
+NEXTAUTH_URL="${server_ip}:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
 
 # Set or update environment variables
