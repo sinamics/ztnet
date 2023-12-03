@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
-// import { useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import Input from "../elements/input";
 
 interface Iprops {
@@ -10,7 +10,8 @@ interface Iprops {
 }
 
 const EditOrganizationModal = ({ organizationId }: Iprops) => {
-	// const t = useTranslations("admin");
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("admin");
 	const [input, setInput] = useState({ orgDescription: "", orgName: "" });
 	const { closeModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
@@ -37,7 +38,9 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 		<form className="space-y-5 w-full">
 			<label className="form-control">
 				<div className="label">
-					<span className="label-text">Organization Name</span>
+					<span className="label-text">
+						{t("organization.listOrganization.organizationName")}
+					</span>
 				</div>
 				<Input
 					type="text"
@@ -50,7 +53,9 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 			</label>
 			<label className="form-control">
 				<div className="label">
-					<span className="label-text">Description</span>
+					<span className="label-text">
+						{t("organization.listOrganization.description")}
+					</span>
 				</div>
 				<textarea
 					placeholder="type here"
@@ -81,7 +86,7 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 				type="submit"
 				className="btn btn-sm"
 			>
-				Submit
+				{b("submit")}
 			</button>
 		</form>
 	);
