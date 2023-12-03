@@ -10,6 +10,7 @@
 		"cancel": "Cancel",
 		"delete": "Delete",
 		"close": "Close",
+		"stash": "Stash",
 		"yes": "Yes",
 		"generate": "Generate",
 		"addNetwork": "Create a network",
@@ -260,10 +261,6 @@
 				"header": "Anotation",
 				"description": "Enhance your member organization by adding notations",
 				"placeholder": "Add Notation"
-			},
-			"userActions": {
-				"header": "User Actions",
-				"stashBtn": "Stash"
 			}
 		},
 		"networkHelp": {

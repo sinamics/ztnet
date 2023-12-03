@@ -260,10 +260,6 @@
 				"header": "Anotasjon",
 				"description": "Forbedre din medlemsorganisasjon ved å legge til notater",
 				"placeholder": "Legg til Notat"
-			},
-			"userActions": {
-				"header": "Brukerhandlinger",
-				"stashBtn": "Arkiver"
 			}
 		},
 		"networkHelp": {

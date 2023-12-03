@@ -260,10 +260,6 @@
 				"header": "Anotación",
 				"description": "Mejore la organización de su miembro añadiendo anotaciones",
 				"placeholder": "Agregar Anotación"
-			},
-			"userActions": {
-				"header": "Acciones del Usuario",
-				"stashBtn": "Almacenar"
 			}
 		},
 		"networkHelp": {
