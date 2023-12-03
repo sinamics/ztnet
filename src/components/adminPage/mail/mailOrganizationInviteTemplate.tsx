@@ -62,8 +62,8 @@ const OrganizationInviteTemplate = () => {
 	}, [defaultTemplates]);
 
 	useEffect(() => {
-		const notificationTemplate = mailTemplates as IMailTemplate;
-		setEmailTemplate(notificationTemplate);
+		const inviteOrganizationTemplate = mailTemplates as IMailTemplate;
+		setEmailTemplate(inviteOrganizationTemplate);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mailTemplates]);
 
@@ -97,7 +97,7 @@ const OrganizationInviteTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(stateTemplate),
-				type: "notificationTemplate",
+				type: "inviteOrganizationTemplate",
 			},
 			{
 				onSuccess: () => {
@@ -167,7 +167,7 @@ const OrganizationInviteTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "notificationTemplate",
+								template: "inviteOrganizationTemplate",
 							})
 						}
 					>
@@ -178,7 +178,7 @@ const OrganizationInviteTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "notificationTemplate" })}
+						onClick={() => sendTestMail({ type: "inviteOrganizationTemplate" })}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")

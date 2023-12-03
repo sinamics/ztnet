@@ -471,8 +471,10 @@ export const adminRouter = createTRPCRouter({
 						toEmail: ctx.session.user.email,
 						toName: ctx.session.user.name,
 						fromName: ctx.session.user.name,
+						fromAdmin: ctx.session.user.name,
 						forgotLink: "https://example.com",
 						notificationMessage: "Test notification message",
+						fromOrganization: "Test Organization",
 						nwid: "123456789",
 					},
 					{ async: true },
@@ -514,6 +516,14 @@ export const adminRouter = createTRPCRouter({
 					const defaultNotificationTemplate = notificationTemplate();
 					const notifiyTemplate =
 						globalOptions?.notificationTemplate ?? defaultNotificationTemplate;
+					await sendTemplateEmail(notifiyTemplate);
+					break;
+				}
+				case "inviteOrganizationTemplate": {
+					const defaultInviteOrganizationTemplate = inviteOrganizationTemplate();
+					const notifiyTemplate =
+						globalOptions?.inviteOrganizationTemplate ??
+						defaultInviteOrganizationTemplate;
 					await sendTemplateEmail(notifiyTemplate);
 					break;
 				}
