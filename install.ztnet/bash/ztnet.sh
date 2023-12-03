@@ -21,6 +21,9 @@ GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 NC=$(tput sgr0) # No Color
 
+# Detect local IP address
+local_ip=$(hostname -I | awk '{print $1}')
+
 ARCH="$(uname -m)"
 case "$ARCH" in
     "x86_64")
@@ -189,7 +192,7 @@ DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?sche
 ZT_ADDR=
 ZT_SECRET=
 NEXT_PUBLIC_SITE_NAME="ZTnet"
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://${local_ip:-localhost}:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
 
 # Set or update environment variables
@@ -251,8 +254,7 @@ echo -e "To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}.
 echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
 
 
-# Detect local IP address
-local_ip=$(hostname -I | awk '{print $1}')
+
 
 rm -rf "$INSTALL_DIR"
 
