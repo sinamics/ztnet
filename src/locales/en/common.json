@@ -2,16 +2,34 @@
 	"input": {
 		"enterToSave": "Hit Enter to save"
 	},
-	"buttons": {
+	"commonButtons": {
 		"add": "Add",
 		"change": "Change",
 		"submit": "Submit",
 		"cancel": "Cancel",
 		"delete": "Delete",
+		"close": "Close",
+		"yes": "Yes",
 		"generate": "Generate",
-		"addNetworkButton": "Create a network",
-		"yesButton": "Yes",
-		"closeButton": "Close"
+		"addNetwork": "Create a network",
+		"leaveOrganization": "Leave Organization"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Name",
+			"description": "Description",
+			"networkId": "Network ID",
+			"members": "Members",
+			"actions": "Actions"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Search for a network"
+		},
+		"tableFooter": {
+			"show": "Show",
+			"page": "Page",
+			"of": "of"
+		}
 	},
 	"sidebar": {
 		"navigation": "Navigation",
@@ -24,6 +42,7 @@
 		"users": "Users",
 		"notification": "Notification",
 		"controller": "ZT Controller",
+		"organization": "Organization",
 		"account": "Account",
 		"user-settings": "User Settings",
 		"logout": "Logout"
@@ -33,18 +52,6 @@
 		"title": "Networks",
 		"description": "VPN Networks",
 		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here."
-	},
-	"networksTable": {
-		"name": "Name",
-		"description": "Description",
-		"networkId": "Network ID",
-		"members": "Members",
-		"networkSearchPlaceholder": "Search for a network"
-	},
-	"tableFooter": {
-		"show": "Show",
-		"page": "Page",
-		"of": "of"
 	},
 	"networkById": {
 		"loading": "Loading...",
@@ -563,6 +570,47 @@
 				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
 				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations."
 			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Contact organization admin to make sure you have proper permissions"
+		},
+		"loading": "Loading...",
+		"organizationDashboard": {
+			"header": "Organization Dashboard"
+		},
+		"membersSection": {
+			"title": "Members",
+			"editUser": "Edit User",
+			"role": "Role"
+		},
+		"informationSection": {
+			"title": "Information",
+			"name": "Name:",
+			"created": "Created:",
+			"members": "Members:"
+		},
+		"networkSection": {
+			"title": "Networks",
+			"noNetworksToShow": "No networks to display."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Leave Organization?",
+			"confirmationMessage": "Are you sure you want to leave the organization?",
+			"note": "Note: If you decide to rejoin this organization in the future, an admin will need to send you a new invitation."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Organization Messages",
+			"chatInfo": "Everyone in the Organization will be able to see your message.",
+			"messageInputPlaceholder": "Type a message...",
+			"noMessages": "No messages yet."
+		},
+		"logFooter": {
+			"toggleLogLabel": "LOG",
+			"logHeader": "Last 100 Activity Logs",
+			"loading": "Fetching logs..."
 		}
 	}
 }

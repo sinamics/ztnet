@@ -21,7 +21,7 @@ const HeadSection = () => (
 );
 
 const CentralNetworks: NextPageWithLayout = () => {
-	const b = useTranslations("buttons");
+	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const {
 		data: centralNetworks,
@@ -74,7 +74,7 @@ const CentralNetworks: NextPageWithLayout = () => {
 									d="M12 4.5v15m7.5-7.5h-15"
 								/>
 							</svg>
-							{b("addNetworkButton")}
+							{b("addNetwork")}
 						</button>
 					</div>
 					<div className="col-span-2">

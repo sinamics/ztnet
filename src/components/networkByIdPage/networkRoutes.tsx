@@ -17,7 +17,7 @@ interface IProp {
 }
 
 export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
-	const b = useTranslations("buttons");
+	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);

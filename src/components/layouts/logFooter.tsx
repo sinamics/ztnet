@@ -3,6 +3,7 @@ import { useLogAsideStore } from "~/utils/store";
 import CodeMirror from "@uiw/react-codemirror";
 import { useRouter } from "next/router";
 import { okaidia } from "@uiw/codemirror-theme-okaidia";
+import { useTranslations } from "next-intl";
 
 const formatLogsData = (logs) => {
 	return logs
@@ -16,6 +17,7 @@ const formatLogsData = (logs) => {
 };
 
 export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
+	const t = useTranslations("organization");
 	const query = useRouter().query;
 	const orgId = query.orgid as string;
 	const { open: logsOpen, toggle: toggleLogs } = useLogAsideStore();
@@ -68,7 +70,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 						/>
 					</svg>
 				)}
-				<p className="text-xs">LOG</p>
+				<p className="text-xs">{t("logFooter.toggleLogLabel")}</p>
 			</button>
 			<div
 				className={`absolute bg-base-200 shadow-md transition-all duration-150 ${
@@ -78,11 +80,11 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 				} overflow-hidden`}
 			>
 				<div className="flex justify-between">
-					<p>Last 100 Activity Logs</p>
+					<p>{t("logFooter.logHeader")}</p>
 					{logsLoading ? (
 						<div className="flex items-center">
 							<div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-900 mr-2"></div>
-							<p>Fetching logs...</p>
+							<p>{t("logFooter.loading")}</p>
 						</div>
 					) : (
 						<button onClick={() => refetchLogs()}>

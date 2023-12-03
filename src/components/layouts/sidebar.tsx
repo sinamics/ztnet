@@ -138,7 +138,7 @@ const Sidebar = (): JSX.Element => {
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
-									Organization
+								{t("organization")}
 								</span>
 							</li>
 							{me?.memberOfOrgs.map((org) => (
@@ -418,7 +418,7 @@ const Sidebar = (): JSX.Element => {
 											/>
 										</svg>
 									</span>
-									<span className="ml-3">Organizations</span>
+									<span className="ml-3">{t("organization")}</span>
 								</Link>
 							</li>
 						</>

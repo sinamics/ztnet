@@ -5,7 +5,7 @@ import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 
 const Modal = () => {
-	const t = useTranslations("buttons");
+	const t = useTranslations("commonButtons");
 	const ref = useRef(null);
 	const {
 		isOpen,
@@ -50,7 +50,7 @@ const Modal = () => {
 							<>
 								{/* closes the modal */}
 								<button className="btn" onClick={actionHandler}>
-									{t("yesButton")}
+									{t("yes")}
 								</button>
 								<button className="btn" onClick={closeModal}>
 									{t("cancel")}
@@ -58,7 +58,7 @@ const Modal = () => {
 							</>
 						) : (
 							<button className="btn" onClick={closeModal}>
-								{t("closeButton")}
+								{t("close")}
 							</button>
 						)}
 					</div>

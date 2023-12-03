@@ -2,16 +2,34 @@
 	"input": {
 		"enterToSave": "Pulsa Enter para guardar"
 	},
-	"changeButton": {
+	"commonButtons": {
 		"add": "Añadir",
 		"change": "Cambiar",
 		"submit": "Enviar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
+		"close": "Cerrar",
+		"yes": "Sí",
 		"generate": "Generar",
-		"addNetworkButton": "Crear una red",
-		"yesButton": "Sí",
-		"closeButton": "Cerrar"
+		"addNetwork": "Crear una red",
+		"leaveOrganization": "Dejar la organización"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"networkId": "ID de la Red",
+			"members": "Miembros",
+			"actions": "Acciones"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Buscar una red"
+		},
+		"tableFooter": {
+			"show": "Mostrar",
+			"page": "Página",
+			"of": "de"
+		}
 	},
 	"sidebar": {
 		"navigation": "Navegación",
@@ -24,6 +42,7 @@
 		"users": "Usuarios",
 		"notification": "Notificación",
 		"controller": "Controlador",
+		"organization": "Organización",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -33,18 +52,6 @@
 		"title": "Redes",
 		"description": "Redes VPN",
 		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí."
-	},
-	"networksTable": {
-		"name": "Nombre",
-		"description": "Descripción",
-		"networkId": "ID de red",
-		"members": "Miembros",
-		"networkSearchPlaceholder": "Buscar una red"
-	},
-	"tableFooter": {
-		"show": "Mostrar",
-		"page": "Página",
-		"of": "de"
 	},
 	"networkById": {
 		"loading": "Cargando...",
@@ -563,6 +570,47 @@
 				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
 				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales."
 			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Contacta al administrador de la organización para asegurarte de tener los permisos adecuados"
+		},
+		"loading": "Cargando...",
+		"organizationDashboard": {
+			"header": "Panel de Organización"
+		},
+		"membersSection": {
+			"title": "Miembros",
+			"editUser": "Editar Usuario",
+			"role": "Rol"
+		},
+		"informationSection": {
+			"title": "Información",
+			"name": "Nombre:",
+			"created": "Creado:",
+			"members": "Miembros:"
+		},
+		"networkSection": {
+			"title": "Redes",
+			"noNetworksToShow": "No hay redes para mostrar."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "¿Abandonar la Organización?",
+			"confirmationMessage": "¿Estás seguro de querer abandonar la organización?",
+			"note": "Nota: Si decides volver a unirte a esta organización en el futuro, un administrador necesitará enviarte una nueva invitación."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Mensajes de la Organización",
+			"chatInfo": "Todos en la Organización podrán ver tu mensaje.",
+			"messageInputPlaceholder": "Escribe un mensaje...",
+			"noMessages": "Aún no hay mensajes."
+		},
+		"logFooter": {
+			"toggleLogLabel": "REG",
+			"logHeader": "Últimos 100 registros de actividad",
+			"loading": "Cargando registros..."
 		}
 	}
 }

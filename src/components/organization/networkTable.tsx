@@ -47,7 +47,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	]);
 
 	const router = useRouter();
-	const t = useTranslations("networksTable");
+	const t = useTranslations("commonTable");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
@@ -57,12 +57,12 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => <span className="truncate">{info.getValue()}</span>,
-				header: () => <span>{t("name")}</span>,
+				header: () => <span>{t("header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("description")}</span>,
+				header: () => <span>{t("header.description")}</span>,
 			}),
 			// columnHelper.accessor("nwid", {
 			// 	cell: (info) => info.getValue(),
@@ -70,7 +70,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 			// 	// footer: (info) => info.column.id,
 			// }),
 			columnHelper.accessor("networkMembers", {
-				header: () => <span>{t("members")}</span>,
+				header: () => <span>{t("header.members")}</span>,
 				cell: (info) => {
 					const data = info.getValue();
 					return data.length;
@@ -137,7 +137,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("networkSearchPlaceholder")}
+					placeholder={t("search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">
