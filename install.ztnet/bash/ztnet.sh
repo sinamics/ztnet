@@ -60,10 +60,27 @@ printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it wil
 printf "  3. Check if Zerotier is installed, If not, it will be installed.\n"
 printf "  4. Clone ztnet repo into /tmp folder and build artifacts from latest tag version.\n"
 printf "  5. Copy artifacts to /opt/ztnet folder.\n"
-printf "${YELLOW}Please note:${NC}\n"
-printf "  - You will have the option to set a custom password for the PostgreSQL user 'postgres'.\n"
 printf "Press space to proceed with the installation..." >&2
 read -n1 -s < /dev/tty
+
+POSTGRES_PASSWORD="postgres"
+
+# Install PostgreSQL
+if ! command_exists psql; then
+    sudo apt install postgresql postgresql-contrib -y
+    # Ask user if they want to set a custom password for PostgreSQL
+    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
+    printf "yes / no ==> " >&2
+    read setCustomPassword < /dev/tty
+
+    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
+    printf "Enter the custom password: " >&2
+    read POSTGRES_PASSWORD < /dev/tty
+    echo "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';" | sudo -u postgres psql
+    else
+    echo "ALTER USER postgres WITH PASSWORD 'postgres';" | sudo -u postgres psql
+    fi
+fi
 
 # Function to check if a command exists
 command_exists() {
@@ -90,25 +107,6 @@ fi
 # Remove directories and then recreate the target directory
 rm -rf "$INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
 mkdir -p "$TARGET_DIR"
-
-POSTGRES_PASSWORD="postgres"
-
-# Install PostgreSQL
-if ! command_exists psql; then
-    sudo apt install postgresql postgresql-contrib -y
-    # Ask user if they want to set a custom password for PostgreSQL
-    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
-    printf "yes / no ==> " >&2
-    read setCustomPassword < /dev/tty
-
-    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
-    printf "Enter the custom password: " >&2
-    read POSTGRES_PASSWORD < /dev/tty
-    echo "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';" | sudo -u postgres psql
-    else
-    echo "ALTER USER postgres WITH PASSWORD 'postgres';" | sudo -u postgres psql
-    fi
-fi
 
 # Install Node.js if it's not installed or if installed version is not the number defined in 'NODE_MAJOR' variable
 if ! command_exists node; then
