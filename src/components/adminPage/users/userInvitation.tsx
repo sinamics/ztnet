@@ -168,7 +168,7 @@ const UserInvitationLink = () => {
 				rootFormClassName="flex flex-col space-y-2 w-6/6"
 				size="sm"
 				placeholder=""
-				buttonText={t("buttons.generate")}
+				buttonText={t("commonButtons.generate")}
 				fields={[
 					{
 						name: "secret",

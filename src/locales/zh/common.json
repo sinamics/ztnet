@@ -34,6 +34,9 @@
 			"authorized": "授权",
 			"id": "ID",
 			"created": "创建时间",
+			"networks": "网络",
+			"group": "组",
+			"account": "账户",
 			"ipAssignments": {
 				"header": "管理的IP / 延迟",
 				"notAssigned": "未分配"
@@ -48,7 +51,7 @@
 				"relayed": "中继",
 				"directLan": "已建立直接LAN连接",
 				"directWan": "已建立直接WAN连接",
-				"direct": "直接连接{版本}",
+				"direct": "直接连接{version}",
 				"offline": "离线"
 			},
 			"status": "状态"
@@ -314,6 +317,7 @@
 			"inviteUserTemplate": "邀请用户模板",
 			"forgotPasswordTemplate": "忘记密码模板",
 			"notificationTemplate": "通知模板",
+			"organizationInviteTemplate": "组织邀请模板",
 			"templates": {
 				"availableTags": "可用的标签：",
 				"subject": "主题",
@@ -357,17 +361,6 @@
 			"users": {
 				"sectionTitle": "用户",
 				"description": "平台上的所有已注册用户。",
-				"table": {
-					"id": "ID",
-					"memberName": "成员名称",
-					"email": "电子邮件",
-					"emailVerified": "电子邮件已验证",
-					"role": "角色",
-					"networks": "网络",
-					"group": "组",
-					"emailVerifiedYes": "是",
-					"emailVerifiedNo": "否"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "用户组",
 					"userRoleLabel": "用户角色",

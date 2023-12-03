@@ -34,6 +34,9 @@
 			"authorized": "Aut.",
 			"id": "ID",
 			"created": "Opprettet",
+			"networks": "Nettverk",
+			"group": "Gruppe",
+			"account": "Konto",
 			"ipAssignments": {
 				"header": "Administrert IP / Latens",
 				"notAssigned": "Ikke Tildelt"
@@ -48,7 +51,7 @@
 				"relayed": "VIDERESENDT",
 				"directLan": "Direkte LAN-forbindelse etablert",
 				"directWan": "Direkte WAN-forbindelse etablert",
-				"direct": "DIREKTE{versjon}",
+				"direct": "DIREKTE{version}",
 				"offline": "frakoblet"
 			},
 			"status": "Status"
@@ -314,6 +317,7 @@
 			"inviteUserTemplate": "Inviter bruker mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
+			"organizationInviteTemplate": "Organisasjonsinvitasjonsmal",
 			"templates": {
 				"availableTags": "Tilgjengelige merker:",
 				"subject": "Emne",
@@ -357,17 +361,6 @@
 			"users": {
 				"sectionTitle": "Brukere",
 				"description": "Alle registrerte brukere på plattformen.",
-				"table": {
-					"id": "ID",
-					"memberName": "Medlemsnavn",
-					"email": "E-post",
-					"emailVerified": "E-post bekreftet",
-					"role": "Rolle",
-					"networks": "Nettverk",
-					"group": "Gruppe",
-					"emailVerifiedYes": "Ja",
-					"emailVerifiedNo": "Nei"
-				},
 				"userOptionModal": {
 					"userGroupLabel": "Brukergruppe",
 					"userRoleLabel": "Brukerrolle",
