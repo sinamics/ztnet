@@ -5,6 +5,7 @@ import { supportedLocales } from "./locales/lang";
 export const config = {
 	matcher: [
 		"/organization/:path*",
+		"/network/:path*",
 		"/dashboard/:path*", // user are redirected to dashboard
 	],
 };
