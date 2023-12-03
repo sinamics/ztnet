@@ -31,7 +31,8 @@
 			"email": "E-post"
 		},
 		"search": {
-			"networkSearchPlaceholder": "Søk etter et nettverk"
+			"networkSearchPlaceholder": "Søk etter et nettverk",
+			"searchUserPlaceholder": "Søk etter en bruker"
 		},
 		"tableFooter": {
 			"show": "Vis",
@@ -302,7 +303,8 @@
 			"mail": "Post",
 			"users": "Brukere",
 			"notification": "Varsling",
-			"controller": "Kontroller"
+			"controller": "Kontroller",
+			"organization": "Organisasjon"
 		},
 		"settings": {
 			"publicPages": {
@@ -508,6 +510,52 @@
 			},
 			"yes": "Ja",
 			"no": "Nei"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "organisasjon",
+				"description": "Utforsk Organisasjonen for å begynne å forme måten teamet ditt jobber sammen. Tildel roller, inviter nye medlemmer, og ha tilsyn med grunnleggende tillatelser i organisasjonen din. Designet for enkelhet og brukervennlighet, gir denne beta-funksjonen en grunnlag for teamets samarbeid. Ettersom vi fortsetter å utvikle og forbedre disse innstillingene, inviterer vi deg til å gi tilbakemeldinger for å hjelpe oss med å forbedre opplevelsen.",
+				"inputFields": {
+					"label": "Legg til Organisasjon",
+					"description": "Opprett en ny organisasjon",
+					"organizationName": {
+						"description": "Navn på organisasjonen"
+					},
+					"organizationDescription": {
+						"description": "Organisasjonsbeskrivelse (Valgfritt)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Slett Organisasjon",
+					"description": "Er du sikker på at du vil slette denne organisasjonen?",
+					"description2": "Denne handlingen vil permanent slette organisasjonen sammen med alle dens nettverk, medlemmer og relaterte data. Denne handlingen kan ikke angres.",
+					"confirmation": "Vennligst bekreft at du vil fortsette med å slette organisasjonen.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Skriv navnet på organisasjonen for å bekrefte"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Organisasjonsnavn:",
+				"description": "Beskrivelse:",
+				"numberOfMembers": "Antall Medlemmer:",
+				"pendingInvitations": "Ventende Invitasjoner:",
+				"invitationModal": {
+					"title": "Organisasjonsinvitasjoner",
+					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
+					"inputFields": {
+						"searchUser": {
+							"title": "Søk etter brukeren du ønsker å legge til",
+							"placeholder": "Søk Bruker"
+						},
+						"userRole": {
+							"title": "Velg brukerens rolle"
+						}
+					}
+				}
+			}
 		}
 	},
 	"userSettings": {

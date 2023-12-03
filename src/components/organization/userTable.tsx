@@ -40,6 +40,9 @@ interface Iprops {
 	organizationId: string;
 }
 export const OrganizationUserTable = ({ organizationId }: Iprops) => {
+	const ct = useTranslations("commonTable");
+	const cb = useTranslations("commonButtons");
+	const t = useTranslations("commonTable");
 	const { data: tableData } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
@@ -51,8 +54,6 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 		{ id: "id", desc: true },
 	]);
 
-	const b = useTranslations("commonButtons");
-	const t = useTranslations("commonTable");
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
@@ -102,7 +103,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 								}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								{b("userActions")}
+								{cb("userActions")}
 							</button>
 						</div>
 					);
@@ -166,7 +167,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder="Search users"
+					placeholder={ct("search.searchUserPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">

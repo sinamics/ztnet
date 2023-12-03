@@ -31,7 +31,8 @@
 			"email": "Email"
 		},
 		"search": {
-			"networkSearchPlaceholder": "Search for a network"
+			"networkSearchPlaceholder": "Search for a network",
+			"searchUserPlaceholder": "Search for a user"
 		},
 		"tableFooter": {
 			"show": "Show",
@@ -302,7 +303,8 @@
 			"mail": "Mail",
 			"users": "Users",
 			"notification": "Notification",
-			"controller": "Controller"
+			"controller": "Controller",
+			"organization": "Organization"
 		},
 		"settings": {
 			"publicPages": {

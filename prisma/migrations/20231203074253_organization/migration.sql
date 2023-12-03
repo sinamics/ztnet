@@ -51,15 +51,6 @@ CREATE TABLE "LastReadMessage" (
 );
 
 -- CreateTable
-CREATE TABLE "NetworkAccess" (
-    "userId" TEXT NOT NULL,
-    "networkId" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
-
-    CONSTRAINT "NetworkAccess_pkey" PRIMARY KEY ("userId","networkId","organizationId")
-);
-
--- CreateTable
 CREATE TABLE "OrganizationSettings" (
     "id" SERIAL NOT NULL,
     "organizationId" TEXT NOT NULL,
@@ -140,16 +131,7 @@ ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_lastMessageId_fkey
 ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "NetworkAccess" ADD CONSTRAINT "NetworkAccess_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "NetworkAccess" ADD CONSTRAINT "NetworkAccess_networkId_fkey" FOREIGN KEY ("networkId") REFERENCES "network"("nwid") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "NetworkAccess" ADD CONSTRAINT "NetworkAccess_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LastReadMessage" ADD CONSTRAINT "LastReadMessage_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationSettings" ADD CONSTRAINT "OrganizationSettings_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;

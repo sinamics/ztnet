@@ -31,7 +31,8 @@
 			"email": "Email"
 		},
 		"search": {
-			"networkSearchPlaceholder": "Buscar una red"
+			"networkSearchPlaceholder": "Buscar una red",
+			"searchUserPlaceholder": "Buscar un usuario"
 		},
 		"tableFooter": {
 			"show": "Mostrar",
@@ -302,7 +303,8 @@
 			"mail": "Correo",
 			"users": "Usuarios",
 			"notification": "Notificación",
-			"controller": "Controlador"
+			"controller": "Controlador",
+			"organization": "Organización"
 		},
 		"settings": {
 			"publicPages": {
@@ -508,6 +510,52 @@
 			},
 			"yes": "Sí",
 			"no": "No"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "organización",
+				"description": "Explora la Organización para comenzar a dar forma a la forma en que tu equipo trabaja junto. Asigna roles, invita a nuevos miembros y supervisa los permisos básicos dentro de tu organización. Diseñada para la simplicidad y facilidad de uso, esta característica beta proporciona una base para la colaboración de tu equipo. A medida que continuamos desarrollando y mejorando estos ajustes, te invitamos a proporcionar comentarios para ayudarnos a refinar la experiencia.",
+				"inputFields": {
+					"label": "Añadir Organización",
+					"description": "Crea una nueva organización",
+					"organizationName": {
+						"description": "Nombre de la organización"
+					},
+					"organizationDescription": {
+						"description": "Descripción de la Organización (Opcional)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Eliminar Organización",
+					"description": "¿Estás seguro de que quieres eliminar esta organización?",
+					"description2": "Esta acción eliminará permanentemente la organización junto con todas sus redes, miembros y datos relacionados. Esta acción no se puede deshacer.",
+					"confirmation": "Por favor, confirma que deseas proceder con la eliminación de la organización.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Escribe el nombre de la organización para confirmar"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Nombre de la Organización:",
+				"description": "Descripción:",
+				"numberOfMembers": "Número de Miembros:",
+				"pendingInvitations": "Invitaciones Pendientes:",
+				"invitationModal": {
+					"title": "Invitaciones de la Organización",
+					"description": "Antes de que puedas agregar usuarios a tu organización, es importante tener en cuenta que deben estar ya registrados en la aplicación",
+					"inputFields": {
+						"searchUser": {
+							"title": "Busca el usuario que deseas añadir",
+							"placeholder": "Buscar Usuario"
+						},
+						"userRole": {
+							"title": "Selecciona el rol del usuario"
+						}
+					}
+				}
+			}
 		}
 	},
 	"userSettings": {
