@@ -79,11 +79,10 @@ read input_ip < /dev/tty
 # Use the default local_ip if the user pressed Enter without typing anything
 server_ip=${input_ip:-$local_ip}
 
-# Check if http:// is already included in the server_ip
-if [[ $server_ip != http://* ]]; then
+# Check if the input already starts with http:// or https://
+if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
-
 
 POSTGRES_PASSWORD="postgres"
 
