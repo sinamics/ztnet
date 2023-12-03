@@ -14,6 +14,7 @@ interface Iprops {
 }
 
 const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
+	const b = useTranslations("commonButtons");
 	const t = useTranslations("admin");
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
@@ -97,14 +98,14 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>
-										Kick User
+										{b("kickUser")}
 									</button>
 									<button
 										onClick={() => setDelete(!deleted)}
 										type="submit"
 										className="btn-sm btn w-2/6"
 									>
-										Cancle
+										{b("cancel")}
 									</button>
 								</div>
 							</form>
@@ -114,7 +115,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 								type="submit"
 								className="btn-sm btn btn-error btn-outline"
 							>
-								Kick User
+								{b("kickUser")}
 							</button>
 						)}
 					</div>

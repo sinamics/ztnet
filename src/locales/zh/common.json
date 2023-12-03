@@ -18,6 +18,7 @@
 		"inviteUser": "邀请用户",
 		"meta": "元数据",
 		"users": "用户",
+		"kickUser": "踢出用户",
 		"deleteOrganization": "删除组织",
 		"userActions": "用户操作",
 		"options": "选项"

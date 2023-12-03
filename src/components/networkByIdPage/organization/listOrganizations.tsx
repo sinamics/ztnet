@@ -93,7 +93,7 @@ const ListOrganizations = () => {
 									callModal({
 										title: (
 											<p>
-												<span>Edit Meta</span>
+												<span>Edit Meta </span>
 												<span className="text-primary">{org.orgName}</span>
 											</p>
 										),
