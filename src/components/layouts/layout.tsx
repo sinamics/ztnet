@@ -8,7 +8,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
 import { api } from "~/utils/api";
-import { useSidebarStore } from "~/utils/store";
+import { useSidebarStore, useAsideChatStore } from "~/utils/store";
+import ChatAside from "./chatAside";
+import { LogsFooter } from "./logFooter";
+import Modal from "../shared/modal";
 
 type TUser = {
 	user: User;
@@ -54,6 +57,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
 	return (
 		<div className="outer-content">
+			<Modal />
 			<Header />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
@@ -71,6 +75,44 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 		</div>
 	);
 };
+export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Element => {
+	// if not session.user redirect to login
+	const { open: sidebarOpen } = useSidebarStore();
+	const { openChats } = useAsideChatStore();
+
+	const router = useRouter();
+	const orgId = router.query.orgid as string;
+
+	return (
+		<div className="outer-content">
+			{/* Header */}
+			<Modal />
+			<Header />
+
+			{/* Main Content including Sidebar, Content, and Chat Aside */}
+			<div className="flex flex-grow relative ">
+				{/* Sidebar */}
+				<aside className={`duration-150 ${sidebarOpen ? "w-64" : "w-0 opacity-0"}`}>
+					<Sidebar />
+				</aside>
+
+				{/* Main Content */}
+				<div
+					className={`flex-grow custom-scrollbar custom-overflow transition-all duration-150 ${
+						openChats.includes(orgId) ? "mr-72" : ""
+					}`}
+				>
+					{children}
+					{/* Logs Footer */}
+					<LogsFooter sidebarOpen={sidebarOpen} asideOpen={openChats.includes(orgId)} />
+				</div>
+
+				{/* Chat Aside */}
+				<ChatAside />
+			</div>
+		</div>
+	);
+};
 
 export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
@@ -80,6 +122,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	}
 	return (
 		<div className="outer-content">
+			<Modal />
 			<Header />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>

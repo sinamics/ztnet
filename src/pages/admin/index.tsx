@@ -7,6 +7,7 @@ import { globalSiteTitle } from "~/utils/global";
 import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
+import Organization from "./organization";
 import { GetServerSidePropsContext } from "next";
 import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
@@ -49,6 +50,11 @@ const AdminSettings = () => {
 			name: t("tabs.controller"),
 			value: "controller",
 			component: <Controller />,
+		},
+		{
+			name: t("tabs.organization"),
+			value: "organization",
+			component: <Organization />,
 		},
 	];
 

@@ -14,6 +14,7 @@ import { type NetworkEntity } from "~/types/local/network";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 
 const updateCache = ({
@@ -43,7 +44,7 @@ const updateCache = ({
 	);
 };
 
-const NetworkName = ({ central = false }: IProp) => {
+const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const client = useQueryClient();
 	const [state, setState] = useState({
@@ -88,6 +89,7 @@ const NetworkName = ({ central = false }: IProp) => {
 			{
 				nwid: networkById?.network?.id,
 				central,
+				organizationId,
 				updateParams: { name: state?.networkName },
 			},
 			{
@@ -128,7 +130,7 @@ const NetworkName = ({ central = false }: IProp) => {
 	return (
 		<div className="flex flex-col justify-between sm:flex-row">
 			<span className="font-medium">{t("networkName")}</span>
-			<span className="relative left-7 flex items-center gap-2">
+			<span className="flex items-center gap-2">
 				{state.editNetworkName ? (
 					<form onSubmit={changeNameHandler}>
 						<Input

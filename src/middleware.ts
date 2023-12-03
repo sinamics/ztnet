@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supportedLocales } from "./locales/lang";
-export const config = { matcher: ["/dashboard", "/networks"] };
+
+// run middleware on these paths
+export const config = {
+	matcher: [
+		"/organization/:path*",
+		"/dashboard/:path*", // user are redirected to dashboard
+	],
+};
 
 const PUBLIC_FILE = /\.(.*)$/;
 
@@ -37,7 +44,6 @@ export async function middleware(req: NextRequest) {
 				preferredLocale = matchedLocale.locale;
 			}
 		}
-
 		// Redirect to the preferred locale if it's different from the current one
 		if (preferredLocale !== req.nextUrl.locale) {
 			return NextResponse.redirect(

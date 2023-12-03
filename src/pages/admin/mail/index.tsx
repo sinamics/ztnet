@@ -7,6 +7,7 @@ import MailUserInviteTemplate from "~/components/adminPage/mail/mailUserInviteTe
 import ForgotPasswordMailTemplate from "~/components/adminPage/mail/mailForgotPasswordTemplate";
 import NotificationTemplate from "~/components/adminPage/mail/mailNotificationTemplate";
 import { useTranslations } from "use-intl";
+import OrganizationInviteTemplate from "~/components/adminPage/mail/mailOrganizationInviteTemplate";
 
 const Mail = () => {
 	const t = useTranslations("admin");
@@ -164,6 +165,13 @@ const Mail = () => {
 					<div className="collapse-title">{t("mail.notificationTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<NotificationTemplate />
+					</div>
+				</div>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
+					<input type="checkbox" />
+					<div className="collapse-title">{t("mail.organizationInviteTemplate")}</div>
+					<div className="collapse-content" style={{ width: "100%" }}>
+						<OrganizationInviteTemplate />
 					</div>
 				</div>
 			</div>

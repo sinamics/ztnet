@@ -16,13 +16,25 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
-
+import { Socket as SocketIOServer } from "socket.io-client";
 import { getServerAuthSession } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
 	session: Session | null;
+	wss: SocketIOServer;
 };
+
+// custom type for the socket server
+interface SocketServerCtx {
+	res: {
+		socket: {
+			server?: {
+				io?: SocketIOServer;
+			};
+		};
+	};
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use it, you can export
@@ -37,6 +49,7 @@ type CreateContextOptions = {
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 	return {
 		session: opts.session,
+		wss: opts.wss,
 		prisma,
 	};
 };
@@ -47,14 +60,17 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
+export const createTRPCContext = async (
+	opts: CreateNextContextOptions & SocketServerCtx,
+) => {
 	const { req, res } = opts;
-
+	const wss = res.socket.server.io;
 	// Get the session from the server using the getServerSession wrapper function
 	const session = await getServerAuthSession({ req, res });
 
 	return createInnerTRPCContext({
 		session,
+		wss,
 	});
 };
 

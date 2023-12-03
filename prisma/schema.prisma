@@ -12,6 +12,13 @@ datasource db {
   shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
 }
 
+enum Role {
+  READ_ONLY
+  USER
+  MODERATOR
+  ADMIN
+}
+
 model GlobalOptions {
   id                    Int                               @id @default(autoincrement())
 
@@ -31,6 +38,7 @@ model GlobalOptions {
   smtpIgnoreTLS                         Boolean             @default(false)
   inviteUserTemplate                    Json?
   inviteAdminTemplate                   Json?
+  inviteOrganizationTemplate            Json?
   forgotPasswordTemplate                Json?
   verifyEmailTemplate                   Json?
   notificationTemplate                  Json?
@@ -52,11 +60,6 @@ model GlobalOptions {
   welcomeMessageBody                    String?
 }
 
-enum Role {
-  USER
-  MODERATOR
-  ADMIN
-}
 
 model network_members {
   nodeid               Int       @id @default(autoincrement())
@@ -81,10 +84,14 @@ model network {
   lastModifiedTime            DateTime?
   flowRule                    String?
   autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId                    String
+  nw_userid                   User?              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId                    String?
   tagsByName                  Json?
   capabilitiesByName          Json?
+
+  organizationId              String?
+  organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   networkMembers              network_members[]
   notations                   Notation[]
 }
@@ -187,35 +194,44 @@ model APIToken {
 }
 
 model User {
-    id                                    String            @id @default(cuid())
+    id                                    String                  @id @default(cuid())
     name                                  String
-    email                                 String            @unique
+    email                                 String                  @unique
     emailVerified                         DateTime?
     lastLogin                             DateTime
     lastseen                              DateTime?
-    expirationDate                        String            @default("")
-    online                                Boolean?          @default(false)
-    role                                  Role              @default(USER)
+    expirationDate                        String                  @default("")
+    online                                Boolean?                @default(false)
+    role                                  Role                    @default(USER)
     image                                 String?
     hash                                  String
     licenseStatus                         String?
     orderStatus                           String?
-    orderId                               Int               @default(0)
-    product_id                            Int?              @default(0)
-    licenseKey                            String?           @default("")
+    orderId                               Int                     @default(0)
+    product_id                            Int?                    @default(0)
+    licenseKey                            String?                 @default("")
     tempPassword                          String?
-    firstTime                             Boolean           @default(true)
+    firstTime                             Boolean                 @default(true)
     userGroupId                           Int?
+    
+    memberOfOrgs                          Organization[]          @relation("MemberRelation") // user can be member of multiple organizations
+    organizationRoles                     UserOrganizationRole[]
+    membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
+    messages                              Messages[]
+    lastReadByUsers                       LastReadMessage[]
+    ActivityLog                           ActivityLog[]
     expiresAt                             DateTime? // null means it never expires
-    isActive                              Boolean           @default(true)
+    isActive                              Boolean                 @default(true)
 
-    userGroup       UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-    options         UserOptions?
-    accounts        Account[]
-    sessions        Session[]
-    network         network[]
-    apiTokens       APIToken[]
+    userGroup                             UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+    options                               UserOptions?
+    accounts                              Account[]
+    sessions                              Session[]
+    network                               network[]
+    apiTokens                             APIToken[]
 }
+
+
 
 model VerificationToken {
     identifier String
@@ -237,6 +253,96 @@ model UserInvitation {
   timesUsed       Int       @default(0)
   createdBy       String      
   createdAt       DateTime  @default(now())
+}
+
+
+//
+// ORGANIZATION
+//
+
+model Organization {
+  id                        String                      @id @default(cuid())
+  createdAt                 DateTime                    @default(now())
+  ownerId                   String
+  orgName                   String 
+  description               String?
+  users                     User[]                      @relation("MemberRelation")
+  networks                  network[]
+  settings                  OrganizationSettings?       
+  invitations               OrganizationInvitation[]    
+  membershipRequests        MembershipRequest[]         @relation("MembershipRequestsForOrganization")     
+  isActive                  Boolean                     @default(true) 
+  userRoles                 UserOrganizationRole[]
+  messages                  Messages[]
+  lastReadByUsers           LastReadMessage[]
+  ActivityLog               ActivityLog[]
+}
+
+model UserOrganizationRole {
+  userId         String
+  organizationId String
+  role           Role
+  user           User             @relation(fields: [userId], references: [id])
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, organizationId])
+}
+
+model Messages {
+  id              Int          @id @default(autoincrement())
+  content         String
+  createdAt       DateTime     @default(now())
+  userId          String       // Reference to the User model
+  user            User         @relation(fields: [userId], references: [id])
+  organizationId  String       // Reference to the Organization model
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lastReadByUsers LastReadMessage[]
+}
+
+model LastReadMessage {
+  id              Int          @id @default(autoincrement())
+  lastMessageId   Int          // ID of the last read message
+  userId          String
+  organizationId  String
+
+  lastMessage     Messages     @relation(fields: [lastMessageId], references: [id])
+  user            User         @relation(fields: [userId], references: [id])
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+}
+
+model OrganizationSettings {
+  id                Int                         @id @default(autoincrement())
+  organizationId    String                      @unique
+  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Add specific settings fields here
+}
+
+model OrganizationInvitation {
+  id                Int                         @id @default(autoincrement())
+  token             String                      @unique
+  email             String
+  organizationId    String
+  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model MembershipRequest {
+  id             Int                            @id @default(autoincrement())
+  userId         String
+  organizationId String
+  user           User                           @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser")
+  organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization", onDelete: Cascade)
+}
+
+model ActivityLog {
+  id              Int         @id @default(autoincrement())
+  action          String      
+  createdAt       DateTime    @default(now())
+  performedById   String      
+  performedBy     User        @relation(fields: [performedById], references: [id])
+  organizationId  String?     // Make this optional
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 

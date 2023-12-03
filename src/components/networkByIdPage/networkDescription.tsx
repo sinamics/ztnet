@@ -10,6 +10,7 @@ import cn from "classnames";
 
 interface IProp {
 	central?: boolean;
+	organizationId?: string;
 }
 const updateCache = ({
 	client,
@@ -40,7 +41,7 @@ const updateCache = ({
 		},
 	);
 };
-const NetworkDescription = ({ central = false }: IProp) => {
+const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const textareaRef = React.useRef<HTMLTextAreaElement>(null); // <-- Create a ref for the textarea
 	const [state, setState] = useState({
@@ -181,6 +182,7 @@ const NetworkDescription = ({ central = false }: IProp) => {
 										{
 											nwid: network.id,
 											central,
+											organizationId,
 											updateParams: { description: target.value },
 										},
 										{

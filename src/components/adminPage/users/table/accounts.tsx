@@ -38,7 +38,9 @@ export const Accounts = () => {
 		{ id: "id", desc: true },
 	]);
 
+	const ct = useTranslations("commonTable");
 	const t = useTranslations("admin");
+
 	const [globalFilter, setGlobalFilter] = useState("");
 	const { callModal } = useModalStore((state) => state);
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
@@ -56,7 +58,7 @@ export const Accounts = () => {
 			// 	minSize: 70,
 			// }),
 			columnHelper.accessor("name", {
-				header: () => <span>{t("users.users.table.memberName")}</span>,
+				header: () => <span>{ct("header.name")}</span>,
 				id: "name",
 				minSize: 350,
 				cell: ({ getValue }) => {
@@ -64,7 +66,7 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("email", {
-				header: () => <span>{t("users.users.table.email")}</span>,
+				header: () => <span>{ct("header.email")}</span>,
 				id: "email",
 			}),
 			// columnHelper.accessor("emailVerified", {
@@ -80,7 +82,7 @@ export const Accounts = () => {
 			// 	},
 			// }),
 			columnHelper.accessor((row: ExtendedUser) => row._count?.network, {
-				header: () => <span>{t("users.users.table.networks")}</span>,
+				header: () => <span>{ct("header.networks")}</span>,
 				id: "Networks",
 				minSize: 20,
 				cell: ({ getValue }) => {
@@ -88,7 +90,7 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("userGroupId", {
-				header: () => <span>{t("users.users.table.group")}</span>,
+				header: () => <span>{ct("header.group")}</span>,
 				id: "group",
 				minSize: 80,
 				cell: ({ row: { original: { userGroup } } }) => {
@@ -96,7 +98,7 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("isActive", {
-				header: () => <span>Account</span>,
+				header: () => <span>{ct("header.account")}</span>,
 				id: "isActive",
 				minSize: 80,
 				cell: ({ getValue }) => {
@@ -104,7 +106,7 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("role", {
-				header: () => <span>{t("users.users.table.role")}</span>,
+				header: () => <span>{ct("header.role")}</span>,
 				id: "role",
 				minSize: 80,
 				cell: ({ getValue }) => {
@@ -112,7 +114,7 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("action", {
-				header: () => <span>Actions</span>,
+				header: () => <span>{ct("header.actions")}</span>,
 				id: "action",
 				cell: ({ row: { original } }) => {
 					return (

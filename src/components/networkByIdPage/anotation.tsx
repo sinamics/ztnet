@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import { getRandomColor } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { toast } from "react-hot-toast";
+import { ErrorData } from "~/types/errorHandling";
 
 type IAnotationProps = {
 	name: string;
@@ -11,12 +12,13 @@ type IAnotationProps = {
 type IProps = {
 	nwid: string;
 	nodeid: number;
+	organizationId?: string;
 };
 const initalState: IAnotationProps = {
 	name: "",
 };
 
-const Anotation = ({ nwid, nodeid }: IProps) => {
+const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 	const t = useTranslations("networkById");
 	const [input, setInput] = useState<IAnotationProps>(initalState);
 	const { refetch: refetchNetworkById } = api.network.getNetworkById.useQuery(
@@ -36,7 +38,21 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 			},
 		);
 	const { mutate: removeAnotation } =
-		api.networkMember.removeMemberAnotations.useMutation();
+		api.networkMember.removeMemberAnotations.useMutation({
+			onError: (error) => {
+				if ((error.data as ErrorData)?.zodError) {
+					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+					for (const field in fieldErrors) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
+						toast.error(`${fieldErrors[field].join(", ")}`);
+					}
+				} else if (error.message) {
+					toast.error(error.message);
+				} else {
+					toast.error(t("addMemberById.error.unknown"));
+				}
+			},
+		});
 
 	const { data: memberAnotationArray, refetch: refetchMemberAnotation } =
 		api.networkMember.getMemberAnotations.useQuery(
@@ -49,7 +65,21 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 			},
 		);
 
-	const { mutate: setAnotation } = api.network.addAnotation.useMutation();
+	const { mutate: setAnotation } = api.network.addAnotation.useMutation({
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error(t("addMemberById.error.unknown"));
+			}
+		},
+	});
 
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
@@ -62,6 +92,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 			setAnotation(
 				{
 					name: value,
+					organizationId,
 					color: getRandomColor(),
 					nwid,
 					nodeid,
@@ -118,6 +149,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 									name: input?.name,
 									color: getRandomColor(),
 									nwid,
+									organizationId,
 									nodeid,
 								},
 								{
@@ -155,6 +187,7 @@ const Anotation = ({ nwid, nodeid }: IProps) => {
 								onClick={() =>
 									removeAnotation(
 										{
+											organizationId,
 											nodeid,
 											notationId: anotation?.notationId,
 										},
