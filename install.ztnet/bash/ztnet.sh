@@ -72,7 +72,7 @@ read -n1 -s < /dev/tty
 printf "\nThe default IP address is ${YELLOW}$local_ip${NC}. Press Enter to use it, or type a new IP address and then press Enter.\n"
 
 # Read the user input
-read -r input_ip
+read input_ip < /dev/tty
 
 # Use the default local_ip if the user pressed Enter without typing anything
 if [[ -z $input_ip ]]; then
