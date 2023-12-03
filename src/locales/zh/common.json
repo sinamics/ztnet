@@ -5,6 +5,7 @@
 	"commonButtons": {
 		"add": "添加",
 		"change": "更改",
+		"create": "创建",
 		"submit": "提交",
 		"cancel": "取消",
 		"delete": "删除",
@@ -12,7 +13,12 @@
 		"yes": "是",
 		"generate": "生成",
 		"addNetwork": "创建网络",
-		"leaveOrganization": "离开组织"
+		"leaveOrganization": "离开组织",
+		"inviteUser": "邀请用户",
+		"meta": "元数据",
+		"users": "用户",
+		"deleteOrganization": "删除组织",
+		"userActions": "用户操作"
 	},
 	"commonTable": {
 		"header": {
@@ -20,7 +26,9 @@
 			"description": "描述",
 			"networkId": "网络ID",
 			"members": "成员",
-			"actions": "操作"
+			"actions": "操作",
+			"role": "角色",
+			"email": "电子邮件"
 		},
 		"search": {
 			"networkSearchPlaceholder": "搜索网络"
@@ -30,6 +38,9 @@
 			"page": "页",
 			"of": "的"
 		}
+	},
+	"commonToast": {
+		"organizationDeleted": "组织已删除"
 	},
 	"sidebar": {
 		"navigation": "导航",

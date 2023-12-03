@@ -1,9 +1,12 @@
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const DeleteOrganizationModal = ({ org }) => {
+	const b = useTranslations("commonButtons");
+	const m = useTranslations("commonToast");
 	const [input, setInput] = useState({ orgNameDelete: "" });
 	const { closeModal } = useModalStore((state) => state);
 	const { mutate: deleteOrg } = api.org.deleteOrg.useMutation();
@@ -41,7 +44,7 @@ const DeleteOrganizationModal = ({ org }) => {
 							},
 							{
 								onSuccess: () => {
-									toast.success("Organization deleted successfully");
+									toast.success(m("organizationDeleted"));
 									refetchOrg();
 									closeModal();
 								},
@@ -51,7 +54,7 @@ const DeleteOrganizationModal = ({ org }) => {
 					disabled={input.orgNameDelete !== org.orgName}
 					className="btn btn-sm btn-error"
 				>
-					Delete Org
+					{b("deleteOrganization")}
 				</button>
 			</div>
 		</div>

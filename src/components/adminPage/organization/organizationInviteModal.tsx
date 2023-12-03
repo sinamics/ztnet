@@ -1,4 +1,5 @@
 import { Role } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ScrollableDropdown from "~/components/elements/dropdownlist";
@@ -11,6 +12,8 @@ interface Iprops {
 }
 
 const OrganizationInviteModal = ({ organizationId }: Iprops) => {
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("admin");
 	const [state, setState] = useState({
 		userId: null,
 		name: "",
@@ -34,17 +37,22 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 			<div className="col-span-4 space-y-10">
 				<div className="form-control max-w-xs">
 					<p className="text-sm text-gray-400">
-						Before you can add users to your organization, it's important to note that
-						they must already be registered in the application
+						{t("organization.listOrganization.invitationModal.description")}
 					</p>
 					<label className="label">
-						<span className="label-text">Search the user you want to add</span>
+						<span className="label-text">
+							{t(
+								"organization.listOrganization.invitationModal.inputFields.searchUser.title",
+							)}
+						</span>
 					</label>
 					<ScrollableDropdown
 						items={allUsers}
 						displayField="name"
 						idField="id"
-						placeholder="Search User"
+						placeholder={t(
+							"organization.listOrganization.invitationModal.inputFields.searchUser.placeholder",
+						)}
 						onOptionSelect={(selectedItem) => {
 							setState({ ...state, userId: selectedItem.id, name: selectedItem.name });
 						}}
@@ -52,7 +60,11 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 				</div>
 				<div className="form-control max-w-xs">
 					<label className="label">
-						<span className="label-text">Set the user role</span>
+						<span className="label-text">
+							{t(
+								"organization.listOrganization.invitationModal.inputFields.userRole.title",
+							)}
+						</span>
 					</label>
 					<div className="form-control w-full max-w-xs">
 						<select
@@ -85,7 +97,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 						}
 						className="btn btn-sm"
 					>
-						Invite User
+						{b("inviteUser")}
 					</button>
 				</div>
 				{/* <form className="flex justify-between">

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
@@ -7,6 +8,8 @@ import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const ListOrganizations = () => {
+	const t = useTranslations("admin");
+	const b = useTranslations("commonButtons");
 	const [openOrgId, setOpenOrgId] = useState(null);
 	const { data: userOrgs } = api.org.getAllOrg.useQuery();
 	const { callModal } = useModalStore((state) => state);
@@ -25,18 +28,21 @@ const ListOrganizations = () => {
 			{userOrgs?.map((org) => (
 				<div key={org.id} className="border border-primary p-4 my-4 rounded">
 					<p>
-						<strong>Organization Name:</strong> {org.orgName}
+						<strong>{t("organization.listOrganization.organizationName")}</strong>{" "}
+						{org.orgName}
 					</p>
 					<p>
-						<strong>Description:</strong> {org.description}
+						<strong>{t("organization.listOrganization.description")}</strong>{" "}
+						{org.description}
 					</p>
 					<p>
-						<strong>Number of members:</strong> {org?.users?.length}
+						<strong>{t("organization.listOrganization.numberOfMembers")}</strong>{" "}
+						{org?.users?.length}
 					</p>
 					<p className="pt-3">
 						{org?.invitations?.length > 0 ? (
 							<div>
-								<strong>Pending Invitations:</strong>
+								<strong>{t("organization.listOrganization.pendingInvitations")}</strong>
 								<div className="flex gap-3">
 									{org?.invitations?.map((invite) => (
 										<button
@@ -44,7 +50,9 @@ const ListOrganizations = () => {
 												callModal({
 													title: (
 														<p>
-															<span>Organization Invites</span>
+															<span>
+																{t("organization.listOrganization.invitationModal.title")}
+															</span>
 														</p>
 													),
 													content: <OrganizationInviteModal organizationId={org.id} />,
@@ -60,7 +68,7 @@ const ListOrganizations = () => {
 							</div>
 						) : null}
 					</p>
-					<div className="p-3 pt-10 flex justify-between">
+					<div className="p-3 pt-2 flex justify-between">
 						<div className="space-x-2">
 							<button
 								onClick={() =>
@@ -68,7 +76,9 @@ const ListOrganizations = () => {
 										rootStyle: "h-3/6",
 										title: (
 											<p>
-												<span>Organization Invites</span>
+												<span>
+													{t("organization.listOrganization.invitationModal.title")}
+												</span>
 											</p>
 										),
 										content: <OrganizationInviteModal organizationId={org.id} />,
@@ -76,7 +86,7 @@ const ListOrganizations = () => {
 								}
 								className="btn btn-sm"
 							>
-								Invite user
+								{b("inviteUser")}
 							</button>
 							<button
 								onClick={() => {
@@ -92,10 +102,10 @@ const ListOrganizations = () => {
 								}}
 								className="btn btn-sm"
 							>
-								Meta
+								{b("meta")}
 							</button>
 							<button onClick={() => toggleUsersTable(org.id)} className="btn btn-sm">
-								Users
+								{b("users")}
 							</button>
 						</div>
 						<button
@@ -103,7 +113,7 @@ const ListOrganizations = () => {
 								callModal({
 									title: (
 										<p>
-											<span>Delete Organization </span>
+											<span>{b("deleteOrganization")} </span>
 											<span className="text-primary">{org.orgName}</span>
 										</p>
 									),
@@ -112,7 +122,7 @@ const ListOrganizations = () => {
 							}
 							className="btn btn-sm btn-error btn-outline"
 						>
-							Delete Organization
+							{b("deleteOrganization")}
 						</button>
 					</div>
 					{openOrgId === org.id ? (
