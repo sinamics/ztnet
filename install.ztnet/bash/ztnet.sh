@@ -76,6 +76,9 @@ printf "==> " >&2
 # Read the user input
 read input_ip < /dev/tty
 
+# update apt
+sudo apt update
+
 # Use the default local_ip if the user pressed Enter without typing anything
 server_ip=${input_ip:-$local_ip}
 
@@ -102,10 +105,6 @@ if ! command_exists psql; then
     echo "ALTER USER postgres WITH PASSWORD 'postgres';" | sudo -u postgres psql
     fi
 fi
-
-
-# update apt
-sudo apt update
 
 # install git curl openssl
 if ! command_exists git; then
