@@ -21,8 +21,10 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 	});
 
 	const { closeModal } = useModalStore((state) => state);
+	const { refetch: refecthOrgUsers } = api.org.getOrgUsers.useQuery({
+		organizationId,
+	});
 	const { data: allUsers } = api.admin.getUsers.useQuery({ isAdmin: false });
-	// const { refetch: refetchOrganization } = api.org.getAllOrg.useQuery();
 
 	const { mutate: addUser } = api.org.addUser.useMutation();
 
@@ -90,6 +92,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 								{
 									onSuccess: () => {
 										toast.success("User added successfully");
+										refecthOrgUsers();
 										closeModal();
 									},
 								},
