@@ -372,13 +372,11 @@ export const networkMemberRouter = createTRPCRouter({
 		}),
 	stash: protectedProcedure
 		.input(
-			z
-				.object({
-					organizationId: z.string().optional(),
-					nwid: z.string({ required_error: "network ID not provided!" }),
-					id: z.string({ required_error: "id not provided!" }),
-				})
-				.required(),
+			z.object({
+				organizationId: z.string().optional(),
+				nwid: z.string({ required_error: "network ID not provided!" }),
+				id: z.string({ required_error: "id not provided!" }),
+			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Check if the user has permission to update the network
@@ -440,14 +438,12 @@ export const networkMemberRouter = createTRPCRouter({
 		}),
 	delete: protectedProcedure
 		.input(
-			z
-				.object({
-					organizationId: z.string().optional(),
-					central: z.boolean().default(false),
-					nwid: z.string({ required_error: "network ID not provided!" }),
-					id: z.string({ required_error: "memberId not provided!" }),
-				})
-				.required(),
+			z.object({
+				organizationId: z.string().optional(),
+				central: z.boolean().default(false),
+				nwid: z.string({ required_error: "network ID not provided!" }),
+				id: z.string({ required_error: "memberId not provided!" }),
+			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Check if the user has permission to update the network
