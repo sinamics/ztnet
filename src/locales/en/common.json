@@ -71,7 +71,7 @@
 		"organizationDeleted": "Organization deleted successfully"
 	},
 	"sidebar": {
-		"navigation": "Navigation",
+		"navigation": "Home",
 		"dashboard": "Dashboard",
 		"networks": "Local Controller",
 		"ztCentral": "ZT Central",
