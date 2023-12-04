@@ -76,7 +76,6 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 				nwid: query.id as string,
 				central,
 			};
-			// void refecthNetworkById();
 			updateCache({ client, data, input });
 		},
 		onError: (e) => {
@@ -96,6 +95,7 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 				onSuccess: () => {
 					void refetchNetworkById();
 					setState({ ...state, editNetworkName: false });
+					toast.success("Network Name updated successfully");
 				},
 			},
 		);
