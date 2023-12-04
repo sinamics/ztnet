@@ -7,6 +7,7 @@ import { type QueryClient, useQueryClient, type Query } from "@tanstack/react-qu
 import { type CentralNetwork } from "~/types/central/network";
 import { type NetworkEntity } from "~/types/local/network";
 import cn from "classnames";
+import toast from "react-hot-toast";
 
 interface IProp {
 	central?: boolean;
@@ -99,6 +100,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 			};
 			// void refecthNetworkById();
 			updateCache({ client, data, input });
+			toast.success("Description updated successfully");
 		},
 	});
 
