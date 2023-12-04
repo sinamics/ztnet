@@ -378,7 +378,6 @@ export const networkMemberRouter = createTRPCRouter({
 					nwid: z.string({ required_error: "network ID not provided!" }),
 					id: z.string({ required_error: "id not provided!" }),
 				})
-				.required(),
 		)
 		.mutation(async ({ ctx, input }) => {
 			// Check if the user has permission to update the network
