@@ -20,6 +20,9 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 	const [input, setInput] = useState({ name: "" });
 	const { closeModal } = useModalStore((state) => state);
 
+	const { refetch: refecthOrgUsers } = api.org.getOrgUsers.useQuery({
+		organizationId,
+	});
 	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
@@ -39,6 +42,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 		},
 		onSuccess: () => {
 			refecthOrg();
+			refecthOrgUsers();
 			closeModal();
 			toast.success(t("users.users.userOptionModal.toast.deleteUserSuccess"));
 		},
