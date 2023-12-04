@@ -147,7 +147,7 @@ const OrganizationById = ({ user }) => {
 													title: (
 														<p>
 															{t("membersSection.editUser")}
-															<span className="text-primary">{user.name}</span>
+															<span className="text-primary px-1">{user.name}</span>
 														</p>
 													),
 													content: (
