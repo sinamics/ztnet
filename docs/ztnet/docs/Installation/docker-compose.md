@@ -110,20 +110,4 @@ As an administrator, you possess unique capabilities not available to regular us
 Please note that while admins have visibility over registered accounts, they **cannot** interact with or modify other users' networks directly. Each network's configuration and data remain exclusive to the respective user account, maintaining privacy and security for all users.
 
 ## Ztnet Environment Variables
-The following environment variables are available for configuration. They can be set in the `.env` file or passed directly to the docker-compose.yml file.
-
-```bash
-ZT_ADDR  # zerotier controller address. Defaults to `http://zerotier:9993` for docker environment, and `http://127.0.0.1:9993` for standalone.
-ZT_SECRET  #zerotier controller secret. Defaults to the content of `/var/lib/zerotier-one/authtoken.secret`.
-NEXT_PUBLIC_SITE_NAME  #Site name. Defaults to `ZTNET`.
-POSTGRES_HOST  #Default: postgres
-POSTGRES_PORT  #Default: 5432
-POSTGRES_USER  #Default: postgres
-POSTGRES_PASSWORD  #Default: postgres
-POSTGRES_DB  #Default: ztnet
-NEXTAUTH_URL  #Default: "http://localhost:3000" # Set the NEXTAUTH_URL environment variable to the canonical URL of your site.
-NEXTAUTH_URL_INTERNAL # If provided, server-side calls will use this instead of NEXTAUTH_URL. Useful in environments when the server doesn't have access to the canonical URL of your site. Defaults to NEXTAUTH_URL.
-NEXTAUTH_SECRET  #Default: "random_secret", change this to a random string for security.
-```
-
-For more information on NEXTAUTH environment variables, see [NEXTAUTH Environment Variables](https://next-auth.js.org/configuration/options#environment-variables).
+See [Environment Variables](/installation/options#environment-variables) for more information.
