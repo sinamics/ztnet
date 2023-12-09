@@ -24,9 +24,6 @@ const config = {
 		locales: ["default", "en", "no", "zh", "es"],
 	},
 	trailingSlash: true,
-	images: {
-		domains: ["pbs.twimg.com"],
-	},
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
