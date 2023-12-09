@@ -18,7 +18,7 @@ servers:
 paths:                 
   /network/{networkId}/member:
     get:
-      summary: Return an individual member on a network
+      summary: Returns a list of Members on the network
       operationId: getNetworkMemberInfo
       parameters:
         - name: x-ztnet-auth
@@ -41,7 +41,7 @@ paths:
               schema:
                 $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkMemberExample'
+                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
           description: Unauthorized
           content:
