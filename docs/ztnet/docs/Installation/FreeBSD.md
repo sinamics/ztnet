@@ -100,3 +100,5 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     node .next/standalone/server.js
     ```
 
+## Ztnet Environment Variables
+See [Environment Variables](/installation/options#environment-variables) for more information.
