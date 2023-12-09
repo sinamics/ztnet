@@ -62,7 +62,7 @@ set -eo pipefail
 
 ## -----------------------------------------------------------------------------
 API_ADDRESS=${API_ADDRESS:-"http://localhost:3000"}
-API_URL="http://${API_ADDRESS}/api/v1"
+API_URL="${API_ADDRESS}/api/v1"
 AUTH_HEADER="x-ztnet-auth: ${ZTNET_API_TOKEN}"
 
 ## -----------------------------------------------------------------------------
