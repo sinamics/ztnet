@@ -100,3 +100,6 @@ After following these steps, `ztnet` should be completely uninstalled from your 
 ### Development
 
 The installation scripts is available in the [install.ztnet](https://github.com/sinamics/ztnet/tree/main/install.ztnet) folder in main repository.
+
+## Ztnet Environment Variables
+See [Environment Variables](/installation/options#environment-variables) for more information.
