@@ -202,7 +202,7 @@ sudo cp /etc/hosts /etc/hosts.bak
 
 ## Add the output to your hosts file
 ```bash
-./zt2hosts.sh 8056c2e21c000001 | sudo tee -i /etc/hosts
+./zt2hosts.sh ztnet.network:8056c2e21c000001 | sudo tee -i /etc/hosts
 ```
 
 ## Test it out
