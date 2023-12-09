@@ -106,7 +106,7 @@ const GET_userNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 				network.nwid,
 				false,
 			);
-			arr.push(ztControllerResponse);
+			arr.push(ztControllerResponse.network);
 		}
 
 		return res.status(200).json(arr);

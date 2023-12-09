@@ -19,6 +19,8 @@ paths:
   /network:
     get:
       summary: Returns a list of Networks you have access to
+      description: |
+        Returns an array of Networks you have access to.
       operationId: getUserNetworks
       parameters:
         - name: x-ztnet-auth
@@ -33,12 +35,63 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-              examples:
-                example1:
-                  value: ["networkid#1", "networkid#2"]
+                $ref: '../_schema/NetworkResponse.yml#/NetworkResponse'
+              example:
+                $ref: '../_example/NetworkExample.yml#/NetworkArrayExample'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    
+  /network/{networkId}:
+    get:
+      summary: Returns information about a specific network
+      operationId: getNetworkInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+      responses:
+        200:
+          description: Detailed information of the specified Network
+          content:
+            application/json:
+              schema:
+                $ref: '../_schema/NetworkResponse.yml#/NetworkResponse'
+              example:
+                $ref: '../_example/NetworkExample.yml#/NetworkExample'
         401:
           description: Unauthorized
           content:
@@ -99,7 +152,7 @@ paths:
               schema:
                 $ref: '../_schema/NetworkResponse.yml#/NetworkResponse'
               example:
-                $ref: '../_example/NetworkExample.yml'
+                $ref: '../_example/NetworkExample.yml#/NetworkExample'
                 
         401:
           description: Unauthorized
