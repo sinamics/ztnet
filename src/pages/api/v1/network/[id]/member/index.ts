@@ -60,7 +60,18 @@ const GET_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => 
 		},
 		prisma,
 	};
+
 	try {
+		// make sure user has access to the network
+		const network = await prisma.network.findUnique({
+			where: { nwid: networkId, authorId: decryptedData.userId },
+			select: { nwid: true, name: true, authorId: true },
+		});
+
+		if (!network) {
+			return res.status(404).json({ error: "Network not found or access denied." });
+		}
+
 		const arr = [];
 		const networks = await prisma.network.findUnique({
 			where: {
