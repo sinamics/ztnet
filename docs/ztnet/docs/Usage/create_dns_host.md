@@ -204,3 +204,8 @@ sudo cp /etc/hosts /etc/hosts.bak
 ```bash
 ./zt2hosts.sh 8056c2e21c000001 | sudo tee -i /etc/hosts
 ```
+
+## Test it out
+```bash
+ping awesome_user.8056c2e21c000001
+```
