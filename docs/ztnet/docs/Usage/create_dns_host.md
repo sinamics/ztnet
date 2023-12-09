@@ -64,7 +64,7 @@ set -eo pipefail
 API_ADDRESS=${API_ADDRESS:-"http://localhost:3000"}
 API_URL="${API_ADDRESS}/api/v1"
 AUTH_HEADER="x-ztnet-auth: ${ZTNET_API_TOKEN}"
-
+echo "API_URL: $API_URL"
 ## -----------------------------------------------------------------------------
 get_network_info() { curl -sH "${AUTH_HEADER}" "$API_URL/network/${1}/"; }
 get_network_members() { curl -sH "${AUTH_HEADER}" "${API_URL}/network/${1}/member/"; }
