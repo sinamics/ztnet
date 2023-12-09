@@ -60,6 +60,13 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+          },
+          networkMember: { // the <id> for network
+            specPath: "docs/Rest Api/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Network-Members", // output directory for network files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
           }
         }
       },

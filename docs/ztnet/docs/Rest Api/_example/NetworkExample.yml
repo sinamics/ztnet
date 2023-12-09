@@ -6,14 +6,14 @@ NetworkExample:
   creationTime: 1698676570111
   dns: []
   enableBroadcast: true
-  id: "network_id"
+  id: "8056c2e21c000001"
   ipAssignmentPools:
     - ipRangeEnd: "172.25.25.254"
       ipRangeStart: "172.25.25.1"
   mtu: 2800
   multicastLimit: 32
   name: "slimy-earwig"
-  nwid: "network_id"
+  nwid: "8056c2e21c000001"
   objtype: "network"
   private: true
   remoteTraceLevel: 0
@@ -35,3 +35,77 @@ NetworkExample:
     6plane: false
     rfc4193: false
     zt: false
+
+NetworkArrayExample:
+  - authTokens: [null]
+    authorizationEndpoint: ""
+    capabilities: []
+    clientId: ""
+    creationTime: 1698676570111
+    dns: []
+    enableBroadcast: true
+    id: "8056c2e21c000001"
+    ipAssignmentPools:
+      - ipRangeEnd: "172.25.25.254"
+        ipRangeStart: "172.25.25.1"
+    mtu: 2800
+    multicastLimit: 32
+    name: "slimy-earwig"
+    nwid: "8056c2e21c000001"
+    objtype: "network"
+    private: true
+    remoteTraceLevel: 0
+    remoteTraceTarget: null
+    revision: 1
+    routes:
+      - target: "172.25.25.0/24"
+        via: null
+    rules:
+      - not: false
+        or: false
+        type: "ACTION_ACCEPT"
+    rulesSource: ""
+    ssoEnabled: false
+    tags: []
+    v4AssignMode:
+      zt: true
+    v6AssignMode:
+      6plane: false
+      rfc4193: false
+      zt: false
+  - authTokens: [null]
+    authorizationEndpoint: ""
+    capabilities: []
+    clientId: ""
+    creationTime: 1698676570111
+    dns: []
+    enableBroadcast: true
+    id: "8056c2e21c000001"
+    ipAssignmentPools:
+      - ipRangeEnd: "172.25.25.254"
+        ipRangeStart: "172.25.25.1"
+    mtu: 2800
+    multicastLimit: 32
+    name: "slimy-earwig"
+    nwid: "network_id"
+    objtype: "network"
+    private: true
+    remoteTraceLevel: 0
+    remoteTraceTarget: null
+    revision: 1
+    routes:
+      - target: "172.25.25.0/24"
+        via: null
+    rules:
+      - not: false
+        or: false
+        type: "ACTION_ACCEPT"
+    rulesSource: ""
+    ssoEnabled: false
+    tags: []
+    v4AssignMode:
+      zt: true
+    v6AssignMode:
+      6plane: false
+      rfc4193: false
+      zt: false

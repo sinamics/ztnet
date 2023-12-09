@@ -1,0 +1,32 @@
+NetworkMemberExample:
+  nodeid: 1
+  id: "abcdef01234"
+  nwid: "8056c2e21c000001"
+  lastSeen: "2023-12-09T12:06:24.529Z"
+  online: false
+  deleted: false
+  name: "my-awesome-computer"
+  address: "abcdef01234"
+  creationTime: 1702110030561
+  activeBridge: false
+  authenticationExpiryTime: 0
+  authorized: true
+  capabilities: []
+  identity: "abcdef0123:0:abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123"
+  ipAssignments:
+    - "10.0.0.3"
+  lastAuthorizedCredential: null
+  lastAuthorizedCredentialType: "api"
+  lastAuthorizedTime: 1599853637989
+  lastDeauthorizedTime: 0
+  noAutoAssignIps: false
+  objtype: "member"
+  remoteTraceLevel: 0
+  remoteTraceTarget: null
+  revision: 3
+  ssoExempt: false
+  tags: []
+  vMajor: 1
+  vMinor: 12
+  vProto: 12
+  vRev: 2
