@@ -67,7 +67,7 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 	});
 
 	if (!network) {
-		return res.status(404).json({ error: "Network not found or access denied." });
+		return res.status(401).json({ error: "Network not found or access denied." });
 	}
 
 	try {
