@@ -6,14 +6,14 @@ NetworkExample:
   creationTime: 1698676570111
   dns: []
   enableBroadcast: true
-  id: "network_id"
+  id: "8056c2e21c000001"
   ipAssignmentPools:
     - ipRangeEnd: "172.25.25.254"
       ipRangeStart: "172.25.25.1"
   mtu: 2800
   multicastLimit: 32
   name: "slimy-earwig"
-  nwid: "network_id"
+  nwid: "8056c2e21c000001"
   objtype: "network"
   private: true
   remoteTraceLevel: 0
@@ -44,14 +44,14 @@ NetworkArrayExample:
     creationTime: 1698676570111
     dns: []
     enableBroadcast: true
-    id: "network_id"
+    id: "8056c2e21c000001"
     ipAssignmentPools:
       - ipRangeEnd: "172.25.25.254"
         ipRangeStart: "172.25.25.1"
     mtu: 2800
     multicastLimit: 32
     name: "slimy-earwig"
-    nwid: "network_id"
+    nwid: "8056c2e21c000001"
     objtype: "network"
     private: true
     remoteTraceLevel: 0
@@ -80,7 +80,7 @@ NetworkArrayExample:
     creationTime: 1698676570111
     dns: []
     enableBroadcast: true
-    id: "network_id"
+    id: "8056c2e21c000001"
     ipAssignmentPools:
       - ipRangeEnd: "172.25.25.254"
         ipRangeStart: "172.25.25.1"
