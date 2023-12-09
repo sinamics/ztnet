@@ -105,7 +105,7 @@ ipv6_lines=("::1 localhost ip6-localhost ip6-loopback")
 for NETWORK in $@; do
   mapfile -td \: FIELDS < <(printf "%s\0" "$NETWORK")
   DNSNAME="${FIELDS[0]}"
-  NETWORKs="${FIELDS[1]}"
+  NETWORK="${FIELDS[1]}"
 
   netmembers=$(get_network_members "$NETWORK")
   netinfo=$(get_network_info "$NETWORK")
@@ -180,19 +180,19 @@ chmod +x zt2hosts.sh
 
 ## Run the script
 ```bash
-./zt2hosts.sh <network id> <network id> <network id> ...
+./zt2hosts.sh <ZONE>:<NETWORK_ID>
 ```
 
 ## Example output
 ```bash
-./zt2hosts.sh 8056c2e21c000001
+./zt2hosts.sh ztnet.network:8056c2e21c000001
 ```
 ```bash
 127.0.0.1                                localhost                                            
-172.25.25.31                             awesome_user.8056c2e21c000001  efcc1b0947.8056c2e21c000001  
+172.25.25.31                             awesome_user.ztnet.network  efcc1b0947.8056c2e21c000001  
 ::1                                      localhost               ip6-localhost                ip6-loopback
-fd17:d395:d8cb:43a8:1899:93ef:cc1b:0947  awesome_user.8056c2e21c000001  efcc1b0947.8056c2e21c000001  
-fc1c:903d:c0ef:cc1b:0947:0000:0000:0001  awesome_user.8056c2e21c000001  efcc1b0947.8056c2e21c000001
+fd17:d395:d8cb:43a8:1899:93ef:cc1b:0947  awesome_user.ztnet.network  efcc1b0947.8056c2e21c000001  
+fc1c:903d:c0ef:cc1b:0947:0000:0000:0001  awesome_user.ztnet.network  efcc1b0947.8056c2e21c000001
 ```
 
 ## Backup your hosts file
@@ -207,5 +207,5 @@ sudo cp /etc/hosts /etc/hosts.bak
 
 ## Test it out
 ```bash
-ping awesome_user.8056c2e21c000001
+ping awesome_user.ztnet.network
 ```
