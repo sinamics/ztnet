@@ -1,4 +1,4 @@
-name: Build and Deploy Docusaurus on runner agent
+name: Deploy Docusaurus on runner agent
 
 on:
   push:

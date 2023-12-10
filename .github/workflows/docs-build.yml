@@ -1,4 +1,4 @@
-name: Build and Deploy Docusaurus
+name: Deploy Docusaurus GH-Pages
 
 on:
   # push:
