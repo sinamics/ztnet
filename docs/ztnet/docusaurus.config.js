@@ -12,7 +12,7 @@ const config = {
   favicon: 'img/ztnet_16x16.png',
 
   // Set the production url of your site here
-  url: 'https://docs.ztnet.network',
+  url: 'https://ztnet.network',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
