@@ -1,11 +1,11 @@
 name: Build and Deploy Docusaurus
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "docs/ztnet/**"
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "docs/ztnet/**"
   workflow_dispatch:
 
 jobs:
