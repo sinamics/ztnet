@@ -14,7 +14,7 @@ const limiter = rateLimit({
 
 const REQUEST_PR_MINUTE = 50;
 
-export default async function createNetworkHandler(
+export default async function apiNetworkByIdHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
