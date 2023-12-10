@@ -1,6 +1,6 @@
 ---
 id: create_dns_host
-title: Custom DNS Host File Generator
+title: DNS Host File Generator
 slug: /usage/create_dns_host
 description: Use the zt2hosts script to automate the conversion of ZTNET API network member data into a hosts file format for efficient local DNS resolution.
 ---
