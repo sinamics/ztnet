@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ztnet.network]
     defaults:
       run:
         working-directory: docs/ztnet
@@ -30,7 +30,7 @@ jobs:
       run: npm run build
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, ztnet.network]
     needs: build
     steps:
     - name: Restart Server
