@@ -36,5 +36,5 @@ jobs:
         working-directory: docs/ztnet
     needs: build
     steps:
-    - name: Restart Server
-      run: RUNNER_TRACKING_ID="ztnet.installer" && (nohup npm run serve -- --build --port 3000 --host 0.0.0.0&)
+      - name: Restart Server
+        run: pm2 restart ecosystem.config.js
