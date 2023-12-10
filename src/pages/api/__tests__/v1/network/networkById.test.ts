@@ -33,7 +33,6 @@ jest.mock("~/utils/rateLimit", () => ({
 	})),
 }));
 
-// Add these tests to your describe block
 it("should respond 200 when network is found", async () => {
 	// Mock the decryption to return a valid user ID
 	(encryptionModule.decryptAndVerifyToken as jest.Mock).mockResolvedValue({
