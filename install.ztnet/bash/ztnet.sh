@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Copyright (c) 2023-2024 sinamics
+# Author: sinamics (Bernt Christian Egeland)
+# License: GPL-3.0
+# https://github.com/sinamics/ztnet/blob/main/LICENSE
+
+clear
+cat <<"EOF"
+ ________  ___________  _____  ___    _______  ___________  
+("      "\("     _   ")(\"   \|"  \  /"     "|("     _   ") 
+ \___/   :))__/  \\__/ |.\\   \    |(: ______) )__/  \\__/  
+   /  ___/    \\_ /    |: \.   \\  | \/    |      \\_ /     
+  //  \__     |.  |    |.  \    \. | // ___)_     |.  |     
+ (:   / "\    \:  |    |    \    \ |(:      "|    \:  |     
+  \_______)    \__|     \___|\____\) \_______)     \__|     
+                                                          
+EOF
+
 # Check if the script is run as root (sudo)
 if [[ $EUID -ne 0 ]]; then
   echo "This script must be run as root (sudo). Exiting."
