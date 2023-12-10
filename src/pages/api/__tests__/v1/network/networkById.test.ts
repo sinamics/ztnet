@@ -5,7 +5,6 @@ import apiNetworkByIdHandler from "~/pages/api/v1/network/[id]";
 import { prisma } from "~/server/db";
 import * as encryptionModule from "~/utils/encryption";
 import * as ztController from "~/utils/ztApi";
-// import rateLimit from "~/utils/rateLimit";
 
 // Mock the ztController module
 jest.mock("~/utils/encryption", () => {
@@ -165,28 +164,3 @@ it("should respond 401 when decryptAndVerifyToken fails", async () => {
 		expect.objectContaining({ error: expect.any(String) }),
 	);
 });
-
-// it("should respond with 429 when rate limit is exceeded", async () => {
-// 	// Apply the mock directly to the rateLimit().check for this specific test
-// 	rateLimit().check = jest.fn().mockImplementation(() => {
-// 		throw new Error();
-// 	});
-
-// 	const req = {
-// 		method: "GET",
-// 		headers: { "x-ztnet-auth": "validApiKey" },
-// 		query: { id: "networkId" },
-// 	} as unknown as NextApiRequest;
-
-// 	const res = {
-// 		status: jest.fn().mockReturnThis(),
-// 		json: jest.fn(),
-// 		end: jest.fn(),
-// 		setHeader: jest.fn(),
-// 	} as unknown as NextApiResponse;
-
-// 	await apiNetworkByIdHandler(req, res);
-
-// 	expect(res.status).toHaveBeenCalledWith(429);
-// 	expect(res.json).toHaveBeenCalledWith({ error: "Rate limit exceeded" });
-// });
