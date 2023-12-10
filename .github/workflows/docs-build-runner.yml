@@ -31,6 +31,9 @@ jobs:
 
   deploy:
     runs-on: [self-hosted, ztnet.network]
+    defaults:
+      run:
+        working-directory: docs/ztnet
     needs: build
     steps:
     - name: Restart Server
