@@ -37,4 +37,5 @@ jobs:
     needs: build
     steps:
     - name: Restart Server
-      run: npm run serve -- --build --port 3000 --host 0.0.0.0
+      run: RUNNER_TRACKING_ID="" && (nohup npm npm run serve -- --build --port 3000 --host 0.0.0.0&)
+      run: 
