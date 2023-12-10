@@ -32,16 +32,16 @@ git clone https://github.com/sinamics/ztnet.git
 cd ztnet
 ```
 
-### 3. Open in Visual Studio Code
+### 3. Open the Project in Visual Studio Code with Dev Container
 
-Open the project in Visual Studio Code.
+To work on the project using a Dev Container in Visual Studio Code, follow these steps:
 
-### 4. Attach to Dev Container
+1. **Open Visual Studio Code** and ensure you have the 'Remote - Containers' extension installed.
 
-- In Visual Studio Code, look for the "Remote Explorer" icon in the sidebar.
-- Under the "Containers" section, you will see the Dev Container for this project.
-- Right-click and choose "Attach to Container".
-
+2. **Open the Project in a Dev Container:**  
+   - Press `Ctrl + Shift + P` to open the command palette.
+   - Type and select `Remote-Containers: Open Folder in Container`.
+   - Select the project folder and press OK. Visual Studio Code will reopen the folder inside the Dev Container.
 
 ### 5. Install Dependencies
 
