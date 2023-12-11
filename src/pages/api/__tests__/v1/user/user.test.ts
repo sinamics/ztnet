@@ -30,6 +30,20 @@ jest.mock("~/server/db", () => ({
 }));
 
 describe("createUserHandler", () => {
+	afterEach(() => {
+		// Restores all mocks back to their original value.
+		// only works when the mock was created with jest.spyOn;
+		jest.restoreAllMocks();
+	});
+	// Helper function to create a mock response object
+	const createMockRes = () =>
+		({
+			status: jest.fn().mockReturnThis(),
+			json: jest.fn(),
+			end: jest.fn(),
+			setHeader: jest.fn(),
+		}) as unknown as NextApiResponse;
+
 	it("should create a user successfully", async () => {
 		prisma.user.count = jest.fn().mockResolvedValue(0);
 
@@ -60,5 +74,46 @@ describe("createUserHandler", () => {
 
 		expect(res.status).toHaveBeenCalledWith(200);
 		expect(res.json).toHaveBeenCalledWith({ id: "newUserId" });
+	});
+
+	it("should respond 401 when decryptAndVerifyToken fails", async () => {
+		prisma.user.count = jest.fn().mockResolvedValue(1);
+
+		// Mock the decryption to fail
+		(encryptionModule.decryptAndVerifyToken as jest.Mock).mockRejectedValue(
+			new Error("Invalid token"),
+		);
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "invalidApiKey" },
+			query: { id: "networkId" },
+		} as unknown as NextApiRequest;
+
+		const res = {
+			status: jest.fn().mockReturnThis(),
+			json: jest.fn(),
+			end: jest.fn(),
+			setHeader: jest.fn(), // Mock `setHeader` if rate limiter uses it
+		} as unknown as NextApiResponse;
+
+		await createUserHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(401);
+		expect(res.json).toHaveBeenCalledWith({ error: "Invalid token" });
+	});
+
+	it("should allow only POST method", async () => {
+		const methods = ["GET", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"];
+		const req = {} as NextApiRequest;
+		const res = createMockRes();
+
+		for (const method of methods) {
+			req.method = method;
+			await createUserHandler(req, res);
+
+			expect(res.status).toHaveBeenCalledWith(405);
+			expect(res.end).toHaveBeenCalled();
+		}
 	});
 });
