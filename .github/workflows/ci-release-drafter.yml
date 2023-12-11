@@ -4,9 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+  workflow_dispatch:
 permissions:
   contents: read
-
 jobs:
   update_release_draft:
     permissions:
