@@ -18,8 +18,21 @@ jobs:
         with:
           fetch-depth: 0 # Required due to the weg Git works, without it this action won't be able to find any or the correct tags
           ref: main
-      
+
+      - name: version
+        id: version
+        run: |
+          tag=${GITHUB_REF/refs\/tags\//}
+          version=${tag#v}
+          major=${version%%.*}
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "major=${major}" >> $GITHUB_OUTPUT     
+          
       - name: Automatic release
         uses: release-drafter/release-drafter@v5
+        with:
+          version: ${{ steps.version.outputs.version }}
+        tag-template: 'v$RESOLVED_VERSION'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
