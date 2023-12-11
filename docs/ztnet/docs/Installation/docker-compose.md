@@ -14,7 +14,7 @@ sidebar_position: 1
 
 ### Setup
 
-:::info
+:::warning IMPORTANT
 
 Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of your site.  
 **Example:**
