@@ -102,12 +102,22 @@ To launch ZTNET, execute the following command in your `docker-compose.yml` dire
 This action pulls necessary images, initializes the containers, and activates the services.
 Visit `http://localhost:3000` to access the ZTNET web interface.
 
-
 ### ⚠️ NOTE
 The first registered user automatically gains admin privileges.
 As an administrator, you possess unique capabilities not available to regular users. This includes the ability to view all registered accounts on the controller.
 
 Please note that while admins have visibility over registered accounts, they **cannot** interact with or modify other users' networks directly. Each network's configuration and data remain exclusive to the respective user account, maintaining privacy and security for all users.
+
+## Updating ZTNET application
+To update ZTNET, pull the latest image and restart the container.
+
+If you are updating from a earlier version, make sure you set the `NEXTAUTH_URL` environment variable to the canonical URL or IP of your site.
+See Note above for more information about [Innstallation Setup](/installation/docker-compose#setup)
+```bash
+docker-compose pull
+docker-compose up -d
+```
+
 
 ## Ztnet Environment Variables
 See [Environment Variables](/installation/options#environment-variables) for more information.
