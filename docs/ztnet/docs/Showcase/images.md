@@ -6,7 +6,7 @@ description: Explore the visual gallery of ZTNET - Images and screenshots highli
 ---
 
 # Images
-Discover the functionality and design of the ZTNet application through this curated collection of images, providing a comprehensive visual guide to its features and user experience.
+Discover the functionality and design of the ZTNet application through this collection of images, providing a comprehensive visual guide to its features and user experience.
 
 ### Organization Layout
 ![Networks](../../../images/showcase/organization_layout.jpg)
