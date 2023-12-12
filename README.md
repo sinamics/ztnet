@@ -218,6 +218,14 @@ This project welcomes contributions. To ensure smooth collaboration, please foll
 ## 📷 Images
 View the following images for a visual overview of the ZTNet application:
 <details>
+<summary>Organization Page</summary>
+
+![Networks](docs/images/showcase/organization_layout.jpg)
+
+</summary>
+</details>
+
+<details>
 <summary>Network Page</summary>
 
 ![Networks](docs/images/showcase/network_local.jpg)
