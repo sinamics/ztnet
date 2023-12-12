@@ -36,5 +36,19 @@ jobs:
         working-directory: docs/ztnet
     needs: build
     steps:
+      - name: Move Website to Temporary Directory
+        run: |
+          # Define a directory within the user's home for the build
+          BUILD_DIR=~/ztnet_docs
+
+          # Remove any existing build directory
+          rm -rf $BUILD_DIR
+
+          # Create a new build directory
+          mkdir -p $BUILD_DIR
+
+          # Move the new build to the directory
+          mv build $BUILD_DIR
+
       - name: Restart Server
         run: pm2 restart ecosystem.config.js
