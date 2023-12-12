@@ -1,10 +1,13 @@
 ---
 id: features
-title: Features
+title: Top Features
 slug: /features
-description: ZTNET features
+description: Discover ZTNET's features for easy and collaborative ZeroTier network management.
 ---
 
+### 🤝 Organization Feature
+
+ZTNET allows users in an organization to work together in managing ZeroTier networks. This feature makes it easier for teams to collaborate and handle network tasks, perfect for groups looking to manage their ZeroTier networks in a unified way.
 
 ### 🍬 ZeroTier Central API Support
 
@@ -30,7 +33,4 @@ To make ZTNET accessible to users worldwide, the platform currently supports mul
 
 ZTNET is designed to run on a wide array of hardware configurations. Currently, it supports both ARM64 and AMD64 architectures, making it a versatile choice that can adapt to numerous devices and systems.
 
-### 📧 Email Invitations
-
-Inviting new members to your ZeroTier network has never been easier. ZTNET's built-in email invitation feature lets you quickly and effortlessly invite participants, streamlining the onboarding process and encouraging easy collaboration.
 
