@@ -10,11 +10,12 @@ interface FormData {
 	password: string;
 	name: string;
 	ztnetToken?: string;
+	token: string;
 }
 
 const RegisterForm: React.FC = () => {
 	const router = useRouter();
-	const { invite } = router.query;
+	const { invite } = router.query as { invite?: string };
 
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
@@ -22,6 +23,7 @@ const RegisterForm: React.FC = () => {
 		password: "",
 		name: "",
 		ztnetToken: "",
+		token: invite,
 	});
 
 	const { mutate: register } = api.auth.register.useMutation();
