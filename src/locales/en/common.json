@@ -14,6 +14,9 @@
 		"yes": "Yes",
 		"generate": "Generate",
 		"addNetwork": "Create a network",
+		"deleteNetwork": "Delete network",
+		"moveNetwork": "Move network",
+		"moveNetworkToOrganization": "Move network to organization",
 		"leaveOrganization": "Leave Organization",
 		"inviteUser": "Invite User",
 		"meta": "Meta",
@@ -65,6 +68,9 @@
 			"show": "Show",
 			"page": "Page",
 			"of": "of"
+		},
+		"cell": {
+			"Options": "Options"
 		}
 	},
 	"commonToast": {
@@ -90,7 +96,20 @@
 		"loading": "Loading",
 		"title": "Networks",
 		"description": "VPN Networks",
-		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here."
+		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
+		"networkActionModal": {
+			"modalTitle": "Options for Network <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Move network",
+				"description": "You can locate the ID in the organization URL.",
+				"warningText": "<strong>Warning:</strong> Transferring the network will move both the network and its members to the selected organization. This action is irreversible and cannot be undone. Please confirm the organization ID carefully before proceeding.<br></br>Additionally, ensure you have write permissions to the organization to which you are transferring the network."
+			},
+			"deleteNetwork": {
+				"title": "Delete network",
+				"description": "Deleting a network will permanently remove it along with all its associated data.",
+				"warningText": "<strong>Warning:</strong> This action will irreversibly delete the network and all related members, settings, and data. This process cannot be undone. Please ensure you have backed up any necessary information before proceeding with deletion."
+			}
+		}
 	},
 	"networkById": {
 		"loading": "Loading...",

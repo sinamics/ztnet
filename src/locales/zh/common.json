@@ -14,6 +14,9 @@
 		"yes": "是",
 		"generate": "生成",
 		"addNetwork": "创建网络",
+		"deleteNetwork": "删除网络",
+		"moveNetwork": "移动网络",
+		"moveNetworkToOrganization": "移动网络到组织",
 		"leaveOrganization": "离开组织",
 		"inviteUser": "邀请用户",
 		"meta": "元数据",
@@ -65,6 +68,9 @@
 			"show": "显示",
 			"page": "页",
 			"of": "共"
+		},
+		"cell": {
+			"Options": "选项"
 		}
 	},
 	"commonToast": {
@@ -90,7 +96,20 @@
 		"loading": "加载中",
 		"title": "网络",
 		"description": "VPN网络",
-		"noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。"
+		"noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。",
+		"networkActionModal": {
+			"modalTitle": "网络操作 <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "移动网络",
+				"description": "您可以在组织的URL中找到ID。",
+				"warningText": "<strong>警告：</strong>转移网络将把网络及其成员移至所选组织。此操作不可逆转，也无法撤销。在进行之前，请仔细确认组织的ID。<br></br>另外，请确保您有权将网络转移到目标组织的写入权限。"
+			},
+			"deleteNetwork": {
+				"title": "删除网络",
+				"description": "删除网络将永久移除它以及所有相关数据。",
+				"warningText": "<strong>警告：</strong>此操作将不可逆转地删除网络及其所有相关成员、设置和数据。此过程无法撤销。请在进行删除前确保已备份所有必要信息。"
+			}
+		}
 	},
 	"networkById": {
 		"loading": "加载中...",

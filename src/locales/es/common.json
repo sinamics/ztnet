@@ -14,6 +14,9 @@
 		"yes": "Sí",
 		"generate": "Generar",
 		"addNetwork": "Crear una red",
+		"deleteNetwork": "Eliminar red",
+		"moveNetwork": "Mover red",
+		"moveNetworkToOrganization": "Mover a la organización",
 		"leaveOrganization": "Dejar la organización",
 		"inviteUser": "Invitar usuario",
 		"meta": "Meta",
@@ -65,6 +68,9 @@
 			"show": "Mostrar",
 			"page": "Página",
 			"of": "de"
+		},
+		"cell": {
+			"Options": "Opciones"
 		}
 	},
 	"commonToast": {
@@ -90,7 +96,20 @@
 		"loading": "Cargando",
 		"title": "Redes",
 		"description": "Redes VPN",
-		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí."
+		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí.",
+		"networkActionModal": {
+			"modalTitle": "Acciones de red <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Mover red",
+				"description": "Puedes localizar el ID en la URL de la organización.",
+				"warningText": "<strong>Advertencia:</strong> Transferir la red moverá tanto la red como sus miembros a la organización seleccionada. Esta acción es irreversible y no se puede deshacer. Por favor, confirme cuidadosamente la ID de la organización antes de proceder.<br></br>Además, asegúrese de tener permisos de escritura en la organización a la cual está transfiriendo la red."
+			},
+			"deleteNetwork": {
+				"title": "Eliminar red",
+				"description": "Eliminar una red la eliminará permanentemente junto con todos sus datos asociados.",
+				"warningText": "<strong>Advertencia:</strong> Esta acción eliminará irreversiblemente la red y todos los miembros, configuraciones y datos relacionados. Este proceso no se puede deshacer. Asegúrese de haber respaldado cualquier información necesaria antes de proceder con la eliminación."
+			}
+		}
 	},
 	"networkById": {
 		"loading": "Cargando...",

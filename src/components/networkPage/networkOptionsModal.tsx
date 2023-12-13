@@ -11,7 +11,8 @@ interface Iprops {
 }
 
 const NetworkOptionsModal = ({ networkId }: Iprops) => {
-	const t = useTranslations("admin");
+	const b = useTranslations("commonButtons");
+	const t = useTranslations("networks");
 	const [action, setAction] = useState({ deleteNetwork: false, moveNetwork: false });
 	const [input, setInput] = useState({ name: "", organizationId: "" });
 	const { closeModal } = useModalStore((state) => state);
@@ -76,20 +77,18 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 			<div className={cn({ "opacity-30": false })}>
 				<div className="grid grid-cols-4 items-start gap-4 space-y-10">
 					<div className="col-span-4 ">
-						<header className="text-md">Move network to Organization</header>
+						<header className="text-md">{b("moveNetworkToOrganization")}</header>
 						<p className="text-sm text-gray-500">
-							You can locate the ID in the organization URL
+							{t("networkActionModal.moveNetwork.description")}
 						</p>
 
 						{action.moveNetwork ? (
 							<form>
 								<p className="text-sm text-red-600">
-									<strong>Warning:</strong> Transferring the network will move both the
-									network and its members to the selected organization. This action is
-									irreversible and cannot be undone. Please confirm the organization ID
-									carefully before proceeding.
-									<br /> Additionally, ensure you have write permissions to the
-									organization to which you are transferring the network.
+									{t.rich("networkActionModal.moveNetwork.warningText", {
+										strong: (children) => <strong>{children}</strong>,
+										br: () => <br />,
+									})}
 								</p>
 
 								<input
@@ -110,9 +109,9 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 											});
 										}}
 										type="submit"
-										className="btn-sm btn-warning btn w-2/6"
+										className="btn-sm btn-error btn w-2/6"
 									>
-										Move Network
+										{b("moveNetwork")}
 									</button>
 									<button
 										onClick={() =>
@@ -124,7 +123,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn w-2/6"
 									>
-										{t("users.users.userOptionModal.buttons.cancle")}
+										{b("cancel")}
 									</button>
 								</div>
 							</form>
@@ -136,24 +135,25 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 								type="submit"
 								className="btn-sm btn btn-error btn-outline"
 							>
-								Move To Organization
+								{b("moveNetwork")}
 							</button>
 						)}
 					</div>
 
 					<div className="col-span-4 ">
-						<header className="text-md">Delete Network</header>
+						<header className="text-md">
+							{t("networkActionModal.deleteNetwork.title")}
+						</header>
 						<p className="text-sm text-gray-500">
-							Deleting a network will permanently remove it along with all its associated
-							data.
+							{t("networkActionModal.deleteNetwork.description")}
 						</p>
 						{action.deleteNetwork ? (
 							<form>
 								<p className="text-sm text-red-600">
-									<strong>Warning:</strong> This action will irreversibly delete the
-									network and all related members, settings, and data. This process cannot
-									be undone. Please ensure you have backed up any necessary information
-									before proceeding with deletion.
+									{t.rich("networkActionModal.deleteNetwork.warningText", {
+										strong: (children) => <strong>{children}</strong>,
+										br: () => <br />,
+									})}
 								</p>
 								<input
 									type="text"
@@ -172,7 +172,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>
-										Delete Network
+										{t("networkActionModal.deleteNetwork.title")}
 									</button>
 									<button
 										onClick={() =>
@@ -184,7 +184,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn w-2/6"
 									>
-										{t("users.users.userOptionModal.buttons.cancle")}
+										{b("cancel")}
 									</button>
 								</div>
 							</form>
@@ -196,7 +196,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 								type="submit"
 								className="btn-sm btn btn-error btn-outline"
 							>
-								Delete Network
+								{b("deleteNetwork")}
 							</button>
 						)}
 					</div>
