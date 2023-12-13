@@ -806,9 +806,18 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			// Update the network with the new organization ID
-			return await ctx.prisma.network.update({
+			await ctx.prisma.network.update({
 				where: { nwid: input.nwid, authorId: ctx.session.user.id },
 				data: { organizationId: input.organizationId, authorId: null },
+			});
+
+			// Log the action
+			return await ctx.prisma.activityLog.create({
+				data: {
+					action: `Transferred private network ${input.nwid} to organization ${input.organizationId}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId, // Use null if organizationId is not provided
+				},
 			});
 		}),
 });
