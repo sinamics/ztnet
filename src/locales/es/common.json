@@ -134,7 +134,7 @@
 		"viewStashedMembers": "Ver miembros guardados",
 		"networkActions": "Acciones de red",
 		"deleteNetwork": {
-			"title": "Eliminar red",
+			"title": "Eliminar red {networkName}",
 			"description": "¿Estás seguro de que quieres eliminar esta red? Esto no se puede deshacer y todos los miembros serán eliminados de esta red",
 			"yesAction": "Sí, eliminar",
 			"noAction": "No, conservarlo"
