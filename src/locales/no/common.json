@@ -14,6 +14,9 @@
 		"yes": "Ja",
 		"generate": "Generere",
 		"addNetwork": "Opprett et nettverk",
+		"deleteNetwork": "Slett nettverk",
+		"moveNetwork": "Flytt nettverk",
+		"moveNetworkToOrganization": "Flytt nettverk til organisasjon",
 		"leaveOrganization": "Forlat Organisasjon",
 		"inviteUser": "Inviter Bruker",
 		"meta": "Meta",
@@ -65,6 +68,9 @@
 			"show": "Vis",
 			"page": "Side",
 			"of": "av"
+		},
+		"cell": {
+			"Options": "Aksjon"
 		}
 	},
 	"commonToast": {
@@ -90,7 +96,20 @@
 		"loading": "Laster",
 		"title": "Nettverk",
 		"description": "VPN-nettverk",
-		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her."
+		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her.",
+		"networkActionModal": {
+			"modalTitle": "Aksjon for Nettverk <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Flytt nettverk",
+				"description": "Du kan finne ID-en i organisasjonens URL.",
+				"warningText": "<strong>Advarsel:</strong> Overføring av nettverket vil flytte både nettverket og dets medlemmer til den valgte organisasjonen. Denne handlingen er ugjenkallelig og kan ikke angres. Vennligst bekreft organisasjonens ID nøye før du fortsetter.<br></br>I tillegg, sørg for at du har skriverettigheter til organisasjonen du overfører nettverket til."
+			},
+			"deleteNetwork": {
+				"title": "Slett nettverk",
+				"description": "Å slette et nettverk vil permanent fjerne det sammen med all tilknyttet data.",
+				"warningText": "<strong>Advarsel:</strong> Denne handlingen vil ugjenkallelig slette nettverket og alle relaterte medlemmer, innstillinger og data. Denne prosessen kan ikke angres. Sørg for at du har sikkerhetskopiert all nødvendig informasjon før du fortsetter med slettingen."
+			}
+		}
 	},
 	"networkById": {
 		"loading": "Laster...",

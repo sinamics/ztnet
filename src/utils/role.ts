@@ -42,7 +42,9 @@ export const checkUserOrganizationRole = async ({
 
 	// If user role is not found, deny access
 	if (!orgUserRole) {
-		throw new TRPCClientError("You don't have permission to perform this action");
+		throw new TRPCClientError(
+			"You are not a member of this organization. Contact your organization administrator to request access.",
+		);
 	}
 	// Directly return true for admin role
 	if (orgUserRole.role === "ADMIN") {
@@ -56,5 +58,7 @@ export const checkUserOrganizationRole = async ({
 	if (userRoleValue >= requiredRoleValue) {
 		return true;
 	}
-	throw new Error("You don't have permission to perform this action");
+	throw new Error(
+		"You don't have required permission to perform this action. Contact your organization administrator to request access.",
+	);
 };
