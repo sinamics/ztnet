@@ -165,7 +165,7 @@ const getData = async <T>(
 				throw new APIError("Invalid API Key", error);
 			}
 			if (statusCode === 404) {
-				throw new APIError("Endpoint Not Found", error);
+				throw new APIError("Network Not Found", error);
 			}
 		}
 		const message = `An error occurred fetching data from ${addr}`;
