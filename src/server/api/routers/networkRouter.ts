@@ -214,7 +214,7 @@ export const networkRouter = createTRPCRouter({
 	deleteNetwork: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string(),
+				nwid: z.string({ invalid_type_error: "Invalid network ID provided" }),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 			}),
@@ -230,15 +230,6 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			try {
-				// Log the action
-				await ctx.prisma.activityLog.create({
-					data: {
-						action: `Deleted network ${input.nwid}`,
-						performedById: ctx.session.user.id,
-						organizationId: input.organizationId || null,
-					},
-				});
-
 				// De-authorize all members before deleting the network
 				const members = await ztController.network_members(
 					ctx,
@@ -277,6 +268,14 @@ export const networkRouter = createTRPCRouter({
 						},
 					});
 				}
+				// Log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `Deleted network ${input.nwid}`,
+						performedById: ctx.session.user.id,
+						organizationId: input.organizationId || null,
+					},
+				});
 			} catch (error) {
 				if (error instanceof z.ZodError) {
 					return throwError(`Invalid routes provided ${error.message}`);

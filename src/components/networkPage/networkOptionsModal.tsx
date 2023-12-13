@@ -14,7 +14,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const [action, setAction] = useState({ deleteNetwork: false, moveNetwork: false });
-	const [input, setInput] = useState({ name: "", organizationId: null });
+	const [input, setInput] = useState({ organizationId: null });
 	const { closeModal } = useModalStore((state) => state);
 
 	const { refetch: refetchNetwork } = api.network.getUserNetworks.useQuery({
@@ -112,7 +112,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>
-										{b("moveNetwork")}
+										{b("imSure")}
 									</button>
 									<button
 										onClick={() =>
@@ -149,20 +149,20 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 							{t("networkActionModal.deleteNetwork.description")}
 						</p>
 						{action.deleteNetwork ? (
-							<form>
+							<form className="space-y-5">
 								<p className="text-sm text-red-600">
 									{t.rich("networkActionModal.deleteNetwork.warningText", {
 										strong: (children) => <strong>{children}</strong>,
 										br: () => <br />,
 									})}
 								</p>
-								<input
+								{/* <input
 									type="text"
-									name="name"
+									name="networkId"
 									onChange={inputHandler}
 									placeholder="Type the network ID"
 									className="input input-bordered border-warning input-sm w-full max-w-xs my-2"
-								/>
+								/> */}
 
 								<div className="flex gap-5">
 									<button
@@ -173,7 +173,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 										type="submit"
 										className="btn-sm btn-error btn w-2/6"
 									>
-										{t("networkActionModal.deleteNetwork.title")}
+										{b("imSure")}
 									</button>
 									<button
 										onClick={() =>

@@ -12,6 +12,7 @@
 		"close": "Close",
 		"stash": "Stash",
 		"yes": "Yes",
+		"imSure": "Yes, I'm sure",
 		"generate": "Generate",
 		"addNetwork": "Create a network",
 		"deleteNetwork": "Delete network",
