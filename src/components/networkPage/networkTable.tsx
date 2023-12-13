@@ -40,7 +40,8 @@ const TruncateText = ({ text }: { text: string }) => {
 };
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
-	const t = useTranslations("commonTable");
+	const t = useTranslations("networks");
+	const ct = useTranslations("commonTable");
 	const { callModal } = useModalStore((state) => state);
 
 	// Load initial state from localStorage or set to default
@@ -64,27 +65,27 @@ export const NetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("header.name")}</span>,
+				header: () => <span>{ct("header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("header.description")}</span>,
+				header: () => <span>{ct("header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("header.networkId")}</span>,
+				header: () => <span>{ct("header.networkId")}</span>,
 				// footer: (info) => info.column.id,
 			}),
 			columnHelper.accessor("members", {
-				header: () => <span>{t("header.members")}</span>,
+				header: () => <span>{ct("header.members")}</span>,
 				cell: ({ row: { original } }) => {
 					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
 					return <span>{original.networkMembers.length}</span>;
 				},
 			}),
 			columnHelper.accessor("action", {
-				header: () => <span>Network action</span>,
+				header: () => <span>{ct("header.actions")}</span>,
 				id: "action",
 				cell: ({ row: { original } }) => {
 					return (
@@ -95,8 +96,14 @@ export const NetworkTable = ({ tableData = [] }) => {
 									callModal({
 										title: (
 											<p>
-												<span>Options for Network </span>
-												<span className="text-primary">{`${original.nwid}`}</span>
+												<span>
+													{t.rich("networkActionModal.modalTitle", {
+														span: (children) => (
+															<span className="text-primary">{children}</span>
+														),
+														networkName: original.nwid,
+													})}
+												</span>
 											</p>
 										),
 										rootStyle: "text-left",
@@ -105,7 +112,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 								}}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								Options
+								{ct("cell.Options")}
 							</button>
 						</div>
 					);
@@ -171,7 +178,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("search.networkSearchPlaceholder")}
+					placeholder={ct("search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">
