@@ -14,7 +14,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const [action, setAction] = useState({ deleteNetwork: false, moveNetwork: false });
-	const [input, setInput] = useState({ name: "", organizationId: "" });
+	const [input, setInput] = useState({ name: "", organizationId: null });
 	const { closeModal } = useModalStore((state) => state);
 
 	const { refetch: refetchNetwork } = api.network.getUserNetworks.useQuery({
@@ -94,6 +94,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 								<input
 									type="text"
 									name="organizationId"
+									value={input.organizationId || ""}
 									onChange={inputHandler}
 									placeholder="Type the organization ID"
 									className="input input-bordered border-warning input-sm w-full max-w-xs my-2"

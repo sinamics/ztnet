@@ -793,8 +793,8 @@ export const organizationRouter = createTRPCRouter({
 	transferNetworkOwnership: protectedProcedure
 		.input(
 			z.object({
-				organizationId: z.string(),
-				nwid: z.string(),
+				organizationId: z.string({ invalid_type_error: "Organization ID is required" }),
+				nwid: z.string({ invalid_type_error: "Network ID is required" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
