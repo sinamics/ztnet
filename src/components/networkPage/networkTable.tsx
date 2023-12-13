@@ -16,6 +16,8 @@ import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "../shared/tableFooter";
+import { useModalStore } from "~/utils/store";
+import NetworkOptionsModal from "./networkOptionsModal";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
@@ -38,7 +40,9 @@ const TruncateText = ({ text }: { text: string }) => {
 };
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
-	const t = useTranslations("commonTable");
+	const t = useTranslations("networks");
+	const ct = useTranslations("commonTable");
+	const { callModal } = useModalStore((state) => state);
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
@@ -53,6 +57,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 		nwid: string;
 		members: network_members[];
 		networkMembers: network_members[];
+		action: string;
 	};
 	const columnHelper = createColumnHelper<ColumnsType>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -60,27 +65,60 @@ export const NetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("header.name")}</span>,
+				header: () => <span>{ct("header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("header.description")}</span>,
+				header: () => <span>{ct("header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{t("header.networkId")}</span>,
+				header: () => <span>{ct("header.networkId")}</span>,
 				// footer: (info) => info.column.id,
 			}),
 			columnHelper.accessor("members", {
-				header: () => <span>{t("header.members")}</span>,
+				header: () => <span>{ct("header.members")}</span>,
 				cell: ({ row: { original } }) => {
 					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
 					return <span>{original.networkMembers.length}</span>;
 				},
 			}),
+			columnHelper.accessor("action", {
+				header: () => <span>{ct("header.actions")}</span>,
+				id: "action",
+				cell: ({ row: { original } }) => {
+					return (
+						<div className="space-x-2">
+							<button
+								onClick={(event) => {
+									event.stopPropagation(); // This will prevent the event from propagating to the row
+									callModal({
+										title: (
+											<p>
+												<span>
+													{t.rich("networkActionModal.modalTitle", {
+														span: (children) => (
+															<span className="text-primary">{children}</span>
+														),
+														networkName: original.nwid,
+													})}
+												</span>
+											</p>
+										),
+										rootStyle: "text-left",
+										content: <NetworkOptionsModal networkId={original.nwid} />,
+									});
+								}}
+								className="btn btn-outline btn-xs rounded-sm"
+							>
+								{ct("cell.Options")}
+							</button>
+						</div>
+					);
+				},
+			}),
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
 
@@ -140,7 +178,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("search.networkSearchPlaceholder")}
+					placeholder={ct("search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">
