@@ -77,20 +77,20 @@ model network_members {
   @@unique([id, nwid])
 }
 model network {
-  nwid                        String            @id
+  nwid                        String              @id
   name                        String?         
   description                 String?       
   creationTime                DateTime?
   lastModifiedTime            DateTime?
   flowRule                    String?
-  autoAssignIp                Boolean?          @default(true)        
-  nw_userid                   User?              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  autoAssignIp                Boolean?            @default(true)        
+  nw_userid                   User?               @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId                    String?
   tagsByName                  Json?
   capabilitiesByName          Json?
 
   organizationId              String?
-  organization                Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization                Organization?       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   networkMembers              network_members[]
   notations                   Notation[]

@@ -798,7 +798,7 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// make sure the user is member of the organization
+			// make sure the user is member of the organization and has the required permissions
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
