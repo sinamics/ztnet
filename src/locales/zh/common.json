@@ -134,7 +134,7 @@
 		"viewStashedMembers": "查看储存的成员",
 		"networkActions": "网络操作",
 		"deleteNetwork": {
-			"title": "删除网络",
+			"title": "删除网络 {networkName}",
 			"description": "你确定要删除这个网络吗？这个操作无法撤销，所有成员将从这个网络中删除",
 			"yesAction": "是的，删除它",
 			"noAction": "不，保留它"

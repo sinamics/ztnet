@@ -134,7 +134,7 @@
 		"viewStashedMembers": "Se stashed medlemmer",
 		"networkActions": "Nettverksaksjoner",
 		"deleteNetwork": {
-			"title": "Slett nettverk",
+			"title": "Slett nettverk {networkName}",
 			"description": "Er du sikker på at du vil slette dette nettverket? Dette kan ikke angres og alle medlemmer vil bli slettet fra dette nettverket",
 			"yesAction": "Ja, slett det",
 			"noAction": "Nei, behold det"

@@ -134,7 +134,7 @@
 		"viewStashedMembers": "View stashed members",
 		"networkActions": "Network Actions",
 		"deleteNetwork": {
-			"title": "Delete network",
+			"title": "Delete network {networkName}",
 			"description": "Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 			"yesAction": "Yes, delete it",
 			"noAction": "No, keep it"

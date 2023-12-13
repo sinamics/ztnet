@@ -36,6 +36,7 @@ const HeadSection = ({ title }: { title: string }) => (
 );
 
 const NetworkById = () => {
+	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		viewZombieTable: false,
@@ -289,16 +290,17 @@ const NetworkById = () => {
 			</div> */}
 
 			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
-				Network Actions
+				{t("networkActions")}
 			</div>
 			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
 				<div className="flex items-end md:justify-end">
 					<button
 						onClick={() =>
 							callModal({
-								title: `Delete network ${network.name}`,
-								description:
-									"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+								title: t.rich("deleteNetwork.title", {
+									networkName: network.name,
+								}),
+								description: t("deleteNetwork.description"),
 								yesAction: () => {
 									deleteNetwork(
 										{ nwid: network.nwid },
@@ -309,7 +311,7 @@ const NetworkById = () => {
 						}
 						className="btn btn-error btn-outline btn-wide"
 					>
-						Delete network
+						{b("deleteNetwork")}
 					</button>
 				</div>
 			</div>
