@@ -16,6 +16,8 @@ import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "../shared/tableFooter";
+import { useModalStore } from "~/utils/store";
+import NetworkOptionsModal from "./networkOptionsModal";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
@@ -39,6 +41,7 @@ const TruncateText = ({ text }: { text: string }) => {
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
 	const t = useTranslations("commonTable");
+	const { callModal } = useModalStore((state) => state);
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
@@ -53,6 +56,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 		nwid: string;
 		members: network_members[];
 		networkMembers: network_members[];
+		action: string;
 	};
 	const columnHelper = createColumnHelper<ColumnsType>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -79,8 +83,35 @@ export const NetworkTable = ({ tableData = [] }) => {
 					return <span>{original.networkMembers.length}</span>;
 				},
 			}),
+			columnHelper.accessor("action", {
+				header: () => <span>Network action</span>,
+				id: "action",
+				cell: ({ row: { original } }) => {
+					return (
+						<div className="space-x-2">
+							<button
+								onClick={(event) => {
+									event.stopPropagation(); // This will prevent the event from propagating to the row
+									callModal({
+										title: (
+											<p>
+												<span>Options for Network </span>
+												<span className="text-primary">{`${original.nwid}`}</span>
+											</p>
+										),
+										rootStyle: "text-left",
+										content: <NetworkOptionsModal networkId={original.nwid} />,
+									});
+								}}
+								className="btn btn-outline btn-xs rounded-sm"
+							>
+								Options
+							</button>
+						</div>
+					);
+				},
+			}),
 		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[],
 	);
 

@@ -790,4 +790,25 @@ export const organizationRouter = createTRPCRouter({
 			});
 			return invite;
 		}),
+	transferNetworkOwnership: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				nwid: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.USER,
+			});
+
+			// Update the network with the new organization ID
+			return await ctx.prisma.network.update({
+				where: { nwid: input.nwid, authorId: ctx.session.user.id },
+				data: { organizationId: input.organizationId, authorId: null },
+			});
+		}),
 });
