@@ -16,9 +16,12 @@
   </p>
   <h3 align="center">
     <a href="https://ztnet.network">Documentation</a>
+    ·
+    <a href="https://discord.gg/YdG3QPa6">Join our Discord</a>
     <br />
   </h3>
   <div align="center">
+
 
   [![GithubCI](https://github.com/sinamics/ztnet/actions/workflows/ci-tag.yml/badge.svg)](https://github.com/sinamics/ztnet/actions)
   [![Release](https://img.shields.io/github/v/release/sinamics/ztnet.svg)](https://github.com/sinamics/ztnet/releases/latest)
