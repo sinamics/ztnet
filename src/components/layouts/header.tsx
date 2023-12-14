@@ -23,7 +23,7 @@ const Header = () => {
 	}
 
 	return (
-		<header className="header bg-base-200 px-4 py-1 shadow">
+		<header className="header bg-base-200 px-4 py-1 shadow-md shadow-base">
 			<div className="header-content flex flex-row items-center">
 				<div className="hidden md:inline-flex">
 					<a href="#" className="inline-flex flex-row items-center gap-2">
