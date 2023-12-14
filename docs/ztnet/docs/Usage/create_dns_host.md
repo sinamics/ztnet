@@ -132,14 +132,16 @@ joined=$(echo "$netmembers" | \
 
   for entry in $(echo "$joined" | jq -c '.'); do
     nodeid=$(echo "$entry" | jq -r '.id')
+    nodename=$(echo "$entry" | jq -r '.name')
 
-    line=$(printf "%s\t%s.%s\t%s" \
-      $(echo "$entry" | jq -r '.ips[0]') \
-      $(echo "$entry" | jq -r '.name') \
-      "$DNSNAME" \
-      "$nodeid.$DNSNAME")
+    for ipv4_address in $(echo "$entry" | jq -r '.ips[]'); do
+      line=$(printf "%s\t%s\t%s" \
+        "$ipv4_address" \
+        "$nodename.$DNSNAME" \
+        "$nodeid.$DNSNAME")
 
-    ipv4_lines+=("$line")
+      ipv4_lines+=("$line")
+    done
   done
 
   for entry in $(echo "$joined" | jq -c '.'); do
