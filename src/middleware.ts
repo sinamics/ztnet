@@ -4,9 +4,11 @@ import { supportedLocales } from "./locales/lang";
 // run middleware on these paths
 export const config = {
 	matcher: [
+		"/dashboard/:path*",
 		"/organization/:path*",
 		"/network/:path*",
-		"/dashboard/:path*", // user are redirected to dashboard
+		"/user-settings/:path*", // user are redirected to dashboard
+		"/admin/:path*",
 	],
 };
 
@@ -20,7 +22,6 @@ export async function middleware(req: NextRequest) {
 	) {
 		return;
 	}
-
 	// Handle automatic locale detection
 	if (req.nextUrl.locale === "default") {
 		const fallbackLocale = "en";
