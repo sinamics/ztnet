@@ -127,6 +127,9 @@
   /* border: 2px solid #7e22ce; */
 }
 
+.social-group{
+  display: flex;
+}
 /* add mobile breakpoint and display title-text with smaller size */
 @media (max-width: 768px) {
   .home .home-content .title-text {
