@@ -17,6 +17,7 @@ const Register = () => {
 			<Head>
 				<title>{title}</title>
 				<meta name="description" content="ZTNET User Registration" />
+				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className="flex min-h-screen flex-col">

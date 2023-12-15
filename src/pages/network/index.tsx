@@ -18,7 +18,7 @@ const HeadSection = () => (
 		<title>{title}</title>
 		<link rel="icon" href="/favicon.ico" />
 		<meta property="og:title" content={title} key={title} />
-		<meta name="robots" content="nofollow" />
+		<meta name="robots" content="noindex, nofollow" />
 	</Head>
 );
 
