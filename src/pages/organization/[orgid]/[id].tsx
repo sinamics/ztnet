@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, type ReactElement } from "react";
+import { useState, type ReactElement, useEffect } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
@@ -11,7 +11,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/table/deletedNetworkMembersTable";
-import { useModalStore } from "~/utils/store";
+import { useModalStore, useSocketStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/networkByIdPage/networkFlowRules";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
@@ -19,12 +19,11 @@ import cn from "classnames";
 import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
 import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { GetServerSidePropsContext } from "next/types";
 import NetworkName from "~/components/networkByIdPage/networkName";
 import NetworkDescription from "~/components/networkByIdPage/networkDescription";
-import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
+import { getServerSideProps } from "~/server/getServerSideProps";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -35,7 +34,14 @@ const HeadSection = ({ title }: { title: string }) => (
 	</Head>
 );
 
-const OrganizationNetworkById = () => {
+type OrganizationId = {
+	id: string;
+};
+interface IProps {
+	orgIds: OrganizationId[];
+}
+
+const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		viewZombieTable: false,
@@ -44,6 +50,18 @@ const OrganizationNetworkById = () => {
 	const { callModal } = useModalStore((state) => state);
 	const { query, push: router } = useRouter();
 	const organizationId = query.orgid as string;
+
+	const setupSocket = useSocketStore((state) => state.setupSocket);
+	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
+
+	useEffect(() => {
+		if (orgIds) {
+			setupSocket(orgIds);
+		}
+		return () => {
+			cleanupSocket();
+		};
+	}, [orgIds, setupSocket, cleanupSocket]);
 
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
@@ -333,15 +351,5 @@ OrganizationNetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
 };
 
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default OrganizationNetworkById;
