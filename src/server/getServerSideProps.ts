@@ -21,7 +21,6 @@ export const getServerSideProps = withAuth(async (context: GetServerSidePropsCon
 		props: {
 			orgIds,
 			session,
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 			messages: (await import(`~/locales/${context.locale}/common.json`)).default,
 		},
 	};
