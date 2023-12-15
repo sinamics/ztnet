@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, type ReactElement, useEffect } from "react";
+import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
@@ -11,7 +11,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
 import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/table/deletedNetworkMembersTable";
-import { useModalStore, useSocketStore } from "~/utils/store";
+import { useModalStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/networkByIdPage/networkFlowRules";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
@@ -24,6 +24,7 @@ import NetworkDescription from "~/components/networkByIdPage/networkDescription"
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -49,17 +50,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		isDebug: false,
 	});
 
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
+	useOrganizationWebsocket(orgIds);
 
 	const { callModal } = useModalStore((state) => state);
 	const { query, push: router } = useRouter();

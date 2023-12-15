@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import { getServerSideProps } from "~/server/getServerSideProps";
-import { useSocketStore } from "~/utils/store";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 type OrganizationId = {
 	id: string;
@@ -33,17 +33,7 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
+	useOrganizationWebsocket(orgIds);
 
 	const {
 		data: userNetworks,

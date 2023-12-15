@@ -4,13 +4,14 @@ import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { OrganizationNetworkTable } from "~/components/organization/networkTable";
 import { stringToColor } from "~/utils/randomColor";
-import { useModalStore, useSocketStore } from "~/utils/store";
+import { useModalStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import EditOrganizationUserModal from "~/components/organization/editUserModal";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const OrganizationById = ({ user, orgIds }) => {
 	const b = useTranslations("commonButtons");
@@ -19,8 +20,8 @@ const OrganizationById = ({ user, orgIds }) => {
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
+
+	useOrganizationWebsocket(orgIds);
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
 		organizationId,
@@ -72,15 +73,6 @@ const OrganizationById = ({ user, orgIds }) => {
 			refecthOrg();
 		},
 	});
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
 
 	useEffect(() => {
 		const calculateMaxHeight = () => {
