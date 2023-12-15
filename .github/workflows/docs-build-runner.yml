@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "docs/ztnet/**"
+      - "docs/**"
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
     runs-on: [self-hosted, ztnet.network]
     defaults:
       run:
-        working-directory: docs/ztnet
+        working-directory: docs
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
@@ -33,7 +33,7 @@ jobs:
     runs-on: [self-hosted, ztnet.network]
     defaults:
       run:
-        working-directory: docs/ztnet
+        working-directory: docs
     needs: build
     steps:
       - name: Move Website to Temporary Directory
