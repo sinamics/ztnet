@@ -88,6 +88,7 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/sinamics/ztnet',
+            
         },
         gtag: {
           trackingID: 'G-K5FT4B5HF2',
@@ -157,6 +158,7 @@ const config = {
         disableSwitch: false,
         respectPrefersColorScheme: false,
       },
+      
       // footer: {
       //   style: 'dark',
       //   links: [
