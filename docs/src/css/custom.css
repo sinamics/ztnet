@@ -130,6 +130,9 @@
 .social-group{
   display: flex;
 }
+.header-discord-link {
+  margin-right: 10px; /* This adds a little space between the icon and the label */
+}
 /* add mobile breakpoint and display title-text with smaller size */
 @media (max-width: 768px) {
   .home .home-content .title-text {
