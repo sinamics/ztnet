@@ -45,7 +45,7 @@ const UserSettings = () => {
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.ico" />
 				<meta property="og:title" content={title} key={title} />
-				<meta name="robots" content="nofollow" />
+				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="py-5">
 				<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
