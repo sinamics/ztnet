@@ -44,7 +44,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -74,7 +74,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -90,7 +90,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -101,7 +101,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -113,7 +113,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -126,7 +126,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -142,7 +142,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -196,7 +196,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -242,7 +242,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -281,7 +281,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -320,7 +320,7 @@ describe("NetworkById component", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById />
+					<NetworkById orgIds={null} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
