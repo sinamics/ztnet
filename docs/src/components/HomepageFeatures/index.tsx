@@ -61,7 +61,7 @@ export default function HomepageFeatures(): JSX.Element {
 			<div className="container">
 				<div className="row">
 					{FeatureList.map((props, idx) => (
-						// rome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						<Feature key={idx} {...props} />
 					))}
 				</div>
