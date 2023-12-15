@@ -9,6 +9,10 @@ import { api } from "../../../utils/api";
 import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { getServerSideProps } from "~/server/getServerSideProps";
+import { GetServerSidePropsContext } from "next";
+import { ParsedUrlQuery } from "querystring";
+import { getSession } from "next-auth/react";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -16,7 +20,21 @@ enum ConnectionStatus {
 	DirectLAN = 1,
 	DirectWAN = 2,
 }
+jest.mock("~/server/db", () => ({
+	prisma: {
+		organization: {
+			findMany: jest.fn(),
+		},
+	},
+}));
 
+jest.mock("~/components/auth/withAuth", () => ({
+	withAuth: jest.fn().mockImplementation((gssp) => gssp),
+}));
+// Mock the next-auth/react module
+jest.mock("next-auth/react", () => ({
+	getSession: jest.fn(), // Mock getSession as a jest function
+}));
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
 }));
@@ -32,19 +50,33 @@ describe("NetworkById component", () => {
 				id: "test-id",
 			},
 		}));
+
+		// Mock getSession to return a simulated user session
+		(getSession as jest.Mock).mockResolvedValue({
+			user: {
+				name: "Test User",
+				email: "test@example.com",
+			},
+		});
 	});
-	it("renders loading element when data is being fetched", () => {
+	it("renders loading element when data is being fetched", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: null,
 			isLoading: true,
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
+		const context = {
+			params: { orgIds: [] } as ParsedUrlQuery,
+			locale: "en",
+		};
+		// @ts-expect-error
+		const { props } = await getServerSideProps(context as GetServerSidePropsContext);
 
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<NetworkById orgIds={null} />
+					<NetworkById {...props} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
