@@ -6,8 +6,7 @@ import { api } from "~/utils/api";
 import { CentralNetworkTable } from "../../components/networkPage/centralNetworkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
-import { type GetServerSidePropsContext } from "next";
-import { withAuth } from "~/components/auth/withAuth";
+import { getServerSideProps } from "~/server/getServerSideProps";
 
 const title = `${globalSiteTitle} - Zerotier Central`;
 
@@ -110,15 +109,5 @@ const CentralNetworks: NextPageWithLayout = () => {
 CentralNetworks.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default CentralNetworks;

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { type ReactElement } from "react";
+import { useEffect, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
@@ -10,21 +10,19 @@ import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-// import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/deletedNetworkMembersTable";
-import { useModalStore } from "~/utils/store";
+import { useModalStore, useSocketStore } from "~/utils/store";
 import { CentralFlowRules } from "~/components/networkByIdPage/ztCentral/centralFlowRules";
 import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 import cn from "classnames";
 import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
 import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { GetServerSidePropsContext } from "next/types";
 import NetworkDescription from "../../components/networkByIdPage/networkDescription";
 import NetworkName from "~/components/networkByIdPage/networkName";
-import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
+import { getServerSideProps } from "~/server/getServerSideProps";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -35,7 +33,7 @@ const HeadSection = ({ title }: { title: string }) => (
 	</Head>
 );
 
-const CentralNetworkById = () => {
+const CentralNetworkById = ({ orgIds }) => {
 	const t = useTranslations("networkById");
 	// const [state, setState] = useState({
 	//   viewZombieTable: false,
@@ -54,6 +52,18 @@ const CentralNetworkById = () => {
 		},
 		{ enabled: !!query.id, refetchInterval: 15000 },
 	);
+
+	const setupSocket = useSocketStore((state) => state.setupSocket);
+	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
+
+	useEffect(() => {
+		if (orgIds) {
+			setupSocket(orgIds);
+		}
+		return () => {
+			cleanupSocket();
+		};
+	}, [orgIds, setupSocket, cleanupSocket]);
 
 	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
 
@@ -288,15 +298,5 @@ CentralNetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default CentralNetworkById;

@@ -2,25 +2,25 @@ import { useRouter } from "next/router";
 import { useEffect, type ReactElement, useState } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-import { GetServerSidePropsContext } from "next/types";
-import { withAuth } from "~/components/auth/withAuth";
-import { getSession } from "next-auth/react";
 import { OrganizationNetworkTable } from "~/components/organization/networkTable";
 import { stringToColor } from "~/utils/randomColor";
-import { useModalStore } from "~/utils/store";
+import { useModalStore, useSocketStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
 import { ErrorData } from "~/types/errorHandling";
 import toast from "react-hot-toast";
 import EditOrganizationUserModal from "~/components/organization/editUserModal";
 import { useTranslations } from "next-intl";
+import { getServerSideProps } from "~/server/getServerSideProps";
 
-const OrganizationById = ({ user }) => {
+const OrganizationById = ({ user, orgIds }) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("organization");
 	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
+	const setupSocket = useSocketStore((state) => state.setupSocket);
+	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
 		organizationId,
@@ -54,6 +54,7 @@ const OrganizationById = ({ user }) => {
 	const { data: orgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
+
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
@@ -71,6 +72,15 @@ const OrganizationById = ({ user }) => {
 			refecthOrg();
 		},
 	});
+
+	useEffect(() => {
+		if (orgIds) {
+			setupSocket(orgIds);
+		}
+		return () => {
+			cleanupSocket();
+		};
+	}, [orgIds, setupSocket, cleanupSocket]);
 
 	useEffect(() => {
 		const calculateMaxHeight = () => {
@@ -113,6 +123,7 @@ const OrganizationById = ({ user }) => {
 			</>
 		);
 	}
+
 	return (
 		<main className="w-full bg-base-100 p-5">
 			<div className="max-w-7xl mx-auto">
@@ -294,17 +305,5 @@ OrganizationById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
 };
 
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	const session = await getSession(context);
-	return {
-		props: {
-			session,
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default OrganizationById;

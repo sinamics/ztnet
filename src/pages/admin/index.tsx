@@ -1,4 +1,4 @@
-import React, { type ReactElement } from "react";
+import React, { useEffect, type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
@@ -8,17 +8,30 @@ import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
 import Organization from "./organization";
-import { GetServerSidePropsContext } from "next";
-import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
 import Settings from "./settings";
+import { getServerSideProps } from "~/server/getServerSideProps";
+import { useSocketStore } from "~/utils/store";
 
-const AdminSettings = () => {
+const AdminSettings = ({ orgIds }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
 
 	const router = useRouter();
 	const { tab = "members" } = router.query;
 	const t = useTranslations("admin");
+
+	const setupSocket = useSocketStore((state) => state.setupSocket);
+	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
+
+	useEffect(() => {
+		if (orgIds) {
+			setupSocket(orgIds);
+		}
+		return () => {
+			cleanupSocket();
+		};
+	}, [orgIds, setupSocket, cleanupSocket]);
+
 	interface ITab {
 		name: string;
 		value: string;
@@ -91,15 +104,5 @@ const AdminSettings = () => {
 AdminSettings.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAdminAuthenticated props={page?.props}>{page}</LayoutAdminAuthenticated>;
 };
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default AdminSettings;
