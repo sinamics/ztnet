@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
@@ -10,7 +10,7 @@ import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-import { useModalStore, useSocketStore } from "~/utils/store";
+import { useModalStore } from "~/utils/store";
 import { CentralFlowRules } from "~/components/networkByIdPage/ztCentral/centralFlowRules";
 import { NetworkMulticast } from "~/components/networkByIdPage/networkMulticast";
 import cn from "classnames";
@@ -23,6 +23,7 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -53,17 +54,7 @@ const CentralNetworkById = ({ orgIds }) => {
 		{ enabled: !!query.id, refetchInterval: 15000 },
 	);
 
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
+	useOrganizationWebsocket(orgIds);
 
 	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
 

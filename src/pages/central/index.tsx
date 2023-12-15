@@ -7,6 +7,7 @@ import { CentralNetworkTable } from "../../components/networkPage/centralNetwork
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const title = `${globalSiteTitle} - Zerotier Central`;
 
@@ -19,7 +20,14 @@ const HeadSection = () => (
 	</Head>
 );
 
-const CentralNetworks: NextPageWithLayout = () => {
+type OrganizationId = {
+	id: string;
+};
+interface IProps {
+	orgIds: OrganizationId[];
+}
+
+const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const {
@@ -29,6 +37,8 @@ const CentralNetworks: NextPageWithLayout = () => {
 	} = api.network.getUserNetworks.useQuery({
 		central: true,
 	});
+
+	useOrganizationWebsocket(orgIds);
 
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation();
 	const addNewNetwork = () => {

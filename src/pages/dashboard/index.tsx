@@ -1,10 +1,10 @@
 import Head from "next/head";
-import { useEffect, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
-import { useSocketStore } from "~/utils/store";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 type OrganizationId = {
 	id: string;
@@ -15,17 +15,7 @@ interface IProps {
 
 const Dashboard: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const title = `${globalSiteTitle} - Dashboard`;
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
+	useOrganizationWebsocket(orgIds);
 
 	return (
 		<>

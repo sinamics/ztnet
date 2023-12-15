@@ -1,4 +1,4 @@
-import React, { useEffect, type ReactElement } from "react";
+import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
@@ -11,7 +11,7 @@ import Organization from "./organization";
 import Head from "next/head";
 import Settings from "./settings";
 import { getServerSideProps } from "~/server/getServerSideProps";
-import { useSocketStore } from "~/utils/store";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const AdminSettings = ({ orgIds }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
@@ -20,18 +20,7 @@ const AdminSettings = ({ orgIds }) => {
 	const { tab = "members" } = router.query;
 	const t = useTranslations("admin");
 
-	const setupSocket = useSocketStore((state) => state.setupSocket);
-	const cleanupSocket = useSocketStore((state) => state.cleanupSocket);
-
-	useEffect(() => {
-		if (orgIds) {
-			setupSocket(orgIds);
-		}
-		return () => {
-			cleanupSocket();
-		};
-	}, [orgIds, setupSocket, cleanupSocket]);
-
+	useOrganizationWebsocket(orgIds);
 	interface ITab {
 		name: string;
 		value: string;
