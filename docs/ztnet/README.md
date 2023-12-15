@@ -5,13 +5,13 @@ This website is built using [Docusaurus 2](https://docusaurus.io/), a modern sta
 ### Installation
 
 ```
-$ yarn
+npm install
 ```
 
 ### Local Development
 
 ```
-$ yarn start
+npm start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
@@ -19,23 +19,26 @@ This command starts a local development server and opens up a browser window. Mo
 ### Build
 
 ```
-$ yarn build
+npm run build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-### Deployment
 
-Using SSH:
+# API docs
+Api is built on OpenAPI and the source needs to be built before it can be used by the website.
 
+### Build
 ```
-$ USE_SSH=true yarn deploy
-```
-
-Not using SSH:
-
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
+npx docusaurus gen-api-docs all
 ```
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+### Clean
+```
+npx docusaurus clean-api-docs all
+```
+
+### Combined
+```
+npx docusaurus clean-api-docs all && npx docusaurus gen-api-docs all
+```
