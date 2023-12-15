@@ -15,6 +15,7 @@ const Login = () => {
 			<Head>
 				<title>{title}</title>
 				<meta name="description" content="ZTNET - Zerotier Controller Web UI" />
+				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<main className="flex min-h-[calc(100vh-7vh)] flex-col">

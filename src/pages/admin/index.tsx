@@ -70,7 +70,7 @@ const AdminSettings = () => {
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.ico" />
 				<meta property="og:title" content={title} key={title} />
-				<meta name="robots" content="nofollow" />
+				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
 				{tabs.map((t) => (
