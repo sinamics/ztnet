@@ -19,12 +19,12 @@ import cn from "classnames";
 import NetworkHelpText from "~/components/networkByIdPage/networkHelp";
 import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyMail";
 import { useTranslations } from "next-intl";
-import { GetServerSidePropsContext } from "next/types";
 import NetworkName from "~/components/networkByIdPage/networkName";
 import NetworkDescription from "~/components/networkByIdPage/networkDescription";
-import { withAuth } from "~/components/auth/withAuth";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
+import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -35,13 +35,23 @@ const HeadSection = ({ title }: { title: string }) => (
 	</Head>
 );
 
-const NetworkById = () => {
+type OrganizationId = {
+	id: string;
+};
+interface IProps {
+	orgIds: OrganizationId[];
+}
+
+const NetworkById = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
 	const [state, setState] = useState({
 		viewZombieTable: false,
 		isDebug: false,
 	});
+
+	useOrganizationWebsocket(orgIds);
+
 	const { callModal } = useModalStore((state) => state);
 	const { query, push: router } = useRouter();
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
@@ -323,15 +333,5 @@ NetworkById.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-});
+export { getServerSideProps };
 export default NetworkById;

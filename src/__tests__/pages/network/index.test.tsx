@@ -23,6 +23,14 @@ jest.mock("../../../utils/api", () => ({
 	},
 }));
 
+jest.mock("~/server/db", () => ({
+	prisma: {
+		organization: {
+			findMany: jest.fn(),
+		},
+	},
+}));
+
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
 }));
