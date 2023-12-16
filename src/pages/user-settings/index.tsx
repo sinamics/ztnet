@@ -3,17 +3,26 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Account from "./account";
-import { type GetServerSidePropsContext } from "next";
 import { useTranslations } from "next-intl";
 import UserNetworkSetting from "./network";
 import { globalSiteTitle } from "~/utils/global";
+import { getServerSideProps } from "~/server/getServerSideProps";
+import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 
-const UserSettings = () => {
+type OrganizationId = {
+	id: string;
+};
+interface IProps {
+	orgIds: OrganizationId[];
+}
+
+const UserSettings = ({ orgIds }: IProps) => {
 	const title = `${globalSiteTitle} - User Settings`;
 	const router = useRouter();
 	const t = useTranslations("userSettings");
 	const { tab = "members" } = router.query;
-	//   const { t } = useTranslation();
+
+	useOrganizationWebsocket(orgIds);
 	interface ITab {
 		name: string;
 		value: string;
@@ -71,15 +80,5 @@ UserSettings.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-	return {
-		props: {
-			// You can get the messages from anywhere you like. The recommended
-			// pattern is to put them in JSON files separated by locale and read
-			// the desired one based on the `locale` received from Next.js.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-			messages: (await import(`../../locales/${context.locale}/common.json`)).default,
-		},
-	};
-}
+export { getServerSideProps };
 export default UserSettings;

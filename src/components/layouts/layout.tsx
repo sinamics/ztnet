@@ -53,8 +53,8 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 };
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
-	// if not session.user redirect to login
 	const { open } = useSidebarStore();
+
 	return (
 		<div className="outer-content">
 			<Modal />
@@ -77,8 +77,8 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 };
 export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Element => {
 	// if not session.user redirect to login
-	const { open: sidebarOpen } = useSidebarStore();
-	const { openChats } = useAsideChatStore();
+	const sidebarOpen = useSidebarStore((state) => state.open);
+	const openChats = useAsideChatStore((state) => state.openChats);
 
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
