@@ -33,10 +33,10 @@ template: |
 
   **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...$RESOLVED_VERSION
 
-  Contributors to this release: $CONTRIBUTORS 🎉
-
-  ## Documentation
+  ### Documentation
   https://ztnet.network
+
+  Contributors to this release: $CONTRIBUTORS 🎉
 
 sort-direction: 'ascending'
   
