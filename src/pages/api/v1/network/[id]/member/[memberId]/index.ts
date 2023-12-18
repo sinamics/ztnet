@@ -120,14 +120,20 @@ const POST_networkUpdateMembers = async (req: NextApiRequest, res: NextApiRespon
 	};
 
 	try {
-		// make sure user has access to the network
+		// make sure the member is valid
 		const network = await prisma.network.findUnique({
 			where: { nwid: networkId, authorId: decryptedData.userId },
-			select: { nwid: true, name: true, authorId: true },
+			include: {
+				networkMembers: {
+					where: { id: memberId },
+				},
+			},
 		});
 
-		if (!network) {
-			return res.status(401).json({ error: "Network not found or access denied." });
+		if (!network?.networkMembers || network.networkMembers.length === 0) {
+			return res
+				.status(401)
+				.json({ error: "Member or Network not found or access denied." });
 		}
 
 		if (Object.keys(databasePayload).length > 0) {
