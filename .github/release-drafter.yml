@@ -36,5 +36,7 @@ template: |
   ### Documentation
   https://ztnet.network
 
-  $CONTRIBUTORS
+  Thanks again to $CONTRIBUTORS 🎉
+
+sort-direction: 'ascending'
   
