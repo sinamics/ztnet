@@ -30,7 +30,7 @@ const parseField = (key: string, value: any, expectedType: string) => {
 	}
 };
 
-export default async function apiNetworkMembersHandler(
+export default async function apiNetworkUpdateMembersHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
@@ -43,7 +43,7 @@ export default async function apiNetworkMembersHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "POST":
-			await POST_networkMembers(req, res);
+			await POST_networkUpdateMembers(req, res);
 			break;
 		default:
 			// Method Not Allowed
@@ -52,7 +52,7 @@ export default async function apiNetworkMembersHandler(
 	}
 }
 
-const POST_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => {
+const POST_networkUpdateMembers = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	const networkId = req.query?.id as string;
 	const memberId = req.query?.memberId as string;
@@ -88,19 +88,23 @@ const POST_networkMembers = async (req: NextApiRequest, res: NextApiResponse) =>
 	const databasePayload: Partial<network_members> = {};
 	const controllerPayload: Partial<network_members> = {};
 
-	for (const key in updateableFields) {
-		if (key in requestBody) {
-			try {
-				const parsedValue = parseField(key, requestBody[key], updateableFields[key].type);
-				if (updateableFields[key].destinations.includes("database")) {
-					databasePayload[key] = parsedValue;
-				}
-				if (updateableFields[key].destinations.includes("controller")) {
-					controllerPayload[key] = parsedValue;
-				}
-			} catch (error) {
-				return res.status(400).json({ error: error.message });
+	// Iterate over keys in the request body
+	for (const key in requestBody) {
+		// Check if the key is not in updateableFields
+		if (!(key in updateableFields)) {
+			return res.status(400).json({ error: `Invalid field: ${key}` });
+		}
+
+		try {
+			const parsedValue = parseField(key, requestBody[key], updateableFields[key].type);
+			if (updateableFields[key].destinations.includes("database")) {
+				databasePayload[key] = parsedValue;
 			}
+			if (updateableFields[key].destinations.includes("controller")) {
+				controllerPayload[key] = parsedValue;
+			}
+		} catch (error) {
+			return res.status(400).json({ error: error.message });
 		}
 	}
 
