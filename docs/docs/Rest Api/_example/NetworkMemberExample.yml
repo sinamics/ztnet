@@ -5,12 +5,12 @@ NetworkMemberExample:
   lastSeen: "2023-12-09T12:06:24.529Z"
   online: false
   deleted: false
-  name: "my-awesome-computer"
+  name: "John Doe"
   address: "abcdef01234"
   creationTime: 1702110030561
   activeBridge: false
   authenticationExpiryTime: 0
-  authorized: true
+  authorized: false
   capabilities: []
   identity: "abcdef0123:0:abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123"
   ipAssignments:
@@ -38,12 +38,12 @@ NetworkArrayMemberExample:
     lastSeen: "2023-12-09T12:06:24.529Z"
     online: false
     deleted: false
-    name: "my-awesome-computer"
+    name: "John Doe"
     address: "abcdef01234"
     creationTime: 1702110030561
     activeBridge: false
     authenticationExpiryTime: 0
-    authorized: true
+    authorized: false
     capabilities: []
     identity: "abcdef0123:0:abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123abcdef0123"
     ipAssignments:
