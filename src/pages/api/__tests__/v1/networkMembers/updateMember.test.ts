@@ -57,6 +57,7 @@ describe("Update Network Members", () => {
 			nwid: "test_nw_id",
 			nwname: "credent_second",
 			authorId: 1,
+			networkMembers: [{ id: "memberId" }],
 		});
 
 		const mockRegister = jest.fn().mockResolvedValue({ id: "memberId" });
@@ -79,6 +80,29 @@ describe("Update Network Members", () => {
 			setHeader: jest.fn(),
 		}) as unknown as NextApiResponse;
 
+	it("should respond 401 when member does not exist", async () => {
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { name: "New Name", authorized: "true" },
+		} as unknown as NextApiRequest;
+
+		// Mock the database to return a network
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: 1,
+			networkMembers: [],
+		});
+		const res = createMockRes();
+
+		// Call your handler
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		// Assertions
+		expect(res.status).toHaveBeenCalledWith(401);
+	});
 	it("should respond 200 when member is successfully updated", async () => {
 		const req = {
 			method: "POST",
@@ -95,7 +119,6 @@ describe("Update Network Members", () => {
 		// Assertions
 		expect(res.status).toHaveBeenCalledWith(200);
 	});
-
 	// Example for a 400 response
 	it("should respond 400 for invalid input", async () => {
 		const req = {
