@@ -69,3 +69,76 @@ paths:
                 properties:
                   message:
                     type: string
+
+  /network/{networkId}/member/{memberId}:
+    post:
+      summary: Modify a network member
+      description: Modify a network member
+      parameters:
+        - in: path
+          name: networkId
+          required: true
+          schema:
+            type: string
+          description: ID of the network
+        - in: path
+          name: memberId
+          required: true
+          schema:
+            type: string
+          description: ID of the member
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: User defined name of the member
+                authorized:
+                  type: boolean
+                  description: Authorization status of the member
+              # required:
+              #   - name
+              #   - authorized
+              example:
+                name: "John Doe"
+                authorized: "false"
+      responses:
+        200:
+          description: Detailed information of the specified Network Member
+          content:
+            application/json:
+              schema:
+                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+              example:
+                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
