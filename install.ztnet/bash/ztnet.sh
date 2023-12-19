@@ -217,7 +217,7 @@ npm install
 cp "$INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
 
 # File path to the .env file
-env_file="$INSTALL_DIR/.env"
+env_file="$TARGET_DIR/.env"
 
 # A function to set or update an environment variable in .env file
 set_env_var() {
