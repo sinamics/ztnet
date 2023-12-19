@@ -104,6 +104,9 @@ if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
 
+# Default values if .env file doesn't exist
+POSTGRES_PASSWORD="postgres"
+
 extract_values_from_env() {
     local target_env_file="$TARGET_DIR/.env"
     if [ -f "$target_env_file" ]; then
@@ -125,8 +128,6 @@ extract_values_from_env() {
             declare -g "$var=$(extract_env_value "$var")"
         done
     else
-        # Default values if .env file doesn't exist
-        POSTGRES_PASSWORD="postgres"
         NEXTAUTH_SECRET=$(openssl rand -hex 32)
         NEXT_PUBLIC_SITE_NAME="ZTnet"
         NEXTAUTH_URL="${server_ip}:3000"
@@ -137,22 +138,30 @@ extract_values_from_env() {
 
 extract_values_from_env
 
-# Install PostgreSQL
-if ! command_exists psql; then
-    sudo apt install postgresql postgresql-contrib -y
-    # Ask user if they want to set a custom password for PostgreSQL
-    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
-    printf "yes / no ==> " >&2
-    read setCustomPassword < /dev/tty
+install_postgres() {
+  # Install PostgreSQL
+  if ! command_exists psql; then
+      sudo apt install postgresql postgresql-contrib -y
 
-    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
-    printf "Enter the custom password: " >&2
-    read POSTGRES_PASSWORD < /dev/tty
-    echo "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';" | sudo -u postgres psql
-    else
-    echo "ALTER USER postgres WITH PASSWORD 'postgres';" | sudo -u postgres psql
-    fi
-fi
+      # Ask user if they want to set a custom password for PostgreSQL
+      printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
+      printf "yes / no ==> " >&2
+      read setCustomPassword < /dev/tty
+
+      if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
+          printf "Enter the custom password: " >&2
+          read POSTGRES_PASSWORD < /dev/tty
+
+          # Use a subshell to avoid 'could not change directory' warning
+          (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';")
+      else
+          # Set the default password 'postgres'
+          (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';")
+      fi
+  fi
+}
+
+install_postgres
 
 # install git curl openssl
 if ! command_exists git; then
