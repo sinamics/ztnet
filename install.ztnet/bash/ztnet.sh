@@ -107,61 +107,55 @@ fi
 # Default values if .env file doesn't exist
 POSTGRES_PASSWORD="postgres"
 
-extract_values_from_env() {
-    local target_env_file="$TARGET_DIR/.env"
-    if [ -f "$target_env_file" ]; then
-        # Read the entire .env file into a variable
-        local env_content=$(<"$target_env_file")
 
-        # Function to extract value from env content
-        extract_env_value() {
-            echo "$env_content" | grep "^$1=" | cut -d '=' -f2- | tr -d '"'
-        }
+target_env_file="$TARGET_DIR/.env"
+if [ -f "$target_env_file" ]; then
+    # Read the entire .env file into a variable
+    env_content=$(<"$target_env_file")
 
-        # Use awk to extract the password from DATABASE_URL
-        POSTGRES_PASSWORD=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
+    # Function to extract value from env content
+    extract_env_value() {
+        echo "$env_content" | grep "^$1=" | cut -d '=' -f2- | tr -d '"'
+    }
 
-        # List of variables to extract
-        local vars=("NEXTAUTH_SECRET" "NEXT_PUBLIC_SITE_NAME" "NEXTAUTH_URL" "ZT_ADDR" "ZT_SECRET")
+    # Use awk to extract the password from DATABASE_URL
+    POSTGRES_PASSWORD=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
 
-        for var in "${vars[@]}"; do
-            declare -g "$var=$(extract_env_value "$var")"
-        done
+    # List of variables to extract
+    env_vars=("NEXTAUTH_SECRET" "NEXT_PUBLIC_SITE_NAME" "NEXTAUTH_URL" "ZT_ADDR" "ZT_SECRET")
+
+    for var in "${env_vars[@]}"; do
+        declare -g "$var=$(extract_env_value "$var")"
+    done
+else
+    NEXTAUTH_SECRET=$(openssl rand -hex 32)
+    NEXT_PUBLIC_SITE_NAME="ZTnet"
+    NEXTAUTH_URL="${server_ip}:3000"
+    ZT_ADDR=
+    ZT_SECRET=
+fi
+
+# Install PostgreSQL
+if ! command_exists psql; then
+    sudo apt install postgresql postgresql-contrib -y
+
+    # Ask user if they want to set a custom password for PostgreSQL
+    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
+    printf "yes / no ==> " >&2
+    read setCustomPassword < /dev/tty
+
+    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
+        printf "Enter the custom password: " >&2
+        read POSTGRES_PASSWORD < /dev/tty
+
+        # Use a subshell to avoid 'could not change directory' warning
+        (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';")
     else
-        NEXTAUTH_SECRET=$(openssl rand -hex 32)
-        NEXT_PUBLIC_SITE_NAME="ZTnet"
-        NEXTAUTH_URL="${server_ip}:3000"
-        ZT_ADDR=
-        ZT_SECRET=
+        # Set the default password 'postgres'
+        (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';")
     fi
-}
+fi
 
-extract_values_from_env
-
-install_postgres() {
-  # Install PostgreSQL
-  if ! command_exists psql; then
-      sudo apt install postgresql postgresql-contrib -y
-
-      # Ask user if they want to set a custom password for PostgreSQL
-      printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
-      printf "yes / no ==> " >&2
-      read setCustomPassword < /dev/tty
-
-      if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
-          printf "Enter the custom password: " >&2
-          read POSTGRES_PASSWORD < /dev/tty
-
-          # Use a subshell to avoid 'could not change directory' warning
-          (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';")
-      else
-          # Set the default password 'postgres'
-          (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';")
-      fi
-  fi
-}
-
-install_postgres
 
 # install git curl openssl
 if ! command_exists git; then
