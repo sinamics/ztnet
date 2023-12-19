@@ -108,8 +108,15 @@ fi
 extract_postgres_password() {
     local env_file="/opt/ztnet/.env"
     if [ -f "$env_file" ]; then
-        POSTGRES_PASSWORD=$(sed -n 's/.*postgresql:\/\/postgres:\(.*\)@.*/\1/p' "$env_file")
+        # Read DATABASE_URL from the .env file
+        local database_url_line=$(grep 'DATABASE_URL=' "$env_file" | cut -d '=' -f2-)
+        echo "Extracted Line: $database_url_line"
+
+        # Use cut and awk to extract the password part from the DATABASE_URL
+        local user_pass=$(echo $database_url_line | cut -d '@' -f1)
+        POSTGRES_PASSWORD=$(echo $user_pass | awk -F ':' '{print $NF}')
     else
+        # Default password if .env file doesn't exist
         POSTGRES_PASSWORD="postgres"
     fi
 }
