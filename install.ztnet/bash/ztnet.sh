@@ -104,6 +104,18 @@ if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
 
+# Function to extract PostgreSQL password from .env file
+extract_postgres_password() {
+    local env_file="/opt/ztnet/.env"
+    if [ -f "$env_file" ]; then
+        POSTGRES_PASSWORD=$(sed -n 's/.*postgresql:\/\/postgres:\(.*\)@.*/\1/p' "$env_file")
+    else
+        POSTGRES_PASSWORD="postgres"
+    fi
+}
+
+extract_postgres_password
+
 POSTGRES_PASSWORD="postgres"
 
 # Install PostgreSQL
