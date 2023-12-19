@@ -26,7 +26,7 @@ fi
 # exit if any command fails
 set -e
 
-INSTALL_DIR="/tmp/ztnet"
+TEMP_INSTALL_DIR="/tmp/ztnet"
 TARGET_DIR="/opt/ztnet"
 NODE_MAJOR=18
 
@@ -88,7 +88,7 @@ read -n1 -s < /dev/tty
 # Inform the user about the default IP and ask if they want to change it
 printf "\nThe current default server IP address is ${YELLOW}$local_ip${NC}.\n"
 printf "Press Enter to use this default IP, or enter a new IP address or domain name pointing to this installation, then press Enter:\n"
-printf "You can change this value later in the ${YELLOW}/opt/ztnet/.env${NC} file. If you make changes, restart the server with '${YELLOW}systemctl restart ztnet${NC}'.\n"
+printf "You can change this value later in the ${YELLOW}${TARGET_DIR}/.env${NC} file. If you make changes, restart the server with '${YELLOW}systemctl restart ztnet${NC}'.\n"
 printf "==> " >&2
 # Read the user input
 read input_ip < /dev/tty
@@ -104,24 +104,38 @@ if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
 
-# Function to extract PostgreSQL password from .env file
-extract_postgres_password() {
-    local env_file="/opt/ztnet/.env"
-    if [ -f "$env_file" ]; then
-        # Read DATABASE_URL from the .env file
-        local database_url_line=$(grep 'DATABASE_URL=' "$env_file" | cut -d '=' -f2-)
-        echo "Extracted Line: $database_url_line"
+extract_values_from_env() {
+    local target_env_file="$TARGET_DIR/.env"
+    if [ -f "$target_env_file" ]; then
+        # Read the entire .env file into a variable
+        local env_content=$(<"$target_env_file")
 
-        # Use cut and awk to extract the password part from the DATABASE_URL
-        local user_pass=$(echo $database_url_line | cut -d '@' -f1)
-        POSTGRES_PASSWORD=$(echo $user_pass | awk -F ':' '{print $NF}')
+        # Function to extract value from env content
+        extract_env_value() {
+            echo "$env_content" | grep "^$1=" | cut -d '=' -f2- | tr -d '"'
+        }
+
+        # Use awk to extract the password from DATABASE_URL
+        POSTGRES_PASSWORD=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
+
+        # List of variables to extract
+        local vars=("NEXTAUTH_SECRET" "NEXT_PUBLIC_SITE_NAME" "NEXTAUTH_URL" "ZT_ADDR" "ZT_SECRET")
+
+        for var in "${vars[@]}"; do
+            declare -g "$var=$(extract_env_value "$var")"
+        done
     else
-        # Default password if .env file doesn't exist
+        # Default values if .env file doesn't exist
         POSTGRES_PASSWORD="postgres"
+        NEXTAUTH_SECRET=$(openssl rand -hex 32)
+        NEXT_PUBLIC_SITE_NAME="ZTnet"
+        NEXTAUTH_URL="${server_ip}:3000"
+        ZT_ADDR=
+        ZT_SECRET=
     fi
 }
 
-extract_postgres_password
+extract_values_from_env
 
 # Install PostgreSQL
 if ! command_exists psql; then
@@ -155,7 +169,7 @@ fi
 
 
 # Remove directories and then recreate the target directory
-rm -rf "$INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
+rm -rf "$TEMP_INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
 mkdir -p "$TARGET_DIR"
 
 # Install Node.js if it's not installed or if installed version is not the number defined in 'NODE_MAJOR' variable
@@ -189,16 +203,16 @@ fi
 
 # Setup Ztnet
 # Clone Ztnet repository into /opt folder
-if [[ ! -d "$INSTALL_DIR" ]]; then
-  git clone https://github.com/sinamics/ztnet.git $INSTALL_DIR
+if [[ ! -d "$TEMP_INSTALL_DIR" ]]; then
+  git clone https://github.com/sinamics/ztnet.git $TEMP_INSTALL_DIR
   echo "Cloned Ztnet repository."
 else
-  echo "$INSTALL_DIR already exists. Updating the repository."
-  cd $INSTALL_DIR
+  echo "$TEMP_INSTALL_DIR already exists. Updating the repository."
+  cd $TEMP_INSTALL_DIR
   git pull origin main
 fi
 
-cd $INSTALL_DIR
+cd $TEMP_INSTALL_DIR
 if [[ -z "$BRANCH" ]]; then
   # If BRANCH is empty or not set, checkout the latest tag or a custom version
   git fetch --tags
@@ -214,10 +228,10 @@ fi
 npm install
 
 # Copy mkworld binary
-cp "$INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
+cp "$TEMP_INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
 
 # File path to the .env file
-env_file="$INSTALL_DIR/.env"
+env_file="$TEMP_INSTALL_DIR/.env"
 
 # A function to set or update an environment variable in .env file
 set_env_var() {
@@ -237,10 +251,6 @@ set_env_var() {
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
-ZT_ADDR=
-ZT_SECRET=
-NEXT_PUBLIC_SITE_NAME="ZTnet"
-NEXTAUTH_URL="${server_ip}:3000"
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
 
 # Set or update environment variables
@@ -249,13 +259,7 @@ set_env_var "ZT_ADDR" "$ZT_ADDR"
 set_env_var "NEXT_PUBLIC_SITE_NAME" "$NEXT_PUBLIC_SITE_NAME"
 set_env_var "NEXTAUTH_URL" "$NEXTAUTH_URL"
 set_env_var "NEXT_PUBLIC_APP_VERSION" "$NEXT_PUBLIC_APP_VERSION"
-
-# Handle NEXTAUTH_SECRET specifically to retain value
-if ! grep -q "NEXTAUTH_SECRET" "$env_file"; then
-  randomSecret=$(openssl rand -hex 32)
-  set_env_var "NEXTAUTH_SECRET" "$randomSecret"
-  echo "Generated and saved a new NEXTAUTH_SECRET"
-fi
+set_env_var "NEXTAUTH_SECRET" "$NEXTAUTH_SECRET"
 
 # Populate PostgreSQL and build Next.js
 npx prisma migrate deploy
@@ -268,14 +272,14 @@ mkdir -p "$TARGET_DIR/.next/standalone"
 mkdir -p "$TARGET_DIR/prisma"
 
 # Copy relevant files and directories
-cp "$INSTALL_DIR/next.config.mjs" "$TARGET_DIR/"
-cp -r "$INSTALL_DIR/public" "$TARGET_DIR/public"
-cp "$INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
+cp "$TEMP_INSTALL_DIR/next.config.mjs" "$TARGET_DIR/"
+cp -r "$TEMP_INSTALL_DIR/public" "$TARGET_DIR/public"
+cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
-cp -a "$INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
-cp -r "$INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
-cp -r "$INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
+cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
+cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
+cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
 
 # Setup systemd service for Ztnet
 cat > /etc/systemd/system/ztnet.service <<EOL
@@ -304,6 +308,6 @@ echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YE
 
 
 
-rm -rf "$INSTALL_DIR"
+rm -rf "$TEMP_INSTALL_DIR"
 
 printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n"
