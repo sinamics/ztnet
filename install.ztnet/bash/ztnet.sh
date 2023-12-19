@@ -113,10 +113,9 @@ extract_postgres_password() {
         POSTGRES_PASSWORD="postgres"
     fi
 }
-
+echo "Extracting PostgreSQL password from .env file..."
+echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
 extract_postgres_password
-
-POSTGRES_PASSWORD="postgres"
 
 # Install PostgreSQL
 if ! command_exists psql; then
