@@ -74,16 +74,16 @@ const UserNetworkSetting = () => {
 			</div>
 			<div className="pb-10">
 				<p className="text-sm text-gray-400">
-					{t("network.annotations.memberTableTitle")}
+					{t("network.memberTable.memberTableTitle")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
 						<p className="font-medium">
-							{t("network.annotations.deAuthorizationWarningTitle")}
+							{t("network.memberTable.deAuthorizationWarningTitle")}
 						</p>
 						<p className="text-sm text-gray-500">
-							{t("network.annotations.deAuthorizationWarningLabel")}
+							{t("network.memberTable.deAuthorizationWarningLabel")}
 						</p>
 					</div>
 					<input
@@ -94,6 +94,29 @@ const UserNetworkSetting = () => {
 							updateSettings(
 								{
 									deAuthorizeWarning: e.target.checked,
+								},
+								{ onSuccess: () => void refetchMe() },
+							);
+						}}
+					/>
+				</div>
+				<div className="flex justify-between py-2">
+					<div>
+						<p className="font-medium">
+							{t("network.memberTable.addMemberIdAsNameTitle")}
+						</p>
+						<p className="text-sm text-gray-500">
+							{t("network.memberTable.addMemberIdAsNameLabel")}
+						</p>
+					</div>
+					<input
+						type="checkbox"
+						checked={me?.options?.addMemberIdAsName || false}
+						className="checkbox-primary checkbox checkbox-sm justify-self-end"
+						onChange={(e) => {
+							updateSettings(
+								{
+									addMemberIdAsName: e.target.checked,
 								},
 								{ onSuccess: () => void refetchMe() },
 							);

@@ -628,10 +628,14 @@
 				"showMarkerInTable": "Vis markør i tabellen",
 				"showMarkerInTableDescription": "Dette vil legge til en sirkel før medlemsnavnet med anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
 				"addBackgroundColorInTable": "Legg til bakgrunnsfarge i tabellen",
-				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert.",
+				"addBackgroundColorInTableDescription": "Dette vil legge til radbakgrunnsfarge basert på anmerkningsfargen. <br></br> Du kan fremdeles søke anmerkningen hvis deaktivert."
+			},
+			"memberTable": {
 				"memberTableTitle": "Medlems Liste",
 				"deAuthorizationWarningTitle": "Vis advarsel ved fjerning av medlemsautorisasjon",
-				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner."
+				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner.",
+				"addMemberIdAsNameTitle": "Legg til medlems-ID som navn ved registrering",
+				"addMemberIdAsNameLabel": "Når et nettverksmedlem registrerer seg, vil medlems-ID-en (nodeid) bli lagt til som navn."
 			}
 		}
 	},

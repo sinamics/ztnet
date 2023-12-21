@@ -628,10 +628,14 @@
 				"showMarkerInTable": "Show marker in Table",
 				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
 				"addBackgroundColorInTable": "Add background color in table",
-				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled.",
+				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
+			},
+			"memberTable": {
 				"memberTableTitle": "Member Table",
 				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
-				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations."
+				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations.",
+				"addMemberIdAsNameTitle": "Add the member ID as name uppon registration",
+				"addMemberIdAsNameLabel": "When a network member registers, the member ID (nodeid) will be added as name."
 			}
 		}
 	},
