@@ -628,10 +628,14 @@
 				"showMarkerInTable": "Mostrar marcador en la tabla",
 				"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
 				"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
-				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
+			},
+			"memberTable": {
 				"memberTableTitle": "Tabla de Miembros",
 				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
-				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales."
+				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales.",
+				"addMemberIdAsNameTitle": "Agregar el ID del miembro como nombre al registrarse",
+				"addMemberIdAsNameLabel": "Cuando un miembro de la red se registra, el ID del miembro (nodeid) se agregará como nombre."
 			}
 		}
 	},

@@ -1,8 +1,8 @@
 import * as ztController from "~/utils/ztApi";
 import { prisma } from "../db";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
-import { network_members } from "@prisma/client";
 import { UserContext } from "~/types/ctx";
+import { network_members } from "@prisma/client";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -138,6 +138,7 @@ export const fetchPeersForAllMembers = async (
 };
 
 export const updateNetworkMembers = async (
+	ctx: UserContext,
 	members: MemberEntity[],
 	peersByAddress: Peers[],
 ) => {
@@ -148,10 +149,13 @@ export const updateNetworkMembers = async (
 		member.conStatus = determineConnectionStatus(member);
 	}
 
-	await psql_updateMember(members);
+	await psql_updateMember(ctx, members);
 };
 
-const psql_updateMember = async (members: MemberEntity[]): Promise<void> => {
+const psql_updateMember = async (
+	ctx: UserContext,
+	members: MemberEntity[],
+): Promise<void> => {
 	for (const member of members) {
 		const storeValues: Partial<network_members> = {
 			id: member.id,
@@ -169,7 +173,7 @@ const psql_updateMember = async (members: MemberEntity[]): Promise<void> => {
 
 		if (!updateMember.count) {
 			try {
-				await psql_addMember(member);
+				await psql_addMember(ctx, member);
 			} catch (error) {
 				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				console.log(error);
@@ -178,12 +182,26 @@ const psql_updateMember = async (members: MemberEntity[]): Promise<void> => {
 	}
 };
 
-const psql_addMember = async (member: MemberEntity) => {
+const psql_addMember = async (ctx, member: MemberEntity) => {
+	const user = await ctx.prisma.user.findFirst({
+		where: {
+			id: ctx.session.user.id,
+		},
+		select: {
+			options: true,
+		},
+	});
+
+	const memberData = {
+		id: member.id,
+		lastSeen: new Date(),
+		creationTime: new Date(),
+		name: user.options?.addMemberIdAsName ? member.id : null,
+	};
+
 	return await prisma.network_members.create({
 		data: {
-			id: member.id,
-			lastSeen: new Date(),
-			creationTime: new Date(),
+			...memberData,
 			nwid_ref: {
 				connect: { nwid: member.nwid },
 			},
