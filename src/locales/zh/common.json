@@ -628,10 +628,14 @@
 				"showMarkerInTable": "在表格中显示标记",
 				"showMarkerInTableDescription": "这将在成员名称前添加一个带有注释颜色的圆圈。<br></br>如果禁用，您仍然可以搜索注释。",
 				"addBackgroundColorInTable": "在表格中添加背景颜色",
-				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。",
+				"addBackgroundColorInTableDescription": "这将根据注释颜色添加行背景颜色。<br></br>如果禁用，您仍然可以搜索注释。"
+			},
+			"memberTable": {
 				"memberTableTitle": "成员表格",
 				"deAuthorizationWarningTitle": "在取消成员授权时显示警告",
-				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。"
+				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。",
+				"addMemberIdAsNameTitle": "注册时将成员ID添加为姓名",
+				"addMemberIdAsNameLabel": "网络成员注册时，成员ID（nodeid）将作为姓名添加。"
 			}
 		}
 	},

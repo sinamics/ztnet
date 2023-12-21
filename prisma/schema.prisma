@@ -164,6 +164,7 @@ model UserOptions {
 
   // member table
   deAuthorizeWarning             Boolean?          @default(false)
+  addMemberIdAsName              Boolean?          @default(false)
 }
 
 enum AccessLevel {
