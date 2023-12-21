@@ -154,7 +154,7 @@ export const networkRouter = createTRPCRouter({
 			);
 
 			// Update network members based on controller response and fetched peers data
-			await updateNetworkMembers(ztControllerResponse.members, peersForAllMembers);
+			await updateNetworkMembers(ctx, ztControllerResponse.members, peersForAllMembers);
 
 			// Fetch members which are marked as deleted/zombie in the database for a given network
 			const zombieMembers = await fetchZombieMembers(
