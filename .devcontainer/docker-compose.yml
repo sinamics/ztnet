@@ -20,8 +20,8 @@ services:
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
-    # environment:
-    #   NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
+    environment:
+      NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
     networks:
       - app-network
     depends_on:
