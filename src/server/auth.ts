@@ -42,7 +42,7 @@ const MyAdapter = {
 	...prismaAdapter,
 	linkAccount: (account) => {
 		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
-		const { refresh_expires_in, ...rest } = account;
+		const { refresh_expires_in, "not-before-policy": _, ...rest } = account;
 		return prismaAdapter.linkAccount(rest);
 	},
 };
