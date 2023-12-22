@@ -35,14 +35,14 @@ const mediumPassword = new RegExp(
 const passwordSchema = (errorMessage: string) =>
 	z
 		.string()
-		.nonempty()
 		.max(40)
 		.refine((val) => {
 			if (!mediumPassword.test(val)) {
 				throw new Error(errorMessage);
 			}
 			return true;
-		});
+		})
+		.optional();
 
 export const authRouter = createTRPCRouter({
 	register: publicProcedure
@@ -295,9 +295,7 @@ export const authRouter = createTRPCRouter({
 					.email()
 					.transform((val) => val.trim())
 					.optional(),
-				password: passwordSchema("Current password does not meet the requirements!")
-					.transform((val) => val.trim())
-					.optional(),
+				password: z.string().optional(),
 				newPassword: passwordSchema("New Password does not meet the requirements!")
 					.transform((val) => val.trim())
 					.optional(),
@@ -314,6 +312,9 @@ export const authRouter = createTRPCRouter({
 				where: {
 					id: ctx.session.user.id,
 				},
+				include: {
+					accounts: true,
+				},
 			});
 
 			// validate
@@ -325,14 +326,18 @@ export const authRouter = createTRPCRouter({
 			}
 
 			if (input.newPassword || input.repeatNewPassword || input.password) {
-				// make sure all fields are filled
-				if (!input.newPassword || !input.repeatNewPassword || !input.password) {
+				// Check if user is OAuth user (no existing password)
+				const isOAuthUser = user.accounts && !user.hash;
+
+				// For setting new password, all fields are required
+				if (
+					!input.newPassword ||
+					!input.repeatNewPassword ||
+					(!input.password && !isOAuthUser)
+				) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: "Please fill all fields!",
-						// optional: pass the original error to retain stack trace
-
-						// cause: theError,
+						message: "Please fill all required fields!",
 					});
 				}
 
@@ -345,7 +350,7 @@ export const authRouter = createTRPCRouter({
 					});
 
 				// check if old password is correct
-				if (!bcrypt.compareSync(input.password, user.hash)) {
+				if (!isOAuthUser && !bcrypt.compareSync(input.password, user.hash)) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
 						message: "Old password is incorrect!",
