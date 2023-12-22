@@ -211,7 +211,7 @@ model User {
     online                                Boolean?                @default(false)
     role                                  Role                    @default(USER)
     image                                 String?
-    hash                                  String
+    hash                                  String?
     licenseStatus                         String?
     orderStatus                           String?
     orderId                               Int                     @default(0)
