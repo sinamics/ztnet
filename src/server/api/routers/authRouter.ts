@@ -17,7 +17,12 @@ import {
 } from "~/utils/mail";
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
-import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	API_TOKEN_SECRET,
+	PASSWORD_RESET_SECRET,
+	encrypt,
+	generateInstanceSecret,
+} from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
 import { User, UserOptions } from "@prisma/client";
 
@@ -402,12 +407,13 @@ export const authRouter = createTRPCRouter({
 
 			if (!user) return "Mail sent if email exist!";
 
+			const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
 			const validationToken = jwt.sign(
 				{
 					id: user.id,
 					email: user.email,
 				},
-				user.hash,
+				secret,
 				{
 					expiresIn: "15m",
 				},
@@ -477,9 +483,9 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 
-				if (!user || !user.hash) throwError("Something went wrong!");
-
-				jwt.verify(token, user.hash);
+				if (!user) throwError("Something went wrong!");
+				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
+				jwt.verify(token, secret);
 
 				// hash password
 				return await ctx.prisma.user.update({
