@@ -5,7 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
-// import { type User } from ".prisma/client";
+import { isRunningInDocker } from "~/utils/docker";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -34,14 +34,55 @@ declare module "next-auth" {
 	}
 }
 
+const prismaAdapter = PrismaAdapter(prisma);
+
+// fix for oauth
+// https://github.com/nextauthjs/next-auth/issues/3823
+const MyAdapter = {
+	...prismaAdapter,
+	linkAccount: (account) => {
+		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
+		const { refresh_expires_in, ...rest } = account;
+		return prismaAdapter.linkAccount(rest);
+	},
+};
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
-	adapter: PrismaAdapter(prisma),
+	adapter: MyAdapter,
 	providers: [
+		{
+			id: "oauth",
+			name: "Oauth",
+			type: "oauth",
+			allowDangerousEmailAccountLinking:
+				Boolean(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING) || true,
+			wellKnown: process.env.OAUTH_WELLKNOWN,
+			clientId: process.env.OAUTH_ID,
+			clientSecret: process.env.OAUTH_SECRET,
+			idToken: true,
+			checks: ["pkce", "state"],
+			authorization: {
+				params: {
+					scope: "openid profile email",
+				},
+			},
+			profile(profile) {
+				return Promise.resolve({
+					id: profile.sub,
+					name: profile.name,
+					email: profile.email,
+					image: profile.picture,
+					lastLogin: new Date().toISOString(),
+					role: "USER",
+				});
+			},
+		},
+
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. "Sign in with...")
 			name: "Credentials",
@@ -105,6 +146,67 @@ export const authOptions: NextAuthOptions = {
 		maxAge: parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE, 10) || 30 * 24 * 60 * 60, // 30 Days
 	},
 	callbacks: {
+		/**
+		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
+		 */
+		async signIn({ user, account }) {
+			if (account.provider === "credentials") {
+				return true;
+			}
+			if (account.provider === "oauth") {
+				// Check if the user already exists
+				const existingUser = await prisma.user.findUnique({
+					where: {
+						email: user.email,
+					},
+				});
+
+				if (existingUser) {
+					// User exists, update last login or other fields as necessary
+					await prisma.user.update({
+						where: {
+							id: existingUser.id,
+						},
+						data: {
+							lastLogin: new Date().toISOString(),
+						},
+					});
+				} else {
+					// User does not exist, create new user
+					const userCount = await prisma.user.count();
+					const defaultUserGroup = await prisma.userGroup.findFirst({
+						where: {
+							isDefault: true,
+						},
+					});
+
+					await prisma.user.create({
+						data: {
+							name: user.name,
+							email: user.email,
+							lastLogin: new Date().toISOString(),
+							role: userCount === 0 ? "ADMIN" : "USER",
+							image: user.image,
+							userGroupId: defaultUserGroup?.id,
+							options: {
+								create: {
+									localControllerUrl: isRunningInDocker()
+										? "http://zerotier:9993"
+										: "http://127.0.0.1:9993",
+								},
+							},
+						},
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							role: true,
+						},
+					});
+				}
+				return true;
+			}
+		},
 		async jwt({ token, user, trigger, account, session }) {
 			if (trigger === "update") {
 				if (session.update) {
@@ -160,8 +262,16 @@ export const authOptions: NextAuthOptions = {
 			}
 
 			// Persist the OAuth access_token to the token right after signin
-			if (account) {
+			// Handle OAuth login
+			if (account && user) {
+				// Persist OAuth token to the JWT
 				token.accessToken = account.accessToken;
+
+				// Update token with user information
+				token.id = user.id;
+				token.name = user.name;
+				token.email = user.email;
+				token.role = user.role; // Add other relevant properties as needed
 			}
 			if (user) {
 				// token.id = user.id;
@@ -196,6 +306,7 @@ export const authOptions: NextAuthOptions = {
 	},
 	pages: {
 		signIn: "/auth/login",
+		error: "/auth/error",
 	},
 	debug: false,
 };

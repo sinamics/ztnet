@@ -1,5 +1,5 @@
 import { signIn } from "next-auth/react";
-import router from "next/router";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
@@ -16,8 +16,14 @@ type NextAuthError = {
 	statusCode?: number;
 };
 
-const LoginForm: React.FC = () => {
-	const [loading, setLoading] = useState(false);
+interface IProps {
+	hasOauth: boolean;
+}
+
+const LoginForm: React.FC<IProps> = ({ hasOauth }) => {
+	const router = useRouter();
+	const { error: oauthError } = router.query;
+	const [loading, setLoading] = useState({ credentials: false, oauth: false });
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
 		password: "",
@@ -33,7 +39,7 @@ const LoginForm: React.FC = () => {
 	};
 
 	const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
-		setLoading(true);
+		setLoading((prev) => ({ ...prev, credentials: true }));
 		event.preventDefault();
 
 		signIn("credentials", {
@@ -44,16 +50,34 @@ const LoginForm: React.FC = () => {
 				if (!result.error) {
 					return await router.push("/dashboard");
 				}
+
 				toast.error(result.error, { duration: 10000 });
-				setLoading(false);
+				setLoading((prev) => ({ ...prev, credentials: false }));
 			})
 			.catch((error: NextAuthError) => {
 				// Handle any errors that might occur during the signIn process
 				toast.error(error.message);
-				setLoading(false);
+				setLoading((prev) => ({ ...prev, credentials: false }));
 			});
 	};
+	const oAuthHandler = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		event.preventDefault();
+		setLoading((prev) => ({ ...prev, oauth: true }));
 
+		await signIn("oauth")
+			.then(async () => {
+				if (!oauthError) {
+					return await router.push("/dashboard");
+				}
+				toast.error(`Error occured: ${oauthError}` as string, { duration: 10000 });
+				setLoading((prev) => ({ ...prev, oauth: false }));
+			})
+			.catch((_error: NextAuthError) => {
+				// Handle any errors that might occur during the signIn process
+				toast.error(`Error occured: ${oauthError}` as string);
+				setLoading((prev) => ({ ...prev, oauth: false }));
+			});
+	};
 	return (
 		<div className="z-10 flex justify-center self-center">
 			<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 bg-base-200 dark:bg-gray-100 p-12">
@@ -98,6 +122,20 @@ const LoginForm: React.FC = () => {
 							</Link>
 						</div>
 					</div>
+					{hasOauth ? (
+						<div>
+							<button
+								type="button"
+								onClick={(e) => oAuthHandler(e)}
+								className={cn(
+									"btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
+								)}
+							>
+								{loading.oauth ? <span className="loading loading-spinner"></span> : null}
+								oAuth
+							</button>
+						</div>
+					) : null}
 					<div>
 						<button
 							type="submit"
@@ -105,7 +143,9 @@ const LoginForm: React.FC = () => {
 								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
 							)}
 						>
-							{loading ? <span className="loading loading-spinner"></span> : null}
+							{loading.credentials ? (
+								<span className="loading loading-spinner"></span>
+							) : null}
 							Sign in
 						</button>
 					</div>
