@@ -21,12 +21,20 @@ describe("LoginForm", () => {
 	});
 
 	it("renders the LoginForm component", () => {
-		render(<LoginForm />);
+		// Mock the router to simulate an OAuth
+		(useRouter as jest.Mock).mockReturnValue({
+			query: { error: "OAuthError" },
+		});
+		render(<LoginForm hasOauth />);
 		expect(screen.getByRole("heading", { name: /Sign In/i })).toBeInTheDocument();
 	});
 
 	it("updates email and password inputs on change", () => {
-		render(<LoginForm />);
+		// Mock the router to simulate an OAuth
+		(useRouter as jest.Mock).mockReturnValue({
+			query: { error: "OAuthError" },
+		});
+		render(<LoginForm hasOauth />);
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -39,7 +47,11 @@ describe("LoginForm", () => {
 	});
 
 	it("submits the form with correct email and password", async () => {
-		render(<LoginForm />);
+		// Mock the router to simulate an OAuth
+		(useRouter as jest.Mock).mockReturnValue({
+			query: { error: "OAuthError" },
+		});
+		render(<LoginForm hasOauth />);
 
 		(signIn as jest.Mock).mockResolvedValue({});
 
