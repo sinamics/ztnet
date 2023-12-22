@@ -8,7 +8,7 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import LoginForm from "~/components/auth/loginForm";
 import { WelcomeMessage } from "~/components/auth/welcomeMessage";
 
-const Login = (props) => {
+const Login = ({ hasOauth }) => {
 	const title = `${globalSiteTitle} - Sign In`;
 
 	return (
@@ -24,7 +24,7 @@ const Login = (props) => {
 				<div className="flex flex-grow items-center">
 					<div className="mx-auto flex">
 						<WelcomeMessage />
-						<LoginForm hasOauth={props} />
+						<LoginForm hasOauth={hasOauth} />
 					</div>
 				</div>
 			</main>
