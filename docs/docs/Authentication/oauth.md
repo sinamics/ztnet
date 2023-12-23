@@ -8,6 +8,13 @@ sidebar_position: 6
 
 # OAuth Configuration Guide
 
+
+:::note
+
+OAuth will be available from version v0.5.6
+
+:::
+
 This document provides guidelines on configuring OAuth for various providers in our application. We support both standard OAuth 2.0 and OpenID Connect integrations.
 
 ## OpenID Connect and Standard OAuth 2.0 Configuration
