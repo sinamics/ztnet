@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { type User } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { throwError } from "~/server/helpers/errorHandler";
+import { PASSWORD_RESET_SECRET, generateInstanceSecret } from "~/utils/encryption";
 
 /**
  * @param  {Object} data user object
@@ -9,13 +10,13 @@ import { throwError } from "~/server/helpers/errorHandler";
 export const sendMailValidationLink = (user: User) => {
 	// eslint-disable-next-line no-throw-literal
 
-	if (!user || !user.hash) throw "User not found!";
-
+	if (!user) throw "User not found!";
+	const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
 	const validationToken = jwt.sign(
 		{
 			id: user.id,
 		},
-		user.hash,
+		secret,
 		{
 			expiresIn: "15m",
 		},
@@ -52,11 +53,13 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 			},
 		});
 
-		if (!loginUser || !loginUser.hash) throwError("User not found!");
+		if (!loginUser) throwError("User not found!");
 
 		if (loginUser.emailVerified) throw "Du har allerede validert denne eposten.";
 
-		jwt.verify(token, loginUser.hash);
+		const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
+
+		jwt.verify(token, secret);
 		Object.assign(loginUser, { emailConfirmed: true });
 
 		return await prisma.user.update({
