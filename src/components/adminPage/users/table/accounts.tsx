@@ -52,11 +52,11 @@ export const Accounts = () => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
-			// columnHelper.accessor("id", {
-			// 	header: () => <span>{t("users.users.table.id")}</span>,
-			// 	id: "id",
-			// 	minSize: 70,
-			// }),
+			columnHelper.accessor("id", {
+				id: "id",
+				minSize: 70,
+				enableHiding: true,
+			}),
 			columnHelper.accessor("name", {
 				header: () => <span>{ct("header.name")}</span>,
 				id: "name",
@@ -154,7 +154,6 @@ export const Accounts = () => {
 	useEffect(() => {
 		setData(users ?? []);
 	}, [users]);
-
 	const [data, setData] = useState<ExtendedUser[]>(users ?? []);
 
 	const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
@@ -164,6 +163,7 @@ export const Accounts = () => {
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
+		initialState: { columnVisibility: { id: false } },
 		autoResetPageIndex,
 		meta: {
 			updateData: (rowIndex, columnId, value) => {
