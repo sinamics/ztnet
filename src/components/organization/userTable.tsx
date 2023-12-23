@@ -215,7 +215,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 							return (
 								<tr
 									key={row.id}
-									className="cursor-pointer border-base-300/50 hover:bg-secondary hover:bg-opacity-25"
+									className="cursor-pointer border-base-300/50 hover:bg-primary/5"
 								>
 									{row.getVisibleCells().map((cell) => {
 										return (
