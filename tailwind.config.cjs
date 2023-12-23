@@ -22,7 +22,7 @@ const config = {
 			{
 				dark: {
 					primary: "#7e22ce",
-					"primary-focus": "#570df8",
+					"primary-focus": "#711eb9",
 					"primary-content": "#ffffff",
 					secondary: "#e5e7eb",
 					"secondary-focus": "#bd0091",

@@ -40,7 +40,7 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 							href={
 								currentPath.includes("/auth/register") ? "/auth/login" : "/auth/register"
 							}
-							className="btn"
+							className="btn btn-primary"
 						>
 							{currentPath === "/auth/register" ? "Login" : "Sign Up"}
 						</Link>
