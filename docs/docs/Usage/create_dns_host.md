@@ -52,6 +52,15 @@ set -eo pipefail
 
 ## -----------------------------------------------------------------------------
 
+# Function to check if the zone name is valid
+is_valid_zone() {
+  if [[ $1 =~ ^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}$ ]]; then
+    return 0 
+  else
+    return 1
+  fi
+}
+
 [[ -z "$ZTNET_API_TOKEN" ]] && \
   >&2 echo "ERROR: must set ZTNET_API_TOKEN!" && \
   exit 1
@@ -64,7 +73,7 @@ set -eo pipefail
 API_ADDRESS=${API_ADDRESS:-"http://localhost:3000"}
 API_URL="${API_ADDRESS}/api/v1"
 AUTH_HEADER="x-ztnet-auth: ${ZTNET_API_TOKEN}"
-echo "API_URL: $API_URL"
+
 ## -----------------------------------------------------------------------------
 get_network_info() { curl -sH "${AUTH_HEADER}" "$API_URL/network/${1}/"; }
 get_network_members() { curl -sH "${AUTH_HEADER}" "${API_URL}/network/${1}/member/"; }
@@ -106,6 +115,12 @@ for NETWORK in $@; do
   mapfile -td \: FIELDS < <(printf "%s\0" "$NETWORK")
   DNSNAME="${FIELDS[0]}"
   NETWORK="${FIELDS[1]}"
+
+  # Check if the zone name is valid
+  if [ -n "$DNSNAME" ] && ! is_valid_zone "$DNSNAME"; then
+    >&2 echo "ERROR: Invalid domain name '$DNSNAME'"
+    exit 1
+  fi
 
   netmembers=$(get_network_members "$NETWORK")
   netinfo=$(get_network_info "$NETWORK")
