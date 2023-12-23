@@ -61,18 +61,16 @@ const ForgotPassword = () => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
-				<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 bg-base-200 dark:bg-gray-100 p-12">
+				<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 p-12">
 					<div className="mb-4">
-						<h3 className="text-2xl font-semibold text-gray-800">Reset Password</h3>
+						<h3 className="text-2xl font-semibold">Reset Password</h3>
 						<p className="text-gray-500">Please enter your new password</p>
 					</div>
 					<form className="space-y-5">
 						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide text-gray-700">
-								Password
-							</label>
+							<label className="text-sm font-medium tracking-wide">Password</label>
 							<input
-								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
+								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 								value={state.password}
 								onChange={handleChange}
 								type="password"
@@ -81,11 +79,11 @@ const ForgotPassword = () => {
 							/>
 						</div>
 						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide text-gray-700">
+							<label className="text-sm font-medium tracking-wide">
 								Confirm New Password
 							</label>
 							<input
-								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
+								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 								value={state.newPassword}
 								onChange={handleChange}
 								type="password"
@@ -97,7 +95,7 @@ const ForgotPassword = () => {
 							<button
 								type="submit"
 								onClick={handleSubmit}
-								className="btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg"
+								className="btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg"
 							>
 								Reset Password
 							</button>

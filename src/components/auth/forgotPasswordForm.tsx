@@ -54,20 +54,18 @@ const ForgotPasswordForm: React.FC = () => {
 	};
 	return (
 		<div className="z-10 flex justify-center  self-center">
-			<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 bg-base-200 dark:bg-gray-100 p-12">
+			<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 p-12">
 				<div className="mb-4">
-					<h3 className="text-2xl font-semibold text-gray-800">Forgot Password </h3>
+					<h3 className="text-2xl font-semibold">Forgot Password </h3>
 					<p className="text-gray-500">
 						We will send you a reset link if the email exist
 					</p>
 				</div>
 				<form className="space-y-5" onSubmit={submitHandler}>
 					<div className="space-y-2">
-						<label className="text-sm font-medium tracking-wide text-gray-700">
-							Email
-						</label>
+						<label className="text-sm font-medium tracking-wide">Email</label>
 						<input
-							className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-green-400 focus:outline-none"
+							className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 							value={formData.email}
 							onChange={handleChange}
 							type="email"
@@ -79,7 +77,7 @@ const ForgotPasswordForm: React.FC = () => {
 						<button
 							type="submit"
 							className={cn(
-								"btn btn-block cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
+								"btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
 							)}
 						>
 							{loading ? <span className="loading loading-spinner"></span> : null}
