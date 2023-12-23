@@ -17,7 +17,12 @@ import {
 } from "~/utils/mail";
 import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
-import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	API_TOKEN_SECRET,
+	PASSWORD_RESET_SECRET,
+	encrypt,
+	generateInstanceSecret,
+} from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
 import { User, UserOptions } from "@prisma/client";
 
@@ -35,14 +40,14 @@ const mediumPassword = new RegExp(
 const passwordSchema = (errorMessage: string) =>
 	z
 		.string()
-		.nonempty()
 		.max(40)
 		.refine((val) => {
 			if (!mediumPassword.test(val)) {
 				throw new Error(errorMessage);
 			}
 			return true;
-		});
+		})
+		.optional();
 
 export const authRouter = createTRPCRouter({
 	register: publicProcedure
@@ -295,9 +300,7 @@ export const authRouter = createTRPCRouter({
 					.email()
 					.transform((val) => val.trim())
 					.optional(),
-				password: passwordSchema("Current password does not meet the requirements!")
-					.transform((val) => val.trim())
-					.optional(),
+				password: z.string().optional(),
 				newPassword: passwordSchema("New Password does not meet the requirements!")
 					.transform((val) => val.trim())
 					.optional(),
@@ -314,6 +317,9 @@ export const authRouter = createTRPCRouter({
 				where: {
 					id: ctx.session.user.id,
 				},
+				include: {
+					accounts: true,
+				},
 			});
 
 			// validate
@@ -325,14 +331,18 @@ export const authRouter = createTRPCRouter({
 			}
 
 			if (input.newPassword || input.repeatNewPassword || input.password) {
-				// make sure all fields are filled
-				if (!input.newPassword || !input.repeatNewPassword || !input.password) {
+				// Check if user is OAuth user (no existing password)
+				const isOAuthUser = user.accounts && !user.hash;
+
+				// For setting new password, all fields are required
+				if (
+					!input.newPassword ||
+					!input.repeatNewPassword ||
+					(!input.password && !isOAuthUser)
+				) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
-						message: "Please fill all fields!",
-						// optional: pass the original error to retain stack trace
-
-						// cause: theError,
+						message: "Please fill all required fields!",
 					});
 				}
 
@@ -345,7 +355,7 @@ export const authRouter = createTRPCRouter({
 					});
 
 				// check if old password is correct
-				if (!bcrypt.compareSync(input.password, user.hash)) {
+				if (!isOAuthUser && !bcrypt.compareSync(input.password, user.hash)) {
 					throw new TRPCError({
 						code: "BAD_REQUEST",
 						message: "Old password is incorrect!",
@@ -397,12 +407,13 @@ export const authRouter = createTRPCRouter({
 
 			if (!user) return "Mail sent if email exist!";
 
+			const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
 			const validationToken = jwt.sign(
 				{
 					id: user.id,
 					email: user.email,
 				},
-				user.hash,
+				secret,
 				{
 					expiresIn: "15m",
 				},
@@ -472,9 +483,9 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 
-				if (!user || !user.hash) throwError("Something went wrong!");
-
-				jwt.verify(token, user.hash);
+				if (!user) throwError("Something went wrong!");
+				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
+				jwt.verify(token, secret);
 
 				// hash password
 				return await ctx.prisma.user.update({

@@ -48,7 +48,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
-      NEXTAUTH_URL: "http://localhost:3000" # change localhost to your domain or server ip address if hosting on a server.
+      NEXTAUTH_URL: "http://server_ip:3000" # change localhost to your domain or server ip address if hosting on a server.
       NEXTAUTH_SECRET: "random_secret" # change this to a random string of characters.
     networks:
       - app-network

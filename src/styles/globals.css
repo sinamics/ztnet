@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .btn{
+    text-transform: uppercase;
+  }
+}
 .outer-content{
   min-height: 100dvh;
 }
@@ -48,3 +53,6 @@ td {
   border: 1px solid black;
   border-collapse: collapse;
 } */
+.theme-black {
+  text-transform: none; /* This prevents text from being transformed to lowercase */
+}

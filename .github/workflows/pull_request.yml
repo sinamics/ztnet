@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@master
         with:
           node-version: 18.x
@@ -37,10 +39,9 @@ jobs:
     name: Test Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        # checkout dev branch
+      - uses: actions/checkout@v3
         with:
-          ref: dev
+          ref: ${{ github.ref }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

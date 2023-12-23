@@ -22,7 +22,7 @@ const config = {
 			{
 				dark: {
 					primary: "#7e22ce",
-					"primary-focus": "#570df8",
+					"primary-focus": "#711eb9",
 					"primary-content": "#ffffff",
 					secondary: "#e5e7eb",
 					"secondary-focus": "#bd0091",
@@ -50,33 +50,6 @@ const config = {
 			"forest",
 		],
 	},
-	// daisyui: {
-	//   themes: [
-	//     {
-	//       "[data-theme=dark]": {
-	//         "color-scheme": "dark",
-	//         primary: "#661AE6",
-	//         "primary-content": "#ffffff",
-	//         secondary: "#D926AA",
-	//         "secondary-content": "#ffffff",
-	//         accent: "#1FB2A5",
-	//         "accent-content": "#ffffff",
-	//         neutral: "#191D24",
-	//         "neutral-focus": "#111318",
-	//         "neutral-content": "#A6ADBB",
-	//         "base-100": "#2A303C",
-	//         "base-200": "#242933",
-	//         "base-300": "#20252E",
-	//         "base-content": "#A6ADBB",
-	//       },
-	//     },
-	//   ],
-	// },
-	// themes: [
-	//   "light",
-	//   "dark",
-	//   "black",
-	// ],
 };
 
 module.exports = config;
