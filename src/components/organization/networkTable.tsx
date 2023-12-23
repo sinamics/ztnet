@@ -187,7 +187,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 									key={row.id}
 									// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 									onClick={() => handleRowClick(row?.original.nwid as string)}
-									className="cursor-pointer border-base-300/50 hover:bg-secondary hover:bg-opacity-25"
+									className="cursor-pointer border-base-300/50 hover:bg-primary/5"
 								>
 									{row.getVisibleCells().map((cell) => {
 										return (
