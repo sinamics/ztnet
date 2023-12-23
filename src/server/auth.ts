@@ -47,6 +47,34 @@ const MyAdapter = {
 	},
 };
 
+function buildAuthorizationConfig(url: string, defaultScope: string) {
+	const hasScopeInUrl = url?.includes("?scope=") || url?.includes("&scope=");
+
+	if (hasScopeInUrl) {
+		// If scope is already in the URL, return the URL as is
+		return url;
+	}
+	if (url) {
+		return {
+			url: url,
+			params: {
+				scope: process.env.OAUTH_SCOPE || defaultScope,
+			},
+		};
+	}
+	// If scope is not in the URL, add it as a separate params object
+	return {
+		params: {
+			scope: process.env.OAUTH_SCOPE || defaultScope,
+		},
+	};
+}
+
+const genericOAuthAuthorization = buildAuthorizationConfig(
+	process.env.OAUTH_AUTHORIZATION_URL,
+	"openid profile email",
+);
+
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
@@ -61,28 +89,24 @@ export const authOptions: NextAuthOptions = {
 			type: "oauth",
 			allowDangerousEmailAccountLinking:
 				Boolean(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING) || true,
-			wellKnown: process.env.OAUTH_WELLKNOWN,
 			clientId: process.env.OAUTH_ID,
 			clientSecret: process.env.OAUTH_SECRET,
-			idToken: true,
-			checks: ["pkce", "state"],
-			authorization: {
-				params: {
-					scope: "openid profile email",
-				},
-			},
+			wellKnown: process.env.OAUTH_WELLKNOWN,
+			checks: ["state", "pkce"], // Include 'pkce' if required for your custom OAuth
+			authorization: genericOAuthAuthorization,
+			token: process.env.OAUTH_ACCESS_TOKEN_URL,
+			userinfo: process.env.OAUTH_USER_INFO,
 			profile(profile) {
 				return Promise.resolve({
-					id: profile.sub,
-					name: profile.name,
+					id: profile.sub || profile.id.toString(), // Handle ID based on provider
+					name: profile.name || profile.login || profile.username,
 					email: profile.email,
-					image: profile.picture,
+					image: profile.picture || profile.avatar_url || profile.image_url,
 					lastLogin: new Date().toISOString(),
 					role: "USER",
 				});
 			},
 		},
-
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. "Sign in with...")
 			name: "Credentials",
