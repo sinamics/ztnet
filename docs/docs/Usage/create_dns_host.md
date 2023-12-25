@@ -208,9 +208,9 @@ chmod +x zt2hosts.sh
 ```bash
 127.0.0.1                                localhost                                            
 ::1                                      localhost               ip6-localhost                ip6-loopback
-172.25.25.31                             awesome_user.ztnet.network  efcc1b0947.ztnet.network  
-fd17:d395:d8cb:43a8:1899:93ef:cc1b:0947  awesome_user.ztnet.network  efcc1b0947.ztnet.network  
-fc1c:903d:c0ef:cc1b:0947:0000:0000:0001  awesome_user.ztnet.network  efcc1b0947.ztnet.network
+172.25.25.31                             awesome_user.ztnet.network  efcc1b0000.ztnet.network  
+fd17:d395:d8cb:43a8:1899:93ef:cc1b:0947  awesome_user.ztnet.network  efcc1b0000.ztnet.network  
+fc1c:903d:c0ef:cc1b:0947:0000:0000:0001  awesome_user.ztnet.network  efcc1b0000.ztnet.network
 ```
 
 ## Backup your hosts file
