@@ -108,3 +108,13 @@ ztnet:
     OAUTH_USER_INFO: "https://discord.com/api/users/@me"
 ```
 
+## Troubleshooting
+If you are having trouble with OAuth, please check the docker server logs:
+```bash
+docker logs ztnet
+```
+
+or if you are using standalone installation, check the systemd logs:
+```bash
+journalctl -u ztnet.service
+```
