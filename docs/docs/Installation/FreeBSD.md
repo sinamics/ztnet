@@ -13,7 +13,7 @@ First, make sure PostgreSQL and ZeroTier are installed and configured on your Fr
 ```bash
 pkg update
 pkg install zerotier protobuf curl git node
-pkg install postgresql13-server postgresql13-contrib
+pkg install postgresql15-server postgresql15-contrib
 sysrc postgresql_enable=yes
 service postgresql initdb
 service postgresql start
