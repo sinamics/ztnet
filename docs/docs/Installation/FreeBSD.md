@@ -13,7 +13,7 @@ First, make sure PostgreSQL and ZeroTier are installed and configured on your Fr
 ```bash
 pkg update
 pkg install zerotier protobuf curl git node
-pkg install postgresql13-server postgresql13-contrib
+pkg install postgresql15-server postgresql15-contrib
 sysrc postgresql_enable=yes
 service postgresql initdb
 service postgresql start
@@ -73,9 +73,9 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 5. Create a `.env` file in the root directory and populate it with the necessary environment variables. Make sure these match what you've set up in your PostgreSQL database.
     ```
     DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ztnet?schema=public
-    ZT_ADDR=http://localhost:9993
+    ZT_ADDR=http://127.0.0.1:9993
     NEXT_PUBLIC_SITE_NAME=ZTnet
-    NEXTAUTH_URL="http://localhost:3000"
+    NEXTAUTH_URL="http://ZTNET_Controller_Web_UI_IP_ADDRESS:3000"
     NEXTAUTH_SECRET="random_secret"
     ```
 
