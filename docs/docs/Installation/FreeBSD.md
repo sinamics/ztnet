@@ -75,7 +75,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ztnet?schema=public
     ZT_ADDR=http://127.0.0.1:9993
     NEXT_PUBLIC_SITE_NAME=ZTnet
-    NEXTAUTH_URL="http://<ZTNET_Controller_Web_UI_IP_ADDRESS>:3000"
+    NEXTAUTH_URL="http://ZTNET_Controller_Web_UI_IP_ADDRESS:3000"
     NEXTAUTH_SECRET="random_secret"
     ```
 
