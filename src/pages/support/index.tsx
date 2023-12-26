@@ -12,7 +12,6 @@ const Support = () => {
 		const { name, value } = event.target;
 		setState((prevState) => ({ ...prevState, [name]: value }));
 	};
-	console.log(nodeStatus);
 	return (
 		<div className="mx-auto w-4/6 grid grid-cols-2 gap-5">
 			<div className="col-span-2 flex items-center justify-center flex-col">
