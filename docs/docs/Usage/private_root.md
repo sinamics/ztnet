@@ -7,6 +7,24 @@ description: Learn how to create and manage private root servers with ZTNet.
 
 # Managing Private Root Servers with ZTNet
 
+### What is a Private Root Server?
+
+A private root server in ZeroTier acts as a central coordination point for a ZeroTier network. Unlike [public root servers](https://zerotier.atlassian.net/wiki/spaces/SD/pages/7241732/Root+Server+IP+Addresses) provided by ZeroTier, private root servers are self-hosted and managed by the network administrator. They play a crucial role in network management, node authentication, and route orchestration.
+
+### Functions of a Private Root Server
+
+- **Network Coordination**: It coordinates network activities and manages connections between nodes.
+- **Security and Privacy**: Offers enhanced security and privacy as the server is under your control, reducing reliance on external or public infrastructure.
+- **Customization and Control**: Allows for greater customization of network behavior and policies.
+- **Improved Performance**: Can potentially offer improved performance, especially if located geographically closer to the majority of the nodes.
+
+### When to Use a Private Root Server
+
+- **Enhanced Security Requirements**: Ideal for organizations with strict security and data privacy requirements.
+- **Large-scale Networks**: Beneficial for managing large-scale or enterprise-level networks where control over all network components is essential.
+- **Geographic Considerations**: When network nodes are concentrated in a specific geographical area, a private root server in the same region can reduce latency.
+
+
 ## Verifying Public Root Servers
 
 To check the current root servers associated with your ZTNET network:
