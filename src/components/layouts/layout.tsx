@@ -52,6 +52,37 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	);
 };
 
+export const LayoutPublicSupport = ({ children }: Props): JSX.Element => {
+	const router = useRouter();
+	const { data: options, isLoading: loadingRegistration } =
+		api.public.registrationAllowed.useQuery();
+
+	const currentPath = router.pathname;
+	return (
+		<div className="outer-content">
+			<div className="mx-auto flex w-5/6">
+				<div>
+					<h1 className="mb-3 text-5xl font-bold">{globalSiteTitle}</h1>
+				</div>
+
+				<div className="m-3 mx-0 flex w-10/12 justify-end">
+					{options?.enableRegistration && !loadingRegistration ? (
+						<Link
+							href={
+								currentPath.includes("/auth/login") ? "/auth/register" : "/auth/login"
+							}
+							className="btn btn-primary"
+						>
+							{currentPath.includes("/auth/login") ? "Sign Up" : "Login"}
+						</Link>
+					) : null}
+				</div>
+			</div>
+			{children}
+		</div>
+	);
+};
+
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
 
