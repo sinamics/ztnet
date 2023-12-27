@@ -57,7 +57,7 @@ const UserSettings = ({ orgIds }: IProps) => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="py-5">
-				<div className="tabs tabs-bordered mx-auto flex uppercase p-3 pb-10 sm:w-6/12">
+				<div className="tabs tabs-bordered mx-auto flex flex-wrap uppercase p-3 pb-10 sm:w-6/12">
 					{tabs.map((t) => (
 						<a
 							key={t.value}
