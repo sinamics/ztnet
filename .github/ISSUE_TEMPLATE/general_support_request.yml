@@ -1,5 +1,5 @@
 name: Support Request
-description: General support request for ZTNET
+description: Submit a request for assistance or inquiry about ZTNET
 title: "[Support]: "
 labels: ["support"]
 
@@ -7,24 +7,27 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: "📝 Describe the Problem You Are Having"
+      label: "📝 Inquiry"
+      description: "Please provide a detailed description of your inquiry, issue, or the assistance you require with ZTNET."
     validations:
       required: true
   - type: input
     id: version
     attributes:
       label: "🔖 Version"
-      description: "Please provide the docker image tag or git commit hash you're using."
+      description: "Please provide the ztnet version tag"
     validations:
       required: true
-  - type: textarea
-    id: docker-logs
+  - type: checkboxes
+    id: deployment-type
     attributes:
-      label: "📋 Docker Logs"
-      description: "Please include Docker logs. Run `docker logs ztnet` and copy and paste the output here. This will be automatically formatted into code, so no need for backticks."
-      render: shell
+      label: "🔧 Deployment Type"
+      description: "Select the type of ZTNET deployment you are using."
+      options:
+        - label: Docker
+        - label: Standalone
     validations:
-      required: false
+      required: true
   - type: dropdown
     id: os
     attributes:

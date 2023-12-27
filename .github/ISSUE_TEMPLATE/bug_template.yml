@@ -18,11 +18,29 @@ body:
       description: "Steps to reproduce the behavior."
     validations:
       required: true
+  - type: checkboxes
+    id: deployment-type
+    attributes:
+      label: "🔧 Deployment Type"
+      description: "Select the type of ZTNET deployment you are using."
+      options:
+        - label: Docker
+        - label: Standalone
+    validations:
+      required: true
   - type: textarea
     id: expected-behavior
     attributes:
       label: "✨ Expected Behavior"
       description: "A clear and concise description of what you expected to happen."
+    validations:
+      required: false
+  - type: textarea
+    id: docker-logs
+    attributes:
+      label: "📋 ZTNET Logs"
+      description: "Run `docker logs ztnet` or `journalctl -u ztnet` and copy and paste the relative output here. This will be automatically formatted into code, so no need for backticks."
+      render: shell
     validations:
       required: false
   - type: textarea
