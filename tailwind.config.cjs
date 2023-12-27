@@ -4,7 +4,7 @@ const config = {
 	theme: {
 		extend: {
 			animation: {
-				fadeIn: "fadeIn 1s ease-in-out",
+				fadeIn: "fadeIn 0.2s ease-in-out",
 			},
 		},
 	},

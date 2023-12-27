@@ -73,7 +73,7 @@ const Support = () => {
 							<div key={status.nwid} className="py-2">
 								<div className="shadow-lg rounded-lg p-6 border border-primary/20">
 									<p className="text-lg">
-										Network ID: <strong className="text-purple-700">{status.nwid}</strong>
+										Network ID: <strong className="text-primary">{status.nwid}</strong>
 									</p>
 									<p className="text-lg">
 										Status:{" "}
@@ -98,133 +98,146 @@ const Support = () => {
 				</div>
 			)}
 
-			<div>
-				<h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
-					Install ZeroTier on Linux
-				</h1>
-				<ul className="space-y-3 list-decimal list-inside border border-primary/30 shadow-lg rounded-lg p-6 divide-y divide-primary-content/20">
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Update System Packages</strong>:
-						<ul className="ml-4 list-inside">
-							Before installing, ensure your Linux system is up to date:
-							<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
-								sudo apt update && sudo apt upgrade -y
-							</code>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Install ZeroTier</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								For Debian/Ubuntu-based systems:
-								<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
-									curl -s https://install.zerotier.com | sudo bash
-								</code>
+			<details
+				tabIndex={0}
+				className="col-span-2 collapse border border-base-300 bg-base-200 mt-20"
+			>
+				<summary className="collapse-title text-xl font-medium">
+					Zerotier Installation Instructions
+				</summary>
+				<div className="collapse-content grid grid-cols-2 gap-5">
+					<div>
+						<h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+							Install ZeroTier on Linux
+						</h1>
+						<ul className="space-y-3 list-decimal list-inside border border-primary/30 shadow-lg rounded-lg p-6 divide-y divide-primary-content/20">
+							<li className="py-4">
+								<strong className="text-lg text-primary">Update System Packages</strong>:
+								<ul className="ml-4 list-inside">
+									Before installing, ensure your Linux system is up to date:
+									<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
+										sudo apt update && sudo apt upgrade -y
+									</code>
+								</ul>
 							</li>
-							<li>
-								For other distributions, check the ZeroTier download page for specific
-								instructions.
+							<li className="py-4">
+								<strong className="text-lg text-primary">Install ZeroTier</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										For Debian/Ubuntu-based systems:
+										<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
+											curl -s https://install.zerotier.com | sudo bash
+										</code>
+									</li>
+									<li>
+										For other distributions, check the ZeroTier download page for specific
+										instructions.
+									</li>
+								</ul>
 							</li>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Join a ZeroTier Network</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								Use the following command to join a network, replacing{" "}
-								<code className="bg-primary-content text-gray-700 p-1 rounded">
-									your_network_id
-								</code>{" "}
-								with the actual network ID:
-								<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
-									sudo zerotier-cli join your_network_id
-								</code>
+							<li className="py-4">
+								<strong className="text-lg text-primary">Join a ZeroTier Network</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										Use the following command to join a network, replacing{" "}
+										<code className="bg-primary-content text-gray-700 p-1 rounded">
+											your_network_id
+										</code>{" "}
+										with the actual network ID:
+										<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
+											sudo zerotier-cli join your_network_id
+										</code>
+									</li>
+								</ul>
 							</li>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">View Your Node ID</strong>:
-						<ul className="ml-4">
-							<li>
-								To view your ZeroTier node ID, use the following command:
-								<code className="block bg-gray-100 text-gray-700 p-2 mt-2 rounded">
-									sudo zerotier-cli info
-								</code>
+							<li className="py-4">
+								<strong className="text-lg text-primary">View Your Node ID</strong>:
+								<ul className="ml-4">
+									<li>
+										To view your ZeroTier node ID, use the following command:
+										<code className="block bg-gray-100 text-gray-700 p-2 mt-2 rounded">
+											sudo zerotier-cli info
+										</code>
+									</li>
+								</ul>
 							</li>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Check Connection Status</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								Verify that your machine has connected successfully:
-								<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
-									sudo zerotier-cli listnetworks
-								</code>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-			<div>
-				<h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
-					Install ZeroTier on Windows
-				</h1>
-				<ul className="space-y-3 list-decimal list-inside border border-primary/30 shadow-lg rounded-lg p-6 divide-y divide-primary-content/20">
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">
-							Download ZeroTier Installer
-						</strong>
-						: Download the ZeroTier installer for Windows from the official ZeroTier
-						website.
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Run the Installer</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								Execute the downloaded installer and follow the on-screen instructions to
-								install ZeroTier on your Windows system.
+							<li className="py-4">
+								<strong className="text-lg text-primary">Check Connection Status</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										Verify that your machine has connected successfully:
+										<code className="block bg-primary-content text-gray-700 p-2 mt-2 rounded">
+											sudo zerotier-cli listnetworks
+										</code>
+									</li>
+								</ul>
 							</li>
 						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Join a ZeroTier Network</strong>:
-						<ul className="ml-4 list-inside">
-							<li>After installation, open ZeroTier from the Start menu.</li>
-							<li>
-								Click on the ZeroTier icon in the system tray, and select 'Join Network'.
+					</div>
+					<div>
+						<h1 className="text-3xl font-bold text-center text-blue-600 mb-8">
+							Install ZeroTier on Windows
+						</h1>
+						<ul className="space-y-3 list-decimal list-inside border border-primary/30 shadow-lg rounded-lg p-6 divide-y divide-primary-content/20">
+							<li className="py-4">
+								<strong className="text-lg text-primary">
+									Download ZeroTier Installer
+								</strong>
+								: Download the ZeroTier installer for Windows from the official ZeroTier
+								website.
 							</li>
-							<li>Enter the network ID you wish to join and click 'OK'.</li>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Check Connection Status</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								Right-click the ZeroTier icon in the system tray and select 'Show
-								Networks' to view connected networks.
+							<li className="py-4">
+								<strong className="text-lg text-primary">Run the Installer</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										Execute the downloaded installer and follow the on-screen instructions
+										to install ZeroTier on your Windows system.
+									</li>
+								</ul>
+							</li>
+							<li className="py-4">
+								<strong className="text-lg text-primary">Join a ZeroTier Network</strong>:
+								<ul className="ml-4 list-inside">
+									<li>After installation, open ZeroTier from the Start menu.</li>
+									<li>
+										Click on the ZeroTier icon in the system tray, and select 'Join
+										Network'.
+									</li>
+									<li>Enter the network ID you wish to join and click 'OK'.</li>
+								</ul>
+							</li>
+							<li className="py-4">
+								<strong className="text-lg text-primary">Check Connection Status</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										Right-click the ZeroTier icon in the system tray and select 'Show
+										Networks' to view connected networks.
+									</li>
+								</ul>
+							</li>
+							<li className="py-4">
+								<strong className="text-lg text-primary">Authorize Device</strong> (if
+								required):
+								<ul className="ml-4 list-inside">
+									<li>Log in to your Ztnet account through their web interface.</li>
+									<li>
+										Navigate to the network you joined and authorize your new device.
+									</li>
+								</ul>
+							</li>
+							<li className="py-4">
+								<strong className="text-lg text-primary">View Your Node ID</strong>:
+								<ul className="ml-4 list-inside">
+									<li>
+										Right-click the ZeroTier icon in the system tray and select 'Show
+										Networks'. Your Node ID will be displayed at the top of the window.
+									</li>
+								</ul>
 							</li>
 						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">Authorize Device</strong> (if
-						required):
-						<ul className="ml-4 list-inside">
-							<li>Log in to your Ztnet account through their web interface.</li>
-							<li>Navigate to the network you joined and authorize your new device.</li>
-						</ul>
-					</li>
-					<li className="py-4">
-						<strong className="text-lg text-purple-700">View Your Node ID</strong>:
-						<ul className="ml-4 list-inside">
-							<li>
-								Right-click the ZeroTier icon in the system tray and select 'Show
-								Networks'. Your Node ID will be displayed at the top of the window.
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
+					</div>
+				</div>
+			</details>
 		</div>
 	);
 };
