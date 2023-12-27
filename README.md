@@ -8,7 +8,7 @@
     ZTNET - Self-Hosted ZeroTier network controller.
     <br />
     <br />
-    <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=support%2Ctriage&projects=&template=general_support_request.yml&title=%5BSupport%5D%3A+">Bug Report</a>
+    <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=bug&projects=&template=bug_template.yml&title=%5BBug%5D%3A+">Bug Report</a>
     ·
     <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature+Request%5D%3A+">Feature Request</a>
     ·
