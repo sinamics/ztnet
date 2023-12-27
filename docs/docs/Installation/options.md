@@ -107,6 +107,10 @@ See [OAuth](/authentication/oauth) for more information.
   - Example: `"read:user user:email"` for GitHub, to request basic user information and email.
   - Default: `"openid profile email"`.
 
+- `OAUTH_EXCLUSIVE_LOGIN`
+  - Description: If set to `true`, users can only log in using OAuth. If set to `false`, users can log in using either OAuth or email credentials.
+  - Default: `false`.
+
 ## NEXTAUTH Configuration
 For more information on NEXTAUTH environment variables, see [NEXTAUTH Environment Variables](https://next-auth.js.org/configuration/options#environment-variables).
 
