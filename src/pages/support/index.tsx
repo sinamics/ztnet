@@ -14,93 +14,101 @@ const Support = () => {
 		setState((prevState) => ({ ...prevState, [name]: value }));
 	};
 	return (
-		<div className="mx-auto w-4/6 grid grid-cols-2 gap-5">
-			<div className="col-span-2 flex items-center justify-center flex-col">
-				{/* <h1 className="text-3xl font-bold">Check your status</h1>
-				<p>Type your nodeId to get the current status</p> */}
-
-				<h1 className="text-3xl font-bold text-blue-600">
-					Check Your ZTNET Network Status
-				</h1>
-				<p className="text-lg mt-4">
-					To view your current network status within the ZTNET network, please enter your
-					node ID in the field provided below. Your node ID is a unique identifier
-					assigned to your device within the ZTNET network. Once you submit your node ID,
-					you'll be able to see details such as your network ID, whether your node is
-					active or has been marked as deleted.
-				</p>
-				<p className="text-lg mt-2">
-					If you are unsure of your node ID, you can find it by running the{" "}
-					<code className="bg-primary-content text-primary p-1 rounded">
-						zerotier-cli info
-					</code>{" "}
-					command in your device's terminal.
-				</p>
-
-				<form>
-					<Input
-						onChange={handleChange}
-						value={state.nodeid}
-						className="border border-primary/30 rounded-lg p-2 mt-5"
-						type="text"
-						name="nodeid"
-						placeholder="Your Node ID"
-					/>
-					<button
-						onClick={(e) => {
-							e.preventDefault();
-							getStatus(
-								{ nodeid: state.nodeid },
-								{
-									onSuccess: () => {
-										setState({ nodeid: "" });
-									},
-								},
-							);
-						}}
-						className="hidden"
-						type="submit"
-					/>
-				</form>
-			</div>
-			{nodeStatus?.length > 0 && (
-				<div className="col-span-2 flex items-center justify-center flex-col animate-fadeIn">
-					<h1 className="text-3xl font-bold text-blue-600 mb-4">
-						Your Membership Status
-					</h1>
-					<div className="grid grid-cols-3 gap-10">
-						{nodeStatus.map((status) => (
-							<div key={status.nwid} className="py-2">
-								<div className="shadow-lg rounded-lg p-6 border border-primary/20">
-									<p className="text-lg">
-										Network ID: <strong className="text-primary">{status.nwid}</strong>
-									</p>
-									<p className="text-lg">
-										Status:{" "}
-										<strong
-											className={cn({
-												"text-red-500": status.deleted,
-												"text-green-500": !status.deleted && status.authorized,
-												"text-yellow-500": !status.deleted && !status.authorized,
-											})}
-										>
-											{status.deleted
-												? "Not Active"
-												: status.authorized
-												  ? "Active"
-												  : "Authorization Pending"}
-										</strong>
-									</p>
-								</div>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
-
+		<div className="mx-auto w-4/6">
 			<details
 				tabIndex={0}
 				className="col-span-2 collapse border border-base-300 bg-base-200 mt-20"
+			>
+				<summary className="collapse-title text-xl font-medium">
+					Check Your ZTNET Network Status
+				</summary>
+				<div className="p-10 col-span-2 flex items-center justify-center flex-col">
+					{/* <h1 className="text-3xl font-bold">Check your status</h1>
+				<p>Type your nodeId to get the current status</p> */}
+
+					<h1 className="text-3xl font-bold text-blue-600">
+						Check Your ZTNET Network Status
+					</h1>
+					<p className="text-lg mt-4">
+						To view your current network status within the ZTNET network, please enter
+						your node ID in the field provided below. Your node ID is a unique identifier
+						assigned to your device within the ZTNET network. Once you submit your node
+						ID, you'll be able to see details such as your network ID, whether your node
+						is active or has been marked as deleted.
+					</p>
+					<p className="text-lg mt-2">
+						If you are unsure of your node ID, you can find it by running the{" "}
+						<code className="bg-primary-content text-primary p-1 rounded">
+							zerotier-cli info
+						</code>{" "}
+						command in your device's terminal.
+					</p>
+
+					<form>
+						<Input
+							onChange={handleChange}
+							value={state.nodeid}
+							className="border border-primary/30 rounded-lg p-2 mt-5"
+							type="text"
+							name="nodeid"
+							placeholder="Your Node ID"
+						/>
+						<button
+							onClick={(e) => {
+								e.preventDefault();
+								getStatus(
+									{ nodeid: state.nodeid },
+									{
+										onSuccess: () => {
+											setState({ nodeid: "" });
+										},
+									},
+								);
+							}}
+							className="hidden"
+							type="submit"
+						/>
+					</form>
+				</div>
+				{nodeStatus?.length > 0 && (
+					<div className="col-span-2 flex items-center justify-center flex-col animate-fadeIn pb-10">
+						<h1 className="text-3xl font-bold text-blue-600 mb-4">
+							Your Membership Status
+						</h1>
+						<div className="grid grid-cols-3 gap-10">
+							{nodeStatus.map((status) => (
+								<div key={status.nwid} className="py-2">
+									<div className="shadow-lg rounded-lg p-6 border border-primary/20">
+										<p className="text-lg">
+											Network ID: <strong className="text-primary">{status.nwid}</strong>
+										</p>
+										<p className="text-lg">
+											Status:{" "}
+											<strong
+												className={cn({
+													"text-red-500": status.deleted,
+													"text-green-500": !status.deleted && status.authorized,
+													"text-yellow-500": !status.deleted && !status.authorized,
+												})}
+											>
+												{status.deleted
+													? "Not Active"
+													: status.authorized
+													  ? "Active"
+													  : "Authorization Pending"}
+											</strong>
+										</p>
+									</div>
+								</div>
+							))}
+						</div>
+					</div>
+				)}
+			</details>
+
+			<details
+				tabIndex={0}
+				className="col-span-2 collapse border border-base-300 bg-base-200 mt-5"
 			>
 				<summary className="collapse-title text-xl font-medium">
 					Zerotier Installation Instructions

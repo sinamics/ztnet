@@ -122,7 +122,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 	}
 
 	return (
-		<div className="animate-fadeIn">
+		<div className="">
 			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6">
