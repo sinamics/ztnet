@@ -17,7 +17,7 @@ const ForgotPassword = () => {
 				<link rel="icon" href="/favicon.ico" />
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
-			<main className="flex min-h-screen flex-col">
+			<main className="flex min-h-screen flex-col m-5 sm:m-0">
 				{/* Main section */}
 				<div className="flex flex-grow items-center">
 					<div className="mx-auto flex">

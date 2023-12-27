@@ -25,6 +25,7 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -114,17 +115,13 @@ const NetworkById = ({ orgIds }: IProps) => {
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="text-center text-2xl font-semibold">
-						<progress className="progress progress-primary w-56" />
-					</h1>
-				</div>
+				<NetworkLoadingSkeleton />
 			</>
 		);
 	}
 
 	return (
-		<div>
+		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
 				<div className="w-5/5 h-fit w-full xl:w-2/6 ">

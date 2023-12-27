@@ -517,7 +517,7 @@
 		},
 		"organization": {
 			"addOrganization": {
-				"title": "organisasjon",
+				"title": "Teamledelse",
 				"description": "Utforsk Organisasjonen for å begynne å forme måten teamet ditt jobber sammen. Tildel roller, inviter nye medlemmer, og ha tilsyn med grunnleggende tillatelser i organisasjonen din. Designet for enkelhet og brukervennlighet, gir denne beta-funksjonen en grunnlag for teamets samarbeid. Ettersom vi fortsetter å utvikle og forbedre disse innstillingene, inviterer vi deg til å gi tilbakemeldinger for å hjelpe oss med å forbedre opplevelsen.",
 				"inputFields": {
 					"label": "Legg til Organisasjon",
