@@ -21,7 +21,7 @@ const Login = ({ hasOauth, oauthExlusiveLogin }) => {
 			</Head>
 			<main className="flex min-h-[calc(100vh-7vh)] flex-col">
 				{/* Main section */}
-				<div className="flex flex-grow items-center">
+				<div className="flex flex-grow items-center m-5 sm:m-0">
 					<div className="mx-auto flex">
 						<WelcomeMessage />
 						<LoginForm hasOauth={hasOauth} oauthExlusiveLogin={oauthExlusiveLogin} />
