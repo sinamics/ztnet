@@ -81,7 +81,7 @@ describe("NetworkById component", () => {
 			</QueryClientProvider>,
 		);
 		// expect(screen.getByText(/loading/i)).toBeInTheDocument();
-		expect(screen.getByRole("progressbar")).toBeInTheDocument();
+		expect(screen.getByRole("skeleton")).toBeInTheDocument();
 	});
 
 	it("renders network details correctly", () => {
