@@ -12,7 +12,7 @@
     ·
     <a href="https://github.com/sinamics/ztnet/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature+Request%5D%3A+">Feature Request</a>
     ·
-    <a href="https://github.com/sinamics/ztnet/discussions">Ask a Question</a>
+    <a href="https://github.com/sinamics/ztnet/discussions/new/choose">Ask a Question</a>
   </p>
   <h3 align="center">
     <a href="https://ztnet.network">Documentation</a>
