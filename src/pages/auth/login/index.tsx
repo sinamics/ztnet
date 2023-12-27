@@ -8,7 +8,7 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import LoginForm from "~/components/auth/loginForm";
 import { WelcomeMessage } from "~/components/auth/welcomeMessage";
 
-const Login = ({ hasOauth }) => {
+const Login = ({ hasOauth, oauthExlusiveLogin }) => {
 	const title = `${globalSiteTitle} - Sign In`;
 
 	return (
@@ -24,7 +24,7 @@ const Login = ({ hasOauth }) => {
 				<div className="flex flex-grow items-center">
 					<div className="mx-auto flex">
 						<WelcomeMessage />
-						<LoginForm hasOauth={hasOauth} />
+						<LoginForm hasOauth={hasOauth} oauthExlusiveLogin={oauthExlusiveLogin} />
 					</div>
 				</div>
 			</main>
@@ -40,10 +40,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
 	const hasOauth = !!(process.env.OAUTH_ID && process.env.OAUTH_SECRET);
+	const oauthExlusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 
 	const session = await getSession(context);
 	if (!session || !session.user) {
-		return { props: { hasOauth } };
+		return { props: { hasOauth, oauthExlusiveLogin } };
 	}
 
 	if (session.user) {
