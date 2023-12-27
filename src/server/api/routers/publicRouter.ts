@@ -35,6 +35,9 @@ export const publicRouter = createTRPCRouter({
 			const database_members = await ctx.prisma.network_members.findMany({
 				where: {
 					address: input.nodeid,
+					nwid_ref: {
+						organizationId: null,
+					},
 				},
 				select: {
 					nwid: true,

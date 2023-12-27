@@ -2,6 +2,7 @@ import React, { ReactElement } from "react";
 import Input from "~/components/elements/input";
 import { LayoutPublicSupport } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
+import cn from "classnames";
 
 const Support = () => {
 	const [state, setState] = React.useState({ nodeid: "" });
@@ -77,16 +78,14 @@ const Support = () => {
 									<p className="text-lg">
 										Status:{" "}
 										<strong
-											className={`text-${
-												status.deleted
-													? "red-500"
-													: status.authorized
-													  ? "green-500"
-													  : "yellow-500"
-											}`}
+											className={cn({
+												"text-red-500": status.deleted,
+												"text-green-500": !status.deleted && status.authorized,
+												"text-yellow-500": !status.deleted && !status.authorized,
+											})}
 										>
 											{status.deleted
-												? "Deleted"
+												? "Not Active"
 												: status.authorized
 												  ? "Active"
 												  : "Authorization Pending"}
