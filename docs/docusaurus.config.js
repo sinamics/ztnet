@@ -162,7 +162,7 @@ const config = {
           },
           {
             // label: 'Discord',
-            href: 'https://discordapp.com/your-discord-url',
+            href: 'https://discord.gg/VafvyXvY58',
             position: 'right',
             className: 'header-discord-link',
             html: `

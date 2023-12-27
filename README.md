@@ -17,7 +17,7 @@
   <h3 align="center">
     <a href="https://ztnet.network">Documentation</a>
     ·
-    <a href="https://discord.gg/YdG3QPa6">Join our Discord</a>
+    <a href="https://discord.gg/VafvyXvY58">Join our Discord</a>
     <br />
   </h3>
   <div align="center">
