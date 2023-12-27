@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
@@ -10,6 +9,8 @@ import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
+import MetaTags from "~/components/shared/metaTags";
 
 type OrganizationId = {
 	id: string;
@@ -19,15 +20,6 @@ interface IProps {
 }
 
 const title = `${globalSiteTitle} - Local Controller`;
-
-const HeadSection = () => (
-	<Head>
-		<title>{title}</title>
-		<link rel="icon" href="/favicon.ico" />
-		<meta property="og:title" content={title} key={title} />
-		<meta name="robots" content="noindex, nofollow" />
-	</Head>
-);
 
 const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
@@ -67,22 +59,17 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	};
 
 	if (isLoading) {
-		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>
-				<HeadSection />
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="text-center text-2xl font-semibold">
-						<progress className="progress progress-primary w-56" />
-					</h1>
-				</div>
+				<MetaTags title={title} />
+				<NetworkLoadingSkeleton />
 			</>
 		);
 	}
 
 	return (
-		<>
-			<HeadSection />
+		<div className="animate-fadeIn">
+			<MetaTags title={title} />
 			<main className="w-full bg-base-100">
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">{t("title")}</h5>
@@ -133,7 +120,7 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 					</div>
 				</div>
 			</main>
-		</>
+		</div>
 	);
 };
 
