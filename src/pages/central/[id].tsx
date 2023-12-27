@@ -24,6 +24,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -59,16 +60,12 @@ const CentralNetworkById = ({ orgIds }) => {
 	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
 
 	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
 		const pageTitleLoading = `${globalSiteTitle}`;
+		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="text-center text-2xl font-semibold">
-						<progress className="progress progress-primary w-56"></progress>
-					</h1>
-				</div>
+				<NetworkLoadingSkeleton />
 			</>
 		);
 	}
