@@ -157,7 +157,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 							name="target"
 							onChange={routeHandler}
 							placeholder={t("nettworkRoutes.destinationPlaceholder")}
-							className="input input-bordered input-primary input-xs w-3/6 rounded-md"
+							className="input input-xs w-3/6 input-bordered"
 						/>
 						<div className="px-4">via</div>
 						<input
@@ -165,14 +165,14 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 							name="via"
 							onChange={routeHandler}
 							placeholder={t("nettworkRoutes.viaPlaceholder")}
-							className="input input-bordered input-primary input-xs w-3/6 rounded-md"
+							className="input input-xs w-3/6 input-bordered"
 						/>
-						<button type="submit" className="btn btn-success btn-xs ml-4 rounded-md">
+						<button type="submit" className="btn btn-active btn-xs ml-4 rounded-md">
 							{b("add")}
 						</button>
 						<button
 							onClick={() => setShowRouteInput(!showRouteInput)}
-							className="btn btn-outline btn-xs ml-4 rounded-md"
+							className="btn btn-ghost btn-xs ml-4"
 						>
 							{b("cancel")}
 						</button>

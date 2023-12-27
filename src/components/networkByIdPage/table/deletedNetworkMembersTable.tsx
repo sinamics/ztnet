@@ -83,7 +83,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 						<span className="space-x-5">
 							<button
 								onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
-								className="btn-success btn-xs rounded-sm"
+								className="btn btn-primary btn-xs"
 							>
 								Re-Activate
 							</button>
@@ -115,7 +115,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 										},
 									})
 								}
-								className="btn-error btn-xs rounded-sm"
+								className="bg-red-800 btn btn-xs hover:bg-red-500"
 							>
 								Force Delete
 							</button>

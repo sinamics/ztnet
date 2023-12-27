@@ -51,52 +51,52 @@ export const InviteMemberByMail = ({ organizationId }: IProps) => {
 
 	return (
 		<form>
-			<div className="form-control">
-				<label className="label">
-					<span className="label-text">{t("inviteMemberByMail.labelText")}</span>
-				</label>
-				<label className="input-group">
-					<span>{t("inviteMemberByMail.title")}</span>
-					<input
-						onChange={inputHandler}
-						name="email"
-						value={user.email}
-						type="email"
-						placeholder={t("inviteMemberByMail.placeholder")}
-						className="input join-item input-bordered"
-					/>
-					<button
-						className="btn join-item"
-						type="submit"
-						onClick={(e) => {
-							e.preventDefault();
-							invite(
-								{
-									email: user.email,
-									nwid: query.id as string,
-									organizationId,
+			<label className="label">
+				<span className="label-text">{t("inviteMemberByMail.labelText")}</span>
+			</label>
+			<div className="join">
+				<span className="join-item px-4 bg-base-200 items-center flex">
+					{t("inviteMemberByMail.title")}
+				</span>
+				<input
+					onChange={inputHandler}
+					name="email"
+					value={user.email}
+					type="email"
+					placeholder={t("inviteMemberByMail.placeholder")}
+					className="input join-item input-bordered"
+				/>
+				<button
+					className="btn btn-active join-item"
+					type="submit"
+					onClick={(e) => {
+						e.preventDefault();
+						invite(
+							{
+								email: user.email,
+								nwid: query.id as string,
+								organizationId,
+							},
+							{
+								onSuccess: () => {
+									setUser({ email: "" });
+									toast.success(
+										t("inviteMemberByMail.successMessage", {
+											email: user.email,
+										}),
+										{ duration: 10000 },
+									);
 								},
-								{
-									onSuccess: () => {
-										setUser({ email: "" });
-										toast.success(
-											t("inviteMemberByMail.successMessage", {
-												email: user.email,
-											}),
-											{ duration: 10000 },
-										);
-									},
-								},
-							);
-						}}
-					>
-						{loadingInvite ? (
-							<span className="loading loading-spinner"></span>
-						) : (
-							<>{t("inviteMemberByMail.buttonText")}</>
-						)}
-					</button>
-				</label>
+							},
+						);
+					}}
+				>
+					{loadingInvite ? (
+						<span className="loading loading-spinner"></span>
+					) : (
+						<>{t("inviteMemberByMail.buttonText")}</>
+					)}
+				</button>
 			</div>
 		</form>
 	);
