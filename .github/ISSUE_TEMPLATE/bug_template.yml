@@ -39,7 +39,7 @@ body:
     id: docker-logs
     attributes:
       label: "📋 ZTNET Logs"
-      description: "Run `docker logs ztnet` or `journalctl -u ztnet` and copy and paste the relative output here. This will be automatically formatted into code, so no need for backticks."
+      description: "Run `docker logs ztnet` for Docker or `journalctl -u ztnet` if you are using standalone version. Copy and paste the relative output here. This will be automatically formatted into code, so no need for backticks."
       render: shell
     validations:
       required: false
