@@ -1,7 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
@@ -10,17 +9,8 @@ const Themes = ["light", "dark", "black", "business", "system", "forest"];
 
 const Header = () => {
 	const session = useSession();
-	const [mounted, setMounted] = useState(false);
 	const { theme, setTheme } = useTheme();
 	const { toggle, open } = useSidebarStore();
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted) {
-		return null;
-	}
 
 	return (
 		<header className="header bg-base-200 px-4 py-1 shadow-md shadow-base">
@@ -67,8 +57,6 @@ const Header = () => {
 					</label>
 				</div>
 				<div className="ml-auto flex">
-					{/* <div className="sidebar-header flex items-center justify-center py-4"> */}
-
 					{/* <a href="#" className="flex flex-row items-center"> */}
 					<div className="dropdown dropdown-end">
 						<label tabIndex={0} className="btn btn-primary btn-sm m-1">
