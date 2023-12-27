@@ -6,6 +6,15 @@ description: Docker Compose installation instructions for ZTNET
 sidebar_position: 1
 ---
 
+# Install Docker
+Docker is a containerization platform that allows you to quickly build, test, and deploy applications as portable, self-sufficient containers that can virtually run everywhere.
+
+https://github.com/docker/docker-install
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+
 # Docker Compose
 ### Services
 - **Postgres**: Database. **Change `POSTGRES_PASSWORD` for security**.
@@ -97,7 +106,7 @@ networks:
 ```
 To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 
-`docker-compose up -d`
+`docker compose up -d`
 
 This action pulls necessary images, initializes the containers, and activates the services.
 Visit `http://localhost:3000` to access the ZTNET web interface.
@@ -114,8 +123,8 @@ To update ZTNET, pull the latest image and restart the container.
 If you are updating from a earlier version, make sure you set the `NEXTAUTH_URL` environment variable to the canonical URL or IP of your site.
 See Note above for more information about [Innstallation Setup](/installation/docker-compose#setup)
 ```bash
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 
