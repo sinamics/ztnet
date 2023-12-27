@@ -49,7 +49,7 @@ const UserSettings = ({ orgIds }: IProps) => {
 		});
 	};
 	return (
-		<>
+		<div className="animate-fadeIn">
 			<Head>
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.ico" />
@@ -72,7 +72,7 @@ const UserSettings = ({ orgIds }: IProps) => {
 				</div>
 				{tabs.find((t) => t.value === tab)?.component}
 			</div>
-		</>
+		</div>
 	);
 };
 
