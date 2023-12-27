@@ -91,7 +91,7 @@ To connect your devices to the newly established private root server, they need 
 2. **Distribute the New `planet` File**: You need to distribute this new `planet` file to each device on your network, replacing the existing one.
 
    - **Windows**:
-     - Access the ZeroTier configuration folder located at `%PROGRAMDATA%ZeroTierOne`.
+     - Access the ZeroTier configuration folder located at `%PROGRAMDATA%\ZeroTier\One\`.
 
    - **Linux**:
      - The corresponding folder on Linux systems is typically `/var/lib/zerotier-one/`.
