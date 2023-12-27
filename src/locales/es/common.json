@@ -517,7 +517,7 @@
 		},
 		"organization": {
 			"addOrganization": {
-				"title": "organización",
+				"title": "Gestión de Equipo",
 				"description": "Explora la Organización para comenzar a dar forma a la forma en que tu equipo trabaja junto. Asigna roles, invita a nuevos miembros y supervisa los permisos básicos dentro de tu organización. Diseñada para la simplicidad y facilidad de uso, esta característica beta proporciona una base para la colaboración de tu equipo. A medida que continuamos desarrollando y mejorando estos ajustes, te invitamos a proporcionar comentarios para ayudarnos a refinar la experiencia.",
 				"inputFields": {
 					"label": "Añadir Organización",

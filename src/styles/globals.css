@@ -56,3 +56,8 @@ td {
 .theme-black {
   text-transform: none; /* This prevents text from being transformed to lowercase */
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

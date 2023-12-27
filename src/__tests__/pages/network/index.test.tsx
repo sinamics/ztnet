@@ -59,7 +59,7 @@ describe("Networks page", () => {
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
-		expect(screen.getByRole("progressbar")).toBeInTheDocument();
+		expect(screen.getByRole("skeleton")).toBeInTheDocument();
 	});
 
 	it("displays networks and handles add network button", async () => {

@@ -12,6 +12,11 @@ import EditOrganizationUserModal from "~/components/organization/editUserModal";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import MetaTags from "~/components/shared/metaTags";
+import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
+import { globalSiteTitle } from "~/utils/global";
+
+const title = `${globalSiteTitle} - Organization`;
 
 const OrganizationById = ({ user, orgIds }) => {
 	const b = useTranslations("commonButtons");
@@ -104,20 +109,16 @@ const OrganizationById = ({ user, orgIds }) => {
 		);
 	}
 	if (orgLoading) {
-		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="text-center text-2xl font-semibold">
-						<progress className="progress progress-primary w-56" />
-					</h1>
-				</div>
+				<MetaTags title={title} />
+				<NetworkLoadingSkeleton />
 			</>
 		);
 	}
-
 	return (
-		<main className="w-full bg-base-100 p-5">
+		<main className="w-full bg-base-100 p-5 animate-fadeIn">
+			<MetaTags title={title} />
 			<div className="max-w-7xl mx-auto">
 				<header className="py-5">
 					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">

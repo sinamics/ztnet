@@ -517,7 +517,7 @@
 		},
 		"organization": {
 			"addOrganization": {
-				"title": "organization",
+				"title": "Team Management",
 				"description": "Explore the Organization to begin shaping the way your team works together. Assign roles, invite new members, and oversee basic permissions within your organization. Designed for simplicity and ease of use, this beta feature provides a foundation for your team's collaboration. As we continue to develop and enhance these settings, we invite you to provide feedback to help us refine the experience.",
 				"inputFields": {
 					"label": "Add Organization",

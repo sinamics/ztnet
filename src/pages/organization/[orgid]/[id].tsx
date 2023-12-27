@@ -25,6 +25,7 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -107,23 +108,20 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 			</>
 		);
 	}
+
 	if (loadingNetwork) {
 		const pageTitleLoading = `${globalSiteTitle}`;
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<div className="flex flex-col items-center justify-center">
-					<h1 className="text-center text-2xl font-semibold">
-						<progress className="progress progress-primary w-56" />
-					</h1>
-				</div>
+				<NetworkLoadingSkeleton />
 			</>
 		);
 	}
 
 	return (
-		<div>
+		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
 			<div className="mx-auto text-sm sm:w-4/5 sm:p-10 md:text-base">
 				<div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
