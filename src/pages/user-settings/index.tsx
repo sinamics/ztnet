@@ -57,13 +57,13 @@ const UserSettings = ({ orgIds }: IProps) => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="py-5">
-				<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
+				<div className="tabs tabs-bordered mx-auto flex uppercase p-3 pb-10 sm:w-6/12">
 					{tabs.map((t) => (
 						<a
 							key={t.value}
 							onClick={() => void changeTab(t)}
 							className={`text-md tab tab-bordered ${
-								t.value === tab ? "tab-active" : ""
+								t.value === tab ? "tab-active" : "text-gray-600"
 							}`}
 						>
 							{t.name}
