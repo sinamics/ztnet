@@ -8,10 +8,10 @@ import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
 import Organization from "./organization";
-import Head from "next/head";
 import Settings from "./settings";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import MetaTags from "~/components/shared/metaTags";
 
 const AdminSettings = ({ orgIds }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
@@ -68,18 +68,19 @@ const AdminSettings = ({ orgIds }) => {
 	};
 	return (
 		<div className="py-5">
-			<Head>
-				<title>{title}</title>
-				<link rel="icon" href="/favicon.ico" />
-				<meta property="og:title" content={title} key={title} />
-				<meta name="robots" content="noindex, nofollow" />
-			</Head>
-			<div className="tabs mx-auto w-full p-3 pb-10 sm:w-6/12">
+			<MetaTags title={title} />
+			<div
+				role="tablist"
+				className="tabs tabs-bordered flex mx-auto p-3 pb-10 sm:w-6/12 "
+			>
 				{tabs.map((t) => (
 					<a
 						key={t.value}
+						role="tab"
 						onClick={() => void changeTab(t)}
-						className={`text-md tab tab-bordered ${t.value === tab ? "tab-active" : ""}`}
+						className={`text-md uppercase tab ${
+							t.value === tab ? "tab-active" : "text-gray-600"
+						}`}
 					>
 						{t.name}
 					</a>
