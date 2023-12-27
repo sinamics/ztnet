@@ -25,7 +25,6 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
-import { AllowPublicStatus } from "~/components/networkByIdPage/addToPublicStatus";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 
 const HeadSection = ({ title }: { title: string }) => (
@@ -122,14 +121,14 @@ const NetworkById = ({ orgIds }: IProps) => {
 	}
 
 	return (
-		<div className="">
+		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
-				<div className="w-5/5 h-fit w-full xl:w-2/6">
+				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkId")}</span>
-							<span className="flex items-center gap-2">
+							<span className="relative left-7 flex items-center gap-2">
 								<CopyToClipboard
 									text={network?.nwid}
 									onCopy={() =>
@@ -157,8 +156,8 @@ const NetworkById = ({ orgIds }: IProps) => {
 					<NetworkPrivatePublic />
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base xl:flex xl:space-y-0">
-				<div className="w-6/6 xl:w-3/6">
+			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+				<div className="hidden lg:flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
 						<span className="text-muted font-medium">{t("networkStart")}</span>{" "}
 						<span
@@ -189,13 +188,6 @@ const NetworkById = ({ orgIds }: IProps) => {
 							{network?.routes[0]?.target || t("notSet")}
 						</span>
 					</div>
-				</div>
-
-				<div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex" />
-
-				{/* Manged routes section */}
-				<div className="w-6/6 xl:w-3/6 ">
-					<AllowPublicStatus />
 				</div>
 			</div>
 			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
