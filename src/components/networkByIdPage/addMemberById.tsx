@@ -50,41 +50,41 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	};
 
 	return (
-		<div className="form-control">
-			<form>
-				<label className="label">
-					<span className="label-text">{t("addMemberById.labelText")}</span>
-				</label>
-				<label className="input-group">
-					<span className="bg-base-300">{t("addMemberById.memberIdInput")}</span>
-					<input
-						onChange={inputHandler}
-						name="memberid"
-						value={user.memberid}
-						type="text"
-						placeholder={t("addMemberById.placeholder")}
-						className="input input-bordered"
-					/>
-					<button
-						type="submit"
-						onClick={(e) => {
-							e.preventDefault();
-							createUser(
-								{
-									id: user.memberid,
-									nwid: query.id as string,
-									organizationId,
-									central,
-								},
-								{ onSuccess: () => setUser({ memberid: "" }) },
-							);
-						}}
-						className="btn btn-square"
-					>
-						{t("addMemberById.submitButton")}
-					</button>
-				</label>
-			</form>
-		</div>
+		<form>
+			<label className="label">
+				<span className="label-text">{t("addMemberById.labelText")}</span>
+			</label>
+			<div className="join">
+				<span className="join-item px-4 bg-base-200 items-center flex">
+					{t("addMemberById.memberIdInput")}
+				</span>
+				<input
+					onChange={inputHandler}
+					name="memberid"
+					value={user.memberid}
+					type="text"
+					placeholder={t("addMemberById.placeholder")}
+					className="input input-bordered join-item"
+				/>
+				<button
+					type="submit"
+					onClick={(e) => {
+						e.preventDefault();
+						createUser(
+							{
+								id: user.memberid,
+								nwid: query.id as string,
+								organizationId,
+								central,
+							},
+							{ onSuccess: () => setUser({ memberid: "" }) },
+						);
+					}}
+					className="btn btn-active btn-square join-item"
+				>
+					{t("addMemberById.submitButton")}
+				</button>
+			</div>
+		</form>
 	);
 };

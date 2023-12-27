@@ -107,14 +107,14 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 									name="multicastLimit"
 									value={state.multicastLimit || 0}
 									onChange={onChangeHandler}
-									className="input join-item input-sm  w-full"
+									className="input join-item input-sm input-bordered w-full"
 									placeholder={t("networkMulticast.NumberPlaceholder")}
 									type="number"
 								/>
 								<button
 									type="submit"
 									onClick={submitHandler}
-									className="btn join-item btn-sm bg-base-300 text-secondary-content"
+									className="btn join-item btn-sm btn-active"
 								>
 									{t("networkMulticast.Submit")}
 								</button>

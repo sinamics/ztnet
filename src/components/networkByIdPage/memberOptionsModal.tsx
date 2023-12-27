@@ -425,17 +425,18 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="my-5">
 					<form>
-						<label className="input-group input-group-sm">
-							<span className="bg-base-200">
+						<div className="join">
+							<span className="join-item px-4 bg-base-200 items-center flex">
 								{t("networkById.memberOptionModal.addressInput.label")}
 							</span>
+
 							<input
 								type="text"
 								name="ipInput"
 								onChange={handleInputChange}
 								value={state.ipInput || ""}
 								placeholder="192.168.169.x"
-								className={cn("input input-bordered input-sm", {
+								className={cn("input input-bordered input-sm join-item", {
 									"border-error": !state.isValid && state.ipInput.length > 0,
 									"border-success": state.isValid,
 								})}
@@ -443,16 +444,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							<button
 								onClick={handleIpSubmit}
 								type="submit"
-								// disabled={!state.isValid}
-								className="btn-square btn-sm w-12 bg-base-200"
+								className="btn-active btn-sm w-12 join-item"
 							>
 								{t("networkById.memberOptionModal.addButton.text")}
 							</button>
-						</label>
+						</div>
 					</form>
 				</div>
-				{/* <div className="divider flex px-4 py-4 text-sm"></div> */}
-
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-3">
 						<header>

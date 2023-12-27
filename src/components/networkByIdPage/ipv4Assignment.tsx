@@ -295,18 +295,20 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 									name="rangeEnd"
 									value={ipRange.rangeEnd}
 									onChange={rangeChangeHandler}
-									className="input join-item input-sm  w-full"
+									className="input join-item input-sm w-full input-bordered"
 									placeholder={t("networkIpAssignments.ipv4.range_end_placeholder")}
 								/>
 							</div>
 						</div>
-						<button
-							type="submit"
-							onClick={submitIpRange}
-							className="btn btn-sm bg-base-300 text-secondary-content"
-						>
-							{t("networkIpAssignments.ipv4.submit")}
-						</button>
+						<div className="col-span-2">
+							<button
+								type="submit"
+								onClick={submitIpRange}
+								className="btn btn-sm btn-active"
+							>
+								{t("networkIpAssignments.ipv4.submit")}
+							</button>
+						</div>
 					</form>
 				</div>
 			) : null}

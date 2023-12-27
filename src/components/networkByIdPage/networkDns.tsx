@@ -188,7 +188,7 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 					</div>
 					<div>
 						<form className="grid grid-cols-2 gap-5 pt-4">
-							<div className="form-control w-full">
+							<div className="form-control">
 								<label className="label">
 									<span className="label-text">{t("networkDns.searchDomain")}</span>
 								</label>
@@ -210,18 +210,20 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 										name="address"
 										value={state.address}
 										onChange={onChangeHandler}
-										className="input join-item input-sm  w-full"
+										className="input join-item input-sm w-full input-bordered"
 										placeholder="10.147.20.190"
 									/>
 								</div>
 							</div>
-							<button
-								type="submit"
-								onClick={submitHandler}
-								className="btn btn-sm bg-base-300 text-secondary-content"
-							>
-								{t("networkDns.submit")}
-							</button>
+							<div className="col-span-2">
+								<button
+									type="submit"
+									onClick={submitHandler}
+									className="btn btn-active btn-sm"
+								>
+									{t("networkDns.submit")}
+								</button>
+							</div>
 						</form>
 					</div>
 				</div>
