@@ -1,0 +1,41 @@
+name: Bug Report
+description: Report a bug encountered while using ZTNET
+title: "[Bug]: "
+labels: ["bug"]
+
+body:
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: "🐛 Describe the Bug"
+      description: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+  - type: input
+    id: steps-to-reproduce
+    attributes:
+      label: "🔍 Steps to Reproduce"
+      description: "Steps to reproduce the behavior."
+    validations:
+      required: true
+  - type: input
+    id: expected-behavior
+    attributes:
+      label: "✨ Expected Behavior"
+      description: "A clear and concise description of what you expected to happen."
+    validations:
+      required: false
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: "🌌 Actual Behavior"
+      description: "A clear and concise description of what actually happened."
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: "🖼 Screenshots"
+      description: "If applicable, add screenshots to help explain your problem."
+    validations:
+      required: false

@@ -1,7 +1,7 @@
 name: Support Request
 description: General support request for ZTNET
 title: "[Support]: "
-labels: ["support", "triage"]
+labels: ["support"]
 
 body:
   - type: textarea
