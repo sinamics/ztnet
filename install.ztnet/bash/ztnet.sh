@@ -46,6 +46,21 @@ command_exists() {
   command -v "$1" >/dev/null 2>&1
 }
 
+# Check if the OS is Ubuntu
+if [[ $OS == "Ubuntu" ]]; then
+  echo "Running script for Ubuntu."
+
+  # stop ubuntu pop-up daemons
+  conf_file="/etc/needrestart/needrestart.conf"
+  if [[ -f "$conf_file" ]]; then
+    # Perform the sed operation and check for success
+    if sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" "$conf_file"; then
+      echo "Disabled pop-up window for needrestart."
+    fi
+  fi
+fi
+
+
 ARCH="$(uname -m)"
 case "$ARCH" in
     "x86_64")
