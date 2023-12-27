@@ -18,7 +18,7 @@ const Dashboard: NextPageWithLayout = ({ orgIds }: IProps) => {
 	useOrganizationWebsocket(orgIds);
 
 	return (
-		<>
+		<div className="animate-fadeIn py-5">
 			<Head>
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.ico" />
@@ -60,7 +60,7 @@ const Dashboard: NextPageWithLayout = ({ orgIds }: IProps) => {
 					</div>
 				</div>
 			</main>
-		</>
+		</div>
 	);
 };
 
