@@ -10,10 +10,16 @@ export const settingsRouter = createTRPCRouter({
 			},
 		});
 		if (options?.smtpPassword) {
-			options.smtpPassword = decrypt(
-				options.smtpPassword,
-				generateInstanceSecret(SMTP_SECRET),
-			);
+			try {
+				options.smtpPassword = decrypt(
+					options.smtpPassword,
+					generateInstanceSecret(SMTP_SECRET),
+				);
+			} catch (_err) {
+				console.warn(
+					"Failed to decrypt SMTP password. Has the NextAuth secret been changed?. Re-save the SMTP password to fix this.",
+				);
+			}
 		}
 		return options;
 	}),
