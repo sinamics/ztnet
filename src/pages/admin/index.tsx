@@ -67,7 +67,7 @@ const AdminSettings = ({ orgIds }) => {
 		});
 	};
 	return (
-		<div className="py-5">
+		<div className="animate-fadeIn py-5">
 			<MetaTags title={title} />
 			<div
 				role="tablist"
