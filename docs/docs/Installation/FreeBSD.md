@@ -6,7 +6,14 @@ description: FreeBSD installation instructions for ZTNET
 sidebar_position: 3
 ---
 
-# Standalone FreeBSD
+## System Requirements
+
+To build and run the application, your system should meet the following minimum requirements:
+
+- **Memory**: At least 1GB of RAM
+- **CPU**: At least 1 CPU Core
+
+# Installation
 
 ### Install PostgreSQL and ZeroTier
 First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.

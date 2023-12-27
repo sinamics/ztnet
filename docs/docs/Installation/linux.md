@@ -6,7 +6,15 @@ description: Debian 11 installation instructions for ZTNET
 sidebar_position: 2
 ---
 
-# Standalone Debian & Ubuntu
+
+## System Requirements
+
+To build and run the application, your system should meet the following minimum requirements:
+
+- **Memory**: At least 1GB of RAM
+- **CPU**: At least 1 CPU Core
+
+# Installation 
 
 Login as **root** on your system, then install `curl`, `lsb-release` and `sudo` if it is not already installed:
 
