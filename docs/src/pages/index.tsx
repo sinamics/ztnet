@@ -64,7 +64,7 @@ const LandingPage = (): JSX.Element => {
 									<a
 										className="bg-secondary sm-hidden"
 										title="Join our Discord"
-										href="https://discord.gg/YdG3QPa6"
+										href="https://discord.gg/VafvyXvY58"
 										style={{ display: "flex", alignItems: "center" }}
 									>
 										<svg
