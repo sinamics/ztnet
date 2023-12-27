@@ -127,11 +127,11 @@ const NetworkById = ({ orgIds }: IProps) => {
 		<div>
 			<HeadSection title={pageTitle} />
 			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-4/5 sm:p-10 md:text-base xl:space-y-0">
-				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
+				<div className="w-5/5 h-fit w-full xl:w-2/6">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkId")}</span>
-							<span className="relative left-7 flex items-center gap-2">
+							<span className="flex items-center gap-2">
 								<CopyToClipboard
 									text={network?.nwid}
 									onCopy={() =>
