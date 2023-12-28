@@ -19,6 +19,7 @@ enum Role {
   ADMIN
 }
 
+
 model GlobalOptions {
   id                    Int                               @id @default(autoincrement())
 
@@ -273,6 +274,12 @@ model Organization {
   ownerId                   String
   orgName                   String 
   description               String?
+
+  // Webhook related fields
+  webhookUrl                String?                    
+  webhookEnabled            Boolean                     @default(false)
+  webhookEventTypes         String                      @default("UNKNOWN") @db.VarChar(255)
+
   users                     User[]                      @relation("MemberRelation")
   networks                  network[]
   settings                  OrganizationSettings?       

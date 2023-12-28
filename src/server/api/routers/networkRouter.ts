@@ -21,6 +21,7 @@ import { type CentralNetwork } from "~/types/central/network";
 import { createNetworkService } from "../services/networkService";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
+import { HookType, NetworkConfigChanged, sendWebhook } from "~/utils/webhook";
 
 export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -547,6 +548,17 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			sendWebhook<NetworkConfigChanged>(
+				{
+					hookType: HookType.MEMBER_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					networkId: input.nwid,
+					memberMetadata: input.updateParams,
+				},
+				process.env.WEBHOOK_URL,
+			);
+
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
