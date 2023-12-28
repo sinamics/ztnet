@@ -2,13 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
-    binaryTargets = ["native", "debian-openssl-1.1.x", "linux-arm64-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
 }
 
@@ -19,107 +19,107 @@ enum Role {
   ADMIN
 }
 
-
 model GlobalOptions {
-  id                    Int                               @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   // Registration
-  enableRegistration    Boolean                           @default(true)
-  firstUserRegistration Boolean                           @default(true) // not in use, will be removed at a later stage
+  enableRegistration    Boolean @default(true)
+  firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
-  smtpHost                              String?
-  smtpPort                              String              @default("587")
-  smtpEmail                             String?
-  smtpUsername                          String?
-  smtpPassword                          String? 
-  smtpUseSSL                            Boolean             @default(false)
-  smtpSecure                            Boolean             @default(false)
-  smtpRequireTLS                        Boolean             @default(false)
-  smtpIgnoreTLS                         Boolean             @default(false)
-  inviteUserTemplate                    Json?
-  inviteAdminTemplate                   Json?
-  inviteOrganizationTemplate            Json?
-  forgotPasswordTemplate                Json?
-  verifyEmailTemplate                   Json?
-  notificationTemplate                  Json?
+  smtpHost                   String?
+  smtpPort                   String  @default("587")
+  smtpEmail                  String?
+  smtpUsername               String?
+  smtpPassword               String?
+  smtpUseSSL                 Boolean @default(false)
+  smtpSecure                 Boolean @default(false)
+  smtpRequireTLS             Boolean @default(false)
+  smtpIgnoreTLS              Boolean @default(false)
+  inviteUserTemplate         Json?
+  inviteAdminTemplate        Json?
+  inviteOrganizationTemplate Json?
+  forgotPasswordTemplate     Json?
+  verifyEmailTemplate        Json?
+  notificationTemplate       Json?
 
   // Notifications
-  userRegistrationNotification          Boolean             @default(false)
+  userRegistrationNotification Boolean @default(false)
 
   // mkworld
-  customPlanetUsed                      Boolean             @default(false)
-  plID                                  BigInt              @default(0)
-  plBirth                               BigInt              @default(0)
-  plRecommend                           Boolean             @default(false)
-  plComment                             String?
-  plIdentity                            String?
-  plEndpoints                           String?
+  customPlanetUsed Boolean @default(false)
+  plID             BigInt  @default(0)
+  plBirth          BigInt  @default(0)
+  plRecommend      Boolean @default(false)
+  plComment        String?
+  plIdentity       String?
+  plEndpoints      String?
 
-  welcomeMessageEnabled                 Boolean             @default(false)
-  welcomeMessageTitle                   String?
-  welcomeMessageBody                    String?
+  welcomeMessageEnabled Boolean @default(false)
+  welcomeMessageTitle   String?
+  welcomeMessageBody    String?
 }
 
-
 model network_members {
-  nodeid               Int       @id @default(autoincrement())
-  id                   String    
-  nwid_ref             network   @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
-  nwid                 String
-  lastSeen             DateTime?
-  online               Boolean?  @default(false)
-  deleted              Boolean?  @default(false)
-  name                 String?
-  address              String?   @default("")
-  creationTime         DateTime
-  notations            NetworkMemberNotation[]
+  nodeid       Int                     @id @default(autoincrement())
+  id           String
+  nwid_ref     network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  nwid         String
+  lastSeen     DateTime?
+  online       Boolean?                @default(false)
+  deleted      Boolean?                @default(false)
+  name         String?
+  address      String?                 @default("")
+  creationTime DateTime
+  notations    NetworkMemberNotation[]
 
   @@unique([id, nwid])
 }
+
 model network {
-  nwid                        String              @id
-  name                        String?         
-  description                 String?       
-  creationTime                DateTime?
-  lastModifiedTime            DateTime?
-  flowRule                    String?
-  autoAssignIp                Boolean?            @default(true)        
-  nw_userid                   User?               @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId                    String?
-  tagsByName                  Json?
-  capabilitiesByName          Json?
+  nwid               String    @id
+  name               String?
+  description        String?
+  creationTime       DateTime?
+  lastModifiedTime   DateTime?
+  flowRule           String?
+  autoAssignIp       Boolean?  @default(true)
+  nw_userid          User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId           String?
+  tagsByName         Json?
+  capabilitiesByName Json?
 
-  organizationId              String?
-  organization                Organization?       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  networkMembers              network_members[]
-  notations                   Notation[]
+  networkMembers network_members[]
+  notations      Notation[]
 }
 
 model Notation {
-  id                        Int           @id @default(autoincrement())
-  name                      String
-  color                     String?
-  description               String?
-  creationTime              DateTime      @default(now())
-  updatedTime               DateTime      @updatedAt
-  isActive                  Boolean       @default(true)
-  nwid                      String
-  network                   network       @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
-  networkMembers            NetworkMemberNotation[]
-  icon                      String?   
-  orderIndex                Int?    
-  visibility                String?
+  id             Int                     @id @default(autoincrement())
+  name           String
+  color          String?
+  description    String?
+  creationTime   DateTime                @default(now())
+  updatedTime    DateTime                @updatedAt
+  isActive       Boolean                 @default(true)
+  nwid           String
+  network        network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  networkMembers NetworkMemberNotation[]
+  icon           String?
+  orderIndex     Int?
+  visibility     String?
 
   @@unique([name, nwid])
 }
 
 model NetworkMemberNotation {
-  notationId            Int
-  nodeid                Int
-  label                 Notation          @relation(fields: [notationId], references: [id])
-  member                network_members    @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
+  notationId Int
+  nodeid     Int
+  label      Notation        @relation(fields: [notationId], references: [id])
+  member     network_members @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
+
   @@id([notationId, nodeid])
 }
 
@@ -130,20 +130,19 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
   expires_at         Int?
   refresh_expires_in Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String? @db.Text
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
-
 
 model Session {
   id           String   @id @default(cuid())
@@ -152,26 +151,27 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model UserOptions {
-  id                   Int       @id @default(autoincrement())
-  userId               String    @unique
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   //networks
-  useNotationColorAsBg           Boolean?          @default(false)
-  showNotationMarkerInTableRow   Boolean?          @default(true)
+  useNotationColorAsBg         Boolean? @default(false)
+  showNotationMarkerInTableRow Boolean? @default(true)
 
   //zt central
-  ztCentralApiKey                String?           @default("")
-  ztCentralApiUrl                String?           @default("https://api.zerotier.com/api/v1")
+  ztCentralApiKey String? @default("")
+  ztCentralApiUrl String? @default("https://api.zerotier.com/api/v1")
 
   // local controller
-  localControllerUrl             String?           @default("http://zerotier:9993")
-  localControllerSecret          String?           @default("")
+  localControllerUrl    String? @default("http://zerotier:9993")
+  localControllerSecret String? @default("")
 
   // member table
-  deAuthorizeWarning             Boolean?          @default(false)
-  addMemberIdAsName              Boolean?          @default(false)
+  deAuthorizeWarning Boolean? @default(false)
+  addMemberIdAsName  Boolean? @default(false)
 }
 
 enum AccessLevel {
@@ -181,65 +181,63 @@ enum AccessLevel {
 }
 
 model UserGroup {
-  id            Int           @id @default(autoincrement())
-  name          String        @unique
-  description   String?
-  maxNetworks   Int           @default(5) 
-  accessLevel   AccessLevel   @default(WRITE)
-  isDefault     Boolean       @default(false)
-  users         User[] 
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String?
+  maxNetworks Int         @default(5)
+  accessLevel AccessLevel @default(WRITE)
+  isDefault   Boolean     @default(false)
+  users       User[]
 }
 
 model APIToken {
-  id          Int       @id @default(autoincrement())
-  name        String
-  token       String    @unique
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  expiresAt   DateTime? // null means it never expires
-  isActive    Boolean   @default(true)
+  id        Int       @id @default(autoincrement())
+  name      String
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  expiresAt DateTime? // null means it never expires
+  isActive  Boolean   @default(true)
 }
 
 model User {
-    id                                    String                  @id @default(cuid())
-    name                                  String
-    email                                 String                  @unique
-    emailVerified                         DateTime?
-    lastLogin                             DateTime
-    lastseen                              DateTime?
-    expirationDate                        String                  @default("")
-    online                                Boolean?                @default(false)
-    role                                  Role                    @default(USER)
-    image                                 String?
-    hash                                  String?
-    licenseStatus                         String?
-    orderStatus                           String?
-    orderId                               Int                     @default(0)
-    product_id                            Int?                    @default(0)
-    licenseKey                            String?                 @default("")
-    tempPassword                          String?
-    firstTime                             Boolean                 @default(true)
-    userGroupId                           Int?
-    
-    memberOfOrgs                          Organization[]          @relation("MemberRelation") // user can be member of multiple organizations
-    organizationRoles                     UserOrganizationRole[]
-    membershipRequests                    MembershipRequest[]     @relation("MembershipRequestsForUser")
-    messages                              Messages[]
-    lastReadByUsers                       LastReadMessage[]
-    ActivityLog                           ActivityLog[]
-    expiresAt                             DateTime? // null means it never expires
-    isActive                              Boolean                 @default(true)
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  emailVerified  DateTime?
+  lastLogin      DateTime
+  lastseen       DateTime?
+  expirationDate String    @default("")
+  online         Boolean?  @default(false)
+  role           Role      @default(USER)
+  image          String?
+  hash           String?
+  licenseStatus  String?
+  orderStatus    String?
+  orderId        Int       @default(0)
+  product_id     Int?      @default(0)
+  licenseKey     String?   @default("")
+  tempPassword   String?
+  firstTime      Boolean   @default(true)
+  userGroupId    Int?
 
-    userGroup                             UserGroup? @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-    options                               UserOptions?
-    accounts                              Account[]
-    sessions                              Session[]
-    network                               network[]
-    apiTokens                             APIToken[]
+  memberOfOrgs       Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
+  organizationRoles  UserOrganizationRole[]
+  membershipRequests MembershipRequest[]    @relation("MembershipRequestsForUser")
+  messages           Messages[]
+  lastReadByUsers    LastReadMessage[]
+  ActivityLog        ActivityLog[]
+  expiresAt          DateTime? // null means it never expires
+  isActive           Boolean                @default(true)
+
+  userGroup UserGroup?   @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+  options   UserOptions?
+  accounts  Account[]
+  sessions  Session[]
+  network   network[]
+  apiTokens APIToken[]
 }
-
-
 
 model VerificationToken {
   identifier String
@@ -250,115 +248,125 @@ model VerificationToken {
 }
 
 model UserInvitation {
-  id              Int       @id @default(autoincrement())
-  token           String    @unique
-  used            Boolean   @default(false)
-  email           String?   
-  secret          String    
-  url             String    
-  expires         DateTime 
-  timesCanUse     Int       @default(1)
-  timesUsed       Int       @default(0)
-  createdBy       String      
-  createdAt       DateTime  @default(now())
+  id          Int      @id @default(autoincrement())
+  token       String   @unique
+  used        Boolean  @default(false)
+  email       String?
+  secret      String
+  url         String
+  expires     DateTime
+  timesCanUse Int      @default(1)
+  timesUsed   Int      @default(0)
+  createdBy   String
+  createdAt   DateTime @default(now())
 }
-
 
 //
 // ORGANIZATION
 //
 
 model Organization {
-  id                        String                      @id @default(cuid())
-  createdAt                 DateTime                    @default(now())
-  ownerId                   String
-  orgName                   String 
-  description               String?
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  ownerId     String
+  orgName     String
+  description String?
 
-  // Webhook related fields
-  webhookUrl                String?                    
-  webhookEnabled            Boolean                     @default(false)
-  webhookEventTypes         String                      @default("UNKNOWN") @db.VarChar(255)
+  users              User[]                   @relation("MemberRelation")
+  networks           network[]
+  settings           OrganizationSettings?
+  invitations        OrganizationInvitation[]
+  membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
+  isActive           Boolean                  @default(true)
+  userRoles          UserOrganizationRole[]
+  messages           Messages[]
+  lastReadByUsers    LastReadMessage[]
+  ActivityLog        ActivityLog[]
+  webhooks           Webhook[]
+}
 
-  users                     User[]                      @relation("MemberRelation")
-  networks                  network[]
-  settings                  OrganizationSettings?       
-  invitations               OrganizationInvitation[]    
-  membershipRequests        MembershipRequest[]         @relation("MembershipRequestsForOrganization")     
-  isActive                  Boolean                     @default(true) 
-  userRoles                 UserOrganizationRole[]
-  messages                  Messages[]
-  lastReadByUsers           LastReadMessage[]
-  ActivityLog               ActivityLog[]
+model Webhook {
+  id           String    @id @default(cuid())
+  name         String
+  description  String
+  url          String
+  enabled      Boolean   @default(false)
+  eventTypes   Json
+  secret       String?   @default("")
+  lastDelivery DateTime? @default(now())
+
+  // Relationship with Organization
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String // Foreign key
+  createdAt      DateTime     @default(now())
 }
 
 model UserOrganizationRole {
   userId         String
   organizationId String
   role           Role
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@id([userId, organizationId])
 }
 
 model Messages {
-  id              Int          @id @default(autoincrement())
+  id              Int               @id @default(autoincrement())
   content         String
-  createdAt       DateTime     @default(now())
-  userId          String       // Reference to the User model
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organizationId  String       // Reference to the Organization model
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime          @default(now())
+  userId          String // Reference to the User model
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId  String // Reference to the Organization model
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   lastReadByUsers LastReadMessage[]
 }
 
 model LastReadMessage {
-  id              Int          @id @default(autoincrement())
-  lastMessageId   Int          // ID of the last read message
-  userId          String
-  organizationId  String
+  id             Int    @id @default(autoincrement())
+  lastMessageId  Int // ID of the last read message
+  userId         String
+  organizationId String
 
-  lastMessage     Messages     @relation(fields: [lastMessageId], references: [id], onDelete: Cascade)
-  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lastMessage  Messages     @relation(fields: [lastMessageId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
 }
 
 model OrganizationSettings {
-  id                Int                         @id @default(autoincrement())
-  organizationId    String                      @unique
-  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id             Int          @id @default(autoincrement())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   // Add specific settings fields here
 }
 
 model OrganizationInvitation {
-  id                Int                         @id @default(autoincrement())
-  token             String                      @unique
-  email             String
-  organizationId    String
-  organization      Organization                @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id             Int          @id @default(autoincrement())
+  token          String       @unique
+  email          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model MembershipRequest {
-  id             Int                            @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   userId         String
   organizationId String
-  user           User                           @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser", onDelete: Cascade)
-  organization   Organization                   @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization", onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser", onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization", onDelete: Cascade)
 }
 
 model ActivityLog {
-  id              Int         @id @default(autoincrement())
-  action          String      
-  createdAt       DateTime    @default(now())
-  performedById   String      
-  performedBy     User        @relation(fields: [performedById], references: [id], onDelete: Cascade)
-  organizationId  String?     // Make this optional
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id             Int           @id @default(autoincrement())
+  action         String
+  createdAt      DateTime      @default(now())
+  performedById  String
+  performedBy    User          @relation(fields: [performedById], references: [id], onDelete: Cascade)
+  organizationId String? // Make this optional
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
-
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:
 // npx prisma migrate dev --name (NAME)
@@ -376,4 +384,3 @@ model ActivityLog {
 
 // generate local draft
 // npx prisma migrate dev --create-only --preview-feature
-

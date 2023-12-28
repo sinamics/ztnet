@@ -17,6 +17,10 @@ import { createTransporter, inviteOrganizationTemplate, sendEmail } from "~/util
 import ejs from "ejs";
 import { Role } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
+import { HookType } from "~/types/webhooks";
+
+// Create a Zod schema for the HookType enum
+const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -168,6 +172,7 @@ export const organizationRouter = createTRPCRouter({
 				userRoles: true,
 				users: true,
 				invitations: true,
+				webhooks: true,
 			},
 			//order by desc
 			orderBy: {
@@ -817,6 +822,67 @@ export const organizationRouter = createTRPCRouter({
 					action: `Transferred private network ${input.nwid} to organization ${input.organizationId}`,
 					performedById: ctx.session.user.id,
 					organizationId: input?.organizationId, // Use null if organizationId is not provided
+				},
+			});
+		}),
+	addOrgWebhooks: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				webhookUrl: z.string(),
+				webhookName: z.string(),
+				hookType: z.array(HookTypeEnum),
+				webhookId: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+
+			// create webhook
+			return await ctx.prisma.webhook.upsert({
+				where: {
+					id: input.webhookId,
+				},
+				create: {
+					url: input.webhookUrl,
+					description: "",
+					name: input.webhookName,
+					eventTypes: input.hookType,
+					organization: {
+						connect: { id: input.organizationId },
+					},
+				},
+				update: {
+					url: input.webhookUrl,
+					description: "",
+					name: input.webhookName,
+					eventTypes: input.hookType,
+				},
+			});
+		}),
+	getOrgWebhooks: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+
+			// get all organizations related to the user
+			return await ctx.prisma.webhook.findMany({
+				where: {
+					id: input.organizationId,
 				},
 			});
 		}),
