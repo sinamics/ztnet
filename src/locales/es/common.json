@@ -9,6 +9,7 @@
 		"submit": "Enviar",
 		"cancel": "Cancelar",
 		"delete": "Eliminar",
+		"update": "Actualizar",
 		"close": "Cerrar",
 		"stash": "Guardar",
 		"yes": "Sí",
@@ -25,6 +26,7 @@
 		"kickUser": "Expulsar usuario",
 		"deleteOrganization": "Eliminar organización",
 		"userActions": "Acciones del usuario",
+		"addWebhooks": "Añadir Webhooks",
 		"options": "Opciones"
 	},
 	"commonTable": {
@@ -546,6 +548,7 @@
 				"description": "Descripción:",
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
+				"activeWebhooks": "Webhooks Activos:",
 				"invitationModal": {
 					"title": "Invitaciones de la Organización",
 					"description": "Antes de que puedas agregar usuarios a tu organización, es importante tener en cuenta que deben estar ya registrados en la aplicación",
@@ -558,6 +561,15 @@
 							"title": "Selecciona el rol del usuario"
 						}
 					}
+				},
+				"webhookModal": {
+					"webhookName": "Webhook Name",
+					"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
+					"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
+					"selectWebhookActions": "Select webhook actions",
+					"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
+					"webhookUrl": "Webhook URL ( HTTPS )",
+					"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
 				}
 			}
 		}

@@ -76,8 +76,8 @@ const ListOrganizations = () => {
 					</div>
 					<div className="py-5">
 						{org?.webhooks?.length > 0 ? (
-							<div className="flex gap-4">
-								<strong>Active Webhooks:</strong>
+							<div className="flex items-center gap-4">
+								<strong>{t("organization.listOrganization.activeWebhooks")}</strong>
 								<div className="flex gap-3">
 									{org?.webhooks?.map((hook) => (
 										<button
@@ -87,7 +87,9 @@ const ListOrganizations = () => {
 													title: (
 														<p>
 															<span>
-																{t("organization.listOrganization.invitationModal.title")}
+																{t(
+																	"organization.listOrganization.webhookModal.editWebhookTitle",
+																)}
 															</span>
 														</p>
 													),
@@ -149,8 +151,17 @@ const ListOrganizations = () => {
 											rootStyle: "h-4/6",
 											title: (
 												<p>
-													<span>Add Webhook Receiver for </span>
-													<span className="text-primary">{org.orgName}</span>
+													<span>
+														{t.rich(
+															"organization.listOrganization.webhookModal.createWebhookTitle",
+															{
+																span: (children) => (
+																	<span className="text-primary">{children}</span>
+																),
+																organization: org.orgName,
+															},
+														)}
+													</span>
 												</p>
 											),
 											content: <OrganizationWebhook organizationId={org.id} />,
@@ -158,7 +169,7 @@ const ListOrganizations = () => {
 									}}
 									className="btn btn-sm"
 								>
-									Add Webhooks
+									{b("addWebhooks")}
 								</button>
 								<button onClick={() => toggleUsersTable(org.id)} className="btn btn-sm">
 									{b("users")}

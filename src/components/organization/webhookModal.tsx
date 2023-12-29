@@ -16,7 +16,7 @@ interface Iprops {
 
 const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 	const b = useTranslations("commonButtons");
-	// const t = useTranslations("admin");
+	const t = useTranslations("admin");
 	const [input, setInput] = useState({
 		webhookId: "",
 		webhookUrl: "",
@@ -111,11 +111,11 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 	return (
 		<form className="space-y-5 w-full">
 			<div className="form-control">
-				<h1 className="text-md font-medium tracking-wide">Webhook Name</h1>
+				<h1 className="text-md font-medium tracking-wide">
+					{t("organization.listOrganization.webhookModal.webhookName")}
+				</h1>
 				<label className="text-sm text-gray-500">
-					This field is for entering the name of the webhook. The name is used to identify
-					the webhook and should be descriptive enough to distinguish it from other
-					webhooks.
+					{t("organization.listOrganization.webhookModal.webhookNameDescription")}
 				</label>
 				<Input
 					type="text"
@@ -127,10 +127,13 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				/>
 			</div>
 			<div className="dropdown dropdown-end z-50">
-				<h1 className="text-md font-medium tracking-wide">Select webhook actions</h1>
+				<h1 className="text-md font-medium tracking-wide">
+					{t("organization.listOrganization.webhookModal.selectWebhookActions")}
+				</h1>
 				<label className="text-sm text-gray-500">
-					This dropdown menu allows you to choose the specific actions your webhook should
-					perform. Each option represents a different type of action.
+					{t(
+						"organization.listOrganization.webhookModal.selectWebhookActionsDescription",
+					)}
 				</label>
 				<div>
 					<MultiSelectDropdown
@@ -144,11 +147,11 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				</div>
 			</div>
 			<div className="form-control">
-				<h1 className="text-md font-medium tracking-wide">Webhook URL ( HTTPS )</h1>
+				<h1 className="text-md font-medium tracking-wide">
+					{t("organization.listOrganization.webhookModal.webhookUrl")}
+				</h1>
 				<label className="text-sm text-gray-500">
-					This field is for entering the URL where the webhook will send data. It must be
-					a valid and accessible URL endpoint that can receive and process incoming
-					webhook data.
+					{t("organization.listOrganization.webhookModal.webhookUrlDescription")}
 				</label>
 				<Input
 					type="text"
@@ -161,8 +164,8 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 			</div>
 
 			<div className="pt-10 space-x-5 ">
-				<button onClick={submitHandler} type="submit" className="btn btn-sm">
-					{hook ? "Update" : b("submit")}
+				<button onClick={submitHandler} type="submit" className="btn btn-sm btn-primary">
+					{hook ? b("update") : b("submit")}
 				</button>
 				{hook ? (
 					<button
