@@ -11,7 +11,7 @@ import { handleErrors } from "~/utils/errors";
 
 interface Iprops {
 	organizationId: string;
-	hook: Webhook;
+	hook?: Webhook;
 }
 
 const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
