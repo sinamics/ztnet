@@ -9,6 +9,7 @@
 		"submit": "Send inn",
 		"cancel": "Avbryt",
 		"delete": "Slett",
+		"update": "Oppdater",
 		"close": "Lukk",
 		"stash": "Stash",
 		"yes": "Ja",
@@ -25,6 +26,7 @@
 		"kickUser": "Spark Bruker",
 		"deleteOrganization": "Slett Organisasjon",
 		"userActions": "Brukerhandlinger",
+		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer"
 	},
 	"commonTable": {
@@ -546,6 +548,7 @@
 				"description": "Beskrivelse:",
 				"numberOfMembers": "Antall Medlemmer:",
 				"pendingInvitations": "Ventende Invitasjoner:",
+				"activeWebhooks": "Aktive Webhooks:",
 				"invitationModal": {
 					"title": "Organisasjonsinvitasjoner",
 					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
@@ -558,6 +561,15 @@
 							"title": "Velg brukerens rolle"
 						}
 					}
+				},
+				"webhookModal": {
+					"webhookName": "Webhook-navn",
+					"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
+					"webhookNameDescription": "Dette feltet er for å angi navnet på webhook. Navnet brukes til å identifisere webhook og bør være beskrivende nok til å skille den fra andre webhooks.",
+					"selectWebhookActions": "Velg webhook-handlinger",
+					"selectWebhookActionsDescription": "Denne rullegardinmenyen lar deg velge de spesifikke handlingene din webhook skal utføre. Hver valgmulighet representerer en forskjellig type handling.",
+					"webhookUrl": "Webhook URL ( HTTPS )",
+					"webhookUrlDescription": "Dette feltet er for å angi URL-en hvor webhook vil sende data. Det må være et gyldig og tilgjengelig URL-endepunkt som kan motta og behandle innkommende webhook-data."
 				}
 			}
 		}
