@@ -5,6 +5,14 @@ import { TRPCError } from "@trpc/server";
 import { type MemberEntity } from "~/types/local/member";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
+import {
+	HookType,
+	MemberConfigChanged,
+	MemberDeleted,
+	MemberJoined,
+} from "~/types/webhooks";
+import { sendWebhook } from "~/utils/webhook";
+import { throwError } from "~/server/helpers/errorHandler";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -113,6 +121,19 @@ export const networkMemberRouter = createTRPCRouter({
 						deleted: false,
 					},
 				});
+			}
+
+			try {
+				// Send webhook
+				await sendWebhook<MemberJoined>({
+					hookType: HookType.NETWORK_JOIN,
+					organizationId: input?.organizationId,
+					memberId: input.id,
+					networkId: input.nwid,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
 			}
 
 			// if not, create new member
@@ -228,6 +249,22 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 				});
 
+			try {
+				// Send webhook
+				await sendWebhook<MemberConfigChanged>({
+					hookType: HookType.MEMBER_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					memberId: input.memberId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: payload,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			if (input.central) return updatedMember;
 		}),
 	Tags: protectedProcedure
@@ -287,6 +324,21 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 				});
 
+			try {
+				// Send webhook
+				await sendWebhook<MemberConfigChanged>({
+					hookType: HookType.MEMBER_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					memberId: input.memberId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: payload,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 			return updatedMember;
 		}),
 	UpdateDatabaseOnly: protectedProcedure
@@ -368,6 +420,22 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			try {
+				// Send webhook
+				await sendWebhook<MemberConfigChanged>({
+					hookType: HookType.MEMBER_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					memberId: input.id,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 			return { member: response.networkMembers[0] };
 		}),
 	stash: protectedProcedure
@@ -409,7 +477,7 @@ export const networkMemberRouter = createTRPCRouter({
 			}
 
 			// Set member with deleted status in database.
-			await ctx.prisma.network
+			const memberUpdate = await ctx.prisma.network
 				.update({
 					where: {
 						nwid: input.nwid,
@@ -435,6 +503,24 @@ export const networkMemberRouter = createTRPCRouter({
 				})
 				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 				.catch((err: string) => console.log(err));
+
+			try {
+				// Send webhook
+				await sendWebhook<MemberConfigChanged>({
+					hookType: HookType.MEMBER_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					memberId: input.id,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: { stashed: true },
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
+			return memberUpdate;
 		}),
 	delete: protectedProcedure
 		.input(
@@ -480,6 +566,21 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			try {
+				// Send webhook
+				await sendWebhook<MemberDeleted>({
+					hookType: HookType.MEMBER_DELETED,
+					organizationId: input?.organizationId,
+					deletedMemberId: input.id,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 		}),
 	getMemberAnotations: protectedProcedure
 		.input(

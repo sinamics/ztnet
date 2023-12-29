@@ -3,6 +3,9 @@ import { prisma } from "../db";
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import { UserContext } from "~/types/ctx";
 import { network_members } from "@prisma/client";
+import { sendWebhook } from "~/utils/webhook";
+import { HookType, MemberJoined } from "~/types/webhooks";
+import { throwError } from "../helpers/errorHandler";
 
 // This function checks if the given IP address is likely a private IP address
 function isPrivateIP(ip: string): boolean {
@@ -198,6 +201,28 @@ const psql_addMember = async (ctx, member: MemberEntity) => {
 		creationTime: new Date(),
 		name: user.options?.addMemberIdAsName ? member.id : null,
 	};
+
+	// check if the new member is joining a organization network
+	const org = await prisma.network.findFirst({
+		where: { nwid: member.nwid },
+		select: { organizationId: true },
+	});
+
+	// send webhook if the new member is joining a organization network
+	if (org) {
+		try {
+			// Send webhook
+			await sendWebhook<MemberJoined>({
+				hookType: HookType.NETWORK_JOIN,
+				organizationId: org.organizationId,
+				memberId: member.id,
+				networkId: member.nwid,
+			});
+		} catch (error) {
+			// add error messge that webhook failed
+			throwError(error.message);
+		}
+	}
 
 	return await prisma.network_members.create({
 		data: {

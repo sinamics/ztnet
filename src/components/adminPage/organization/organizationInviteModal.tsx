@@ -98,7 +98,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 								},
 							)
 						}
-						className="btn btn-sm"
+						className="btn btn-sm btn-primary"
 					>
 						{b("inviteUser")}
 					</button>

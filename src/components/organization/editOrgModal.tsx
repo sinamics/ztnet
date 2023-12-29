@@ -84,7 +84,7 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 					);
 				}}
 				type="submit"
-				className="btn btn-sm"
+				className="btn btn-sm btn-primary"
 			>
 				{b("submit")}
 			</button>
