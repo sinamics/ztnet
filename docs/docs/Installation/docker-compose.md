@@ -110,8 +110,12 @@ To change the `NEXTAUTH_URL` in docker-compose.yml, you can use this command tha
 sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" docker-compose.yml
 ```
 
-To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
+Instead of copy the docker-compose.yml file, you can also download it directly from the repository:
+```bash
+wget -O docker-compose.yml https://raw.githubusercontent.com/sinamics/ztnet/main/docker-compose.yml
+```
 
+To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 ```bash
 docker compose up -d
 ```
