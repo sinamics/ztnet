@@ -76,11 +76,12 @@ const App: AppType<{ session: Session | null }> = ({
 				<Toaster
 					position="bottom-right"
 					toastOptions={{
-						className: "bg-primary-500",
 						style: {
 							border: "1px solid #191919",
 							color: "#fff",
 							background: "#404040",
+							wordWrap: "break-word",
+							overflowWrap: "anywhere",
 						},
 					}}
 				/>

@@ -285,7 +285,10 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 
 							{state.viewZombieTable ? (
 								<div className="membersTable-wrapper text-center">
-									<DeletedNetworkMembersTable nwid={network.nwid} />
+									<DeletedNetworkMembersTable
+										nwid={network.nwid}
+										organizationId={organizationId}
+									/>
 								</div>
 							) : null}
 						</>

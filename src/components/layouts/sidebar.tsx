@@ -457,7 +457,7 @@ const Sidebar = (): JSX.Element => {
 						<a
 							href="#"
 							onClick={() => void signOut({ callbackUrl: "/" })}
-							className="flex h-10 flex-row items-center rounded-lg px-3 text-gray-300 hover:bg-gray-100 hover:text-gray-700"
+							className="flex h-10 flex-row items-center rounded-lg px-3 hover:bg-gray-100 hover:text-gray-700"
 						>
 							<span className="flex items-center justify-center text-lg text-red-400">
 								<svg

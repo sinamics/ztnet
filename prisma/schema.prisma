@@ -27,37 +27,35 @@ model GlobalOptions {
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
-  smtpHost                   String?
-  smtpPort                   String  @default("587")
-  smtpEmail                  String?
-  smtpUsername               String?
-  smtpPassword               String?
-  smtpUseSSL                 Boolean @default(false)
-  smtpSecure                 Boolean @default(false)
-  smtpRequireTLS             Boolean @default(false)
-  smtpIgnoreTLS              Boolean @default(false)
-  inviteUserTemplate         Json?
-  inviteAdminTemplate        Json?
-  inviteOrganizationTemplate Json?
-  forgotPasswordTemplate     Json?
-  verifyEmailTemplate        Json?
-  notificationTemplate       Json?
-
+  smtpHost                     String?
+  smtpPort                     String  @default("587")
+  smtpEmail                    String?
+  smtpUsername                 String?
+  smtpPassword                 String?
+  smtpUseSSL                   Boolean @default(false)
+  smtpSecure                   Boolean @default(false)
+  smtpRequireTLS               Boolean @default(false)
+  smtpIgnoreTLS                Boolean @default(false)
+  inviteUserTemplate           Json?
+  inviteAdminTemplate          Json?
+  inviteOrganizationTemplate   Json?
+  forgotPasswordTemplate       Json?
+  verifyEmailTemplate          Json?
+  notificationTemplate         Json?
   // Notifications
   userRegistrationNotification Boolean @default(false)
-
   // mkworld
-  customPlanetUsed Boolean @default(false)
-  plID             BigInt  @default(0)
-  plBirth          BigInt  @default(0)
-  plRecommend      Boolean @default(false)
-  plComment        String?
-  plIdentity       String?
-  plEndpoints      String?
-
-  welcomeMessageEnabled Boolean @default(false)
-  welcomeMessageTitle   String?
-  welcomeMessageBody    String?
+  customPlanetUsed             Boolean @default(false)
+  plID                         BigInt  @default(0)
+  plBirth                      BigInt  @default(0)
+  plRecommend                  Boolean @default(false)
+  plComment                    String?
+  plIdentity                   String?
+  plEndpoints                  String?
+  // Welcome message
+  welcomeMessageEnabled        Boolean @default(false)
+  welcomeMessageTitle          String?
+  welcomeMessageBody           String?
 }
 
 model network_members {
@@ -77,23 +75,22 @@ model network_members {
 }
 
 model network {
-  nwid               String    @id
+  nwid               String            @id
   name               String?
   description        String?
   creationTime       DateTime?
   lastModifiedTime   DateTime?
   flowRule           String?
-  autoAssignIp       Boolean?  @default(true)
-  nw_userid          User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  autoAssignIp       Boolean?          @default(true)
+  nw_userid          User?             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId           String?
   tagsByName         Json?
   capabilitiesByName Json?
-
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  networkMembers network_members[]
-  notations      Notation[]
+  // Relationships
+  organizationId     String?
+  organization       Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  networkMembers     network_members[]
+  notations          Notation[]
 }
 
 model Notation {
@@ -153,25 +150,21 @@ model Session {
 }
 
 model UserOptions {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id                           Int      @id @default(autoincrement())
+  userId                       String   @unique
+  user                         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   //networks
   useNotationColorAsBg         Boolean? @default(false)
   showNotationMarkerInTableRow Boolean? @default(true)
-
   //zt central
-  ztCentralApiKey String? @default("")
-  ztCentralApiUrl String? @default("https://api.zerotier.com/api/v1")
-
+  ztCentralApiKey              String?  @default("")
+  ztCentralApiUrl              String?  @default("https://api.zerotier.com/api/v1")
   // local controller
-  localControllerUrl    String? @default("http://zerotier:9993")
-  localControllerSecret String? @default("")
-
+  localControllerUrl           String?  @default("http://zerotier:9993")
+  localControllerSecret        String?  @default("")
   // member table
-  deAuthorizeWarning Boolean? @default(false)
-  addMemberIdAsName  Boolean? @default(false)
+  deAuthorizeWarning           Boolean? @default(false)
+  addMemberIdAsName            Boolean? @default(false)
 }
 
 enum AccessLevel {
@@ -202,26 +195,25 @@ model APIToken {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  emailVerified  DateTime?
-  lastLogin      DateTime
-  lastseen       DateTime?
-  expirationDate String    @default("")
-  online         Boolean?  @default(false)
-  role           Role      @default(USER)
-  image          String?
-  hash           String?
-  licenseStatus  String?
-  orderStatus    String?
-  orderId        Int       @default(0)
-  product_id     Int?      @default(0)
-  licenseKey     String?   @default("")
-  tempPassword   String?
-  firstTime      Boolean   @default(true)
-  userGroupId    Int?
-
+  id                 String                 @id @default(cuid())
+  name               String
+  email              String                 @unique
+  emailVerified      DateTime?
+  lastLogin          DateTime
+  lastseen           DateTime?
+  expirationDate     String                 @default("")
+  online             Boolean?               @default(false)
+  role               Role                   @default(USER)
+  image              String?
+  hash               String?
+  licenseStatus      String?
+  orderStatus        String?
+  orderId            Int                    @default(0)
+  product_id         Int?                   @default(0)
+  licenseKey         String?                @default("")
+  tempPassword       String?
+  firstTime          Boolean                @default(true)
+  userGroupId        Int?
   memberOfOrgs       Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
   organizationRoles  UserOrganizationRole[]
   membershipRequests MembershipRequest[]    @relation("MembershipRequestsForUser")
@@ -230,13 +222,13 @@ model User {
   ActivityLog        ActivityLog[]
   expiresAt          DateTime? // null means it never expires
   isActive           Boolean                @default(true)
-
-  userGroup UserGroup?   @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-  options   UserOptions?
-  accounts  Account[]
-  sessions  Session[]
-  network   network[]
-  apiTokens APIToken[]
+  userGroup          UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+  options            UserOptions?
+  accounts           Account[]
+  sessions           Session[]
+  network            network[]
+  apiTokens          APIToken[]
+  webhooks           Webhook[]
 }
 
 model VerificationToken {
@@ -266,12 +258,11 @@ model UserInvitation {
 //
 
 model Organization {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  ownerId     String
-  orgName     String
-  description String?
-
+  id                 String                   @id @default(cuid())
+  createdAt          DateTime                 @default(now())
+  ownerId            String
+  orgName            String
+  description        String?
   users              User[]                   @relation("MemberRelation")
   networks           network[]
   settings           OrganizationSettings?
@@ -286,19 +277,21 @@ model Organization {
 }
 
 model Webhook {
-  id           String    @id @default(cuid())
-  name         String
-  description  String
-  url          String
-  enabled      Boolean   @default(false)
-  eventTypes   Json
-  secret       String?   @default("")
-  lastDelivery DateTime? @default(now())
-
+  id             String        @id @default(cuid())
+  name           String
+  description    String
+  url            String
+  enabled        Boolean       @default(false)
+  eventTypes     Json
+  secret         String?       @default("")
+  lastDelivery   DateTime?     @default(now())
   // Relationship with Organization
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String // Foreign key
-  createdAt      DateTime     @default(now())
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String? // Foreign key
+  createdAt      DateTime      @default(now())
+  // Relationship with User
+  User           User?         @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model UserOrganizationRole {

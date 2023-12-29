@@ -7,6 +7,7 @@ import Input from "../elements/input";
 import MultiSelectDropdown from "../elements/multiSelect";
 import { Webhook } from "@prisma/client";
 import { HookType } from "~/types/webhooks";
+import { handleErrors } from "~/utils/errors";
 
 interface Iprops {
 	organizationId: string;
@@ -28,6 +29,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
 
 	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation();
+	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation();
 
 	useEffect(() => {
 		if (!hook) return;
@@ -47,12 +49,10 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 		});
 	};
 
-	const selectHandler = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
+	const selectHandler = (e: string[]) => {
 		setInput({
 			...input,
-			hookType: e as string[],
+			hookType: e,
 		});
 	};
 
@@ -69,12 +69,12 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				},
 				{
 					onSuccess: () => {
-						toast.success("Webhook added successfully");
+						toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
 						closeModal();
 						refecthAllOrg();
 					},
-					onError: () => {
-						toast.error("Error adding webhook");
+					onError: (error) => {
+						handleErrors(error);
 					},
 				},
 			);
@@ -82,6 +82,30 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 			refecthAllOrg();
 		} catch (_err) {
 			toast.error("Error adding webhook");
+		}
+	};
+	const deleteHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		e.preventDefault();
+		try {
+			deleteWebhook(
+				{
+					organizationId: organizationId,
+					webhookId: input.webhookId,
+				},
+				{
+					onSuccess: () => {
+						closeModal();
+						refecthAllOrg();
+					},
+					onError: (error) => {
+						handleErrors(error);
+					},
+				},
+			);
+
+			refecthAllOrg();
+		} catch (_err) {
+			toast.error("Error deleting webhook");
 		}
 	};
 	return (
@@ -120,7 +144,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				</div>
 			</div>
 			<div className="form-control">
-				<h1 className="text-md font-medium tracking-wide">Webhook URL</h1>
+				<h1 className="text-md font-medium tracking-wide">Webhook URL ( HTTPS )</h1>
 				<label className="text-sm text-gray-500">
 					This field is for entering the URL where the webhook will send data. It must be
 					a valid and accessible URL endpoint that can receive and process incoming
@@ -128,7 +152,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				</label>
 				<Input
 					type="text"
-					placeholder="URL"
+					placeholder="https://...."
 					value={input?.webhookUrl}
 					onChange={inputHandler}
 					name="webhookUrl"
@@ -136,10 +160,19 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				/>
 			</div>
 
-			<div className="pt-10">
+			<div className="pt-10 space-x-5 ">
 				<button onClick={submitHandler} type="submit" className="btn btn-sm">
-					{b("submit")}
+					{hook ? "Update" : b("submit")}
 				</button>
+				{hook ? (
+					<button
+						onClick={deleteHandler}
+						type="submit"
+						className="btn btn-sm btn-error btn-outline"
+					>
+						{b("delete")}
+					</button>
+				) : null}
 			</div>
 		</form>
 	);

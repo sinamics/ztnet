@@ -21,7 +21,7 @@ import { type CentralNetwork } from "~/types/central/network";
 import { createNetworkService } from "../services/networkService";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
-import { HookType, NetworkConfigChanged } from "~/types/webhooks";
+import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 
 export const customConfig: Config = {
@@ -284,6 +284,22 @@ export const networkRouter = createTRPCRouter({
 				}
 				throw error;
 			}
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkDeleted>({
+					hookType: HookType.NETWORK_DELETED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
+			return true;
 		}),
 
 	ipv6: protectedProcedure
@@ -332,6 +348,21 @@ export const networkRouter = createTRPCRouter({
 				  }
 				: { v6AssignMode: { ...network.v6AssignMode, ...input.v6AssignMode } };
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			// update network
 			return ztController.network_update({
 				ctx,
@@ -378,6 +409,21 @@ export const networkRouter = createTRPCRouter({
 				? { config: { v4AssignMode } }
 				: { v4AssignMode };
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			// update network
 			return ztController.network_update({
 				ctx,
@@ -420,6 +466,21 @@ export const networkRouter = createTRPCRouter({
 			const { routes } = input.updateParams;
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 
 			// update network
 			return ztController.network_update({
@@ -469,6 +530,20 @@ export const networkRouter = createTRPCRouter({
 				? { config: { ipAssignmentPools, routes, v4AssignMode } }
 				: { ipAssignmentPools, routes, v4AssignMode };
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 			// update network
 			return ztController.network_update({
 				ctx,
@@ -521,6 +596,20 @@ export const networkRouter = createTRPCRouter({
 				? { config: { ipAssignmentPools } }
 				: { ipAssignmentPools };
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 			// update network
 			return ztController.network_update({
 				ctx,
@@ -532,7 +621,7 @@ export const networkRouter = createTRPCRouter({
 	privatePublicNetwork: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().optional().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -550,14 +639,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			sendWebhook<NetworkConfigChanged>({
-				hookType: HookType.MEMBER_CONFIG_CHANGED,
-				networkId: input.nwid,
-
-				organizationId: input?.organizationId,
-				content: input.updateParams,
-			});
-
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
@@ -566,6 +647,7 @@ export const networkRouter = createTRPCRouter({
 					requiredRole: Role.USER,
 				});
 			}
+
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
 				: { private: input.updateParams.private };
@@ -582,6 +664,22 @@ export const networkRouter = createTRPCRouter({
 				const { id: nwid, config, ...otherProps } = updated as CentralNetwork;
 				return { nwid, ...config, ...otherProps } as Partial<CentralNetwork>;
 			}
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			return updated as NetworkEntity;
 		}),
 	networkName: protectedProcedure
@@ -637,6 +735,21 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			return updated;
 		}),
 	networkDescription: protectedProcedure
@@ -690,6 +803,21 @@ export const networkRouter = createTRPCRouter({
 					...input.updateParams,
 				},
 			});
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 
 			return {
 				description: updated.description,
@@ -756,6 +884,21 @@ export const networkRouter = createTRPCRouter({
 				ztControllerUpdates = { config: { ...ztControllerUpdates } };
 			}
 
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			// Send the request to update the network
 			return await ztController.network_update({
 				ctx,
@@ -802,7 +945,7 @@ export const networkRouter = createTRPCRouter({
 				: { ...input.updateParams };
 
 			try {
-				return await ztController.network_update({
+				await ztController.network_update({
 					ctx,
 					nwid: input.nwid,
 					central: input.central,
@@ -814,6 +957,21 @@ export const networkRouter = createTRPCRouter({
 				} else {
 					throw error;
 				}
+			}
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
 			}
 		}),
 	createNetwork: protectedProcedure
@@ -922,6 +1080,21 @@ export const networkRouter = createTRPCRouter({
 
 			// update network in prisma
 			const { prisma } = ctx;
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: { rulesSource: input.updateParams.flowRoute },
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 
 			// Start a transaction
 			return await prisma.$transaction([

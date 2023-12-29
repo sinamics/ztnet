@@ -17,7 +17,9 @@ import { createTransporter, inviteOrganizationTemplate, sendEmail } from "~/util
 import ejs from "ejs";
 import { Role } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { HookType } from "~/types/webhooks";
+import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
+import { throwError } from "~/server/helpers/errorHandler";
+import { sendWebhook } from "~/utils/webhook";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -344,6 +346,20 @@ export const organizationRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkCreated>({
+					hookType: HookType.NETWORK_CREATED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: newNw.nwid,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
 			return newNw;
 		}),
 	changeUserRole: protectedProcedure
@@ -636,15 +652,46 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// make sure the user is not the owner of the organization
 			const org = await ctx.prisma.organization.findUnique({
 				where: {
 					id: input.organizationId,
 				},
+				include: {
+					users: {
+						select: {
+							email: true,
+							id: true,
+						},
+					},
+				},
 			});
+
+			// make sure the user is not the owner of the organization
 			if (org?.ownerId === input.userId) {
 				throw new Error("You cannot leave an organization you own.");
 			}
+
+			// Find the email of the user
+			const user = org.users.find((user) => user.id === input.userId);
+			if (!user) {
+				throw new Error("User not found in organization.");
+			}
+
+			// Send webhook
+			try {
+				await sendWebhook<OrgMemberRemoved>({
+					hookType: HookType.ORG_MEMBER_REMOVED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					removedUserId: user.id,
+					removedUserEmail: user.email,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+
 			// leave organization
 			return await ctx.prisma.organization.update({
 				where: {
@@ -825,6 +872,29 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	deleteOrgWebhooks: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				webhookId: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+
+			// create webhook
+			return await ctx.prisma.webhook.deleteMany({
+				where: {
+					id: input.webhookId,
+					organizationId: input.organizationId,
+				},
+			});
+		}),
 	addOrgWebhooks: protectedProcedure
 		.input(
 			z.object({
@@ -842,7 +912,17 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				requiredRole: Role.ADMIN,
 			});
+			// Validate the URL to be HTTPS
+			if (!input.webhookUrl.startsWith("https://")) {
+				// throw error
+				console.error("Webhook URL is not HTTPS");
+				return throwError(`Webhook URL needs to be HTTPS: ${input.webhookUrl}`);
+			}
 
+			if (input.hookType.length === 0) {
+				// throw error
+				return throwError("Webhook needs to have at least one action type");
+			}
 			// create webhook
 			return await ctx.prisma.webhook.upsert({
 				where: {

@@ -15,7 +15,12 @@ import {
 } from "@tanstack/react-table";
 import { type MemberEntity } from "~/types/local/member";
 
-export const DeletedNetworkMembersTable = ({ nwid }) => {
+interface IProps {
+	nwid: string;
+	organizationId?: string;
+}
+
+export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => {
 	const { query } = useRouter();
 	const [sorting, setSorting] = useState<SortingState>([
 		{
@@ -103,6 +108,7 @@ export const DeletedNetworkMembersTable = ({ nwid }) => {
 										yesAction: () => {
 											void deleteMember(
 												{
+													organizationId,
 													nwid,
 													id,
 												},
