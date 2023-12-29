@@ -42,20 +42,20 @@ services:
     restart: unless-stopped
     ports:
       - 3000:3000
+    # - 127.0.0.1:3000:3000  <--- Use / Uncomment this line to restrict access to localhost only
     environment:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
-      NEXTAUTH_URL: "http://server_ip:3000" # change localhost to your domain or server ip address if hosting on a server.
-      NEXTAUTH_SECRET: "random_secret" # change this to a random string of characters.
+      NEXTAUTH_URL: "http://localhost:3000" # !! Important !! Set the NEXTAUTH_URL environment variable to the canonical URL or IP of your site with port 3000
+      NEXTAUTH_SECRET: "random_secret"
     networks:
       - app-network
     depends_on:
       - postgres
       - zerotier
-
 volumes:
   zerotier:
   postgres-data:
