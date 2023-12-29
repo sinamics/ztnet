@@ -104,6 +104,12 @@ networks:
       config:
         - subnet: 172.31.255.0/29
 ```
+
+To change the `NEXTAUTH_URL` in docker-compose.yml, you can use this command that will set the default server ip:
+```bash
+sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" docker-compose.yml
+```
+
 To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 
 `docker compose up -d`
