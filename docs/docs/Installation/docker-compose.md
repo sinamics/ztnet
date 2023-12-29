@@ -112,7 +112,9 @@ sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" doc
 
 To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 
-`docker compose up -d`
+```bash
+docker compose up -d
+```
 
 This action pulls necessary images, initializes the containers, and activates the services.
 Visit `http://localhost:3000` to access the ZTNET web interface.
