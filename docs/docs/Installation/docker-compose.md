@@ -105,14 +105,14 @@ networks:
         - subnet: 172.31.255.0/29
 ```
 
-To change the `NEXTAUTH_URL` in docker-compose.yml, you can use this command that will set the default server ip:
-```bash
-sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" docker-compose.yml
-```
-
 Instead of copy the docker-compose.yml file, you can also download it directly from the repository:
 ```bash
 wget -O docker-compose.yml https://raw.githubusercontent.com/sinamics/ztnet/main/docker-compose.yml
+```
+
+To change the `NEXTAUTH_URL` in docker-compose.yml, you can use this command that will set the default server ip:
+```bash
+sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" docker-compose.yml
 ```
 
 To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
