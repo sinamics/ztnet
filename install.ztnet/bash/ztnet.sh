@@ -24,7 +24,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # exit if any command fails
-set -e
+# set -e
 
 TEMP_INSTALL_DIR="/tmp/ztnet"
 TARGET_DIR="/opt/ztnet"
