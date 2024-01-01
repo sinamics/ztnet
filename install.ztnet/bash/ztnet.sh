@@ -40,7 +40,6 @@ POSTGRES_PASSWORD="postgres"
 target_env_file="$TARGET_DIR/.env"
 
 exec 3>&1 4>&2
-# trap 'failure $BASH_LINENO "${BASH_COMMAND}" "${?}"' ERR
 trap 'cleanup; exit' SIGINT
 
 exec 2> >(tee "/tmp/stderr.log")  # Redirect stderr to a temporary file
@@ -71,6 +70,12 @@ verbose() {
         # An error occurred
         failure $BASH_LINENO "$command" "$status" "$output"
     fi
+}
+
+# Function to print status messages
+print_status() {
+    local message=$1
+    echo -ne "\r\033[K ==>  $message"  # Clear the line and print the new message
 }
 
 # Check if the script is run as root (sudo)
@@ -148,11 +153,7 @@ function cleanup() {
   # Show the cursor before exiting
   tput cnorm
 }
-# Function to print status messages
-print_status() {
-    local message=$1
-    echo -ne "\r\033[K ==>  $message"  # Clear the line and print the new message
-}
+
 
 start_spinner() {
     local pid=$1
@@ -295,7 +296,6 @@ printf "  5. Transfer the artifacts to the ${YELLOW}${TARGET_DIR}${NC} directory
 ask_string "Enter ZTnet server IP address / domain name, or press Enter to use the current one" "$local_ip" input_ip
 # Attempt to connect to PostgreSQL and check if 'postgres' user exists
 if ! command_exists psql || ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='postgres'" | grep -q 1; then
-    echo "vqalidas"
     ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "postgres" POSTGRES_PASSWORD
 fi
 ask_question "Do you prefer a silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
