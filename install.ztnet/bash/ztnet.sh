@@ -6,6 +6,8 @@
 # https://github.com/sinamics/ztnet/blob/main/LICENSE
 
 clear
+set -E -o functrace
+
 cat <<"EOF"
  ________  ___________  _____  ___    _______  ___________  
 ("      "\("     _   ")(\"   \|"  \  /"     "|("     _   ") 
@@ -17,15 +19,10 @@ cat <<"EOF"
                                                           
 EOF
 
-# Check if the script is run as root (sudo)
-if [[ $EUID -ne 0 ]]; then
-  echo "This script must be run as root (sudo). Exiting."
-  exit 1
-fi
-
-# exit if any command fails
-set -e
-
+HOST_OS=$(( lsb_release -ds || cat /etc/*release || uname -om ) 2>/dev/null | head -n1)
+INSTALL_NODE=false
+BRANCH=main
+SILENT_MODE=No
 TEMP_INSTALL_DIR="/tmp/ztnet"
 TARGET_DIR="/opt/ztnet"
 NODE_MAJOR=18
@@ -38,6 +35,146 @@ GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 NC=$(tput sgr0) # No Color
 
+# Default values if .env file doesn't exist
+POSTGRES_PASSWORD="postgres"
+target_env_file="$TARGET_DIR/.env"
+
+exec 3>&1 4>&2
+# trap 'failure $BASH_LINENO "${BASH_COMMAND}" "${?}"' ERR
+trap 'cleanup; exit' SIGINT
+
+exec 2> >(tee "/tmp/stderr.log")  # Redirect stderr to a temporary file
+
+silent() {
+    local output
+    local status
+    local command="$@"
+    
+    if [ "$SILENT_MODE" = "Yes" ]; then
+        output="$($command >/dev/null 2>&1)"
+        status=$?
+      if [ $status -ne 0 ]; then
+          # An error occurred
+          failure $BASH_LINENO "$command" "$status" "$output"
+      fi
+    fi
+}
+
+
+verbose() {
+    local output
+    local status
+    local command="$@"
+    $command 2>&1
+    status=$?
+    if [ $status -ne 0 ]; then
+        # An error occurred
+        failure $BASH_LINENO "$command" "$status" "$output"
+    fi
+}
+
+# Check if the script is run as root (sudo)
+if [[ $EUID -ne 0 ]]; then
+  print_status "This script must be run as root (sudo). Exiting."
+  exit 1
+fi
+
+function failure() {
+  cleanup
+
+  local _bash_lineno=$1
+  local _last_command=$2
+  local _exitcode=$3
+  local _output=$4
+
+  local uname=$(uname -a | sed -e 's/"//g')
+
+  printf "\n${RED}An error occured! ${NC}\n" >&2
+
+  jsonError=$(jq -n --arg kernel "$uname" \
+      --arg runner "ztnet standalone" \
+      --arg arch "$ARCH" \
+      --arg os "$HOST_OS" \
+      --arg command "$_last_command" \
+      --arg exitcode "$_exitcode" \
+      --arg output "$_output" \
+      --arg timestamp $(date +"%d-%m-%Y/%M:%S") \
+      --arg lineno "$_bash_lineno" \
+      '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
+
+  jq '.' <<< $jsonError >&2
+
+  echo -e "\n${YELLOW}Do you want to send the error report to ztnet.network admin for application improvements?"
+  echo -e "Only the above error message will be sent! [yes/no]?${NC}"
+  printf "\nyes / no ==> "
+  read -r answer < /dev/tty
+
+  finish="-1"
+  while [ "$finish" = '-1' ]
+  do
+    finish="1"
+    case $answer in
+      y | Y | yes | YES | Yes) 
+
+      print_status ">>> Generating Report..."
+      print_status ">>> Transmitting..."
+      curl --insecure --max-time 10 \
+      -d "$jsonError" \
+      -H 'Content-Type: application/json' \
+      -X POST "http://install.ztnet.network/post/error"
+      # -X POST "http://localhost:9090/post/error"
+      ;;
+      n | N | no | NO | No ) 
+      printf "Exiting! Please create new issue at https://github.com/sinamics/ztnet/issues/new/choose with the above information\n"
+      
+      exit 1 
+      ;;
+      *) finish="-1";
+        echo -n '>>> Invalid response -- please reenter [yes/no]:' >&2;
+        read answer < /dev/tty;;
+        
+    esac
+  done
+  exit ${_code}
+}
+
+function cleanup() {
+  printf "\n\nCleaning up...\n"
+  # Before the script exits, stop the spinner if it's running
+  if [ "$SILENT_MODE" = "Yes" ]; then
+      stop_spinner "$SPINNER_PID"
+  fi
+  rm -rf "$TEMP_INSTALL_DIR"
+  # Show the cursor before exiting
+  tput cnorm
+}
+# Function to print status messages
+print_status() {
+    local message=$1
+    echo -ne "\r\033[K ==>  $message"  # Clear the line and print the new message
+}
+
+start_spinner() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\\'
+
+    tput civis # Hide cursor
+    while [ "$(ps a | awk '{print $1}' | grep $pid)" ]; do
+        local temp=${spinstr#?}
+        printf "\r [\033[34m%c\033[0m]  " "$spinstr"  # Spinner updates in place
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+    done
+    printf "\r\033[K"  # Clear the spinner before printing the next status
+}
+
+stop_spinner() {
+    kill "$1" 2>/dev/null
+    exec 3>&- # Close file descriptor
+    print_status "Operation completed."
+}
+
 # Detect local IP address
 local_ip=$(hostname -I | awk '{print $1}')
 
@@ -48,14 +185,14 @@ command_exists() {
 
 # Check if the OS is Ubuntu
 if [[ $OS == "Ubuntu" ]]; then
-  echo "Running script for Ubuntu."
+  print_status "Running script for Ubuntu."
 
   # stop ubuntu pop-up daemons
   conf_file="/etc/needrestart/needrestart.conf"
   if [[ -f "$conf_file" ]]; then
     # Perform the sed operation and check for success
     if sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" "$conf_file"; then
-      echo "Disabled pop-up window for needrestart."
+      print_status "Disabled pop-up window for needrestart."
     fi
   fi
 fi
@@ -70,46 +207,122 @@ case "$ARCH" in
         ARCH="arm64"
         ;;
     *)
-        echo ">>> Unsupported architecture: $ARCH"
+        print_status ">>> Unsupported architecture: $ARCH"
         exit 1
         ;;
 esac
 
-while getopts v:b: option 
+
+while getopts v:b:s option 
 do 
  case "${option}" 
  in 
  v) CUSTOM_VERSION=${OPTARG};;
  b) BRANCH=${OPTARG};;
+ s) SILENT_MODE=Yes;;
  esac 
 done
 
 if [[ "$(lsb_release -is)" != "Debian" && "$(lsb_release -is)" != "Ubuntu" ]]; then
-  echo "This script is only for Debian and Ubuntu. Exiting."
+  print_status "This script is only for Debian and Ubuntu. Exiting."
   exit 1
 fi
 
-# Show info text to user
-printf "\n\n${YELLOW}Welcome to the installation script.${NC}\n"
-printf "${YELLOW}This script will perform the following actions:${NC}\n"
-printf "  1. Check if PostgreSQL is installed. If not, it will be installed.\n"
-printf "  2. Check if Node.js version "$NODE_MAJOR" is installed. If not, it will be installed.\n"
-printf "  3. Check if Zerotier is installed, If not, it will be installed.\n"
-printf "  4. Clone ztnet repo into /tmp folder and build artifacts from latest tag version.\n"
-printf "  5. Copy artifacts to /opt/ztnet folder.\n\n"
-printf "Press space to proceed with the installation..." >&2
-read -n1 -s < /dev/tty
 
-# Inform the user about the default IP and ask if they want to change it
-printf "\nThe current default server IP address is ${YELLOW}$local_ip${NC}.\n"
-printf "Press Enter to use this default IP, or enter a new IP address or domain name pointing to this installation, then press Enter:\n"
-printf "You can change this value later in the ${YELLOW}${TARGET_DIR}/.env${NC} file. If you make changes, restart the server with '${YELLOW}systemctl restart ztnet${NC}'.\n"
-printf "==> " >&2
-# Read the user input
-read input_ip < /dev/tty
+# Function to ask a Yes/No question
+ask_question() {
+    local question=$1
+    local default_answer=$2
+    local varname=$3
+
+    # Display the question with a check mark
+    echo -ne "\033[32m✔\033[0m $question (Yes/No) [Default: $default_answer]: "
+    read -r reply
+
+    # If no response is given, use the default answer
+    if [[ -z "$reply" ]]; then
+        reply=$default_answer
+    fi
+
+    while true; do
+        case "$reply" in
+            [Yy]*)
+                eval "$varname='Yes'"
+                break
+                ;;
+            [Nn]* | "")
+                eval "$varname='No'"
+                break
+                ;;
+            *) 
+                echo -n "Invalid response. Please answer Yes or No: "
+                read -r reply
+                ;;
+        esac
+    done
+}
+
+# Function to ask for a string response
+ask_string() {
+    local question=$1
+    local default_value=$2
+    local varname=$3
+
+    # Display the question with a colored checkmark and the default value
+    echo -ne "\033[32m✔\033[0m $question [$default_value]: "
+    read -r reply
+
+    # If the user did not enter a value, use the default
+    if [ -z "$reply" ]; then
+        reply=$default_value
+    fi
+
+    eval "$varname='$reply'"
+}
+
+# Show info text to user
+printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
+printf "${YELLOW}This script will perform the following actions:${NC}\n"
+printf "  1. Install PostgreSQL if it's not already present.\n"
+printf "  2. Ensure Node.js version ${NODE_MAJOR} is installed.\n"
+printf "  3. Install Zerotier if it's missing.\n"
+printf "  4. Clone the ZTnet repository into the /tmp folder and build artifacts from the latest tag.\n"
+printf "  5. Transfer the artifacts to the ${YELLOW}${TARGET_DIR}${NC} directory.\n\n"
+# printf "Press space to proceed with the installation..." >&2
+# read -n1 -s < /dev/tty
+
+# Ask the user about the server IP with the default as the current IP
+ask_string "Enter ZTnet server IP address / domain name, or press Enter to use the current one" "$local_ip" input_ip
+# Attempt to connect to PostgreSQL and check if 'postgres' user exists
+if ! command_exists psql || ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='postgres'" | grep -q 1; then
+    echo "vqalidas"
+    ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "postgres" POSTGRES_PASSWORD
+fi
+ask_question "Do you prefer a silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
+
+print_status "Starting installation..."
+# Set STD based on silent mode
+if [ "$SILENT_MODE" = "Yes" ]; then
+    STD="silent"
+
+    # Start a dummy background process
+    sleep 86400 & # Sleep for a long time (e.g., one day)
+    SPINNER_PID=$!
+
+    # Start the spinner
+    start_spinner "$SPINNER_PID" &
+else
+    STD="verbose"
+fi
+
+# install git curl openssl
+if ! command_exists jq; then
+  print_status "Installing jq..."
+  $STD sudo apt install jq -y
+fi
 
 # update apt
-sudo apt update
+$STD sudo apt update
 
 # Use the default local_ip if the user pressed Enter without typing anything
 server_ip=${input_ip:-$local_ip}
@@ -119,11 +332,7 @@ if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
 
-# Default values if .env file doesn't exist
-POSTGRES_PASSWORD="postgres"
 
-
-target_env_file="$TARGET_DIR/.env"
 if [ -f "$target_env_file" ]; then
     # Read the entire .env file into a variable
     env_content=$(<"$target_env_file")
@@ -135,7 +344,6 @@ if [ -f "$target_env_file" ]; then
 
     # Use awk to extract the password from DATABASE_URL
     POSTGRES_PASSWORD=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
-
     # List of variables to extract
     env_vars=("NEXTAUTH_SECRET" "NEXT_PUBLIC_SITE_NAME" "NEXTAUTH_URL" "ZT_ADDR" "ZT_SECRET")
 
@@ -152,37 +360,24 @@ fi
 
 # Install PostgreSQL
 if ! command_exists psql; then
-    sudo apt install postgresql postgresql-contrib -y
+    $STD sudo apt install postgresql postgresql-contrib -y
 
-    # Ask user if they want to set a custom password for PostgreSQL
-    printf "${YELLOW}Do you want to set a custom password for the PostgreSQL user 'postgres'? (Default is 'postgres'):${NC}\n"
-    printf "yes / no ==> " >&2
-    read setCustomPassword < /dev/tty
-
-    if [[ "$setCustomPassword" == "yes" || "$setCustomPassword" == "y" ]]; then
-        printf "Enter the custom password: " >&2
-        read POSTGRES_PASSWORD < /dev/tty
-
-        # Use a subshell to avoid 'could not change directory' warning
-        (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';")
-    else
-        # Set the default password 'postgres'
-        (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';")
-    fi
+    # Use a subshell to avoid 'could not change directory' warning
+    (sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '$POSTGRES_PASSWORD';") > /dev/null 2>&1
 fi
 
 
 # install git curl openssl
 if ! command_exists git; then
-    sudo apt install git -y
+    $STD sudo apt install git -y
 fi
 
 if ! command_exists curl; then
-    sudo apt install curl -y
+    $STD sudo apt install curl -y
 fi
 
 if ! command_exists openssl; then
-    sudo apt install openssl -y
+    $STD sudo apt install openssl -y
 fi
 
 
@@ -201,49 +396,56 @@ else
 fi
 
 if [ "$INSTALL_NODE" = true ]; then
-  sudo apt-get update
-  sudo apt-get install -y ca-certificates curl gnupg
+  $STD echo "Installing Node.js $NODE_MAJOR.x..."
+  
+  # remove if they already exist
+  sudo rm -f /etc/apt/sources.list.d/nodesource.list
+  sudo rm -f /etc/apt/keyrings/nodesource.gpg
+  $STD sudo apt-get update > /dev/null 2>&1
+  $STD sudo apt-get install -y ca-certificates curl gnupg > /dev/null 2>&1
   sudo mkdir -p /etc/apt/keyrings
+
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-  sudo apt-get update
-  sudo apt-get install nodejs -y
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_"$NODE_MAJOR".x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null 2>&1
+  $STD sudo apt-get update
+  $STD sudo apt-get install nodejs -y
 fi
 
 # Install ZeroTier
 if ! command_exists zerotier-cli; then
-    echo "ZeroTier not found, installing..."
-    curl -s https://install.zerotier.com | sudo bash
+    print_status "ZeroTier not found, installing..."
+    $STD curl -s https://install.zerotier.com | sudo bash
 else
-    echo "ZeroTier is already installed."
+    print_status "ZeroTier is already installed."
 fi
 
 
 # Setup Ztnet
 # Clone Ztnet repository into /opt folder
 if [[ ! -d "$TEMP_INSTALL_DIR" ]]; then
-  git clone https://github.com/sinamics/ztnet.git $TEMP_INSTALL_DIR
-  echo "Cloned Ztnet repository."
+  $STD git clone https://github.com/sinamics/ztnet.git $TEMP_INSTALL_DIR
+  print_status "Cloned Ztnet repository."
 else
-  echo "$TEMP_INSTALL_DIR already exists. Updating the repository."
+  print_status "$TEMP_INSTALL_DIR already exists. Updating the repository."
   cd $TEMP_INSTALL_DIR
-  git pull origin main
+  $STD git pull origin main
 fi
 
 cd $TEMP_INSTALL_DIR
 if [[ -z "$BRANCH" ]]; then
   # If BRANCH is empty or not set, checkout the latest tag or a custom version
-  git fetch --tags
+  $STD git fetch --tags
   latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
-  echo "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
-  git checkout "${CUSTOM_VERSION:-$latestTag}"
+  print_status "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
+  $STD git checkout "${CUSTOM_VERSION:-$latestTag}"
 else
   # If BRANCH is not empty, checkout the specified branch
-  echo "Checking out branch: $BRANCH"
-  git checkout "$BRANCH"
+  print_status "Checking out branch: $BRANCH"
+  $STD git checkout "$BRANCH"
 fi
 
-npm install
+print_status "Installing dependencies..."
+$STD npm install
 
 # Copy mkworld binary
 cp "$TEMP_INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
@@ -265,7 +467,7 @@ set_env_var() {
 }
 
 # Check if .env file exists, if not create it
-[[ ! -f "$env_file" ]] && touch "$env_file" && echo "Created new .env file"
+[[ ! -f "$env_file" ]] && touch "$env_file" && print_status "Created new .env file"
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
@@ -279,11 +481,15 @@ set_env_var "NEXTAUTH_URL" "$NEXTAUTH_URL"
 set_env_var "NEXT_PUBLIC_APP_VERSION" "$NEXT_PUBLIC_APP_VERSION"
 set_env_var "NEXTAUTH_SECRET" "$NEXTAUTH_SECRET"
 
+print_status "Database migrations..."
 # Populate PostgreSQL and build Next.js
-npx prisma migrate deploy
-npx prisma db seed
-npm run build
+$STD npx prisma migrate deploy
+print_status "Seed Database..."
+$STD npx prisma db seed
+print_status "Building Ztnet artifacts... This may take a while."
+$STD npm run build
 
+print_status "Copying files to $TARGET_DIR..."
 # Ensure the target directories exist
 mkdir -p "$TARGET_DIR"
 mkdir -p "$TARGET_DIR/.next/standalone"
@@ -298,6 +504,8 @@ cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
 cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
 cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
+
+print_status "Creating systemd service..."
 
 # Setup systemd service for Ztnet
 cat > /etc/systemd/system/ztnet.service <<EOL
@@ -314,9 +522,11 @@ WantedBy=multi-user.target
 EOL
 
 # Enable and start the service
-sudo systemctl daemon-reload
-sudo systemctl enable ztnet
-sudo systemctl restart ztnet
+$STD sudo systemctl daemon-reload
+$STD sudo systemctl enable ztnet
+$STD sudo systemctl restart ztnet
+
+cleanup
 
 # Note for the user regarding systemd service management
 echo -e "Note: You can check the status of the service with ${YELLOW}systemctl status ztnet${NC}."
@@ -324,8 +534,4 @@ echo -e "To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}.
 echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
 
 
-
-
-rm -rf "$TEMP_INSTALL_DIR"
-
-printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n"
+printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n\n"
