@@ -305,7 +305,7 @@ if [ ! -f "$target_env_file" ]; then
 fi
 
 # Attempt to connect to PostgreSQL and check if 'postgres' user exists
-if ! command_exists psql || ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='postgres'" | grep -q 1; then
+if ! command_exists psql; then
     ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "postgres" POSTGRES_PASSWORD
 fi
 
