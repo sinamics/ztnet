@@ -87,19 +87,19 @@ ask_string() {
 
     # Display the question with a colored checkmark and the default value
     echo -ne "\033[32m✔\033[0m${YELLOW} $question [$default_value]:${NC}"
-    IFS= read -r reply || true  # Read input; 'true' ensures the script continues even if input is empty
-
+    read -r ask_string < /dev/pts/2  # Read input; 'true' ensures the script continues even if input is empty
+  
     # If the user did not enter a value, use and display the default
-    if [ -z "$reply" ]; then
-        reply=$default_value
+    if [ -z "$ask_string" ]; then
+        ask_string=$default_value
         # Move cursor back to the start of the line
         tput cuu1
         tput cuf $((${#question} + ${#default_value} + 8))
-        echo -n "$reply"
+        echo -n "$ask_string"
         echo    # Add a newline
     fi
 
-    eval "$varname='$reply'"
+    eval "$varname='$ask_string'"
 }
 
 
