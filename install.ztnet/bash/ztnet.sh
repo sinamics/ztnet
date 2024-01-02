@@ -34,8 +34,8 @@ GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 NC=$(tput sgr0) # No Color
 
-# Default values if .env file doesn't exist
-POSTGRES_PASSWORD="postgres"
+# Auto generate 10char postgres password
+POSTGRES_PASSWORD=$(openssl rand -hex 10)
 target_env_file="$TARGET_DIR/.env"
 
 exec 3>&1 4>&2
@@ -86,7 +86,7 @@ ask_string() {
     local varname=$3
 
     # Display the question with a colored checkmark and the default value
-    echo -ne "\033[32m✔\033[0m${YELLOW} $question [$default_value]:${NC}"
+    echo -ne "\033[32m✔\033[0m${YELLOW} $question [Default: $default_value]:${NC}"
     read -r ask_string < /dev/tty
   
     # If the user did not enter a value, use and display the default
@@ -322,7 +322,7 @@ fi
 
 # Attempt to connect to PostgreSQL and check if 'postgres' user exists
 if ! command_exists psql; then
-    ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "postgres" POSTGRES_PASSWORD
+    ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "(auto generated)" POSTGRES_PASSWORD
 fi
 
 ask_question "Do you prefer a silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
