@@ -94,7 +94,7 @@ ask_string() {
         ask_string=$default_value
         # Move cursor back to the start of the line
         tput cuu1
-        tput cuf $((${#question} + ${#default_value} + 8))
+        tput cuf $((${#question} + ${#default_value} + 16))
         echo -n "$ask_string"
         echo    # Add a newline
     fi
