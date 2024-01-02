@@ -9,8 +9,8 @@ import { postError } from './routes/postError';
 import { getHealth } from './routes/health';
 
 const errorRateLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 60 minutes
-  max: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  windowMs: 60 * 15 * 1000, // 15 minutes
+  max: 2, // Limit each IP to 2 requests per `window` (here, per 15 minutes)
   message: 'Too many error reports submitted, please try again after an hour\n',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
