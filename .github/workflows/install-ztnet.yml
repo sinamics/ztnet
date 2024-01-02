@@ -25,7 +25,7 @@ jobs:
       - name: Enviorment
         run: |
           touch .env
-          echo NODE_ENV="production" >> .env
+          echo NODE_ENV="production" > .env
           echo NODE_MAILER_USER="${{ secrets.NODE_MAILER_USER }}" >> .env
           echo NODE_MAILER_PASSWORD="${{ secrets.NODE_MAILER_PASSWORD }}" >> .env
 
