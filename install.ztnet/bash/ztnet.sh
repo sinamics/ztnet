@@ -58,8 +58,8 @@ ask_question() {
         reply=$default_answer
         tput cuu1
         tput cuf $((${#question} + ${#default_answer} + 26))
-        echo -n "$reply"
-        echo 
+        # echo -n "$reply"
+        # echo 
     fi
 
     while true; do
@@ -95,8 +95,8 @@ ask_string() {
         # Move cursor back to the start of the line
         tput cuu1
         tput cuf $((${#question} + ${#default_value} + 8))
-        echo -n "$reply"
-        echo    # Add a newline
+        # echo -n "$reply"
+        # echo    # Add a newline
     fi
 
     eval "$varname='$reply'"
