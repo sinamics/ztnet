@@ -51,7 +51,7 @@ ask_question() {
 
     # Display the question with a check mark
     echo -ne "\033[32m✔\033[0m${YELLOW} $question (Yes/No) [Default: $default_answer]: ${NC}"
-    read -r reply -s < /dev/tty
+    read -r reply < /dev/tty
 
     # If no response is given, use the default answer
     if [[ -z "$reply" ]]; then
