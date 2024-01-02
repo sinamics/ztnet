@@ -480,6 +480,7 @@ cp "$TEMP_INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkw
 
 # File path to the .env file
 env_file="$TEMP_INSTALL_DIR/.env"
+env_file_backup="$TEMP_INSTALL_DIR/.env_backup"
 
 # A function to set or update an environment variable in .env file
 set_env_var() {
@@ -491,6 +492,7 @@ set_env_var() {
   else
     # If key doesn't exist, append it
     echo "$key=$value" >> "$env_file"
+    echo "$key=$value" >> "$env_file_backup"
   fi
 }
 
