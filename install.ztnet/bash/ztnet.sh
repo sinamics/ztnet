@@ -162,20 +162,29 @@ function failure() {
 
   local uname=$(uname -a | sed -e 's/"//g')
 
-  printf "\n${RED}An error occured! ${NC}\n" >&2
+  printf "\n${RED}An error occurred! ${NC}\n" >&2
 
-  jsonError=$(jq -n --arg kernel "$uname" \
-      --arg runner "ztnet standalone" \
-      --arg arch "$ARCH" \
-      --arg os "$HOST_OS" \
-      --arg command "$_last_command" \
-      --arg exitcode "$_exitcode" \
-      --arg output "$_output" \
-      --arg timestamp $(date +"%d-%m-%Y/%M:%S") \
-      --arg lineno "$_bash_lineno" \
-      '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
-
-  jq '.' <<< $jsonError >&2
+  # Check if jq is installed
+  if command -v jq >/dev/null 2>&1; then
+      # If jq is installed, use it to create JSON error report
+      jsonError=$(jq -n --arg kernel "$uname" \
+          --arg runner "ztnet standalone" \
+          --arg arch "$ARCH" \
+          --arg os "$HOST_OS" \
+          --arg command "$_last_command" \
+          --arg exitcode "$_exitcode" \
+          --arg output "$_output" \
+          --arg timestamp "$(date +"%d-%m-%Y/%M:%S")" \
+          --arg lineno "$_bash_lineno" \
+          '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
+  else
+      # Manually create JSON string
+      jsonError="{\"kernel\": \"$uname\", \"runner\": \"ztnet standalone\", \"arch\": \"$ARCH\", \"os\": \"$HOST_OS\", \"command\": \"$_last_command\", \"output\": \"$_output\", \"exitcode\": \"$_exitcode\", \"timestamp\": \"$(date +"%d-%m-%Y/%M:%S")\", \"lineno\": \"$_bash_lineno\"}"
+      # Replace newlines in output with \n to make it a valid JSON string
+      jsonError=$(echo $jsonError | sed ':a;N;$!ba;s/\n/\\n/g')
+  fi
+  
+  echo -e "\n${RED}Error report:${NC}\n$jsonError\n"
 
   echo -e "\nDo you want to send the error report to ztnet.network admin for application improvements?"
   echo -e "Only the above error message will be sent! [Default Yes]"
@@ -192,26 +201,24 @@ function failure() {
     finish="1"
     case $SEND_REPORT in
       y | Y | yes | YES | Yes) 
-
-      print_status ">>> Generating Report..."
-      print_status ">>> Transmitting..."
-      curl --insecure --max-time 10 \
-      -d "$jsonError" \
-      -H 'Content-Type: application/json' \
-      -X POST "http://install.ztnet.network/post/error"
-      # -X POST "http://localhost:9090/post/error"
-      ;;
+        print_status ">>> Generating Report..."
+        print_status ">>> Transmitting..."
+        curl --insecure --max-time 10 \
+        -d "$jsonError" \
+        -H 'Content-Type: application/json' \
+        -X POST "http://install.ztnet.network/post/error"
+        ;;
       n | N | no | NO | No ) 
-      printf "Exiting! Please create new issue at https://github.com/sinamics/ztnet/issues/new/choose with the above information\n"
-      
-      exit 1 
-      ;;
+        printf "Exiting! Please create new issue at https://github.com/sinamics/ztnet/issues/new/choose with the above information\n"
+        exit 1 
+        ;;
       *) finish="-1";
         ask_string "Invalid response -- please reenter [yes/no]: " "Yes" SEND_REPORT >&2;        
     esac
   done
   exit ${_code}
 }
+
 
 function cleanup() {
   printf "\n\nCleaning up...\n"
