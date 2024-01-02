@@ -479,25 +479,25 @@ $STD npm install
 cp "$TEMP_INSTALL_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
 
 # File path to the .env file
-env_file="$TEMP_INSTALL_DIR/.env"
-env_file_backup="$TEMP_INSTALL_DIR/.env_backup"
+ENV_DEFAULTS="$TEMP_INSTALL_DIR/.env"
+ENV_LOCAL="$TEMP_INSTALL_DIR/.env.local"
 
 # A function to set or update an environment variable in .env file
 set_env_var() {
   local key="$1"
   local value="$2"
-  if grep -qE "^$key=" "$env_file"; then
+  if grep -qE "^$key=" "$ENV_LOCAL"; then
     # If key exists, update it
-    sed -i "s|^$key=.*|$key=$value|" "$env_file"
+    sed -i "s|^$key=.*|$key=$value|" "$ENV_LOCAL"
   else
     # If key doesn't exist, append it
-    echo "$key=$value" >> "$env_file"
-    echo "$key=$value" >> "$env_file_backup"
+    echo "$key=$value" >> "$ENV_DEFAULTS"
+    echo "$key=$value" >> "$ENV_LOCAL"
   fi
 }
 
 # Check if .env file exists, if not create it
-[[ ! -f "$env_file" ]] && touch "$env_file" && print_status "Created new .env file"
+[[ ! -f "$ENV_LOCAL" ]] && touch "$ENV_LOCAL" && print_status "Created new .env.local file"
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
@@ -532,7 +532,6 @@ cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
 cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
-cp -a "$env_file_backup" "$TARGET_DIR/"
 cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
 cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
 
