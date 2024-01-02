@@ -87,7 +87,7 @@ ask_string() {
 
     # Display the question with a colored checkmark and the default value
     echo -ne "\033[32m✔\033[0m${YELLOW} $question [$default_value]:${NC}"
-    read -r ask_string < /dev/pts/2  # Read input; 'true' ensures the script continues even if input is empty
+    read -r ask_string < /dev/pts/2 
   
     # If the user did not enter a value, use and display the default
     if [ -z "$ask_string" ]; then
@@ -131,10 +131,19 @@ verbose() {
     fi
 }
 
-# Function to print status messages
+# Global variable to keep track of the current ongoing task
+CURRENT_TASK=""
 print_status() {
     local message=$1
-    echo -ne "\r\033[K ==>  $message"  # Clear the line and print the new message
+
+    # If there is an ongoing task, mark it as complete with a green checkmark
+    if [ ! -z "$CURRENT_TASK" ]; then
+        printf "\r\033[K ${GREEN}[✔]${NC} $CURRENT_TASK\n"
+    fi
+
+    # Print the new ongoing task with a simple dash
+    printf "\r\033[K [-]  $message"
+    CURRENT_TASK="$message"
 }
 
 # Check if the script is run as root (sudo)
