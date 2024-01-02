@@ -497,7 +497,7 @@ set_env_var() {
 }
 
 # Check if .env file exists, if not create it
-[[ ! -f "$ENV_LOCAL" ]] && touch "$ENV_LOCAL" && print_status "Created new .env file"
+[[ ! -f "$ENV_LOCAL" ]] && touch "$ENV_LOCAL" && print_status "Created new .env.local file"
 
 # Variables with default values
 DATABASE_URL="postgresql://postgres:$POSTGRES_PASSWORD@127.0.0.1:5432/ztnet?schema=public"
@@ -532,9 +532,15 @@ cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
 cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
+
 if [ -e "$ENV_DEFAULTS" ]; then
     cp -a "$ENV_DEFAULTS" "$TARGET_DIR/"
 fi
+
+if [ -e "$ENV_LOCAL" ]; then
+    cp -a "$ENV_LOCAL" "$TARGET_DIR/"
+fi
+
 cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
 cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
 
