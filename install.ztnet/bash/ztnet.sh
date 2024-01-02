@@ -51,7 +51,7 @@ ask_question() {
 
     # Display the question with a check mark
     echo -ne "\033[32m✔\033[0m${YELLOW} $question (Yes/No) [Default: $default_answer]: ${NC}"
-    read -r reply < /dev/pts/2
+    read -r reply < /dev/tty
 
     # If no response is given, use the default answer
     if [[ -z "$reply" ]]; then
@@ -87,7 +87,7 @@ ask_string() {
 
     # Display the question with a colored checkmark and the default value
     echo -ne "\033[32m✔\033[0m${YELLOW} $question [$default_value]:${NC}"
-    read -r ask_string < /dev/pts/2 
+    read -r ask_string < /dev/tty
   
     # If the user did not enter a value, use and display the default
     if [ -z "$ask_string" ]; then
@@ -183,7 +183,7 @@ function failure() {
       # Replace newlines in output with \n to make it a valid JSON string
       jsonError=$(echo $jsonError | sed ':a;N;$!ba;s/\n/\\n/g')
   fi
-  
+
   echo -e "\n${RED}Error report:${NC}\n$jsonError\n"
 
   echo -e "\nDo you want to send the error report to ztnet.network admin for application improvements?"
