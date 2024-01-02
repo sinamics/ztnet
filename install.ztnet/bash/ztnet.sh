@@ -532,6 +532,7 @@ cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
 cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
+cp -a "$env_file_backup" "$TARGET_DIR/"
 cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
 cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
 
