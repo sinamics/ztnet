@@ -32,7 +32,7 @@ curl -s http://install.ztnet.network | sudo bash
 If you want to rollback or install a previous version, you can specify a version like this:
 
 ```bash
-curl http://install.ztnet.network | sudo bash -s -- -v v0.4.2
+curl -s http://install.ztnet.network | sudo bash -s -- -v v0.4.2
 ```
 
 ## Script Functionality Overview
