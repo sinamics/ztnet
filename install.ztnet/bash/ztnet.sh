@@ -322,7 +322,7 @@ fi
 
 # Attempt to connect to PostgreSQL and check if 'postgres' user exists
 if ! command_exists psql; then
-    ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "(auto generated)" POSTGRES_PASSWORD
+    ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "$POSTGRES_PASSWORD" POSTGRES_PASSWORD
 fi
 
 ask_question "Do you prefer a silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
