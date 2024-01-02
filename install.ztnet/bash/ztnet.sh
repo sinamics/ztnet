@@ -497,6 +497,7 @@ set_env_var() {
 }
 
 # Check if .env file exists, if not create it
+[[ ! -f "$ENV_DEFAULTS" ]] && touch "$ENV_DEFAULTS" && print_status "Created new .env file"
 [[ ! -f "$ENV_LOCAL" ]] && touch "$ENV_LOCAL" && print_status "Created new .env.local file"
 
 # Variables with default values
@@ -532,6 +533,7 @@ cp "$TEMP_INSTALL_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
 cp -a "$TEMP_INSTALL_DIR/.next/standalone/." "$TARGET_DIR/"
+cp -a "$ENV_LOCAL" "$TARGET_DIR/"
 cp -r "$TEMP_INSTALL_DIR/.next/static" "$TARGET_DIR/.next/static"
 cp -r "$TEMP_INSTALL_DIR/prisma" "$TARGET_DIR/prisma"
 
