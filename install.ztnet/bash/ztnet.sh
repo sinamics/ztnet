@@ -21,7 +21,6 @@ EOF
 
 HOST_OS=$(( lsb_release -ds || cat /etc/*release || uname -om ) 2>/dev/null | head -n1)
 INSTALL_NODE=false
-BRANCH=main
 SILENT_MODE=No
 TEMP_INSTALL_DIR="/tmp/ztnet"
 TARGET_DIR="/opt/ztnet"
@@ -43,6 +42,66 @@ exec 3>&1 4>&2
 trap 'cleanup; exit' SIGINT
 
 exec 2> >(tee "/tmp/stderr.log")  # Redirect stderr to a temporary file
+
+# Function to ask a Yes/No question
+ask_question() {
+    local question=$1
+    local default_answer=$2
+    local varname=$3
+
+    # Display the question with a check mark
+    echo -ne "\033[32m✔\033[0m${YELLOW} $question (Yes/No) [Default: $default_answer]: ${NC}"
+    read -r reply
+
+    # If no response is given, use the default answer
+    if [[ -z "$reply" ]]; then
+        reply=$default_answer
+        tput cuu1
+        tput cuf $((${#question} + ${#default_answer} + 26))
+        echo -n "$reply"
+        echo 
+    fi
+
+    while true; do
+        case "$reply" in
+            [Yy]*)
+                eval "$varname='Yes'"
+                break
+                ;;
+            [Nn]* | "")
+                eval "$varname='No'"
+                break
+                ;;
+            *) 
+                echo -n "Invalid response. Please answer Yes or No: "
+                read -r reply
+                ;;
+        esac
+    done
+}
+
+ask_string() {
+    local question=$1
+    local default_value=$2
+    local varname=$3
+
+    # Display the question with a colored checkmark and the default value
+    echo -ne "\033[32m✔\033[0m${YELLOW} $question [$default_value]:${NC}"
+    IFS= read -r reply || true  # Read input; 'true' ensures the script continues even if input is empty
+
+    # If the user did not enter a value, use and display the default
+    if [ -z "$reply" ]; then
+        reply=$default_value
+        # Move cursor back to the start of the line
+        tput cuu1
+        tput cuf $((${#question} + ${#default_value} + 8))
+        echo -n "$reply"
+        echo    # Add a newline
+    fi
+
+    eval "$varname='$reply'"
+}
+
 
 silent() {
     local output
@@ -109,16 +168,20 @@ function failure() {
 
   jq '.' <<< $jsonError >&2
 
-  echo -e "\n${YELLOW}Do you want to send the error report to ztnet.network admin for application improvements?"
-  echo -e "Only the above error message will be sent! [yes/no]?${NC}"
-  printf "\nyes / no ==> "
-  read -r answer < /dev/tty
+  echo -e "\nDo you want to send the error report to ztnet.network admin for application improvements?"
+  echo -e "Only the above error message will be sent! [Default Yes]"
+  sleep 0.1
+  ask_string "Yes / No ==> " "Yes" SEND_REPORT
+
+  if [ -z "$SEND_REPORT" ]; then
+      SEND_REPORT="yes"
+  fi
 
   finish="-1"
   while [ "$finish" = '-1' ]
   do
     finish="1"
-    case $answer in
+    case $SEND_REPORT in
       y | Y | yes | YES | Yes) 
 
       print_status ">>> Generating Report..."
@@ -135,9 +198,7 @@ function failure() {
       exit 1 
       ;;
       *) finish="-1";
-        echo -n '>>> Invalid response -- please reenter [yes/no]:' >&2;
-        read answer < /dev/tty;;
-        
+        ask_string "Invalid response -- please reenter [yes/no]: " "Yes" SEND_REPORT >&2;        
     esac
   done
   exit ${_code}
@@ -229,75 +290,25 @@ if [[ "$(lsb_release -is)" != "Debian" && "$(lsb_release -is)" != "Ubuntu" ]]; t
   exit 1
 fi
 
-
-# Function to ask a Yes/No question
-ask_question() {
-    local question=$1
-    local default_answer=$2
-    local varname=$3
-
-    # Display the question with a check mark
-    echo -ne "\033[32m✔\033[0m $question (Yes/No) [Default: $default_answer]: "
-    read -r reply
-
-    # If no response is given, use the default answer
-    if [[ -z "$reply" ]]; then
-        reply=$default_answer
-    fi
-
-    while true; do
-        case "$reply" in
-            [Yy]*)
-                eval "$varname='Yes'"
-                break
-                ;;
-            [Nn]* | "")
-                eval "$varname='No'"
-                break
-                ;;
-            *) 
-                echo -n "Invalid response. Please answer Yes or No: "
-                read -r reply
-                ;;
-        esac
-    done
-}
-
-# Function to ask for a string response
-ask_string() {
-    local question=$1
-    local default_value=$2
-    local varname=$3
-
-    # Display the question with a colored checkmark and the default value
-    echo -ne "\033[32m✔\033[0m $question [$default_value]: "
-    read -r reply
-
-    # If the user did not enter a value, use the default
-    if [ -z "$reply" ]; then
-        reply=$default_value
-    fi
-
-    eval "$varname='$reply'"
-}
-
 # Show info text to user
 printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
-printf "${YELLOW}This script will perform the following actions:${NC}\n"
+printf "This script will perform the following actions:\n"
 printf "  1. Install PostgreSQL if it's not already present.\n"
 printf "  2. Ensure Node.js version ${NODE_MAJOR} is installed.\n"
 printf "  3. Install Zerotier if it's missing.\n"
 printf "  4. Clone the ZTnet repository into the /tmp folder and build artifacts from the latest tag.\n"
 printf "  5. Transfer the artifacts to the ${YELLOW}${TARGET_DIR}${NC} directory.\n\n"
-# printf "Press space to proceed with the installation..." >&2
-# read -n1 -s < /dev/tty
 
 # Ask the user about the server IP with the default as the current IP
-ask_string "Enter ZTnet server IP address / domain name, or press Enter to use the current one" "$local_ip" input_ip
+if [ ! -f "$target_env_file" ]; then
+  ask_string "Enter ZTnet server IP address / domain name, or press Enter to use the current one" "$local_ip" input_ip
+fi
+
 # Attempt to connect to PostgreSQL and check if 'postgres' user exists
 if ! command_exists psql || ! sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='postgres'" | grep -q 1; then
     ask_string "Do you want to set a custom password for the PostgreSQL user 'postgres'?" "postgres" POSTGRES_PASSWORD
 fi
+
 ask_question "Do you prefer a silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
 
 print_status "Starting installation..."
@@ -315,14 +326,15 @@ else
     STD="verbose"
 fi
 
+print_status "Updating apt..."
+# update apt
+$STD sudo apt update
+
 # install git curl openssl
 if ! command_exists jq; then
   print_status "Installing jq..."
   $STD sudo apt install jq -y
 fi
-
-# update apt
-$STD sudo apt update
 
 # Use the default local_ip if the user pressed Enter without typing anything
 server_ip=${input_ip:-$local_ip}
@@ -434,7 +446,7 @@ fi
 cd $TEMP_INSTALL_DIR
 if [[ -z "$BRANCH" ]]; then
   # If BRANCH is empty or not set, checkout the latest tag or a custom version
-  $STD git fetch --tags
+  git fetch --tags
   latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
   print_status "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
   $STD git checkout "${CUSTOM_VERSION:-$latestTag}"
@@ -529,9 +541,11 @@ $STD sudo systemctl restart ztnet
 cleanup
 
 # Note for the user regarding systemd service management
-echo -e "Note: You can check the status of the service with ${YELLOW}systemctl status ztnet${NC}."
-echo -e "To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}."
-echo -e "If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
-
+echo -e "NOTE!"
+echo -e "- ZTnet is installed in ${GREEN}/opt/ztnet${NC}."
+echo -e "- You can check the status of the service with ${YELLOW}systemctl status ztnet${NC}."
+echo -e "- To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC}."
+echo -e "- If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
+echo -e "- Environment variables can be changed in ${YELLOW}/opt/ztnet/.env${NC}."
 
 printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n\n"
