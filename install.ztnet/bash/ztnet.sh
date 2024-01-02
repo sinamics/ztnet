@@ -51,15 +51,15 @@ ask_question() {
 
     # Display the question with a check mark
     echo -ne "\033[32m✔\033[0m${YELLOW} $question (Yes/No) [Default: $default_answer]: ${NC}"
-    read -r reply < /dev/tty
+    read -r reply < /dev/pts/2
 
     # If no response is given, use the default answer
     if [[ -z "$reply" ]]; then
         reply=$default_answer
         tput cuu1
         tput cuf $((${#question} + ${#default_answer} + 26))
-        # echo -n "$reply"
-        # echo 
+        echo -n "$reply"
+        echo 
     fi
 
     while true; do
@@ -95,8 +95,8 @@ ask_string() {
         # Move cursor back to the start of the line
         tput cuu1
         tput cuf $((${#question} + ${#default_value} + 8))
-        # echo -n "$reply"
-        # echo    # Add a newline
+        echo -n "$reply"
+        echo    # Add a newline
     fi
 
     eval "$varname='$reply'"
