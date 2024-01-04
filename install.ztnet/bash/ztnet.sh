@@ -414,7 +414,7 @@ rm -rf "$TEMP_INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR
 mkdir -p "$TARGET_DIR"
 
 # Install Node.js if it's not installed or if installed version is not the number defined in 'NODE_MAJOR' variable
-if ! command_exists node; then
+if ! command_exists node || ! command_exists npm; then
   INSTALL_NODE=true
 else
   NODE_VERSION=$(node -v | cut -d 'v' -f 2 | cut -d '.' -f 1)
@@ -437,6 +437,12 @@ if [ "$INSTALL_NODE" = true ]; then
   echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_"$NODE_MAJOR".x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list > /dev/null 2>&1
   $STD sudo apt-get update
   $STD sudo apt-get install nodejs -y
+    
+  # Check and install npm if it's not installed
+  if ! command_exists npm; then
+    echo "npm is not installed, installing npm..."
+    sudo apt-get install npm -y
+  fi
 fi
 
 # Install ZeroTier
