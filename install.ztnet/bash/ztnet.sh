@@ -565,4 +565,4 @@ echo -e "- To stop the ZTnet service, use ${YELLOW}sudo systemctl stop ztnet${NC
 echo -e "- If you do not want ZTnet to start on boot, you can disable it with ${YELLOW}sudo systemctl disable ztnet${NC}."
 echo -e "- Environment variables can be changed in ${YELLOW}/opt/ztnet/.env${NC}."
 
-printf "\n\nYou can now open ZTnet at: ${YELLOW}${server_ip}:3000${NC}\n\n"
+printf "\n\nZTnet is waiting for you at: ${YELLOW}${server_ip}:3000${NC}\n\n"
