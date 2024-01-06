@@ -130,6 +130,11 @@
 		"networkCidr": "Nettverk Cidr:",
 		"networkSettings": "Nettverksinnstillinger",
 		"networkMembers": "Nettverksmedlemmer",
+		"noMembersInformation": {
+			"title": "Dette nettverket har ingen medlemmer",
+			"installZerotier": "Installer ZeroTier",
+			"joinNetwork": "Bli med på nettverket"
+		},
 		"networkMembersAlert": {
 			"message": "Bli med på dette nettverks-ID og enheten vil automatisk bli vist"
 		},

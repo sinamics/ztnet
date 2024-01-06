@@ -130,6 +130,11 @@
 		"networkCidr": "网络 CIDR:",
 		"networkSettings": "网络设置",
 		"networkMembers": "网络成员",
+		"noMembersInformation": {
+			"title": "没有成员信息",
+			"installZerotier": "安装 ZeroTier",
+			"joinNetwork": "加入网络"
+		},
 		"networkMembersAlert": {
 			"message": "加入这个网络 ID，设备会自动显示"
 		},
