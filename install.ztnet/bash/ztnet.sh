@@ -930,7 +930,7 @@ $STD sudo systemctl daemon-reload
 $STD sudo systemctl enable ztnet
 $STD sudo systemctl restart ztnet
 
-sleep 2
+sleep 4
 
 cleanup
 
@@ -943,5 +943,3 @@ echo -e "- If you do not want ZTnet to start on boot, you can disable it with ${
 echo -e "- Environment variables can be changed in ${YELLOW}/opt/ztnet/.env${NC}."
 
 echo -e "\n\nZTnet is waiting for you at: ${YELLOW}${server_ip}:3000${NC}\n\n"
-#!TODO just for testing
-# systemctl restart systemd-timesyncd.service
