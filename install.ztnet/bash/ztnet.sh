@@ -92,7 +92,7 @@ setup_color
 print_ztnet
 
 # print when this ztnet.sh file was last updated
-printf "Last updated: %s\n" "$(date -r "$0" "+%d %b %Y")"
+printf "Last updated: %s\n" "$(date -d "$LAST_UPDATED" "+%d %b %Y")"
 
 ##     ##    ###    ########  ####    ###    ########  ##       ########  ######  
 ##     ##   ## ##   ##     ##  ##    ## ##   ##     ## ##       ##       ##    ## 
