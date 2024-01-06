@@ -128,7 +128,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkId")}</span>
-							<span className="relative left-7 flex items-center gap-2">
+							<span className="relative flex items-center gap-2">
 								<CopyToClipboard
 									text={network?.nwid}
 									onCopy={() =>
