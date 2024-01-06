@@ -130,6 +130,11 @@
 		"networkCidr": "Cidr de red:",
 		"networkSettings": "Configuraciones de la red",
 		"networkMembers": "Miembros de la red",
+		"noMembersInformation": {
+			"title": "No hay información de miembros",
+			"installZerotier": "Instalar ZeroTier",
+			"joinNetwork": "Unirse a la red"
+		},
 		"networkMembersAlert": {
 			"message": "Únete a este ID de red y el dispositivo se mostrará automáticamente"
 		},
