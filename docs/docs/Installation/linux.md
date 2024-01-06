@@ -14,7 +14,7 @@ To build and run the application, your system should meet the following minimum 
 - **Memory**: At least 1GB of RAM
 - **CPU**: At least 1 CPU Core
 
-# Installation 
+# Install or update ztnet 
 
 Login as **root** on your system, then install `curl`, `lsb-release` and `sudo` if it is not already installed:
 
@@ -93,17 +93,11 @@ curl http://install.ztnet.network | sudo bash -s -- -b main
 ```
 
 ## Uninstalling ztnet
-
-Follow these steps to uninstall `ztnet` from your system:
-
-1. **Stop Service**: Stop the systemd service by running `sudo systemctl stop ztnet`.
-2. **Disable Service**: Disable the systemd service from auto-starting at boot by running `sudo systemctl disable ztnet`.
-3. **Remove Service File**: Delete the systemd service file, located in `/etc/systemd/system/ztnet.service`.
-4. **Delete Files**: Remove all `ztnet` files from `/opt/ztnet`.
-5. **Uninstall Dependencies**: Optionally, uninstall Node.js 18 and PostgreSQL if they were installed specifically for `ztnet`.
-6. **Reload Systemd**: Run `sudo systemctl daemon-reload` to reload systemd configurations.
-
-After following these steps, `ztnet` should be completely uninstalled from your system.
+This will remove the ztnet systemd service and the ztnet folder.  
+Postgres, Git and Node.js will not be removed.
+```bash
+curl -s http://install.ztnet.network | sudo bash -s -- -u
+```
 
 ### Development
 
