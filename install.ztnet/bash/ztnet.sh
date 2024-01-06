@@ -571,10 +571,6 @@ if [ "$UNINSTALL" = 1 ]; then
       remove_package_if_installed "$package" | true
   done
 
-  # Stop the PostgreSQL service
-  print_status "Stopping PostgreSQL service..."
-  sudo systemctl stop postgresql > /dev/null 2>&1
-
   # Clean up remaining dependencies
   print_status "Cleaning up remaining dependencies..."
   sudo apt-get autoremove -y > /dev/null 2>&1
