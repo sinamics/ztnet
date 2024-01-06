@@ -9,6 +9,9 @@ on:
       - 'install.ztnet/**'
   workflow_dispatch:
 
+env:
+  LAST_UPDATED: ${{ github.event.head_commit.timestamp }}
+  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
