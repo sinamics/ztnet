@@ -91,7 +91,8 @@ print_ztnet() {
 setup_color
 print_ztnet
 
-
+# print when this ztnet.sh file was last updated
+printf "Last updated: %s\n" "$(date -r "$0" "+%d %b %Y")"
 
 ##     ##    ###    ########  ####    ###    ########  ##       ########  ######  
 ##     ##   ## ##   ##     ##  ##    ## ##   ##     ## ##       ##       ##    ## 
@@ -674,8 +675,20 @@ if [[ $server_ip != http://* && $server_ip != https://* ]]; then
     server_ip="http://${server_ip}"
 fi
 
-env_handler() {
+check_existing_env_handler() {
+  # Define default values for variables
+  declare -A env_vars=(
+    ["NEXTAUTH_SECRET"]=$(openssl rand -hex 32)
+    ["NEXT_PUBLIC_SITE_NAME"]="ZTnet"
+    ["NEXTAUTH_URL"]="${server_ip}:3000"
+    ["ZT_ADDR"]=
+    ["ZT_SECRET"]=
+    ["POSTGRES_PASSWORD"]=$POSTGRES_PASSWORD
+    ["POSTGRES_USER"]=$POSTGRES_USER
+  )
+
   if [ -f "$TARGET_ENV_FILE" ]; then
+      print_status "Found existing .env file. Reading variables from it..."
       # Read the entire .env file into a variable
       env_content=$(<"$TARGET_ENV_FILE")
 
@@ -684,28 +697,35 @@ env_handler() {
           echo "$env_content" | grep "^$1=" | cut -d '=' -f2- | tr -d '"'
       }
 
-      # Use awk to extract the password from DATABASE_URL
-      POSTGRES_PASSWORD=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
+      # Extract POSTGRES_PASSWORD and POSTGRES_USER separately
+      extracted_postgres_password=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $3}')
+      extracted_postgres_user=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $2}' | cut -d '/' -f3)
 
-      # Use awk to extract the user from DATABASE_URL
-      POSTGRES_USER=$(echo "$env_content" | grep 'DATABASE_URL=' | awk -F '[:@]' '{print $2}' | cut -d '/' -f3)
-      
-      # List of variables to extract
-      env_vars=("NEXTAUTH_SECRET" "NEXT_PUBLIC_SITE_NAME" "NEXTAUTH_URL" "ZT_ADDR" "ZT_SECRET")
+      # Check if the extracted values are non-empty
+      if [ -n "$extracted_postgres_password" ]; then
+          env_vars["POSTGRES_PASSWORD"]="$extracted_postgres_password"
+      fi
 
-      for var in "${env_vars[@]}"; do
-          declare -g "$var=$(extract_env_value "$var")"
-      done
-  else
-      NEXTAUTH_SECRET=$(openssl rand -hex 32)
-      NEXT_PUBLIC_SITE_NAME="ZTnet"
-      NEXTAUTH_URL="${server_ip}:3000"
-      ZT_ADDR=
-      ZT_SECRET=
+      if [ -n "$extracted_postgres_user" ]; then
+          env_vars["POSTGRES_USER"]="$extracted_postgres_user"
+      fi
   fi
+
+  print_status "Setting environment variables..."
+  # Iterate through the associative array
+  for var in "${!env_vars[@]}"; do
+      if [ -f "$TARGET_ENV_FILE" ] && [ ! -z "$(extract_env_value "$var")" ]; then
+          # If the variable is set in the env file, extract its value
+          declare -g "$var=$(extract_env_value "$var")"
+      else
+          # If the env file doesn't exist or the variable is not set, use the default value
+          declare -g "$var=${env_vars[$var]}"
+      fi
+  done
 }
 
-env_handler
+check_existing_env_handler
+
 
 ########   #######   ######  ########  ######   ########  ########  ######  
 ##     ## ##     ## ##    ##    ##    ##    ##  ##     ## ##       ##    ## 
@@ -750,6 +770,53 @@ setup_postgres() {
 }
 
 setup_postgres
+
+check_postgres_access_and_prompt_password() {
+    local postgres_user=$1
+    local postgres_password=$2
+    local postgres_db=$3
+
+    # Function to check read and write access
+    check_access() {
+        # Construct the PostgreSQL URL
+        local pg_url="postgresql://$postgres_user:$postgres_password@127.0.0.1:5432/$postgres_db"
+
+        # Run the command and capture the output and error
+        local output=$(sudo psql -d "$pg_url" -c "\dt" 2>&1)
+
+        # Check if the output contains "authentication failed"
+        if [[ $output == *"authentication failed"* ]]; then
+            echo "Authentication failed for user $postgres_user."
+            return 1 # failure
+        else
+            return 0 # success
+        fi
+    }
+
+    # Check if the user has access
+    if check_access; then
+        return 0
+    else
+        stop_spinner "$SPINNER_PID"
+
+        printf "\n\n"
+        printf "${RED}The user '$postgres_user' currently lacks read/write access to the database '$postgres_db'.${NC}\n"
+        printf "${RED}To address this issue, we recommend generating a new password. Please note, generating a new password will not affect the existing database in any way.${NC}\n"
+        printf "${RED}The new password will be securely stored in the '/opt/ztnet/.env' file for future use.${NC}\n"
+        printf "\n\n"
+
+        sleep 0.5
+        ask_question "Do you want to generate a new password?" Yes newpassword_answer
+        if [[ $newpassword_answer == "Yes" ]]; then
+            # Generate new password
+            print_status "Generating new password..."
+            new_password=$(openssl rand -hex 10)
+            sudo -u "$POSTGRES_SUPER_USER" psql -d "$postgres_db" -c "ALTER USER $postgres_user WITH PASSWORD '$new_password';" > /dev/null 2>&1
+            POSTGRES_PASSWORD="$new_password"
+        fi
+        start_spinner "$SPINNER_PID" &
+    fi
+}
 
 ##    ##  #######  ########  ########       ##  ######  
 ###   ## ##     ## ##     ## ##             ## ##    ## 
@@ -858,6 +925,10 @@ pull_checkout_ztnet(){
 }
 
 pull_checkout_ztnet
+
+
+# just to make sure that the user has access to the database
+check_postgres_access_and_prompt_password "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB"
 
 # Copy mkworld binary
 cp "$TEMP_REPO_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
