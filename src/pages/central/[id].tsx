@@ -194,22 +194,68 @@ const CentralNetworkById = ({ orgIds }) => {
 						<NetworkMembersTable nwid={network.id} central={true} />
 					</div>
 				) : (
-					<div className="alert alert-warning flex justify-center shadow-lg">
-						<div className="flex">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="mr-5 h-6 w-6 flex-shrink-0 stroke-current"
-								fill="none"
-								viewBox="0 0 24 24"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									strokeWidth="2"
-									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-								/>
-							</svg>
-							<span>{t("networkMembersAlert.message")}</span>
+					<div role="alert" className="alert">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							className="stroke-info shrink-0 w-6 h-6"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+							></path>
+						</svg>
+						<div className="w-full space-y-5 font-medium tracking-wide">
+							<div className="w-full flex justify-center">
+								<p>{t("noMembersInformation.title")}</p>
+							</div>
+							<div>
+								<div className="w-full flex justify-center">
+									<p>{t("noMembersInformation.installZerotier")}</p>
+								</div>
+								<div className="w-full flex justify-center">
+									<CopyToClipboard
+										text="curl -s https://install.zerotier.com | sudo bash"
+										onCopy={() =>
+											toast.success(t("copyToClipboard.success", { element: "" }), {
+												id: "copyNwid",
+											})
+										}
+										title={t("copyToClipboard.title")}
+									>
+										<div className="flex cursor-pointer items-center gap-2">
+											<kbd className="kbd kbd-md">
+												curl -s https://install.zerotier.com | sudo bash
+											</kbd>
+											<CopyIcon />
+										</div>
+									</CopyToClipboard>
+								</div>
+							</div>
+							<div>
+								<div className="w-full flex justify-center">
+									<p>{t("noMembersInformation.joinNetwork")}</p>
+								</div>
+								<div className="w-full flex justify-center">
+									<CopyToClipboard
+										text={`zerotier-cli join ${network.nwid}`}
+										onCopy={() =>
+											toast.success(t("copyToClipboard.success", { element: "" }), {
+												id: "copyNwid",
+											})
+										}
+										title={t("copyToClipboard.title")}
+									>
+										<div className="flex cursor-pointer items-center gap-2">
+											<kbd className="kbd kbd-md">zerotier-cli join {network.nwid}</kbd>
+											<CopyIcon />
+										</div>
+									</CopyToClipboard>
+								</div>
+							</div>
 						</div>
 					</div>
 				)}
