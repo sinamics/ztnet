@@ -861,6 +861,10 @@ setup_nodejs(){
 
 setup_nodejs
 
+
+# Set NODE_OPTIONS to prefer IPv4 addresses as Starlink DNS returns IPv6 addresses first
+export NODE_OPTIONS=--dns-result-order=ipv4first
+
 ######## ######## ########   #######  ######## #### ######## ########  
      ##  ##       ##     ## ##     ##    ##     ##  ##       ##     ## 
     ##   ##       ##     ## ##     ##    ##     ##  ##       ##     ## 
