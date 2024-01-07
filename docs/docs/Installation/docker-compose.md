@@ -139,6 +139,11 @@ docker compose pull
 docker compose up -d
 ```
 
+## Application Logs
+To view the ZTNET server logs:
+```bash
+docker compose logs -f ztnet
+```
 
 ## Ztnet Environment Variables
 See [Environment Variables](/installation/options#environment-variables) for more information.
