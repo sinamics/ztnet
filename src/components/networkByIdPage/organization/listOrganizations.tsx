@@ -28,7 +28,10 @@ const ListOrganizations = () => {
 	return (
 		<div className="space-y-10">
 			{userOrgs?.map((org) => (
-				<div key={org.id} className="border border-primary p-4 my-4 rounded">
+				<div
+					key={org.id}
+					className="border border-primary/20 p-4 my-4 rounded bg-base-200 shadow-lg"
+				>
 					<div>
 						<p>
 							<strong>{t("organization.listOrganization.organizationName")}</strong>{" "}
@@ -125,7 +128,7 @@ const ListOrganizations = () => {
 											content: <OrganizationInviteModal organizationId={org.id} />,
 										})
 									}
-									className="btn btn-sm"
+									className="btn btn-sm bg-base-300"
 								>
 									{b("inviteUser")}
 								</button>
@@ -141,7 +144,7 @@ const ListOrganizations = () => {
 											content: <EditOrganizationModal organizationId={org.id} />,
 										});
 									}}
-									className="btn btn-sm"
+									className="btn btn-sm bg-base-300"
 								>
 									{b("meta")}
 								</button>
@@ -167,11 +170,14 @@ const ListOrganizations = () => {
 											content: <OrganizationWebhook organizationId={org.id} />,
 										});
 									}}
-									className="btn btn-sm"
+									className="btn btn-sm bg-base-300"
 								>
 									{b("addWebhooks")}
 								</button>
-								<button onClick={() => toggleUsersTable(org.id)} className="btn btn-sm">
+								<button
+									onClick={() => toggleUsersTable(org.id)}
+									className="btn btn-sm bg-base-300"
+								>
 									{b("users")}
 								</button>
 							</div>
