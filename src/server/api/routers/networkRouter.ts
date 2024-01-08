@@ -49,7 +49,7 @@ const RouteSchema = z.object({
 			z
 				.string()
 				.optional()
-				.refine((val) => !val || isValidIP(val), {
+				.refine((val) => !val || val === "lan" || isValidIP(val), {
 					message: "Via IP must be a valid IP address!",
 				}),
 			z.null(),
@@ -464,6 +464,7 @@ export const networkRouter = createTRPCRouter({
 				});
 			}
 			const { routes } = input.updateParams;
+
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
 
