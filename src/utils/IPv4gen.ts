@@ -1,5 +1,8 @@
 // function randomOctet() {
 //   return Math.floor(Math.random() * 255);
+
+import { throwError } from "~/server/helpers/errorHandler";
+
 // }
 const cidrOptions = [
 	"10.121.15.0/24",
@@ -51,3 +54,47 @@ function int32toIPv4String(int32: number) {
 	ipv4 += `.${(int32 & 0x000000ff).toString()}`;
 	return ipv4;
 }
+
+export const getNetworkClassCIDR = (
+	ipRanges: { ipRangeStart: string; ipRangeEnd: string }[],
+): { target: string; via: null }[] => {
+	const result: { target: string; via: null }[] = [];
+
+	const ipToBinary = (ip: string): string =>
+		ip
+			.split(".")
+			.map((octet) => parseInt(octet, 10).toString(2).padStart(8, "0"))
+			.join("");
+
+	const binaryToIp = (binary: string): string =>
+		binary
+			.match(/.{1,8}/g)
+			?.map((bin) => parseInt(bin, 2).toString(10))
+			.join(".") ?? "";
+
+	const countCommonBits = (start: string, end: string): number => {
+		for (let i = 0; i < start.length; i++) {
+			if (start[i] !== end[i]) return i;
+		}
+		return start.length;
+	};
+
+	const ipToNumber = (ip: string): number =>
+		ip.split(".").reduce((acc, octet) => (acc << 8) + parseInt(octet, 10), 0);
+
+	for (const range of ipRanges) {
+		if (ipToNumber(range.ipRangeStart) >= ipToNumber(range.ipRangeEnd)) {
+			return throwError("Invalid IP range provided");
+		}
+
+		const binaryStart = ipToBinary(range.ipRangeStart);
+		const binaryEnd = ipToBinary(range.ipRangeEnd);
+		const commonBits = countCommonBits(binaryStart, binaryEnd);
+		const networkBinary = binaryStart.substring(0, commonBits).padEnd(32, "0");
+		const networkIp = binaryToIp(networkBinary);
+		const cidr = `${networkIp}/${commonBits}`;
+		result.push({ target: cidr, via: null });
+	}
+
+	return result;
+};
