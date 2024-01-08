@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { IPv4gen } from "~/utils/IPv4gen";
+import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import {
@@ -49,7 +49,7 @@ const RouteSchema = z.object({
 			z
 				.string()
 				.optional()
-				.refine((val) => !val || isValidIP(val), {
+				.refine((val) => !val || val === "lan" || isValidIP(val), {
 					message: "Via IP must be a valid IP address!",
 				}),
 			z.null(),
@@ -305,7 +305,7 @@ export const networkRouter = createTRPCRouter({
 	ipv6: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().optional().default(false),
 				v6AssignMode: z.object({
 					"6plane": z.boolean().optional(),
@@ -374,7 +374,7 @@ export const networkRouter = createTRPCRouter({
 	enableIpv4AutoAssign: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().optional().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -464,6 +464,7 @@ export const networkRouter = createTRPCRouter({
 				});
 			}
 			const { routes } = input.updateParams;
+
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
 
@@ -493,7 +494,7 @@ export const networkRouter = createTRPCRouter({
 	easyIpAssignment: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -555,18 +556,16 @@ export const networkRouter = createTRPCRouter({
 	advancedIpAssignment: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().optional().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
-					ipAssignmentPools: z
-						.array(
-							z.object({
-								ipRangeStart: z.string(),
-								ipRangeEnd: z.string(),
-							}),
-						)
-						.optional(),
+					ipAssignmentPools: z.array(
+						z.object({
+							ipRangeStart: z.string(),
+							ipRangeEnd: z.string(),
+						}),
+					),
 				}),
 			}),
 		)
@@ -590,11 +589,24 @@ export const networkRouter = createTRPCRouter({
 					requiredRole: Role.USER,
 				});
 			}
+
+			// validate the ip ranges
+			for (const ipRange of input.updateParams.ipAssignmentPools) {
+				if (!isValidIP(ipRange.ipRangeStart) || !isValidIP(ipRange.ipRangeEnd)) {
+					return throwError("Invalid IP range provided");
+				}
+			}
+
 			const { ipAssignmentPools } = input.updateParams;
+
+			const routes = getNetworkClassCIDR(
+				ipAssignmentPools as { ipRangeStart: string; ipRangeEnd: string }[],
+			);
+
 			// prepare update params
 			const updateParams = input.central
-				? { config: { ipAssignmentPools } }
-				: { ipAssignmentPools };
+				? { config: { ipAssignmentPools, routes } }
+				: { ipAssignmentPools, routes };
 
 			try {
 				// Send webhook
@@ -910,7 +922,7 @@ export const networkRouter = createTRPCRouter({
 	multiCast: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().optional().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -1113,7 +1125,7 @@ export const networkRouter = createTRPCRouter({
 	getFlowRule: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				central: z.boolean().default(false),
 				reset: z.boolean().default(false).optional(),
 			}),
@@ -1179,7 +1191,7 @@ accept;`;
 	inviteUserByMail: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string().nonempty(),
+				nwid: z.string(),
 				email: z.string().email(),
 				organizationId: z.string().optional(),
 			}),
