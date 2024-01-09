@@ -186,7 +186,7 @@
 			},
 			"mtu": {
 				"title": "MTU Value",
-				"description": "Nodes needs to leave and re-join network to make effect."
+				"description": "Peers might need to leave and re-join network to make effect."
 			}
 		},
 		"nettworkRoutes": {
