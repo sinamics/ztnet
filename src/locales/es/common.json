@@ -185,8 +185,9 @@
 				"submit": "Enviar"
 			},
 			"mtu": {
-				"title": "Valor de MTU",
-				"description": "Los nodos necesitan salir y volver a unirse a la red para que surta efecto."
+				"title": "MTU (Unidad de Transmisión Máxima)",
+				"description": "Esta configuración determina el tamaño máximo del paquete que puede ser transmitido a través de la red. Ajustar el valor de MTU puede impactar en el rendimiento y la eficiencia de la red.",
+				"acceptedValue": "Los valores aceptados están entre 1280 y 10000"
 			}
 		},
 		"nettworkRoutes": {

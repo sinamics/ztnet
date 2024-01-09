@@ -185,8 +185,9 @@
 				"submit": "Submit"
 			},
 			"mtu": {
-				"title": "MTU Value",
-				"description": "Peers might need to leave and re-join network to make effect."
+				"title": "MTU (Maximum Transmission Unit)",
+				"description": "This setting determines the largest packet size that can be transmitted through the network. Adjusting the MTU value can impact network performance and efficiency. ",
+				"acceptedValue": "Accepted values are between 1280 and 10000"
 			}
 		},
 		"nettworkRoutes": {

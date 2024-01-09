@@ -185,8 +185,9 @@
 				"submit": "提交"
 			},
 			"mtu": {
-				"title": "MTU 值",
-				"description": "节点需要离开并重新加入网络才能生效。"
+				"title": "MTU (最大传输单元)",
+				"description": "此设置决定了可以通过网络传输的最大数据包大小。调整MTU值可以影响网络性能和效率。",
+				"acceptedValue": "接受的值在1280到10000之间"
 			}
 		},
 		"nettworkRoutes": {

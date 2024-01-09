@@ -81,12 +81,15 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	const { network } = networkByIdQuery || {};
 	return (
 		<form className="flex justify-between">
-			<div className="form-control ">
+			<div className="form-control">
 				<label className="label-text">{t("networkIpAssignments.mtu.title")}</label>
 				<label className="text-gray-500 text-sm mb-2">
 					{t("networkIpAssignments.mtu.description")}
 				</label>
-				<div className="join">
+				<label className="text-gray-500 label-text">
+					{t("networkIpAssignments.mtu.acceptedValue")}
+				</label>
+				<div className="join w-3/6">
 					<input
 						id="mtu"
 						name="mtu"
