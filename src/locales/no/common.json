@@ -185,8 +185,9 @@
 				"submit": "Send inn"
 			},
 			"mtu": {
-				"title": "MTU-verdi",
-				"description": "Noder må forlate og bli med i nettverket igjen for at det skal tre i kraft."
+				"title": "MTU (Maksimal Transmisjonsenhet)",
+				"description": "Denne innstillingen bestemmer den største pakkestørrelsen som kan overføres gjennom nettverket. Justering av MTU-verdien kan påvirke nettverksytelsen og effektiviteten.",
+				"acceptedValue": "Aksepterte verdier er mellom 1280 og 10000"
 			}
 		},
 		"nettworkRoutes": {
