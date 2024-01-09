@@ -919,6 +919,71 @@ export const networkRouter = createTRPCRouter({
 				updateParams: ztControllerUpdates,
 			});
 		}),
+	mtu: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+				central: z.boolean().optional().default(false),
+				organizationId: z.string().optional(),
+				updateParams: z.object({
+					mtu: z.number().optional(),
+				}),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed network ${input.nwid} MTU to ${JSON.stringify(
+						input.updateParams,
+					)}`,
+					performedById: ctx.session.user.id,
+					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
+				},
+			});
+
+			// Check if the user has permission to update the network
+			if (input?.organizationId) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input?.organizationId,
+					requiredRole: Role.USER,
+				});
+			}
+			const updateParams = input.central
+				? { config: { ...input.updateParams } }
+				: { ...input.updateParams };
+
+			try {
+				await ztController.network_update({
+					ctx,
+					nwid: input.nwid,
+					central: input.central,
+					updateParams,
+				});
+			} catch (error) {
+				if (error instanceof z.ZodError) {
+					throwError(`Something went wrong during update, ${error.message}`);
+				} else {
+					throw error;
+				}
+			}
+
+			try {
+				// Send webhook
+				await sendWebhook<NetworkConfigChanged>({
+					hookType: HookType.NETWORK_CONFIG_CHANGED,
+					organizationId: input?.organizationId,
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: input.nwid,
+					changes: input.updateParams,
+				});
+			} catch (error) {
+				// add error messge that webhook failed
+				throwError(error.message);
+			}
+		}),
 	multiCast: protectedProcedure
 		.input(
 			z.object({
