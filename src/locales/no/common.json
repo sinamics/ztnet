@@ -162,7 +162,8 @@
 			"header": "IP-tilordninger",
 			"tabs": {
 				"ipv4": "IPv4",
-				"ipv6": "IPv6"
+				"ipv6": "IPv6",
+				"mtu": "MTU"
 			},
 			"ipv6": {
 				"rfc4193Label": "ZeroTier RFC4193 (/128 for hver enhet)",
@@ -182,6 +183,10 @@
 				"range_end": "Range Slutt",
 				"range_end_placeholder": "192.168.168.254",
 				"submit": "Send inn"
+			},
+			"mtu": {
+				"title": "MTU-verdi",
+				"description": "Noder må forlate og bli med i nettverket igjen for at det skal tre i kraft."
 			}
 		},
 		"nettworkRoutes": {

@@ -2,8 +2,8 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "use-intl";
+import { handleErrors } from "~/utils/errors";
 
 interface IProp {
 	central?: boolean;
@@ -31,11 +31,7 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateNetwork } = api.network.mtu.useMutation({
 		onError: (e) => {
-			if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-				void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
-			} else {
-				void toast.error(e?.message);
-			}
+			handleErrors(e);
 		},
 	});
 
@@ -86,9 +82,9 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	return (
 		<form className="flex justify-between">
 			<div className="form-control ">
-				<label className="label-text">MTU Value</label>
+				<label className="label-text">{t("networkIpAssignments.mtu.title")}</label>
 				<label className="text-gray-500 text-sm mb-2">
-					Nodes needs to leave and re-join network to make effect.
+					{t("networkIpAssignments.mtu.description")}
 				</label>
 				<div className="join">
 					<input
@@ -97,7 +93,7 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 						value={state.mtu}
 						onChange={onChangeHandler}
 						className="input join-item input-sm input-bordered w-full"
-						placeholder={t("networkMulticast.NumberPlaceholder")}
+						placeholder="Default 2800"
 						type="number"
 					/>
 					<button
@@ -109,7 +105,6 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 					</button>
 				</div>
 			</div>
-			<button type="submit" onClick={submitHandler} className="hidden" />
 		</form>
 	);
 };

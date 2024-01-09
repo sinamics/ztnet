@@ -162,7 +162,8 @@
 			"header": "IP Assignment",
 			"tabs": {
 				"ipv4": "IPv4",
-				"ipv6": "IPv6"
+				"ipv6": "IPv6",
+				"mtu": "MTU"
 			},
 			"ipv6": {
 				"rfc4193Label": "ZeroTier RFC4193 (/128 for each device)",
@@ -182,6 +183,10 @@
 				"range_end": "Range End",
 				"range_end_placeholder": "192.168.168.254",
 				"submit": "Submit"
+			},
+			"mtu": {
+				"title": "MTU Value",
+				"description": "Nodes needs to leave and re-join network to make effect."
 			}
 		},
 		"nettworkRoutes": {
