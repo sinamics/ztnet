@@ -162,7 +162,8 @@
 			"header": "IP Assignment",
 			"tabs": {
 				"ipv4": "IPv4",
-				"ipv6": "IPv6"
+				"ipv6": "IPv6",
+				"mtu": "MTU"
 			},
 			"ipv6": {
 				"rfc4193Label": "ZeroTier RFC4193 (/128 for each device)",
@@ -182,6 +183,11 @@
 				"range_end": "Range End",
 				"range_end_placeholder": "192.168.168.254",
 				"submit": "Submit"
+			},
+			"mtu": {
+				"title": "MTU (Maximum Transmission Unit)",
+				"description": "This setting determines the largest packet size that can be transmitted through the network. Adjusting the MTU value can impact network performance and efficiency. ",
+				"acceptedValue": "Accepted values are between 1280 and 10000"
 			}
 		},
 		"nettworkRoutes": {
