@@ -40,7 +40,7 @@ export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) 
 						onClick={() => setActiveTab("mtu")}
 						className={`tab tab-bordered ${activeTab === "mtu" ? "tab-active" : ""}`}
 					>
-						MTU
+						{t("networkIpAssignments.tabs.mtu")}
 					</a>
 				</div>
 				{activeTab === "IPv4" ? (

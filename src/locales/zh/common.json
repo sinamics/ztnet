@@ -162,7 +162,8 @@
 			"header": "IP 分配",
 			"tabs": {
 				"ipv4": "IPv4",
-				"ipv6": "IPv6"
+				"ipv6": "IPv6",
+				"mtu": "MTU"
 			},
 			"ipv6": {
 				"rfc4193Label": "ZeroTier RFC4193 (/128 对于每一台设备)",
@@ -182,6 +183,10 @@
 				"range_end": "范围结束",
 				"range_end_placeholder": "192.168.168.254",
 				"submit": "提交"
+			},
+			"mtu": {
+				"title": "MTU 值",
+				"description": "节点需要离开并重新加入网络才能生效。"
 			}
 		},
 		"nettworkRoutes": {

@@ -926,7 +926,7 @@ export const networkRouter = createTRPCRouter({
 				central: z.boolean().optional().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
-					mtu: z.number().optional(),
+					mtu: z.number().min(1280).max(10000),
 				}),
 			}),
 		)

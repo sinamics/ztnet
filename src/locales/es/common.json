@@ -162,7 +162,8 @@
 			"header": "Asignaciones de IP",
 			"tabs": {
 				"ipv4": "IPv4",
-				"ipv6": "IPv6"
+				"ipv6": "IPv6",
+				"mtu": "MTU"
 			},
 			"ipv6": {
 				"rfc4193Label": "ZeroTier RFC4193 (/128 para cada dispositivo)",
@@ -182,6 +183,10 @@
 				"range_end": "Fin del rango",
 				"range_end_placeholder": "192.168.168.254",
 				"submit": "Enviar"
+			},
+			"mtu": {
+				"title": "Valor de MTU",
+				"description": "Los nodos necesitan salir y volver a unirse a la red para que surta efecto."
 			}
 		},
 		"nettworkRoutes": {
