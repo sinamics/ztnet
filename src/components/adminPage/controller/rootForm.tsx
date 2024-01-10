@@ -198,12 +198,12 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		});
 	};
 
-	const handleEndpointArrayChange = (e, index) => {
-		const { name, value } = e.target;
-		const list = [...config];
-		list[index][name] = value;
-		setConfig(list);
-	};
+	// const handleEndpointArrayChange = (e, index) => {
+	// 	const { name, value } = e.target;
+	// 	const list = [...config];
+	// 	list[index][name] = value;
+	// 	setConfig(list);
+	// };
 
 	// const handleAddClick = (e) => {
 	// 	e.preventDefault();
@@ -261,22 +261,22 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					</div>
 				</div>
 
-				<RootNodesArray
+				{/* <RootNodesArray
 					rootNodes={world.rootNodes}
 					handleEndpointArrayChange={handleEndpointArrayChange}
-				/>
+				/> */}
 
 				<div className="pt-10">
 					<button
 						onClick={(e) => {
 							e.preventDefault();
-							// makeWorld(world, {
-							// 	onSuccess: () => {
-							// 		refetchOptions();
+							makeWorld(world, {
+								onSuccess: () => {
+									refetchOptions();
 
-							// 		if (onClose) onClose();
-							// 	},
-							// });
+									if (onClose) onClose();
+								},
+							});
 						}}
 						className={"btn btn-primary btn-sm"}
 						type="submit"
