@@ -830,6 +830,16 @@ export const adminRouter = createTRPCRouter({
 
 		return { ip, identity };
 	}),
+	getPlanet: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.planet.findFirst({
+			where: {
+				id: 1,
+			},
+			include: {
+				rootNodes: true,
+			},
+		});
+	}),
 	makeWorld: adminRoleProtectedRoute
 		.input(
 			z
