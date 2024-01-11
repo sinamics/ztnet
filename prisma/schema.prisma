@@ -65,12 +65,12 @@ model Planet {
 }
 
 model RootNodes {
-  id          Int     @id @default(autoincrement())
-  Planet      Planet  @relation(fields: [PlanetId], references: [id], onDelete: Cascade)
-  PlanetId    Int
-  plComment   String?
-  plIdentity  String?
-  plEndpoints String?
+  id        Int     @id @default(autoincrement())
+  Planet    Planet  @relation(fields: [PlanetId], references: [id], onDelete: Cascade)
+  PlanetId  Int
+  comments  String?
+  identity  String
+  endpoints Json
 }
 
 model network_members {

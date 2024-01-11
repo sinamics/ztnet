@@ -33,9 +33,9 @@ CREATE TABLE "Planet" (
 CREATE TABLE "RootNodes" (
     "id" SERIAL NOT NULL,
     "PlanetId" INTEGER NOT NULL,
-    "plComment" TEXT,
-    "plIdentity" TEXT,
-    "plEndpoints" TEXT,
+    "comments" TEXT,
+    "identity" TEXT NOT NULL,
+    "endpoints" JSONB NOT NULL,
 
     CONSTRAINT "RootNodes_pkey" PRIMARY KEY ("id")
 );
