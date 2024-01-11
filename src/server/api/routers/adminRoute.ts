@@ -830,6 +830,25 @@ export const adminRouter = createTRPCRouter({
 
 		return { ip, identity };
 	}),
+	getPlanet: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		const options = await ctx.prisma.globalOptions.findFirst({
+			where: {
+				id: 1,
+			},
+			select: {
+				planet: {
+					select: {
+						id: true,
+						plID: true,
+						plBirth: true,
+						plRecommend: true,
+						rootNodes: true,
+					},
+				},
+			},
+		});
+		return options?.planet;
+	}),
 	makeWorld: adminRoleProtectedRoute
 		.input(
 			z
@@ -837,9 +856,21 @@ export const adminRouter = createTRPCRouter({
 					plID: z.number().optional(),
 					plRecommend: z.boolean().default(true),
 					plBirth: z.number().optional(),
-					comment: z.string().nullable().optional(),
-					identity: z.string().optional(),
-					endpoints: z.string(),
+					rootNodes: z.array(
+						z.object({
+							identity: z.string().min(1, "Identity must have a value."),
+							endpoints: z
+								.any()
+								.refine(
+									(data): data is string[] =>
+										Array.isArray(data) && data.every((item) => typeof item === "string"),
+									{
+										message: "Endpoints must be an array of strings.",
+									},
+								),
+							comments: z.string().optional(),
+						}),
+					),
 				})
 				.refine(
 					// Validator function
@@ -868,7 +899,6 @@ export const adminRouter = createTRPCRouter({
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
-
 				try {
 					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
 				} catch (_err) {
@@ -908,23 +938,20 @@ export const adminRouter = createTRPCRouter({
 						fs.copyFileSync(planetPath, `${backupDir}/planet.bak.${timestamp}`);
 					}
 				}
-				const identity =
-					input.identity ||
-					fs.readFileSync(`${ZT_FOLDER}/identity.public`, "utf-8").trim();
+				// const identity = fs.readFileSync(`${ZT_FOLDER}/identity.public`, "utf-8").trim();
 
 				/*
 				 *
 				 * Mock the mkworld.config.json file and write it to the file system
 				 *
 				 */
+
 				const config: WorldConfig = {
-					rootNodes: [
-						{
-							comments: `${input.comment || "default.domain"}`,
-							identity,
-							endpoints: input.endpoints.split(","),
-						},
-					],
+					rootNodes: input.rootNodes.map((node) => ({
+						comments: node.comments || "ztnet.network",
+						identity: node.identity,
+						endpoints: node.endpoints,
+					})),
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
 					plID: input.plID || 0,
@@ -939,13 +966,10 @@ export const adminRouter = createTRPCRouter({
 				 * Update local.conf file with the new port number
 				 *
 				 */
-				// Extract the port numbers from the endpoint string
-				const portNumbers = input.endpoints
+				// Extract the port numbers from the first endpoint string
+				const portNumbers = input.rootNodes[0].endpoints[0]
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-				// if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-				// 	throwError("Error: Port numbers are not equal in the provided endpoints");
-				// }
 
 				try {
 					await updateLocalConf(portNumbers);
@@ -977,20 +1001,36 @@ export const adminRouter = createTRPCRouter({
 				 * Update DB with the new planet file details
 				 *
 				 */
-				await ctx.prisma.globalOptions.update({
+				await ctx.prisma.planet.upsert({
 					where: {
 						id: 1,
 					},
-					data: {
-						customPlanetUsed: true,
-						plBirth: config.plBirth,
-						plID: config.plID,
-						plEndpoints: Array.isArray(config.rootNodes[0]?.endpoints)
-							? config.rootNodes[0].endpoints.join(",")
-							: null,
-						plComment: config.rootNodes[0].comments,
-						plRecommend: config.plRecommend,
-						plIdentity: config.rootNodes[0].identity,
+					update: {
+						globalOptions: {
+							connect: {
+								id: 1,
+							},
+						},
+						// Data for updating an existing Planet
+						plBirth: input.plBirth || 0,
+						plID: input.plID || 0,
+						rootNodes: {
+							deleteMany: {},
+							create: config.rootNodes,
+						},
+					},
+					create: {
+						globalOptions: {
+							connect: {
+								id: 1,
+							},
+						},
+						// Data for creating a new Planet
+						plBirth: input.plBirth || 0,
+						plID: input.plID || 0,
+						rootNodes: {
+							create: config.rootNodes,
+						},
 					},
 				});
 
@@ -1013,18 +1053,7 @@ export const adminRouter = createTRPCRouter({
 		};
 
 		const resetDatabase = async () => {
-			await ctx.prisma.globalOptions.update({
-				where: { id: 1 },
-				data: {
-					customPlanetUsed: false,
-					plBirth: 0,
-					plID: 0,
-					plEndpoints: "",
-					plComment: "",
-					plRecommend: true,
-					plIdentity: "",
-				},
-			});
+			await ctx.prisma.planet.deleteMany({});
 		};
 
 		try {

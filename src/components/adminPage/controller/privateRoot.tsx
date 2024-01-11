@@ -10,13 +10,12 @@ const PrivateRoot = () => {
 	const t = useTranslations("admin");
 	const [open, setOpen] = useState(false);
 	const { callModal } = useModalStore((state) => state);
-	const { data: getOptions } = api.settings.getAllOptions.useQuery();
-	const { data: globalOptions, refetch: refetchOptions } =
-		api.settings.getAllOptions.useQuery();
+	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
+
 	const closeForm = () => setOpen(false);
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
 		onSuccess: () => {
-			refetchOptions();
+			refetchPlanet();
 			toast.success("Planet file has been restored!");
 		},
 	});
@@ -72,7 +71,7 @@ const PrivateRoot = () => {
 				return response.json();
 			})
 			.then(() => {
-				refetchOptions();
+				refetchPlanet();
 				callModal({
 					title: <p>{t("controller.generatePlanet.modal.noteTitle")}</p>,
 					rootStyle: "text-left border border-yellow-300/30",
@@ -101,10 +100,11 @@ const PrivateRoot = () => {
 	return (
 		<div className="space-y-4">
 			<div>
-				<p className="text-sm text-gray-500 pb-4">
+				<p className="text-sm text-gray-500">
 					{t("controller.generatePlanet.updatePlanetWarning")}
 				</p>
-				{globalOptions?.customPlanetUsed ? (
+
+				{getPlanet?.rootNodes?.length > 0 ? (
 					<>
 						<div className="space-y-4">
 							<div className="alert">
@@ -123,17 +123,21 @@ const PrivateRoot = () => {
 								</svg>
 								<span>{t("controller.generatePlanet.customPlanetInUse")}</span>
 							</div>
-							<div className="border border-primary p-4 my-4 rounded">
-								<p>
-									<strong>Comments:</strong> {getOptions?.plComment}
-								</p>
-								<p>
-									<strong>Endpoints:</strong> {getOptions?.plEndpoints}
-								</p>
-								<p>
-									<strong>Identity:</strong> {getOptions?.plIdentity?.substring(0, 50)}
-									...
-								</p>
+							<div className="   space-y-5">
+								{getPlanet?.rootNodes?.map((node, i) => (
+									<div key={node.id} className="border border-primary rounded p-4 my-4">
+										<p className="tracking-wide font-medium">Root #{i + 1}</p>
+										<p>
+											<strong>Comments:</strong> {node.comments}
+										</p>
+										<p>
+											<strong>Endpoints:</strong> {node.endpoints.toString()}
+										</p>
+										<p>
+											<strong>Identity:</strong> {node.identity.substring(0, 50)}
+										</p>
+									</div>
+								))}
 							</div>
 							<div>
 								<p className=" text-sm">

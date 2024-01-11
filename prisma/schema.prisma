@@ -44,18 +44,33 @@ model GlobalOptions {
   notificationTemplate         Json?
   // Notifications
   userRegistrationNotification Boolean @default(false)
-  // mkworld
-  customPlanetUsed             Boolean @default(false)
-  plID                         BigInt  @default(0)
-  plBirth                      BigInt  @default(0)
-  plRecommend                  Boolean @default(false)
-  plComment                    String?
-  plIdentity                   String?
-  plEndpoints                  String?
   // Welcome message
   welcomeMessageEnabled        Boolean @default(false)
   welcomeMessageTitle          String?
   welcomeMessageBody           String?
+  // mkworld
+  customPlanetUsed             Boolean @default(false)
+  planetId                     Int?    @unique
+  planet                       Planet? @relation(fields: [planetId], references: [id])
+}
+
+// ROOT SERVERS
+model Planet {
+  id            Int            @id @default(autoincrement())
+  plID          BigInt         @default(0)
+  plBirth       BigInt         @default(0)
+  plRecommend   Boolean        @default(false)
+  rootNodes     RootNodes[]
+  globalOptions GlobalOptions?
+}
+
+model RootNodes {
+  id        Int     @id @default(autoincrement())
+  Planet    Planet  @relation(fields: [PlanetId], references: [id], onDelete: Cascade)
+  PlanetId  Int
+  comments  String?
+  identity  String
+  endpoints Json
 }
 
 model network_members {
