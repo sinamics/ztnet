@@ -9,6 +9,7 @@
 		"submit": "提交",
 		"cancel": "取消",
 		"delete": "删除",
+		"remove": "移除",
 		"update": "更新",
 		"close": "关闭",
 		"stash": "隐藏",
@@ -495,7 +496,7 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
 				"customPlanetInUse": "自定义星球目前正在使用中！",
-				"downloadPlanetInfo": "您还可以通过访问URL来下载这个星球的文件:",
+				"downloadPlanetInfo": "如果您需要，可以从以下网址下载行星文件：",
 				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "生成私有根",
 				"generatePrivateRootPlaceholder": "为您的控制器添加私有根",

@@ -12,6 +12,7 @@ import { updateLocalConf } from "~/utils/planet";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
+import { WorldConfig } from "~/types/worldConfig";
 
 export const config = {
 	api: {
@@ -120,33 +121,82 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 										})
 										.on("end", async () => {
 											try {
+												/*
+												 *
+												 * parse json content from the uploaded file
+												 *
+												 */
 												const parsedContent = JSON.parse(jsonContent);
-												const plEndpoints =
-													parsedContent?.rootNodes?.[0]?.endpoints.join(",");
 
-												await prisma.globalOptions.update({
-													where: { id: 1 },
-													data: {
-														customPlanetUsed: true,
-														plBirth: parsedContent?.plBirth,
-														plID: parsedContent?.plID,
-														plRecommend: parsedContent?.plRecommend,
-														plComment: parsedContent?.rootNodes?.[0]?.comments,
-														plIdentity: parsedContent?.rootNodes?.[0]?.identity,
-														plEndpoints,
+												/*
+												 *
+												 * Mock the mkworld.config.json file and write it to the file system
+												 *
+												 */
+												const config: WorldConfig = {
+													rootNodes: parsedContent?.rootNodes.map((node) => ({
+														comments: node.comments || "ztnet.network",
+														identity: node.identity,
+														endpoints: node.endpoints,
+													})),
+													signing: ["previous.c25519", "current.c25519"],
+													output: "planet.custom",
+													plID: parsedContent?.plID || 0,
+													plBirth: parsedContent?.plBirth || 0,
+													plRecommend: parsedContent?.plRecommend,
+												};
+
+												/*
+												 *
+												 * Update DB with the new planet config
+												 *
+												 */
+												await prisma.planet.upsert({
+													where: {
+														id: 1,
+													},
+													update: {
+														globalOptions: {
+															connect: {
+																id: 1,
+															},
+														},
+														// Data for updating an existing Planet
+														plBirth: parsedContent?.plBirth || 0,
+														plID: parsedContent?.plID || 0,
+														rootNodes: {
+															deleteMany: {},
+															create: config.rootNodes,
+														},
+													},
+													create: {
+														globalOptions: {
+															connect: {
+																id: 1,
+															},
+														},
+														// Data for creating a new Planet
+														plBirth: config.plBirth || 0,
+														plID: config.plID || 0,
+														rootNodes: {
+															create: config.rootNodes,
+														},
 													},
 												});
+
 												/*
 												 *
 												 * Update local.conf file with the new port number
 												 *
 												 */
+
 												// Extract the port number from the endpoint string
-												const portNumbers = plEndpoints
+												const portNumbers = parsedContent?.rootNodes[0].endpoints[0]
 													.split(",")
 													.map((endpoint) =>
 														parseInt(endpoint.split("/").pop() || "", 10),
 													);
+
 												try {
 													await updateLocalConf(portNumbers);
 												} catch (_error) {

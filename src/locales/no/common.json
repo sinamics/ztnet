@@ -10,6 +10,7 @@
 		"cancel": "Avbryt",
 		"delete": "Slett",
 		"update": "Oppdater",
+		"remove": "Fjern",
 		"close": "Lukk",
 		"stash": "Stash",
 		"yes": "Ja",
@@ -495,7 +496,7 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "Oppdatering av planetfilen vil endre kjernestrukturen i ZeroTier-nettverket ditt, påvirke ruter, fleksibilitet og potensielt tilgjengelighet. Fortsett med forsiktighet, og forstå konsekvensene.",
 				"customPlanetInUse": "Egendefinert Planet er for tiden i bruk!",
-				"downloadPlanetInfo": "Du kan også laste ned planetfilen ved å få tilgang til URL-en:",
+				"downloadPlanetInfo": "Skulle du trenge det, er planetfilen tilgjengelig for nedlasting på følgende nettadresse:",
 				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "Generer privat rot",
 				"generatePrivateRootPlaceholder": "Legg til en privat rot i kontrolleren din",
