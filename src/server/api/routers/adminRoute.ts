@@ -831,14 +831,23 @@ export const adminRouter = createTRPCRouter({
 		return { ip, identity };
 	}),
 	getPlanet: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		return await ctx.prisma.planet.findFirst({
+		const options = await ctx.prisma.globalOptions.findFirst({
 			where: {
 				id: 1,
 			},
-			include: {
-				rootNodes: true,
+			select: {
+				planet: {
+					select: {
+						id: true,
+						plID: true,
+						plBirth: true,
+						plRecommend: true,
+						rootNodes: true,
+					},
+				},
 			},
 		});
+		return options?.planet;
 	}),
 	makeWorld: adminRoleProtectedRoute
 		.input(
@@ -849,9 +858,17 @@ export const adminRouter = createTRPCRouter({
 					plBirth: z.number().optional(),
 					rootNodes: z.array(
 						z.object({
-							identity: z.string(),
-							endpoints: z.string(),
-							comments: z.string(),
+							identity: z.string().min(1, "Identity must have a value."),
+							endpoints: z
+								.any()
+								.refine(
+									(data): data is string[] =>
+										Array.isArray(data) && data.every((item) => typeof item === "string"),
+									{
+										message: "Endpoints must be an array of strings.",
+									},
+								),
+							comments: z.string().optional(),
 						}),
 					),
 				})
@@ -882,7 +899,6 @@ export const adminRouter = createTRPCRouter({
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
 
 				// Check for write permission on the directory
-
 				try {
 					fs.accessSync(ZT_FOLDER, fs.constants.W_OK);
 				} catch (_err) {
@@ -932,9 +948,9 @@ export const adminRouter = createTRPCRouter({
 
 				const config: WorldConfig = {
 					rootNodes: input.rootNodes.map((node) => ({
+						comments: node.comments || "ztnet.network",
 						identity: node.identity,
-						endpoints: node.endpoints.split(","),
-						comments: node.comments || "default.domain",
+						endpoints: node.endpoints,
 					})),
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
@@ -951,12 +967,9 @@ export const adminRouter = createTRPCRouter({
 				 *
 				 */
 				// Extract the port numbers from the first endpoint string
-				const portNumbers = input.rootNodes[0].endpoints
+				const portNumbers = input.rootNodes[0].endpoints[0]
 					.split(",")
 					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-				// if (portNumbers.length > 1 && portNumbers[0] !== portNumbers[1]) {
-				// 	throwError("Error: Port numbers are not equal in the provided endpoints");
-				// }
 
 				try {
 					await updateLocalConf(portNumbers);

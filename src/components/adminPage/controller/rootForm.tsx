@@ -2,77 +2,67 @@ import { RootNodes } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { JsonValue } from "type-fest";
 import Input from "~/components/elements/input";
 import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
-const RootNodesArray = ({ rootNodes, handleEndpointArrayChange }) => {
+interface RootNode {
+	endpoints: JsonValue;
+	comments: string;
+	identity: string;
+}
+
+interface RootNodesArrayProps {
+	rootNodes: Partial<RootNode>[];
+	handleEndpointArrayChange: (
+		e: React.ChangeEvent<HTMLInputElement>,
+		index: number,
+	) => void;
+	handleAddClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+	handleRemoveClick: (
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+		index: number,
+	) => void;
+}
+
+const RootNodesArray: React.FC<RootNodesArrayProps> = ({
+	rootNodes,
+	handleEndpointArrayChange,
+	handleAddClick,
+	handleRemoveClick,
+}) => {
 	const t = useTranslations("admin");
-
-	const [config, setConfig] = useState([{ endpoint: "", identity: "", comment: "" }]);
-
-	useEffect(() => {
-		if (!rootNodes[0].identity) return;
-		setConfig([
-			{
-				endpoint: rootNodes[0].endpoints,
-				identity: rootNodes[0].identity,
-				comment: rootNodes[0].comment || "",
-			},
-		]);
-	}, [rootNodes]);
-
-	const handleRemoveClick = (index) => {
-		const list = [...config];
-		list.splice(index, 1);
-		setConfig(list);
-	};
 	return (
 		<div className="space-y-10">
-			{config.map((cfg, i) => (
+			{rootNodes.map((node, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={i} className="p-5 border rounded-md border-primary">
 					<p>Root #{i + 1}</p>
-					<div>
-						<label className="block text-gray-500 mb-2">
-							{t("controller.generatePlanet.endpointsDescription")}
-						</label>
-						<Input
-							name="endpoint"
-							type="text"
-							placeholder="Endpoint"
-							value={cfg.endpoint}
-							onChange={(e) => handleEndpointArrayChange(e, i)}
-							className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
-						/>
+					<label className="block text-gray-500 mb-2">
+						{t("controller.generatePlanet.endpointsDescription")}
+					</label>
+					<div className="space-y-3">
+						{["endpoints", "identity", "comments"].map((field) => (
+							<div key={field}>
+								<label className="block text-gray-500 mb-1 capitalize">{field}</label>
+								<Input
+									name={field}
+									type="text"
+									placeholder={field}
+									value={node[field]}
+									onChange={(e) => handleEndpointArrayChange(e, i)}
+									className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
+								/>
+							</div>
+						))}
 					</div>
-					<div>
-						<label className="block text-gray-500 mb-2">Identity</label>
-						<Input
-							name="identity"
-							type="text"
-							placeholder="Identity"
-							value={cfg.identity}
-							onChange={(e) => handleEndpointArrayChange(e, i)}
-							className="px-3 py-2 w-full input-sm rounded-md border-gray-300"
-						/>
-					</div>
-					<div>
-						<label className="block text-gray-500 mb-2">Comment Description</label>
-						<Input
-							name="comment"
-							type="text"
-							placeholder="Comment"
-							value={cfg.comment}
-							onChange={(e) => handleEndpointArrayChange(e, i)}
-							className="px-3 py-2 w-full input-sm rounded-md border-gray-300"
-						/>
-					</div>
-					{i > 0 && i === config.length - 1 ? (
+					{i > 0 ? (
 						<div className="pt-7">
 							<button
-								onClick={() => handleRemoveClick(i)}
+								type="button"
+								onClick={(e) => handleRemoveClick(e, i)}
 								className="btn btn-sm btn-outline"
 							>
 								Remove
@@ -87,9 +77,9 @@ const RootNodesArray = ({ rootNodes, handleEndpointArrayChange }) => {
 					Expand your network by adding an additional root server. Click here to register
 					a new server to your system.
 				</p>
-				{/* <button onClick={handleAddClick} className="btn btn-sm btn-outline">
+				<button type="button" onClick={handleAddClick} className="btn btn-sm btn-outline">
 					+
-				</button> */}
+				</button>
 			</div>
 		</div>
 	);
@@ -98,21 +88,20 @@ const RootNodesArray = ({ rootNodes, handleEndpointArrayChange }) => {
 const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	const t = useTranslations("admin");
 	const { callModal } = useModalStore((state) => state);
-	const { data: getPlanet, refetch: refetchOptions } = api.admin.getPlanet.useQuery();
+	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
 
 	const { data: getIdentity } = api.admin.getIdentity.useQuery();
-
 	const [world, setWorld] = useState({
 		plRecommend: true,
 		plBirth: Date.now(),
 		plID: Math.floor(Math.random() * 2 ** 32),
 		rootNodes: [
 			{
-				plEndpoints: "",
-				plComment: "",
-				plIdentity: "",
+				endpoints: [],
+				comments: "",
+				identity: "",
 			},
-		] as RootNodes[],
+		] as Partial<RootNodes>[],
 	});
 
 	useEffect(() => {
@@ -120,12 +109,12 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 			// Use existing data from getOptions.rootNodes if available
 			const rootNodesData =
 				getPlanet?.rootNodes.length > 0
-					? getPlanet.rootNodes
+					? getPlanet?.rootNodes
 					: [
 							{
-								endpoints: `${getIdentity?.ip}/9993`,
-								identity: getIdentity?.identity,
-								comment: "",
+								endpoints: [`${getIdentity?.ip}/9993`],
+								identity: getIdentity?.identity || "",
+								comments: "",
 							},
 					  ];
 
@@ -198,18 +187,40 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		});
 	};
 
-	// const handleEndpointArrayChange = (e, index) => {
-	// 	const { name, value } = e.target;
-	// 	const list = [...config];
-	// 	list[index][name] = value;
-	// 	setConfig(list);
-	// };
+	const handleEndpointArrayChange = (e, index) => {
+		const { name, value } = e.target;
+		const root = [...world.rootNodes];
 
-	// const handleAddClick = (e) => {
-	// 	e.preventDefault();
-	// 	setConfig([...config, { endpoint: "", identity: "", comment: "" }]);
-	// };
+		if (name === "endpoints") {
+			// Split the string by commas to create an array
+			root[index][name] = value.split(",").map((endpoint) => endpoint.trim());
+		} else {
+			// For other fields, assign the value directly
+			root[index][name] = value;
+		}
+		setWorld((prev) => ({
+			...prev,
+			rootNodes: root,
+		}));
+	};
 
+	const handleAddClick = (e) => {
+		e.preventDefault();
+		setWorld((prev) => ({
+			...prev,
+			rootNodes: [...prev.rootNodes, { endpoints: "", identity: "", comments: "" }],
+		}));
+	};
+	const handleRemoveClick = (e, index) => {
+		e.preventDefault();
+
+		const roots = [...world.rootNodes];
+		roots.splice(index, 1);
+		setWorld((prev) => ({
+			...prev,
+			rootNodes: [...roots],
+		}));
+	};
 	return (
 		<>
 			{/* Display list of root nodes */}
@@ -221,7 +232,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						</span>
 						<input
 							name="plRecommend"
-							disabled={!getPlanet?.id}
+							disabled={!!getPlanet?.id}
 							type="checkbox"
 							checked={world.plRecommend}
 							className="checkbox checkbox-primary checkbox-sm"
@@ -241,7 +252,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							value={world.plBirth}
 							onChange={inputChange}
 							className="input-bordered input-sm px-3 py-2 w-full rounded-md border-gray-300"
-							disabled={world.plRecommend && !!getPlanet?.id}
+							disabled={world.plRecommend && !getPlanet?.id}
 						/>
 					</div>
 
@@ -256,15 +267,16 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							value={world.plID}
 							onChange={inputChange}
 							className="input-bordered input-sm px-3 w-full py-2 rounded-md border-gray-300"
-							disabled={world.plRecommend && !!getPlanet?.id}
+							disabled={world.plRecommend && !getPlanet?.id}
 						/>
 					</div>
 				</div>
-
-				{/* <RootNodesArray
+				<RootNodesArray
 					rootNodes={world.rootNodes}
 					handleEndpointArrayChange={handleEndpointArrayChange}
-				/> */}
+					handleAddClick={handleAddClick}
+					handleRemoveClick={handleRemoveClick}
+				/>
 
 				<div className="pt-10">
 					<button
@@ -272,7 +284,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 							e.preventDefault();
 							makeWorld(world, {
 								onSuccess: () => {
-									refetchOptions();
+									refetchPlanet();
 
 									if (onClose) onClose();
 								},
@@ -281,7 +293,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 						className={"btn btn-primary btn-sm"}
 						type="submit"
 					>
-						{!getPlanet?.id
+						{getPlanet?.rootNodes
 							? t("controller.generatePlanet.buttons.updateWorld")
 							: t("controller.generatePlanet.buttons.createPlanet")}
 					</button>
