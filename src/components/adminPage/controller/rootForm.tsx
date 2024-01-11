@@ -34,6 +34,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 	handleRemoveClick,
 }) => {
 	const t = useTranslations("admin");
+	const b = useTranslations("commonButtons");
 	return (
 		<div className="space-y-10">
 			{rootNodes.map((node, i) => (
@@ -65,7 +66,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 								onClick={(e) => handleRemoveClick(e, i)}
 								className="btn btn-sm btn-outline"
 							>
-								Remove
+								{b("remove")}
 							</button>
 						</div>
 					) : null}
