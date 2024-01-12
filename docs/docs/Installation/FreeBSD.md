@@ -19,7 +19,7 @@ To build and run the application, your system should meet the following minimum 
 First, make sure PostgreSQL and ZeroTier are installed and configured on your FreeBSD server.
 ```bash
 pkg update
-pkg install zerotier protobuf curl git node npm rust
+pkg install zerotier protobuf curl git node npm rust vips
 pkg install postgresql15-server postgresql15-contrib
 sysrc postgresql_enable=yes
 service postgresql initdb
