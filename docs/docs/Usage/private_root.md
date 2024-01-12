@@ -123,23 +123,25 @@ To add a second private root server to your ZeroTier network, follow these steps
    - On the new root server, locate the identity file, typically found at `/var/lib/zerotier-one/identity.public` on Linux systems.
    - Read the contents of this file to find the server's identity.
 
-3. **Download and Unzip the Current Configuration from ZTNet**:
-   - Download the current configuration as a ZIP file from ZTNet.
-   - Unzip this file to access the `mkworld.config.json`.
+3. **Create or edit root server in ZTNET**:
+   - From the ZTNet web UI, navigate to the Admin - ZT Controller page.
+   - Click the `Generate Planet` button to open the planet generation form.
+   - Press `Add root server` button to add a new root server.
+   - Enter the identity and IP address of the second root server.
 
-4. **Update `mkworld.config.json` with Second Server Information**:
-   - Edit `mkworld.config.json` to include the identity and IP address of the second root server in the `rootNodes` section.
-
+If you download the configuration file, you will see that the `mkworld.config.json` file now contains two root servers.
 Example `mkworld.config.json` for Two Roots:
 ```json
 {
   "rootNodes": [
     {
-      "identity": "[identity_of_first_root]",
+      "comments": "amsterdam official - ZTNET controller",
+      "identity": "992fcf1db7:0:206ed59350b31916f749a1f85dffb3a8787dcbf83525....",  
       "endpoints": ["[ip_of_first_root]/[port]"]
     },
     {
-      "identity": "[identity_of_second_root]",
+      "comments": "new-york official - Second root server",
+      "identity": "002fcf1db1:0:653gd59350b31916f749a1f85dffb3a8787dcbf83b8c....",
       "endpoints": ["[ip_of_second_root]/[port]"]
     }
   ],
@@ -147,19 +149,14 @@ Example `mkworld.config.json` for Two Roots:
 }
 ```
 
-5. **Rezip and Upload the Configuration to ZTNet**:
-   - Rezip the updated `mkworld.config.json` with the other original files into a ZIP archive.
-   - In ZTNet, use the 'Restore Original Planet' to remove the current config.
-   - Now, Upload the new ZIP file.
-
-6. **Download, Rename, and Distribute the Updated `planet.custom` File**:
-   - After ZTNet processes the upload, download the new `planet.custom` file.
+4. **Download, Rename, and Distribute the Updated `planet.custom` File**:
+   - Download the new `planet.custom` file.
    - Rename this file to `planet` and distribute it to each client device in your network.
 
-7. **Restart ZeroTier Services on Client Devices**:
+5. **Restart ZeroTier Services on Client Devices**:
    - Restart the ZeroTier-One service on each client device to apply the new configuration.
 
-8. **Verify the Configuration**:
+6. **Verify the Configuration**:
    - Use `zerotier-cli listpeers` on client devices to check for the presence of both private root servers.
    - Ensure no public root servers are listed, confirming the network is using only your private roots.
 
