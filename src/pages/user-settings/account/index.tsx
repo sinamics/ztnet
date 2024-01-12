@@ -9,15 +9,8 @@ import { useTranslations } from "next-intl";
 import { globalSiteVersion } from "~/utils/global";
 import Link from "next/link";
 import ApiToken from "~/components/userSettings/apiToken";
-import { supportedLocales } from "~/locales/lang";
+import { languageNames, supportedLocales } from "~/locales/lang";
 
-const languageNames = {
-	default: "System",
-	en: "English",
-	no: "Norwegian",
-	zh: "Chinese",
-	es: "Spanish",
-};
 const defaultLocale = "en";
 
 const Account = () => {
