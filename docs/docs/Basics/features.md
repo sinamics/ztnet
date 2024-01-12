@@ -27,7 +27,7 @@ ZTNET is more than just a networking tool; it's a personalized experience. Each 
 
 ### 🌍 Multi-Language
 
-To make ZTNET accessible to users worldwide, the platform currently supports multiple languages including English, Spanish (ES), Norwegian (NO), and Chinese (ZH). This focus on multilingual support ensures an inclusive experience for users from different linguistic backgrounds.
+To make ZTNET accessible to users worldwide, the platform currently supports multiple languages including English, French, Spanish (ES), Norwegian (NO), and Chinese (ZH). This focus on multilingual support ensures an inclusive experience for users from different linguistic backgrounds.
 
 ### 🛠️ Multi-Architecture
 
