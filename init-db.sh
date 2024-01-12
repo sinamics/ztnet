@@ -13,7 +13,7 @@ EOF
 
 # config
 envFilename='.env'
-nextFolder='/.next'
+nextFolder='.next'
 function apply_path {
   # read all config file  
   while read line; do
@@ -21,7 +21,6 @@ function apply_path {
     if [ "${line:0:1}" == "#" ] || [ "${line}" == "" ]; then
       continue
     fi
-    
     # split
     configName="$(cut -d'=' -f1 <<<"$line")"
     configValue="$(cut -d'=' -f2 <<<"$line")"
@@ -38,7 +37,7 @@ function apply_path {
 }
 
 apply_path
-
+exit
 until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -c '\q'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
