@@ -25,6 +25,7 @@ EOF
 envFilename='.env'
 nextFolder='.next'
 
+# Currently not in use. 
 function apply_path {
   # echo "Applying path..."
   while read line; do
@@ -35,8 +36,6 @@ function apply_path {
     configValue="$(cut -d'=' -f2 <<<"$line")"
     envValue="${!configName}";
 
-    # echo "Debug: configName=$configName, configValue=$configValue, envValue=$envValue"
-
     if [ -n "$configValue" ] && [ -n "$envValue" ]; then
       echo "Replace: ${configValue} with: ${envValue}"
       find $nextFolder \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#$configValue#$envValue#g"
@@ -44,8 +43,9 @@ function apply_path {
   done < $envFilename
 }
 
-apply_path
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -c '\q'; do
+# apply_path
+
+until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c '\q'; do
   echo "Postgres is unavailable - sleeping"
   sleep 1
 done
