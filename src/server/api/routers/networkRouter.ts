@@ -599,15 +599,35 @@ export const networkRouter = createTRPCRouter({
 
 			const { ipAssignmentPools } = input.updateParams;
 
+			// get routes from controller
+			const controllerNetwork = await ztController.get_network(
+				ctx,
+				input.nwid,
+				input.central,
+			);
+
+			// Fetch network and merge the routes
 			const routes = getNetworkClassCIDR(
 				ipAssignmentPools as { ipRangeStart: string; ipRangeEnd: string }[],
 			);
 
+			const combinedRoutes = [...(controllerNetwork?.routes || []), ...routes];
+			const uniqueRoutes = Array.from(
+				new Map(combinedRoutes?.map((route) => [route.target, route])).values(),
+			);
+
 			// prepare update params
 			const updateParams = input.central
-				? { config: { ipAssignmentPools, routes } }
-				: { ipAssignmentPools, routes };
-
+				? {
+						config: {
+							ipAssignmentPools,
+							routes: uniqueRoutes,
+						},
+				  }
+				: {
+						ipAssignmentPools,
+						routes: uniqueRoutes,
+				  };
 			try {
 				// Send webhook
 				await sendWebhook<NetworkConfigChanged>({
