@@ -13,7 +13,7 @@ EOF
 
 # config
 envFilename='.env'
-nextFolder='/app/.next/'
+nextFolder='/app'
 function apply_path {
   # read all config file  
   while read line; do
