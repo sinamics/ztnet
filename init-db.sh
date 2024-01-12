@@ -1,10 +1,20 @@
 #!/bin/bash
 
+# Enable error handling and debug tracing
 set -e
+# set -x  ( DEBUG )
+
+error_handling() {
+    echo "An error occurred. Exiting..."
+    exit 1
+}
+# trap errors
+trap error_handling ERR
 
 cmd="$@"
 
 # Create .env file
+echo "Creating .env file..."
 cat << EOF > .env
 DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
 ZT_ADDR=${ZT_ADDR}
@@ -14,22 +24,20 @@ EOF
 # config
 envFilename='.env'
 nextFolder='.next'
+
 function apply_path {
-  # read all config file  
+  # echo "Applying path..."
   while read line; do
-    # no comment or not empty
     if [ "${line:0:1}" == "#" ] || [ "${line}" == "" ]; then
       continue
     fi
-    # split
     configName="$(cut -d'=' -f1 <<<"$line")"
     configValue="$(cut -d'=' -f2 <<<"$line")"
-    # get system env
-    envValue=$(env | grep "^$configName=" | grep -oe '[^=]*$');
-    
-    # if config found
+    envValue="${!configName}";
+
+    # echo "Debug: configName=$configName, configValue=$configValue, envValue=$envValue"
+
     if [ -n "$configValue" ] && [ -n "$envValue" ]; then
-      # replace all
       echo "Replace: ${configValue} with: ${envValue}"
       find $nextFolder \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s#$configValue#$envValue#g"
     fi
@@ -37,9 +45,8 @@ function apply_path {
 }
 
 apply_path
-exit
 until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
+  echo "Postgres is unavailable - sleeping"
   sleep 1
 done
 
@@ -53,5 +60,5 @@ echo "Seeding the database..."
 npx prisma db seed
 echo "Database seeded successfully!"
 
->&2 echo "Executing command"
+echo "Executing command"
 exec $cmd
