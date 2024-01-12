@@ -12,7 +12,7 @@ NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
 EOF
 
 # config
-envFilename='.env.production'
+envFilename='.env'
 nextFolder='/app/.next/'
 function apply_path {
   # read all config file  
@@ -37,7 +37,7 @@ function apply_path {
   done < $envFilename
 }
 
-# apply_path
+apply_path
 
 until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -c '\q'; do
   >&2 echo "Postgres is unavailable - sleeping"
