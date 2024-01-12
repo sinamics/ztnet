@@ -21,7 +21,7 @@ const config = {
 	 */
 	i18n: {
 		defaultLocale: "default",
-		locales: ["default", "en", "no", "zh", "es"],
+		locales: ["default", "en", "fr", "no", "zh", "es"],
 	},
 	trailingSlash: true,
 	eslint: {
