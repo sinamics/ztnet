@@ -695,7 +695,7 @@
 			"note": "Remarque : Si vous décidez de rejoindre cette organisation à l'avenir, un administrateur devra vous envoyer une nouvelle invitation."
 		},
 		"chatSidebar": {
-			"toggleChatLabel": "Conversation",
+			"toggleChatLabel": "MSG",
 			"chatHeader": "Messages de l'organisation",
 			"chatInfo": "Tout le monde dans l’organisation pourra voir votre message.",
 			"messageInputPlaceholder": "Tapez un message...",
