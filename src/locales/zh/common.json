@@ -496,6 +496,8 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "更新planet文件将修改您的ZeroTier网络的核心结构，影响路由，灵活性和可能的可用性。小心进行，理解其中的含义。",
 				"customPlanetInUse": "自定义星球目前正在使用中！",
+				"customPortIsInUse": "注意！使用了自定义端口",
+				"customPortIsInUseDescription": "你需要在 ZeroTier Docker Compose 的环境变量中添加 <kbd>ZT_PRIMARY_PORT:端口</kbd>。",
 				"downloadPlanetInfo": "如果您需要，可以从以下网址下载行星文件：",
 				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "生成私有根",
