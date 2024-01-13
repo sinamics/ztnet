@@ -606,17 +606,35 @@ export const networkRouter = createTRPCRouter({
 				input.central,
 			);
 
-			// Fetch network and merge the routes
+			/**
+			 *  getNetworkClassCIDR: Converts IP address ranges to CIDR notations.
+			 *  Accepts an array of `{ ipRangeStart, ipRangeEnd }` objects and returns an array of CIDR strings.
+			 */
+
 			const routes = getNetworkClassCIDR(
 				ipAssignmentPools as { ipRangeStart: string; ipRangeEnd: string }[],
 			);
 
+			/**
+			 * Combine the routes from the controller with the routes from the input.
+			 */
 			const combinedRoutes = [...(controllerNetwork?.routes || []), ...routes];
-			const uniqueRoutes = Array.from(
-				new Map(combinedRoutes?.map((route) => [route.target, route])).values(),
+
+			/**
+			 * Create a map of unique routes using the target IP as the key.
+			 * This ensures that duplicate routes are not added to the network.
+			 */
+			const uniqueRoutesMap = new Map(
+				combinedRoutes.map((route) => {
+					const ip = route.target.split("/")[0];
+					return [ip, route];
+				}),
 			);
 
-			// prepare update params
+			/**
+			 * Convert the map back to an array of unique routes.
+			 */
+			const uniqueRoutes = Array.from(uniqueRoutesMap.values());
 			const updateParams = input.central
 				? {
 						config: {
@@ -624,10 +642,8 @@ export const networkRouter = createTRPCRouter({
 							routes: uniqueRoutes,
 						},
 				  }
-				: {
-						ipAssignmentPools,
-						routes: uniqueRoutes,
-				  };
+				: { ipAssignmentPools, routes: uniqueRoutes };
+
 			try {
 				// Send webhook
 				await sendWebhook<NetworkConfigChanged>({
