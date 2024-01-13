@@ -599,14 +599,50 @@ export const networkRouter = createTRPCRouter({
 
 			const { ipAssignmentPools } = input.updateParams;
 
+			// get routes from controller
+			const controllerNetwork = await ztController.get_network(
+				ctx,
+				input.nwid,
+				input.central,
+			);
+
+			/**
+			 *  getNetworkClassCIDR: Converts IP address ranges to CIDR notations.
+			 *  Accepts an array of `{ ipRangeStart, ipRangeEnd }` objects and returns an array of CIDR strings.
+			 */
+
 			const routes = getNetworkClassCIDR(
 				ipAssignmentPools as { ipRangeStart: string; ipRangeEnd: string }[],
 			);
 
-			// prepare update params
+			/**
+			 * Combine the routes from the controller with the routes from the input.
+			 */
+			const combinedRoutes = [...(controllerNetwork?.routes || []), ...routes];
+
+			/**
+			 * Create a map of unique routes using the target IP as the key.
+			 * This ensures that duplicate routes are not added to the network.
+			 */
+			const uniqueRoutesMap = new Map(
+				combinedRoutes.map((route) => {
+					const ip = route.target.split("/")[0];
+					return [ip, route];
+				}),
+			);
+
+			/**
+			 * Convert the map back to an array of unique routes.
+			 */
+			const uniqueRoutes = Array.from(uniqueRoutesMap.values());
 			const updateParams = input.central
-				? { config: { ipAssignmentPools, routes } }
-				: { ipAssignmentPools, routes };
+				? {
+						config: {
+							ipAssignmentPools,
+							routes: uniqueRoutes,
+						},
+				  }
+				: { ipAssignmentPools, routes: uniqueRoutes };
 
 			try {
 				// Send webhook
