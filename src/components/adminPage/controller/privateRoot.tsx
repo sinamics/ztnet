@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import RootForm from "./rootForm";
 import Link from "next/link";
+import CreatePlanet from "./createPlanet";
 
 const PrivateRoot = () => {
 	const t = useTranslations("admin");
@@ -30,7 +31,6 @@ const PrivateRoot = () => {
 			const a = document.createElement("a");
 			a.style.display = "none";
 			a.href = url;
-			// the filename you want
 			a.download = "ztnet-world.zip";
 			document.body.appendChild(a);
 			a.click();
@@ -103,7 +103,6 @@ const PrivateRoot = () => {
 				<p className="text-sm text-gray-500">
 					{t("controller.generatePlanet.updatePlanetWarning")}
 				</p>
-
 				{getPlanet?.rootNodes?.length > 0 ? (
 					<>
 						<div className="space-y-4">
@@ -123,9 +122,41 @@ const PrivateRoot = () => {
 								</svg>
 								<span>{t("controller.generatePlanet.customPlanetInUse")}</span>
 							</div>
-							<div className="   space-y-5">
+							<div className="space-y-5">
 								{getPlanet?.rootNodes?.map((node, i) => (
 									<div key={node.id} className="border border-primary rounded p-4 my-4">
+										{!node.endpoints.toString().includes("9993") ? (
+											<div role="alert" className="alert shadow-lg mb-5">
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													fill="none"
+													viewBox="0 0 24 24"
+													className="stroke-info shrink-0 w-6 h-6"
+												>
+													<path
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														strokeWidth="2"
+														d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+													></path>
+												</svg>
+												<div>
+													<h3 className="font-bold">
+														{t("controller.generatePlanet.customPortIsInUse")}
+													</h3>
+													<div className="text-xs">
+														{t.rich(
+															"controller.generatePlanet.customPortIsInUseDescription",
+															{
+																kbd: (content) => (
+																	<kbd className="kbd kbd-xs">{content}</kbd>
+																),
+															},
+														)}
+													</div>
+												</div>
+											</div>
+										) : null}
 										<p className="tracking-wide font-medium">Root #{i + 1}</p>
 										<p>
 											<strong>Comments:</strong> {node.comments}
@@ -184,44 +215,15 @@ const PrivateRoot = () => {
 						</div>
 					</>
 				) : (
-					<>
-						<div className="flex w-full justify-between">
-							<div className={"cursor-pointer"}>
-								<div className="flex font-medium">
-									<span>{t("controller.generatePlanet.generatePrivateRootLabel")}</span>
-								</div>
-								<div>
-									<p className="m-0 p-0 text-xs text-gray-500">
-										{t("controller.generatePlanet.generatePrivateRootPlaceholder")}
-									</p>
-								</div>
-							</div>
-							<div className="flex gap-3">
-								<button
-									onClick={() => setOpen(!open)}
-									data-testid="view-form"
-									className="btn btn-sm"
-								>
-									{t("controller.generatePlanet.buttons.createPlanet")}
-								</button>
-								<input
-									type="file"
-									id="fileInput"
-									style={{ display: "none" }}
-									onChange={handleFileChange}
-									accept=".zip"
-								/>
-								<button
-									data-testid="view-form"
-									className="btn btn-sm"
-									onClick={triggerFileInput}
-								>
-									{t("controller.generatePlanet.buttons.uploadConfig")}
-								</button>
-							</div>
-						</div>
-						{open ? <RootForm onClose={closeForm} /> : null}
-					</>
+					<CreatePlanet
+						getPlanet={getPlanet}
+						resetWorld={resetWorld}
+						open={open}
+						setOpen={setOpen}
+						handleFileChange={handleFileChange}
+						triggerFileInput={triggerFileInput}
+						closeForm={closeForm}
+					/>
 				)}
 			</div>
 		</div>

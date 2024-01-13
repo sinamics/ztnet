@@ -496,6 +496,8 @@
 			"generatePlanet": {
 				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",
 				"customPlanetInUse": "¡El Planeta Personalizado está actualmente en uso!",
+				"customPortIsInUse": "¡NOTA! Puerto personalizado utilizado",
+				"customPortIsInUseDescription": "Necesitas agregar <kbd>ZT_PRIMARY_PORT:puerto</kbd> a las variables de entorno de ZeroTier Docker Compose.",
 				"downloadPlanetInfo": "En caso de que lo necesite, el archivo del planeta está disponible para descargar en la siguiente URL:",
 				"downloadPlanetUrl": "api/planet",
 				"generatePrivateRootLabel": "Generar raíz privada",

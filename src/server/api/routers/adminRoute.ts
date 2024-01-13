@@ -831,6 +831,12 @@ export const adminRouter = createTRPCRouter({
 		return { ip, identity };
 	}),
 	getPlanet: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		const paths = {
+			backupDir: `${ZT_FOLDER}/planet_backup`,
+			planetPath: `${ZT_FOLDER}/planet`,
+			mkworldDir: `${ZT_FOLDER}/zt-mkworld`,
+		};
+
 		const options = await ctx.prisma.globalOptions.findFirst({
 			where: {
 				id: 1,
@@ -847,6 +853,20 @@ export const adminRouter = createTRPCRouter({
 				},
 			},
 		});
+		// Check if the backup directory exists
+		const backupExists = fs.existsSync(paths.backupDir);
+
+		// If backup exists and no planet data is found in the database
+		if (backupExists && !options?.planet) {
+			return {
+				error: new Error(
+					"Inconsistent configuration: Planet backup exists but no planet data in the database.",
+				),
+				rootNodes: [], // Assuming rootNodes as an empty array in case of error
+				...options?.planet,
+			};
+		}
+
 		return options?.planet;
 	}),
 	makeWorld: adminRoleProtectedRoute
@@ -1069,18 +1089,15 @@ export const adminRouter = createTRPCRouter({
 				.filter((file) => file.startsWith("planet.bak."))
 				.sort();
 
-			if (backups.length === 0) {
-				throw new Error("No backup files found.");
-			}
-
 			// Restore from the latest backup
 			const latestBackup = backups.at(-1);
-			fs.copyFileSync(`${paths.backupDir}/${latestBackup}`, paths.planetPath);
+			if (latestBackup) {
+				fs.copyFileSync(`${paths.backupDir}/${latestBackup}`, paths.planetPath);
+			}
 
 			// Clean up backup and mkworld directories
 			fs.rmSync(paths.backupDir, { recursive: true, force: true });
 			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
-
 			/*
 			 *
 			 * Reset local.conf with default port number
