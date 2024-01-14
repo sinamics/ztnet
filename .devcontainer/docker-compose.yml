@@ -17,7 +17,7 @@ services:
       args:
         NEXT_PUBLIC_CLIENTVAR: "clientvar"
     environment:
-      ZTNET_TRUST_HOST: "true"
+      AUTH_TRUST_HOST: "true"
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
