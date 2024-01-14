@@ -49,8 +49,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
-      AUTH_TRUST_HOST: "true"
-      NEXTAUTH_URL: "http://localhost:3000"
+      ZTNET_TRUST_HOST: "true"
+      # NEXTAUTH_URL: "http://localhost:3000"
       NEXTAUTH_SECRET: "random_secret"
     networks:
       - app-network
