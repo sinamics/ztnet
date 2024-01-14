@@ -16,8 +16,8 @@ services:
       dockerfile: .devcontainer/Dockerfile.dev
       args:
         NEXT_PUBLIC_CLIENTVAR: "clientvar"
-    environment:
-      AUTH_TRUST_HOST: "true"
+    # environment:
+    #   AUTH_TRUST_HOST: "true"
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
