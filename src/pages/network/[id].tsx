@@ -26,6 +26,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
+import { useQRCode } from "next-qrcode";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -46,6 +47,8 @@ interface IProps {
 const NetworkById = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
+	const { Image } = useQRCode();
+
 	const [state, setState] = useState({
 		viewZombieTable: false,
 		isDebug: false,
@@ -151,6 +154,23 @@ const NetworkById = ({ orgIds }: IProps) => {
 						<NetworkName />
 						<NetworkDescription />
 					</div>
+				</div>
+				<div>
+					<Image
+						text={network?.nwid}
+						options={{
+							type: "image/jpeg",
+							quality: 0.3,
+							errorCorrectionLevel: "M",
+							margin: 3,
+							scale: 4,
+							width: 100,
+							// color: {
+							// 	dark: "#010599FF",
+							// 	light: "#FFBF60FF",
+							// },
+						}}
+					/>
 				</div>
 				<div>
 					<NetworkPrivatePublic />
