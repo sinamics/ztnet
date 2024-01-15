@@ -464,6 +464,22 @@ ztnet_postgres_user_permissions() {
     fi
 }
 
+memory_warning() {
+  # Get total memory in KB and convert it to MB
+  total_mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+  total_mem_mb=$((total_mem_kb / 1024))
+
+  # Check if total memory is less than or equal to 1024MB (1GB)
+  if [ "$total_mem_mb" -le 1024 ]; then
+      echo "${YELLOW}Warning: Your system's total memory is only ${total_mem_mb}MB. If the installation process fails, it might be due to insufficient memory. Consider upgrading your memory if possible.${NC}"
+      read -n 1 -s -r -p "Press space to continue" key
+
+      if [ "$key" != ' ' ]; then
+          echo "You did not press space. Exiting."
+          exit 1
+      fi
+  fi
+}
 
 # Check if the OS is Ubuntu
 if [[ $OS == "Ubuntu" ]]; then
@@ -622,6 +638,10 @@ if ! command_exists psql; then
 fi
 
 ask_question "Use silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
+
+# Check if the user has enough memory, and warn if not
+memory_warning
+
 printf "\n"
 print_status "Starting installation..."
 
