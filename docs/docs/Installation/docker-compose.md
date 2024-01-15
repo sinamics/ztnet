@@ -6,6 +6,13 @@ description: Docker Compose installation instructions for ZTNET
 sidebar_position: 1
 ---
 
+## System Requirements
+
+To build and run the application, your system should meet the following minimum requirements:
+
+- **Memory**: 1GB of RAM
+- **CPU**: 1 Core
+
 # Install Docker
 Docker is a containerization platform that allows you to quickly build, test, and deploy applications as portable, self-sufficient containers that can virtually run everywhere.
 
