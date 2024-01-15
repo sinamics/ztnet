@@ -473,7 +473,7 @@ memory_warning() {
   if [ "$total_mem_mb" -le 1024 ]; then
       printf "\n${YELLOW}Warning: Your system's total memory is only ${total_mem_mb}MB. If the installation process fails, it might be due to insufficient memory. Consider upgrading your memory if possible.${NC}"
       sleep 0.5
-      read -n 1 -s -r -p "Press any key to continue..."
+      read -n 1 -s -r -p "Press any key to continue..." < /dev/tty
   fi
 }
 
