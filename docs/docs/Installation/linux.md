@@ -11,8 +11,14 @@ sidebar_position: 2
 
 To build and run the application, your system should meet the following minimum requirements:
 
-- **Memory**: At least 1GB of RAM
-- **CPU**: At least 1 CPU Core
+- **Memory**: 2GB of RAM
+- **CPU**: 1 Core
+
+:::note
+
+The standalone version require a minimum of 2GB of RAM primarily due to its build process requirements. Should your system have less than 2GB of RAM, it's advisable to opt for the Docker version instead. The [Docker](/installation/docker-compose) image offers a significant advantage with its prebuilt configuration, which results in a notably reduced footprint.
+
+:::
 
 # Install or update ztnet 
 
