@@ -473,11 +473,6 @@ memory_warning() {
   if [ "$total_mem_mb" -le 1024 ]; then
       echo "${YELLOW}Warning: Your system's total memory is only ${total_mem_mb}MB. If the installation process fails, it might be due to insufficient memory. Consider upgrading your memory if possible.${NC}"
       read -n 1 -s -r -p "Press space to continue" key
-
-      if [ "$key" != ' ' ]; then
-          echo "You did not press space. Exiting."
-          exit 1
-      fi
   fi
 }
 
