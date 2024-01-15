@@ -8,7 +8,7 @@ sidebar_position: 1
 
 ## System Requirements
 
-To build and run the application, your system should meet the following minimum requirements:
+Your system should meet the following minimum requirements:
 
 - **Memory**: 1GB of RAM
 - **CPU**: 1 Core
