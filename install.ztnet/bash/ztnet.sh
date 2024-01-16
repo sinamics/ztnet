@@ -215,7 +215,6 @@ ask_string() {
     eval "$varname='$ask_string'"
 }
 
-
 silent() {
     local output
     local status
@@ -224,13 +223,18 @@ silent() {
     if [ "$SILENT_MODE" = "Yes" ]; then
         output="$($command 2>&1)"
         status=$?
-      if [ $status -ne 0 ]; then
-          # An error occurred
-          failure $BASH_LINENO "$command" "$status" "$output"
-      fi
+        if [ $status -ne 0 ]; then
+            # Check for "heap out of memory" error in the output
+            if echo "$output" | grep -q "heap out of memory"; then
+                # Handle the specific "heap out of memory" error
+                handle_memory_error $BASH_LINENO "$command" "$status" "$output"
+            else
+                # Handle general errors
+                failure $BASH_LINENO "$command" "$status" "$output"
+            fi
+        fi
     fi
 }
-
 
 verbose() {
     local output
@@ -313,6 +317,17 @@ fi
 ##       ##     ##  ##  ##       ##     ## ##    ##  ##       
 ##       ##     ## #### ########  #######  ##     ## ######## 
 
+# Example of a handler function for memory errors
+handle_memory_error() {
+    local lineno=$1
+    local command=$2
+    local status=$3
+    local output=$4
+
+    # Custom handling for memory errors
+    echo "Memory error detected in command '$command' at line $lineno. Status: $status"
+    # Add additional handling logic here
+}
 
 function failure() {
   cleanup
