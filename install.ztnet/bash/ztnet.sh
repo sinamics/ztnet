@@ -226,9 +226,6 @@ silent() {
         if [ $status -ne 0 ]; then
             # Check for "heap out of memory" error in the output
             if echo "$output" | grep -q "heap out of memory"; then
-                # Handle the specific "heap out of memory" error
-                handle_memory_error $BASH_LINENO "$command" "$status" "$output"
-            else
                 # Handle general errors
                 failure $BASH_LINENO "$command" "$status" "$output"
             fi
