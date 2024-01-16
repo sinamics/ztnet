@@ -53,7 +53,7 @@ export const postError = function (req: Request, res: Response) {
 											console.error("sendMail error:", error);
 									} else if (process.env.NODE_ENV === "development") {
 											console.log("Message %s sent: %s", info.messageId, info.response);
-											// res.render("index"); // Uncomment or modify based on your actual usage
+											res.render("index");
 									}
 							});
 					} catch (error) {
@@ -61,15 +61,6 @@ export const postError = function (req: Request, res: Response) {
 					}
 			}
 	});
-		transporter.sendMail(mailOptions, (error: any, info: any) => {
-			if (error) {
-				return console.log(error);
-			}
-			if (process.env.NODE_ENV === "development") {
-				console.log("Message %s sent: %s", info.messageId, info.response);
-				res.render("index");
-			}
-		});
 	
 	} catch (error) {
 		console.log(error);
