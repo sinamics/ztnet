@@ -221,12 +221,19 @@ silent() {
     local command="$@"
     
     if [ "$SILENT_MODE" = "Yes" ]; then
+        # Capture the output and get the exit status
         output="$($command 2>&1)"
         status=$?
-        # Check for "heap out of memory" error in the output
-        if [ $status -ne 0 ] || echo "$output" | grep -q "heap out of memory"; then
-            # Handle the specific "heap out of memory" error
-            failure $BASH_LINENO "$command" "$status" "$output"
+
+        # Check for general error or specific "heap out of memory" error
+        if [ $status -ne 0 ]; then
+            if echo "$output" | grep -q "out of memory"; then
+                # If "heap out of memory" error is found, change the output message
+                failure $BASH_LINENO "$command" "$status" "Out of Memory"
+            else
+                # For other errors, pass the original output
+                failure $BASH_LINENO "$command" "$status" "$output"
+            fi
         fi
     fi
 }
@@ -241,8 +248,14 @@ verbose() {
     status=$?
 
     if [ $status -ne 0 ]; then
-        # An error occurred
-        failure $BASH_LINENO "$command" "$status" "$output"
+        # Check for "heap out of memory" error in the output
+        if echo "$output" | grep -q "out of memory"; then
+            # Handle the specific "heap out of memory" error
+            failure $BASH_LINENO "$command" "$status" "Out of Memory"
+        else
+            # Handle other types of errors
+            failure $BASH_LINENO "$command" "$status" "$output"
+        fi
     fi
 }
 
