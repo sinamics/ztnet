@@ -91,8 +91,6 @@ print_ztnet() {
 setup_color
 print_ztnet
 
-# print when this ztnet.sh file was last updated
-printf "Last updated: %s\n" "$(date -d "$LAST_UPDATED" "+%d %b %Y")"
 
 ##     ##    ###    ########  ####    ###    ########  ##       ########  ######  
 ##     ##   ## ##   ##     ##  ##    ## ##   ##     ## ##       ##       ##    ## 
@@ -102,6 +100,7 @@ printf "Last updated: %s\n" "$(date -d "$LAST_UPDATED" "+%d %b %Y")"
   ## ##   ##     ## ##    ##   ##  ##     ## ##     ## ##       ##       ##    ## 
    ###    ##     ## ##     ## #### ##     ## ########  ######## ########  ######  
 
+INSTALLER_LAST_UPDATED=""
 APT_PROGRAMS=("git" "curl" "jq" "postgresql" "postgresql-contrib")
 HOST_OS=$(( lsb_release -ds || cat /etc/*release || uname -om ) 2>/dev/null | head -n1)
 INSTALL_NODE=false
@@ -223,7 +222,7 @@ silent() {
     local command="$@"
     
     if [ "$SILENT_MODE" = "Yes" ]; then
-        output="$($command >/dev/null 2>&1)"
+        output="$($command 2>&1)"
         status=$?
       if [ $status -ne 0 ]; then
           # An error occurred
@@ -237,8 +236,11 @@ verbose() {
     local output
     local status
     local command="$@"
-    $command 2>&1
+
+    # Execute the command, capturing its output and also displaying it
+    output=$($command 2>&1 | tee /dev/tty)
     status=$?
+
     if [ $status -ne 0 ]; then
         # An error occurred
         failure $BASH_LINENO "$command" "$status" "$output"
@@ -319,8 +321,15 @@ function failure() {
   local _last_command=$2
   local _exitcode=$3
   local _output=$4
+  local formatted_output=$(echo "$_output" | tr '\n' ' ' | sed 's/  */ /g')
 
   local uname=$(uname -a | sed -e 's/"//g')
+  local disk_space=$(df -m | awk 'NR>1 {print $1": "$4"MB"}' | xargs)
+
+  # Get total memory in KB and convert it to MB
+  local total_mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+  local total_mem_mb=$((total_mem_kb / 1024))
+  
 
   printf "\n${RED}An error occurred! ${NC}\n" >&2
 
@@ -333,13 +342,15 @@ function failure() {
           --arg os "$HOST_OS" \
           --arg command "$_last_command" \
           --arg exitcode "$_exitcode" \
-          --arg output "$_output" \
+          --arg disk "$disk_space" \
+          --arg memory "$total_mem_mb"MB \
+          --arg output "$formatted_output" \
           --arg timestamp "$(date +"%d-%m-%Y/%M:%S")" \
           --arg lineno "$_bash_lineno" \
-          '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
+          '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, disk: $disk, memory: $memory, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
   else
       # Manually create JSON string
-      jsonError="{\"kernel\": \"$uname\", \"runner\": \"ztnet standalone\", \"arch\": \"$ARCH\", \"os\": \"$HOST_OS\", \"command\": \"$_last_command\", \"output\": \"$_output\", \"exitcode\": \"$_exitcode\", \"timestamp\": \"$(date +"%d-%m-%Y/%M:%S")\", \"lineno\": \"$_bash_lineno\"}"
+      jsonError="{\"kernel\": \"$uname\", \"runner\": \"ztnet standalone\", \"arch\": \"$ARCH\", \"os\": \"$HOST_OS\", \"command\": \"$_last_command\",  \"disk\": \"$disk_space\",  \"memory\": \"$total_mem_mb\", \"output\": \"$formatted_output\", \"exitcode\": \"$_exitcode\", \"timestamp\": \"$(date +"%d-%m-%Y/%M:%S")\", \"lineno\": \"$_bash_lineno\"}"
       # Replace newlines in output with \n to make it a valid JSON string
       jsonError=$(echo $jsonError | sed ':a;N;$!ba;s/\n/\\n/g')
   fi
@@ -613,6 +624,9 @@ fi
 ##  ##  ## ##       ##       ##       ##     ## ##     ## ##           ##  ##  #### ##       ##     ## 
 ##  ##  ## ##       ##       ##    ## ##     ## ##     ## ##           ##  ##   ### ##       ##     ## 
  ###  ###  ######## ########  ######   #######  ##     ## ########    #### ##    ## ##        #######  
+
+# print when this ztnet.sh file was last updated
+printf "Last updated: %s\n" "$(date -d "$INSTALLER_LAST_UPDATED" "+%d %b %Y")"
 
 # Show info text to user
 printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
