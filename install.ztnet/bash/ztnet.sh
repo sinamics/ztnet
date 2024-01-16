@@ -225,15 +225,13 @@ silent() {
         output="$($command 2>&1)"
         status=$?
 
-        # Check for general error or specific "heap out of memory" error
-        if [ $status -ne 0 ]; then
-            if echo "$output" | grep -q "out of memory"; then
-                # If "heap out of memory" error is found, change the output message
-                failure $BASH_LINENO "$command" "$status" "Out of Memory"
-            else
-                # For other errors, pass the original output
-                failure $BASH_LINENO "$command" "$status" "$output"
-            fi
+        # Check for "heap out of memory" error in the output first
+        if echo "$output" | grep -q "out of memory"; then
+            # If "heap out of memory" error is found, change the output message
+            failure $BASH_LINENO "$command" "$status" "Out of Memory"
+        elif [ $status -ne 0 ]; then
+            # For other errors, pass the original output
+            failure $BASH_LINENO "$command" "$status" "$output"
         fi
     fi
 }
@@ -247,15 +245,13 @@ verbose() {
     output=$($command 2>&1 | tee /dev/tty)
     status=$?
 
-    if [ $status -ne 0 ]; then
-        # Check for "heap out of memory" error in the output
-        if echo "$output" | grep -q "out of memory"; then
-            # Handle the specific "heap out of memory" error
-            failure $BASH_LINENO "$command" "$status" "Out of Memory"
-        else
-            # Handle other types of errors
-            failure $BASH_LINENO "$command" "$status" "$output"
-        fi
+    # Check for "out of memory" error in the output first
+    if echo "$output" | grep -q "out of memory"; then
+        # Handle the specific "out of memory" error
+        failure $BASH_LINENO "$command" "$status" "Out of Memory"
+    elif [ $status -ne 0 ]; then
+        # For other types of errors, pass the original output
+        failure $BASH_LINENO "$command" "$status" "$output"
     fi
 }
 
