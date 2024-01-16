@@ -223,12 +223,10 @@ silent() {
     if [ "$SILENT_MODE" = "Yes" ]; then
         output="$($command 2>&1)"
         status=$?
-        if [ $status -ne 0 ]; then
-            # Check for "heap out of memory" error in the output
-            if echo "$output" | grep -q "heap out of memory"; then
-                # Handle general errors
-                failure $BASH_LINENO "$command" "$status" "$output"
-            fi
+        # Check for "heap out of memory" error in the output
+        if [ $status -ne 0 ] || echo "$output" | grep -q "heap out of memory"; then
+            # Handle the specific "heap out of memory" error
+            failure $BASH_LINENO "$command" "$status" "$output"
         fi
     fi
 }
