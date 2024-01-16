@@ -44,7 +44,7 @@ jobs:
     steps:
       - name: Update Installer Script
         run: |
-          sed -i "s/^INSTALLER_LAST_UPDATED=.*$/INSTALLER_LAST_UPDATED=${{ env.LAST_UPDATED }}/" ztnet.sh
+          sed -i "s/^INSTALLER_LAST_UPDATED=.*$/INSTALLER_LAST_UPDATED=${{ env.LAST_UPDATED }}/" bash/ztnet.sh
       - name: Build Application
         run: npm run build
 
