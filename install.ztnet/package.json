@@ -15,7 +15,7 @@
     "express-rate-limit": "^6.4.0",
     "mime": "^3.0.0",
     "node-fetch": "^2.6.11",
-    "nodemailer": "^6.7.5",
+    "nodemailer": "^6.9.9",
     "ts-node-dev": "^2.0.0",
     "uuidv4": "^6.2.13"
   },
