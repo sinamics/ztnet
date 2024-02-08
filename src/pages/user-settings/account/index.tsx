@@ -169,9 +169,9 @@ const Account = () => {
 						<Link
 							className="link"
 							target="_blank"
-							href="https://ztnet.network/Rest%20Api"
+							href="https://ztnet.network/category/rest-api"
 						>
-							https://ztnet.network/Rest%20Api
+							https://ztnet.network/category/rest-api
 						</Link>
 					</p>
 				</div>
