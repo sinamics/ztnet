@@ -10,8 +10,8 @@ permissions:
 jobs:
   update_release_draft:
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write-all
+      pull-requests: write-all
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
