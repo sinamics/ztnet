@@ -175,7 +175,7 @@
 			"ipv4": {
 				"please_enter_valid_ip_range": "Podaj prawidłowy zakres adresów IP",
 				"ip_range_already_exists": "Zakres IP już istnieje",
-				"auto_assign_from_range": "Auto-przypisywanie z zakresu adresów IP",
+				"auto_assign_from_range": "Automatycznie przypisuj adres IP",
 				"easy": "Prosty",
 				"advanced": "Zaawansowany",
 				"delete_ip_assignment": "Usuwanie przypisania IP",
@@ -286,8 +286,8 @@
 				"description": "Mostkowanie wymaga dodatkowej konfiguracji na urządzeniu. Więcej informacji można znaleźć w instrukcji i bazie wiedzy. Urządzenia mobilne nie mogą być mostami sieciowymi."
 			},
 			"doNotAutoAssignIPs": {
-				"header": "Nie używaj Auto-przypisywania adresów IP",
-				"description": "Spowoduje to wyłączenie możliwości automatycznego przypisywania adresów IP temu członkowi."
+				"header": "Nie używaj automatycznego przypisywania IP",
+				"description": "Spowoduje to wyłączenie możliwości automatycznego przypisywania adresu IP temu członkowi sieci."
 			},
 			"capabilities": {
 				"header": "Możliwości:"
@@ -314,7 +314,7 @@
 			"multicastRecipientLimitText2": "Ustawienie wartości 0 powoduje wyłączenie multicast, ale należy pamiętać, że bez multicast będą działać tylko protokoły IPv6 z emulacją NDP (tryby adresowania RFC4193 lub 6PLANE) lub inne protokoły obsługujące wyłącznie transmisję pojedynczą.",
 			"managedRoutes": "Zarządzane trasy",
 			"managedRoutesText": "Trasy IPv4 publikowane dla członków sieci. Można ich używać dla tworzenia tras do innych sieci za pośrednictwem bram w sieci ZeroTier. Należy pamiętać, że ze względów bezpieczeństwa większość klientów nie będzie używać tras domyślnych, ani tras pokrywających się z publiczną przestrzenią adresów IP, chyba że użytkownik wyraźnie na to zezwoli. Zakresy publicznych adresów IP są oznaczone ikoną:",
-			"ipv4AutoAssign": "Auto-przypisywanie IPv4",
+			"ipv4AutoAssign": "Automatyczne przypisywanie adresu IPv4",
 			"ipv4AutoAssignText": "Zakres IPv4, z którego można automatycznie przypisywać adresy IP. Należy pamiętać, że adresy IP zostaną przypisane tylko wtedy, gdy mieszczą się również w określonej trasie. Tryb łatwy pozwala użytkownikom wybrać zakres adresów IP, a definicja trasy i puli zostanie utworzona automatycznie.",
 			"dnsPush": "Forsuj DNS",
 			"dnsPushText1": "Wymaga ZeroTier w wersji 1.6 lub wyższej",
