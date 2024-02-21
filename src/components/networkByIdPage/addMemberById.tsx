@@ -80,7 +80,7 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 							{ onSuccess: () => setUser({ memberid: "" }) },
 						);
 					}}
-					className="btn btn-active btn-square join-item"
+					className="btn btn-active join-item"
 				>
 					{t("addMemberById.submitButton")}
 				</button>

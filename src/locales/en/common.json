@@ -132,7 +132,7 @@
 		"networkSettings": "Network Settings",
 		"networkMembers": "Network Members",
 		"noMembersInformation": {
-			"title": "This network has no members, see installation instructions bellow",
+			"title": "This network has no members, see installation instructions below",
 			"installZerotier": "Install ZeroTier",
 			"joinNetwork": "Join Network"
 		},

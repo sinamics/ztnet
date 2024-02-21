@@ -164,7 +164,7 @@ describe("NetworkById component", () => {
 		);
 		expect(
 			screen.getByText(
-				/This network has no members, see installation instructions bellow/,
+				/This network has no members, see installation instructions below/,
 			),
 		).toBeInTheDocument();
 	});
