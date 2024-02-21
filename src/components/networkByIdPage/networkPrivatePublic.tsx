@@ -96,7 +96,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 				onClick={() => privateHandler(true)}
 				faded={!network.private}
 				title={t("networkById.privatePublicSwitch.privateCardTitle")}
-				rootClassName="sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
+				rootClassName="flex-1 sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
 				iconClassName="text-green-500"
 				content={t("networkById.privatePublicSwitch.privateCardContent")}
 			/>
@@ -104,7 +104,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 				onClick={() => privateHandler(false)}
 				faded={network.private}
 				title={t("networkById.privatePublicSwitch.publicCardTitle")}
-				rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
+				rootClassName="flex-1 transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
 				iconClassName="text-warning"
 				content={t("networkById.privatePublicSwitch.publicCardContent")}
 			/>
