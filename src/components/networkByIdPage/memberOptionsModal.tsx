@@ -444,7 +444,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							<button
 								onClick={handleIpSubmit}
 								type="submit"
-								className="btn-active btn-sm w-12 join-item"
+								className="btn-active btn-sm join-item"
 							>
 								{t("networkById.memberOptionModal.addButton.text")}
 							</button>
