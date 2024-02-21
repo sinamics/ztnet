@@ -1,0 +1,710 @@
+{
+	"input": {
+		"enterToSave": "Aby zapisać wciśnij Enter"
+	},
+	"commonButtons": {
+		"add": "Dodaj",
+		"change": "Zmień",
+		"create": "Utwórz",
+		"submit": "Zatwierdź",
+		"cancel": "Anuluj",
+		"delete": "Usuń",
+		"remove": "Usuń",
+		"update": "Aktualizuj",
+		"close": "Zamknij",
+		"stash": "Ukryj 'na później'",
+		"yes": "Tak",
+		"imSure": "Tak, na pewno",
+		"generate": "Generuj",
+		"addNetwork": "Utwórz sieć",
+		"deleteNetwork": "Usuń sieć",
+		"moveNetwork": "Przenieś sieć",
+		"moveNetworkToOrganization": "Przenieś sieć do organizacji",
+		"leaveOrganization": "Opuść organizację",
+		"inviteUser": "Zaproś użytkownika",
+		"meta": "Meta dane",
+		"users": "Użytkownicy",
+		"kickUser": "Usuń użytkownika",
+		"deleteOrganization": "Usuń organizację",
+		"userActions": "Akcje",
+		"addWebhooks": "Dodaj Webhooki",
+		"options": "Opcje"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Nazwa",
+			"description": "Opis sieci",
+			"networkId": "ID Sieci",
+			"members": "Ilość członków sieci",
+			"actions": "Akcje",
+			"role": "Rola",
+			"email": "Email",
+			"authorized": "Autoryzacja",
+			"id": "ID",
+			"created": "Utworzono",
+			"networks": "Sieci",
+			"group": "Grupa",
+			"account": "Konto",
+			"ipAssignments": {
+				"header": "Zarządzane IP / Opóźnienie",
+				"notAssigned": "Nie przypisano"
+			},
+			"physicalIp": {
+				"header": "Fizyczne IP",
+				"unknownValue": "Nieznane"
+			},
+			"conStatus": {
+				"header": "Status",
+				"toolTip": "Nie można nawiązać bezpośredniego połączenia i jest ono obecnie przekazywane przez serwery ZeroTier z większymi opóźnieniami",
+				"relayed": "PRZEKAZYWANY",
+				"directLan": "Nawiązano bezpośrednie połączenie LAN",
+				"directWan": "Nawiązano bezpośrednie połączenie WAN",
+				"direct": "BEZPOŚREDNIO{version}",
+				"offline": "OFFLINE "
+			},
+			"status": "Status"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Szukaj sieci",
+			"searchUserPlaceholder": "Szukaj użytkownika"
+		},
+		"tableFooter": {
+			"show": "Pokaż",
+			"page": "Strona",
+			"of": "z"
+		},
+		"cell": {
+			"Options": "Opcje"
+		}
+	},
+	"commonToast": {
+		"organizationDeleted": "Organizacja została pomyślnie usunięta"
+	},
+	"sidebar": {
+		"navigation": "Nawigacja",
+		"dashboard": "Pulpit",
+		"networks": "Lokalny kontroler",
+		"ztCentral": "ZT Central",
+		"admin": "Administracja",
+		"settings": "Ustawienia",
+		"mail": "Mail",
+		"users": "Użytkownicy",
+		"notification": "Powiadomienia",
+		"controller": "Kontroler ZT",
+		"organization": "Organizacje",
+		"account": "Konto",
+		"user-settings": "Ustawienia konta",
+		"logout": "Wyloguj"
+	},
+	"networks": {
+		"loading": "Ładowanie",
+		"title": "Sieci",
+		"description": "Sieci VPN",
+		"noNetworksMessage": "Nie utworzono jeszcze żadnych sieci. Utwórz nową sieć, a pojawi się ona właśnie tutaj...",
+		"networkActionModal": {
+			"modalTitle": "Opcje dla sieci <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Przenieś sieć",
+				"description": "Identyfikator organizacji można znaleźć w adresie URL.",
+				"warningText": "<strong>Ostrzeżenie:</strong> Czynność ta spowoduje nieodwracalne przeniesienie sieci do organizacji, wszystkich powiązanych członków sieci, ustawień i danych. Tego procesu nie będzie można cofnąć. Przed przystąpieniem do przenoszenia upewnij się, że wykonałeś kopię zapasową wszystkich niezbędnych informacji."
+			},
+			"deleteNetwork": {
+				"title": "Usuń sieć",
+				"description": "Usuwanie sieci spowoduje trwałe jej usunięcie wraz ze wszystkimi powiązanymi z nią danymi.",
+				"warningText": "<strong>Ostrzeżenie:</strong> Czynność ta spowoduje nieodwracalne usunięcie sieci, wszystkich powiązanych członków sieci, ustawień i danych. Tego procesu nie będzie można cofnąć. Przed przystąpieniem do usunięcia upewnij się, że wykonałeś kopię zapasową wszystkich niezbędnych informacji."
+			}
+		}
+	},
+	"networkById": {
+		"loading": "Ładowanie...",
+		"errorSteps": {
+			"step1": "Sprawdź czy działa kontener ZeroTier",
+			"step2": "Jeśli aktywne są inne instancje ZeroTier, wpierw je deaktywuj, aby nie powodowały konfliktów."
+		},
+		"networkId": "ID sieci:",
+		"networkName": "Nazwa sieci:",
+		"addDescription": "Dodaj opis",
+		"descriptionPlaceholder": "Opis",
+		"networkStart": "Początek sieci:",
+		"notSet": "nie ustawiono",
+		"networkEnd": "Koniec sieci:",
+		"networkCidr": "Adres sieci:",
+		"networkSettings": "Ustawienia sieci",
+		"networkMembers": "Członkowie sieci",
+		"noMembersInformation": {
+			"title": "Ta sieć nie ma członków, zobacz instrukcje instalacji poniżej",
+			"installZerotier": "Instalacja ZeroTier",
+			"joinNetwork": "Dołącz do sieci"
+		},
+		"networkMembersAlert": {
+			"message": "Dołącz do tego ID sieci - urządzenie zostanie automatycznie wyświetlone"
+		},
+		"viewStashedMembers": "Pokaż ukrytych 'na póżniej'",
+		"networkActions": "Akcje sieci",
+		"deleteNetwork": {
+			"title": "Usuwanie sieci {networkName}",
+			"description": "Czy na pewno chcesz usunąć tę sieć? Tej czynności nie będzie można cofnąć. Wszyscy członkowie sieci zostaną z niej usunięci.",
+			"yesAction": "Tak, usuń ją",
+			"noAction": "Nie, zostaw ją"
+		},
+		"copyToClipboard": {
+			"title": "skopiuj do schowka",
+			"success": "{element} skopiowano do schowka"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Twoja sieć jest teraz {authType}",
+			"privateCardTitle": "Prywatna",
+			"privateCardContent": "Każdy członek sieci musi uzyskać autoryzację od administratora kontrolera",
+			"publicCardTitle": "Publiczna",
+			"publicCardContent": "Wszyscy członkowie sieci mogą łączyć się z tą siecią bez autoryzacji",
+			"loading": "Ładowanie"
+		},
+		"networkIpAssignments": {
+			"header": "Przypisywanie adresu IP",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6",
+				"mtu": "MTU"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 dla kkażdego urządzenia)",
+				"plane6Label": "ZeroTier 6PLANE (/80 routowalne dla każdego urządzenia)",
+				"rfc4193Updated": "zaktualizowane rfc4193",
+				"plane6Updated": "zaktualizowane 6plane"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "Podaj prawidłowy zakres adresów IP",
+				"ip_range_already_exists": "Zakres IP już istnieje",
+				"auto_assign_from_range": "Automatycznie przypisuj adres IP",
+				"easy": "Prosty",
+				"advanced": "Zaawansowany",
+				"delete_ip_assignment": "Usuwanie przypisania IP",
+				"range_start": "Początkowy adres z zakresu",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Końcowy adres z zakresu",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Zatwierdź"
+			},
+			"mtu": {
+				"title": "MTU (Maximum Transmission Unit)",
+				"description": "Ustawienie to określa największy rozmiar pakietu jaki można przesłać w sieci. Dostosowanie wartości MTU może mieć wpływ na wydajność i efektywność sieci. ",
+				"acceptedValue": "Akceptowane wartości zawierają się pomiędzy 1280 a 10000"
+			}
+		},
+		"nettworkRoutes": {
+			"managedRoutesTitle": "Zarządzane trasy",
+			"noManagedRoutesTitle": "Nie zdefiniowano żadnych tras.",
+			"noManagedRoutesDescription1": "Urządzenia nie otrzymają adresu IP bez pasującej trasy.",
+			"noManagedRoutesDescription2": "Jeśli nie masz specyficznych, bardziej zaawansowanych wymagań, wypróbuj automatyczne przypisywanie adresów IPv4 w trybie prostym.",
+			"destinationPlaceholder": "Miejsce docelowe",
+			"viaPlaceholder": "cel"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Wymaga co najmniej wersji ZeroTier 1.6.",
+			"clearDNS": "Wyczyść DNS",
+			"searchDomain": "Domena",
+			"serverAddress": "Adres serwera",
+			"submit": "Zatwierdź",
+			"servers": "Serwery",
+			"addressAndDomainRequired": "Adres i domena są wymagane"
+		},
+		"networkMulticast": {
+			"Multicast": "Multicast",
+			"MulticastRecipientLimit": "Limit odbiorców Multicastu",
+			"Submit": "Zatwierdź",
+			"EnableBroadcast": "Włącz Broadcast",
+			"NumberPlaceholder": "Numer",
+			"MulticastUpdatedSuccessfully": "Multicast pomyślnie zaktualizowany"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Szukaj cokolwiek...",
+			"optionModalTitle": "Opcje członka sieci",
+			"tableRow": {
+				"updateName": "Kliknij aby zmienić nazwę"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "Nazwa członka sieci pomyślnie zaktualizowana"
+			},
+			"unauthorizedRowMessage": "Nieautoryzowany dostęp",
+			"tableFooter": {
+				"RowsPerPage": "Rzędów na stronę",
+				"Of": "z"
+			},
+			"search": {
+				"placeholder": "Szukaj cokolwiek..."
+			}
+		},
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "Pokaż ukrytych"
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Mail",
+			"labelText": "Wyślij E-Mail z instrukcjami dołączenia",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Zaproś",
+			"loadingText": "Ładowanie...",
+			"successMessage": "Sukces! e-mail z zaproszeniem został wysłany na adres {email}",
+			"errorMessage": {
+				"unknownError": "Wystąpił nieznany błąd"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Dodaj członka sieci ręcznie. Może być użyty do odzyskania innego członka sieci.",
+			"memberIdInput": "ID członka sieci",
+			"placeholder": "10-cyfrowa liczba w hex",
+			"submitButton": "Dodaj",
+			"error": {
+				"unknown": "Wystąpił nieznany błąd"
+			}
+		},
+		"memberOptionModal": {
+			"loading": {
+				"text": "Ładowanie..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} jest już przypisany",
+				"errorNotValidIp": "IP {target} nie jest prawidłowym adresem IP"
+			},
+			"ipAssignment": {
+				"header": "Przypisywanie adresu IP",
+				"description": "Dodaj lub usuń adres IP dla tego członka."
+			},
+			"deleteIpAssignment": {
+				"title": "Usuń przypisanie IP"
+			},
+			"addressInput": {
+				"label": "Adres"
+			},
+			"addButton": {
+				"text": "Dodaj"
+			},
+			"allowEthernetBridging": {
+				"header": "Zezwalaj na mostkowanie sieci Ethernet",
+				"description": "Mostkowanie wymaga dodatkowej konfiguracji na urządzeniu. Więcej informacji można znaleźć w instrukcji i bazie wiedzy. Urządzenia mobilne nie mogą być mostami sieciowymi."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "Nie używaj automatycznego przypisywania IP",
+				"description": "Spowoduje to wyłączenie możliwości automatycznego przypisywania adresu IP temu członkowi sieci."
+			},
+			"capabilities": {
+				"header": "Możliwości:"
+			},
+			"tags": {
+				"header": "Tagi:"
+			},
+			"anotation": {
+				"header": "Notatka",
+				"description": "Popraw wygląd członka sieci notatką",
+				"placeholder": "Dodaj notatkę"
+			}
+		},
+		"networkHelp": {
+			"title": "Pomoc dotycząca sieci",
+			"networkID": "ID sieci",
+			"networkIDText": "Unikalny globalnie 16-cyfrowy identyfikator sieci. Obecnie nie można tego zmienić.",
+			"networkName": "Nazwa sieci",
+			"networkNameText": "Zdefiniowana przez użytkownika krótka nazwa tej sieci widoczna dla jej członków. Zalecamy użycie nazwy domeny (np. zerotier.com) lub adresu e-mail.",
+			"accessControl": "Kontrola dostępu",
+			"accessControlText": "Jak kontrolowane jest członkostwo? Należy pozostawić to ustawienie domyślne, chyba że chcesz utworzyć całkowicie otwartą sieć do testowania, grania itp.",
+			"multicastRecipientLimit": "Limit odbiorców Multicastu",
+			"multicastRecipientLimitText": "Maksymalna liczba odbiorców, którzy mogą odebrać transmisje typu broadcast i multicast w sieci Ethernet. Jeśli liczba odbiorców przekroczy ten limit, powiadomienie otrzyma podzbiór losowy. Ustawienie tej wartości na wyższą sprawia, że transmisja multicast jest bardziej niezawodna w dużych sieciach kosztem przepustowości.",
+			"multicastRecipientLimitText2": "Ustawienie wartości 0 powoduje wyłączenie multicast, ale należy pamiętać, że bez multicast będą działać tylko protokoły IPv6 z emulacją NDP (tryby adresowania RFC4193 lub 6PLANE) lub inne protokoły obsługujące wyłącznie transmisję pojedynczą.",
+			"managedRoutes": "Zarządzane trasy",
+			"managedRoutesText": "Trasy IPv4 publikowane dla członków sieci. Można ich używać dla tworzenia tras do innych sieci za pośrednictwem bram w sieci ZeroTier. Należy pamiętać, że ze względów bezpieczeństwa większość klientów nie będzie używać tras domyślnych, ani tras pokrywających się z publiczną przestrzenią adresów IP, chyba że użytkownik wyraźnie na to zezwoli. Zakresy publicznych adresów IP są oznaczone ikoną:",
+			"ipv4AutoAssign": "Automatyczne przypisywanie adresu IPv4",
+			"ipv4AutoAssignText": "Zakres IPv4, z którego można automatycznie przypisywać adresy IP. Należy pamiętać, że adresy IP zostaną przypisane tylko wtedy, gdy mieszczą się również w określonej trasie. Tryb łatwy pozwala użytkownikom wybrać zakres adresów IP, a definicja trasy i puli zostanie utworzona automatycznie.",
+			"dnsPush": "Forsuj DNS",
+			"dnsPushText1": "Wymaga ZeroTier w wersji 1.6 lub wyższej",
+			"dnsPushText2": "Starsze wersje ZeroTier będą ignorować te ustawienia.",
+			"dnsPushText3": "W systemach macOS, iOS, Windows i Android ZeroTier może automatycznie dodawać serwery DNS dla określonej domeny. Nie skonfiguruje ani nie będzie hostować serwera DNS. Musisz posiadać własny serwer.",
+			"dnsPushText4": "Jeśli skonfigurujesz zt.example.com jako domenę wyszukiwania i 10.147.20.1 jako adres serwera, komputer zapyta 10.147.20.1 o wyszukanie adresów IP dla nazw hostów kończących się na zt.example.com.",
+			"dnsPushText5": "Należy to włączyć na każdym kliencie za pomocą opcji allowDNS. W interfejsie użytkownika w szczegółach każdej sieci znajduje się pole wyboru, obok pola wyboru Allow managed."
+		}
+	},
+	"admin": {
+		"tabs": {
+			"settings": "Ustawienia",
+			"network": "Sieć",
+			"mail": "Mail",
+			"users": "Użytkownicy",
+			"notification": "Powiadomienia",
+			"controller": "Kontroler",
+			"organization": "Organizacje"
+		},
+		"settings": {
+			"publicPages": {
+				"sectionTitle": "Strony startowe",
+				"description": "Dostosuj tekst wyświetlany na stronach logowania i rejestracji, aby lepiej pasował do Twojej marki lub zapewniał użytkownikom szczegółowe instrukcje."
+			}
+		},
+		"mail": {
+			"mailSMTP": "Ustawienia serwera SMTP",
+			"smtpHost": "Serwer SMTP",
+			"smtpPort": "Port SMTP",
+			"senderEmail": "E-mail nadawcy",
+			"mailPlaceholder": "mail@example.com",
+			"username": "Nazwa użytkownika",
+			"password": "Hasło",
+			"useSSL": "Użyj SSL",
+			"inviteUserTemplate": "Szablon - Zaproszenie użytkownika",
+			"forgotPasswordTemplate": "Szablon - Zapomniane hasło",
+			"notificationTemplate": "Szablon - Powiadomienie",
+			"organizationInviteTemplate": "Szablon - Zaproszenie do organizacji",
+			"templates": {
+				"availableTags": "Dostępne tagi:",
+				"subject": "Temat",
+				"inputPlaceholderSubject": "Temat",
+				"htmlBody": "Wiadomość HTML",
+				"textareaPlaceholderBody": "Szablon Mail",
+				"saveTemplateButton": "Zapisz szablon",
+				"resetButton": "Zresetuj",
+				"sendTestMailButton": "Wyślij wiadomość testową",
+				"sendTestMailButtonLoading": "W trakcie...",
+				"errorFields": "Uzupełnij wszystkie pola",
+				"successToastMailSent": "Mail został poprawnie wysłany",
+				"successToastTemplateSaved": "Zapisano szablon"
+			}
+		},
+		"users": {
+			"authentication": {
+				"header": "Uwierzytelnianie",
+				"enableUserRegistration": "Włączyć rejestrację użytkowników?",
+				"generateInvitation": {
+					"header": "Generuj link zaproszenia",
+					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej wiadomości podczas rejestracji (wielkość liter ma znaczenie)",
+					"secretMessagePlaceholder": "Dodaj sekretną wiadomość",
+					"expireTimeLabel": "Link z zaproszeniem wygaśnie po tym czasie",
+					"expireTimePlaceholder": "Czas wygaśnięcia w minutach",
+					"timeUsedLabel": "Ile razy można użyć tego linku? (Opcjonalne, domyślnie 1)",
+					"timeUsedPlaceholder": "Można użyć okresów",
+					"activeInvitationsLabel": "Aktywne zaproszenia (kliknij po więcej informacji)",
+					"invitationModal": {
+						"header": "Szczegóły zaproszenia",
+						"secretLabel": "Sekret:",
+						"expiresLabel": "Status:",
+						"timesUsedLabel": "Użyte okresy:",
+						"invitationLinkLabel": "Link zaproszenia:",
+						"clickToCopyLabel": "kliknij aby skopiować",
+						"linkCopiedToast": "link skopiowany do schowka",
+						"deleteButton": "Usuń"
+					}
+				}
+			},
+			"users": {
+				"sectionTitle": "Użytkownicy",
+				"description": "Wszyscy zarejestrowani użytkownicy na platformie.",
+				"userOptionModal": {
+					"userGroupLabel": "Grupa użytkownika",
+					"userRoleLabel": "Rola użytkownika",
+					"account": {
+						"title": "ZTNet codziennie sprawdza czy użytkownicy zostali wygaszeni. Jeśli okaże się, że ważność użytkownika wygasła, autoryzacja wszystkich powiązanych urządzeń zostanie cofnięta, a konto użytkownika zostanie dezaktywowane.",
+						"userAccountLabel": "Status konta",
+						"userExpireLabel": "Wygaśnięcie konta"
+					},
+					"userActionsLabel": "Akcje użytkownika",
+					"typeUserName": "Wpisz nazwę użytkownika.",
+					"buttons": {
+						"deleteUser": "Usuń użytkownika",
+						"cancle": "Anuluj"
+					},
+					"toast": {
+						"deleteUserSuccess": "Użytkownik został pomyślnie usunięty",
+						"nameNotEqual": "Podana nazwa użytkownika nie jest taka sama jak użytkownik."
+					}
+				},
+				"roleDescriptions": {
+					"admin": "Jako administrator użytkownik ten będzie miał pełne uprawnienia, w tym dostęp do panelu administracyjnego.",
+					"user": "Jeśli ustawisz opcję Użytkownik, ten użytkownik będzie miał ograniczone uprawnienia i nie będzie mógł uzyskać dostępu do panelu administracyjnego."
+				},
+				"changeRoleModal": {
+					"title": "Zmień rolę dla {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Rola pomyślnie zmieniona",
+					"errorOccurred": "Wystąpił nieznany błąd"
+				}
+			},
+			"groups": {
+				"sectionTitle": "Grupy",
+				"description": "Utwórz nową grupę użytkowników aby lepiej zorganizować użytkowników platformy. Przypisywanie użytkowników do określonych grup pozwala na kontrolowanie dostępu, ustalanie limitów i dostosowywanie ustawień w zależności od typu użytkowników.",
+				"addGroup": {
+					"editGroupTitle": "Edycja grupy",
+					"deleteGroupTitle": "Usuwanie grupy",
+					"deleteGroupDescription": "Czy na pewno chcesz usunąć tę grupę? Jeśli jest przypisana jakiemuś użytkownikowi zostanie z niego usunięta.",
+					"addGroupLabel": "Dodaj nową grupę",
+					"addGroupButton": "Dodaj grupę",
+					"groupNamePlaceholder": "Nazwa grupy",
+					"groupNameDescription": "Wpisz nazwę dla nowej grupy",
+					"networkLimitPlaceholder": "Limit sieci",
+					"networkLimitDescription": "Ustaw maksymalną liczbę sieci, którą może utworzyć użytkownik w tej grupie",
+					"useAsDefaultPlaceholder": "Użyj jako domyślnej",
+					"useAsDefaultDescription": "Ustaw tę grupę jako domyślną dla nowych użytkowników"
+				}
+			}
+		},
+		"notification": {
+			"authentication": "Uwierzytelnianie",
+			"whenUserRegister": "Kiedy użytkownik się zarejestruje",
+			"allAdminsNotification": "Wszyscy administratorzy otrzymają powiadomienie"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "Sieci & Członkowie",
+				"totalNetworks": "Liczba wszystkich sieci:",
+				"totalMembers": "Liczba wszystkich członków sieci:",
+				"totalUnlinkedNetworks": "Liczba wszystkich niepodpiętych sieci:",
+				"unlinkedNetworks": {
+					"title": "Niepodpięte sieci",
+					"description": "Ta sekcja zawiera listę wszystkich sieci, które nie są obecnie podpięte do żadnego użytkownika w bazie danych ZTnet. Zwykle pochodzą one z niestandardowych kontrolerów ZeroTier, które zostały dodane przez użytkowników, ale nie są jeszcze zarządzane w ZTNET. Lista ta daje możliwość przypisania niezarządzanych sieci konkretnym użytkownikom administracyjnym. Może to być szczególnie przydatne, jeśli użytkownik dodał niestandardowy kontroler ZeroTier, który nie był jeszcze zarządzany przez ZTnet.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Nazwa sieci",
+						"creationTime": "Czas utworzenia",
+						"members": "Członkowie sieci",
+						"assign": "Przypisz"
+					},
+					"assignModal": {
+						"title": "Czy na pewno chcesz przypisać użytkownika {user} do sieci {network}?",
+						"description": "Ta operacja nie może być cofnięta"
+					}
+				}
+			},
+			"management": {
+				"title": "Zarządzanie",
+				"allowManagementFrom": "Zezwól na zarządzanie z:",
+				"allowTcpFallbackRelay": "Zezwól na rezerwowe przekazywanie TCP:",
+				"listeningOn": "Nasłuchiwanie na:"
+			},
+			"controllerStatus": {
+				"title": "Status kontrolera",
+				"online": "Online:",
+				"tcpFallbackActive": "Aktywne rezerwowe przekazywanie TCP:",
+				"version": "Wersja:"
+			},
+			"controllerConfig": {
+				"danger_zone": "STREFA NIEBEZPIECZNA",
+				"proceed_with_caution": "<span>Postępuj ostrożnie:</span>",
+				"modification_warning": "Modyfikowanie adresu URL kontrolera ZeroTier ma wpływ na wszystkich użytkowników. Chociaż zapewnia to elastyczność dla tych, którzy chcą niestandardowego kontrolera, należy pamiętać o potencjalnych zakłóceniach i problemach ze zgodnością. Zawsze wykonaj kopię zapasową konfiguracji przed zmianami.",
+				"local_zerotier_url": "Lokalny URL Zerotier",
+				"zerotier_secret": "Sekretny klucz Zerotier",
+				"submit_empty_field_default": "Zatwierdź puste pole aby użyć wartości domyślnej.",
+				"isUsingEnvVariablesAlert": "Zmienne środowiskowe <span>ZT_ADDR lub ZT_SECRET</span> mają pierwszeństwo i zastępują wszelkie zmiany adresu URL wprowadzone za pomocą interfejsu użytkownika. Aby zaktualizować odpowiednie pola za pośrednictwem interfejsu użytkownika, należy najpierw usunąć zmienne środowiskowe ZT_ADDR lub ZT_SECRET."
+			},
+			"generatePlanet": {
+				"updatePlanetWarning": "Aktualizacja pliku planet zmodyfikuje podstawową strukturę Twojej sieci ZeroTier, wpływając na trasy, elastyczność i potencjalną dostępność. Postępuj ostrożnie, rozumiejąc konsekwencje.",
+				"customPlanetInUse": "Niestandardowe ustawienia planet są już w użyciu!",
+				"customPortIsInUse": "NOTA! Niestandardowy port jest w użyciu",
+				"customPortIsInUseDescription": "Musisz dodać <kbd>ZT_PRIMARY_PORT:port</kbd> do zmiennych środowiskowych ZeroTier w Docker Compose.",
+				"downloadPlanetInfo": "Jeśli potrzebujesz, plik planety jest dostępny do pobrania pod następującym adresem URL:",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "Wygeneruj prywatny root",
+				"generatePrivateRootPlaceholder": "Dodaj prywatny root do Twojego kontrolera",
+				"commentDescription": "Dodaj komentarz dla tej planety (opcjonalnie)",
+				"commentPlaceholder": "Wprowadź komentarz",
+				"identityDescription": "Tożsamość (opcjonalnie). Wartość domyślna to zawartość bieżącego pliku identity.public",
+				"endpointsDescription": "Wprowadź zewnętrzny adres IP swojego kontrolera. W przypadku wielu adresów użyj formatu rozdzielanego przecinkami (IP/PORT). Na przykład: '84.17.53.155/9993,2a02:6ea0:d405::/9993'. Jeśli chcesz, aby węzły spoza sieci lokalnej mogły się łączyć, upewnij się, że te adresy są osiągalne globalnie.",
+				"endpointsPlaceholder": "zewnętrzne ip/9993",
+				"plRecommend": "Auto-Generowanie ID",
+				"birthLabel": "Narodziny (plBirth)",
+				"birthPlaceholder": "Wprowadź narodziny",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Wprowadź ID",
+				"buttons": {
+					"editPlanetConfig": "ZMIEŃ KONFIGURACJĘ PLANETY",
+					"createPlanet": "UTWÓRZ PLANETĘ",
+					"uploadConfig": "WGRAJ KONFIGURACJĘ",
+					"updateWorld": "Zaktualizuj Świat",
+					"downloadPlanetButton": "Pobierz konfigurację",
+					"restoreOriginalPlanetButton": "Przywróć oryginalne ustawienia Planety"
+				},
+				"modal": {
+					"noteTitle": "NOTA!",
+					"customPlanetGenerated": "Niestandardowa planeta została wygenerowana.",
+					"restartContainerInstructions": "Musisz zrestartować kontener zerotier, aby załadować nową konfigurację:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Przywróć oryginalne ustawienia Planety",
+					"restoreOriginalPlanetContent": "Czy na pewno chcesz przywrócić oryginalny plik planety? Upewnij się, że masz kopię zapasową aktualnej planety w celu zachowania bieżących kluczy."
+				}
+			},
+			"yes": "Tak",
+			"no": "Nie"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "Zarządzanie zespołem",
+				"description": "Poznaj Organizacje aby rozpocząć współpracę Twojego zespołu. Przypisuj role, zapraszaj nowych członków i nadzoruj podstawowe uprawnienia w swojej organizacji. Ta beta funkcja zaprojektowana została z myślą o prostocie i łatwości obsługi, stanowi podstawę współpracy Twojego zespołu. Ponieważ stale rozwijamy i ulepszamy te ustawienia, zapraszamy do przesyłania opinii, które pomogą nam udoskonalać wrażenia w obsługiwaniu aplikacji.",
+				"inputFields": {
+					"label": "Dodaj organizację",
+					"description": "Utwórz nową organizację",
+					"organizationName": {
+						"description": "Nazwa organizacji"
+					},
+					"organizationDescription": {
+						"description": "Opis organizacji (opcjonalnie)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Usuwanie organizacji",
+					"description": "Czy na pewno chce usunąć tę organizację?",
+					"description2": "Ta czynność spowoduje trwałe usunięcie organizacji wraz ze wszystkimi jej sieciami, członkami i powiązanymi danymi. Tej akcji nie można cofnąć!",
+					"confirmation": "Potwierdź, że chcesz kontynuować usunięcie organizacji.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Aby potwierdzić, wpisz nazwę organizacji"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Nazwa organizacji:",
+				"description": "Opis organizacji:",
+				"numberOfMembers": "Liczba użytkowników:",
+				"pendingInvitations": "Oczekujące zaproszenia:",
+				"activeWebhooks": "Aktywne Webhooki:",
+				"invitationModal": {
+					"title": "Zaproszenie do organizacji",
+					"description": "Zanim dodasz użytkownika do swojej organizacji, pamiętaj, że musi on być zarejestrowany w aplikacji",
+					"inputFields": {
+						"searchUser": {
+							"title": "Wyszukaj użytkownika, którego chcesz dodać",
+							"placeholder": "Szukaj użytkownika"
+						},
+						"userRole": {
+							"title": "Wybierz rolę użytkownika"
+						}
+					}
+				},
+				"webhookModal": {
+					"editWebhookTitle": "Edytuj Webhook",
+					"createWebhookTitle": "Utwórz Webhook dla organizacji <span>{organization}</span>",
+					"webhookName": "Nazwa Webhooka",
+					"webhookNameDescription": "To pole służy do wpisania nazwy webhooka. Nazwa służy do identyfikacji webhooka i powinna być na tyle unikalna, aby odróżnić ją od innych webhooków.",
+					"selectWebhookActions": "Wybierz akcje dla webhooka",
+					"selectWebhookActionsDescription": "To menu rozwijane pozwala wybrać konkretne działania, które powinien wykonać webhook. Każda opcja reprezentuje inny typ akcji.",
+					"webhookUrl": "URL Webhooka (HTTPS)",
+					"webhookUrlDescription": "To pole służy do wpisania adresu URL, pod który webhook będzie wysyłał dane. Musi to być prawidłowy i dostępny adres URL, który odbierze i przetworzy przychodzące dane."
+				}
+			}
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Konto",
+			"network": "Sieć",
+			"user": "Użytkownik"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Ustawienia konta",
+				"nameLabel": "Nazwa",
+				"emailLabel": "Email",
+				"verifiedBadge": "Zweryfikowany",
+				"notVerifiedBadge": "Niezweryfikowany",
+				"passwordLabel": "Hasło",
+				"currentPasswordPlaceholder": "Aktualne hasło",
+				"newPasswordPlaceholder": "Nowe hasło",
+				"repeatNewPasswordPlaceholder": "Powtórz nowe hasło",
+				"role": "Rola"
+			},
+			"restapi": {
+				"sectionTitle": "Tokeny dostępowe API",
+				"description": "Dzięki temu możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",
+				"inputFields": {
+					"tokenName": {
+						"label": "Nadaj nazwę tokena",
+						"placeholder": "Mój wspaniały token"
+					}
+				},
+				"buttons": {
+					"submitToken": "Generuj token",
+					"cancle": "Usuń token"
+				},
+				"response": {
+					"title": "Kliknij token aby skopiować do schowka",
+					"info": "Uwaga! Ten token wyświetlony będzie tylko raz. Skopiuj go proszę teraz!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Usuwanie tokena",
+						"description": "Czy na pewno chcesz usunąć ten token? Operacja nie może być cofnięta."
+					}
+				}
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Włączenie Twojego ZeroTier Central API umożliwi Ci zarządzanie sieciami centralnymi bezpośrednio z ZTNET. Po zintegrowaniu klucza na pasku bocznym pojawi się nowe menu zapewniające lepszą dostępność i kontrolę.<br></br>Klucz możesz uzyskać z portalu ZeroTier Central. https://my.zerotier.com/account",
+				"apiKeyLabel": "Klucz API Zerotier Central",
+				"apiUrlLabel": "Zerotier API Url",
+				"apiUrlLabelDescription": "Adres URL do API ZeroTier Central, Domyślny to https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Preferencje konta",
+				"languageLabel": "Język"
+			},
+			"application": {
+				"title": "Aplikacja",
+				"version": "Wersja",
+				"developerMode": "tryb developera"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Adnotacje członka sieci",
+				"showMarkerInTable": "Pokaż znacznik w tabeli",
+				"showMarkerInTableDescription": "Spowoduje to dodanie kółka przed nazwą członka sieci z kolorem adnotacji.<br></br>Możesz wyszukiwać adnotację nawet wówczas, kiedy jest wyłączona.",
+				"addBackgroundColorInTable": "Dodaj kolor tła w tabeli",
+				"addBackgroundColorInTableDescription": "Spowoduje to dodanie koloru tła wiersza na podstawie koloru adnotacji.<br></br>Możesz wyszukiwać adnotację nawet wówczas, kiedy jest wyłączona."
+			},
+			"memberTable": {
+				"memberTableTitle": "Tabela członków sieci",
+				"deAuthorizationWarningTitle": "Pokaż ostrzeżenie przy deautoryzacji członka sieci",
+				"deAuthorizationWarningLabel": "Pokaż okno potwierdzenia, aby zapobiec przypadkowym deautoryzacjom.",
+				"addMemberIdAsNameTitle": "Dodaj ID członka sieci jako nazwę po jego dołączeniu",
+				"addMemberIdAsNameLabel": "Po dołączeniu członka do sieci, jego ID (nodeid) będzie dodane jako jego nazwa."
+			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Skontaktuj się z adminem organizacji aby upewnić się, że masz właściwe uprawnienia"
+		},
+		"loading": "Ładowanie...",
+		"organizationDashboard": {
+			"header": "Pulpit organizacji"
+		},
+		"membersSection": {
+			"title": "Użytkownicy",
+			"editUser": "Edycja użytkownika",
+			"role": "Rola"
+		},
+		"informationSection": {
+			"title": "Informacje",
+			"name": "Nazwa:",
+			"created": "Utworzono:",
+			"members": "Użytkownicy:"
+		},
+		"networkSection": {
+			"title": "Sieci",
+			"noNetworksToShow": "Brak sieci do wyświetlenia."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Opuścić organizację?",
+			"confirmationMessage": "Czy na pewno chcesz opuścić tę organizację?",
+			"note": "Nota: Jeśli w przyszłości zdecydujesz się ponownie dołączyć do tej organizacji, administrator będzie musiał Ci wysłać nowe zaproszenie."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "WIAD",
+			"chatHeader": "Wiadomości organizacji",
+			"chatInfo": "Każdy w organizacji będzie mógł zobaczyć Twoje wiadomości.",
+			"messageInputPlaceholder": "Wpisz wiadomość...",
+			"noMessages": "Brak wiadomości."
+		},
+		"logFooter": {
+			"toggleLogLabel": "LOG",
+			"logHeader": "Ostatnie 100 logów aktywności",
+			"loading": "Pobieranie logów..."
+		}
+	}
+}
