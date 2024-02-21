@@ -32,7 +32,7 @@
 	},
 	"commonTable": {
 		"header": {
-			"name": "Nazwa sieci",
+			"name": "Nazwa",
 			"description": "Opis sieci",
 			"networkId": "ID Sieci",
 			"members": "Ilość członków sieci",
