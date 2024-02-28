@@ -10,6 +10,7 @@ import { globalSiteVersion } from "~/utils/global";
 import Link from "next/link";
 import ApiToken from "~/components/userSettings/apiToken";
 import { languageNames, supportedLocales } from "~/locales/lang";
+import ApplicationFontSize from "~/components/userSettings/fontSize";
 
 const defaultLocale = "en";
 
@@ -287,7 +288,7 @@ const Account = () => {
 					</select>
 				</div>
 			</div>
-
+			<ApplicationFontSize />
 			<div>
 				<div className="py-10">
 					<p className="text-gray-400 text-[0.7rem] uppercase">

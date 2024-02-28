@@ -36,6 +36,17 @@ const App: AppType<{ session: Session | null }> = ({
 	useEffect(() => {
 		setIsClient(true);
 	}, []);
+	// font size
+	useEffect(() => {
+		const savedFontSize = localStorage.getItem("appFontSize");
+		const fontSizeOptions = {
+			Small: "text-xs",
+			Medium: "text-base",
+			Large: "text-lg",
+			"Extra Large": "text-xl",
+		};
+		document.documentElement.className = fontSizeOptions[savedFontSize] || "text-base";
+	}, []);
 
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage
