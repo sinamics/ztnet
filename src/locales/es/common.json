@@ -577,8 +577,9 @@
 					}
 				},
 				"webhookModal": {
-					"webhookName": "Webhook Name",
+					"editWebhookTitle": "Editar Webhook",
 					"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
+					"webhookName": "Webhook Name",
 					"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
 					"selectWebhookActions": "Select webhook actions",
 					"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
@@ -640,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "Preferencias de la cuenta",
-				"languageLabel": "Idioma"
+				"languageLabel": "Idioma",
+				"fontSize": "Tamaño de fuente"
 			},
 			"application": {
 				"title": "Aplicación",

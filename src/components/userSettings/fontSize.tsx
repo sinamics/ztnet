@@ -1,6 +1,8 @@
+import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 
 const ApplicationFontSize = () => {
+	const t = useTranslations("userSettings");
 	const [fontSize, setFontSize] = useState(() => {
 		// Get font size from local storage or default to "Medium"
 		const savedFontSize = localStorage.getItem("appFontSize");
@@ -18,14 +20,15 @@ const ApplicationFontSize = () => {
 		Small: "text-xs",
 		Medium: "text-base",
 		Large: "text-lg",
-		"Extra Large": "text-xl",
 	};
 
 	return (
 		<div>
 			<div className="form-control w-full max-w-xs">
 				<label className="label">
-					<span className="label-text font-medium">Font Size</span>
+					<span className="label-text font-medium">
+						{t("account.accountPreferences.fontSize")}
+					</span>
 				</label>
 				<select
 					value={fontSize}

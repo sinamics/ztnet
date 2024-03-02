@@ -268,29 +268,31 @@ const Account = () => {
 				<p className="pt-10 text-[0.7rem] text-gray-400 uppercase">
 					{t("account.accountPreferences.title")}
 				</p>
-				<div className="divider mt-0 p-0 text-gray-500" />
-				<div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text font-medium">
-							{t("account.accountPreferences.languageLabel")}
-						</span>
-					</label>
-					<select
-						defaultValue={locale} // use `defaultValue` here
-						onChange={(e) => void ChangeLanguage(e.target.value)}
-						className="select select-bordered select-sm"
-					>
-						{locales.map((language) => (
-							<option key={language} value={language}>
-								{languageNames[language]}
-							</option>
-						))}
-					</select>
+				<div className="space-y-5">
+					<div className="divider mt-0 p-0 text-gray-500" />
+					<div className="form-control w-full max-w-xs">
+						<label className="label">
+							<span className="label-text font-medium">
+								{t("account.accountPreferences.languageLabel")}
+							</span>
+						</label>
+						<select
+							defaultValue={locale} // use `defaultValue` here
+							onChange={(e) => void ChangeLanguage(e.target.value)}
+							className="select select-bordered select-sm"
+						>
+							{locales.map((language) => (
+								<option key={language} value={language}>
+									{languageNames[language]}
+								</option>
+							))}
+						</select>
+					</div>
+					<ApplicationFontSize />
 				</div>
 			</div>
-			<ApplicationFontSize />
 			<div>
-				<div className="py-10">
+				<div className="pt-10">
 					<p className="text-gray-400 text-[0.7rem] uppercase">
 						{t("account.application.title")}
 					</p>
