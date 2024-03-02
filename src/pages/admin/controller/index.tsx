@@ -115,9 +115,9 @@ const Controller = () => {
 							<p>{t("controller.management.allowTcpFallbackRelay")}</p>
 							<p>{allowTcpFallbackRelay ? "Yes" : "No"}</p>
 						</div>
-						<div className="flex items-center justify-between">
+						<div className="grid grid-cols-3">
 							<p>{t("controller.management.listeningOn")}</p>
-							<div className="list-inside list-disc space-x-2">
+							<div className="col-span-2 gap-1 flex flex-col items-end">
 								{listeningOn?.map((address) => (
 									<span key={address}>{address}</span>
 								))}
