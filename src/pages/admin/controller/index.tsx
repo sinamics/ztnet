@@ -117,7 +117,7 @@ const Controller = () => {
 						</div>
 						<div className="grid grid-cols-3">
 							<p>{t("controller.management.listeningOn")}</p>
-							<div className="col-span-2 gap-1 flex flex-wrap justify-end">
+							<div className="col-span-2 gap-1 flex flex-col items-end">
 								{listeningOn?.map((address) => (
 									<span key={address}>{address}</span>
 								))}
