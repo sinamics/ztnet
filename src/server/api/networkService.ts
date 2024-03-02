@@ -168,7 +168,6 @@ const psql_updateMember = async (
 		if (member.peers && member.conStatus !== 0) {
 			storeValues.lastSeen = new Date();
 		}
-
 		const updateMember = await prisma.network_members.updateMany({
 			where: { nwid: member.nwid, id: member.id },
 			data: storeValues,
