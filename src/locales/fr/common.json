@@ -641,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "Préférences de compte",
-				"languageLabel": "Langue"
+				"languageLabel": "Langue",
+				"fontSize": "Taille de la police"
 			},
 			"application": {
 				"title": "Application",
