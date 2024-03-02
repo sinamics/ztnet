@@ -1,6 +1,11 @@
 import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
+import {
+	enrichMembers,
+	fetchPeersForAllMembers,
+	updateNetworkMembers,
+} from "./server/api/networkService";
 
 type FakeContext = {
 	session: {
@@ -83,6 +88,86 @@ export const CheckExpiredUsers = async () => {
 						isActive: false,
 					},
 				});
+			}
+		},
+		null,
+		true,
+		"America/Los_Angeles",
+	);
+};
+
+export const updatePeers = async () => {
+	new cron.CronJob(
+		// updates every 5 minutes
+
+		"*/10 * * * * *", // every 10 seconds ( testing )
+		// "*/5 * * * *", // every 5min
+		async () => {
+			try {
+				// fetch all users
+				const users = await prisma.user.findMany({
+					where: {
+						isActive: true,
+					},
+					select: {
+						id: true,
+					},
+				});
+
+				// if no users return
+				if (users.length === 0) return;
+
+				// fetch all members for each user
+				for (const user of users) {
+					const networks = await prisma.network.findMany({
+						where: {
+							authorId: user.id,
+						},
+						select: {
+							nwid: true,
+						},
+					});
+
+					// if no networks return
+					if (networks.length === 0) return;
+
+					// fetch all members for each network
+					for (const network of networks) {
+						const context: FakeContext = {
+							session: {
+								user: {
+									id: user.id,
+								},
+							},
+						};
+
+						// get members from the zt controller
+						const ztControllerResponse = await ztController.local_network_detail(
+							// @ts-expect-error
+							context,
+							network.nwid,
+							false,
+						);
+						if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
+
+						// fetch all peers for each member
+						const peersForAllMembers = await fetchPeersForAllMembers(
+							// @ts-expect-error
+							context,
+							ztControllerResponse.members,
+						);
+
+						const enrichedMembers = await enrichMembers(
+							network.nwid,
+							ztControllerResponse.members,
+							peersForAllMembers,
+						);
+						// @ts-expect-error
+						await updateNetworkMembers(context, enrichedMembers);
+					}
+				}
+			} catch (error) {
+				console.error("cron task updatePeers:", error);
 			}
 		},
 		null,
