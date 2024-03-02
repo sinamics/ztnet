@@ -577,6 +577,7 @@
 					}
 				},
 				"webhookModal": {
+					"editWebhookTitle": "编辑 Webhook",
 					"webhookName": "Webhook 名称",
 					"createWebhookTitle": "为组织创建 Webhook <span>{organization}</span>",
 					"webhookNameDescription": "此字段用于输入 webhook 的名称。名称用于识别 webhook，并应足够具有描述性以将其与其他 webhook 区分开。",
@@ -640,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "帐户首选项",
-				"languageLabel": "语言"
+				"languageLabel": "语言",
+				"fontSize": "字体大小"
 			},
 			"application": {
 				"title": "应用",

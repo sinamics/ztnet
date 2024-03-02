@@ -368,69 +368,69 @@
 				"successToastTemplateSaved": "模板已儲存"
 			}
 		},
-    "users": {
+		"users": {
 			"authentication": {
-					"header": "身分驗證",
-					"enableUserRegistration": "啟用使用者註冊？",
-					"generateInvitation": {
-							"header": "建立邀請連結",
-							"secretMessageLabel": "使用者註冊時將被要求輸入此訊息（區分大小寫）",
-							"secretMessagePlaceholder": "新增秘密訊息",
-							"expireTimeLabel": "邀請連結將在此時間後過期",
-							"expireTimePlaceholder": "過期時間（分鐘）",
-							"timeUsedLabel": "此連結可以使用多少次？（可選，預設1次）",
-							"timeUsedPlaceholder": "可使用次數",
-							"activeInvitationsLabel": "有效邀請（點擊取得更多資訊）",
-							"invitationModal": {
-									"header": "邀請詳情",
-									"secretLabel": "秘鑰:",
-									"expiresLabel": "狀態:",
-									"timesUsedLabel": "使用次數:",
-									"invitationLinkLabel": "邀請連結:",
-									"clickToCopyLabel": "點擊複製",
-									"linkCopiedToast": "連結已複製到剪貼簿",
-									"deleteButton": "刪除"
-							}
+				"header": "身分驗證",
+				"enableUserRegistration": "啟用使用者註冊？",
+				"generateInvitation": {
+					"header": "建立邀請連結",
+					"secretMessageLabel": "使用者註冊時將被要求輸入此訊息（區分大小寫）",
+					"secretMessagePlaceholder": "新增秘密訊息",
+					"expireTimeLabel": "邀請連結將在此時間後過期",
+					"expireTimePlaceholder": "過期時間（分鐘）",
+					"timeUsedLabel": "此連結可以使用多少次？（可選，預設1次）",
+					"timeUsedPlaceholder": "可使用次數",
+					"activeInvitationsLabel": "有效邀請（點擊取得更多資訊）",
+					"invitationModal": {
+						"header": "邀請詳情",
+						"secretLabel": "秘鑰:",
+						"expiresLabel": "狀態:",
+						"timesUsedLabel": "使用次數:",
+						"invitationLinkLabel": "邀請連結:",
+						"clickToCopyLabel": "點擊複製",
+						"linkCopiedToast": "連結已複製到剪貼簿",
+						"deleteButton": "刪除"
 					}
+				}
 			},
 			"users": {
-					"sectionTitle": "使用者",
-					"description": "平台上的所有已註冊使用者。",
-					"userOptionModal": {
-							"userGroupLabel": "使用者群組",
-							"userRoleLabel": "使用者角色",
-							"account": {
-									"title": "ZTNet 每天進行一次檢查，查找是否有使用者已過期。如果發現使用者已過期，所有相關的節點將被取消授權，使用者帳戶將被停用。",
-									"userAccountLabel": "帳戶狀態",
-									"userExpireLabel": "帳戶到期"
-							},
-							"userActionsLabel": "使用者操作",
-							"typeUserName": "輸入使用者的名稱。",
-							"buttons": {
-									"deleteUser": "刪除使用者",
-									"cancle": "取消"
-							},
-							"toast": {
-									"deleteUserSuccess": "使用者刪除成功",
-									"nameNotEqual": "您輸入的使用者名稱與使用者的名稱不同。"
-							}
+				"sectionTitle": "使用者",
+				"description": "平台上的所有已註冊使用者。",
+				"userOptionModal": {
+					"userGroupLabel": "使用者群組",
+					"userRoleLabel": "使用者角色",
+					"account": {
+						"title": "ZTNet 每天進行一次檢查，查找是否有使用者已過期。如果發現使用者已過期，所有相關的節點將被取消授權，使用者帳戶將被停用。",
+						"userAccountLabel": "帳戶狀態",
+						"userExpireLabel": "帳戶到期"
 					},
-					"roleDescriptions": {
-							"admin": "作為管理員，此使用者將擁有完全的權限，包括訪問管理面板的權限。",
-							"user": "如果設定為使用者，此使用者將只擁有有限的權限，並且不能訪問管理面板。"
+					"userActionsLabel": "使用者操作",
+					"typeUserName": "輸入使用者的名稱。",
+					"buttons": {
+						"deleteUser": "刪除使用者",
+						"cancle": "取消"
 					},
-					"changeRoleModal": {
-							"title": "修改{name}的角色"
-					},
-					"toastMessages": {
-							"roleChangeSuccess": "角色成功修改",
-							"errorOccurred": "發生未知錯誤"
+					"toast": {
+						"deleteUserSuccess": "使用者刪除成功",
+						"nameNotEqual": "您輸入的使用者名稱與使用者的名稱不同。"
 					}
+				},
+				"roleDescriptions": {
+					"admin": "作為管理員，此使用者將擁有完全的權限，包括訪問管理面板的權限。",
+					"user": "如果設定為使用者，此使用者將只擁有有限的權限，並且不能訪問管理面板。"
+				},
+				"changeRoleModal": {
+					"title": "修改{name}的角色"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "角色成功修改",
+					"errorOccurred": "發生未知錯誤"
+				}
 			},
 			"groups": {
-        "sectionTitle": "使用者群組",
-        "description": "建立一個新的使用者群組以更好地組織平台使用者。將使用者分配到特定群組可以進行受控訪問，設定限制，並根據使用者類型調整設定。",
-        "addGroup": {
+				"sectionTitle": "使用者群組",
+				"description": "建立一個新的使用者群組以更好地組織平台使用者。將使用者分配到特定群組可以進行受控訪問，設定限制，並根據使用者類型調整設定。",
+				"addGroup": {
 					"editGroupTitle": "編輯群組",
 					"deleteGroupTitle": "刪除群組",
 					"deleteGroupDescription": "您確定要刪除此使用者群組嗎？如果已分配，它將從使用者中移除。",
@@ -442,14 +442,14 @@
 					"networkLimitDescription": "設定此群組中使用者可建立的網路數量的最大值",
 					"useAsDefaultPlaceholder": "預設使用",
 					"useAsDefaultDescription": "將此群組設為新使用者的預設群組"
-        }
-    	}
+				}
+			}
 		},
-    "notification": {
+		"notification": {
 			"authentication": "身份驗證",
 			"whenUserRegister": "當使用者註冊時",
 			"allAdminsNotification": "所有管理員將收到通知"
-	},
+		},
 		"controller": {
 			"networkMembers": {
 				"title": "網路與成員",
@@ -473,16 +473,16 @@
 				}
 			},
 			"management": {
-        "title": "管理",
-        "allowManagementFrom": "允許從以下位置管理：",
-        "allowTcpFallbackRelay": "允許 TCP Fallback Relay：",
-        "listeningOn": "正在監聽："
+				"title": "管理",
+				"allowManagementFrom": "允許從以下位置管理：",
+				"allowTcpFallbackRelay": "允許 TCP Fallback Relay：",
+				"listeningOn": "正在監聽："
 			},
 			"controllerStatus": {
-        "title": "控制器狀態",
-        "online": "在線：",
-        "tcpFallbackActive": "TCP Fallback 啟動：",
-        "version": "版本："
+				"title": "控制器狀態",
+				"online": "在線：",
+				"tcpFallbackActive": "TCP Fallback 啟動：",
+				"version": "版本："
 			},
 			"controllerConfig": {
 				"danger_zone": "危險區域",
@@ -494,97 +494,98 @@
 				"isUsingEnvVariablesAlert": "環境變數<span>ZT_ADDR 或 ZT_SECRET</span>將優先覆蓋透過使用者介面所做的任何 URL 修改。要透過使用者介面更新相應欄位，您必須先刪除 ZT_ADDR 或 ZT_SECRET 環境變數。"
 			},
 			"generatePlanet": {
-        "updatePlanetWarning": "更新行星(Planet)配置檔將修改您的 ZeroTier 網路的核心結構，可能會影響路由、彈性和可用性。小心進行，理解其中的含義。",
-        "customPlanetInUse": "自訂行星(Planet)目前正在使用中！",
-        "customPortIsInUse": "注意！使用了自訂埠",
-        "customPortIsInUseDescription": "你需要在 ZeroTier Docker Compose 的環境變數中新增 <kbd>ZT_PRIMARY_PORT:埠</kbd>。",
-        "downloadPlanetInfo": "如果您需要，可以從以下網址下載行星(Planet)配置檔：",
-        "downloadPlanetUrl": "api/planet",
-        "generatePrivateRootLabel": "生成私有根",
-        "generatePrivateRootPlaceholder": "為您的控制器新增私有根",
-        "commentDescription": "為此行星(Planet)新增註釋（可選）",
-        "commentPlaceholder": "輸入註釋",
-        "identityDescription": "身份（可選）。預設值是當前 identity.public 的內容",
-        "endpointsDescription": "輸入您控制器的外部 IP 地址。對於多個地址，請使用逗號分隔的格式（IP/埠）。例如：'84.17.53.155/9993,2a02:6ea0:d405::/9993'。如果您希望本地網路外的節點連接，請確保這些地址可以全球訪問。",
-        "endpointsPlaceholder": "外部 IP/9993",
-        "plRecommend": "自動生成ID",
-        "birthLabel": "出生 (plBirth)",
-        "birthPlaceholder": "輸入出生日期",
-        "idLabel": "身份 (plID)",
-        "idPlaceholder": "輸入ID",
-        "buttons": {
-          "editPlanetConfig": "編輯行星(Planet)配置",
-          "createPlanet": "建立行星(Planet)",
-          "uploadConfig": "上傳配置",
-          "updateWorld": "更新世界",
-          "downloadPlanetButton": "下載配置",
-          "restoreOriginalPlanetButton": "恢復原始行星(Planet)"
-        },
-        "modal": {
-          "noteTitle": "注意！",
-          "customPlanetGenerated": "已生成自訂行星(Planet)。",
-          "restartContainerInstructions": "您需要重新啟動 zerotier 容器以載入新設定：<br></br><br></br><span>docker restart zerotier</span>",
-          "restoreOriginalPlanetTitle": "恢復原始行星(Planet)",
-          "restoreOriginalPlanetContent": "您確定要恢復原始行星(Planet)配置檔嗎？如果您想保留當前的密鑰，請確保備份您當前的行星(Planet)配置檔"
-        }
+				"updatePlanetWarning": "更新行星(Planet)配置檔將修改您的 ZeroTier 網路的核心結構，可能會影響路由、彈性和可用性。小心進行，理解其中的含義。",
+				"customPlanetInUse": "自訂行星(Planet)目前正在使用中！",
+				"customPortIsInUse": "注意！使用了自訂埠",
+				"customPortIsInUseDescription": "你需要在 ZeroTier Docker Compose 的環境變數中新增 <kbd>ZT_PRIMARY_PORT:埠</kbd>。",
+				"downloadPlanetInfo": "如果您需要，可以從以下網址下載行星(Planet)配置檔：",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "生成私有根",
+				"generatePrivateRootPlaceholder": "為您的控制器新增私有根",
+				"commentDescription": "為此行星(Planet)新增註釋（可選）",
+				"commentPlaceholder": "輸入註釋",
+				"identityDescription": "身份（可選）。預設值是當前 identity.public 的內容",
+				"endpointsDescription": "輸入您控制器的外部 IP 地址。對於多個地址，請使用逗號分隔的格式（IP/埠）。例如：'84.17.53.155/9993,2a02:6ea0:d405::/9993'。如果您希望本地網路外的節點連接，請確保這些地址可以全球訪問。",
+				"endpointsPlaceholder": "外部 IP/9993",
+				"plRecommend": "自動生成ID",
+				"birthLabel": "出生 (plBirth)",
+				"birthPlaceholder": "輸入出生日期",
+				"idLabel": "身份 (plID)",
+				"idPlaceholder": "輸入ID",
+				"buttons": {
+					"editPlanetConfig": "編輯行星(Planet)配置",
+					"createPlanet": "建立行星(Planet)",
+					"uploadConfig": "上傳配置",
+					"updateWorld": "更新世界",
+					"downloadPlanetButton": "下載配置",
+					"restoreOriginalPlanetButton": "恢復原始行星(Planet)"
+				},
+				"modal": {
+					"noteTitle": "注意！",
+					"customPlanetGenerated": "已生成自訂行星(Planet)。",
+					"restartContainerInstructions": "您需要重新啟動 zerotier 容器以載入新設定：<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "恢復原始行星(Planet)",
+					"restoreOriginalPlanetContent": "您確定要恢復原始行星(Planet)配置檔嗎？如果您想保留當前的密鑰，請確保備份您當前的行星(Planet)配置檔"
+				}
 			},
 			"yes": "是",
 			"no": "否"
 		},
 		"organization": {
-      "addOrganization": {
-        "title": "團隊管理",
-        "description": "探索組織以開始塑造團隊的合作方式。分配角色，邀請新成員，並監督組織內的基本權限。此beta功能為團隊協作提供了基礎，設計簡單易用。我們將繼續開發和完善這些設置，邀請您提供反饋，以幫助我們完善體驗。",
-        "inputFields": {
-          "label": "新增組織",
-          "description": "建立一個新的組織",
-          "organizationName": {
-            "description": "組織名稱"
-          },
-          "organizationDescription": {
-            "description": "組織描述（可選）"
-          }
-        },
-        "deleteOrganizationModal": {
-          "title": "刪除組織",
-          "description": "你確定要刪除這個組織嗎？",
-          "description2": "此操作將永久刪除該組織及其所有網路、成員和相關資料。此操作無法復原。",
-          "confirmation": "請確認你想繼續刪除組織。",
-          "inputFields": {
-            "organizationName": {
-              "placeholder": "輸入組織名稱以確認"
-            }
-          }
-        }
-      },
+			"addOrganization": {
+				"title": "團隊管理",
+				"description": "探索組織以開始塑造團隊的合作方式。分配角色，邀請新成員，並監督組織內的基本權限。此beta功能為團隊協作提供了基礎，設計簡單易用。我們將繼續開發和完善這些設置，邀請您提供反饋，以幫助我們完善體驗。",
+				"inputFields": {
+					"label": "新增組織",
+					"description": "建立一個新的組織",
+					"organizationName": {
+						"description": "組織名稱"
+					},
+					"organizationDescription": {
+						"description": "組織描述（可選）"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "刪除組織",
+					"description": "你確定要刪除這個組織嗎？",
+					"description2": "此操作將永久刪除該組織及其所有網路、成員和相關資料。此操作無法復原。",
+					"confirmation": "請確認你想繼續刪除組織。",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "輸入組織名稱以確認"
+						}
+					}
+				}
+			},
 			"listOrganization": {
-        "organizationName": "組織名稱：",
-        "description": "描述：",
-        "numberOfMembers": "成員數量：",
-        "pendingInvitations": "待處理的邀請：",
-        "activeWebhooks": "活躍的 Webhooks:",
-        "invitationModal": {
-          "title": "組織邀請",
-          "description": "在將使用者新增到你的組織之前，請注意他們必須已經在應用程式中註冊",
-          "inputFields": {
-            "searchUser": {
-              "title": "搜尋你想新增的使用者",
-              "placeholder": "搜尋使用者"
-            },
-            "userRole": {
-              "title": "選擇使用者角色"
-            }
-          }
-        },
-        "webhookModal": {
-          "webhookName": "Webhook 名稱",
-          "createWebhookTitle": "為組織建立 Webhook <span>{organization}</span>",
-          "webhookNameDescription": "此欄位用於輸入 webhook 的名稱。名稱用於識別 webhook，並應足夠具有描述性以將其與其他 webhook 區分開。",
-          "selectWebhookActions": "選擇 webhook 操作",
-          "selectWebhookActionsDescription": "此下拉選單允許您選擇 webhook 應執行的特定操作。每個選項代表一種不同類型的操作。",
-          "webhookUrl": "Webhook 網址 ( HTTPS )",
-          "webhookUrlDescription": "此欄位用於輸入 webhook 將發送資料的 URL。它必須是一個有效且可訪問的 URL 端點，能夠接收和處理傳入的 webhook 資料。"
-        }
+				"organizationName": "組織名稱：",
+				"description": "描述：",
+				"numberOfMembers": "成員數量：",
+				"pendingInvitations": "待處理的邀請：",
+				"activeWebhooks": "活躍的 Webhooks:",
+				"invitationModal": {
+					"title": "組織邀請",
+					"description": "在將使用者新增到你的組織之前，請注意他們必須已經在應用程式中註冊",
+					"inputFields": {
+						"searchUser": {
+							"title": "搜尋你想新增的使用者",
+							"placeholder": "搜尋使用者"
+						},
+						"userRole": {
+							"title": "選擇使用者角色"
+						}
+					}
+				},
+				"webhookModal": {
+					"editWebhookTitle": "編輯 Webhook",
+					"webhookName": "Webhook 名稱",
+					"createWebhookTitle": "為組織建立 Webhook <span>{organization}</span>",
+					"webhookNameDescription": "此欄位用於輸入 webhook 的名稱。名稱用於識別 webhook，並應足夠具有描述性以將其與其他 webhook 區分開。",
+					"selectWebhookActions": "選擇 webhook 操作",
+					"selectWebhookActionsDescription": "此下拉選單允許您選擇 webhook 應執行的特定操作。每個選項代表一種不同類型的操作。",
+					"webhookUrl": "Webhook 網址 ( HTTPS )",
+					"webhookUrlDescription": "此欄位用於輸入 webhook 將發送資料的 URL。它必須是一個有效且可訪問的 URL 端點，能夠接收和處理傳入的 webhook 資料。"
+				}
 			}
 		}
 	},
@@ -640,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "帳戶偏好設定",
-				"languageLabel": "語言"
+				"languageLabel": "語言",
+				"fontSize": "字體大小"
 			},
 			"application": {
 				"title": "應用程式",

@@ -577,6 +577,7 @@
 					}
 				},
 				"webhookModal": {
+					"editWebhookTitle": "Rediger Webhook",
 					"webhookName": "Webhook-navn",
 					"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
 					"webhookNameDescription": "Dette feltet er for å angi navnet på webhook. Navnet brukes til å identifisere webhook og bør være beskrivende nok til å skille den fra andre webhooks.",
@@ -640,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "Kontoinnstillinger",
-				"languageLabel": "Språk"
+				"languageLabel": "Språk",
+				"fontSize": "Skriftstørrelse"
 			},
 			"application": {
 				"title": "Applikasjon",

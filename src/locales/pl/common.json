@@ -641,7 +641,8 @@
 			},
 			"accountPreferences": {
 				"title": "Preferencje konta",
-				"languageLabel": "Język"
+				"languageLabel": "Język",
+				"fontSize": "Rozmiar czcionki"
 			},
 			"application": {
 				"title": "Aplikacja",
