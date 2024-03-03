@@ -4,11 +4,10 @@ import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
 import {
-	enrichMembers,
 	fetchPeersForAllMembers,
 	fetchZombieMembers,
 	updateNetworkMembers,
-} from "../networkService";
+} from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 
 import RuleCompiler from "~/utils/rule-compiler";
@@ -23,6 +22,7 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
+import { craftMemberFactory } from "../factory/memberFactory";
 
 export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -165,7 +165,7 @@ export const networkRouter = createTRPCRouter({
 			);
 
 			// Enrich controller members with additional database information and peer data
-			const controllerMembers = await enrichMembers(
+			const controllerMembers = await craftMemberFactory(
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
@@ -191,7 +191,6 @@ export const networkRouter = createTRPCRouter({
 					deleted: false,
 				},
 			});
-
 			// Process databaseMembers
 			for (const member of databaseMembers) {
 				if (!mergedMembersMap.has(member.id)) {
