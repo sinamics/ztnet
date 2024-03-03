@@ -6,7 +6,7 @@ import {
 	protectedProcedure,
 } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
-import { customConfig, networkRouter } from "./networkRouter";
+import { networkRouter } from "./networkRouter";
 import * as ztController from "~/utils/ztApi";
 import {
 	ORG_INVITE_TOKEN_SECRET,
@@ -20,6 +20,7 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
+import { nameGeneratorConfig } from "../factory/networkFactory";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -310,7 +311,7 @@ export const organizationRouter = createTRPCRouter({
 
 			if (!input?.networkName) {
 				// Generate adjective and noun word
-				input.networkName = uniqueNamesGenerator(customConfig);
+				input.networkName = uniqueNamesGenerator(nameGeneratorConfig);
 			}
 
 			// Create ZT network
