@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createNetworkService } from "~/server/api/services/networkService";
+import { networkProvisioningFactory } from "~/server/api/factory/networkFactory";
 import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
@@ -61,7 +61,7 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 		prisma,
 	};
 
-	const newNetworkId = await createNetworkService({
+	const newNetworkId = await networkProvisioningFactory({
 		ctx,
 		input: { central: false, name },
 	});
