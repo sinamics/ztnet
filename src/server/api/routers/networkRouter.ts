@@ -1,9 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
-import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import { fetchZombieMembers, updateNetworkMembers } from "../services/networkService";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
@@ -11,20 +9,18 @@ import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
-import { createNetworkService } from "../services/networkService";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { craftMemberFactory } from "../factory/memberFactory";
-import { fetchPeersForAllMembers } from "../services/memberService";
+import {
+	fetchPeersForAllMembers,
+	fetchZombieMembers,
+	syncMemberPeersAndStatus,
+} from "../services/memberService";
 import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
-
-export const customConfig: Config = {
-	dictionaries: [adjectives, animals],
-	separator: "-",
-	length: 2,
-};
+import { networkProvisioningFactory } from "../factory/networkFactory";
 
 const RouteSchema = z.object({
 	target: z
@@ -131,7 +127,11 @@ export const networkRouter = createTRPCRouter({
 			);
 
 			// Update network members based on controller response and fetched peers data
-			await updateNetworkMembers(ctx, ztControllerResponse.members, peersForAllMembers);
+			await syncMemberPeersAndStatus(
+				ctx,
+				ztControllerResponse.members,
+				peersForAllMembers,
+			);
 
 			// Fetch members which are marked as deleted/zombie in the database for a given network
 			const zombieMembers = await fetchZombieMembers(
@@ -1069,7 +1069,7 @@ export const networkRouter = createTRPCRouter({
 		)
 		.mutation(async (props) => {
 			// abstracted due to pages/api/v1/network/index.ts
-			await createNetworkService(props);
+			await networkProvisioningFactory(props);
 		}),
 	setFlowRule: protectedProcedure
 		.input(

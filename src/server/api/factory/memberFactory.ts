@@ -1,5 +1,5 @@
 import { MemberEntity, Paths, Peers } from "~/types/local/member";
-import { retrieveActiveMemberFromDatabase } from "../services/networkService";
+import { retrieveActiveMemberFromDatabase } from "../services/memberService";
 
 export const craftMemberFactory = async (
 	nwid: string,
