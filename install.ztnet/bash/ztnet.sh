@@ -729,7 +729,7 @@ check_existing_env_handler() {
   declare -A env_vars=(
     ["NEXTAUTH_SECRET"]=$(openssl rand -hex 32)
     ["NEXT_PUBLIC_SITE_NAME"]="ZTnet"
-    ["NEXTAUTH_URL_INTERNAL"]="http://localhost:3000"
+    ["NEXTAUTH_URL_INTERNAL"]="http://127.0.0.1:3000"
     ["NEXTAUTH_URL"]="${server_ip}:3000"
     ["ZT_ADDR"]=
     ["ZT_SECRET"]=
