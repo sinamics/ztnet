@@ -42,9 +42,18 @@ const enrichMemberDetails = async (
 	const peers = peersByAddress[dbMember.address] || [];
 	const activePreferredPath = findActivePreferredPeerPath(peers);
 
+	/**
+	 * if no active preferred path is found, return the enriched member details without
+	 * the physical IP address and the rest of the active preferred path.
+	 */
 	if (!activePreferredPath) return { ...dbMember, ...member, peers: {} };
 
 	const { address: physicalAddress, ...restOfActivePreferredPath } = activePreferredPath;
+
+	/**
+	 * if preferred path is found, return the enriched member details, such as
+	 * pyhsical IP address and the rest of the active preferred path.
+	 */
 	return {
 		...dbMember,
 		...member,
