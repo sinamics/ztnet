@@ -13,12 +13,6 @@ export const craftMemberFactory = async (
 	return enrichedMembers.filter(Boolean); // Filters out any null values
 };
 
-const determineActivePreferredPath = (peers: Peers) => {
-	return "paths" in peers && peers.paths.length > 0
-		? peers.paths.find((path: Paths) => path.active && path.preferred)
-		: undefined;
-};
-
 const enrichMemberDetails = async (
 	nwid: string,
 	member: MemberEntity,
@@ -38,4 +32,10 @@ const enrichMemberDetails = async (
 		...member,
 		peers: { ...peers, physicalAddress, ...restOfActivePreferredPath },
 	};
+};
+
+const determineActivePreferredPath = (peers: Peers) => {
+	return "paths" in peers && peers.paths.length > 0
+		? peers.paths.find((path: Paths) => path.active && path.preferred)
+		: undefined;
 };
