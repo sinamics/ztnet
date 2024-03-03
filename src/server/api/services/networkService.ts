@@ -79,26 +79,6 @@ export const retrieveActiveMemberFromDatabase = async (
 	return dbMember && !dbMember.deleted ? dbMember : null;
 };
 
-export const fetchPeersForAllMembers = async (
-	ctx: UserContext,
-	members: MemberEntity[],
-): Promise<Peers[]> => {
-	const memberAddresses = members.map((member) => member.address);
-	const peerPromises = memberAddresses.map((address) =>
-		ztController.peer(ctx, address).catch(() => null),
-	);
-
-	const peers = await Promise.all(peerPromises);
-	const peersByAddress: Peers[] = [];
-
-	// biome-ignore lint/complexity/noForEach: <explanation>
-	memberAddresses.forEach((address, index) => {
-		peersByAddress[address] = peers[index];
-	});
-
-	return peersByAddress;
-};
-
 export const updateNetworkMembers = async (
 	ctx: UserContext,
 	members: MemberEntity[],

@@ -3,13 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import {
-	fetchPeersForAllMembers,
-	fetchZombieMembers,
-	updateNetworkMembers,
-} from "../services/networkService";
-import { Address4, Address6 } from "ip-address";
-
+import { fetchZombieMembers, updateNetworkMembers } from "../services/networkService";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
@@ -23,6 +17,8 @@ import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { craftMemberFactory } from "../factory/memberFactory";
+import { fetchPeersForAllMembers } from "../services/memberService";
+import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
 
 export const customConfig: Config = {
 	dictionaries: [adjectives, animals],
@@ -30,13 +26,6 @@ export const customConfig: Config = {
 	length: 2,
 };
 
-function isValidIP(ip: string): boolean {
-	return Address4.isValid(ip) || Address6.isValid(ip);
-}
-function isValidDomain(domain: string): boolean {
-	const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
-	return domainRegex.test(domain);
-}
 const RouteSchema = z.object({
 	target: z
 		.string()
@@ -57,20 +46,6 @@ const RouteSchema = z.object({
 		.optional(),
 });
 
-function isValidCIDR(cidr: string): boolean {
-	const [ip, prefix] = cidr.split("/");
-	const isIPv4 = isValidIP(ip);
-	const isIPv6 = isValidIP(ip);
-	const prefixNumber = parseInt(prefix);
-
-	if (isIPv4) {
-		return prefixNumber >= 0 && prefixNumber <= 32;
-	}
-	if (isIPv6) {
-		return prefixNumber >= 0 && prefixNumber <= 128;
-	}
-	return false;
-}
 const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
