@@ -7,7 +7,7 @@ import * as ztController from "~/utils/ztApi";
 /**
  * Configuration object for new network name.
  */
-export const customConfig: Config = {
+const nameGeneratorConfig: Config = {
 	dictionaries: [adjectives, animals],
 	separator: "-",
 	length: 2,
@@ -51,7 +51,7 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 
 		if (!input?.name) {
 			// Generate adjective and noun word
-			input.name = uniqueNamesGenerator(customConfig);
+			input.name = uniqueNamesGenerator(nameGeneratorConfig);
 		}
 
 		// Create ZT network
