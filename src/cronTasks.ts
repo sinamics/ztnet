@@ -2,10 +2,10 @@ import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 import {
-	enrichMembers,
 	fetchPeersForAllMembers,
 	updateNetworkMembers,
-} from "./server/api/networkService";
+} from "./server/api/services/networkService";
+import { craftMemberFactory } from "./server/api/factory/memberFactory";
 
 type FakeContext = {
 	session: {
@@ -157,7 +157,7 @@ export const updatePeers = async () => {
 							ztControllerResponse.members,
 						);
 
-						const enrichedMembers = await enrichMembers(
+						const enrichedMembers = await craftMemberFactory(
 							network.nwid,
 							ztControllerResponse.members,
 							peersForAllMembers,
