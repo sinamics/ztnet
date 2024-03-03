@@ -7,7 +7,7 @@ import * as ztController from "~/utils/ztApi";
 /**
  * Configuration object for new network name.
  */
-const nameGeneratorConfig: Config = {
+export const nameGeneratorConfig: Config = {
 	dictionaries: [adjectives, animals],
 	separator: "-",
 	length: 2,
