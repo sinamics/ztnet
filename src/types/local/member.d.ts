@@ -24,7 +24,7 @@ export interface MemberEntity {
 	revision: number;
 	ssoExempt: boolean;
 	tags: NumberPairArray;
-	peers: Peers;
+	peers: Peers | Record<string, never>;
 	lastSeen?: number | datetime;
 	conStatus?: number;
 	vMajor: number;

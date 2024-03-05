@@ -1,12 +1,12 @@
 import { UserContext } from "~/types/ctx";
-import { MemberEntity, Peers } from "~/types/local/member";
+import { MemberEntity, Paths, Peers } from "~/types/local/member";
 import * as ztController from "~/utils/ztApi";
 import { determineConnectionStatus } from "../utils/memberUtils";
-import { network_members } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { sendWebhook } from "~/utils/webhook";
 import { HookType, MemberJoined } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
+import { network_members } from "@prisma/client";
 
 /**
  * Fetches peers for all members.
@@ -35,6 +35,7 @@ export const fetchPeersForAllMembers = async (
 };
 
 /**
+ * syncMemberPeersAndStatus
  * Synchronizes the peers and connection status of the given members.
  * @param ctx - The user context.
  * @param members - An array of member entities.
@@ -42,54 +43,77 @@ export const fetchPeersForAllMembers = async (
  */
 export const syncMemberPeersAndStatus = async (
 	ctx: UserContext,
-	members: MemberEntity[],
+	nwid: string,
+	ztMembers: MemberEntity[],
 	peersByAddress: Peers[],
 ) => {
-	if (!members || members.length === 0) return;
+	if (ztMembers.length === 0) return [];
 
-	for (const member of members) {
-		member.peers = peersByAddress[member.address] || [];
-		member.conStatus = determineConnectionStatus(member);
-	}
+	const updatedMembers = await Promise.all(
+		ztMembers.map(async (ztMember) => {
+			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
+			if (!dbMember) return null;
 
-	await psql_updateMember(ctx, members);
+			const peers = peersByAddress[dbMember.address] || [];
+
+			const activePreferredPath = findActivePreferredPeerPath(peers);
+
+			const flattenPeers = activePreferredPath
+				? {
+						physicalAddress: activePreferredPath.address,
+						...activePreferredPath,
+				  }
+				: {};
+
+			const updatedMember = {
+				...dbMember,
+				...ztMember,
+				peers: activePreferredPath ? flattenPeers : {},
+			} as MemberEntity;
+
+			// Update the connection status
+			updatedMember.conStatus = determineConnectionStatus(updatedMember);
+
+			// Create the object with the data to be updated
+			const updateData: Partial<network_members> = {
+				id: updatedMember.id,
+				address: updatedMember.address,
+			};
+
+			const shouldUpdateLastSeen =
+				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
+
+			// add lastSeen to updateData if the member is connected
+			if (shouldUpdateLastSeen) {
+				updateData.lastSeen = new Date();
+			}
+
+			const updateResult = await prisma.network_members.updateMany({
+				where: { nwid: updatedMember.nwid, id: updatedMember.id },
+				data: updateData,
+			});
+
+			if (updateResult.count === 0) {
+				await addNetworkMember(ctx, updatedMember).catch(console.error);
+			}
+
+			return updatedMember;
+		}),
+	);
+
+	return updatedMembers.filter(Boolean); // Filter out any null values
 };
 
 /**
- * Updates the members in the database with the provided data.
- * If a member does not exist, it will be added to the database.
+ * Determines the active preferred path from the given peers.
  *
- * @param ctx - The user context.
- * @param members - An array of member entities to update.
- * @returns A Promise that resolves when the update is complete.
+ * @param peers - The peers object containing paths.
+ * @returns The active preferred path, or undefined if not found.
  */
-const psql_updateMember = async (
-	ctx: UserContext,
-	members: MemberEntity[],
-): Promise<void> => {
-	for (const member of members) {
-		const storeValues: Partial<network_members> = {
-			id: member.id,
-			address: member.address,
-		};
-
-		if (member.peers && member.conStatus !== 0) {
-			storeValues.lastSeen = new Date();
-		}
-		const updateMember = await prisma.network_members.updateMany({
-			where: { nwid: member.nwid, id: member.id },
-			data: storeValues,
-		});
-
-		if (!updateMember.count) {
-			try {
-				await psql_addMember(ctx, member);
-			} catch (error) {
-				// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-				console.log(error);
-			}
-		}
-	}
+const findActivePreferredPeerPath = (peers: Peers) => {
+	return "paths" in peers && peers.paths.length > 0
+		? peers.paths.find((path: Paths) => path.active && path.preferred)
+		: undefined;
 };
 
 /**
@@ -99,7 +123,7 @@ const psql_updateMember = async (
  * @param member - The member entity to be added.
  * @returns A promise that resolves to the created network member.
  */
-const psql_addMember = async (ctx, member: MemberEntity) => {
+const addNetworkMember = async (ctx, member: MemberEntity) => {
 	const user = await ctx.prisma.user.findFirst({
 		where: {
 			id: ctx.session.user.id,
