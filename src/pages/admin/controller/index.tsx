@@ -103,9 +103,9 @@ const Controller = () => {
 					<div className="pb-10">
 						<p className="text-sm text-gray-400">{t("controller.management.title")}</p>
 						<div className="divider mt-0 p-0 text-gray-500"></div>
-						<div className="flex items-center justify-between">
+						<div className="grid grid-cols-3">
 							<p>{t("controller.management.allowManagementFrom")}</p>
-							<div className="list-inside list-disc space-x-2">
+							<div className="col-span-2 gap-1 flex flex-col items-end">
 								{allowManagementFrom?.map((address) => (
 									<span key={address}>{address}</span>
 								))}
