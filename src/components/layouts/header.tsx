@@ -5,7 +5,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
 
-const Themes = ["light", "dark", "black", "business", "system", "forest"];
+const Themes = ["light", "dark", "system", "black", "business", "forest", "sunset", "luxury", "night", "dim"];
 
 const Header = () => {
 	const session = useSession();
