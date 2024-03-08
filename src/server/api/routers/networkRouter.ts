@@ -123,6 +123,7 @@ export const networkRouter = createTRPCRouter({
 				});
 
 			if (!ztControllerResponse) return throwError("Failed to get network details!");
+
 			/**
 			 * Fetches peers for all members.
 			 */
@@ -141,7 +142,6 @@ export const networkRouter = createTRPCRouter({
 				peersForAllMembers,
 			);
 			// console.log(ztControllerResponse.members);
-
 			/**
 			 * Fetches zombie members.
 			 */
