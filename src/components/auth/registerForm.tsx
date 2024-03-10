@@ -50,7 +50,7 @@ const RegisterForm: React.FC = () => {
 					setLoading(false);
 
 					if (!result.error) {
-						await router.push("/dashboard");
+						await router.push("/network");
 					}
 				})(),
 			onError: (error) => {
