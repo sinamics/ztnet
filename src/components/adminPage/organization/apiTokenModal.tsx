@@ -4,12 +4,9 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-// import { useModalStore } from "~/utils/store";
 
 interface Iprops {
 	organizationId: string;
-	// orgData: Organization & { APIToken: APIToken[] };
-	// invite?: OrganizationInvitation & { tokenUrl: string };
 }
 
 const OrgApiTokenModal = ({ organizationId }: Iprops) => {
@@ -23,28 +20,14 @@ const OrgApiTokenModal = ({ organizationId }: Iprops) => {
 	});
 
 	const { refetch: refetchAllOrgs } = api.org.getAllOrg.useQuery();
-	// const { data: orgData, refetch: refetchOrg } = api.org.getOrgById.useQuery({
-	// 	organizationId,
-	// });
-
-	// const { mutate: deleteToken } = api.org.deleteApiToken.useMutation({
-	// 	onSuccess: () => {
-	// 		refetchOrg();
-	// 		refetchAllOrgs();
-	// 		toast.success("Token deleted successfully");
-	// 	},
-	// });
 
 	const { mutate: generateApiToken } = api.org.generateApiToken.useMutation({
 		onSuccess: (data) => {
 			setToken(data);
-			// refetchOrg();
 			refetchAllOrgs();
-			// closeModal();
 			toast.success("Token generated successfully");
 		},
 	});
-	// const { closeModal } = useModalStore((state) => state);
 	return (
 		<div className="grid grid-cols-4 items-start gap-4">
 			<div className="col-span-4 space-y-10">
