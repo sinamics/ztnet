@@ -318,6 +318,16 @@ export const authOptions: NextAuthOptions = {
 				// If the user does not exist, set user to null
 				return { ...session, user: null };
 			}
+
+			// update users lastseen in the database
+			await prisma.user.update({
+				where: {
+					id: user.id,
+				},
+				data: {
+					lastseen: new Date(),
+				},
+			});
 			session.user = { ...token } as IUser;
 			return session;
 		},
