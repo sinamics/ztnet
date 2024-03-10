@@ -67,7 +67,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	if (session.user) {
 		return {
 			redirect: {
-				destination: "/dashboard",
+				destination: "/network",
 				permanent: false,
 			},
 		};
