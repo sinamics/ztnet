@@ -2,10 +2,7 @@ import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
-import {
-	fetchPeersForAllMembers,
-	syncMemberPeersAndStatus,
-} from "./server/api/services/memberService";
+import { syncMemberPeersAndStatus } from "./server/api/services/memberService";
 
 type FakeContext = {
 	session: {
@@ -165,18 +162,11 @@ export const updatePeers = async () => {
 						);
 						if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
 
-						// fetch all peers for each member
-						const peersForAllMembers = await fetchPeersForAllMembers(
-							// @ts-expect-error
-							context,
-							ztControllerResponse.members,
-						);
 						await syncMemberPeersAndStatus(
 							// @ts-expect-error
 							context,
 							network?.nwid,
 							ztControllerResponse.members,
-							peersForAllMembers,
 						);
 					}
 				}

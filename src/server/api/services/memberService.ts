@@ -9,32 +9,6 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { network_members } from "@prisma/client";
 
 /**
- * Fetches peers for all members.
- * @param ctx - The user context.
- * @param members - An array of member entities.
- * @returns A promise that resolves to an array of peers.
- */
-export const fetchPeersForAllMembers = async (
-	ctx: UserContext,
-	members: MemberEntity[],
-): Promise<Peers[]> => {
-	const memberAddresses = members.map((member) => member.address);
-	const peerPromises = memberAddresses.map((address) =>
-		ztController.peer(ctx, address).catch(() => null),
-	);
-
-	const peers = await Promise.all(peerPromises);
-	const peersByAddress: Peers[] = [];
-
-	// biome-ignore lint/complexity/noForEach: <explanation>
-	memberAddresses.forEach((address, index) => {
-		peersByAddress[address] = peers[index];
-	});
-
-	return peersByAddress;
-};
-
-/**
  * syncMemberPeersAndStatus
  * Synchronizes the peers and connection status of the given members.
  * @param ctx - The user context.
@@ -45,24 +19,21 @@ export const syncMemberPeersAndStatus = async (
 	ctx: UserContext,
 	nwid: string,
 	ztMembers: MemberEntity[],
-	peersByAddress: Peers[],
 ) => {
 	if (ztMembers.length === 0) return [];
 
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
-			const peers = peersByAddress[ztMember.address] || [];
-
+			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
+			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
 			const flattenPeers = activePreferredPath
 				? {
-						physicalAddress: activePreferredPath.address,
-						...activePreferredPath,
+						physicalAddress: activePreferredPath.address || dbMember?.physicalAddress,
+						...peers,
 				  }
 				: {};
-
-			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
@@ -81,12 +52,17 @@ export const syncMemberPeersAndStatus = async (
 			};
 
 			// Check if the member is connected and has peers, if so, update the lastSeen
-			const shouldUpdateLastSeen =
+			const memberIsOnline =
 				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
 
 			// add lastSeen to updateData if the member is connected
-			if (shouldUpdateLastSeen) {
+			if (memberIsOnline) {
 				updateData.lastSeen = new Date();
+			}
+
+			// update physicalAddress if the member is connected
+			if (memberIsOnline && updatedMember?.peers?.physicalAddress) {
+				updateData.physicalAddress = updatedMember.peers.physicalAddress;
 			}
 
 			// Update the member in the database
@@ -117,11 +93,10 @@ const findActivePreferredPeerPath = (peers: Peers) => {
 	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
 		return null;
 	}
-
 	const { paths } = peers;
 	const res = paths.find((path) => path?.active && path?.preferred);
 
-	return { ...res, ...peers };
+	return { ...res };
 };
 
 /**
