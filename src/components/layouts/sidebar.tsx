@@ -79,7 +79,7 @@ const Sidebar = (): JSX.Element => {
 							{t("navigation")}
 						</span>
 					</li>
-					<li className="my-px">
+					{/* <li className="my-px">
 						<Link
 							href="/dashboard"
 							className={`flex h-10 flex-row items-center rounded-lg px-3  
@@ -90,7 +90,6 @@ const Sidebar = (): JSX.Element => {
 							}`}
 						>
 							<span className="flex items-center justify-center text-lg text-gray-400">
-								{/* https://heroicons.com/  */}
 								<svg
 									fill="none"
 									strokeLinecap="round"
@@ -105,7 +104,7 @@ const Sidebar = (): JSX.Element => {
 							</span>
 							<span className="ml-3"> {t("dashboard")}</span>
 						</Link>
-					</li>
+					</li> */}
 
 					<li className="my-px">
 						<Link
