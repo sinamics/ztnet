@@ -129,7 +129,7 @@ export const updatePeers = async () => {
 				const now = new Date();
 				const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
 				const activeUsers = users.filter((user) => {
-					return user?.lastseen < fiveMinutesAgo;
+					return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
 				});
 
 				// fetch all networks for each user
