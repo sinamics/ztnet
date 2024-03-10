@@ -1,16 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
-import { type Config, adjectives, animals } from "unique-names-generator";
 import * as ztController from "~/utils/ztApi";
-import {
-	enrichMembers,
-	fetchPeersForAllMembers,
-	fetchZombieMembers,
-	updateNetworkMembers,
-} from "../networkService";
-import { Address4, Address6 } from "ip-address";
-
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
@@ -18,25 +9,18 @@ import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
 import { type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
-import { createNetworkService } from "../services/networkService";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
+import {
+	fetchPeersForAllMembers,
+	fetchZombieMembers,
+	syncMemberPeersAndStatus,
+} from "../services/memberService";
+import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
+import { networkProvisioningFactory } from "../services/networkService";
 
-export const customConfig: Config = {
-	dictionaries: [adjectives, animals],
-	separator: "-",
-	length: 2,
-};
-
-function isValidIP(ip: string): boolean {
-	return Address4.isValid(ip) || Address6.isValid(ip);
-}
-function isValidDomain(domain: string): boolean {
-	const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
-	return domainRegex.test(domain);
-}
 const RouteSchema = z.object({
 	target: z
 		.string()
@@ -57,20 +41,6 @@ const RouteSchema = z.object({
 		.optional(),
 });
 
-function isValidCIDR(cidr: string): boolean {
-	const [ip, prefix] = cidr.split("/");
-	const isIPv4 = isValidIP(ip);
-	const isIPv6 = isValidIP(ip);
-	const prefixNumber = parseInt(prefix);
-
-	if (isIPv4) {
-		return prefixNumber >= 0 && prefixNumber <= 32;
-	}
-	if (isIPv6) {
-		return prefixNumber >= 0 && prefixNumber <= 128;
-	}
-	return false;
-}
 const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
@@ -112,7 +82,7 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// First, retrieve the network with organization details
-			const psqlNetworkData = await ctx.prisma.network.findUnique({
+			const networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
 					nwid: input.nwid,
 				},
@@ -121,17 +91,17 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			if (!psqlNetworkData) {
+			if (!networkFromDatabase) {
 				return throwError("Network not found!");
 			}
 
 			// Check if the user is the author of the network or part of the associated organization
-			const isAuthor = psqlNetworkData.authorId === ctx.session.user.id;
+			const isAuthor = networkFromDatabase.authorId === ctx.session.user.id;
 			const isMemberOfOrganization =
-				psqlNetworkData.organizationId &&
+				networkFromDatabase.organizationId &&
 				(await ctx.prisma.organization.findFirst({
 					where: {
-						id: psqlNetworkData.organizationId,
+						id: networkFromDatabase.organizationId,
 						users: {
 							some: { id: ctx.session.user.id },
 						},
@@ -142,45 +112,52 @@ export const networkRouter = createTRPCRouter({
 				return throwError("You do not have access to this network!");
 			}
 
+			/**
+			 * Response from the ztController.local_network_detail method.
+			 * @type {Promise<any>}
+			 */
 			const ztControllerResponse = await ztController
-				.local_network_detail(ctx, psqlNetworkData.nwid, false)
+				.local_network_detail(ctx, networkFromDatabase.nwid, false)
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
-			// console.log(JSON.stringify(ztControllerResponse, null, 2));
-			if (!ztControllerResponse) return throwError("Failed to get network details!");
 
+			if (!ztControllerResponse) return throwError("Failed to get network details!");
+			/**
+			 * Fetches peers for all members.
+			 */
 			const peersForAllMembers = await fetchPeersForAllMembers(
 				ctx,
 				ztControllerResponse.members,
 			);
 
-			// Update network members based on controller response and fetched peers data
-			await updateNetworkMembers(ctx, ztControllerResponse.members, peersForAllMembers);
-
-			// Fetch members which are marked as deleted/zombie in the database for a given network
-			const zombieMembers = await fetchZombieMembers(
-				input.nwid,
-				ztControllerResponse.members,
-			);
-
-			// Enrich controller members with additional database information and peer data
-			const controllerMembers = await enrichMembers(
+			/**
+			 * Syncs member peers and status.
+			 */
+			const membersWithStatusAndPeers = await syncMemberPeersAndStatus(
+				ctx,
 				input.nwid,
 				ztControllerResponse.members,
 				peersForAllMembers,
+			);
+			// console.log(ztControllerResponse.members);
+			/**
+			 * Fetches zombie members.
+			 */
+			const zombieMembers = await fetchZombieMembers(
+				input.nwid,
+				membersWithStatusAndPeers,
 			);
 
 			// Generate CIDR options for IP configuration
 			const { cidrOptions } = IPv4gen(null);
 
-			// Merging logic to ensure that members who only exist in local database ( added manually ) are also included in the response
-
-			// Create a map to store members by their id for efficient lookup
+			/**
+			 * Merging logic to ensure that members who only exist in local database ( added manually ) are also included in the response
+			 * Create a map to store members by their id for efficient lookup
+			 */
 			const mergedMembersMap = new Map();
-
-			// Process controllerMembers first for precedence
-			for (const member of controllerMembers) {
+			for (const member of membersWithStatusAndPeers) {
 				mergedMembersMap.set(member.id, member);
 			}
 
@@ -201,12 +178,11 @@ export const networkRouter = createTRPCRouter({
 
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
-
 			// Construct the final response object
 			return {
 				network: {
 					...ztControllerResponse?.network,
-					...psqlNetworkData,
+					...networkFromDatabase,
 					cidr: cidrOptions,
 				},
 				members: mergedMembers,
@@ -1095,7 +1071,7 @@ export const networkRouter = createTRPCRouter({
 		)
 		.mutation(async (props) => {
 			// abstracted due to pages/api/v1/network/index.ts
-			await createNetworkService(props);
+			await networkProvisioningFactory(props);
 		}),
 	setFlowRule: protectedProcedure
 		.input(

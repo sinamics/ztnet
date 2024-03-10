@@ -1,10 +1,27 @@
 import { uniqueNamesGenerator } from "unique-names-generator";
 import { CustomLimitError, throwError } from "~/server/helpers/errorHandler";
+import { type Config, adjectives, animals } from "unique-names-generator";
 import { IPv4gen } from "~/utils/IPv4gen";
-import { customConfig } from "../routers/networkRouter";
 import * as ztController from "~/utils/ztApi";
 
-export const createNetworkService = async ({ ctx, input }) => {
+/**
+ * Configuration object for new network name.
+ */
+export const nameGeneratorConfig: Config = {
+	dictionaries: [adjectives, animals],
+	separator: "-",
+	length: 2,
+};
+
+/**
+ * Creates a network service.
+ * @param {Object} ctx - The context object.
+ * @param {Object} input - The input object.
+ * @returns {Promise<Object>} - The created network service.
+ * @throws {CustomLimitError} - If the user has reached the maximum number of networks allowed for their user group.
+ * @throws {Error} - If an error occurs while creating the network service.
+ */
+export const networkProvisioningFactory = async ({ ctx, input }) => {
 	try {
 		// 1. Fetch the user with its related UserGroup
 		const userWithGroup = await ctx.prisma.user.findUnique({
@@ -34,7 +51,7 @@ export const createNetworkService = async ({ ctx, input }) => {
 
 		if (!input?.name) {
 			// Generate adjective and noun word
-			input.name = uniqueNamesGenerator(customConfig);
+			input.name = uniqueNamesGenerator(nameGeneratorConfig);
 		}
 
 		// Create ZT network
