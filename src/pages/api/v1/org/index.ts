@@ -45,31 +45,44 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 	}
 
 	try {
-		const organization = await prisma.organization.findFirst({
-			where: {
-				id: decryptedData.organizationId,
-			},
-			select: {
-				id: true,
-				orgName: true,
-				ownerId: true,
-				description: true,
-				createdAt: true,
-				users: {
-					select: {
-						id: true,
-						name: true,
-						email: true,
-						organizationRoles: {
-							select: {
-								role: true,
-								organizationId: true,
+		const organization = await prisma.organization
+			.findFirst({
+				where: {
+					id: decryptedData.organizationId,
+				},
+				select: {
+					id: true,
+					orgName: true,
+					ownerId: true,
+					description: true,
+					createdAt: true,
+					users: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							organizationRoles: {
+								where: {
+									organizationId: decryptedData.organizationId,
+								},
+								select: {
+									role: true,
+								},
 							},
 						},
 					},
 				},
-			},
-		});
+			})
+			.then((organization) => ({
+				...organization,
+				users: organization.users.map((user) => ({
+					...user,
+					orgRole:
+						user.organizationRoles.length > 0 ? user.organizationRoles[0].role : null,
+					organizationId: decryptedData.organizationId,
+					organizationRoles: undefined, // Optionally remove organizationRoles if not needed in final output
+				})),
+			}));
 
 		return res.status(200).json(organization);
 	} catch (cause) {
