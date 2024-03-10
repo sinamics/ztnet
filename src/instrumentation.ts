@@ -6,8 +6,8 @@ export async function register() {
 		}
 
 		// update lastseen for all members
-		if (cronTasksModule.updatePeers) {
-			cronTasksModule.updatePeers();
-		}
+		// if (cronTasksModule.updatePeers) {
+		// 	cronTasksModule.updatePeers();
+		// }
 	}
 }
