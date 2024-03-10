@@ -276,7 +276,7 @@ const OrganizationById = ({ user, orgIds }) => {
 											{ organizationId, userId: user.id },
 											{
 												onSuccess: () => {
-													push("/dashboard");
+													push("/network");
 												},
 											},
 										);

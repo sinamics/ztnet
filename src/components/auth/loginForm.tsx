@@ -135,7 +135,7 @@ const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
 		})
 			.then(async (result) => {
 				if (!result.error) {
-					return await router.push("/dashboard");
+					return await router.push("/network");
 				}
 
 				toast.error(result.error, { duration: 10000 });
@@ -154,7 +154,7 @@ const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
 		await signIn("oauth")
 			.then(async () => {
 				if (!oauthError) {
-					return await router.push("/dashboard");
+					return await router.push("/network");
 				}
 				toast.error(`Error occured: ${oauthError}` as string, { duration: 10000 });
 				setLoading((prev) => ({ ...prev, oauth: false }));
