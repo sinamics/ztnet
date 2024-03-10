@@ -5,6 +5,7 @@ const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const SMTP_SECRET = "_smtp";
 export const API_TOKEN_SECRET = "_ztnet_api_token";
+export const ORG_API_TOKEN_SECRET = "_ztnet_organization_api_token";
 export const ORG_INVITE_TOKEN_SECRET = "_ztnet_org_invite";
 export const PASSWORD_RESET_SECRET = "_ztnet_passwd_reset";
 

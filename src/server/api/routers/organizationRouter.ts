@@ -9,6 +9,7 @@ import { IPv4gen } from "~/utils/IPv4gen";
 import { networkRouter } from "./networkRouter";
 import * as ztController from "~/utils/ztApi";
 import {
+	ORG_API_TOKEN_SECRET,
 	ORG_INVITE_TOKEN_SECRET,
 	encrypt,
 	generateInstanceSecret,
@@ -176,6 +177,7 @@ export const organizationRouter = createTRPCRouter({
 				users: true,
 				invitations: true,
 				webhooks: true,
+				APIToken: true,
 			},
 			//order by desc
 			orderBy: {
@@ -964,6 +966,70 @@ export const organizationRouter = createTRPCRouter({
 			return await ctx.prisma.webhook.findMany({
 				where: {
 					id: input.organizationId,
+				},
+			});
+		}),
+	generateApiToken: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				name: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+
+			const token_content: string = JSON.stringify({
+				name: input.name,
+				userId: ctx.session.user.id,
+				organizationId: input.organizationId,
+			});
+
+			const token_hash = encrypt(
+				token_content,
+				generateInstanceSecret(ORG_API_TOKEN_SECRET),
+			);
+
+			// create token
+			return await ctx.prisma.organization.update({
+				where: {
+					id: input.organizationId,
+				},
+				data: {
+					APIToken: {
+						create: {
+							name: input.name,
+							token: token_hash,
+						},
+					},
+				},
+			});
+		}),
+	deleteApiToken: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				tokenId: z.number(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				requiredRole: Role.ADMIN,
+			});
+
+			// delete token
+			return await ctx.prisma.aPIToken.deleteMany({
+				where: {
+					organizationId: input.organizationId,
+					id: input.tokenId,
 				},
 			});
 		}),
