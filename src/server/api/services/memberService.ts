@@ -1,5 +1,5 @@
 import { UserContext } from "~/types/ctx";
-import { MemberEntity, Paths, Peers } from "~/types/local/member";
+import { MemberEntity, Peers } from "~/types/local/member";
 import * as ztController from "~/utils/ztApi";
 import { determineConnectionStatus } from "../utils/memberUtils";
 import { prisma } from "~/server/db";
@@ -51,10 +51,7 @@ export const syncMemberPeersAndStatus = async (
 
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
-			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
-			if (!dbMember) return null;
-
-			const peers = peersByAddress[dbMember.address] || [];
+			const peers = peersByAddress[ztMember.address] || [];
 
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
@@ -65,6 +62,9 @@ export const syncMemberPeersAndStatus = async (
 				  }
 				: {};
 
+			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
+
+			// Merge the data from the database with the data from Controller
 			const updatedMember = {
 				...dbMember,
 				...ztMember,
@@ -80,6 +80,7 @@ export const syncMemberPeersAndStatus = async (
 				address: updatedMember.address,
 			};
 
+			// Check if the member is connected and has peers, if so, update the lastSeen
 			const shouldUpdateLastSeen =
 				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
 
@@ -88,11 +89,13 @@ export const syncMemberPeersAndStatus = async (
 				updateData.lastSeen = new Date();
 			}
 
+			// Update the member in the database
 			const updateResult = await prisma.network_members.updateMany({
 				where: { nwid: updatedMember.nwid, id: updatedMember.id },
 				data: updateData,
 			});
 
+			// If the member was not found in the database, add it
 			if (updateResult.count === 0) {
 				await addNetworkMember(ctx, updatedMember).catch(console.error);
 			}
@@ -111,9 +114,14 @@ export const syncMemberPeersAndStatus = async (
  * @returns The active preferred path, or undefined if not found.
  */
 const findActivePreferredPeerPath = (peers: Peers) => {
-	return "paths" in peers && peers.paths.length > 0
-		? peers.paths.find((path: Paths) => path.active && path.preferred)
-		: undefined;
+	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
+		return null;
+	}
+
+	const { paths } = peers;
+	const res = paths.find((path) => path?.active && path?.preferred);
+
+	return { res, ...peers };
 };
 
 /**
