@@ -96,6 +96,13 @@ export const CheckExpiredUsers = async () => {
 	);
 };
 
+/**
+ * Updates the peers for all active users and their networks.
+ * This function is scheduled to run periodically using a cron job.
+ *
+ * Run every 5 minutes and if user is offline. There is no reason to update if the user is online.
+ * https://github.com/sinamics/ztnet/issues/313
+ */
 export const updatePeers = async () => {
 	new cron.CronJob(
 		// updates every 5 minutes
@@ -156,9 +163,13 @@ export const updatePeers = async () => {
 							context,
 							ztControllerResponse.members,
 						);
-
-						// @ts-expect-error
-						await syncMemberPeersAndStatus(context, enrichedMembers, peersForAllMembers);
+						await syncMemberPeersAndStatus(
+							// @ts-expect-error
+							context,
+							network?.nwid,
+							ztControllerResponse.members,
+							peersForAllMembers,
+						);
 					}
 				}
 			} catch (error) {
