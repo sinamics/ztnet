@@ -19,7 +19,7 @@ import {
 	syncMemberPeersAndStatus,
 } from "../services/memberService";
 import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
-import { networkProvisioningFactory } from "../factory/networkFactory";
+import { networkProvisioningFactory } from "../services/networkService";
 
 const RouteSchema = z.object({
 	target: z
