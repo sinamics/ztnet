@@ -13,11 +13,7 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
-import {
-	fetchPeersForAllMembers,
-	fetchZombieMembers,
-	syncMemberPeersAndStatus,
-} from "../services/memberService";
+import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
 import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 
@@ -123,13 +119,6 @@ export const networkRouter = createTRPCRouter({
 				});
 
 			if (!ztControllerResponse) return throwError("Failed to get network details!");
-			/**
-			 * Fetches peers for all members.
-			 */
-			const peersForAllMembers = await fetchPeersForAllMembers(
-				ctx,
-				ztControllerResponse.members,
-			);
 
 			/**
 			 * Syncs member peers and status.
@@ -138,9 +127,8 @@ export const networkRouter = createTRPCRouter({
 				ctx,
 				input.nwid,
 				ztControllerResponse.members,
-				peersForAllMembers,
 			);
-			// console.log(ztControllerResponse.members);
+
 			/**
 			 * Fetches zombie members.
 			 */

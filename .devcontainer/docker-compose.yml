@@ -7,7 +7,8 @@ services:
       
   # zt container
   zerotier:
-    image: zyclonite/zerotier:1.12.1
+    image: zyclonite/zerotier:1.12.2
+
 
   # ztnet
   ztnet:

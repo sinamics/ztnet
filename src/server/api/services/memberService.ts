@@ -45,15 +45,13 @@ export const syncMemberPeersAndStatus = async (
 	ctx: UserContext,
 	nwid: string,
 	ztMembers: MemberEntity[],
-	peersByAddress: Peers[],
 ) => {
 	if (ztMembers.length === 0) return [];
 
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
-			const peers = peersByAddress[ztMember.address] || [];
+			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
-
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
 			const flattenPeers = activePreferredPath
@@ -121,7 +119,6 @@ const findActivePreferredPeerPath = (peers: Peers) => {
 	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
 		return null;
 	}
-
 	const { paths } = peers;
 	const res = paths.find((path) => path?.active && path?.preferred);
 
