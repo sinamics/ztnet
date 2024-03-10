@@ -94,6 +94,7 @@ export const syncMemberPeersAndStatus = async (
 				where: { nwid: updatedMember.nwid, id: updatedMember.id },
 				data: updateData,
 			});
+
 			// If the member was not found in the database, add it
 			if (updateResult.count === 0) {
 				await addNetworkMember(ctx, updatedMember).catch(console.error);

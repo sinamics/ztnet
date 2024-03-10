@@ -107,8 +107,8 @@ export const updatePeers = async () => {
 	new cron.CronJob(
 		// updates every 5 minutes
 
-		"*/10 * * * * *", // every 10 seconds ( testing )
-		// "*/5 * * * *", // every 5min
+		// "*/10 * * * * *", // every 10 seconds ( testing )
+		"*/5 * * * *", // every 5min
 		async () => {
 			try {
 				// fetch all users
@@ -118,14 +118,22 @@ export const updatePeers = async () => {
 					},
 					select: {
 						id: true,
+						lastseen: true,
 					},
 				});
 
 				// if no users return
 				if (users.length === 0) return;
 
-				// fetch all members for each user
-				for (const user of users) {
+				// Get all users that have been active in the last 5 minutes
+				const now = new Date();
+				const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
+				const activeUsers = users.filter((user) => {
+					return user?.lastseen < fiveMinutesAgo;
+				});
+
+				// fetch all networks for each user
+				for (const user of activeUsers) {
 					const networks = await prisma.network.findMany({
 						where: {
 							authorId: user.id,
