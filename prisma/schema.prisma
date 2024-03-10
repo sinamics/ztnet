@@ -74,17 +74,18 @@ model RootNodes {
 }
 
 model network_members {
-  nodeid       Int                     @id @default(autoincrement())
-  id           String
-  nwid_ref     network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
-  nwid         String
-  lastSeen     DateTime?
-  online       Boolean?                @default(false)
-  deleted      Boolean?                @default(false)
-  name         String?
-  address      String?                 @default("")
-  creationTime DateTime
-  notations    NetworkMemberNotation[]
+  nodeid          Int                     @id @default(autoincrement())
+  id              String
+  nwid_ref        network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  nwid            String
+  lastSeen        DateTime?
+  physicalAddress String?
+  online          Boolean?                @default(false)
+  deleted         Boolean?                @default(false)
+  name            String?
+  address         String?                 @default("")
+  creationTime    DateTime
+  notations       NetworkMemberNotation[]
 
   @@unique([id, nwid])
 }
