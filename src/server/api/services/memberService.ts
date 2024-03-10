@@ -9,32 +9,6 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { network_members } from "@prisma/client";
 
 /**
- * Fetches peers for all members.
- * @param ctx - The user context.
- * @param members - An array of member entities.
- * @returns A promise that resolves to an array of peers.
- */
-export const fetchPeersForAllMembers = async (
-	ctx: UserContext,
-	members: MemberEntity[],
-): Promise<Peers[]> => {
-	const memberAddresses = members.map((member) => member.address);
-	const peerPromises = memberAddresses.map((address) =>
-		ztController.peer(ctx, address).catch(() => null),
-	);
-
-	const peers = await Promise.all(peerPromises);
-	const peersByAddress: Peers[] = [];
-
-	// biome-ignore lint/complexity/noForEach: <explanation>
-	memberAddresses.forEach((address, index) => {
-		peersByAddress[address] = peers[index];
-	});
-
-	return peersByAddress;
-};
-
-/**
  * syncMemberPeersAndStatus
  * Synchronizes the peers and connection status of the given members.
  * @param ctx - The user context.
