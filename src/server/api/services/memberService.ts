@@ -52,17 +52,16 @@ export const syncMemberPeersAndStatus = async (
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
 			const peers = peersByAddress[ztMember.address] || [];
+			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
 			const flattenPeers = activePreferredPath
 				? {
-						physicalAddress: activePreferredPath.address,
+						physicalAddress: activePreferredPath.address || dbMember?.physicalAddress,
 						...peers,
 				  }
 				: {};
-
-			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
