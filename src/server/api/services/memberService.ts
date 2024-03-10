@@ -58,7 +58,7 @@ export const syncMemberPeersAndStatus = async (
 			const flattenPeers = activePreferredPath
 				? {
 						physicalAddress: activePreferredPath.address,
-						...activePreferredPath,
+						...peers,
 				  }
 				: {};
 
@@ -81,12 +81,17 @@ export const syncMemberPeersAndStatus = async (
 			};
 
 			// Check if the member is connected and has peers, if so, update the lastSeen
-			const shouldUpdateLastSeen =
+			const memberIsOnline =
 				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
 
 			// add lastSeen to updateData if the member is connected
-			if (shouldUpdateLastSeen) {
+			if (memberIsOnline) {
 				updateData.lastSeen = new Date();
+			}
+
+			// update physicalAddress if the member is connected
+			if (memberIsOnline && updatedMember?.peers?.physicalAddress) {
+				updateData.physicalAddress = updatedMember.peers.physicalAddress;
 			}
 
 			// Update the member in the database
@@ -121,7 +126,7 @@ const findActivePreferredPeerPath = (peers: Peers) => {
 	const { paths } = peers;
 	const res = paths.find((path) => path?.active && path?.preferred);
 
-	return { ...res, ...peers };
+	return { ...res };
 };
 
 /**
