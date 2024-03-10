@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
+import ApiTokenModal from "~/components/adminPage/organization/apiTokenModal";
 import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "~/components/organization/editOrgModal";
@@ -44,6 +45,16 @@ const ListOrganizations = () => {
 						<p>
 							<strong>{t("organization.listOrganization.numberOfMembers")}</strong>{" "}
 							{org?.users?.length}
+						</p>
+						<p>
+							<strong>Rest API:</strong>{" "}
+							{org?.APIToken ? (
+								<span className="text-success">
+									Active, {org?.APIToken.length} Tokens
+								</span>
+							) : (
+								<span className="text-error">Inactive</span>
+							)}
 						</p>
 						<p className="pt-3">
 							{org?.invitations?.length > 0 ? (
@@ -131,6 +142,22 @@ const ListOrganizations = () => {
 									className="btn btn-sm bg-base-300"
 								>
 									{b("inviteUser")}
+								</button>
+								<button
+									onClick={() =>
+										callModal({
+											rootStyle: "h-3/6",
+											title: (
+												<p>
+													<span>Create Organization API Token</span>
+												</p>
+											),
+											content: <ApiTokenModal organizationId={org.id} orgData={org} />,
+										})
+									}
+									className="btn btn-sm bg-base-300"
+								>
+									API TOKEN
 								</button>
 								<button
 									onClick={() => {
