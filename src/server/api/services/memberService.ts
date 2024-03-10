@@ -94,7 +94,6 @@ export const syncMemberPeersAndStatus = async (
 				where: { nwid: updatedMember.nwid, id: updatedMember.id },
 				data: updateData,
 			});
-
 			// If the member was not found in the database, add it
 			if (updateResult.count === 0) {
 				await addNetworkMember(ctx, updatedMember).catch(console.error);
@@ -121,7 +120,7 @@ const findActivePreferredPeerPath = (peers: Peers) => {
 	const { paths } = peers;
 	const res = paths.find((path) => path?.active && path?.preferred);
 
-	return { res, ...peers };
+	return { ...res, ...peers };
 };
 
 /**
@@ -132,7 +131,7 @@ const findActivePreferredPeerPath = (peers: Peers) => {
  * @returns A promise that resolves to the created network member.
  */
 const addNetworkMember = async (ctx, member: MemberEntity) => {
-	const user = await ctx.prisma.user.findFirst({
+	const user = await prisma.user.findFirst({
 		where: {
 			id: ctx.session.user.id,
 		},
