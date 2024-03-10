@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { networkProvisioningFactory } from "~/server/api/factory/networkFactory";
+import { networkProvisioningFactory } from "~/server/api/services/networkService";
 import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
