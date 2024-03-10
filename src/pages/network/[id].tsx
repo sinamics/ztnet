@@ -69,7 +69,6 @@ const NetworkById = ({ orgIds }: IProps) => {
 	);
 	const { network, members = [] } = networkById || {};
 	const pageTitle = `${globalSiteTitle} - ${network?.name}`;
-
 	if (errorNetwork) {
 		return (
 			<>

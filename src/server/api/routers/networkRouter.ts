@@ -123,7 +123,6 @@ export const networkRouter = createTRPCRouter({
 				});
 
 			if (!ztControllerResponse) return throwError("Failed to get network details!");
-
 			/**
 			 * Fetches peers for all members.
 			 */
@@ -149,6 +148,7 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				membersWithStatusAndPeers,
 			);
+
 			// Generate CIDR options for IP configuration
 			const { cidrOptions } = IPv4gen(null);
 
@@ -178,7 +178,6 @@ export const networkRouter = createTRPCRouter({
 
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
-
 			// Construct the final response object
 			return {
 				network: {
