@@ -4,5 +4,10 @@ export async function register() {
 		if (cronTasksModule.CheckExpiredUsers) {
 			cronTasksModule.CheckExpiredUsers();
 		}
+
+		// update lastseen for all members
+		if (cronTasksModule.updatePeers) {
+			cronTasksModule.updatePeers();
+		}
 	}
 }

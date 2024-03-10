@@ -2,6 +2,11 @@ import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
+import {
+	fetchPeersForAllMembers,
+	syncMemberPeersAndStatus,
+} from "./server/api/services/memberService";
+
 type FakeContext = {
 	session: {
 		user: {
@@ -83,6 +88,81 @@ export const CheckExpiredUsers = async () => {
 						isActive: false,
 					},
 				});
+			}
+		},
+		null,
+		true,
+		"America/Los_Angeles",
+	);
+};
+
+export const updatePeers = async () => {
+	new cron.CronJob(
+		// updates every 5 minutes
+
+		"*/10 * * * * *", // every 10 seconds ( testing )
+		// "*/5 * * * *", // every 5min
+		async () => {
+			try {
+				// fetch all users
+				const users = await prisma.user.findMany({
+					where: {
+						isActive: true,
+					},
+					select: {
+						id: true,
+					},
+				});
+
+				// if no users return
+				if (users.length === 0) return;
+
+				// fetch all members for each user
+				for (const user of users) {
+					const networks = await prisma.network.findMany({
+						where: {
+							authorId: user.id,
+						},
+						select: {
+							nwid: true,
+						},
+					});
+
+					// if no networks return
+					if (networks.length === 0) return;
+
+					// fetch all members for each network
+					for (const network of networks) {
+						const context: FakeContext = {
+							session: {
+								user: {
+									id: user.id,
+								},
+							},
+						};
+
+						// get members from the zt controller
+						const ztControllerResponse = await ztController.local_network_detail(
+							// @ts-expect-error
+							context,
+							network.nwid,
+							false,
+						);
+						if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
+
+						// fetch all peers for each member
+						const peersForAllMembers = await fetchPeersForAllMembers(
+							// @ts-expect-error
+							context,
+							ztControllerResponse.members,
+						);
+
+						// @ts-expect-error
+						await syncMemberPeersAndStatus(context, enrichedMembers, peersForAllMembers);
+					}
+				}
+			} catch (error) {
+				console.error("cron task updatePeers:", error);
 			}
 		},
 		null,
