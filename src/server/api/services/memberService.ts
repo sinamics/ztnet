@@ -76,10 +76,16 @@ export const syncMemberPeersAndStatus = async (
 				await addNetworkMember(ctx, updatedMember).catch(console.error);
 			}
 
+			// Return null if the member is deleted.
+			if (!dbMember) {
+				return null;
+			}
+
+			// Return the updated member
 			return updatedMember;
 		}),
 	);
-
+	// console.log(updatedMembers);
 	return updatedMembers.filter(Boolean); // Filter out any null values
 };
 
@@ -166,7 +172,7 @@ export const retrieveActiveMemberFromDatabase = async (
 	memberId: string,
 ) => {
 	const dbMember = await prisma.network_members.findFirst({
-		where: { nwid, id: memberId },
+		where: { nwid, id: memberId, deleted: false },
 		include: { notations: { include: { label: true } } },
 	});
 	return dbMember && !dbMember.deleted ? dbMember : null;

@@ -134,7 +134,7 @@ export const networkRouter = createTRPCRouter({
 			 */
 			const zombieMembers = await fetchZombieMembers(
 				input.nwid,
-				membersWithStatusAndPeers,
+				ztControllerResponse.members,
 			);
 
 			// Generate CIDR options for IP configuration
