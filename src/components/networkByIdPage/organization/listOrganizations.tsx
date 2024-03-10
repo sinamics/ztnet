@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
-import ApiTokenModal from "~/components/adminPage/organization/apiTokenModal";
+import toast from "react-hot-toast";
+import OrgApiTokenModal from "~/components/adminPage/organization/apiTokenModal";
 import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
 import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "~/components/organization/editOrgModal";
@@ -10,12 +11,18 @@ import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const ListOrganizations = () => {
-	const t = useTranslations("admin");
+	const t = useTranslations();
 	const b = useTranslations("commonButtons");
 	const [openOrgId, setOpenOrgId] = useState(null);
-	const { data: userOrgs } = api.org.getAllOrg.useQuery();
-	const { callModal } = useModalStore((state) => state);
-
+	const { data: userOrgs, refetch: refetchAllOrgs } = api.org.getAllOrg.useQuery();
+	const { callModal, closeModal } = useModalStore((state) => state);
+	const { mutate: deleteToken } = api.org.deleteApiToken.useMutation({
+		onSuccess: () => {
+			refetchAllOrgs();
+			closeModal();
+			toast.success("Token deleted successfully");
+		},
+	});
 	const toggleUsersTable = (orgId) => {
 		if (openOrgId === orgId) {
 			// If the table for this org is already open, close it
@@ -35,31 +42,23 @@ const ListOrganizations = () => {
 				>
 					<div>
 						<p>
-							<strong>{t("organization.listOrganization.organizationName")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.organizationName")}</strong>{" "}
 							{org.orgName}
 						</p>
 						<p>
-							<strong>{t("organization.listOrganization.description")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.description")}</strong>{" "}
 							{org.description}
 						</p>
 						<p>
-							<strong>{t("organization.listOrganization.numberOfMembers")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.numberOfMembers")}</strong>{" "}
 							{org?.users?.length}
-						</p>
-						<p>
-							<strong>Rest API:</strong>{" "}
-							{org?.APIToken ? (
-								<span className="text-success">
-									Active, {org?.APIToken.length} Tokens
-								</span>
-							) : (
-								<span className="text-error">Inactive</span>
-							)}
 						</p>
 						<p className="pt-3">
 							{org?.invitations?.length > 0 ? (
 								<div>
-									<strong>{t("organization.listOrganization.pendingInvitations")}</strong>
+									<strong>
+										{t("admin.organization.listOrganization.pendingInvitations")}
+									</strong>
 									<div className="flex gap-3">
 										{org?.invitations?.map((invite) => (
 											<button
@@ -69,7 +68,7 @@ const ListOrganizations = () => {
 															<p>
 																<span>
 																	{t(
-																		"organization.listOrganization.invitationModal.title",
+																		"admin.organization.listOrganization.invitationModal.title",
 																	)}
 																</span>
 															</p>
@@ -88,10 +87,10 @@ const ListOrganizations = () => {
 							) : null}
 						</p>
 					</div>
-					<div className="py-5">
+					<div className="">
 						{org?.webhooks?.length > 0 ? (
 							<div className="flex items-center gap-4">
-								<strong>{t("organization.listOrganization.activeWebhooks")}</strong>
+								<strong>{t("admin.organization.listOrganization.activeWebhooks")}</strong>
 								<div className="flex gap-3">
 									{org?.webhooks?.map((hook) => (
 										<button
@@ -102,7 +101,7 @@ const ListOrganizations = () => {
 														<p>
 															<span>
 																{t(
-																	"organization.listOrganization.webhookModal.editWebhookTitle",
+																	"admin.organization.listOrganization.webhookModal.editWebhookTitle",
 																)}
 															</span>
 														</p>
@@ -122,6 +121,64 @@ const ListOrganizations = () => {
 							</div>
 						) : null}
 					</div>
+					<div className="py-2 pb-10">
+						{org?.APIToken?.length > 0 ? (
+							<div className="flex items-center gap-4">
+								<strong>API Tokens:</strong>
+								<div className="flex gap-3">
+									{org?.APIToken?.map((token) => (
+										<button
+											className="badge badge-primary cursor-pointer"
+											key={token.id}
+											onClick={() =>
+												callModal({
+													title: <p>Token Info</p>,
+													rootStyle: "text-left",
+													showButtons: true,
+													closeModalOnSubmit: true,
+													content: (
+														<div>
+															<div className="flex justify-between w-3/6">
+																<span className="text-sm text-gray-500">Name:</span>
+																<span>{token.name}</span>
+															</div>
+															<div className="flex justify-between w-3/6">
+																<span className="text-sm text-gray-500">Expires At:</span>
+																{token.expiresAt
+																	? new Date(token.expiresAt).toDateString()
+																	: "Never"}
+															</div>
+															<div className="flex justify-between w-3/6">
+																<span className="text-sm text-gray-500">isActive:</span>
+																{token.isActive ? "True" : "False"}
+															</div>
+															<div className="pt-5">
+																<button
+																	className="btn btn-error btn-sm"
+																	onClick={() =>
+																		deleteToken({
+																			tokenId: token.id,
+																			organizationId: org.id,
+																		})
+																	}
+																>
+																	{t(
+																		"userSettings.account.restapi.modals.deleteToken.title",
+																	)}
+																</button>
+															</div>
+														</div>
+													),
+												})
+											}
+										>
+											{token.name}
+										</button>
+									))}
+								</div>
+							</div>
+						) : null}
+					</div>
 					<div>
 						<div className="p-3 pt-2 flex justify-between">
 							<div className="space-x-2">
@@ -132,7 +189,9 @@ const ListOrganizations = () => {
 											title: (
 												<p>
 													<span>
-														{t("organization.listOrganization.invitationModal.title")}
+														{t(
+															"admin.organization.listOrganization.invitationModal.title",
+														)}
 													</span>
 												</p>
 											),
@@ -146,13 +205,13 @@ const ListOrganizations = () => {
 								<button
 									onClick={() =>
 										callModal({
-											rootStyle: "h-3/6",
+											rootStyle: "",
 											title: (
 												<p>
 													<span>Create Organization API Token</span>
 												</p>
 											),
-											content: <ApiTokenModal organizationId={org.id} orgData={org} />,
+											content: <OrgApiTokenModal organizationId={org.id} />,
 										})
 									}
 									className="btn btn-sm bg-base-300"
@@ -183,7 +242,7 @@ const ListOrganizations = () => {
 												<p>
 													<span>
 														{t.rich(
-															"organization.listOrganization.webhookModal.createWebhookTitle",
+															"admin.organization.listOrganization.webhookModal.createWebhookTitle",
 															{
 																span: (children) => (
 																	<span className="text-primary">{children}</span>

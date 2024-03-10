@@ -274,6 +274,7 @@ export const organizationRouter = createTRPCRouter({
 				include: {
 					userRoles: true,
 					users: true,
+					APIToken: true,
 					networks: {
 						include: {
 							networkMembers: true,
@@ -996,7 +997,7 @@ export const organizationRouter = createTRPCRouter({
 			);
 
 			// create token
-			return await ctx.prisma.organization.update({
+			await ctx.prisma.organization.update({
 				where: {
 					id: input.organizationId,
 				},
@@ -1009,6 +1010,8 @@ export const organizationRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			return token_hash;
 		}),
 	deleteApiToken: protectedProcedure
 		.input(
