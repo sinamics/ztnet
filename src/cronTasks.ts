@@ -125,15 +125,15 @@ export const updatePeers = async () => {
 				// if no users return
 				if (users.length === 0) return;
 
-				// Get all users that have been active in the last 5 minutes
+				// Get all users that have been inactive for 5 minutes
 				const now = new Date();
 				const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
-				const activeUsers = users.filter((user) => {
+				const inactiveUsers = users.filter((user) => {
 					return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
 				});
 
 				// fetch all networks for each user
-				for (const user of activeUsers) {
+				for (const user of inactiveUsers) {
 					const networks = await prisma.network.findMany({
 						where: {
 							authorId: user.id,
