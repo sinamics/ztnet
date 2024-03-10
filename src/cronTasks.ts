@@ -96,12 +96,19 @@ export const CheckExpiredUsers = async () => {
 	);
 };
 
+/**
+ * Updates the peers for all active users and their networks.
+ * This function is scheduled to run periodically using a cron job.
+ *
+ * Run every 5 minutes and if user is offline. There is no reason to update if the user is online.
+ * https://github.com/sinamics/ztnet/issues/313
+ */
 export const updatePeers = async () => {
 	new cron.CronJob(
 		// updates every 5 minutes
 
-		"*/10 * * * * *", // every 10 seconds ( testing )
-		// "*/5 * * * *", // every 5min
+		// "*/10 * * * * *", // every 10 seconds ( testing )
+		"*/5 * * * *", // every 5min
 		async () => {
 			try {
 				// fetch all users
@@ -111,14 +118,22 @@ export const updatePeers = async () => {
 					},
 					select: {
 						id: true,
+						lastseen: true,
 					},
 				});
 
 				// if no users return
 				if (users.length === 0) return;
 
-				// fetch all members for each user
-				for (const user of users) {
+				// Get all users that have been inactive for 5 minutes
+				const now = new Date();
+				const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
+				const inactiveUsers = users.filter((user) => {
+					return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
+				});
+
+				// fetch all networks for each user
+				for (const user of inactiveUsers) {
 					const networks = await prisma.network.findMany({
 						where: {
 							authorId: user.id,
@@ -156,9 +171,13 @@ export const updatePeers = async () => {
 							context,
 							ztControllerResponse.members,
 						);
-
-						// @ts-expect-error
-						await syncMemberPeersAndStatus(context, enrichedMembers, peersForAllMembers);
+						await syncMemberPeersAndStatus(
+							// @ts-expect-error
+							context,
+							network?.nwid,
+							ztControllerResponse.members,
+							peersForAllMembers,
+						);
 					}
 				}
 			} catch (error) {
