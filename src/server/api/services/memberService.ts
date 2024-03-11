@@ -21,25 +21,27 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
-
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
+			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
+			// this will make the node active in all networks it is part of if it is active in one of them.
+			// Should open a issue at ZeroTier
 			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
+
+			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
+
+			// Find the active preferred path in the peers object
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
-			const flattenPeers = activePreferredPath
-				? {
-						physicalAddress: activePreferredPath.address || dbMember?.physicalAddress,
-						...peers,
-				  }
-				: {};
+			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
-				...dbMember,
+				...restOfDbMembers,
 				...ztMember,
-				peers: activePreferredPath ? flattenPeers : {},
+				physicalAddress: activePreferredPath?.address ?? physicalAddress,
+				peers,
 			} as MemberEntity;
 
 			// Update the connection status
@@ -61,8 +63,8 @@ export const syncMemberPeersAndStatus = async (
 			}
 
 			// update physicalAddress if the member is connected
-			if (memberIsOnline && updatedMember?.peers?.physicalAddress) {
-				updateData.physicalAddress = updatedMember.peers.physicalAddress;
+			if (memberIsOnline && updatedMember?.physicalAddress) {
+				updateData.physicalAddress = updatedMember.physicalAddress;
 			}
 
 			// Update the member in the database
@@ -86,6 +88,7 @@ export const syncMemberPeersAndStatus = async (
 		}),
 	);
 	// console.log(updatedMembers);
+	// console.log(updatedMembers[0].peers?.paths);
 	return updatedMembers.filter(Boolean); // Filter out any null values
 };
 
