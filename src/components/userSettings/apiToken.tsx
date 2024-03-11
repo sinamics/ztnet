@@ -7,7 +7,7 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslations } from "next-intl";
-import { ApiType } from "~/types/apiTypes";
+import { AuthorizationType } from "~/types/apiTypes";
 
 const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
@@ -154,12 +154,12 @@ const ApiToken = () => {
 						name: "apiAuthorizationType",
 						type: "dropdown",
 						elementType: "dropdown",
-						selectOptions: Object.keys(ApiType),
-						placeholder: "Select Type",
-						description: "Select API Authorization Type",
+						selectOptions: Object.keys(AuthorizationType),
+						placeholder: "Select Auth Type",
+						title: "Select API Authorization Type",
 					},
 					{
-						name: "expiresAt",
+						name: "daysToExpire",
 						type: "select",
 						elementType: "select",
 						selectOptions: [
@@ -185,7 +185,7 @@ const ApiToken = () => {
 							},
 						],
 						description: "Select Expire Time",
-						placeholder: "Select Type",
+						placeholder: "Select Time",
 					},
 				]}
 				submitHandler={(params) =>

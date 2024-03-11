@@ -94,14 +94,14 @@ export default function MultiSelectDropdown({
 	};
 	const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 	return (
-		<label className="relative w-full" ref={dropdownRef}>
+		<label className="relative" ref={dropdownRef}>
 			<input type="checkbox" className="hidden peer" />
 
 			<div
 				onClick={toggleDropdown}
-				className="w-full cursor-pointer after:content-['▼'] after:text-xs after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform inline-flex border border-gray-700 rounded-xl px-5 py-1"
+				className="w-full flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[10px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border border-gray-700 rounded-md px-3 py-1"
 			>
-				{prompt}
+				<span>{prompt}</span>
 				{isJsEnabled ? (
 					<span className="ml-1 text-blue-500">{`(${selectedOptions.length} selected)`}</span>
 				) : null}

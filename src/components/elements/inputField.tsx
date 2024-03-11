@@ -8,6 +8,7 @@ import MultiSelectDropdown from "./multiSelect";
 interface FieldConfig {
 	name: string;
 	description?: string;
+	title?: string;
 	initialValue?: string;
 	type?: string;
 	placeholder: string;
@@ -202,6 +203,11 @@ const InputField = ({
 								if (field.type === "checkbox") {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -224,6 +230,11 @@ const InputField = ({
 								if (field.elementType === "dropdown" && field.selectOptions) {
 									return (
 										<div key={field.name} className="form-control w-full">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -246,6 +257,11 @@ const InputField = ({
 								if (field.elementType === "select" && field.selectOptions) {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -273,6 +289,11 @@ const InputField = ({
 								if (field.elementType === "textarea") {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}

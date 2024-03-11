@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 
 const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
@@ -61,17 +62,20 @@ export const decrypt = (text: string, secret: Buffer) => {
 type DecryptedTokenData = {
 	userId: string;
 	name: string;
-	organizationId: string;
+	apiAuthorizationType: AuthorizationType;
+	expiresAt: string;
 };
 
 type VerifyToken = {
 	apiKey: string;
 	requireAdmin?: boolean;
+	apiAuthorizationType: AuthorizationType;
 };
 
 export async function decryptAndVerifyToken({
 	apiKey,
 	requireAdmin = false,
+	apiAuthorizationType,
 }: VerifyToken): Promise<DecryptedTokenData> {
 	// Check if API key is provided
 	if (!apiKey) {
@@ -91,6 +95,22 @@ export async function decryptAndVerifyToken({
 	// Validate the decrypted data structure (add more validations as necessary)
 	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
 		throw new Error("Invalid token structure");
+	}
+
+	// validate the authorization type in token with the required authorization type
+	if (
+		!Array.isArray(decryptedData.apiAuthorizationType) ||
+		!decryptedData.apiAuthorizationType.includes(apiAuthorizationType)
+	) {
+		throw new Error("Invalid Authorization Type");
+	}
+
+	// check if the token has expired. if decryptedData.expiresAt is null or undefined, it means the token never expires
+	if (decryptedData.expiresAt) {
+		const expiresAt = new Date(decryptedData.expiresAt);
+		if (expiresAt < new Date()) {
+			throw new Error("Token expired");
+		}
 	}
 
 	// Verify if the user exists and has the required token
@@ -116,76 +136,6 @@ export async function decryptAndVerifyToken({
 	if (user.apiTokens.length === 0) {
 		throw new Error("Invalid or expired token");
 	}
-
-	if (user.role !== "ADMIN" && requireAdmin) {
-		throw new Error("Unauthorized");
-	}
-
-	return decryptedData;
-}
-
-export async function orgDecryptAndVerifyToken({
-	apiKey,
-	requireAdmin = true,
-}: VerifyToken): Promise<DecryptedTokenData> {
-	// Check if API key is provided
-	if (!apiKey) {
-		throw new Error("API key missing");
-	}
-
-	let decryptedData: DecryptedTokenData;
-
-	// Try decrypting the token
-	try {
-		const decryptedString = decrypt(apiKey, generateInstanceSecret(ORG_API_TOKEN_SECRET));
-		decryptedData = JSON.parse(decryptedString);
-	} catch (_error) {
-		throw new Error("Invalid token");
-	}
-
-	// Validate the decrypted data structure (add more validations as necessary)
-	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
-		throw new Error("Invalid token structure");
-	}
-
-	// Verify if the organization exists and has the required token
-	const org = await prisma.organization.findUnique({
-		where: {
-			id: decryptedData.organizationId,
-		},
-		select: {
-			id: true,
-			APIToken: {
-				where: {
-					token: apiKey,
-				},
-			},
-		},
-	});
-
-	if (!org) {
-		throw new Error("Unauthorized");
-	}
-
-	if (org.APIToken.length === 0) {
-		throw new Error("Invalid or expired token");
-	}
-
-	// Verify if the userId in token is valid
-	const user = await prisma.user.findUnique({
-		where: {
-			id: decryptedData.userId,
-		},
-		select: {
-			id: true,
-			role: true,
-			apiTokens: {
-				where: {
-					token: apiKey,
-				},
-			},
-		},
-	});
 
 	if (user.role !== "ADMIN" && requireAdmin) {
 		throw new Error("Unauthorized");

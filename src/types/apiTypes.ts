@@ -1,5 +1,5 @@
 // Define Hook Types
-export enum ApiType {
+export enum AuthorizationType {
 	PERSONAL = "PERSONAL",
 	ORGANIZATION = "ORGANIZATION",
 }
