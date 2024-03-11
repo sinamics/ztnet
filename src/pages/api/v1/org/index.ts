@@ -2,7 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { orgDecryptAndVerifyToken } from "~/utils/encryption";
+import { AuthorizationType } from "~/types/apiTypes";
+import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
 
 // Number of allowed requests per minute
@@ -37,18 +38,26 @@ export default async function apiOrganizationHandler(
 const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	let decryptedData: { userId: string; name?: string; organizationId: string };
+	let decryptedData: { userId: string; name: string };
 	try {
-		decryptedData = await orgDecryptAndVerifyToken({ apiKey });
+		decryptedData = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
 
 	try {
-		const organization = await prisma.organization
-			.findFirst({
+		// get all organizations the user is part of.
+		const organizations = await prisma.organization
+			.findMany({
 				where: {
-					id: decryptedData.organizationId,
+					users: {
+						some: {
+							id: decryptedData.userId,
+						},
+					},
 				},
 				select: {
 					id: true,
@@ -62,9 +71,6 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 							name: true,
 							email: true,
 							organizationRoles: {
-								where: {
-									organizationId: decryptedData.organizationId,
-								},
 								select: {
 									role: true,
 								},
@@ -73,18 +79,22 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 					},
 				},
 			})
-			.then((organization) => ({
-				...organization,
-				users: organization.users.map((user) => ({
-					...user,
-					orgRole:
-						user.organizationRoles.length > 0 ? user.organizationRoles[0].role : null,
-					organizationId: decryptedData.organizationId,
-					organizationRoles: undefined, // Optionally remove organizationRoles if not needed in final output
-				})),
-			}));
+			.then((orgs) => {
+				// only return the organization where the user has Admin role
+				return orgs.filter((org) => {
+					const user = org.users.find((user) => user.id === decryptedData.userId);
+					const adminMember = user?.organizationRoles.some(
+						(role) => role.role === "ADMIN",
+					);
+					// only return org without user object.
+					if (adminMember) {
+						org.users = undefined;
+						return org;
+					}
+				});
+			});
 
-		return res.status(200).json(organization);
+		return res.status(200).json(organizations);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);

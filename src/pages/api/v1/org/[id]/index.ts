@@ -3,7 +3,8 @@ import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { networkProvisioningFactory } from "~/server/api/services/networkService";
 import { prisma } from "~/server/db";
-import { orgDecryptAndVerifyToken } from "~/utils/encryption";
+import { AuthorizationType } from "~/types/apiTypes";
+import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 
@@ -46,7 +47,10 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 
 	// If there are users, verify the API key
 	try {
-		decryptedData = await orgDecryptAndVerifyToken({ apiKey });
+		decryptedData = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
@@ -72,9 +76,12 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	let decryptedData: { userId: string; name?: string; organizationId: string };
+	let decryptedData: { userId: string; name?: string };
 	try {
-		decryptedData = await orgDecryptAndVerifyToken({ apiKey });
+		decryptedData = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
@@ -108,7 +115,6 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 			);
 			arr.push(ztControllerResponse.network);
 		}
-		// console.log(arr);
 		return res.status(200).json({ ...organization, networks: arr });
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
