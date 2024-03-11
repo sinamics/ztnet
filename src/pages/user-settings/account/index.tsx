@@ -65,7 +65,7 @@ const Account = () => {
 					<InputField
 						label={t("account.accountSettings.nameLabel")}
 						isLoading={!session?.user}
-						rootClassName=""
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
 						fields={[
 							{
@@ -83,7 +83,7 @@ const Account = () => {
 					<InputField
 						label={t("account.accountSettings.emailLabel")}
 						isLoading={!session?.user}
-						rootClassName=""
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
 						// badge={
 						// 	session?.user?.emailVerified
@@ -114,7 +114,7 @@ const Account = () => {
 						label={t("account.accountSettings.passwordLabel")}
 						placeholder="******"
 						size="sm"
-						rootFormClassName="space-y-3 pt-2"
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						fields={[
 							{
 								name: "password",
@@ -197,7 +197,7 @@ const Account = () => {
 							label="Zerotier Central API Key"
 							placeholder="******"
 							size="sm"
-							rootFormClassName="space-y-3 pt-2"
+							rootFormClassName="space-y-3 pt-2 w-3/6"
 							fields={[
 								{
 									name: "ztCentralApiKey",
@@ -232,7 +232,7 @@ const Account = () => {
 							label={t("account.zerotierCentral.apiUrlLabel")}
 							description={t("account.zerotierCentral.apiUrlLabelDescription")}
 							size="sm"
-							rootFormClassName="space-y-3 pt-2"
+							rootFormClassName="space-y-3 pt-2 w-3/6"
 							rootClassName="py-2"
 							fields={[
 								{

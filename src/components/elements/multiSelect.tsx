@@ -2,13 +2,21 @@
 
 import { useState, useEffect, useRef } from "react";
 
+interface MultiSelectDropdownProps {
+	formFieldName: string;
+	value: string[];
+	options: string[];
+	onChange: (value: string[]) => void;
+	prompt?: string;
+}
+
 export default function MultiSelectDropdown({
 	formFieldName,
 	value = [],
 	options,
 	onChange,
 	prompt = "Select one or more options",
-}) {
+}: MultiSelectDropdownProps) {
 	const [isJsEnabled, setIsJsEnabled] = useState(false);
 	const [selectedOptions, setSelectedOptions] = useState([]);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -86,12 +94,12 @@ export default function MultiSelectDropdown({
 	};
 	const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 	return (
-		<label className="relative " ref={dropdownRef}>
+		<label className="relative w-full" ref={dropdownRef}>
 			<input type="checkbox" className="hidden peer" />
 
 			<div
 				onClick={toggleDropdown}
-				className="cursor-pointer after:content-['▼'] after:text-xs after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform inline-flex border border-primary rounded-xl px-5 py-1"
+				className="w-full cursor-pointer after:content-['▼'] after:text-xs after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform inline-flex border border-gray-700 rounded-xl px-5 py-1"
 			>
 				{prompt}
 				{isJsEnabled ? (
@@ -99,7 +107,7 @@ export default function MultiSelectDropdown({
 				) : null}
 			</div>
 			{isDropdownOpen && (
-				<div className="custom-scrollbar absolute badge-ghost rounded-sm border  peer-checked:pointer-events-auto w-full max-h-60 overflow-y-scroll">
+				<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-60 overflow-y-scroll">
 					{isJsEnabled && (
 						<ul>
 							<li>
