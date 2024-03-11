@@ -40,7 +40,7 @@ export const syncMemberPeersAndStatus = async (
 			const updatedMember = {
 				...restOfDbMembers,
 				...ztMember,
-				physicalAddress: activePreferredPath.address ?? physicalAddress,
+				physicalAddress: activePreferredPath?.address ?? physicalAddress,
 				peers,
 			} as MemberEntity;
 
