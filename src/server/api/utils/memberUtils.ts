@@ -10,36 +10,32 @@ export enum ConnectionStatus {
 }
 
 export function determineConnectionStatus(member: MemberEntity): ConnectionStatus {
-	// Check for Controller status
 	const regex = new RegExp(`^${member.id}`);
 	if (regex.test(member.nwid)) {
 		return ConnectionStatus.Controller;
 	}
-
-	// Determine if Offline
-	const peerKeys = Object.keys(member?.peers || {});
-	if (!peerKeys || (peerKeys.length === 1 && peerKeys.includes("physicalAddress"))) {
+	// fix for zt version 1.12. Return type of peer is object!.
+	if (!member?.peers || Object.keys(member?.peers).length === 0) {
 		return ConnectionStatus.Offline;
 	}
 
-	// At this point, it is ensured that the peers object exists and has more properties
-	const { latency, paths } = member.peers;
+	if (Array.isArray(member?.peers) && member?.peers.length === 0) {
+		return ConnectionStatus.Offline;
+	}
 
-	// Determine if Relayed
-	if (latency === -1) {
+	if (member?.peers?.latency === -1 || member?.peers?.versionMajor === -1) {
 		return ConnectionStatus.Relayed;
 	}
 
-	// Determine Direct connection type (DirectLAN or DirectWAN)
-	if (Array.isArray(paths) && paths.some((path) => path.active && !path.expired)) {
-		const hasDirectLAN = paths.some((path) => {
+	// Check if at least one path has a private IP
+	if (member?.peers?.paths && member?.peers.paths.length > 0) {
+		for (const path of member.peers.paths) {
 			const ip = path.address.split("/")[0];
-			return isPrivateIP(ip);
-		});
-
-		return hasDirectLAN ? ConnectionStatus.DirectLAN : ConnectionStatus.DirectWAN;
+			if (isPrivateIP(ip)) {
+				return ConnectionStatus.DirectLAN;
+			}
+		}
 	}
 
-	// If none of the above conditions are met, default to Offline as a fallback
-	return ConnectionStatus.Offline;
+	return ConnectionStatus.DirectWAN;
 }
