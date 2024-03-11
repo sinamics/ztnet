@@ -7,6 +7,8 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslations } from "next-intl";
+import MultiSelectDropdown from "../elements/multiSelect";
+import { ApiType } from "~/types/apiTypes";
 
 const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
@@ -147,6 +149,14 @@ const ApiToken = () => {
 						placeholder: t("account.restapi.inputFields.tokenName.placeholder"),
 						description: t("account.restapi.inputFields.tokenName.label"),
 					},
+					{
+						name: "name",
+						type: "select",
+						elementType: "select",
+						selectOptions: Object.keys(ApiType),
+						placeholder: "Select Type",
+						description: "Select API Authorization Type",
+					},
 				]}
 				submitHandler={(params) =>
 					new Promise((resolve) => {
@@ -186,6 +196,7 @@ const ApiToken = () => {
 					})
 				}
 			/>
+
 			<ApiLables tokens={apiTokens} />
 		</div>
 	);

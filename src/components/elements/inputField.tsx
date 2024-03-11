@@ -3,6 +3,8 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 import cn from "classnames";
+import MultiSelectDropdown from "./multiSelect";
+import { ApiType } from "~/types/apiTypes";
 interface FieldConfig {
 	name: string;
 	description?: string;
@@ -228,7 +230,16 @@ const InputField = ({
 													{field.description}
 												</label>
 											) : null}
-											<select
+											<MultiSelectDropdown
+												formFieldName={field.name}
+												options={field.selectOptions}
+												value={formValues[field.name]}
+												// value={input?.hookType}
+												onChange={handleChange}
+												prompt={field.placeholder}
+											/>
+
+											{/* <select
 												ref={i === 0 ? selectRef : undefined}
 												value={String(formValues[field.name])}
 												onChange={handleChange}
@@ -240,7 +251,7 @@ const InputField = ({
 														{option.label}
 													</option>
 												))}
-											</select>
+											</select> */}
 										</div>
 									);
 								}

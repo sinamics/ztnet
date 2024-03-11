@@ -86,12 +86,12 @@ export default function MultiSelectDropdown({
 	};
 	const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 	return (
-		<label className="relative" ref={dropdownRef}>
+		<label className="relative " ref={dropdownRef}>
 			<input type="checkbox" className="hidden peer" />
 
 			<div
 				onClick={toggleDropdown}
-				className="cursor-pointer after:content-['▼'] after:text-xs after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform inline-flex border rounded px-5 py-2"
+				className="cursor-pointer after:content-['▼'] after:text-xs after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform inline-flex border border-primary rounded-xl px-5 py-1"
 			>
 				{prompt}
 				{isJsEnabled ? (
