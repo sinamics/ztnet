@@ -43,7 +43,10 @@ export default async function apiNetworkUpdateMembersHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "POST":
-			await POST_networkUpdateMembers(req, res);
+			await POST_updateNetworkMember(req, res);
+			break;
+		case "DELETE":
+			await POST_deleteNetworkMember(req, res);
 			break;
 		default:
 			// Method Not Allowed
@@ -52,7 +55,14 @@ export default async function apiNetworkUpdateMembersHandler(
 	}
 }
 
-const POST_networkUpdateMembers = async (req: NextApiRequest, res: NextApiResponse) => {
+/**
+ * Handles the POST request to update network members.
+ *
+ * @param req - The NextApiRequest object.
+ * @param res - The NextApiResponse object.
+ * @returns A JSON response indicating the success or failure of the update operation.
+ */
+const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	const networkId = req.query?.id as string;
 	const memberId = req.query?.memberId as string;
@@ -181,6 +191,85 @@ const POST_networkUpdateMembers = async (req: NextApiRequest, res: NextApiRespon
 		// @ts-expect-error
 		const caller = appRouter.createCaller(ctx);
 		const networkAndMembers = await caller.networkMember.getMemberById({
+			nwid: networkId,
+			id: memberId,
+		});
+
+		return res.status(200).json(networkAndMembers);
+	} catch (cause) {
+		if (cause instanceof TRPCError) {
+			const httpCode = getHTTPStatusCodeFromError(cause);
+			try {
+				const parsedErrors = JSON.parse(cause.message);
+				return res.status(httpCode).json({ cause: parsedErrors });
+			} catch (_error) {
+				return res.status(httpCode).json({ error: cause.message });
+			}
+		}
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+/**
+ * Handles the HTTP DELETE request to delete a member from a network.
+ *
+ * @param req - The NextApiRequest object representing the incoming request.
+ * @param res - The NextApiResponse object representing the outgoing response.
+ * @returns A JSON response indicating the success or failure of the operation.
+ */
+const POST_deleteNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
+	const apiKey = req.headers["x-ztnet-auth"] as string;
+	const networkId = req.query?.id as string;
+	const memberId = req.query?.memberId as string;
+
+	let decryptedData: { userId: string; name?: string };
+	try {
+		decryptedData = await decryptAndVerifyToken({ apiKey });
+	} catch (error) {
+		return res.status(401).json({ error: error.message });
+	}
+
+	// Check if the networkId exists
+	if (!networkId) {
+		return res.status(400).json({ error: "Network ID is required" });
+	}
+
+	// Check if the networkId exists
+	if (!memberId) {
+		return res.status(400).json({ error: "Member ID is required" });
+	}
+
+	// assemble the context object
+	const ctx = {
+		session: {
+			user: {
+				id: decryptedData.userId as string,
+			},
+		},
+		prisma,
+		wss: null,
+	};
+
+	try {
+		// make sure the member is valid
+		const network = await prisma.network.findUnique({
+			where: { nwid: networkId, authorId: decryptedData.userId },
+			include: {
+				networkMembers: {
+					where: { id: memberId },
+				},
+			},
+		});
+
+		if (!network?.networkMembers || network.networkMembers.length === 0) {
+			return res
+				.status(401)
+				.json({ error: "Member or Network not found or access denied." });
+		}
+
+		// @ts-expect-error
+		const caller = appRouter.createCaller(ctx);
+		const networkAndMembers = await caller.networkMember.stash({
 			nwid: networkId,
 			id: memberId,
 		});
