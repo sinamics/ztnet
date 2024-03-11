@@ -470,7 +470,12 @@ export const networkMemberRouter = createTRPCRouter({
 				await caller.Update({
 					memberId: input.id,
 					nwid: input.nwid,
-					updateParams: { authorized: false, ipAssignments: [] },
+					updateParams: {
+						authorized: false,
+						ipAssignments: [],
+						tags: [],
+						capabilities: [],
+					},
 				});
 			} catch (error) {
 				console.error(error);
