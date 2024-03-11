@@ -21,25 +21,24 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
-
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
 			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 
-			const flattenPeers = activePreferredPath
-				? {
-						physicalAddress: activePreferredPath.address || dbMember?.physicalAddress,
-						...peers,
-				  }
-				: {};
+			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
+
+			const flattenPeers = {
+				physicalAddress: activePreferredPath?.address || physicalAddress,
+				...peers,
+			};
 
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
-				...dbMember,
+				...restOfDbMembers,
 				...ztMember,
-				peers: activePreferredPath ? flattenPeers : {},
+				peers: flattenPeers,
 			} as MemberEntity;
 
 			// Update the connection status
@@ -85,7 +84,7 @@ export const syncMemberPeersAndStatus = async (
 			return updatedMember;
 		}),
 	);
-	// console.log(updatedMembers);
+	// console.log(updatedMembers[0].peers?.paths);
 	return updatedMembers.filter(Boolean); // Filter out any null values
 };
 

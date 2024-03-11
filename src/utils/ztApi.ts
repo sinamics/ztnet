@@ -627,7 +627,6 @@ export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer> => {
 	const { localControllerUrl } = await getOptions(ctx, false);
 
 	const addr = `${localControllerUrl}/peer`;
-
 	// get headers based on local or central api
 	const { headers } = await getOptions(ctx, false);
 

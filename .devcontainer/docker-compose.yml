@@ -8,8 +8,11 @@ services:
   # zt container
   zerotier:
     image: zyclonite/zerotier:1.12.2
-
-
+    ports:
+      - "9993:9993"
+    environment:
+      - ZT_OVERRIDE_LOCAL_CONF=true
+      - ZT_ALLOW_MANAGEMENT_FROM=0.0.0.0/0
   # ztnet
   ztnet:
     build:
