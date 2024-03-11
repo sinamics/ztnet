@@ -240,7 +240,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 			}),
 			columnHelper.accessor(
 				(row) => {
-					return row?.peers?.physicalAddress;
+					return row?.physicalAddress;
 				},
 				{
 					header: () => <span>{c("header.physicalIp.header")}</span>,

@@ -160,8 +160,8 @@ describe("Update Network Members", () => {
 		);
 	});
 
-	it("should allow only POST method", async () => {
-		const methods = ["GET", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"];
+	it("should allow only POST and DELETE method", async () => {
+		const methods = ["GET", "PUT", "PATCH", "OPTIONS", "HEAD"];
 		const req = {} as NextApiRequest;
 		const res = createMockRes();
 

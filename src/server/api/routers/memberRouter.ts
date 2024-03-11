@@ -265,7 +265,7 @@ export const networkMemberRouter = createTRPCRouter({
 				throwError(error.message);
 			}
 
-			if (input.central) return updatedMember;
+			return updatedMember;
 		}),
 	Tags: protectedProcedure
 		.input(
@@ -466,18 +466,24 @@ export const networkMemberRouter = createTRPCRouter({
 			const caller = networkMemberRouter.createCaller(ctx);
 			//user needs to be de-authorized before deleted.
 			// adding try catch to prevent error if user is not part of the network but still in the database.
+			let response;
 			try {
-				await caller.Update({
+				response = await caller.Update({
 					memberId: input.id,
 					nwid: input.nwid,
-					updateParams: { authorized: false },
+					updateParams: {
+						authorized: false,
+						ipAssignments: [],
+						tags: [],
+						capabilities: [],
+					},
 				});
 			} catch (error) {
 				console.error(error);
 			}
 
 			// Set member with deleted status in database.
-			const memberUpdate = await ctx.prisma.network
+			await ctx.prisma.network
 				.update({
 					where: {
 						nwid: input.nwid,
@@ -489,14 +495,6 @@ export const networkMemberRouter = createTRPCRouter({
 								data: {
 									deleted: true,
 								},
-							},
-						},
-					},
-					include: {
-						networkMembers: {
-							where: {
-								id: input.id,
-								deleted: false,
 							},
 						},
 					},
@@ -520,7 +518,7 @@ export const networkMemberRouter = createTRPCRouter({
 				throwError(error.message);
 			}
 
-			return memberUpdate;
+			return response;
 		}),
 	delete: protectedProcedure
 		.input(
