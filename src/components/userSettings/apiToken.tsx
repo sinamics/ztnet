@@ -7,7 +7,6 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslations } from "next-intl";
-import MultiSelectDropdown from "../elements/multiSelect";
 import { ApiType } from "~/types/apiTypes";
 
 const ApiLables = ({ tokens }) => {
@@ -137,9 +136,11 @@ const ApiToken = () => {
 		<div className="space-y-5">
 			<InputFields
 				label="Api Token"
-				rootFormClassName="flex flex-col space-y-2"
+				rootFormClassName="flex flex-col space-y-2 w-3/6"
+				labelClassName="text-gray-500"
 				size="sm"
 				placeholder=""
+				rootClassName=""
 				buttonText={t("account.restapi.buttons.submitToken")}
 				fields={[
 					{
@@ -150,12 +151,41 @@ const ApiToken = () => {
 						description: t("account.restapi.inputFields.tokenName.label"),
 					},
 					{
-						name: "name",
-						type: "select",
-						elementType: "select",
+						name: "apiAuthorizationType",
+						type: "dropdown",
+						elementType: "dropdown",
 						selectOptions: Object.keys(ApiType),
 						placeholder: "Select Type",
 						description: "Select API Authorization Type",
+					},
+					{
+						name: "expiresAt",
+						type: "select",
+						elementType: "select",
+						selectOptions: [
+							{
+								label: "Never",
+								value: "never",
+							},
+							{
+								label: "1 Day",
+								value: "1",
+							},
+							{
+								label: "10 Days",
+								value: "10",
+							},
+							{
+								label: "1 Month",
+								value: "30",
+							},
+							{
+								label: "1 Year",
+								value: "365",
+							},
+						],
+						description: "Select Expire Time",
+						placeholder: "Select Type",
 					},
 				]}
 				submitHandler={(params) =>
