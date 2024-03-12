@@ -1,11 +1,10 @@
 import { Role } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
@@ -101,19 +100,6 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 		);
 		return res.status(200).json(ztControllerResponse?.network);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-
-		if (cause instanceof Error) {
-			return res.status(500).json({ message: cause.message });
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };
