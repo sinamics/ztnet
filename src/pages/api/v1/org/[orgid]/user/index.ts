@@ -62,7 +62,7 @@ const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) 
 			prisma,
 		};
 		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.getOrgById will check for the same thing
+		// TODO This might be redundant as the caller.getOrgUsers will check for the same thing
 		await checkUserOrganizationRole({
 			ctx,
 			organizationId: orgid,

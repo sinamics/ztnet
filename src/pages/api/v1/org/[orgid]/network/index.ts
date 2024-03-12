@@ -74,11 +74,11 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 		};
 
 		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.getOrgById will check for the same thing
+		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
 		await checkUserOrganizationRole({
 			ctx,
 			organizationId: orgid,
-			minimumRequiredRole: Role.ADMIN,
+			minimumRequiredRole: Role.USER,
 		});
 
 		if (!orgid) {
@@ -114,48 +114,44 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 
 const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
+	// organization id
+	const orgid = req.query?.orgid as string;
 
 	let decryptedData: { userId: string; name?: string };
 	try {
 		decryptedData = await decryptAndVerifyToken({
 			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	// If there are users, verify the API key
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+		// If there are users, verify the API key
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-	};
-	try {
-		const networks = await prisma.user.findFirst({
-			where: {
-				id: decryptedData.userId,
-			},
-			select: {
-				network: true,
-			},
-		});
-		const arr = [];
-		// biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
-		for (const network of networks?.network) {
-			const ztControllerResponse = await ztController.local_network_detail(
-				//@ts-expect-error
-				ctx,
-				network.nwid,
-				false,
-			);
-			arr.push(ztControllerResponse.network);
-		}
+			prisma,
+		};
 
-		return res.status(200).json(arr);
+		// @ts-expect-error
+		const caller = appRouter.createCaller(ctx);
+		const organization = await caller.org
+			.getOrgById({ organizationId: orgid })
+			.then(async (org) => {
+				// Make sure to use `async` here to allow await inside
+				// Use Promise.all to wait for all network detail fetches to complete
+				const networksDetails = await Promise.all(
+					org.networks.map(async (network) => {
+						//@ts-expect-error ctx is mocked
+						const controller = await ztController.local_network_detail(ctx, network.nwid);
+						return controller.network;
+					}),
+				);
+				return networksDetails;
+			});
+
+		return res.status(200).json(organization);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);
