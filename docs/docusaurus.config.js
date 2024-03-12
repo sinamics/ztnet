@@ -41,7 +41,7 @@ const config = {
         docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
         config: {
           // Personal Controller
-          personal_user: { // the <id> referenced when running CLI commands
+          personal_user: {
             specPath: "docs/Rest Api/Personal/_source/user.yml", // path to OpenAPI spec, URLs supported
             outputDir: "docs/Rest Api/Personal/User", // output directory for generated files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
@@ -64,9 +64,23 @@ const config = {
           },
 
           // Organization Controller
-          organization: { // the <id> referenced when running CLI commands
+          organization: {
             specPath: "docs/Rest Api/Organization/_source/organization.yml", // path to OpenAPI spec, URLs supported
             outputDir: "docs/Rest Api/Organization/Organization", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          },
+          organization_users: {
+            specPath: "docs/Rest Api/Organization/_source/users.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Organization/Users", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          },
+          organization_network: {
+            specPath: "docs/Rest Api/Organization/_source/network.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Organization/Network", // output directory for generated files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
