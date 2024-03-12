@@ -40,34 +40,37 @@ const config = {
         id: "api", // plugin id
         docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
         config: {
-          // info: { // the <id> referenced when running CLI commands
-          //   specPath: "docs/Rest Api/info.yml", // path to OpenAPI spec, URLs supported
-          //   outputDir: "docs/Rest Api", // output directory for generated files
-          //   sidebarOptions: { // optional, instructs plugin to generate sidebar.js
-          //     groupPathsBy: "tag", // group sidebar items by operation "tag"
-          //   },
-          // },
-          user: { // the <id> referenced when running CLI commands
-            specPath: "docs/Rest Api/_source/user.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api/User", // output directory for generated files
+          // Personal Controller
+          personal_user: { // the <id> referenced when running CLI commands
+            specPath: "docs/Rest Api/Personal/_source/user.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Personal/User", // output directory for generated files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
           },
-          network: { // the <id> for network
-            specPath: "docs/Rest Api/_source/network.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api/Network", // output directory for network files
+          personal_network: { // the <id> for network
+            specPath: "docs/Rest Api/Personal/_source/network.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Personal/Network", // output directory for network files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
           },
-          networkMember: { // the <id> for network
-            specPath: "docs/Rest Api/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
-            outputDir: "docs/Rest Api/Network-Members", // output directory for network files
+          personal_networkMember: { // the <id> for network
+            specPath: "docs/Rest Api/Personal/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Personal/Network-Members", // output directory for network files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
-          }
+          },
+
+          // Organization Controller
+          organization: { // the <id> referenced when running CLI commands
+            specPath: "docs/Rest Api/Organization/_source/organization.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Organization/Organization", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          },
         }
       },
     ]
