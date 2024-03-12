@@ -92,6 +92,10 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 				return res.status(httpCode).json({ error: cause.message });
 			}
 		}
+
+		if (cause instanceof Error) {
+			return res.status(500).json({ message: cause.message });
+		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
 };
