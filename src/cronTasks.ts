@@ -116,6 +116,11 @@ export const updatePeers = async () => {
 					select: {
 						id: true,
 						lastseen: true,
+						memberOfOrgs: {
+							select: {
+								networks: true,
+							},
+						},
 					},
 				});
 
@@ -129,6 +134,9 @@ export const updatePeers = async () => {
 					return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
 				});
 
+				// keep track of processed networks
+				const processedNetworks = new Set();
+
 				// fetch all networks for each user
 				for (const user of inactiveUsers) {
 					const networks = await prisma.network.findMany({
@@ -140,34 +148,47 @@ export const updatePeers = async () => {
 						},
 					});
 
+					// include get organization networks
+					const organizationNetworks = user.memberOfOrgs?.flatMap((org) =>
+						org.networks.map((network) => ({
+							nwid: network.nwid,
+						})),
+					);
+
+					// merge user and organization networks
+					const allNetworks = [...networks, ...organizationNetworks];
+
 					// if no networks return
-					if (networks.length === 0) return;
+					if (allNetworks.length === 0) return;
 
 					// fetch all members for each network
-					for (const network of networks) {
-						const context: FakeContext = {
-							session: {
-								user: {
-									id: user.id,
+					for (const network of allNetworks) {
+						if (network && !processedNetworks.has(network.nwid)) {
+							processedNetworks.add(network.nwid);
+							const context: FakeContext = {
+								session: {
+									user: {
+										id: user.id,
+									},
 								},
-							},
-						};
+							};
 
-						// get members from the zt controller
-						const ztControllerResponse = await ztController.local_network_detail(
-							// @ts-expect-error
-							context,
-							network.nwid,
-							false,
-						);
-						if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
+							// get members from the zt controller
+							const ztControllerResponse = await ztController.local_network_detail(
+								// @ts-expect-error
+								context,
+								network.nwid,
+								false,
+							);
+							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
 
-						await syncMemberPeersAndStatus(
-							// @ts-expect-error
-							context,
-							network?.nwid,
-							ztControllerResponse.members,
-						);
+							await syncMemberPeersAndStatus(
+								// @ts-expect-error
+								context,
+								network?.nwid,
+								ztControllerResponse.members,
+							);
+						}
 					}
 				}
 			} catch (error) {
