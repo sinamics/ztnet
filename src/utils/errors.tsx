@@ -1,3 +1,6 @@
+import { TRPCError } from "@trpc/server";
+import { getHTTPStatusCodeFromError } from "@trpc/server/http";
+import { NextApiResponse } from "next";
 import toast from "react-hot-toast";
 import { ErrorData } from "~/types/errorHandling";
 
@@ -14,4 +17,21 @@ export const handleErrors = (error: any) => {
 	} else {
 		toast.error("An unknown error occurred");
 	}
+};
+
+export const handleApiErrors = (cause, res: NextApiResponse) => {
+	if (cause instanceof TRPCError) {
+		const httpCode = getHTTPStatusCodeFromError(cause);
+		try {
+			const parsedErrors = JSON.parse(cause.message);
+			return res.status(httpCode).json({ cause: parsedErrors });
+		} catch (_error) {
+			return res.status(httpCode).json({ error: cause.message });
+		}
+	}
+
+	if (cause instanceof Error) {
+		return res.status(500).json({ message: cause.message });
+	}
+	return res.status(500).json({ message: "Internal server error" });
 };
