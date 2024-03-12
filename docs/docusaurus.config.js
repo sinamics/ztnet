@@ -55,7 +55,7 @@ const config = {
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
           },
-          personal_networkMember: { // the <id> for network
+          personal_network_member: { // the <id> for network
             specPath: "docs/Rest Api/Personal/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
             outputDir: "docs/Rest Api/Personal/Network-Members", // output directory for network files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
@@ -81,6 +81,13 @@ const config = {
           organization_network: {
             specPath: "docs/Rest Api/Organization/_source/network.yml", // path to OpenAPI spec, URLs supported
             outputDir: "docs/Rest Api/Organization/Network", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          },
+          organization_network_member: {
+            specPath: "docs/Rest Api/Organization/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Organization/Network-Members", // output directory for generated files
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
