@@ -37,17 +37,21 @@ export default async function apiOrganizationHandler(
 const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	let decryptedData: { userId: string; name: string };
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	try {
+		// const orgUserRole = await prisma.userOrganizationRole.findFirst({
+		// 	where: {
+		// 		userId: decryptedData.userId,
+		// 	},
+		// 	select: {
+		// 		role: true, // Only select the role
+		// 	},
+		// });
+
 		// get all organizations the user is part of.
 		const organizations = await prisma.organization
 			.findMany({
@@ -79,17 +83,9 @@ const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) =
 				},
 			})
 			.then((orgs) => {
-				// only return the organization where the user has Admin role
 				return orgs.filter((org) => {
-					const user = org.users.find((user) => user.id === decryptedData.userId);
-					const adminMember = user?.organizationRoles.some(
-						(role) => role.role === "ADMIN",
-					);
-					// only return org without user object.
-					if (adminMember) {
-						org.users = undefined;
-						return org;
-					}
+					org.users = undefined;
+					return org;
 				});
 			});
 
