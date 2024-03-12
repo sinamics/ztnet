@@ -44,25 +44,41 @@ const ApiLables = ({ tokens }) => {
 					>
 						<div
 							onClick={() => {
+								const joinedAuthorizationType = Array.isArray(token?.apiAuthorizationType)
+									? token.apiAuthorizationType.join(" - ")
+									: "Not Set";
+
 								callModal({
-									title: <p>Token Info</p>,
+									title: <p>{t("account.restapi.viewToken.title")}</p>,
 									rootStyle: "text-left",
 									showButtons: true,
 									closeModalOnSubmit: true,
 									content: (
 										<div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">Name:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.name")}:
+												</span>
 												<span>{token.name}</span>
 											</div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">Expires At:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.authorizationType")}:
+												</span>
+												<span>{joinedAuthorizationType}</span>
+											</div>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.expireAt")}:
+												</span>
 												{token.expiresAt
-													? new Date(token.expiresAt).toDateString()
+													? new Date(token.expiresAt).toLocaleString()
 													: "Never"}
 											</div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">isActive:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.isActive")}:
+												</span>
 												{token.isActive ? "True" : "False"}
 											</div>
 										</div>
@@ -135,7 +151,7 @@ const ApiToken = () => {
 	return (
 		<div className="space-y-5">
 			<InputFields
-				label="Api Token"
+				label={t("account.restapi.generateToken.title")}
 				rootFormClassName="flex flex-col space-y-2 w-3/6"
 				labelClassName="text-gray-500"
 				size="sm"
@@ -147,16 +163,18 @@ const ApiToken = () => {
 						name: "name",
 						type: "text",
 						elementType: "input",
-						placeholder: t("account.restapi.inputFields.tokenName.placeholder"),
-						description: t("account.restapi.inputFields.tokenName.label"),
+						placeholder: t("account.restapi.generateToken.tokenName.placeholder"),
+						description: t("account.restapi.generateToken.tokenName.label"),
 					},
 					{
 						name: "apiAuthorizationType",
 						type: "dropdown",
 						elementType: "dropdown",
 						selectOptions: Object.keys(AuthorizationType),
-						placeholder: "Select Auth Type",
-						title: "Select API Authorization Type",
+						placeholder: t(
+							"account.restapi.generateToken.tokenAuthorizationType.placeholder",
+						),
+						title: t("account.restapi.generateToken.tokenAuthorizationType.label"),
 					},
 					{
 						name: "daysToExpire",
@@ -164,28 +182,28 @@ const ApiToken = () => {
 						elementType: "select",
 						selectOptions: [
 							{
-								label: "Never",
+								label: t("account.restapi.generateToken.tokenExpireAt.values.never"),
 								value: "never",
 							},
 							{
-								label: "1 Day",
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1day"),
 								value: "1",
 							},
 							{
-								label: "10 Days",
+								label: t("account.restapi.generateToken.tokenExpireAt.values.10day"),
 								value: "10",
 							},
 							{
-								label: "1 Month",
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1month"),
 								value: "30",
 							},
 							{
-								label: "1 Year",
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1year"),
 								value: "365",
 							},
 						],
-						description: "Select Expire Time",
-						placeholder: "Select Time",
+						description: t("account.restapi.generateToken.tokenExpireAt.label"),
+						placeholder: t("account.restapi.generateToken.tokenExpireAt.placeholder"),
 					},
 				]}
 				submitHandler={(params) =>

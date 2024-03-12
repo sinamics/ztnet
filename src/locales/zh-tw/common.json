@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "API存取Token",
 				"description": "API存取Token用於訪問ZTNET公共API。",
-				"inputFields": {
+				"viewToken": {
+					"title": "令牌資訊",
+					"name": "名稱",
+					"authorizationType": "授權類型",
+					"expireAt": "過期時間",
+					"isActive": "是否啟用"
+				},
+				"generateToken": {
+					"title": "Rest Api 令牌",
 					"tokenName": {
-						"label": "為您的Token新增有意義的名稱",
-						"placeholder": "我的超棒Token"
+						"label": "為您的令牌添加一個有意義的名稱",
+						"placeholder": "我的超棒令牌"
+					},
+					"tokenAuthorizationType": {
+						"label": "選擇 API 授權類型",
+						"placeholder": "選擇授權類型"
+					},
+					"tokenExpireAt": {
+						"label": "選擇令牌過期日期",
+						"placeholder": "選擇日期",
+						"values": {
+							"never": "從不",
+							"1day": "1天",
+							"10day": "10天",
+							"1month": "1個月",
+							"1year": "1年"
+						}
 					}
 				},
 				"buttons": {
