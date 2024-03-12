@@ -102,7 +102,6 @@ const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiResponse) =>
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	// organization id
 	const orgid = req.query?.orgid as string;
-
 	let decryptedData: { userId: string; name?: string };
 	try {
 		decryptedData = await decryptAndVerifyToken({
