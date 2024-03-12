@@ -3,7 +3,6 @@ import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
-import { hasOrganizationWritePermission } from "~/server/api/services/orgAuthService";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
@@ -43,59 +42,33 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 	// Does this endpoint requires an user with admin privileges.
 	const NEEDS_USER_ADMIN = false;
 
-	// Does this endpoint requires an Organization admin user.
-	const NEEDS_ORG_WRITE_PERMISSION = true;
-
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const orgid = req.query?.orgid as string;
-
-	let decryptedData: { userId: string; name?: string };
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const apiKey = req.headers["x-ztnet-auth"] as string;
+		const orgid = req.query?.orgid as string;
+
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 			requireAdmin: NEEDS_USER_ADMIN,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
-	// Mock context
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+
+		// Mock context
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-	};
+			prisma,
+		};
 
-	// Check if the user is an organization admin
-	// TODO redundant as the caller.getOrgById will check for the same thing
-	if (NEEDS_ORG_WRITE_PERMISSION) {
-		const isOrgAdmin = await hasOrganizationWritePermission({
-			orgId: orgid,
-			userId: decryptedData.userId,
+		// Check if the user is an organization admin
+		// TODO This might be redundant as the caller.getOrgById will check for the same thing
+		await checkUserOrganizationRole({
+			ctx,
+			organizationId: orgid,
+			minimumRequiredRole: Role.READ_ONLY,
 		});
-		if (!isOrgAdmin) {
-			return res.status(401).json({ error: "Unauthorized" });
-		}
-	}
-
-	await checkUserOrganizationRole({
-		ctx,
-		organizationId: orgid,
-		minimumRequiredRole: Role.READ_ONLY,
-	});
-
-	try {
-		// const organization = await prisma.organization.findFirst({
-		// 	where: {
-		// 		id: orgid,
-		// 	},
-		// 	include: {
-		// 		networks: true,
-		// 	},
-		// });
 
 		//@ts-expect-error
 		const caller = appRouter.createCaller(ctx);
@@ -119,16 +92,6 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 				};
 			});
 
-		// const arr = [];
-		// for (const network of organization?.networks) {
-		// 	const ztControllerResponse = await ztController.local_network_detail(
-		// 		//@ts-expect-error
-		// 		ctx,
-		// 		network.nwid,
-		// 		false,
-		// 	);
-		// 	arr.push(ztControllerResponse.network);
-		// }
 		return res.status(200).json(organization);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
@@ -139,6 +102,10 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 			} catch (_error) {
 				return res.status(httpCode).json({ error: cause.message });
 			}
+		}
+
+		if (cause instanceof Error) {
+			return res.status(500).json({ message: cause.message });
 		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
