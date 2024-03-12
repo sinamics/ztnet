@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "Token d'accès à l'API",
 				"description": "Cela vous permet de générer un token API que vous pouvez utiliser pour vous authentifier et accéder aux services API de notre application. Avec un token valide, vous pouvez adresser des requêtes à l'API et interagir avec les fonctionnalités de l'application par programmation.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Informations sur le jeton",
+					"name": "Nom",
+					"authorizationType": "Type d'autorisation",
+					"expireAt": "Expirer à",
+					"isActive": "Est actif"
+				},
+				"generateToken": {
+					"title": "Jeton d'API Rest",
 					"tokenName": {
-						"label": "Ajoutez un nom significatif à votre token",
-						"placeholder": "Mon token"
+						"label": "Ajoutez un nom significatif à votre jeton",
+						"placeholder": "Mon super jeton"
+					},
+					"tokenAuthorizationType": {
+						"label": "Sélectionnez le type d'autorisation de l'API",
+						"placeholder": "Sélectionnez le type d'authentification"
+					},
+					"tokenExpireAt": {
+						"label": "Sélectionnez la date d'expiration du jeton",
+						"placeholder": "Sélectionnez la date",
+						"values": {
+							"never": "Jamais",
+							"1day": "1 jour",
+							"10day": "10 jours",
+							"1month": "1 mois",
+							"1year": "1 an"
+						}
 					}
 				},
 				"buttons": {

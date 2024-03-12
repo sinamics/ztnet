@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "API访问令牌",
 				"description": "API访问令牌用于访问ZTNET公共API。",
-				"inputFields": {
+				"viewToken": {
+					"title": "令牌信息",
+					"name": "名称",
+					"authorizationType": "授权类型",
+					"expireAt": "过期时间",
+					"isActive": "是否激活"
+				},
+				"generateToken": {
+					"title": "Rest Api 令牌",
 					"tokenName": {
-						"label": "为您的令牌添加有意义的名称",
+						"label": "为您的令牌添加一个有意义的名称",
 						"placeholder": "我的超棒令牌"
+					},
+					"tokenAuthorizationType": {
+						"label": "选择 API 授权类型",
+						"placeholder": "选择授权类型"
+					},
+					"tokenExpireAt": {
+						"label": "选择令牌过期日期",
+						"placeholder": "选择日期",
+						"values": {
+							"never": "从不",
+							"1day": "1天",
+							"10day": "10天",
+							"1month": "1个月",
+							"1year": "1年"
+						}
 					}
 				},
 				"buttons": {

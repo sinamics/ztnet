@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "Tokeny dostępowe API",
 				"description": "Dzięki temu możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Informacje o tokenie",
+					"name": "Nazwa",
+					"authorizationType": "Typ autoryzacji",
+					"expireAt": "Wygasa o",
+					"isActive": "Jest aktywny"
+				},
+				"generateToken": {
+					"title": "Token API Rest",
 					"tokenName": {
-						"label": "Nadaj nazwę tokena",
+						"label": "Dodaj opisową nazwę do swojego tokena",
 						"placeholder": "Mój wspaniały token"
+					},
+					"tokenAuthorizationType": {
+						"label": "Wybierz typ autoryzacji API",
+						"placeholder": "Wybierz typ autoryzacji"
+					},
+					"tokenExpireAt": {
+						"label": "Wybierz datę wygaśnięcia tokena",
+						"placeholder": "Wybierz datę",
+						"values": {
+							"never": "Nigdy",
+							"1day": "1 dzień",
+							"10day": "10 dni",
+							"1month": "1 miesiąc",
+							"1year": "1 rok"
+						}
 					}
 				},
 				"buttons": {
