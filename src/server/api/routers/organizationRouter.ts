@@ -223,6 +223,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.READ_ONLY,
+			});
+
 			// get all organizations related to the user
 			const organization = await ctx.prisma.organization.findUnique({
 				where: {

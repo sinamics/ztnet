@@ -1,10 +1,13 @@
+import { Role } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
+import { checkUserOrganizationRole } from "~/utils/role";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -43,44 +46,38 @@ const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) 
 	const orgid = req.query?.orgid as string;
 
 	try {
-		await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 			requireAdmin: NEEDS_ORG_ADMIN,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	try {
-		const users = await prisma.organization
-			.findFirst({
-				where: {
-					id: orgid,
+		// Mock context
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
 				},
-				include: {
-					users: {
-						select: {
-							id: true,
-							email: true,
-							name: true,
-							role: true,
-						},
-					},
-				},
+			},
+			prisma,
+		};
+		// Check if the user is an organization admin
+		// TODO This might be redundant as the caller.getOrgById will check for the same thing
+		await checkUserOrganizationRole({
+			ctx,
+			organizationId: orgid,
+			minimumRequiredRole: Role.READ_ONLY,
+		});
+
+		// @ts-expect-error ctx is not a valid parameter
+		const caller = appRouter.createCaller(ctx);
+		const orgUsers = await caller.org
+			.getOrgUsers({
+				organizationId: orgid,
 			})
-			// construct user object, {orgId, userId, email, name, role}
-			.then((org) => {
-				if (!org) {
-					throw new TRPCError({
-						code: "NOT_FOUND",
-						message: JSON.stringify({
-							orgid: "Organization not found",
-						}),
-					});
-				}
-				return org.users.map((user) => ({
-					orgId: org.id,
+			.then((users) => {
+				return users.map((user) => ({
+					orgId: orgid,
 					userId: user.id,
 					name: user.name,
 					email: user.email,
@@ -88,7 +85,7 @@ const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) 
 				}));
 			});
 
-		return res.status(200).json(users);
+		return res.status(200).json(orgUsers);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);
@@ -98,6 +95,10 @@ const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) 
 			} catch (_error) {
 				return res.status(httpCode).json({ error: cause.message });
 			}
+		}
+
+		if (cause instanceof Error) {
+			return res.status(500).json({ message: cause.message });
 		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
