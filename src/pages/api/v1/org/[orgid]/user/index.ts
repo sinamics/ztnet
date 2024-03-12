@@ -14,12 +14,12 @@ const limiter = rateLimit({
 
 const REQUEST_PR_MINUTE = 50;
 
-export default async function apiOrganizationHandler(
+export default async function apiNetworkHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "GET_ORGANIZATION_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, REQUEST_PR_MINUTE, "CREATE_USER_CACHE_TOKEN"); // 10 requests per minute
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
@@ -27,7 +27,7 @@ export default async function apiOrganizationHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "GET":
-			await GET_userOrganization(req, res);
+			await GET_organizationUsers(req, res);
 			break;
 		default: // Method Not Allowed
 			res.status(405).end();
@@ -35,66 +35,60 @@ export default async function apiOrganizationHandler(
 	}
 }
 
-const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
+const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) => {
+	// Does this endpoint requires an admin user.
+	const NEEDS_ORG_ADMIN = false;
 
-	let decryptedData: { userId: string; name: string };
+	const apiKey = req.headers["x-ztnet-auth"] as string;
+	const orgid = req.query?.orgid as string;
+
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+			requireAdmin: NEEDS_ORG_ADMIN,
 		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
 
 	try {
-		// get all organizations the user is part of.
-		const organizations = await prisma.organization
-			.findMany({
+		const users = await prisma.organization
+			.findFirst({
 				where: {
-					users: {
-						some: {
-							id: decryptedData.userId,
-						},
-					},
+					id: orgid,
 				},
-				select: {
-					id: true,
-					orgName: true,
-					ownerId: true,
-					description: true,
-					createdAt: true,
+				include: {
 					users: {
 						select: {
 							id: true,
-							name: true,
 							email: true,
-							organizationRoles: {
-								select: {
-									role: true,
-								},
-							},
+							name: true,
+							role: true,
 						},
 					},
 				},
 			})
-			.then((orgs) => {
-				// only return the organization where the user has Admin role
-				return orgs.filter((org) => {
-					const user = org.users.find((user) => user.id === decryptedData.userId);
-					const adminMember = user?.organizationRoles.some(
-						(role) => role.role === "ADMIN",
-					);
-					// only return org without user object.
-					if (adminMember) {
-						org.users = undefined;
-						return org;
-					}
-				});
+			// construct user object, {orgId, userId, email, name, role}
+			.then((org) => {
+				if (!org) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: JSON.stringify({
+							orgid: "Organization not found",
+						}),
+					});
+				}
+				return org.users.map((user) => ({
+					orgId: org.id,
+					userId: user.id,
+					name: user.name,
+					email: user.email,
+					role: user.role,
+				}));
 			});
 
-		return res.status(200).json(organizations);
+		return res.status(200).json(users);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);
