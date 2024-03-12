@@ -78,7 +78,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -177,7 +177,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -287,7 +287,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -360,7 +360,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -452,7 +452,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -535,7 +535,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
@@ -611,7 +611,7 @@ export const networkMemberRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action

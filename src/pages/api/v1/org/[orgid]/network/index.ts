@@ -1,7 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { networkProvisioningFactory } from "~/server/api/services/networkService";
+import { appRouter } from "~/server/api/root";
+import { hasOrganizationWritePermission } from "~/server/api/services/orgAuthService";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
@@ -29,7 +30,7 @@ export default async function apiNetworkHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "GET":
-			await GET_organization(req, res);
+			await GET_orgUserNetworks(req, res);
 			break;
 		case "POST":
 			await POST_orgCreateNewNetwork(req, res);
@@ -41,7 +42,20 @@ export default async function apiNetworkHandler(
 }
 
 const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiResponse) => {
+	// Does this endpoint requires an user with admin privileges.
+	const NEEDS_USER_ADMIN = false;
+
+	// Does this endpoint requires an Organization admin user.
+	const NEEDS_ORG_WRITE_PERMISSION = true;
+
+	// API Key
 	const apiKey = req.headers["x-ztnet-auth"] as string;
+
+	// organization id
+	const orgid = req.query?.orgid as string;
+
+	// organization name
+	const { name } = req.body;
 
 	let decryptedData: { userId: string; name: string };
 
@@ -50,11 +64,26 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 		decryptedData = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+			requireAdmin: NEEDS_USER_ADMIN,
 		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
-	const { name } = req.body;
+
+	if (!orgid) {
+		return res.status(400).json({ error: "Organization ID is required" });
+	}
+
+	// Check if the user is an organization admin
+	if (NEEDS_ORG_WRITE_PERMISSION) {
+		const isOrgAdmin = await hasOrganizationWritePermission({
+			orgId: orgid,
+			userId: decryptedData.userId,
+		});
+		if (!isOrgAdmin) {
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+	}
 
 	const ctx = {
 		session: {
@@ -65,48 +94,51 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 		prisma,
 	};
 
-	const newNetworkId = await networkProvisioningFactory({
-		ctx,
-		input: { central: false, name },
+	// @ts-expect-error
+	const caller = appRouter.createCaller(ctx);
+	const networkAndMembers = await caller.org.createOrgNetwork({
+		organizationId: orgid,
+		networkName: name,
+		orgName: "Created by Rest API",
 	});
 
-	return res.status(200).json(newNetworkId);
+	return res.status(200).json(networkAndMembers);
 };
 
-const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
+const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	let decryptedData: { userId: string; name?: string };
 	try {
 		decryptedData = await decryptAndVerifyToken({
 			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+			apiAuthorizationType: AuthorizationType.PERSONAL,
 		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}
 
-	try {
-		const organization = await prisma.organization.findFirst({
-			where: {
-				id: decryptedData.organizationId,
+	// If there are users, verify the API key
+	const ctx = {
+		session: {
+			user: {
+				id: decryptedData.userId as string,
 			},
-			include: {
-				networks: true,
+		},
+		prisma,
+	};
+	try {
+		const networks = await prisma.user.findFirst({
+			where: {
+				id: decryptedData.userId,
+			},
+			select: {
+				network: true,
 			},
 		});
-
 		const arr = [];
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-		};
 		// biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
-		for (const network of organization?.networks) {
+		for (const network of networks?.network) {
 			const ztControllerResponse = await ztController.local_network_detail(
 				//@ts-expect-error
 				ctx,
@@ -115,7 +147,8 @@ const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
 			);
 			arr.push(ztControllerResponse.network);
 		}
-		return res.status(200).json({ ...organization, networks: arr });
+
+		return res.status(200).json(arr);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);

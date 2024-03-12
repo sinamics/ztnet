@@ -25,7 +25,7 @@ enum Role {
 export const checkUserOrganizationRole = async ({
 	ctx,
 	organizationId,
-	requiredRole,
+	minimumRequiredRole,
 }) => {
 	const userId = ctx.session.user.id;
 
@@ -52,7 +52,7 @@ export const checkUserOrganizationRole = async ({
 	}
 
 	const userRoleValue = Role[orgUserRole.role];
-	const requiredRoleValue = Role[requiredRole];
+	const requiredRoleValue = Role[minimumRequiredRole];
 
 	// Return true if the user's role value meets or exceeds the required role value, otherwise throw an error
 	if (userRoleValue >= requiredRoleValue) {
