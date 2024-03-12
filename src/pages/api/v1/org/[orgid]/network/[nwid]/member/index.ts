@@ -1,10 +1,13 @@
+import { Role } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
+import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
 
 // Number of allowed requests per minute
@@ -15,12 +18,12 @@ const limiter = rateLimit({
 
 const REQUEST_PR_MINUTE = 50;
 
-export default async function apiNetworkByIdHandler(
+export default async function apiNetworkMembersHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "NETWORK_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, REQUEST_PR_MINUTE, "NETWORK_MEMBERS_CACHE_TOKEN"); // 10 requests per minute
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
@@ -28,60 +31,73 @@ export default async function apiNetworkByIdHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "GET":
-			await GET_network(req, res);
+			await GET_orgNetworkMembers(req, res);
 			break;
-		default:
+		default: // Method Not Allowed
 			res.status(405).end();
 			break;
 	}
 }
 
-const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
+const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.id as string;
+	// network id
+	const networkId = req.query?.nwid as string;
+
+	// organization id
+	const orgid = req.query?.orgid as string;
 
 	// Check if the networkId exists
 	if (!networkId) {
 		return res.status(400).json({ error: "Network ID is required" });
 	}
 
-	let decryptedData: { userId: string; name?: string };
+	if (!orgid) {
+		return res.status(400).json({ error: "Organization ID is required" });
+	}
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	// assemble the context object
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+		// assemble the context object
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-	};
-	// make sure user has access to the network
-	const network = await prisma.network.findUnique({
-		where: { nwid: networkId, authorId: decryptedData.userId },
-		select: { nwid: true, name: true, authorId: true },
-	});
+			prisma,
+		};
 
-	if (!network) {
-		return res.status(401).json({ error: "Network not found or access denied." });
-	}
+		// Check if the user is an organization admin
+		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
+		await checkUserOrganizationRole({
+			ctx,
+			organizationId: orgid,
+			minimumRequiredRole: Role.USER,
+		});
 
-	try {
+		// @ts-expect-error
+		const caller = appRouter.createCaller(ctx);
+		const network = await caller.network
+			.getNetworkById({ nwid: networkId })
+			.then(async (res) => {
+				return res.network || null;
+			});
+
+		if (!network) {
+			return res.status(401).json({ error: "Network not found or access denied." });
+		}
+
 		const ztControllerResponse = await ztController.local_network_detail(
 			//@ts-expect-error
 			ctx,
 			networkId,
 			false,
 		);
-		return res.status(200).json(ztControllerResponse?.network);
+		return res.status(200).json(ztControllerResponse?.members);
 	} catch (cause) {
 		if (cause instanceof TRPCError) {
 			const httpCode = getHTTPStatusCodeFromError(cause);

@@ -47,7 +47,7 @@ export default async function apiNetworkUpdateMembersHandler(
 			await POST_updateNetworkMember(req, res);
 			break;
 		case "DELETE":
-			await POST_deleteNetworkMember(req, res);
+			await DELETE_deleteNetworkMember(req, res);
 			break;
 		default:
 			// Method Not Allowed
@@ -221,7 +221,7 @@ const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiRespons
  * @param res - The NextApiResponse object representing the outgoing response.
  * @returns A JSON response indicating the success or failure of the operation.
  */
-const POST_deleteNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
+const DELETE_deleteNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	const networkId = req.query?.id as string;
 	const memberId = req.query?.memberId as string;

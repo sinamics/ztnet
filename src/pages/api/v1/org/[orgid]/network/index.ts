@@ -134,6 +134,13 @@ const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiResponse) =>
 			prisma,
 		};
 
+		// Check if the user is an organization admin
+		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
+		await checkUserOrganizationRole({
+			ctx,
+			organizationId: orgid,
+			minimumRequiredRole: Role.USER,
+		});
 		// @ts-expect-error
 		const caller = appRouter.createCaller(ctx);
 		const organization = await caller.org
