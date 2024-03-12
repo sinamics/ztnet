@@ -210,6 +210,10 @@ const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiRespons
 				return res.status(httpCode).json({ error: cause.message });
 			}
 		}
+
+		if (cause instanceof Error) {
+			return res.status(500).json({ message: cause.message });
+		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
 };
@@ -291,6 +295,10 @@ const POST_deleteNetworkMember = async (req: NextApiRequest, res: NextApiRespons
 			} catch (_error) {
 				return res.status(httpCode).json({ error: cause.message });
 			}
+		}
+
+		if (cause instanceof Error) {
+			return res.status(500).json({ message: cause.message });
 		}
 		return res.status(500).json({ message: "Internal server error" });
 	}
