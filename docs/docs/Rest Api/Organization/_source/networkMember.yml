@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: ZTNet Network Rest API
+  title: ZTNet Organization Member Rest API
   version: 1.0.0
   description: |
-    Access the ZTNet suite through our RESTful Web API, compatible with version 0.4.0 and beyond. 
+    Access the ZTNet Organization suite through our RESTful Web API, compatible with version 0.6.0 and beyond. 
     
     This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
 
@@ -16,9 +16,9 @@ servers:
         description: API version
 
 paths:                 
-  /network/{networkId}/member:
+  /org/:orgid/network/{networkId}/member:
     get:
-      summary: Returns a list of Members on the network
+      summary: Returns a list of Members in a organization network
       operationId: getNetworkMemberInfo
       parameters:
         - name: x-ztnet-auth
@@ -35,7 +35,7 @@ paths:
           description: Unique identifier of the network
       responses:
         200:
-          description: Detailed information of the specified Network Member
+          description: Detailed information of the specified organization Network Member
           content:
             application/json:
               schema:
@@ -43,36 +43,16 @@ paths:
               example:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-  /network/{networkId}/member/{memberId}:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+  /org/:orgid/network/{networkId}/member/{memberId}:
     post:
-      summary: Modify a network member
-      description: Modify a network member
+      summary: Modify a organization network member
+      description: Modify a organization network member
       parameters:
         - in: path
           name: networkId
@@ -115,34 +95,14 @@ paths:
               example:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
     delete:
-      summary: Delete a network member
+      summary: Delete a organization network member
       description: This action flags the member as deleted, revokes their authorization, and updates their status in the database. Consequently, the member will be moved to the "Stashed Members" list, indicating their altered status.
       operationId: deleteNetworkMember
       parameters:
@@ -160,7 +120,7 @@ paths:
           description: ID of the member
       responses:
         200:
-          description: Network Response
+          description: Organization Network Response
           content:
             application/json:
               schema:
@@ -168,29 +128,8 @@ paths:
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

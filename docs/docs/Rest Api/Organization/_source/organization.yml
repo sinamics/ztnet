@@ -47,7 +47,7 @@ paths:
 
   /org/{orgId}:
     get:
-      summary: Returns detailed information of the specified Organization.
+      summary: Returns information of the specified Organization.
       operationId: getOrganizationInfo
       parameters:
         - name: x-ztnet-auth
