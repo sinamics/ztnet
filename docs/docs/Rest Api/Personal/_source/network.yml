@@ -15,11 +15,61 @@ servers:
         default: v1
         description: API version
 
-paths:                 
-  /network/{networkId}/member:
+paths:
+  /network:
     get:
-      summary: Returns a list of Members on the network
-      operationId: getNetworkMemberInfo
+      summary: Returns a list of Networks you have access to
+      description: |
+        Returns an array of Networks you have access to.
+      operationId: getUserNetworks
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+      responses:
+        200:
+          description: An array of Network IDs
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+              example:
+                $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        429:
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    
+  /network/{networkId}:
+    get:
+      summary: Returns information about a specific network
+      operationId: getNetworkInfo
       parameters:
         - name: x-ztnet-auth
           in: header
@@ -35,13 +85,13 @@ paths:
           description: Unique identifier of the network
       responses:
         200:
-          description: Detailed information of the specified Network Member
+          description: Detailed information of the specified Network
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+                $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
           description: Unauthorized
           content:
@@ -69,104 +119,41 @@ paths:
                 properties:
                   message:
                     type: string
-  /network/{networkId}/member/{memberId}:
+    # POST /network
     post:
-      summary: Modify a network member
-      description: Modify a network member
+      summary: Create New Network
+      operationId: createNewNetwork
       parameters:
-        - in: path
-          name: networkId
+        - name: x-ztnet-auth
+          in: header
           required: true
           schema:
             type: string
-          description: ID of the network
-        - in: path
-          name: memberId
-          required: true
-          schema:
-            type: string
-          description: ID of the member
+          description: API Key for the user
       requestBody:
         required: false
         content:
           application/json:
             schema:
               type: object
-              properties:
-                name:
-                  type: string
-                  description: User defined name of the member
-                authorized:
-                  type: boolean
-                  description: Authorization status of the member
               # required:
               #   - name
-              #   - authorized
-              example:
-                name: "John Doe"
-                authorized: "false"
+              properties:
+                name:
+                  type:
+                    - string
+                  required: false
+                  description: Name of the network. If not provided, a random name will be generated.
       responses:
         200:
-          description: Detailed information of the specified Network Member
+          description: New Network Created
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
-        401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-    delete:
-      summary: Delete a network member
-      # description: Delete a network member
-      operationId: deleteNetworkMember
-      parameters:
-        - in: path
-          name: networkId
-          required: true
-          schema:
-            type: string
-          description: ID of the network
-        - in: path
-          name: memberId
-          required: true
-          schema:
-            type: string
-          description: ID of the member
-      responses:
-        200:
-          description: Network Response
-          content:
-            application/json:
-              schema:
-                $ref: '../_schema/NetworkResponse.yml#/NetworkResponse'
-              example:
-                $ref: '../_example/NetworkExample.yml#/NetworkArrayExample'
+                $ref: '../../_example/NetworkExample.yml#/NetworkExample'
+                
         401:
           description: Unauthorized
           content:

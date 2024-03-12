@@ -29,7 +29,7 @@ export default async function apiNetworkHandler(
 	// create a switch based on the HTTP method
 	switch (req.method) {
 		case "GET":
-			await GET_organization(req, res);
+			await GET_orgById(req, res);
 			break;
 		default: // Method Not Allowed
 			res.status(405).end();
@@ -37,7 +37,7 @@ export default async function apiNetworkHandler(
 	}
 }
 
-const GET_organization = async (req: NextApiRequest, res: NextApiResponse) => {
+const GET_orgById = async (req: NextApiRequest, res: NextApiResponse) => {
 	// Does this endpoint requires an user with admin privileges.
 	const NEEDS_USER_ADMIN = false;
 
