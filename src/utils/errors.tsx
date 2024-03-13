@@ -29,6 +29,10 @@ export const handleApiErrors = (cause, res: NextApiResponse) => {
 			return res.status(httpCode).json({ error: cause.message });
 		}
 	}
+	// Check if the error is an instance of Error and has a message indicating an invalid token
+	if (cause instanceof Error && cause.message === "Invalid token") {
+		return res.status(401).json({ error: "Invalid token" });
+	}
 
 	if (cause instanceof Error) {
 		return res.status(500).json({ message: cause.message });
