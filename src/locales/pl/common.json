@@ -615,11 +615,11 @@
 					"title": "Informacje o tokenie",
 					"name": "Nazwa",
 					"authorizationType": "Typ autoryzacji",
-					"expireAt": "Wygasa o",
+					"expireAt": "Wygasa",
 					"isActive": "Jest aktywny"
 				},
 				"generateToken": {
-					"title": "Token API Rest",
+					"title": "Token Rest API",
 					"tokenName": {
 						"label": "Dodaj opisową nazwę do swojego tokena",
 						"placeholder": "Mój wspaniały token"
