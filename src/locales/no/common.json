@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "API-tilgangstokens",
 				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Token Informasjon",
+					"name": "Navn",
+					"authorizationType": "Autorisasjonstype",
+					"expireAt": "Utløper",
+					"isActive": "Er aktiv"
+				},
+				"generateToken": {
+					"title": "Rest Api-token",
 					"tokenName": {
-						"label": "Legg til et meningsfylt navn på tokenet ditt",
-						"placeholder": "Mitt fantastiske token"
+						"label": "Legg til et beskrivende navn for tokenet ditt",
+						"placeholder": "Mitt supre token"
+					},
+					"tokenAuthorizationType": {
+						"label": "Velg API-autorisasjonstype",
+						"placeholder": "Velg autorisasjonstype"
+					},
+					"tokenExpireAt": {
+						"label": "Velg utløpsdato for token",
+						"placeholder": "Velg dato",
+						"values": {
+							"never": "Aldri",
+							"1day": "1 dag",
+							"10day": "10 dager",
+							"1month": "1 måned",
+							"1year": "1 år"
+						}
 					}
 				},
 				"buttons": {

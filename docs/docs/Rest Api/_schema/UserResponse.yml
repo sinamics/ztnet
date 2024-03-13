@@ -1,0 +1,29 @@
+User:
+  type: object
+  properties:
+    orgId:
+      type: string
+      example: "aa01abcdefghijjkl"
+      description: Unique identifier for the organization to which the user belongs.
+    userId:
+      type: string
+      example: "aa01abcdefghijjkm"
+      description: Unique identifier for the user.
+    name:
+      type: string
+      example: "John Doe"
+      description: Name of the user.
+    email:
+      type: string
+      example: "johndoe@ztnet.network"
+      description: Email address of the user.
+    role:
+      type: string
+      example: "USER"
+      description: Role of the user within the organization.
+
+UserResponse:
+  type: array
+  items:
+    $ref: '#/User'
+    

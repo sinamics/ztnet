@@ -1,0 +1,52 @@
+openapi: 3.1.0
+info:
+  title: ZTNet Organization User Rest API
+  version: 1.0.0
+  description: |
+      The official ZTNet Organization Web API, beginning with version 0.6.0, provides public access with a rate limit of 50 requests per minute to maintain optimal service performance.
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+tags:
+  - name: organization_users
+    description: Organization Users API
+    x-displayName: Organization Users
+paths:
+  /org/:orgid/users:
+    get:
+      tags:
+        - organization_users
+      summary: Returns a list of Users in the organization
+      operationId: getOrganizationUsers
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        200:
+          description: An array of User IDs
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/UserResponse.yml#/UserResponse'
+              example:
+                $ref: '../../_example/UserExample.yml#/UserExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

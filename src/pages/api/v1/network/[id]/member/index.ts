@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
@@ -46,7 +47,10 @@ const GET_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => 
 
 	let decryptedData: { userId: string; name?: string };
 	try {
-		decryptedData = await decryptAndVerifyToken({ apiKey });
+		decryptedData = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.PERSONAL,
+		});
 	} catch (error) {
 		return res.status(401).json({ error: error.message });
 	}

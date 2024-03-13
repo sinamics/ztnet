@@ -639,24 +639,49 @@ export const authRouter = createTRPCRouter({
 	addApiToken: protectedProcedure
 		.input(
 			z.object({
-				name: z.string().min(5).max(50),
+				name: z.string().min(3).max(50),
+				daysToExpire: z.string(),
+				apiAuthorizationType: z.array(z.enum(["PERSONAL", "ORGANIZATION"])),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const token_content: string = JSON.stringify({
-				name: input.name,
-				userId: ctx.session.user.id,
-			});
+			try {
+				// generate daysToExpire date. If "Never" is selected, the token will never expire
+				const expiresAt = input.daysToExpire === "never" ? null : new Date();
+				if (expiresAt) {
+					expiresAt.setDate(expiresAt.getDate() + parseInt(input.daysToExpire));
+				}
 
-			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
-			const token = await ctx.prisma.aPIToken.create({
-				data: {
-					token: token_hash,
-					name: input.name,
+				// token factory
+				const token_content: string = JSON.stringify({
 					userId: ctx.session.user.id,
-				},
-			});
-			return token;
+					expiresAt,
+					apiAuthorizationType: input.apiAuthorizationType,
+				});
+
+				// hash token
+				const token_hash = encrypt(
+					token_content,
+					generateInstanceSecret(API_TOKEN_SECRET),
+				);
+
+				// store token in database
+				const token = await ctx.prisma.aPIToken.create({
+					data: {
+						token: token_hash,
+						name: input.name,
+						apiAuthorizationType: input.apiAuthorizationType,
+						userId: ctx.session.user.id,
+						expiresAt,
+					},
+				});
+				return token;
+			} catch (error) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: error.message,
+				});
+			}
 		}),
 
 	deleteApiToken: protectedProcedure

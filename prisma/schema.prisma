@@ -200,14 +200,15 @@ model UserGroup {
 }
 
 model APIToken {
-  id        Int       @id @default(autoincrement())
-  name      String
-  token     String    @unique
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime  @default(now())
-  expiresAt DateTime? // null means it never expires
-  isActive  Boolean   @default(true)
+  id                   Int       @id @default(autoincrement())
+  name                 String
+  token                String    @unique
+  userId               String
+  apiAuthorizationType Json
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt            DateTime  @default(now())
+  expiresAt            DateTime? // null means it never expires
+  isActive             Boolean   @default(true)
 }
 
 model User {

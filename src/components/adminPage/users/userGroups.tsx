@@ -199,7 +199,7 @@ const UserGroups = () => {
 			<InputFields
 				isLoading={false}
 				label={t("users.groups.addGroup.addGroupLabel")}
-				rootFormClassName="flex flex-col space-y-2"
+				rootFormClassName="flex flex-col space-y-2 w-3/6"
 				size="sm"
 				placeholder=""
 				buttonText={t("users.groups.addGroup.addGroupButton")}
