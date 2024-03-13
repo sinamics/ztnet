@@ -38,9 +38,6 @@ export default async function apiNetworkHandler(
 }
 
 const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) => {
-	// Does this endpoint requires an admin user.
-	const NEEDS_ORG_ADMIN = false;
-
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	const orgid = req.query?.orgid as string;
 
@@ -48,7 +45,6 @@ const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) 
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-			requireAdmin: NEEDS_ORG_ADMIN,
 		});
 
 		// Mock context

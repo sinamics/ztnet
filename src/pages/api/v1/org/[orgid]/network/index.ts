@@ -42,9 +42,6 @@ export default async function apiNetworkHandler(
 }
 
 const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiResponse) => {
-	// Does this endpoint requires an user with admin privileges.
-	const NEEDS_USER_ADMIN = false;
-
 	try {
 		// API Key
 		const apiKey = req.headers["x-ztnet-auth"] as string;
@@ -55,11 +52,18 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 		// organization name
 		const { name } = req.body;
 
+		if (!apiKey) {
+			return res.status(400).json({ error: "API Key is required" });
+		}
+
+		if (!orgid) {
+			return res.status(400).json({ error: "Organization ID is required" });
+		}
+
 		// If there are users, verify the API key
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-			requireAdmin: NEEDS_USER_ADMIN,
 		});
 
 		// Mock context
@@ -100,11 +104,18 @@ const POST_orgCreateNewNetwork = async (req: NextApiRequest, res: NextApiRespons
 
 const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
-	// organization id
 	const orgid = req.query?.orgid as string;
-	let decryptedData: { userId: string; name?: string };
+
+	if (!apiKey) {
+		return res.status(400).json({ error: "API Key is required" });
+	}
+
+	if (!orgid) {
+		return res.status(400).json({ error: "Organization ID is required" });
+	}
+
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});

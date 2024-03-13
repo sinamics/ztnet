@@ -50,7 +50,10 @@ const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) 
 	// organization id
 	const orgid = req.query?.orgid as string;
 
-	// Check if the networkId exists
+	if (!apiKey) {
+		return res.status(400).json({ error: "API Key is required" });
+	}
+
 	if (!networkId) {
 		return res.status(400).json({ error: "Network ID is required" });
 	}
@@ -58,6 +61,7 @@ const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) 
 	if (!orgid) {
 		return res.status(400).json({ error: "Organization ID is required" });
 	}
+
 	try {
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,

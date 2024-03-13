@@ -48,7 +48,10 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 	const orgid = req.query?.orgid as string;
 
 	try {
-		// Check if the networkId exists
+		if (!apiKey) {
+			return res.status(400).json({ error: "API Key is required" });
+		}
+
 		if (!networkId) {
 			return res.status(400).json({ error: "Network ID is required" });
 		}
