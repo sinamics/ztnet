@@ -39,32 +39,11 @@ paths:
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
                     
   /network/{networkId}:
     get:
@@ -93,32 +72,12 @@ paths:
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
     # POST /network
     post:
       summary: Create New Network
@@ -155,29 +114,8 @@ paths:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
                 
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

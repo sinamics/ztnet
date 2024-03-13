@@ -47,6 +47,9 @@ describe("createUserHandler", () => {
 	it("should create a user successfully", async () => {
 		prisma.user.count = jest.fn().mockResolvedValue(0);
 
+		// mock prisma transaction
+		prisma.$transaction = jest.fn().mockResolvedValue({ id: "newUserId" });
+
 		// Mock the decryption to fail
 		(encryptionModule.decryptAndVerifyToken as jest.Mock).mockResolvedValue({
 			userId: "userId",
@@ -78,6 +81,9 @@ describe("createUserHandler", () => {
 
 	it("should respond 401 when decryptAndVerifyToken fails", async () => {
 		prisma.user.count = jest.fn().mockResolvedValue(1);
+
+		// mock prisma transaction
+		prisma.$transaction = jest.fn().mockResolvedValue({ id: "newUserId" });
 
 		// Mock the decryption to fail
 		(encryptionModule.decryptAndVerifyToken as jest.Mock).mockRejectedValue(
