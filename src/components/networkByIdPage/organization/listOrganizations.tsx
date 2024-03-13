@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const ListOrganizations = () => {
-	const t = useTranslations("admin");
+	const t = useTranslations();
 	const b = useTranslations("commonButtons");
 	const [openOrgId, setOpenOrgId] = useState(null);
 	const { data: userOrgs } = api.org.getAllOrg.useQuery();
@@ -34,21 +34,23 @@ const ListOrganizations = () => {
 				>
 					<div>
 						<p>
-							<strong>{t("organization.listOrganization.organizationName")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.organizationName")}</strong>{" "}
 							{org.orgName}
 						</p>
 						<p>
-							<strong>{t("organization.listOrganization.description")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.description")}</strong>{" "}
 							{org.description}
 						</p>
 						<p>
-							<strong>{t("organization.listOrganization.numberOfMembers")}</strong>{" "}
+							<strong>{t("admin.organization.listOrganization.numberOfMembers")}</strong>{" "}
 							{org?.users?.length}
 						</p>
 						<p className="pt-3">
 							{org?.invitations?.length > 0 ? (
 								<div>
-									<strong>{t("organization.listOrganization.pendingInvitations")}</strong>
+									<strong>
+										{t("admin.organization.listOrganization.pendingInvitations")}
+									</strong>
 									<div className="flex gap-3">
 										{org?.invitations?.map((invite) => (
 											<button
@@ -58,7 +60,7 @@ const ListOrganizations = () => {
 															<p>
 																<span>
 																	{t(
-																		"organization.listOrganization.invitationModal.title",
+																		"admin.organization.listOrganization.invitationModal.title",
 																	)}
 																</span>
 															</p>
@@ -77,10 +79,10 @@ const ListOrganizations = () => {
 							) : null}
 						</p>
 					</div>
-					<div className="py-5">
+					<div className="">
 						{org?.webhooks?.length > 0 ? (
 							<div className="flex items-center gap-4">
-								<strong>{t("organization.listOrganization.activeWebhooks")}</strong>
+								<strong>{t("admin.organization.listOrganization.activeWebhooks")}</strong>
 								<div className="flex gap-3">
 									{org?.webhooks?.map((hook) => (
 										<button
@@ -91,7 +93,7 @@ const ListOrganizations = () => {
 														<p>
 															<span>
 																{t(
-																	"organization.listOrganization.webhookModal.editWebhookTitle",
+																	"admin.organization.listOrganization.webhookModal.editWebhookTitle",
 																)}
 															</span>
 														</p>
@@ -121,7 +123,9 @@ const ListOrganizations = () => {
 											title: (
 												<p>
 													<span>
-														{t("organization.listOrganization.invitationModal.title")}
+														{t(
+															"admin.organization.listOrganization.invitationModal.title",
+														)}
 													</span>
 												</p>
 											),
@@ -156,7 +160,7 @@ const ListOrganizations = () => {
 												<p>
 													<span>
 														{t.rich(
-															"organization.listOrganization.webhookModal.createWebhookTitle",
+															"admin.organization.listOrganization.webhookModal.createWebhookTitle",
 															{
 																span: (children) => (
 																	<span className="text-primary">{children}</span>

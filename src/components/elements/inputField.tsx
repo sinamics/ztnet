@@ -1,22 +1,27 @@
 import { useTranslations } from "next-intl";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 import cn from "classnames";
+import MultiSelectDropdown from "./multiSelect";
+
 interface FieldConfig {
 	name: string;
 	description?: string;
+	title?: string;
 	initialValue?: string;
 	type?: string;
 	placeholder: string;
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
 	value?: string | number | boolean;
-	elementType?: "input" | "select" | "textarea";
-	selectOptions?: { value: string; label: string }[];
+	elementType?: "input" | "select" | "textarea" | "dropdown";
+	selectOptions?: string[] | { value: string; label: string }[];
 }
 
-type SubmitHandlerType = (values: Record<string, string | boolean>) => Promise<unknown>;
+type SubmitHandlerType = (
+	values: Record<string, string | boolean | string[]>,
+) => Promise<unknown>;
 
 interface FormProps {
 	label: string;
@@ -69,7 +74,9 @@ const InputField = ({
 }: FormProps) => {
 	const t = useTranslations("commonButtons");
 	const [showInputs, setShowInputs] = useState(openByDefault);
-	const [formValues, setFormValues] = useState<Record<string, string | boolean>>({});
+	const [formValues, setFormValues] = useState<
+		Record<string, string | boolean | string[]>
+	>({});
 
 	// Create a new ref
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -104,21 +111,16 @@ const InputField = ({
 	const handleEditClick = () => !disabled && setShowInputs(!showInputs);
 
 	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+		e:
+			| ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+			| { target: { name: string; value: string[] } },
 	) => {
-		if (e.target.type === "checkbox") {
-			// Check for the type
-			const checked = (e.target as HTMLInputElement).checked;
-			setFormValues((prevValues) => ({
-				...prevValues,
-				[e.target.name]: checked, // This will be a boolean: true or false
-			}));
-		} else {
-			setFormValues((prevValues) => ({
-				...prevValues,
-				[e.target.name]: e.target.value,
-			}));
-		}
+		const { name, value } = "target" in e ? e.target : e; // This line checks if the event has a target property to distinguish between standard events and custom ones.
+
+		setFormValues((prevValues) => ({
+			...prevValues,
+			[name]: value, // Directly use the name and value, accommodating both single and multiple value changes.
+		}));
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -201,6 +203,11 @@ const InputField = ({
 								if (field.type === "checkbox") {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -220,9 +227,41 @@ const InputField = ({
 										</div>
 									);
 								}
+								if (field.elementType === "dropdown" && field.selectOptions) {
+									return (
+										<div key={field.name} className="form-control w-full">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
+											{field.description ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.description}
+												</label>
+											) : null}
+											<MultiSelectDropdown
+												formFieldName={field.name}
+												options={field.selectOptions as string[]}
+												value={(formValues[field.name] as string[]) || []}
+												onChange={(e) =>
+													handleChange({
+														target: { name: field.name, type: "select", value: e },
+													})
+												}
+												prompt={field.placeholder}
+											/>
+										</div>
+									);
+								}
 								if (field.elementType === "select" && field.selectOptions) {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -235,18 +274,26 @@ const InputField = ({
 												name={field.name}
 												className={`select select-bordered select-${size}`}
 											>
-												{field.selectOptions.map((option) => (
-													<option value={option.value} key={option.value}>
-														{option.label}
-													</option>
-												))}
+												{Array.isArray(field.selectOptions)
+													? field.selectOptions.map((option) => (
+															<option value={option?.value} key={option.value}>
+																{option.label}
+															</option>
+													  ))
+													: null}
 											</select>
 										</div>
 									);
 								}
+
 								if (field.elementType === "textarea") {
 									return (
 										<div key={field.name} className="form-control">
+											{field.title ? (
+												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+													{field.title}
+												</label>
+											) : null}
 											{field.description ? (
 												<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
 													{field.description}
@@ -280,7 +327,7 @@ const InputField = ({
 											value={String(formValues[field.name])}
 											onChange={handleChange}
 											name={field.name}
-											className={`input-bordered input-${size}`}
+											className={`input-bordered input-${size} w-full`}
 										/>
 									</div>
 								);

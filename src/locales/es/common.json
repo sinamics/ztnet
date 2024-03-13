@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "Tokens de Acceso a la API",
 				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Información del token",
+					"name": "Nombre",
+					"authorizationType": "Tipo de autorización",
+					"expireAt": "Expira en",
+					"isActive": "Está activo"
+				},
+				"generateToken": {
+					"title": "Token de API Rest",
 					"tokenName": {
 						"label": "Agrega un nombre significativo a tu token",
-						"placeholder": "Mi token asombroso"
+						"placeholder": "Mi token genial"
+					},
+					"tokenAuthorizationType": {
+						"label": "Selecciona el tipo de autorización de la API",
+						"placeholder": "Selecciona el tipo de autorización"
+					},
+					"tokenExpireAt": {
+						"label": "Selecciona la fecha de expiración del token",
+						"placeholder": "Selecciona la fecha",
+						"values": {
+							"never": "Nunca",
+							"1day": "1 día",
+							"10day": "10 días",
+							"1month": "1 mes",
+							"1year": "1 año"
+						}
 					}
 				},
 				"buttons": {

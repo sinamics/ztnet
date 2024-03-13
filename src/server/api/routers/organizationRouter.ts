@@ -76,7 +76,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 			const caller = networkRouter.createCaller(ctx);
 			// make sure the user is the owner of the organization
@@ -128,7 +128,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 			// make sure the user is the owner of the organization
 			const org = await ctx.prisma.organization.findUnique({
@@ -223,6 +223,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.READ_ONLY,
+			});
+
 			// get all organizations related to the user
 			const organization = await ctx.prisma.organization.findUnique({
 				where: {
@@ -262,7 +269,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
@@ -293,7 +300,7 @@ export const organizationRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -380,7 +387,7 @@ export const organizationRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.ADMIN,
+					minimumRequiredRole: Role.ADMIN,
 				});
 			}
 			// chagne the user's role in the organization
@@ -412,7 +419,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
@@ -470,7 +477,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 
 			const userId = ctx.session.user.id;
@@ -724,7 +731,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// Get all messages associated with the current user
 			const logs = await ctx.prisma.activityLog.findMany({
@@ -855,7 +862,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.USER,
+				minimumRequiredRole: Role.USER,
 			});
 
 			// Update the network with the new organization ID
@@ -885,7 +892,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 
 			// create webhook
@@ -911,7 +918,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 			// Validate the URL to be HTTPS
 			if (!input.webhookUrl.startsWith("https://")) {
@@ -957,7 +964,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 
 			// get all organizations related to the user

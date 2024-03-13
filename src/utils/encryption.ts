@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 
 const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const SMTP_SECRET = "_smtp";
 export const API_TOKEN_SECRET = "_ztnet_api_token";
+export const ORG_API_TOKEN_SECRET = "_ztnet_organization_api_token";
 export const ORG_INVITE_TOKEN_SECRET = "_ztnet_org_invite";
 export const PASSWORD_RESET_SECRET = "_ztnet_passwd_reset";
 
@@ -60,16 +62,20 @@ export const decrypt = (text: string, secret: Buffer) => {
 type DecryptedTokenData = {
 	userId: string;
 	name: string;
+	apiAuthorizationType: AuthorizationType;
+	expiresAt: string;
 };
 
 type VerifyToken = {
 	apiKey: string;
 	requireAdmin?: boolean;
+	apiAuthorizationType: AuthorizationType;
 };
 
 export async function decryptAndVerifyToken({
 	apiKey,
 	requireAdmin = false,
+	apiAuthorizationType,
 }: VerifyToken): Promise<DecryptedTokenData> {
 	// Check if API key is provided
 	if (!apiKey) {
@@ -89,6 +95,22 @@ export async function decryptAndVerifyToken({
 	// Validate the decrypted data structure (add more validations as necessary)
 	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
 		throw new Error("Invalid token structure");
+	}
+
+	// validate the authorization type in token with the required authorization type
+	if (
+		!Array.isArray(decryptedData.apiAuthorizationType) ||
+		!decryptedData.apiAuthorizationType.includes(apiAuthorizationType)
+	) {
+		throw new Error("Invalid Authorization Type");
+	}
+
+	// check if the token has expired. if decryptedData.expiresAt is null or undefined, it means the token never expires
+	if (decryptedData.expiresAt) {
+		const expiresAt = new Date(decryptedData.expiresAt);
+		if (expiresAt < new Date()) {
+			throw new Error("Token expired");
+		}
 	}
 
 	// Verify if the user exists and has the required token

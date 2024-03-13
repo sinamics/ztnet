@@ -39,9 +39,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
           description: Unauthorized
           content:
@@ -111,9 +111,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
           description: Unauthorized
           content:
@@ -143,7 +143,7 @@ paths:
                     type: string
     delete:
       summary: Delete a network member
-      # description: Delete a network member
+      description: This action flags the member as deleted, revokes their authorization, and updates their status in the database. Consequently, the member will be moved to the "Stashed Members" list, indicating their altered status.
       operationId: deleteNetworkMember
       parameters:
         - in: path
@@ -164,9 +164,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkResponse.yml#/NetworkResponse'
+                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
               example:
-                $ref: '../_example/NetworkExample.yml#/NetworkArrayExample'
+                $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
         401:
           description: Unauthorized
           content:

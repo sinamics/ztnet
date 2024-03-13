@@ -611,10 +611,33 @@
 			"restapi": {
 				"sectionTitle": "API Access Tokens",
 				"description": "This allows you to generate an API token that you can use to authenticate and gain access to our application's API services. With a valid token, you can make requests to the API and interact with the application's features programmatically.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Token Information",
+					"name": "Name",
+					"authorizationType": "Authorization Type",
+					"expireAt": "Expire At",
+					"isActive": "Is Active"
+				},
+				"generateToken": {
+					"title": "Rest Api Token",
 					"tokenName": {
 						"label": "Add a meaningful name to your token",
 						"placeholder": "My awesome token"
+					},
+					"tokenAuthorizationType": {
+						"label": "Select API Authorization Type",
+						"placeholder": "Select Auth Type"
+					},
+					"tokenExpireAt": {
+						"label": "Select Token Expiration Date",
+						"placeholder": "Select Date",
+						"values": {
+							"never": "Never",
+							"1day": "1 Day",
+							"10day": "10 Days",
+							"1month": "1 Month",
+							"1year": "1 Year"
+						}
 					}
 				},
 				"buttons": {

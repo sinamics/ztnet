@@ -191,7 +191,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -296,7 +296,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const network = await ztController.get_network(ctx, input.nwid, input.central);
@@ -363,7 +363,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// if central is true, send the request to the central API and return the response
@@ -424,7 +424,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const { routes } = input.updateParams;
@@ -482,7 +482,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// generate network params
@@ -550,7 +550,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -656,7 +656,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -720,7 +720,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const updateParams = input.central
@@ -790,7 +790,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			// if central is true, send the request to the central API and return the response
@@ -878,7 +878,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -947,7 +947,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const updateParams = input.central
@@ -1014,7 +1014,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const updateParams = input.central
@@ -1087,7 +1087,7 @@ export const networkRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const { flowRoute } = input.updateParams;
@@ -1276,7 +1276,7 @@ accept;`;
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 			const { nwid, email } = input;
@@ -1341,7 +1341,7 @@ accept;`;
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input?.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 

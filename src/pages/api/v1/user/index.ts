@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import rateLimit from "~/utils/rateLimit";
 
@@ -47,7 +48,11 @@ const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 	if (userCount > 0) {
 		// If there are users, verify the API key
 		try {
-			await decryptAndVerifyToken({ apiKey, requireAdmin: NEEDS_ADMIN });
+			await decryptAndVerifyToken({
+				apiKey,
+				requireAdmin: NEEDS_ADMIN,
+				apiAuthorizationType: AuthorizationType.PERSONAL,
+			});
 		} catch (error) {
 			return res.status(401).json({ error: error.message });
 		}
