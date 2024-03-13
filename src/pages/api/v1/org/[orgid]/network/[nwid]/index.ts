@@ -33,7 +33,7 @@ export default async function apiNetworkByIdHandler(
 			await GET_network(req, res);
 			break;
 		default:
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
