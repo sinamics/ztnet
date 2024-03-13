@@ -646,7 +646,7 @@ export const authRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// generate daysToExpire date. If "never" is selected, the token will never expire. If daysToExpire is a emoty string token will never expire
+				// generate daysToExpire date. If "never" is selected or a empty string, the token will never expire.
 				const daysToExpire = parseInt(input.daysToExpire);
 				const expiresAt =
 					typeof daysToExpire === "number" && daysToExpire > 0 ? new Date() : null;
