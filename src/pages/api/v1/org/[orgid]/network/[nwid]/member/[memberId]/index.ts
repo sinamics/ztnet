@@ -36,7 +36,7 @@ export default async function apiNetworkUpdateMembersHandler(
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "UPDATE_USER_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_UPDATE_USER_CACHE_TOKEN"); // 10 requests per minute
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
@@ -51,7 +51,7 @@ export default async function apiNetworkUpdateMembersHandler(
 			break;
 		default:
 			// Method Not Allowed
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
@@ -71,31 +71,23 @@ const POST_orgUpdateNetworkMember = async (req: NextApiRequest, res: NextApiResp
 	// organization id
 	const orgid = req.query?.orgid as string;
 
-	if (Object.keys(requestBody).length === 0) {
-		return res.status(400).json({ error: "No data provided for update" });
+	if (!apiKey) {
+		return res.status(400).json({ error: "API Key is required" });
 	}
 
-	let decryptedData: { userId: string; name?: string };
+	if (!networkId) {
+		return res.status(400).json({ error: "Network ID is required" });
+	}
+
+	if (!orgid) {
+		return res.status(400).json({ error: "Organization ID is required" });
+	}
+
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
-
-		// Check if the networkId exists
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
-		}
-
-		// Check if the networkId exists
-		if (!memberId) {
-			return res.status(400).json({ error: "Member ID is required" });
-		}
-
-		// Check if the orgid exists
-		if (!orgid) {
-			return res.status(400).json({ error: "Organization ID is required" });
-		}
 
 		// structure of the updateableFields object:
 		const updateableFields = {

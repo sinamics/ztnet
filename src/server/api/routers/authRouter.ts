@@ -646,12 +646,13 @@ export const authRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// generate daysToExpire date. If "Never" is selected, the token will never expire
-				const expiresAt = input.daysToExpire === "never" ? null : new Date();
+				// generate daysToExpire date. If "never" is selected or a empty string, the token will never expire.
+				const daysToExpire = parseInt(input.daysToExpire);
+				const expiresAt =
+					typeof daysToExpire === "number" && daysToExpire > 0 ? new Date() : null;
 				if (expiresAt) {
 					expiresAt.setDate(expiresAt.getDate() + parseInt(input.daysToExpire));
 				}
-
 				// token factory
 				const token_content: string = JSON.stringify({
 					userId: ctx.session.user.id,

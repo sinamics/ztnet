@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
@@ -29,7 +30,7 @@ export default async function apiOrganizationHandler(
 			await GET_userOrganization(req, res);
 			break;
 		default: // Method Not Allowed
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
@@ -43,14 +44,19 @@ const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) =
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
 
-		// const orgUserRole = await prisma.userOrganizationRole.findFirst({
-		// 	where: {
-		// 		userId: decryptedData.userId,
-		// 	},
-		// 	select: {
-		// 		role: true, // Only select the role
-		// 	},
-		// });
+		const orgUserRole = await prisma.userOrganizationRole.findFirst({
+			where: {
+				userId: decryptedData.userId,
+			},
+			select: {
+				role: true,
+			},
+		});
+
+		// If the user is not part of the organization or the role is not in the Role enum
+		if (!orgUserRole || orgUserRole.role in Role === false) {
+			return res.status(403).json({ error: "Unauthorized" });
+		}
 
 		// get all organizations the user is part of.
 		const organizations = await prisma.organization
