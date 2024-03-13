@@ -49,7 +49,7 @@ const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) =
 				userId: decryptedData.userId,
 			},
 			select: {
-				role: true, // Only select the role
+				role: true,
 			},
 		});
 
