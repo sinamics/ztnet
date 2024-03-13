@@ -22,7 +22,11 @@ export default async function apiNetworkMembersHandler(
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "NETWORK_MEMBERS_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(
+			res,
+			REQUEST_PR_MINUTE,
+			"ORGANIZATION_NETWORK_MEMBERS_CACHE_TOKEN",
+		); // 10 requests per minute
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
@@ -33,7 +37,7 @@ export default async function apiNetworkMembersHandler(
 			await GET_orgNetworkMembers(req, res);
 			break;
 		default: // Method Not Allowed
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
@@ -46,7 +50,10 @@ const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) 
 	// organization id
 	const orgid = req.query?.orgid as string;
 
-	// Check if the networkId exists
+	if (!apiKey) {
+		return res.status(400).json({ error: "API Key is required" });
+	}
+
 	if (!networkId) {
 		return res.status(400).json({ error: "Network ID is required" });
 	}
@@ -54,6 +61,7 @@ const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) 
 	if (!orgid) {
 		return res.status(400).json({ error: "Organization ID is required" });
 	}
+
 	try {
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
