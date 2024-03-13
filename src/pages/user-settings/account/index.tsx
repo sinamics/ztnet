@@ -157,7 +157,6 @@ const Account = () => {
 					</div>
 				</div>
 			</div>
-
 			<div>
 				<div className="text-gray-400 uppercase text-[0.7rem]">
 					{t("account.restapi.sectionTitle")}
