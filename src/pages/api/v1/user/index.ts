@@ -1,4 +1,5 @@
-import { $Enums } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
+import { DefaultArgs, PrismaClientOptions } from "@prisma/client/runtime/library";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
@@ -37,15 +38,10 @@ export default async function createUserHandler(
 	}
 }
 
-interface ResponseType {
-	user: {
-		name: string;
-		email: string;
-		id: string;
-		expiresAt: Date;
-		role: $Enums.Role;
-	};
-	apiToken?: string; // Make apiToken an optional property
+interface UserResponse {
+	user?: User;
+	Error?: string;
+	apiToken?: string;
 }
 
 const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -65,10 +61,6 @@ const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 			});
 		}
 
-		// Create context and caller
-		const ctx = await createTRPCContext({ req, res });
-		const caller = appRouter.createCaller(ctx);
-
 		// get data from the post request
 		const { email, password, name, expiresAt, generateApiToken } = req.body;
 
@@ -86,53 +78,74 @@ const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 			}
 		}
 
-		const register = (await caller.auth.register({
-			email: email,
-			password: password,
-			name: name,
-			expiresAt: expiresAt,
-		})) as ResponseType;
+		/**
+		 *
+		 * Create a transaction to make sure the user and API token are created together
+		 *
+		 */
+		const result = await prisma.$transaction(async (transactionPrisma) => {
+			// Create context with the transaction-aware Prisma instance
+			const ctx = await createTRPCContext({ req, res });
 
-		if (register.user === undefined) {
-			return res.status(500).json({ message: "Internal server error" });
-		}
-		// creat fake context
-		const fakeCtx = {
-			session: {
-				user: {
-					id: register.user.id,
-				},
-			},
-			prisma,
-		};
+			// Update the context to use the transaction-aware Prisma client
+			ctx.prisma = transactionPrisma as PrismaClient<
+				PrismaClientOptions,
+				never,
+				DefaultArgs
+			>;
 
-		// @ts-ignore fake context
-		const tokenCaller = appRouter.createCaller(fakeCtx);
-		let apiToken: string | undefined;
-		if (generateApiToken !== undefined) {
-			if (typeof generateApiToken !== "boolean") {
-				return res.status(400).json({ message: "generateApiToken must be a boolean" });
+			// Use the updated context with the transaction-aware Prisma client for operations
+			const transactionCaller = appRouter.createCaller(ctx);
+
+			// Perform operations using transactionCaller, which now includes the transaction-aware Prisma client
+			const registerResponse = (await transactionCaller.auth.register({
+				email: email,
+				password: password,
+				name: name,
+				expiresAt: expiresAt,
+			})) as UserResponse;
+
+			if (!registerResponse.user) {
+				throw new Error("User registration failed");
 			}
-			// generate a new API token
-			if (generateApiToken) {
-				const tokenResponse = await tokenCaller.auth.addApiToken({
-					name: "Generated Token via API",
-					apiAuthorizationType: ["PERSONAL", "ORGANIZATION"],
-					daysToExpire: "1",
-				});
-				if (tokenResponse.token !== undefined) {
+
+			const ctxWithUser = {
+				session: {
+					user: {
+						id: registerResponse.user.id,
+					},
+				},
+				prisma: transactionPrisma,
+			};
+
+			// @ts-expect-error fake context
+			const transactionCallerWithUserCtx = appRouter.createCaller(ctxWithUser);
+
+			let apiToken: string;
+			if (generateApiToken !== undefined) {
+				if (typeof generateApiToken !== "boolean") {
+					throw new Error("generateApiToken must be a boolean");
+				}
+				if (generateApiToken) {
+					const tokenResponse = await transactionCallerWithUserCtx.auth.addApiToken({
+						name: "Generated Token via API",
+						apiAuthorizationType: ["PERSONAL", "ORGANIZATION"],
+						daysToExpire: "1",
+					});
+
+					if (!tokenResponse.token) {
+						throw new Error("API token generation failed");
+					}
+
 					apiToken = tokenResponse.token;
 				}
 			}
-		}
 
-		const response: ResponseType = { user: register.user };
+			// Return the user and optionally the API token
+			return { user: registerResponse.user, apiToken };
+		});
 
-		if (apiToken !== undefined) {
-			response.apiToken = apiToken;
-		}
-
-		return res.status(200).json(response);
+		return res.status(200).json(result);
 	} catch (cause) {
 		return handleApiErrors(cause, res);
 	}
