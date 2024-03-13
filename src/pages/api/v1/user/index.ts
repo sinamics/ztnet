@@ -1,5 +1,4 @@
 import { PrismaClient, User } from "@prisma/client";
-import { DefaultArgs, PrismaClientOptions } from "@prisma/client/runtime/library";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
@@ -88,11 +87,7 @@ const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 			const ctx = await createTRPCContext({ req, res });
 
 			// Update the context to use the transaction-aware Prisma client
-			ctx.prisma = transactionPrisma as PrismaClient<
-				PrismaClientOptions,
-				never,
-				DefaultArgs
-			>;
+			ctx.prisma = transactionPrisma as PrismaClient;
 
 			// Use the updated context with the transaction-aware Prisma client for operations
 			const transactionCaller = appRouter.createCaller(ctx);
