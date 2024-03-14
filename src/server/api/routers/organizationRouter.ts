@@ -115,7 +115,7 @@ export const organizationRouter = createTRPCRouter({
 				});
 			});
 		}),
-	updateMeta: adminRoleProtectedRoute
+	updateMeta: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
@@ -130,15 +130,15 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				minimumRequiredRole: Role.ADMIN,
 			});
-			// make sure the user is the owner of the organization
-			const org = await ctx.prisma.organization.findUnique({
-				where: {
-					id: input.organizationId,
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated organization meta: ${input.orgName}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
 				},
 			});
-			if (org?.ownerId !== ctx.session.user.id) {
-				throw new Error("You are not the owner of this organization.");
-			}
 			// update the organization
 			return await ctx.prisma.organization.update({
 				where: {
@@ -407,6 +407,7 @@ export const organizationRouter = createTRPCRouter({
 			if (input.userId === ctx.session.user.id) {
 				throw new Error("You cannot change your own role.");
 			}
+
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
@@ -415,6 +416,25 @@ export const organizationRouter = createTRPCRouter({
 					minimumRequiredRole: Role.ADMIN,
 				});
 			}
+
+			// get the user name
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userId,
+				},
+				select: {
+					name: true,
+				},
+			});
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed user ${user.name} role to ${input.role} in organization.`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
+				},
+			});
 			// chagne the user's role in the organization
 			return await ctx.prisma.userOrganizationRole.update({
 				where: {
@@ -945,6 +965,7 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				minimumRequiredRole: Role.ADMIN,
 			});
+
 			// Validate the URL to be HTTPS
 			if (!input.webhookUrl.startsWith("https://")) {
 				// throw error
