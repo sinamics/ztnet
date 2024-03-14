@@ -99,7 +99,7 @@ export default function MultiSelectDropdown({
 
 			<div
 				onClick={toggleDropdown}
-				className="w-full flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[10px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
+				className="w-full flex justify-between text-sm cursor-pointer after:content-['▲'] after:text-[8px]  after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
 			>
 				<span>{prompt}</span>
 				{isJsEnabled ? (
