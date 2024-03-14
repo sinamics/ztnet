@@ -128,7 +128,14 @@ const OrganizationById = ({ user, orgIds }) => {
 					</div>
 				</header> */}
 				<OrgNavBar title={orgData?.orgName} orgData={orgData} />
-
+				{orgData?.description ? (
+					<div
+						className="border-l-4 border-primary p-2 leading-snug"
+						style={{ caretColor: "transparent" }}
+					>
+						{orgData?.description}
+					</div>
+				) : null}
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">

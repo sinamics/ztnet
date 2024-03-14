@@ -119,7 +119,7 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().optional(),
+				orgName: z.string().min(3).max(150),
 				orgDescription: z.string().optional(),
 			}),
 		)
@@ -615,7 +615,7 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: z.string(),
 				userId: z.string(),
 				userName: z.string(),
-				organizationRole: z.enum(["READ_ONLY", "USER"]),
+				organizationRole: z.enum(["READ_ONLY", "USER", "ADMIN"]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
