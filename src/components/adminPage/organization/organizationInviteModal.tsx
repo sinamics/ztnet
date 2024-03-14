@@ -74,8 +74,9 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 							onChange={(e) => dropDownHandler(e)}
 							className="select select-sm select-bordered  select-ghost max-w-xs"
 						>
-							<option>READ_ONLY</option>
+							<option>ADMIN</option>
 							<option>USER</option>
+							<option>READ_ONLY</option>
 						</select>
 					</div>
 				</div>

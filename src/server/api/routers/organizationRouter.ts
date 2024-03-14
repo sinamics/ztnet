@@ -676,7 +676,7 @@ export const organizationRouter = createTRPCRouter({
 
 			// make sure the user is not the owner of the organization
 			if (org?.ownerId === input.userId) {
-				throw new Error("You cannot leave an organization you own.");
+				throw new Error("You cannot kick the organization owner.");
 			}
 
 			// Find the email of the user
