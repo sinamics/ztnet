@@ -95,7 +95,7 @@ const AdminNavMenu = ({ orgData }) => {
 					<li onClick={() => openModal("webhooks")}>
 						<a className="justify-between cursor-pointer">Create new webhook</a>
 					</li>
-					{orgData?.webhooks.map((webhook) => {
+					{orgData?.webhooks?.map((webhook) => {
 						return (
 							<li
 								onClick={() =>
