@@ -115,11 +115,11 @@ export const organizationRouter = createTRPCRouter({
 				});
 			});
 		}),
-	updateMeta: adminRoleProtectedRoute
+	updateMeta: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().optional(),
+				orgName: z.string().min(3).max(40),
 				orgDescription: z.string().optional(),
 			}),
 		)
@@ -130,15 +130,15 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				minimumRequiredRole: Role.ADMIN,
 			});
-			// make sure the user is the owner of the organization
-			const org = await ctx.prisma.organization.findUnique({
-				where: {
-					id: input.organizationId,
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated organization meta: ${input.orgName}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
 				},
 			});
-			if (org?.ownerId !== ctx.session.user.id) {
-				throw new Error("You are not the owner of this organization.");
-			}
 			// update the organization
 			return await ctx.prisma.organization.update({
 				where: {
@@ -216,6 +216,30 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getPlatformUsers: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// get all users
+			return await ctx.prisma.user.findMany({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+				},
+			});
+		}),
+
 	getOrgUsers: protectedProcedure
 		.input(
 			z.object({
@@ -247,14 +271,16 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			// return user with role flatten
-			const users = organization?.users.map((user) => {
-				const role = organization.userRoles.find((role) => role.userId === user.id);
-				return {
-					...user,
-					role: role?.role,
-				};
-			});
+			// return user with role flatten and sort by id
+			const users = organization?.users
+				.map((user) => {
+					const role = organization.userRoles.find((role) => role.userId === user.id);
+					return {
+						...user,
+						role: role?.role,
+					};
+				})
+				.sort((a, b) => a.id.localeCompare(b.id)); // Sort users by id in ascending order
 
 			return users;
 		}),
@@ -279,6 +305,7 @@ export const organizationRouter = createTRPCRouter({
 				include: {
 					userRoles: true,
 					users: true,
+					webhooks: true,
 					networks: {
 						include: {
 							networkMembers: true,
@@ -382,6 +409,7 @@ export const organizationRouter = createTRPCRouter({
 			if (input.userId === ctx.session.user.id) {
 				throw new Error("You cannot change your own role.");
 			}
+
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
@@ -390,6 +418,25 @@ export const organizationRouter = createTRPCRouter({
 					minimumRequiredRole: Role.ADMIN,
 				});
 			}
+
+			// get the user name
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userId,
+				},
+				select: {
+					name: true,
+				},
+			});
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed user ${user.name} role to ${input.role} in organization.`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
+				},
+			});
 			// chagne the user's role in the organization
 			return await ctx.prisma.userOrganizationRole.update({
 				where: {
@@ -609,16 +656,23 @@ export const organizationRouter = createTRPCRouter({
 			return notifications;
 		}),
 
-	addUser: adminRoleProtectedRoute
+	addUser: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
 				userId: z.string(),
 				userName: z.string(),
-				organizationRole: z.enum(["READ_ONLY", "USER"]),
+				organizationRole: z.enum(["READ_ONLY", "USER", "ADMIN"]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -676,7 +730,7 @@ export const organizationRouter = createTRPCRouter({
 
 			// make sure the user is not the owner of the organization
 			if (org?.ownerId === input.userId) {
-				throw new Error("You cannot leave an organization you own.");
+				throw new Error("You cannot kick the organization owner.");
 			}
 
 			// Find the email of the user
@@ -920,6 +974,7 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				minimumRequiredRole: Role.ADMIN,
 			});
+
 			// Validate the URL to be HTTPS
 			if (!input.webhookUrl.startsWith("https://")) {
 				// throw error

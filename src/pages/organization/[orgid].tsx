@@ -15,6 +15,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
+import { OrgNavBar } from "~/components/organization/orgNavBar";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -116,18 +117,23 @@ const OrganizationById = ({ user, orgIds }) => {
 			</>
 		);
 	}
-	return (
-		<main className="w-full bg-base-100 p-5 animate-fadeIn">
-			<MetaTags title={title} />
-			<div className="max-w-7xl mx-auto">
-				<header className="py-5">
-					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
-						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
-						<p className="text-center text-sm font-bold">{orgData?.description}</p>
-						<p className="text-center text-xl">{t("organizationDashboard.header")}</p>
-					</div>
-				</header>
 
+	const truncatedOrgName =
+		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
+
+	return (
+		<main className="w-full bg-base-100 py-8 animate-fadeIn">
+			<MetaTags title={title} />
+			<div className="max-w-7xl mx-auto space-y-10">
+				<OrgNavBar title={orgData?.orgName} orgData={orgData} />
+				{orgData?.description ? (
+					<div
+						className="border-l-4 border-primary p-2 leading-snug"
+						style={{ caretColor: "transparent" }}
+					>
+						{orgData?.description}
+					</div>
+				) : null}
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
@@ -172,7 +178,9 @@ const OrganizationById = ({ user, orgIds }) => {
 												</div>
 												<div>
 													<p className="font-medium">{user.name}</p>
-													<p className="text-sm text-gray-400">{user?.role}</p>
+													<p className="text-sm text-gray-400">
+														{user.id === orgData.ownerId ? "OWNER" : user?.role}
+													</p>
 												</div>
 											</div>
 										</li>
@@ -190,7 +198,7 @@ const OrganizationById = ({ user, orgIds }) => {
 						<ul className="space-y-2">
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.name")}</span>
-								<span>{orgData?.orgName}</span>
+								<span>{truncatedOrgName}</span>
 							</li>
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.created")}</span>

@@ -63,6 +63,7 @@ const OrgUserRole = ({ user, organizationId }: Iuser) => {
 				onChange={(e) => dropDownHandler(e, user?.id)}
 				className="select select-sm select-bordered  select-ghost max-w-xs"
 			>
+				<option>ADMIN</option>
 				<option>USER</option>
 				<option>READ_ONLY</option>
 			</select>

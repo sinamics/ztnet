@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import Input from "../elements/input";
+import { ErrorData } from "~/types/errorHandling";
 
 interface Iprops {
 	organizationId: string;
@@ -15,10 +16,29 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 	const [input, setInput] = useState({ orgDescription: "", orgName: "" });
 	const { closeModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
-	const { data: orgData } = api.org.getOrgById.useQuery({
+	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
-	const { mutate: updateOrg } = api.org.updateMeta.useMutation();
+	const { mutate: updateOrg } = api.org.updateMeta.useMutation({
+		onSuccess: () => {
+			toast.success("Organization updated successfully");
+			refecthAllOrg();
+			refecthOrgById();
+			closeModal();
+		},
+		onError: (error) => {
+			if ((error.data as ErrorData)?.zodError) {
+				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
+				for (const field in fieldErrors) {
+					toast.error(`${fieldErrors[field].join(", ")}`);
+				}
+			} else if (error.message) {
+				toast.error(error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+		},
+	});
 	useEffect(() => {
 		if (orgData) {
 			setInput({

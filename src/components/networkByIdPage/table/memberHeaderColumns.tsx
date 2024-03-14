@@ -249,6 +249,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 					sortUndefined: -1,
 					sortingFn: sortingPhysicalIpAddress,
 					cell: ({ getValue, row: { original } }) => {
+						const isOffline = original?.conStatus === ConnectionStatus.Offline;
 						if (central) {
 							const centralPhysicalAddress: string = original?.physicalAddress;
 							if (!centralPhysicalAddress || typeof centralPhysicalAddress !== "string")
@@ -268,7 +269,17 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 								</span>
 							);
 
-						return physicalAddress.split("/")[0];
+						return (
+							<div>
+								{isOffline ? (
+									<span className="text-sm text-gray-400/50">
+										{physicalAddress.split("/")[0]}
+									</span>
+								) : (
+									<span>{physicalAddress.split("/")[0]}</span>
+								)}
+							</div>
+						);
 					},
 				},
 			),
