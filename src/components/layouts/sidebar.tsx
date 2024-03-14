@@ -172,58 +172,65 @@ const Sidebar = (): JSX.Element => {
 									{t("organization")}
 								</span>
 							</li>
-							{me?.memberOfOrgs.map((org) => (
-								<li key={org.orgName} className="my-px">
-									<Link
-										shallow
-										href={`/organization/${org.id}`}
-										className={`flex h-10 flex-row items-center rounded-lg px-3 
+							{me?.memberOfOrgs.map((org) => {
+								const truncatedOrgName =
+									org.orgName.length > 15
+										? `${org.orgName.slice(0, 15)}...`
+										: org.orgName;
+
+								return (
+									<li key={org.orgName} className="my-px">
+										<Link
+											shallow
+											href={`/organization/${org.id}`}
+											className={`flex h-10 flex-row items-center rounded-lg px-3 
 								${
 									router.query.orgid?.includes(org.id)
 										? "bg-gray-100 text-gray-700"
 										: "hover:bg-slate-700"
 								}`}
-									>
-										<span className="flex items-center justify-center text-lg text-gray-400">
-											{/* https://heroicons.com/  */}
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												strokeWidth="1.5"
-												stroke="currentColor"
-												className="w-6 h-6"
-											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
-												/>
-											</svg>
-										</span>
-										<span className="ml-3">{org.orgName}</span>
-										<div className="relative">
-											{hasNewMessages[org.id] ? (
-												// <span className="absolute bg-red-400 w-2 h-2 rounded-lg left-1 -top-2 glow" />
+										>
+											<span className="flex items-center justify-center text-lg text-gray-400">
+												{/* https://heroicons.com/  */}
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
 													fill="none"
 													viewBox="0 0 24 24"
 													strokeWidth="1.5"
 													stroke="currentColor"
-													className="w-4 h-4 text-red-500 ml-2"
+													className="w-6 h-6"
 												>
 													<path
 														strokeLinecap="round"
 														strokeLinejoin="round"
-														d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+														d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"
 													/>
 												</svg>
-											) : null}
-										</div>
-									</Link>
-								</li>
-							))}
+											</span>
+											<span className="ml-3">{truncatedOrgName}</span>
+											<div className="relative">
+												{hasNewMessages[org.id] ? (
+													// <span className="absolute bg-red-400 w-2 h-2 rounded-lg left-1 -top-2 glow" />
+													<svg
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 24 24"
+														strokeWidth="1.5"
+														stroke="currentColor"
+														className="w-4 h-4 text-red-500 ml-2"
+													>
+														<path
+															strokeLinecap="round"
+															strokeLinejoin="round"
+															d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"
+														/>
+													</svg>
+												) : null}
+											</div>
+										</Link>
+									</li>
+								);
+							})}
 						</>
 					) : null}
 					{session?.user?.role === "ADMIN" ? (

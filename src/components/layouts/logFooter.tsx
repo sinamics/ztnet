@@ -32,7 +32,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 		<>
 			<button
 				className={`fixed z-10 flex items-center justify-center flex-col text-6xl ${
-					asideOpen ? "right-[calc(50%+1rem)]" : "right-[calc(42%+1rem)]"
+					asideOpen ? "right-[calc(16%+1rem)]" : "right-[calc(1%+1rem)]"
 				} ${
 					logsOpen ? "bottom-[calc(350px/2+2.5rem)]" : "bottom-[0px]"
 				} rounded-full p-2 shadow-md transition-all duration-150`}

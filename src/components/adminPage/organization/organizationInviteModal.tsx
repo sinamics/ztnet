@@ -24,7 +24,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 	const { refetch: refecthOrgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
-	const { data: allUsers } = api.admin.getUsers.useQuery({ isAdmin: false });
+	const { data: allUsers } = api.org.getPlatformUsers.useQuery({ organizationId });
 
 	const { mutate: addUser } = api.org.addUser.useMutation();
 
@@ -74,8 +74,9 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 							onChange={(e) => dropDownHandler(e)}
 							className="select select-sm select-bordered  select-ghost max-w-xs"
 						>
-							<option>READ_ONLY</option>
+							<option>ADMIN</option>
 							<option>USER</option>
+							<option>READ_ONLY</option>
 						</select>
 					</div>
 				</div>

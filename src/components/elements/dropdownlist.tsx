@@ -80,7 +80,7 @@ const ScrollableDropdown = ({
 							width: containerRef.current ? containerRef.current.offsetWidth : "auto",
 						}}
 					>
-						{filteredItems.map((item) => (
+						{filteredItems?.map((item) => (
 							<li
 								key={item[idField]}
 								tabIndex={0}

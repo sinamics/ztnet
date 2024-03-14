@@ -25,11 +25,30 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 		hookType: [],
 	});
 
+	// TODO make only one request instead of Orgbyid and AllOrgs
 	const { closeModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
+		organizationId,
+	});
 
-	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation();
-	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation();
+	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation({
+		onSuccess: () => {
+			toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
+			closeModal();
+			refecthOrg();
+			refecthAllOrg();
+		},
+	});
+
+	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation({
+		onSuccess: () => {
+			toast.success("Webhook deleted successfully");
+			closeModal();
+			refecthOrg();
+			refecthAllOrg();
+		},
+	});
 
 	useEffect(() => {
 		if (!hook) return;
@@ -71,6 +90,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 					onSuccess: () => {
 						toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
 						closeModal();
+						refecthOrg();
 						refecthAllOrg();
 					},
 					onError: (error) => {
@@ -78,8 +98,6 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 					},
 				},
 			);
-
-			refecthAllOrg();
 		} catch (_err) {
 			toast.error("Error adding webhook");
 		}
@@ -95,6 +113,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 				{
 					onSuccess: () => {
 						closeModal();
+						refecthOrg();
 						refecthAllOrg();
 					},
 					onError: (error) => {
@@ -102,8 +121,6 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 					},
 				},
 			);
-
-			refecthAllOrg();
 		} catch (_err) {
 			toast.error("Error deleting webhook");
 		}

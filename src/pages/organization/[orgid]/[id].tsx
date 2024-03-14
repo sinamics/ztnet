@@ -142,7 +142,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 										}
 										title={t("copyToClipboard.title")}
 									>
-										<div className="flex cursor-pointer items-center">
+										<div className="flex cursor-pointer items-center gap-2">
 											{network?.nwid}
 											<CopyIcon />
 										</div>
