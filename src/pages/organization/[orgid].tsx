@@ -178,7 +178,9 @@ const OrganizationById = ({ user, orgIds }) => {
 												</div>
 												<div>
 													<p className="font-medium">{user.name}</p>
-													<p className="text-sm text-gray-400">{user?.role}</p>
+													<p className="text-sm text-gray-400">
+														{user.id === orgData.ownerId ? "OWNER" : user?.role}
+													</p>
 												</div>
 											</div>
 										</li>
