@@ -117,16 +117,14 @@ const OrganizationById = ({ user, orgIds }) => {
 			</>
 		);
 	}
+
+	const truncatedOrgName =
+		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
+
 	return (
 		<main className="w-full bg-base-100 py-8 animate-fadeIn">
 			<MetaTags title={title} />
 			<div className="max-w-7xl mx-auto space-y-10">
-				{/* <header className="">
-					<div className="container mx-auto flex flex-col items-center justify-center">
-						<p className="text-center text-sm font-bold">{orgData?.description}</p>
-						<p className="text-center text-xl">{t("organizationDashboard.header")}</p>
-					</div>
-				</header> */}
 				<OrgNavBar title={orgData?.orgName} orgData={orgData} />
 				{orgData?.description ? (
 					<div
@@ -198,7 +196,7 @@ const OrganizationById = ({ user, orgIds }) => {
 						<ul className="space-y-2">
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.name")}</span>
-								<span>{orgData?.orgName}</span>
+								<span>{truncatedOrgName}</span>
 							</li>
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.created")}</span>

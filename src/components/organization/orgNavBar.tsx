@@ -4,6 +4,7 @@ import OrganizationWebhook from "./webhookModal";
 import OrganizationInviteModal from "../adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
 
 // Utility function to open modals
 const useOpenModal = (orgData) => {
@@ -145,11 +146,16 @@ export const OrgNavBar = ({ title, orgData }) => {
 	const { callModal } = useModalStore((state) => state);
 	const { data: session } = useSession();
 
+	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
+		organizationId: orgData.id,
+		userId: session.user.id,
+	});
+
 	return (
 		<div className="navbar bg-base-200 rounded-md shadow-md">
 			<div className="navbar-start">
 				<div className="dropdown">
-					<div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+					<div tabIndex={0} role="button" className="btn btn-ghost xl:hidden">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="h-5 w-5"
@@ -189,8 +195,8 @@ export const OrgNavBar = ({ title, orgData }) => {
 				</div>
 				<a className="btn btn-ghost text-xl">{title}</a>
 			</div>
-			<div className="navbar-center hidden lg:flex ">
-				{session?.user?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
+			<div className="navbar-center hidden xl:flex ">
+				{meOrgRole.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
 			</div>
 			<div className="navbar-end">
 				<button

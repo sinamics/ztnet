@@ -119,7 +119,7 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().min(3).max(150),
+				orgName: z.string().min(3).max(40),
 				orgDescription: z.string().optional(),
 			}),
 		)
