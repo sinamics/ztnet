@@ -1,6 +1,8 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
 import OrganizationWebhook from "./webhookModal";
+import OrganizationInviteModal from "../adminPage/organization/organizationInviteModal";
+import EditOrganizationModal from "./editOrgModal";
 
 export const OrgNavBar = ({ title, orgData }) => {
 	const { callModal } = useModalStore((state) => state);
@@ -11,7 +13,7 @@ export const OrgNavBar = ({ title, orgData }) => {
 	return (
 		<div className="navbar bg-base-200 rounded-md shadow-md">
 			<div className="navbar-start">
-				<div className="dropdown">
+				<div className="dropdown dropdown-end">
 					<div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -53,53 +55,87 @@ export const OrgNavBar = ({ title, orgData }) => {
 				</div>
 				<a className="btn btn-ghost text-xl">{title}</a>
 			</div>
-			<div className="navbar-center hidden lg:flex">
-				<ul className="menu menu-horizontal px-1">
-					<li>
-						<a>INVITE USER</a>
-					</li>
-					{/* <li>
-						<details>
-							<summary>Parent</summary>
-							<ul className="p-2">
-								<li>
-									<a>Submenu 1</a>
-								</li>
-								<li>
-									<a>Submenu 2</a>
-								</li>
-							</ul>
-						</details>
-					</li> */}
-					<li
-						onClick={() => {
+			<div className="navbar-center hidden lg:flex ">
+				<div className="dropdown dropdown-end">
+					<div tabIndex={0} role="button" className="btn btn-ghost">
+						<div className="rounded-full">WEBHOOKS</div>
+					</div>
+					<ul
+						tabIndex={0}
+						className="bg-base-300 menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow  rounded-box w-52"
+					>
+						<li
+							onClick={() => {
+								callModal({
+									rootStyle: "h-4/6",
+									title: (
+										<p>
+											<span>
+												{t.rich(
+													"admin.organization.listOrganization.webhookModal.createWebhookTitle",
+													{
+														span: (children) => (
+															<span className="text-primary">{children}</span>
+														),
+														organization: orgData.orgName,
+													},
+												)}
+											</span>
+										</p>
+									),
+									content: <OrganizationWebhook organizationId={orgData.id} />,
+								});
+							}}
+						>
+							<p className="justify-between">
+								Create
+								<span className="badge">New</span>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div className="dropdown dropdown-end">
+					<div
+						onClick={() =>
 							callModal({
-								rootStyle: "h-4/6",
+								rootStyle: "h-3/6",
 								title: (
 									<p>
 										<span>
-											{t.rich(
-												"admin.organization.listOrganization.webhookModal.createWebhookTitle",
-												{
-													span: (children) => (
-														<span className="text-primary">{children}</span>
-													),
-													organization: orgData.orgName,
-												},
-											)}
+											{t("admin.organization.listOrganization.invitationModal.title")}
 										</span>
 									</p>
 								),
-								content: <OrganizationWebhook organizationId={orgData.id} />,
+								content: <OrganizationInviteModal organizationId={orgData.id} />,
+							})
+						}
+						tabIndex={0}
+						role="button"
+						className="btn btn-ghost"
+					>
+						<div className="rounded-full">INVITE USER</div>
+					</div>
+				</div>
+				<div className="dropdown dropdown-end">
+					<div
+						onClick={() => {
+							callModal({
+								title: (
+									<p>
+										<span>Edit Meta </span>
+										<span className="text-primary">{orgData.orgName}</span>
+									</p>
+								),
+								content: <EditOrganizationModal organizationId={orgData.id} />,
 							});
 						}}
+						tabIndex={0}
+						role="button"
+						className="btn btn-ghost"
 					>
-						<p>WEBHOOKS</p>
-					</li>
-					<li>
-						<a>META</a>
-					</li>
-				</ul>
+						<div className="rounded-full">META</div>
+					</div>
+				</div>
 			</div>
 			<div className="navbar-end">
 				{/* <button className="btn btn-ghost btn-circle">

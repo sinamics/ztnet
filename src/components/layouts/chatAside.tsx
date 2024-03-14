@@ -59,7 +59,7 @@ const ChatAside = () => {
 
 	const { openChats, toggleChat } = useAsideChatStore();
 	const [messages, setMessages] = useState([]);
-	const { messages: newMessages, hasNewMessages } = useSocketStore();
+	const { messages: newMessages } = useSocketStore();
 
 	const [inputMsg, setInputMsg] = useState({ chatMessage: "" });
 	const query = useRouter().query;
@@ -155,8 +155,7 @@ const ChatAside = () => {
 				aria-label="Toggle chat"
 				onClick={() => toggleChat(orgId)}
 			>
-				<div className="flex items-center relative">
-					{/* Replace with an actual chat icon */}
+				{/* <div className="flex items-center relative">
 					{openChats.includes(orgId) ? (
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -188,13 +187,13 @@ const ChatAside = () => {
 							/>
 						</svg>
 					)}
-					<div className="relative">
+					 <div className="relative">
 						<span className="text-xs">{t("chatSidebar.toggleChatLabel")}</span>
 						{hasNewMessages[orgId] ? (
 							<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
 						) : null}
-					</div>
-				</div>
+					</div> 
+				</div> */}
 			</button>
 			{/* Chat Aside Panel */}
 			<aside
