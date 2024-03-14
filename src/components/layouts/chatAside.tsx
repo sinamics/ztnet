@@ -64,6 +64,7 @@ const ChatAside = () => {
 	const [inputMsg, setInputMsg] = useState({ chatMessage: "" });
 	const query = useRouter().query;
 	const orgId = query.orgid as string;
+	const networkId = query.id as string;
 	const messageEndRef = useRef(null);
 
 	const { mutate: markMessagesAsRead } = api.org.markMessagesAsRead.useMutation();
@@ -145,56 +146,62 @@ const ChatAside = () => {
 			},
 		);
 	};
+
+	// add showChatBtn = true if networkId is not null
+	const showChatBtn = networkId !== undefined;
+
 	return (
 		<>
 			{/* Chat Toggle Button */}
-			<button
-				className={`w-14 z-10 fixed right-2 top-20 transition-all duration-150 ${
-					openChats.includes(orgId) ? "mr-72" : "w-0"
-				}`}
-				aria-label="Toggle chat"
-				onClick={() => toggleChat(orgId)}
-			>
-				<div className="flex items-center relative">
-					{openChats.includes(orgId) ? (
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth="1.5"
-							stroke="currentColor"
-							className="w-6 h-6"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M8.25 4.5l7.5 7.5-7.5 7.5"
-							/>
-						</svg>
-					) : (
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth="1.5"
-							stroke="currentColor"
-							className="w-6 h-6"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M15.75 19.5L8.25 12l7.5-7.5"
-							/>
-						</svg>
-					)}
-					<div className="relative">
-						<span className="text-xs">{t("chatSidebar.toggleChatLabel")}</span>
-						{hasNewMessages[orgId] ? (
-							<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
-						) : null}
+			{showChatBtn ? (
+				<button
+					className={`w-14 z-10 fixed right-2 top-20 transition-all duration-150 ${
+						openChats.includes(orgId) ? "mr-72" : "w-0"
+					}`}
+					aria-label="Toggle chat"
+					onClick={() => toggleChat(orgId)}
+				>
+					<div className="flex items-center relative">
+						{openChats.includes(orgId) ? (
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth="1.5"
+								stroke="currentColor"
+								className="w-6 h-6"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M8.25 4.5l7.5 7.5-7.5 7.5"
+								/>
+							</svg>
+						) : (
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth="1.5"
+								stroke="currentColor"
+								className="w-6 h-6"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M15.75 19.5L8.25 12l7.5-7.5"
+								/>
+							</svg>
+						)}
+						<div className="relative">
+							<span className="text-xs">{t("chatSidebar.toggleChatLabel")}</span>
+							{hasNewMessages[orgId] ? (
+								<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
+							) : null}
+						</div>
 					</div>
-				</div>
-			</button>
+				</button>
+			) : null}
 			{/* Chat Aside Panel */}
 			<aside
 				className={`fixed h-full right-0 bg-base-200 shadow-md transition-all duration-150 ${
