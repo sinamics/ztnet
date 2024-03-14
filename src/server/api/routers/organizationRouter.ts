@@ -271,14 +271,16 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			// return user with role flatten
-			const users = organization?.users.map((user) => {
-				const role = organization.userRoles.find((role) => role.userId === user.id);
-				return {
-					...user,
-					role: role?.role,
-				};
-			});
+			// return user with role flatten and sort by id
+			const users = organization?.users
+				.map((user) => {
+					const role = organization.userRoles.find((role) => role.userId === user.id);
+					return {
+						...user,
+						role: role?.role,
+					};
+				})
+				.sort((a, b) => a.id.localeCompare(b.id)); // Sort users by id in ascending order
 
 			return users;
 		}),
