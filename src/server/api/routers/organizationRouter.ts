@@ -216,6 +216,30 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getPlatformUsers: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// get all users
+			return await ctx.prisma.user.findMany({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+				},
+			});
+		}),
+
 	getOrgUsers: protectedProcedure
 		.input(
 			z.object({

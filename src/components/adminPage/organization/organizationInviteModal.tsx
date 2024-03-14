@@ -24,7 +24,7 @@ const OrganizationInviteModal = ({ organizationId }: Iprops) => {
 	const { refetch: refecthOrgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
-	const { data: allUsers } = api.admin.getUsers.useQuery({ isAdmin: false });
+	const { data: allUsers } = api.org.getPlatformUsers.useQuery({ organizationId });
 
 	const { mutate: addUser } = api.org.addUser.useMutation();
 
