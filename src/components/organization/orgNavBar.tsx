@@ -3,17 +3,152 @@ import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store"
 import OrganizationWebhook from "./webhookModal";
 import OrganizationInviteModal from "../adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
+import { useSession } from "next-auth/react";
+
+// Utility function to open modals
+const useOpenModal = (orgData) => {
+	const { callModal } = useModalStore();
+	const t = useTranslations();
+
+	const openModal = (type) => {
+		const modalTypes = {
+			editMeta: {
+				title: (
+					<p>
+						<span>Edit Meta </span>
+						<span className="text-primary">{orgData.orgName}</span>
+					</p>
+				),
+				content: <EditOrganizationModal organizationId={orgData.id} />,
+			},
+			webhooks: {
+				rootStyle: "h-4/6",
+				title: (
+					<p>
+						<span>
+							{t.rich(
+								"admin.organization.listOrganization.webhookModal.createWebhookTitle",
+								{
+									span: (children) => <span className="text-primary">{children}</span>,
+									organization: orgData.orgName,
+								},
+							)}
+						</span>
+					</p>
+				),
+				content: <OrganizationWebhook organizationId={orgData.id} />,
+			},
+			inviteUser: {
+				rootStyle: "h-3/6",
+				title: (
+					<p>
+						<span>{t("admin.organization.listOrganization.invitationModal.title")}</span>
+					</p>
+				),
+				content: <OrganizationInviteModal organizationId={orgData.id} />,
+			},
+		};
+
+		callModal(modalTypes[type]);
+	};
+
+	return openModal;
+};
+
+const AdminHamburgerMenu = ({ orgData }) => {
+	const openModal = useOpenModal(orgData);
+	return (
+		<ul
+			tabIndex={0}
+			className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+		>
+			<li onClick={() => openModal("editMeta")}>
+				<a className="justify-between cursor-pointer">META</a>
+			</li>
+			<li onClick={() => openModal("webhooks")}>
+				<a className="justify-between cursor-pointer">WEBHOOKS</a>
+			</li>
+			<li onClick={() => openModal("inviteUser")}>
+				<a className="justify-between cursor-pointer">INVITE USER</a>
+			</li>
+		</ul>
+	);
+};
+
+const AdminNavMenu = ({ orgData }) => {
+	const { callModal } = useModalStore();
+	const openModal = useOpenModal(orgData);
+	return (
+		<div>
+			<div className="dropdown dropdown-end">
+				<div tabIndex={0} role="button" className="btn btn-ghost">
+					<div className="rounded-full">WEBHOOKS</div>
+				</div>
+				<ul
+					tabIndex={0}
+					className="bg-base-300 menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow  rounded-box w-52"
+				>
+					<li onClick={() => openModal("webhooks")}>
+						<a className="justify-between cursor-pointer">Create new webhook</a>
+					</li>
+					{orgData?.webhooks.map((webhook) => {
+						return (
+							<li
+								onClick={() =>
+									void callModal({
+										title: (
+											<p>
+												<span>Edit Webhook </span>
+												<span className="text-primary">{webhook.name}</span>
+											</p>
+										),
+										content: (
+											<OrganizationWebhook organizationId={orgData.id} hook={webhook} />
+										),
+									})
+								}
+								key={webhook.id}
+							>
+								<a className="justify-between cursor-pointer">{webhook.name}</a>
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+			<div className="dropdown dropdown-end">
+				<div
+					onClick={() => openModal("inviteUser")}
+					tabIndex={0}
+					role="button"
+					className="btn btn-ghost"
+				>
+					<div className="rounded-full">INVITE USER</div>
+				</div>
+			</div>
+			<div className="dropdown dropdown-end">
+				<div
+					onClick={() => openModal("editMeta")}
+					tabIndex={0}
+					role="button"
+					className="btn btn-ghost"
+				>
+					<div className="rounded-full">META</div>
+				</div>
+			</div>
+		</div>
+	);
+};
 
 export const OrgNavBar = ({ title, orgData }) => {
-	const { callModal } = useModalStore((state) => state);
 	const { toggleChat } = useAsideChatStore();
 	const { hasNewMessages } = useSocketStore();
-	const t = useTranslations();
+	const { callModal } = useModalStore((state) => state);
+	const { data: session } = useSession();
 
 	return (
 		<div className="navbar bg-base-200 rounded-md shadow-md">
 			<div className="navbar-start">
-				<div className="dropdown dropdown-end">
+				<div className="dropdown">
 					<div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -30,130 +165,34 @@ export const OrgNavBar = ({ title, orgData }) => {
 							/>
 						</svg>
 					</div>
-					<ul
-						tabIndex={0}
-						className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-					>
-						<li>
-							<a>Item 1</a>
-						</li>
-						<li>
-							<a>Parent</a>
-							<ul className="p-2">
-								<li>
-									<a>Submenu 1</a>
-								</li>
-								<li>
-									<a>Submenu 2</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a>Item 3</a>
-						</li>
-					</ul>
+					<div className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+						<div
+							onClick={() => {
+								callModal({
+									title: (
+										<p>
+											<span>Edit Meta </span>
+											<span className="text-primary">{orgData.orgName}</span>
+										</p>
+									),
+									content: <EditOrganizationModal organizationId={orgData.id} />,
+								});
+							}}
+							tabIndex={0}
+							role="button"
+							className="btn btn-ghost"
+						>
+							<div className="rounded-full">META</div>
+						</div>
+					</div>
+					<AdminHamburgerMenu orgData={orgData} />
 				</div>
 				<a className="btn btn-ghost text-xl">{title}</a>
 			</div>
 			<div className="navbar-center hidden lg:flex ">
-				<div className="dropdown dropdown-end">
-					<div tabIndex={0} role="button" className="btn btn-ghost">
-						<div className="rounded-full">WEBHOOKS</div>
-					</div>
-					<ul
-						tabIndex={0}
-						className="bg-base-300 menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow  rounded-box w-52"
-					>
-						<li
-							onClick={() => {
-								callModal({
-									rootStyle: "h-4/6",
-									title: (
-										<p>
-											<span>
-												{t.rich(
-													"admin.organization.listOrganization.webhookModal.createWebhookTitle",
-													{
-														span: (children) => (
-															<span className="text-primary">{children}</span>
-														),
-														organization: orgData.orgName,
-													},
-												)}
-											</span>
-										</p>
-									),
-									content: <OrganizationWebhook organizationId={orgData.id} />,
-								});
-							}}
-						>
-							<p className="justify-between">
-								Create
-								<span className="badge">New</span>
-							</p>
-						</li>
-					</ul>
-				</div>
-				<div className="dropdown dropdown-end">
-					<div
-						onClick={() =>
-							callModal({
-								rootStyle: "h-3/6",
-								title: (
-									<p>
-										<span>
-											{t("admin.organization.listOrganization.invitationModal.title")}
-										</span>
-									</p>
-								),
-								content: <OrganizationInviteModal organizationId={orgData.id} />,
-							})
-						}
-						tabIndex={0}
-						role="button"
-						className="btn btn-ghost"
-					>
-						<div className="rounded-full">INVITE USER</div>
-					</div>
-				</div>
-				<div className="dropdown dropdown-end">
-					<div
-						onClick={() => {
-							callModal({
-								title: (
-									<p>
-										<span>Edit Meta </span>
-										<span className="text-primary">{orgData.orgName}</span>
-									</p>
-								),
-								content: <EditOrganizationModal organizationId={orgData.id} />,
-							});
-						}}
-						tabIndex={0}
-						role="button"
-						className="btn btn-ghost"
-					>
-						<div className="rounded-full">META</div>
-					</div>
-				</div>
+				{session?.user?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
 			</div>
 			<div className="navbar-end">
-				{/* <button className="btn btn-ghost btn-circle">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-						/>
-					</svg>
-				</button> */}
 				<button
 					onClick={() => {
 						toggleChat(orgData.id);
