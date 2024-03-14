@@ -99,7 +99,7 @@ export default function MultiSelectDropdown({
 
 			<div
 				onClick={toggleDropdown}
-				className="w-full flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[10px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border border-gray-700 rounded-md px-3 py-1"
+				className="w-full flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[10px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
 			>
 				<span>{prompt}</span>
 				{isJsEnabled ? (
@@ -107,25 +107,25 @@ export default function MultiSelectDropdown({
 				) : null}
 			</div>
 			{isDropdownOpen && (
-				<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-60 overflow-y-scroll">
+				<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-96 overflow-y-auto overflow-x-hidden">
 					{isJsEnabled && (
 						<ul>
 							<li>
 								<button
 									onClick={handleSelectAllClick}
 									disabled={!isSelectAllEnabled}
-									className="w-full btn-xs btn rounded-none btn-primary text-left px-2 py-1 disabled:opacity-50"
+									className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
 								>
-									{"Select All"}
+									Select All
 								</button>
 							</li>
 							<li>
 								<button
 									onClick={handleClearSelectionClick}
 									disabled={!isClearSelectionEnabled}
-									className="w-full btn-xs btn text-left px-2 py-1 disabled:opacity-50"
+									className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
 								>
-									{"Clear selection"}
+									Clear selection
 								</button>
 							</li>
 						</ul>
