@@ -654,7 +654,7 @@ export const organizationRouter = createTRPCRouter({
 			return notifications;
 		}),
 
-	addUser: adminRoleProtectedRoute
+	addUser: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
@@ -664,6 +664,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
