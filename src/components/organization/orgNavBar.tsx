@@ -79,11 +79,14 @@ const AdminHamburgerMenu = ({ orgData }) => {
 const AdminNavMenu = ({ orgData }) => {
 	const { callModal } = useModalStore();
 	const openModal = useOpenModal(orgData);
+	const b = useTranslations("commonButtons");
+	const t = useTranslations();
+
 	return (
 		<div>
 			<div className="dropdown dropdown-end">
 				<div tabIndex={0} role="button" className="btn btn-ghost">
-					<div className="rounded-full">WEBHOOKS</div>
+					<div className="rounded-full">{b("addWebhooks")}</div>
 				</div>
 				<ul
 					tabIndex={0}
@@ -99,7 +102,11 @@ const AdminNavMenu = ({ orgData }) => {
 									void callModal({
 										title: (
 											<p>
-												<span>Edit Webhook </span>
+												<span>
+													{t(
+														"admin.organization.listOrganization.webhookModal.editWebhookTitle",
+													)}
+												</span>
 												<span className="text-primary">{webhook.name}</span>
 											</p>
 										),
@@ -123,7 +130,7 @@ const AdminNavMenu = ({ orgData }) => {
 					role="button"
 					className="btn btn-ghost"
 				>
-					<div className="rounded-full">INVITE USER</div>
+					<div className="rounded-full">{b("inviteUser")}</div>
 				</div>
 			</div>
 			<div className="dropdown dropdown-end">
@@ -133,7 +140,7 @@ const AdminNavMenu = ({ orgData }) => {
 					role="button"
 					className="btn btn-ghost"
 				>
-					<div className="rounded-full">META</div>
+					<div className="rounded-full">{b("meta")}</div>
 				</div>
 			</div>
 		</div>
