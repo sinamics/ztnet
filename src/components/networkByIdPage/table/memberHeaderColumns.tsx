@@ -272,7 +272,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 						return (
 							<div>
 								{isOffline ? (
-									<span className="text-sm text-gray-400">
+									<span className="text-sm text-gray-400/50">
 										{physicalAddress.split("/")[0]}
 									</span>
 								) : (
