@@ -203,7 +203,7 @@ export const OrgNavBar = ({ title, orgData }) => {
 				<a className="btn btn-ghost text-xl">{title}</a>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
-				{meOrgRole.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
+				{meOrgRole?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
 			</div>
 			<div className="navbar-end">
 				<button
