@@ -63,7 +63,7 @@ type DecryptedTokenData = {
 	userId: string;
 	name: string;
 	apiAuthorizationType: AuthorizationType;
-	expiresAt: string;
+	tokenId: string;
 };
 
 type VerifyToken = {
@@ -93,7 +93,11 @@ export async function decryptAndVerifyToken({
 	}
 
 	// Validate the decrypted data structure (add more validations as necessary)
-	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
+	if (
+		!decryptedData.userId ||
+		typeof decryptedData.userId !== "string" ||
+		!decryptedData.tokenId
+	) {
 		throw new Error("Invalid token structure");
 	}
 
@@ -105,9 +109,24 @@ export async function decryptAndVerifyToken({
 		throw new Error("Invalid Authorization Type");
 	}
 
-	// check if the token has expired. if decryptedData.expiresAt is null or undefined, it means the token never expires
-	if (decryptedData.expiresAt) {
-		const expiresAt = new Date(decryptedData.expiresAt);
+	// get the token from the database
+	const token = await prisma.aPIToken.findUnique({
+		where: {
+			id: decryptedData.tokenId,
+			userId: decryptedData.userId,
+		},
+		select: {
+			expiresAt: true,
+		},
+	});
+
+	if (!token) {
+		throw new Error("Invalid token");
+	}
+
+	// check if the token is expired
+	if (token.expiresAt) {
+		const expiresAt = new Date(token.expiresAt);
 		if (expiresAt < new Date()) {
 			throw new Error("Token expired");
 		}

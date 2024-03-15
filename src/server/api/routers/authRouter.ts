@@ -630,11 +630,29 @@ export const authRouter = createTRPCRouter({
 			return updated;
 		}),
 	getApiToken: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.prisma.aPIToken.findMany({
+		const tokens = await ctx.prisma.aPIToken.findMany({
 			where: {
 				userId: ctx.session.user.id,
 			},
+			orderBy: {
+				createdAt: "asc",
+			},
 		});
+
+		// if expiresAt is < now, set isActive to false. use for of loop to avoid async issues
+		for (const token of tokens) {
+			if (token.expiresAt) {
+				await ctx.prisma.aPIToken.update({
+					where: {
+						id: token.id,
+					},
+					data: {
+						isActive: token.expiresAt > new Date(),
+					},
+				});
+			}
+		}
+		return tokens;
 	}),
 	addApiToken: protectedProcedure
 		.input(
@@ -646,37 +664,55 @@ export const authRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			try {
-				// generate daysToExpire date. If "never" is selected or a empty string, the token will never expire.
+				// generate daysToExpire date. If "never" is selected or an empty string, the token will never expire.
 				const daysToExpire = parseInt(input.daysToExpire);
-				const expiresAt =
-					typeof daysToExpire === "number" && daysToExpire > 0 ? new Date() : null;
-				if (expiresAt) {
-					expiresAt.setDate(expiresAt.getDate() + parseInt(input.daysToExpire));
+				let expiresAt: Date | null = new Date();
+				if (!Number.isNaN(daysToExpire) && daysToExpire > 0) {
+					expiresAt.setDate(expiresAt.getDate() + daysToExpire);
+				} else {
+					expiresAt = null; // Token never expires
 				}
+
 				// token factory
-				const token_content: string = JSON.stringify({
+				const tokenContent = JSON.stringify({
 					userId: ctx.session.user.id,
-					expiresAt,
 					apiAuthorizationType: input.apiAuthorizationType,
 				});
 
 				// hash token
-				const token_hash = encrypt(
-					token_content,
-					generateInstanceSecret(API_TOKEN_SECRET),
-				);
+				const tokenHash = encrypt(tokenContent, generateInstanceSecret(API_TOKEN_SECRET));
 
-				// store token in database
+				// store token in database with tokenHash
 				const token = await ctx.prisma.aPIToken.create({
 					data: {
-						token: token_hash,
+						token: tokenHash,
 						name: input.name,
 						apiAuthorizationType: input.apiAuthorizationType,
 						userId: ctx.session.user.id,
 						expiresAt,
 					},
 				});
-				return token;
+
+				// Add the database token ID to the token hash for reference
+				const tokenId = token.id.toString(); // Just in case the token id is not a string ( old db structure )
+				const tokenWithIdContent = JSON.stringify({
+					...JSON.parse(tokenContent),
+					tokenId,
+				});
+
+				// hash token with token id
+				const tokenWithIdHash = encrypt(
+					tokenWithIdContent,
+					generateInstanceSecret(API_TOKEN_SECRET),
+				);
+
+				// Update the token in the database with the new hash that includes the tokenId
+				const updatedToken = await ctx.prisma.aPIToken.update({
+					where: { id: token.id },
+					data: { token: tokenWithIdHash },
+				});
+
+				return updatedToken;
 			} catch (error) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
@@ -688,13 +724,13 @@ export const authRouter = createTRPCRouter({
 	deleteApiToken: protectedProcedure
 		.input(
 			z.object({
-				id: z.number(),
+				id: z.union([z.string(), z.number()]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			return await ctx.prisma.aPIToken.delete({
 				where: {
-					id: input.id,
+					id: input.id.toString(),
 					userId: ctx.session.user.id,
 				},
 			});
