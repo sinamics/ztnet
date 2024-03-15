@@ -98,7 +98,7 @@ export async function decryptAndVerifyToken({
 		typeof decryptedData.userId !== "string" ||
 		!decryptedData.tokenId
 	) {
-		throw new Error("Invalid token structure");
+		throw new Error("Invalid token");
 	}
 
 	// validate the authorization type in token with the required authorization type
