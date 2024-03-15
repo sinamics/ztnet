@@ -40,7 +40,9 @@ const ApiLables = ({ tokens }) => {
 				return (
 					<div
 						key={token.id}
-						className={cn("badge badge-lg rounded-md flex items-center badge-primary")}
+						className={cn("badge badge-lg rounded-md flex items-center badge-primary", {
+							"bg-error": !token.isActive,
+						})}
 					>
 						<div
 							onClick={() => {
@@ -87,7 +89,7 @@ const ApiLables = ({ tokens }) => {
 							}}
 							className="cursor-pointer"
 						>
-							<p>{token.name}</p>
+							<p>{!token.isActive ? `Expired: ${token.name}` : token.name}</p>
 						</div>
 
 						<div>

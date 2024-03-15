@@ -200,7 +200,7 @@ model UserGroup {
 }
 
 model APIToken {
-  id                   Int       @id @default(autoincrement())
+  id                   String    @id @default(cuid())
   name                 String
   token                String    @unique
   userId               String

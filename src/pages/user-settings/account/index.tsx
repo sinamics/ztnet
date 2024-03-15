@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { globalSiteVersion } from "~/utils/global";
 import Link from "next/link";
-import ApiToken from "~/components/userSettings/apiToken";
+import GenerateApiToken from "~/components/userSettings/apiToken";
 import { languageNames, supportedLocales } from "~/locales/lang";
 import ApplicationFontSize from "~/components/userSettings/fontSize";
 
@@ -176,7 +176,7 @@ const Account = () => {
 					</p>
 				</div>
 				<div className="space-y-5">
-					<ApiToken />
+					<GenerateApiToken />
 				</div>
 			</div>
 
