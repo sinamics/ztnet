@@ -1,10 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { networkProvisioningFactory } from "~/server/api/services/networkService";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 
@@ -42,12 +41,9 @@ export default async function apiNetworkHandler(
 
 const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
-
-	let decryptedData: { userId: string; name: string };
-
 	// If there are users, verify the API key
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.PERSONAL,
 		});
@@ -62,7 +58,6 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 			},
 			prisma,
 		};
-
 		const newNetworkId = await networkProvisioningFactory({
 			ctx,
 			input: { central: false, name },
@@ -70,16 +65,7 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 
 		return res.status(200).json(newNetworkId);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };
 
@@ -128,15 +114,6 @@ const GET_userNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
 
 		return res.status(200).json(arr);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };

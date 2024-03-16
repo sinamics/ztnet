@@ -1,9 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 
@@ -83,15 +82,6 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 		);
 		return res.status(200).json(ztControllerResponse?.network);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };
