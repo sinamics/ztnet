@@ -15,7 +15,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 50;
+export const REQUEST_PR_MINUTE = 50;
 
 // Function to parse and validate fields based on the expected type
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -301,7 +301,10 @@ export const GET_orgNetworkMemberById = async (
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
 		});
-
+		// check if orgid is present
+		if (!orgid) {
+			return res.status(400).json({ error: "Organization ID is required" });
+		}
 		// Check if the networkId exists
 		if (!networkId) {
 			return res.status(400).json({ error: "Network ID is required" });

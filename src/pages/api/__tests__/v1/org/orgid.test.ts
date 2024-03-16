@@ -8,6 +8,9 @@ import apiNetworkHandler, {
 
 jest.mock("~/server/db", () => ({
 	prisma: {
+		userOrganizationRole: {
+			findFirst: jest.fn().mockResolvedValue({ role: "READ_ONLY" }),
+		},
 		user: {
 			count: jest.fn(),
 			create: jest.fn(),
@@ -16,7 +19,6 @@ jest.mock("~/server/db", () => ({
 				role: "ADMIN",
 				apiTokens: [
 					{
-						// Assuming your actual `apiTokens` structure looks something like this
 						token: "testToken",
 						tokenId: "testTokenId",
 						expiresAt: new Date(Date.now() + 100000).toISOString(), // Simulate a future expiration
@@ -49,6 +51,8 @@ describe("organization api validation", () => {
 		mockRequest = {
 			headers: {},
 			body: {},
+			query: {}, // Reset query to an empty object
+			method: "GET", // Default method can be set here if most tests use the same method, otherwise set it in individual tests
 		};
 		mockResponse = {
 			status: jest.fn().mockReturnThis(),
@@ -66,6 +70,9 @@ describe("organization api validation", () => {
 		jest.restoreAllMocks();
 	});
 	test('GET_orgById should throw "Invalid Token"', async () => {
+		// add organizationId to the request
+		mockRequest.query = { orgid: "testOrgId" };
+
 		prisma.user.count = jest.fn().mockResolvedValue(0);
 		// mock prisma transaction
 		prisma.$transaction = jest
@@ -96,9 +103,75 @@ describe("organization api validation", () => {
 			expect(error.message).toBe("Invalid Authorization Type");
 		}
 	});
+
+	test("should deny access if member is not tied to organization", async () => {
+		// add organizationId to the request
+		mockRequest.query = { orgid: "testOrgId" };
+
+		// Mock an API token with an unauthorized role
+		const unauthorizedTokenData = JSON.stringify({
+			userId: "testUserId",
+			tokenId: "testTokenId",
+			apiAuthorizationType: ["ORGANIZATION"],
+		});
+
+		const unauthorizedToken = encrypt(
+			unauthorizedTokenData,
+			generateInstanceSecret(API_TOKEN_SECRET),
+		);
+
+		prisma.aPIToken.findUnique = jest.fn().mockResolvedValue({
+			expiresAt: new Date(Date.now() + 100000).toISOString(),
+			token: unauthorizedToken,
+			userId: "testUserId",
+			tokenId: "testTokenId",
+		});
+
+		// return null, as this user is not a member of the organization
+		prisma.userOrganizationRole.findFirst = jest.fn().mockResolvedValue(null);
+
+		mockRequest.headers["x-ztnet-auth"] = unauthorizedToken;
+
+		await GET_orgById(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
+
+		expect(mockResponse.status).toHaveBeenCalledWith(500);
+		expect(mockResponse.json).toHaveBeenCalledWith({
+			message:
+				"You are not a member of this organization. Contact your organization administrator to request access.",
+		});
+	});
+	test("should respond with bad request for missing orgid", async () => {
+		// reset the request headers
+		mockRequest.headers = {};
+
+		const validTokenData = JSON.stringify({
+			userId: "testUserId",
+			tokenId: "testTokenId",
+			apiAuthorizationType: ["ORGANIZATION"],
+		});
+
+		// set req.method to GET
+		mockRequest.method = "GET";
+
+		const validToken = encrypt(validTokenData, generateInstanceSecret(API_TOKEN_SECRET));
+		mockRequest.headers["x-ztnet-auth"] = validToken;
+
+		// add organizationId to the request
+		mockRequest.query = undefined;
+		await apiNetworkHandler(
+			mockRequest as NextApiRequest,
+			mockResponse as NextApiResponse,
+		);
+
+		expect(mockResponse.status).toHaveBeenCalledWith(400);
+		expect(mockResponse.json).toHaveBeenCalledWith({
+			error: "Organization ID is required",
+		});
+	});
+
 	test("should enforce rate limiting", async () => {
-		for (let i = 0; i < 50; i++) {
-			mockRequest.headers["x-ztnet-auth"] = "ratelimittoken";
+		for (let i = 0; i < REQUEST_PR_MINUTE; i++) {
+			mockRequest.headers["x-ztnet-auth"] = `validToken${i}`;
 			await apiNetworkHandler(
 				mockRequest as NextApiRequest,
 				mockResponse as NextApiResponse,

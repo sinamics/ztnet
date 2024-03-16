@@ -42,6 +42,14 @@ export const GET_orgById = async (req: NextApiRequest, res: NextApiResponse) => 
 		const apiKey = req.headers["x-ztnet-auth"] as string;
 		const orgid = req.query?.orgid as string;
 
+		if (!apiKey) {
+			return res.status(400).json({ error: "API Key is required" });
+		}
+
+		if (!orgid) {
+			return res.status(400).json({ error: "Organization ID is required" });
+		}
+
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.ORGANIZATION,
