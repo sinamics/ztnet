@@ -23,7 +23,7 @@ const useOpenModal = (orgData) => {
 				content: <EditOrganizationModal organizationId={orgData.id} />,
 			},
 			webhooks: {
-				rootStyle: "h-4/6",
+				rootStyle: "h-10/12",
 				title: (
 					<p>
 						<span>
