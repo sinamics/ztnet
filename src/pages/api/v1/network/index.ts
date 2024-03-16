@@ -35,7 +35,7 @@ export default async function apiNetworkHandler(
 			await POST_createNewNetwork(req, res);
 			break;
 		default: // Method Not Allowed
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
