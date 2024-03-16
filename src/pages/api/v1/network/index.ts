@@ -51,26 +51,36 @@ const POST_createNewNetwork = async (req: NextApiRequest, res: NextApiResponse) 
 			apiKey,
 			apiAuthorizationType: AuthorizationType.PERSONAL,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
-	const { name } = req.body;
 
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+		const { name } = req.body;
+
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-	};
+			prisma,
+		};
 
-	const newNetworkId = await networkProvisioningFactory({
-		ctx,
-		input: { central: false, name },
-	});
+		const newNetworkId = await networkProvisioningFactory({
+			ctx,
+			input: { central: false, name },
+		});
 
-	return res.status(200).json(newNetworkId);
+		return res.status(200).json(newNetworkId);
+	} catch (cause) {
+		if (cause instanceof TRPCError) {
+			const httpCode = getHTTPStatusCodeFromError(cause);
+			try {
+				const parsedErrors = JSON.parse(cause.message);
+				return res.status(httpCode).json({ cause: parsedErrors });
+			} catch (_error) {
+				return res.status(httpCode).json({ error: cause.message });
+			}
+		}
+		return res.status(500).json({ message: "Internal server error" });
+	}
 };
 
 const GET_userNetworks = async (req: NextApiRequest, res: NextApiResponse) => {
