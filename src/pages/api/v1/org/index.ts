@@ -35,7 +35,7 @@ export default async function apiOrganizationHandler(
 	}
 }
 
-const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	try {

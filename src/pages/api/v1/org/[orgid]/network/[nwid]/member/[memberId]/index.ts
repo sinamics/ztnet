@@ -63,7 +63,10 @@ export default async function apiNetworkUpdateMembersHandler(
  * @param res - The NextApiResponse object.
  * @returns A JSON response indicating the success or failure of the update operation.
  */
-const POST_orgUpdateNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
+export const POST_orgUpdateNetworkMember = async (
+	req: NextApiRequest,
+	res: NextApiResponse,
+) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	const networkId = req.query?.nwid as string;
 	const memberId = req.query?.memberId as string;
@@ -214,7 +217,7 @@ const POST_orgUpdateNetworkMember = async (req: NextApiRequest, res: NextApiResp
  * @param res - The NextApiResponse object representing the outgoing response.
  * @returns A JSON response indicating the success or failure of the operation.
  */
-const DELETE_orgStashNetworkMember = async (
+export const DELETE_orgStashNetworkMember = async (
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) => {
