@@ -27,7 +27,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 
 	// TODO make only one request instead of Orgbyid and AllOrgs
 	const { closeModal } = useModalStore((state) => state);
-	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+	// const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
 	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
@@ -37,7 +37,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 			toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
 			closeModal();
 			refecthOrg();
-			refecthAllOrg();
+			// refecthAllOrg();
 		},
 	});
 
@@ -46,7 +46,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 			toast.success("Webhook deleted successfully");
 			closeModal();
 			refecthOrg();
-			refecthAllOrg();
+			// refecthAllOrg();
 		},
 	});
 
@@ -91,7 +91,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 						toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
 						closeModal();
 						refecthOrg();
-						refecthAllOrg();
+						// refecthAllOrg();
 					},
 					onError: (error) => {
 						handleErrors(error);
@@ -114,7 +114,7 @@ const OrganizationWebhook = ({ organizationId, hook }: Iprops) => {
 					onSuccess: () => {
 						closeModal();
 						refecthOrg();
-						refecthAllOrg();
+						// refecthAllOrg();
 					},
 					onError: (error) => {
 						handleErrors(error);

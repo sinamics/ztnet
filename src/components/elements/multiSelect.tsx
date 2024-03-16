@@ -94,12 +94,12 @@ export default function MultiSelectDropdown({
 	};
 	const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 	return (
-		<label className="relative" ref={dropdownRef}>
+		<label ref={dropdownRef}>
 			<input type="checkbox" className="hidden peer" />
 
 			<div
 				onClick={toggleDropdown}
-				className="w-full flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[8px]  after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
+				className="relative flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[8px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
 			>
 				<span>{prompt}</span>
 				{isJsEnabled ? (
@@ -107,7 +107,7 @@ export default function MultiSelectDropdown({
 				) : null}
 			</div>
 			{isDropdownOpen && (
-				<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-96 overflow-y-auto overflow-x-hidden">
+				<div className="custom-scrollbar absolute badge-ghost rounded-sm border w-full peer-checked:pointer-events-auto max-h-96 overflow-y-auto overflow-x-hidden">
 					{isJsEnabled && (
 						<ul>
 							<li>
