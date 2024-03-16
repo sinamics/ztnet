@@ -119,7 +119,9 @@ describe("createUserHandler", () => {
 			await createUserHandler(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(405);
-			expect(res.end).toHaveBeenCalled();
+			expect(res.json).toHaveBeenCalledWith(
+				expect.objectContaining({ error: "Method Not Allowed" }),
+			);
 		}
 	});
 });
