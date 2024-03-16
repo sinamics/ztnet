@@ -56,7 +56,7 @@ paths:
           schema:
             type: string
           description: API Key for the user
-        - name: orgId
+        - orgid: orgid
           in: path
           required: true
           schema:

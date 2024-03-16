@@ -33,6 +33,12 @@ paths:
           schema:
             type: string
           description: Unique identifier of the network
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       responses:
         200:
           description: Detailed information of the specified organization Network Member
@@ -50,6 +56,49 @@ paths:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
 
   /org/:orgid/network/{networkId}/member/{memberId}:
+    get:
+      summary: Returns a specific organization network member
+      operationId: getNetworkMemberInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the member
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        200:
+          description: Detailed information of the specified organization Network Member
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+              example:
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
     post:
       summary: Modify a organization network member
       description: Modify a organization network member
@@ -66,6 +115,12 @@ paths:
           schema:
             type: string
           description: ID of the member
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       requestBody:
         required: false
         content:
@@ -118,6 +173,12 @@ paths:
           schema:
             type: string
           description: ID of the member
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       responses:
         200:
           description: Organization Network Response
