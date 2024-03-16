@@ -131,7 +131,11 @@ const OrganizationById = ({ user, orgIds }) => {
 						className="border-l-4 border-primary p-2 leading-snug"
 						style={{ caretColor: "transparent" }}
 					>
-						{orgData?.description}
+						{/* add newline support if description has newlines */}
+						{orgData?.description.split("\n").map((str, index) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+							<p key={index}>{str}</p>
+						))}
 					</div>
 				) : null}
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
