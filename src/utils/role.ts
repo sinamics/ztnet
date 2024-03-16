@@ -46,6 +46,7 @@ export const checkUserOrganizationRole = async ({
 			"You are not a member of this organization. Contact your organization administrator to request access.",
 		);
 	}
+
 	// Directly return true for admin role
 	if (orgUserRole.role === "ADMIN") {
 		return true;

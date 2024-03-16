@@ -15,7 +15,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 50;
+export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkByIdHandler(
 	req: NextApiRequest,
@@ -52,12 +52,12 @@ export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => 
 			return res.status(400).json({ error: "API Key is required" });
 		}
 
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
-		}
-
 		if (!orgid) {
 			return res.status(400).json({ error: "Organization ID is required" });
+		}
+
+		if (!networkId) {
+			return res.status(400).json({ error: "Network ID is required" });
 		}
 
 		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
@@ -74,13 +74,12 @@ export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => 
 			},
 			prisma,
 		};
-
 		// Check if the user is an organization admin
 		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
 		await checkUserOrganizationRole({
 			ctx,
 			organizationId: orgid,
-			minimumRequiredRole: Role.USER,
+			minimumRequiredRole: Role.READ_ONLY,
 		});
 
 		// @ts-expect-error

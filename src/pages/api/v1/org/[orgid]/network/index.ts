@@ -15,7 +15,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 50;
+export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkHandler(
 	req: NextApiRequest,
@@ -132,7 +132,6 @@ export const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiRespo
 			},
 			prisma,
 		};
-
 		// Check if the user is an organization admin
 		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
 		await checkUserOrganizationRole({
@@ -140,6 +139,7 @@ export const GET_orgUserNetworks = async (req: NextApiRequest, res: NextApiRespo
 			organizationId: orgid,
 			minimumRequiredRole: Role.USER,
 		});
+
 		// @ts-expect-error
 		const caller = appRouter.createCaller(ctx);
 		const organization = await caller.org

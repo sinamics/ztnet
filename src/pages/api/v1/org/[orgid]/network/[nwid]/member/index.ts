@@ -15,7 +15,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 50;
+export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkMembersHandler(
 	req: NextApiRequest,
