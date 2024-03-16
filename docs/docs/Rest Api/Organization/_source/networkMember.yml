@@ -33,7 +33,7 @@ paths:
           schema:
             type: string
           description: Unique identifier of the network
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
@@ -58,7 +58,7 @@ paths:
   /org/:orgid/network/{networkId}/member/{memberId}:
     get:
       summary: Returns a specific organization network member
-      operationId: getNetworkMemberInfo
+      operationId: getNetworkMemberByIdInfo
       parameters:
         - name: x-ztnet-auth
           in: header
@@ -78,7 +78,7 @@ paths:
           schema:
             type: string
           description: Unique identifier of the member
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
@@ -99,10 +99,16 @@ paths:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
     post:
       summary: Modify a organization network member
       description: Modify a organization network member
       parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
         - in: path
           name: networkId
           required: true
@@ -115,7 +121,7 @@ paths:
           schema:
             type: string
           description: ID of the member
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
@@ -173,7 +179,7 @@ paths:
           schema:
             type: string
           description: ID of the member
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:

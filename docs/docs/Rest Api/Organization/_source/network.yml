@@ -29,7 +29,7 @@ paths:
           schema:
             type: string
           description: API Key for the user
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
@@ -62,7 +62,7 @@ paths:
           schema:
             type: string
           description: API Key for the user
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
@@ -116,7 +116,7 @@ paths:
           schema:
             type: string
           description: Unique identifier of the network
-        - orgid: orgid
+        - name: orgid
           in: path
           required: true
           schema:
