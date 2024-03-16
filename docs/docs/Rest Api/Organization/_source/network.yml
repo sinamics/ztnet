@@ -29,6 +29,12 @@ paths:
           schema:
             type: string
           description: API Key for the user
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       responses:
         200:
           description: An array of Network IDs
@@ -56,6 +62,12 @@ paths:
           schema:
             type: string
           description: API Key for the user
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       requestBody:
         required: false
         content:
@@ -104,6 +116,12 @@ paths:
           schema:
             type: string
           description: Unique identifier of the network
+        - orgid: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
       responses:
         200:
           description: Detailed information of the specified Network
