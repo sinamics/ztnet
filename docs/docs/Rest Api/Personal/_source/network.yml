@@ -44,39 +44,6 @@ paths:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
-                    
-  /network/{networkId}:
-    get:
-      summary: Returns information about a specific network
-      operationId: getNetworkInfo
-      parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
-        - name: networkId
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Unique identifier of the network
-      responses:
-        200:
-          description: Detailed information of the specified Network
-          content:
-            application/json:
-              schema:
-                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
-              example:
-                $ref: '../../_example/NetworkExample.yml#/NetworkExample'
-        401:
-          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
-        429:
-          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
-        500:
-          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
 
     # POST /network
     post:
@@ -119,3 +86,38 @@ paths:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+                           
+  /network/{networkId}:
+    get:
+      summary: Returns information about a specific network
+      operationId: getNetworkInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+      responses:
+        200:
+          description: Detailed information of the specified Network
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+              example:
+                $ref: '../../_example/NetworkExample.yml#/NetworkExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+
