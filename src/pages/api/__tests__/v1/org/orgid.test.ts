@@ -1,7 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
-import { GET_orgById } from "~/pages/api/v1/org/[orgid]";
+import apiNetworkHandler, {
+	GET_orgById,
+	REQUEST_PR_MINUTE,
+} from "~/pages/api/v1/org/[orgid]";
 
 jest.mock("~/server/db", () => ({
 	prisma: {
@@ -49,6 +52,8 @@ describe("organization api validation", () => {
 		};
 		mockResponse = {
 			status: jest.fn().mockReturnThis(),
+			setHeader: jest.fn(),
+			end: jest.fn(),
 			json: jest.fn((result) => {
 				jsonResponse = result;
 				return mockResponse;
@@ -90,5 +95,22 @@ describe("organization api validation", () => {
 		} catch (error) {
 			expect(error.message).toBe("Invalid Authorization Type");
 		}
+	});
+	test("should enforce rate limiting", async () => {
+		for (let i = 0; i < 50; i++) {
+			mockRequest.headers["x-ztnet-auth"] = "ratelimittoken";
+			await apiNetworkHandler(
+				mockRequest as NextApiRequest,
+				mockResponse as NextApiResponse,
+			);
+		}
+
+		// Expect the last request to be rate limited
+		await apiNetworkHandler(
+			mockRequest as NextApiRequest,
+			mockResponse as NextApiResponse,
+		);
+		expect(mockResponse.status).toHaveBeenCalledWith(429);
+		expect(mockResponse.json).toHaveBeenCalledWith({ error: "Rate limit exceeded" });
 	});
 });

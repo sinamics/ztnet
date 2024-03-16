@@ -36,7 +36,7 @@ export default async function apiNetworkUpdateMembersHandler(
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_UPDATE_USER_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_MEMBERID_CACHE_TOKEN"); // 10 requests per minute
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
