@@ -14,14 +14,14 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 500, // Max 500 users per second
 });
 
-const REQUEST_PR_MINUTE = 50;
+export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_CREATE_USER_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_GET_CACHE_TOKEN");
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}
