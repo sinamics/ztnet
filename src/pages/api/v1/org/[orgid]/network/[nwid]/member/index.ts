@@ -42,7 +42,10 @@ export default async function apiNetworkMembersHandler(
 	}
 }
 
-const GET_orgNetworkMembers = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET_orgNetworkMembers = async (
+	req: NextApiRequest,
+	res: NextApiResponse,
+) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 	// network id
 	const networkId = req.query?.nwid as string;
