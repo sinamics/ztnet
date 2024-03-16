@@ -170,7 +170,11 @@ describe("Update Network Members", () => {
 			await apiNetworkUpdateMembersHandler(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(405);
-			expect(res.end).toHaveBeenCalled();
+
+			// expect json to be called with text "Method Not Allowed"
+			expect(res.json).toHaveBeenCalledWith(
+				expect.objectContaining({ error: "Method Not Allowed" }),
+			);
 		}
 	});
 });
