@@ -3,6 +3,7 @@ import { prisma } from "~/server/db";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import {
 	DELETE_orgStashNetworkMember,
+	GET_orgNetworkMemberById,
 	POST_orgUpdateNetworkMember,
 } from "~/pages/api/v1/org/[orgid]/network/[nwid]/member/[memberId]";
 
@@ -137,6 +138,47 @@ describe("organization network members api validation", () => {
 		mockRequest.headers["x-ztnet-auth"] = tokenWithIdHash;
 		try {
 			await DELETE_orgStashNetworkMember(
+				mockRequest as NextApiRequest,
+				mockResponse as NextApiResponse,
+			);
+		} catch (error) {
+			expect(error.message).toBe("Invalid Authorization Type");
+		}
+	});
+
+	test('GET_orgNetworkMemberById should throw "Invalid Token"', async () => {
+		// mock req.query?.orgid
+		mockRequest.query = { orgid: "testOrgId", nwid: "testNetworkId" };
+
+		prisma.user.count = jest.fn().mockResolvedValue(0);
+		// mock prisma transaction
+		prisma.$transaction = jest
+			.fn()
+			.mockResolvedValue({ id: "newUserId", name: "Ztnet", email: "post@ztnet.network" });
+
+		mockRequest.headers["x-ztnet-auth"] = "not valid token";
+
+		await GET_orgNetworkMemberById(
+			mockRequest as NextApiRequest,
+			mockResponse as NextApiResponse,
+		);
+		expect(mockResponse.status).toHaveBeenCalledWith(401);
+		// check if the response is correct. invalid token
+		expect(mockResponse.json).toHaveBeenCalledWith({ error: "Invalid token" });
+	});
+
+	test('GET_orgNetworkMemberById should throw "Invalid Authorization Type" for mismatched authorization types', async () => {
+		// Mock decrypt function to return a payload that simulates a mismatched authorization type
+		const tokendata = JSON.stringify({
+			userId: "testUserId",
+			tokenId: "testTokenId",
+			apiAuthorizationType: ["PERSONAL"],
+		});
+
+		const tokenWithIdHash = encrypt(tokendata, generateInstanceSecret(API_TOKEN_SECRET));
+		mockRequest.headers["x-ztnet-auth"] = tokenWithIdHash;
+		try {
+			await GET_orgNetworkMemberById(
 				mockRequest as NextApiRequest,
 				mockResponse as NextApiResponse,
 			);

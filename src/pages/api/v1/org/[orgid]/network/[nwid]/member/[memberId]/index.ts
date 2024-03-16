@@ -43,6 +43,9 @@ export default async function apiNetworkUpdateMembersHandler(
 
 	// create a switch based on the HTTP method
 	switch (req.method) {
+		case "GET":
+			await GET_orgNetworkMemberById(req, res);
+			break;
 		case "POST":
 			await POST_orgUpdateNetworkMember(req, res);
 			break;
@@ -244,6 +247,11 @@ export const DELETE_orgStashNetworkMember = async (
 			return res.status(400).json({ error: "Member ID is required" });
 		}
 
+		// Check if the organizationId exists
+		if (!orgid) {
+			return res.status(400).json({ error: "Organization ID is required" });
+		}
+
 		// assemble the context object
 		const ctx = {
 			session: {
@@ -256,7 +264,7 @@ export const DELETE_orgStashNetworkMember = async (
 		};
 
 		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
+		// TODO This might be redundant as the caller.stash will check for the same thing. Keeping it for now
 		await checkUserOrganizationRole({
 			ctx,
 			organizationId: orgid,
@@ -269,6 +277,64 @@ export const DELETE_orgStashNetworkMember = async (
 			nwid: networkId,
 			id: memberId,
 			organizationId: orgid,
+		});
+
+		return res.status(200).json(networkAndMembers);
+	} catch (cause) {
+		return handleApiErrors(cause, res);
+	}
+};
+
+export const GET_orgNetworkMemberById = async (
+	req: NextApiRequest,
+	res: NextApiResponse,
+) => {
+	const apiKey = req.headers["x-ztnet-auth"] as string;
+	const networkId = req.query?.nwid as string;
+	const memberId = req.query?.memberId as string;
+
+	// organization id
+	const orgid = req.query?.orgid as string;
+
+	try {
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.ORGANIZATION,
+		});
+
+		// Check if the networkId exists
+		if (!networkId) {
+			return res.status(400).json({ error: "Network ID is required" });
+		}
+
+		// Check if the networkId exists
+		if (!memberId) {
+			return res.status(400).json({ error: "Member ID is required" });
+		}
+
+		// assemble the context object
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
+			},
+			prisma,
+			wss: null,
+		};
+
+		// Check if the user is an organization admin
+		await checkUserOrganizationRole({
+			ctx,
+			organizationId: orgid,
+			minimumRequiredRole: Role.USER,
+		});
+
+		// @ts-expect-error
+		const caller = appRouter.createCaller(ctx);
+		const networkAndMembers = await caller.networkMember.getMemberById({
+			nwid: networkId,
+			id: memberId,
 		});
 
 		return res.status(200).json(networkAndMembers);
