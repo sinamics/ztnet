@@ -38,7 +38,7 @@ export default async function apiNetworkByIdHandler(
 	}
 }
 
-const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	// network id
