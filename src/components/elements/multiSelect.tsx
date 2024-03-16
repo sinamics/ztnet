@@ -99,58 +99,60 @@ export default function MultiSelectDropdown({
 
 			<div
 				onClick={toggleDropdown}
-				className="relative flex justify-between text-sm cursor-pointer after:content-['▼'] after:text-[8px] after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
+				className="w-full flex justify-between text-sm cursor-pointer after:content-['▲'] after:text-[8px]  after:ml-1 after:inline-flex after:items-center peer-checked:after:-rotate-180 after:transition-transform border input-bordered rounded-md px-3 py-[6px]"
 			>
 				<span>{prompt}</span>
 				{isJsEnabled ? (
 					<span className="ml-1 text-blue-500">{`(${selectedOptions.length} selected)`}</span>
 				) : null}
 			</div>
-			{isDropdownOpen && (
-				<div className="custom-scrollbar absolute badge-ghost rounded-sm border w-full peer-checked:pointer-events-auto max-h-96 overflow-y-auto overflow-x-hidden">
-					{isJsEnabled && (
-						<ul>
-							<li>
-								<button
-									onClick={handleSelectAllClick}
-									disabled={!isSelectAllEnabled}
-									className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
-								>
-									Select All
-								</button>
-							</li>
-							<li>
-								<button
-									onClick={handleClearSelectionClick}
-									disabled={!isClearSelectionEnabled}
-									className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
-								>
-									Clear selection
-								</button>
-							</li>
-						</ul>
-					)}
-					<ul ref={optionsListRef}>
-						{options.map((option) => {
-							return (
-								<li key={option}>
-									<label className="flex items-center cursor-pointer px-2 py-1 select-none">
-										<input
-											type="checkbox"
-											name={formFieldName}
-											value={option}
-											className="cursor-pointer checkbox checkbox-primary checkbox-xs"
-											onChange={handleChange}
-											checked={selectedOptions.includes(option)}
-										/>
-										<span className="ml-1 text-sm">{option}</span>
-									</label>
+			<div className="relative">
+				{isDropdownOpen && (
+					<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-96 overflow-y-auto overflow-x-hidden">
+						{isJsEnabled && (
+							<ul>
+								<li>
+									<button
+										onClick={handleSelectAllClick}
+										disabled={!isSelectAllEnabled}
+										className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
+									>
+										Select All
+									</button>
 								</li>
-							);
-						})}
-					</ul>
-				</div>
-			)}
+								<li>
+									<button
+										onClick={handleClearSelectionClick}
+										disabled={!isClearSelectionEnabled}
+										className="btn-block btn-xs btn rounded-none text-left px-2 py-1 "
+									>
+										Clear selection
+									</button>
+								</li>
+							</ul>
+						)}
+						<ul ref={optionsListRef}>
+							{options.map((option) => {
+								return (
+									<li key={option}>
+										<label className="flex items-center cursor-pointer px-2 py-1 select-none ">
+											<input
+												type="checkbox"
+												name={formFieldName}
+												value={option}
+												className="cursor-pointer checkbox checkbox-primary checkbox-xs"
+												onChange={handleChange}
+												checked={selectedOptions.includes(option)}
+											/>
+											<span className="ml-1 text-sm">{option}</span>
+										</label>
+									</li>
+								);
+							})}
+						</ul>
+					</div>
+				)}
+			</div>
 		</label>
 	);
 }
