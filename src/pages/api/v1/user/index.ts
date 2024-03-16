@@ -43,13 +43,14 @@ interface UserResponse {
 	apiToken?: string;
 }
 
-const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
+export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 	const apiKey = req.headers["x-ztnet-auth"] as string;
 
 	const NEEDS_ADMIN = true;
 
 	// Count the number of users in database
 	const userCount = await prisma.user.count();
+
 	try {
 		if (userCount > 0) {
 			// If there are users, verify the API key
@@ -139,7 +140,6 @@ const POST_createUser = async (req: NextApiRequest, res: NextApiResponse) => {
 			// Return the user and optionally the API token
 			return { user: registerResponse.user, apiToken };
 		});
-
 		return res.status(200).json(result);
 	} catch (cause) {
 		return handleApiErrors(cause, res);

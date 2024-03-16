@@ -37,7 +37,7 @@ export default async function apiNetworkHandler(
 	}
 }
 
-const GET_orgById = async (req: NextApiRequest, res: NextApiResponse) => {
+export const GET_orgById = async (req: NextApiRequest, res: NextApiResponse) => {
 	try {
 		const apiKey = req.headers["x-ztnet-auth"] as string;
 		const orgid = req.query?.orgid as string;
