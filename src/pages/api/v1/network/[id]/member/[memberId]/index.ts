@@ -1,11 +1,10 @@
 import { network_members } from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 
@@ -201,16 +200,7 @@ const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiRespons
 
 		return res.status(200).json(networkAndMembers);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };
 
@@ -226,38 +216,33 @@ const DELETE_deleteNetworkMember = async (req: NextApiRequest, res: NextApiRespo
 	const networkId = req.query?.id as string;
 	const memberId = req.query?.memberId as string;
 
-	let decryptedData: { userId: string; name?: string };
 	try {
-		decryptedData = await decryptAndVerifyToken({
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
 			apiKey,
 			apiAuthorizationType: AuthorizationType.PERSONAL,
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	// Check if the networkId exists
-	if (!networkId) {
-		return res.status(400).json({ error: "Network ID is required" });
-	}
+		// Check if the networkId exists
+		if (!networkId) {
+			return res.status(400).json({ error: "Network ID is required" });
+		}
 
-	// Check if the networkId exists
-	if (!memberId) {
-		return res.status(400).json({ error: "Member ID is required" });
-	}
+		// Check if the networkId exists
+		if (!memberId) {
+			return res.status(400).json({ error: "Member ID is required" });
+		}
 
-	// assemble the context object
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+		// assemble the context object
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-		wss: null,
-	};
+			prisma,
+			wss: null,
+		};
 
-	try {
 		// make sure the member is valid
 		const network = await prisma.network.findUnique({
 			where: { nwid: networkId, authorId: decryptedData.userId },
@@ -283,15 +268,6 @@ const DELETE_deleteNetworkMember = async (req: NextApiRequest, res: NextApiRespo
 
 		return res.status(200).json(networkAndMembers);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };
