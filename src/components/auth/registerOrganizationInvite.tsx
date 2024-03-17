@@ -22,7 +22,7 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 		email: "",
 		password: "",
 		name: "",
-		token: organizationInvite,
+		token: "",
 		ztnetOrganizationToken: organizationInvite,
 	});
 
@@ -72,7 +72,7 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 							<label className="text-sm font-medium tracking-wide">Token</label>
 							<input
 								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={formData.token}
+								value={formData.ztnetOrganizationToken}
 								onChange={handleChange}
 								type=""
 								name="ztnetToken"

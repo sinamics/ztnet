@@ -19,14 +19,13 @@ import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
-	ORG_INVITE_TOKEN_SECRET,
 	PASSWORD_RESET_SECRET,
-	decrypt,
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
 import { User, UserOptions } from "@prisma/client";
+import { validateOrganizationToken } from "../services/organizationAuthService";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -83,45 +82,12 @@ export const authRouter = createTRPCRouter({
 				},
 			});
 
-			// check if the user is registering with an organization token
-			const organizationToken = ztnetOrganizationToken?.trim() || token?.trim();
+			// Validate the organization token if it exists
+			const hasValidOrganizationToken = await validateOrganizationToken(
+				ztnetOrganizationToken,
+				email,
+			);
 
-			// ztnet organization invitation
-			const hasValidOrganizationToken =
-				organizationToken &&
-				(await (async () => {
-					try {
-						if (!ztnetOrganizationToken.trim()) {
-							throw new TRPCError({
-								code: "BAD_REQUEST",
-								message: "No organization token provided",
-							});
-						}
-						// decode the token
-						const decryptedOrganizationToken = decrypt(
-							organizationToken,
-							generateInstanceSecret(ORG_INVITE_TOKEN_SECRET),
-						);
-						const invitation = await ctx.prisma.organizationInvitation.findUnique({
-							where: {
-								token: ztnetOrganizationToken.trim(),
-								email: decryptedOrganizationToken.email,
-							},
-						});
-
-						if (!invitation) {
-							throw new TRPCError({
-								code: "BAD_REQUEST",
-								message: invitation
-									? "Code has already been used or has expired"
-									: "Invalid code provided",
-							});
-						}
-					} catch (_err) {
-						return _err;
-					}
-				})());
-			return false;
 			const invitationToken = ztnetInvitationCode?.trim() || token?.trim();
 			// ztnet user invitation
 			const hasValidCode =
@@ -174,7 +140,7 @@ export const authRouter = createTRPCRouter({
 				})());
 
 			// check if enableRegistration is true
-			if (!settings.enableRegistration && !hasValidCode) {
+			if (!settings.enableRegistration && !hasValidCode && !hasValidOrganizationToken) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "Registration is disabled! Please contact the administrator.",
@@ -192,6 +158,7 @@ export const authRouter = createTRPCRouter({
 					email: email,
 				},
 			});
+
 			// validate
 			if (registerUser) {
 				// eslint-disable-next-line no-throw-literal
@@ -240,6 +207,23 @@ export const authRouter = createTRPCRouter({
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
 					userGroupId: defaultUserGroup?.id,
+					// add user to organizationRoles if the token is valid
+					organizationRoles: hasValidOrganizationToken
+						? {
+								create: {
+									organizationId: hasValidOrganizationToken.organizationId,
+									role: hasValidOrganizationToken.role,
+								},
+						  }
+						: undefined,
+					// add the user to the organization if the token is valid
+					memberOfOrgs: hasValidOrganizationToken
+						? {
+								connect: {
+									id: hasValidOrganizationToken.organizationId,
+								},
+						  }
+						: undefined,
 					options: {
 						create: {
 							localControllerUrl: isRunningInDocker()
@@ -254,6 +238,12 @@ export const authRouter = createTRPCRouter({
 					email: true,
 					expiresAt: true,
 					role: true,
+					memberOfOrgs: {
+						select: {
+							id: true,
+							orgName: true,
+						},
+					},
 				},
 			});
 
@@ -304,7 +294,24 @@ export const authRouter = createTRPCRouter({
 					}
 				}
 			}
+			// add log if hasValidOrganizationToken is true
+			if (hasValidOrganizationToken) {
+				// Log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `User ${newUser.name} has registered with email ${newUser.email} and has been added to the organization ${hasValidOrganizationToken.organizationId} with the role ${hasValidOrganizationToken.role}!`,
+						performedById: hasValidOrganizationToken?.invitedById,
+						organizationId: hasValidOrganizationToken?.organizationId,
+					},
+				});
 
+				// delete the organization token
+				await ctx.prisma.organizationInvitation.delete({
+					where: {
+						token: ztnetOrganizationToken,
+					},
+				});
+			}
 			return {
 				user: newUser,
 			};
