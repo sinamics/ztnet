@@ -822,10 +822,13 @@ export const organizationRouter = createTRPCRouter({
 			if (!input.organizationId) {
 				throw new Error("Organization ID cannot be empty.");
 			}
+
 			const payload = {
 				email: input.email,
 				organizationId: input.organizationId,
-				expires: Date.now() + 3600000, // Current time + 1 hour
+				role: input.role,
+				invitedById: ctx.session.user.id,
+				expiresAt: Date.now() + 3600000, // Current time + 1 hour
 			};
 
 			// Encrypt the payload
@@ -838,6 +841,9 @@ export const organizationRouter = createTRPCRouter({
 					token: encryptedToken,
 					organizationId: input.organizationId,
 					email: input.email,
+					role: input.role,
+					invitedById: ctx.session.user.id,
+					expiresAt: new Date(payload.expiresAt),
 				},
 			});
 
