@@ -41,7 +41,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 						name: "email",
 						type: "text",
 						description: "Enter the mail address of the user you want to invite",
-						placeholder: "email address",
+						placeholder: "Email Address",
 						// value: options?.smtpPort,
 					},
 					{

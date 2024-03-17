@@ -807,7 +807,7 @@ export const organizationRouter = createTRPCRouter({
 
 			return logs;
 		}),
-	generateInviteLink: adminRoleProtectedRoute
+	generateInviteLink: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
@@ -851,7 +851,7 @@ export const organizationRouter = createTRPCRouter({
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
 		}),
-	inviteUserByMail: adminRoleProtectedRoute
+	inviteUserByMail: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
@@ -893,7 +893,7 @@ export const organizationRouter = createTRPCRouter({
 			// send test mail to user
 			await sendEmail(transporter, mailOptions);
 		}),
-	deleteInvite: adminRoleProtectedRoute
+	deleteInvite: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
@@ -909,6 +909,27 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 			return invite;
+		}),
+	getInvites: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { organizationId } = input;
+			// make sure the user is member of the organization and has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			return await ctx.prisma.organizationInvitation.findMany({
+				where: {
+					organizationId,
+				},
+			});
 		}),
 	transferNetworkOwnership: protectedProcedure
 		.input(
