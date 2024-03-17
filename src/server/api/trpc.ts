@@ -23,6 +23,7 @@ import { prisma } from "~/server/db";
 type CreateContextOptions = {
 	session: Session | null;
 	wss: SocketIOServer;
+	res: NextApiResponse;
 };
 
 // custom type for the socket server
@@ -51,6 +52,7 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 		session: opts.session,
 		wss: opts.wss,
 		prisma,
+		res: opts.res,
 	};
 };
 
@@ -71,6 +73,7 @@ export const createTRPCContext = async (
 	return createInnerTRPCContext({
 		session,
 		wss,
+		res,
 	});
 };
 
@@ -84,6 +87,7 @@ export const createTRPCContext = async (
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { NextApiResponse } from "next";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
 	transformer: superjson,
