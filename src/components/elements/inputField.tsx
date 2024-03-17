@@ -115,11 +115,11 @@ const InputField = ({
 			| ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 			| { target: { name: string; value: string[] } },
 	) => {
-		const { name, value } = "target" in e ? e.target : e; // This line checks if the event has a target property to distinguish between standard events and custom ones.
+		const { name, value } = "target" in e ? e.target : e;
 
 		setFormValues((prevValues) => ({
 			...prevValues,
-			[name]: value, // Directly use the name and value, accommodating both single and multiple value changes.
+			[name]: value,
 		}));
 	};
 

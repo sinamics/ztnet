@@ -8,6 +8,7 @@ interface Iprops {
 	displayField: string;
 	idField: string;
 	className?: string;
+	inputClassName?: string;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	onOptionSelect?: (value: any) => void;
 }
@@ -18,6 +19,7 @@ const ScrollableDropdown = ({
 	displayField,
 	idField,
 	className,
+	inputClassName,
 	onOptionSelect,
 }: Iprops) => {
 	const [inputValue, setInputValue] = useState("");
@@ -66,7 +68,7 @@ const ScrollableDropdown = ({
 				<input
 					ref={inputRef}
 					type="text"
-					className="input-bordered input-sm w-full"
+					className={cn("input-bordered input input-sm", inputClassName)}
 					placeholder={placeholder}
 					value={inputValue}
 					onChange={handleInputChange}
