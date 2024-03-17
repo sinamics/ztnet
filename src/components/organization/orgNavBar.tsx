@@ -5,6 +5,7 @@ import OrganizationInviteModal from "./organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
+import Link from "next/link";
 
 // Utility function to open modals
 const useOpenModal = (orgData) => {
@@ -124,14 +125,13 @@ const AdminNavMenu = ({ orgData }) => {
 				</ul>
 			</div>
 			<div className="dropdown dropdown-end">
-				<div
-					onClick={() => openModal("inviteUser")}
+				<Link
+					href={`/organization/${orgData.id}/invite`}
 					tabIndex={0}
-					role="button"
-					className="btn btn-ghost"
+					className="btn btn-ghost text-md"
 				>
-					<div className="rounded-full">{b("inviteUser")}</div>
-				</div>
+					<div className="rounded-full uppercase">{b("inviteUser")}</div>
+				</Link>
 			</div>
 			<div className="dropdown dropdown-end">
 				<div
@@ -200,7 +200,9 @@ export const OrgNavBar = ({ title, orgData }) => {
 					</div>
 					<AdminHamburgerMenu orgData={orgData} />
 				</div>
-				<a className="btn btn-ghost text-xl">{title}</a>
+				<Link href={`/organization/${orgData.id}`} className="btn btn-ghost text-xl">
+					{title}
+				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
 				{meOrgRole?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}

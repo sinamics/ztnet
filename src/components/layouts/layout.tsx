@@ -12,6 +12,7 @@ import { useSidebarStore, useAsideChatStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
+import { OrgNavBar } from "../organization/orgNavBar";
 
 type TUser = {
 	user: User;
@@ -83,6 +84,9 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
 
+	const orgdata = {
+		id: orgId,
+	};
 	return (
 		<div className="outer-content">
 			{/* Header */}
@@ -102,9 +106,12 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>
-					{children}
-					{/* Logs Footer */}
-					<LogsFooter sidebarOpen={sidebarOpen} asideOpen={openChats.includes(orgId)} />
+					<div className="max-w-7xl mx-auto space-y-5 pt-10">
+						<OrgNavBar title={"Org"} orgData={orgdata} />
+						{children}
+						{/* Logs Footer */}
+						<LogsFooter sidebarOpen={sidebarOpen} asideOpen={openChats.includes(orgId)} />
+					</div>
 				</div>
 
 				{/* Chat Aside */}
