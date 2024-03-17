@@ -11,7 +11,7 @@ interface FieldConfig {
 	title?: string;
 	initialValue?: string;
 	type?: string;
-	placeholder: string;
+	placeholder?: string;
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
 	value?: string | number | boolean;
@@ -126,7 +126,7 @@ const InputField = ({
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await submitHandler(formValues);
-		if (response) {
+		if (response && !openByDefault) {
 			setShowInputs(false);
 		}
 	};

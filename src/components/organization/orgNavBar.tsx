@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
 import OrganizationWebhook from "./webhookModal";
-import OrganizationInviteModal from "../adminPage/organization/organizationInviteModal";
+import OrganizationInviteModal from "./organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
@@ -40,7 +40,7 @@ const useOpenModal = (orgData) => {
 				content: <OrganizationWebhook organizationId={orgData.id} />,
 			},
 			inviteUser: {
-				rootStyle: "h-3/6",
+				rootStyle: "h-8/12 w-11/12 max-w-3xl",
 				title: (
 					<p>
 						<span>{t("admin.organization.listOrganization.invitationModal.title")}</span>

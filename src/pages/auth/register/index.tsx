@@ -8,9 +8,14 @@ import RegisterForm from "~/components/auth/registerForm";
 import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
 import { WelcomeMessage } from "~/components/auth/welcomeMessage";
+import { useRouter } from "next/router";
+import RegisterOrganizationInviteForm from "~/components/auth/registerOrganizationInvite";
 
 const Register = () => {
 	const title = `${globalSiteTitle} - Sign Up`;
+
+	const router = useRouter();
+	const { organizationInvite } = router.query as { organizationInvite?: string };
 
 	return (
 		<div>
@@ -25,7 +30,7 @@ const Register = () => {
 				<div className="flex flex-grow items-center">
 					<div className="mx-auto flex">
 						<WelcomeMessage />
-						<RegisterForm />
+						{organizationInvite ? <RegisterOrganizationInviteForm /> : <RegisterForm />}
 					</div>
 				</div>
 			</main>
@@ -50,9 +55,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	});
 	// easy check to see if the invite probably is a jwt token
 	const ztnetInvite = !!context.query?.invite && context.query?.invite.length > 50;
+	const ztnetOrganizationInvite =
+		!!context.query?.organizationInvite && context.query?.organizationInvite.length > 50;
+
 	const session = await getSession(context);
 	// redirect user to 404 if registration is disabled
-	if (!options?.enableRegistration && !ztnetInvite) {
+	if (!options?.enableRegistration && !ztnetInvite && !ztnetOrganizationInvite) {
 		return {
 			redirect: {
 				destination: "/404",

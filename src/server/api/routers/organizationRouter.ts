@@ -811,6 +811,7 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
+				role: z.nativeEnum(Role),
 				email: z.string(),
 			}),
 		)
@@ -841,7 +842,6 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
-
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
 		}),

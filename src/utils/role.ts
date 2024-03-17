@@ -7,6 +7,20 @@ enum Role {
 	ADMIN = 3,
 }
 
+export const UserRolesList = [
+	{
+		value: "READ_ONLY",
+		label: "READ_ONLY",
+	},
+	{
+		value: "USER",
+		label: "USER",
+	},
+	{
+		value: "ADMIN",
+		label: "ADMIN",
+	},
+];
 /**
  * Checks if a user's role within a specific organization meets or exceeds a required role level.
  *

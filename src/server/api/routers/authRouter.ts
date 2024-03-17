@@ -19,7 +19,9 @@ import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
+	ORG_INVITE_TOKEN_SECRET,
 	PASSWORD_RESET_SECRET,
+	decrypt,
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
@@ -60,31 +62,79 @@ export const authRouter = createTRPCRouter({
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3).max(40),
 				expiresAt: z.string().optional(),
-				ztnetToken: z.string().optional(),
+				ztnetInvitationCode: z.string().optional(),
+				ztnetOrganizationToken: z.string().optional(),
 				token: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name, ztnetToken, token, expiresAt } = input;
+			const {
+				email,
+				password,
+				name,
+				ztnetInvitationCode,
+				ztnetOrganizationToken,
+				token,
+				expiresAt,
+			} = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
 				},
 			});
-			const invitationToken = ztnetToken?.trim() || token?.trim();
 
+			// check if the user is registering with an organization token
+			const organizationToken = ztnetOrganizationToken?.trim() || token?.trim();
+
+			// ztnet organization invitation
+			const hasValidOrganizationToken =
+				organizationToken &&
+				(await (async () => {
+					try {
+						if (!ztnetOrganizationToken.trim()) {
+							throw new TRPCError({
+								code: "BAD_REQUEST",
+								message: "No organization token provided",
+							});
+						}
+						// decode the token
+						const decryptedOrganizationToken = decrypt(
+							organizationToken,
+							generateInstanceSecret(ORG_INVITE_TOKEN_SECRET),
+						);
+						const invitation = await ctx.prisma.organizationInvitation.findUnique({
+							where: {
+								token: ztnetOrganizationToken.trim(),
+								email: decryptedOrganizationToken.email,
+							},
+						});
+
+						if (!invitation) {
+							throw new TRPCError({
+								code: "BAD_REQUEST",
+								message: invitation
+									? "Code has already been used or has expired"
+									: "Invalid code provided",
+							});
+						}
+					} catch (_err) {
+						return _err;
+					}
+				})());
+			return false;
+			const invitationToken = ztnetInvitationCode?.trim() || token?.trim();
 			// ztnet user invitation
 			const hasValidCode =
 				invitationToken &&
 				(await (async () => {
-					if (!ztnetToken.trim()) {
+					if (!ztnetInvitationCode.trim()) {
 						throw new TRPCError({
 							code: "BAD_REQUEST",
 							message: "No invitation code provided",
 						});
 					}
 					const invitation = await ctx.prisma.userInvitation.findUnique({
-						where: { token: token.trim(), secret: ztnetToken.trim() },
+						where: { token: token.trim(), secret: ztnetInvitationCode.trim() },
 					});
 
 					if (

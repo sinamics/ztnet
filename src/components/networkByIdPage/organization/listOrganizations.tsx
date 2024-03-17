@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
-import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
-import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
+import DeleteOrganizationModal from "~/components/organization/deleteOrganizationModal";
+import OrganizationInviteModal from "~/components/organization/organizationInviteModal";
 import EditOrganizationModal from "~/components/organization/editOrgModal";
 import { OrganizationUserTable } from "~/components/organization/userTable";
 import OrganizationWebhook from "~/components/organization/webhookModal";
