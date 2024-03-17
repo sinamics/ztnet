@@ -26,6 +26,7 @@ import {
 import { isRunningInDocker } from "~/utils/docker";
 import { User, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
+import rateLimit from "~/utils/rateLimit";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -36,6 +37,14 @@ import { validateOrganizationToken } from "../services/organizationAuthService";
 const mediumPassword = new RegExp(
 	"^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})",
 );
+
+// allow 15 requests per 10 minutes
+const limiter = rateLimit({
+	interval: 10 * 60 * 1000, // 600 seconds or 10 minutes
+	uniqueTokenPerInterval: 1000,
+});
+
+const GENERAL_REQUEST_LIMIT = 60;
 
 // create a zod password schema
 const passwordSchema = (errorMessage: string) =>
@@ -67,6 +76,16 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// add rate limit
+			try {
+				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "REGISTER_USER");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded",
+				});
+			}
+
 			const {
 				email,
 				password,
