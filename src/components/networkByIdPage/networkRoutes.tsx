@@ -124,7 +124,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 						return (
 							<div
 								key={route.target}
-								className="flex items-center justify-between space-y-1"
+								className="flex items-center justify-between space-y-1 hover:bg-base-100 hover:rounded-md"
 							>
 								<div key={route.target} className="text-xs opacity-30 md:text-base">
 									{route.target} via {route.via ? route.via : "LAN"}
