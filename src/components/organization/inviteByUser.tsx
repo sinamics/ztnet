@@ -49,7 +49,7 @@ const InviteByUsers = () => {
 		<div className="space-y-5">
 			<div className="form-control w-full space-y-5">
 				<div>
-					<h2 className="text-xl">Site users</h2>
+					<h2 className="text-xl">Invite site users</h2>
 					<p className="text-sm text-gray-400">
 						{t("organization.listOrganization.invitationModal.description")}
 					</p>
