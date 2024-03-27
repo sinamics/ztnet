@@ -25,9 +25,15 @@ interface IUser extends User {
 		memberOfOrgs: Organization[];
 	};
 }
-const RegisterOrganizationInviteForm: React.FC = () => {
+
+interface Iprops {
+	organizationInvite?: string;
+}
+
+const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
+	organizationInvite,
+}: Iprops) => {
 	const router = useRouter();
-	const { organizationInvite } = router.query as { organizationInvite?: string };
 
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
@@ -39,6 +45,27 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 	});
 
 	const { mutate: register } = api.auth.register.useMutation();
+
+	// Prevalidate the user invite
+	// check if the user is a member of the application then add him to the organization
+	const {
+		error: preValidateError,
+		isLoading: preValidateLoading,
+		status,
+	} = api.org.preValidateUserInvite.useQuery(
+		{
+			token: organizationInvite,
+		},
+		{
+			retry: false,
+			onSuccess: (data) => {
+				if ("organizationId" in data) {
+					// redirect to login / organization page
+					router.push(`/organization/${data.organizationId}`);
+				}
+			},
+		},
+	);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
@@ -62,7 +89,6 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 						...formData,
 					});
 					setLoading(false);
-
 					if (!result.error) {
 						// if the user is a member of an organization, redirect to the organization
 						if (orgId) return await router.push(`/organization/${orgId}`);
@@ -78,6 +104,33 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 			},
 		});
 	};
+
+	// add loading progress bar to center of page, vertially and horizontally
+	if (status === "loading" || preValidateLoading) {
+		return (
+			<div className="flex flex-col items-center justify-center">
+				<h1 className="text-center text-2xl font-semibold">
+					<progress className="progress progress-primary w-56"></progress>
+				</h1>
+			</div>
+		);
+	}
+	// if error show user
+	if (preValidateError) {
+		return (
+			<div className="flex flex-col items-center justify-center space-y-5">
+				<h1 className="text-center text-2xl font-semibold text-error">
+					{preValidateError.message}
+				</h1>
+				<button
+					onClick={() => router.push("/auth/login")}
+					className="btn btn-primary btn-sm"
+				>
+					GOTO LOGIN
+				</button>
+			</div>
+		);
+	}
 	return (
 		<div className="z-10 flex justify-center  self-center">
 			<div className="w-100 mx-auto rounded-2xl border p-12">
@@ -88,13 +141,16 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 				<form className="space-y-5" onSubmit={submitHandler}>
 					{organizationInvite ? (
 						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">Token</label>
+							<label className="text-sm font-medium tracking-wide">
+								Invitation Token
+							</label>
 							<input
 								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 								value={formData.ztnetOrganizationToken}
 								onChange={handleChange}
 								type=""
 								name="ztnetToken"
+								disabled
 								placeholder="Inviation code"
 							/>
 						</div>

@@ -16,7 +16,6 @@ const Register = () => {
 
 	const router = useRouter();
 	const { organizationInvite } = router.query as { organizationInvite?: string };
-
 	return (
 		<div>
 			<Head>
@@ -30,7 +29,11 @@ const Register = () => {
 				<div className="flex flex-grow items-center">
 					<div className="mx-auto flex">
 						<WelcomeMessage />
-						{organizationInvite ? <RegisterOrganizationInviteForm /> : <RegisterForm />}
+						{organizationInvite ? (
+							<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
+						) : (
+							<RegisterForm />
+						)}
 					</div>
 				</div>
 			</main>
@@ -53,6 +56,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 			enableRegistration: true,
 		},
 	});
+
 	// easy check to see if the invite probably is a jwt token
 	const ztnetInvite = !!context.query?.invite && context.query?.invite.length > 50;
 	const ztnetOrganizationInvite =
@@ -72,7 +76,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 		return { props: {} };
 	}
 
-	if (session.user) {
+	if (session.user && !ztnetOrganizationInvite) {
 		return {
 			redirect: {
 				destination: "/network",
