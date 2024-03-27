@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import InputField from "~/components/elements/inputField";
 import {
 	useTrpcApiErrorHandler,
@@ -11,6 +12,7 @@ interface Iprops {
 }
 
 const InviteByMail = ({ organizationId }: Iprops) => {
+	const t = useTranslations("organization");
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
@@ -26,11 +28,9 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 
 	return (
 		<div>
-			<p className="text-xl">Invite by mail</p>
+			<p className="text-xl">{t("invitation.inviteByEmail.title")}</p>
 			<p className="text-sm text-gray-400 ">
-				Invited users who are not currently members of the application will need to
-				register through the provided link in the invitation email. Link is valid for 24
-				hour.
+				{t("invitation.inviteByEmail.description")}
 			</p>
 			<InputField
 				isLoading={false}
@@ -51,15 +51,15 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 					{
 						name: "email",
 						type: "text",
-						description: "Enter the mail address of the user you want to invite",
-						placeholder: "Email Address",
+						description: t("invitation.inviteByEmail.emailDescription"),
+						placeholder: t("invitation.inviteByEmail.emailPlaceholder"),
 						// value: options?.smtpPort,
 					},
 					{
 						name: "role",
 						elementType: "select",
 						placeholder: "user role",
-						description: "Select the role of the user",
+						description: t("invitation.inviteByEmail.selectRoleDescription"),
 						initialValue: "READ_ONLY",
 						selectOptions: UserRolesList,
 					},

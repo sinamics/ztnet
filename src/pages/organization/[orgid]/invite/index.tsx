@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
 
 const Invites = () => {
+	const t = useTranslations("organization");
 	const b = useTranslations("commonButtons");
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
@@ -35,11 +36,11 @@ const Invites = () => {
 		<div className="">
 			<div className="space-y-5 bg-base-200 rounded-lg p-5">
 				<div className="space-y-2">
-					<h1 className="text-2xl font-bold">Team Expansion: Invite New Members</h1>
+					<h1 className="text-2xl font-bold">{t("invitation.title")}</h1>
 					<p className="text-gray-400">
-						Invite more people to your team! You can send invitations by email or find and
-						add people who are already using the platform.
-						<br /> This makes it easy for your team to grow and include more members.
+						{t.rich("invitation.description", {
+							br: () => <br />,
+						})}
 					</p>
 				</div>
 				<div className="grid grid-cols-[1fr,auto,1fr] gap-3">
@@ -49,7 +50,9 @@ const Invites = () => {
 				</div>
 				<div>
 					{orgInvites?.length > 0 ? (
-						<div className="divider pt-10">Pending Invites</div>
+						<div className="divider pt-10">
+							{t("invitation.pendingInvitations.title")}
+						</div>
 					) : null}
 					<div className="grid grid-cols-3 gap-3">
 						{orgInvites?.map((invite) => {
@@ -86,7 +89,7 @@ const Invites = () => {
 													}
 												/>
 											) : (
-												"Resend"
+												b("resend")
 											)}
 										</button>
 										<button

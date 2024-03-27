@@ -16,7 +16,7 @@ type stateType = {
 };
 
 const InviteByUsers = () => {
-	const t = useTranslations("admin");
+	const t = useTranslations("organization");
 	const b = useTranslations("commonButtons");
 
 	const handleApiError = useTrpcApiErrorHandler();
@@ -49,16 +49,14 @@ const InviteByUsers = () => {
 		<div className="space-y-5">
 			<div className="form-control w-full space-y-5">
 				<div>
-					<h2 className="text-xl">Invite site users</h2>
+					<h2 className="text-xl">{t("invitation.inviteSiteUser.title")}</h2>
 					<p className="text-sm text-gray-400">
-						{t("organization.listOrganization.invitationModal.description")}
+						{t("invitation.inviteSiteUser.description")}
 					</p>
 				</div>
 				<div>
 					<p className="text-sm text-gray-500">
-						{t(
-							"organization.listOrganization.invitationModal.inputFields.searchUser.title",
-						)}
+						{t("invitation.inviteSiteUser.inputFields.searchUser.title")}
 					</p>
 					<ScrollableDropdown
 						items={allUsers}
@@ -66,7 +64,7 @@ const InviteByUsers = () => {
 						inputClassName="w-full"
 						idField="id"
 						placeholder={t(
-							"organization.listOrganization.invitationModal.inputFields.searchUser.placeholder",
+							"invitation.inviteSiteUser.inputFields.searchUser.placeholder",
 						)}
 						onOptionSelect={(selectedItem) => {
 							setState({
@@ -81,9 +79,7 @@ const InviteByUsers = () => {
 			<div className="form-control space-y-8">
 				<div className="form-control w-full">
 					<p className="text-sm text-gray-500">
-						{t(
-							"organization.listOrganization.invitationModal.inputFields.userRole.title",
-						)}
+						{t("invitation.inviteSiteUser.inputFields.userRole.title")}
 					</p>
 					<select
 						value={state?.role}

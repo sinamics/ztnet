@@ -28,7 +28,8 @@
 		"deleteOrganization": "Usuń organizację",
 		"userActions": "Akcje",
 		"addWebhooks": "Dodaj Webhooki",
-		"options": "Opcje"
+		"options": "Opcje",
+		"resend": "Wyślij ponownie"
 	},
 	"commonTable": {
 		"header": {
@@ -567,19 +568,6 @@
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
 				"activeWebhooks": "Aktywne Webhooki:",
-				"invitationModal": {
-					"title": "Zaproszenie do organizacji",
-					"description": "Zanim dodasz użytkownika do swojej organizacji, pamiętaj, że musi on być zarejestrowany w aplikacji",
-					"inputFields": {
-						"searchUser": {
-							"title": "Wyszukaj użytkownika, którego chcesz dodać",
-							"placeholder": "Szukaj użytkownika"
-						},
-						"userRole": {
-							"title": "Wybierz rolę użytkownika"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "Edytuj Webhook",
 					"createWebhookTitle": "Utwórz Webhook dla organizacji <span>{organization}</span>",
@@ -733,6 +721,33 @@
 			"toggleLogLabel": "LOG",
 			"logHeader": "Ostatnie 100 logów aktywności",
 			"loading": "Pobieranie logów..."
+		},
+		"invitation": {
+			"title": "Rozszerzenie zespołu: Zaproszenie nowych członków",
+			"description": "Zaproś więcej osób do swojego zespołu! Możesz wysyłać zaproszenia drogą mailową lub znaleźć i dodać osoby, które już korzystają z platformy. <br></br> To ułatwia rozwój Twojego zespołu i włączenie do niego większej liczby członków.",
+			"pendingInvitations": {
+				"title": "Oczekujące zaproszenia"
+			},
+			"inviteByEmail": {
+				"title": "Zaproś drogą mailową",
+				"description": "Zaproszeni użytkownicy, którzy obecnie nie są członkami aplikacji, będą musieli zarejestrować się za pomocą udostępnionego linku w mailu z zaproszeniem. Link jest ważny przez 24 godziny.",
+				"emailPlaceholder": "Adres e-mail",
+				"emailDescription": "Wpisz adres e-mail osoby, którą chcesz zaprosić",
+				"selectRoleDescription": "Wybierz rolę użytkownika"
+			},
+			"inviteSiteUser": {
+				"title": "Zaproś użytkowników witryny",
+				"description": "Zanim będziesz mógł dodać użytkowników do swojej organizacji, ważne jest, aby wiedzieć, że muszą oni już być zarejestrowani w aplikacji",
+				"inputFields": {
+					"searchUser": {
+						"title": "Wyszukaj użytkownika, którego chcesz dodać",
+						"placeholder": "Wyszukaj użytkownika"
+					},
+					"userRole": {
+						"title": "Wybierz rolę użytkownika"
+					}
+				}
+			}
 		}
 	}
 }

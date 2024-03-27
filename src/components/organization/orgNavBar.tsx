@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
 import OrganizationWebhook from "./webhookModal";
-import OrganizationInviteModal from "./organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
@@ -41,15 +40,6 @@ const useOpenModal = (orgData) => {
 				),
 				content: <OrganizationWebhook organizationId={orgData.id} />,
 			},
-			inviteUser: {
-				rootStyle: "h-8/12 w-11/12 max-w-3xl",
-				title: (
-					<p>
-						<span>{t("admin.organization.listOrganization.invitationModal.title")}</span>
-					</p>
-				),
-				content: <OrganizationInviteModal organizationId={orgData.id} />,
-			},
 		};
 
 		callModal(modalTypes[type]);
@@ -71,8 +61,13 @@ const AdminHamburgerMenu = ({ organization }) => {
 			<li onClick={() => openModal("webhooks")}>
 				<a className="justify-between cursor-pointer">WEBHOOKS</a>
 			</li>
-			<li onClick={() => openModal("inviteUser")}>
-				<a className="justify-between cursor-pointer">INVITE USER</a>
+			<li>
+				<Link
+					href={`/organization/${organization}/invite`}
+					className="justify-between cursor-pointer"
+				>
+					INVITE USER
+				</Link>
 			</li>
 		</ul>
 	);
