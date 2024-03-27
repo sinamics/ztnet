@@ -15,7 +15,6 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
-import { OrgNavBar } from "~/components/organization/orgNavBar";
 
 const title = `${globalSiteTitle} - Organization`;
 
