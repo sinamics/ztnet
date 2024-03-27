@@ -885,16 +885,37 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			// make sure the user does not exist in the organization
-			const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+			// check if the user already exists
+			const doesUserExist = await ctx.prisma.user.findFirst({
 				where: {
-					organizationId: organizationId,
-					userId: ctx.session.user.id,
+					email: email,
 				},
 			});
 
-			if (isMember) {
-				throw new Error("User is already a member of the organization.");
+			if (doesUserExist) {
+				// make sure the user does not exist in the organization
+				const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+					where: {
+						organizationId: organizationId,
+						userId: doesUserExist.id,
+					},
+				});
+
+				if (isMember) {
+					throw new Error("User is already a member of the organization.");
+				}
+			}
+
+			// check if the user has pending invitation
+			const existingInvitation = await ctx.prisma.organizationInvitation.findFirst({
+				where: {
+					organizationId: organizationId,
+					email: email,
+				},
+			});
+
+			if (existingInvitation) {
+				throw new Error("User already has a pending invitation.");
 			}
 
 			try {
@@ -903,7 +924,7 @@ export const organizationRouter = createTRPCRouter({
 					organizationId: organizationId,
 					role: role,
 					invitedById: ctx.session.user.id,
-					expiresAt: Date.now() + 7200000, // Current time + 2 hour
+					expiresAt: Date.now() + 86400000, // Current time + 24 hour
 				};
 
 				// Encrypt the payload

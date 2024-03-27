@@ -28,7 +28,7 @@ const Invites = () => {
 					</p>
 				</div>
 				<div>
-					{orgInvites.length > 0 ? (
+					{orgInvites?.length > 0 ? (
 						<h2 className="font-semibold">Pending invites by email</h2>
 					) : null}
 					<div className="grid grid-cols-3 gap-3">

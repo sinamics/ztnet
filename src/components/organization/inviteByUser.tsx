@@ -18,6 +18,7 @@ type stateType = {
 const InviteByUsers = () => {
 	const t = useTranslations("admin");
 	const b = useTranslations("commonButtons");
+
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
