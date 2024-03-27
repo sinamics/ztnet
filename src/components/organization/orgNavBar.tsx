@@ -230,7 +230,7 @@ export const OrgNavBar = () => {
 					}}
 					className="btn btn-ghost btn-circle"
 				>
-					<div className="indicator">
+					<div className="flex">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -247,7 +247,10 @@ export const OrgNavBar = () => {
 						</svg>
 
 						{hasNewMessages[organization?.id] ? (
-							<span className="badge badge-xs badge-primary indicator-item"></span>
+							<span className="relative flex h-3 w-3">
+								<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+								<span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+							</span>
 						) : null}
 					</div>
 				</button>

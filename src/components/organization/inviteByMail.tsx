@@ -29,7 +29,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 			<p className="text-xl upp">Invite by mail</p>
 			<p className="text-sm text-gray-400 ">
 				Invited users who are not currently members of the application will need to
-				register through the provided link in the invitation email. Token is valid for 1
+				register through the provided link in the invitation email. Link is valid for 24
 				hour.
 			</p>
 			<InputField

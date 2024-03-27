@@ -35,20 +35,8 @@ const Invites = () => {
 						{orgInvites?.map((invite) => {
 							return (
 								<div className="border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md cursor-pointer">
-									{/* Use justify-between to push the button to the far right */}
 									<div className="flex items-center justify-between space-x-4">
 										<div className="flex items-center space-x-2">
-											{/* <img
-												alt="Avatar for user"
-												className="rounded-full"
-												height="40"
-												src="/placeholder.svg"
-												style={{
-													aspectRatio: "40/40",
-													objectFit: "cover",
-												}}
-												width="40"
-											/> */}
 											<div>
 												<h3 className="text-sm font-semibold">{invite.email}</h3>
 												<p className="text-sm text-gray-500 dark:text-gray-400">
