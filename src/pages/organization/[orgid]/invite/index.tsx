@@ -17,12 +17,13 @@ const Invites = () => {
 	const { data: orgInvites, refetch: refetchInvites } = api.org.getInvites.useQuery({
 		organizationId,
 	});
-	const { mutate: resendInvite } = api.org.resendInvite.useMutation({
-		onSuccess: () => {
-			refetchInvites();
-			toast.success("Invitation resent successfully");
-		},
-	});
+	const { mutate: resendInvite, isLoading: resendLoading } =
+		api.org.resendInvite.useMutation({
+			onSuccess: () => {
+				refetchInvites();
+				toast.success("Invitation resent successfully");
+			},
+		});
 
 	const { mutate: deleteInvite } = api.org.deleteInvite.useMutation({
 		onSuccess: () => {
@@ -72,7 +73,7 @@ const Invites = () => {
 											// set disabled if invite.mailsentAt is less than 5min ago
 											// or if invite.mailsentAt is null
 											title="Resend invitation email"
-											disabled={resendLimit}
+											disabled={resendLimit || resendLoading}
 											onClick={() =>
 												resendInvite({ invitationId: invite.id, organizationId })
 											}
