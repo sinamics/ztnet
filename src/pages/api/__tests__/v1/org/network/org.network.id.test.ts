@@ -3,6 +3,7 @@ import { prisma } from "~/server/db";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import {
 	GET_network,
+	POST_network,
 	REQUEST_PR_MINUTE,
 } from "~/pages/api/v1/org/[orgid]/network/[nwid]";
 import apiNetworkHandler from "~/pages/api/v1/org/[orgid]/network/[nwid]";
@@ -156,6 +157,74 @@ describe("organization networkid api validation", () => {
 
 		// set req.method to GET
 		mockRequest.method = "GET";
+
+		const validToken = encrypt(validTokenData, generateInstanceSecret(API_TOKEN_SECRET));
+		mockRequest.headers["x-ztnet-auth"] = validToken;
+
+		// add organizationId to the request
+		mockRequest.query = undefined;
+		await apiNetworkHandler(
+			mockRequest as NextApiRequest,
+			mockResponse as NextApiResponse,
+		);
+
+		expect(mockResponse.status).toHaveBeenCalledWith(400);
+		expect(mockResponse.json).toHaveBeenCalledWith({
+			error: "Organization ID is required",
+		});
+	});
+
+	test("should deny access if member is not tied to organization", async () => {
+		// add organizationId to the request
+		mockRequest.query = {
+			orgid: "testOrgId",
+			nwid: "testNetworkId",
+		};
+		// Mock an API token with an unauthorized role
+		const unauthorizedTokenData = JSON.stringify({
+			userId: "testUserId",
+			tokenId: "testTokenId",
+			apiAuthorizationType: ["ORGANIZATION"],
+		});
+
+		const unauthorizedToken = encrypt(
+			unauthorizedTokenData,
+			generateInstanceSecret(API_TOKEN_SECRET),
+		);
+
+		prisma.aPIToken.findUnique = jest.fn().mockResolvedValue({
+			expiresAt: new Date(Date.now() + 100000).toISOString(),
+			token: unauthorizedToken,
+			userId: "testUserId",
+			tokenId: "testTokenId",
+		});
+
+		// return null, as this user is not a member of the organization
+		prisma.userOrganizationRole.findFirst = jest.fn().mockResolvedValue(null);
+
+		mockRequest.headers["x-ztnet-auth"] = unauthorizedToken;
+
+		await POST_network(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
+
+		expect(mockResponse.status).toHaveBeenCalledWith(500);
+		expect(mockResponse.json).toHaveBeenCalledWith({
+			message:
+				"You are not a member of this organization. Contact your organization administrator to request access.",
+		});
+	});
+
+	test("should respond with bad request for missing orgid", async () => {
+		// reset the request headers
+		mockRequest.headers = {};
+
+		const validTokenData = JSON.stringify({
+			userId: "testUserId",
+			tokenId: "testTokenId",
+			apiAuthorizationType: ["ORGANIZATION"],
+		});
+
+		// set req.method to POST
+		mockRequest.method = "POST";
 
 		const validToken = encrypt(validTokenData, generateInstanceSecret(API_TOKEN_SECRET));
 		mockRequest.headers["x-ztnet-auth"] = validToken;
