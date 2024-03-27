@@ -13,7 +13,16 @@ interface Iprops {
 const InviteByMail = ({ organizationId }: Iprops) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
-	const { mutate: inviteUserByMail } = api.org.inviteUserByMail.useMutation();
+
+	const { refetch: refetchInvites } = api.org.getInvites.useQuery({
+		organizationId,
+	});
+
+	const { mutate: inviteUserByMail } = api.org.inviteUserByMail.useMutation({
+		onSuccess: () => {
+			refetchInvites();
+		},
+	});
 
 	return (
 		<div>
@@ -51,6 +60,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 						elementType: "select",
 						placeholder: "user role",
 						description: "Select the role of the user",
+						initialValue: "READ_ONLY",
 						selectOptions: UserRolesList,
 					},
 				]}

@@ -9,7 +9,7 @@ export const inviteOrganizationTemplate = () => {
 		body:
 			"Hello <%= toEmail %>,<br /><br />" +
 			"You have been invited by <%= fromAdmin %> to join our ZTNET organization, '<%= fromOrganization %>'. We are excited to potentially have you on board and look forward to collaborating with you.<br /><br />" +
-			"To accept this invitation, please follow the link provided.<br />" +
+			"To complete your invitation process, kindly use the link below. Please note, the link will expire after 24 hours.<br />" +
 			"<a href='<%= invitationLink %>' style='color: blue; text-decoration: underline;'><%= invitationLink %></a><br /><br />" +
 			"If you are not familiar with '<%= fromAdmin %>' or '<%= fromOrganization %>', please disregard this message for your security.<br /><br />" +
 			"Warm regards,<br />" +
