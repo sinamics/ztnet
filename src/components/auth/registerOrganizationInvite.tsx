@@ -5,6 +5,8 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
+import { Organization, Role, User } from "@prisma/client";
+
 interface FormData {
 	email: string;
 	password: string;
@@ -13,6 +15,16 @@ interface FormData {
 	token: string;
 }
 
+interface IUser extends User {
+	user: {
+		email: string;
+		name: string;
+		id: string;
+		expiresAt: Date;
+		role: Role;
+		memberOfOrgs: Organization[];
+	};
+}
 const RegisterOrganizationInviteForm: React.FC = () => {
 	const router = useRouter();
 	const { organizationInvite } = router.query as { organizationInvite?: string };
@@ -41,7 +53,9 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 		setLoading(true);
 		event.preventDefault();
 		register(formData, {
-			onSuccess: () =>
+			onSuccess: ({ user }: IUser) => {
+				// get the first org id
+				const orgId = user?.memberOfOrgs?.[0]?.id;
 				void (async () => {
 					const result = await signIn("credentials", {
 						redirect: false,
@@ -50,9 +64,14 @@ const RegisterOrganizationInviteForm: React.FC = () => {
 					setLoading(false);
 
 					if (!result.error) {
+						// if the user is a member of an organization, redirect to the organization
+						if (orgId) return await router.push(`/organization/${orgId}`);
+
+						// otherwise redirect to the network
 						await router.push("/network");
 					}
-				})(),
+				})();
+			},
 			onError: (error) => {
 				setLoading(false);
 				toast.error(error.message, { duration: 10000 });

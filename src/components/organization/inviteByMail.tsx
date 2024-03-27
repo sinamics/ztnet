@@ -67,7 +67,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 				submitHandler={(params) => {
 					return new Promise(() => {
 						return inviteUserByMail(
-							{ ...params },
+							{ ...params, email: (params.email as string)?.trim() },
 							{
 								onSuccess: handleApiSuccess,
 								onError: handleApiError,
