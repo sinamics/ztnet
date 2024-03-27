@@ -673,6 +673,16 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
+			// check if the user is already a member of the organization
+			const userRole = await ctx.prisma.userOrganizationRole.findFirst({
+				where: {
+					organizationId: input.organizationId,
+					userId: input.userId,
+				},
+			});
+			if (userRole) {
+				throw new Error("User is already a member of the organization.");
+			}
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {

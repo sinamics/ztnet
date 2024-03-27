@@ -1,40 +1,20 @@
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { ReactElement, useState } from "react";
-import ScrollableDropdown from "~/components/elements/dropdownlist";
+import { ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import InviteByMail from "~/components/organization/inviteByMail";
+import InviteByUser from "~/components/organization/inviteByUser";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 
-// interface Iprops {
-// 	organizationId: string;
-// }
-
 const Invites = () => {
-	const t = useTranslations("admin");
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
-	const [state, setState] = useState({
-		userId: null,
-		name: "",
-		role: "",
-	});
-
-	// get the organization id from the query
-	const { data: allUsers } = api.org.getPlatformUsers.useQuery({ organizationId });
 	const { data: orgInvites } = api.org.getInvites.useQuery({ organizationId });
 
-	const dropDownHandler = (e) => {
-		setState({
-			...state,
-			role: e.target.value,
-		});
-	};
 	return (
 		<div className="">
-			<div className="space-y-6 bg-base-200 rounded-lg p-5">
+			<div className="space-y-10 bg-base-200 rounded-lg p-5">
 				<div className="space-y-2">
 					<h1 className="text-2xl font-bold">Invite users</h1>
 					<p className="text-gray-500 dark:text-gray-400">
@@ -46,7 +26,7 @@ const Invites = () => {
 					<div className="grid grid-cols-3 gap-3">
 						{orgInvites?.map((invite) => {
 							return (
-								<div className="border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800">
+								<div className="border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md cursor-pointer">
 									{/* Use justify-between to push the button to the far right */}
 									<div className="flex items-center justify-between space-x-4">
 										<div className="flex items-center space-x-2">
@@ -68,71 +48,20 @@ const Invites = () => {
 												</p>
 											</div>
 										</div>
-										{/* This div is now correctly aligned to the right */}
+									</div>
+									<div className="flex justify-end gap-3">
 										<button className="btn btn-primary btn-xs">Resend</button>
+										<button className="btn btn-xs">Delete</button>
 									</div>
 								</div>
 							);
 						})}
 					</div>
 				</div>
-				<div>
-					<div className="space-y-6 ">
-						<div className="form-control w-full">
-							<h2 className=" font-semibold">Search for existing users</h2>
-							<p className="text-sm text-gray-400">
-								{t("organization.listOrganization.invitationModal.description")}
-							</p>
-							<label className="label">
-								<span className="label-text">
-									{t(
-										"organization.listOrganization.invitationModal.inputFields.searchUser.title",
-									)}
-								</span>
-							</label>
-							<ScrollableDropdown
-								items={allUsers}
-								displayField="name"
-								inputClassName="w-full"
-								idField="id"
-								placeholder={t(
-									"organization.listOrganization.invitationModal.inputFields.searchUser.placeholder",
-								)}
-								onOptionSelect={(selectedItem) => {
-									setState({
-										...state,
-										userId: selectedItem.id,
-										name: selectedItem.name,
-									});
-								}}
-							/>
-						</div>
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text">
-									{t(
-										"organization.listOrganization.invitationModal.inputFields.userRole.title",
-									)}
-								</span>
-							</label>
-							<div className="form-control w-full max-w-xs">
-								<select
-									value={state?.role as string}
-									onChange={(e) => dropDownHandler(e)}
-									className="select select-sm select-bordered  select-ghost max-w-xs"
-								>
-									<option>ADMIN</option>
-									<option>USER</option>
-									<option>READ_ONLY</option>
-								</select>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="divider">OR</div>
-				<div>
-					<p className="text-xl">Invite by mail</p>
+				<div className="grid grid-cols-[1fr,auto,1fr] gap-3">
 					<InviteByMail organizationId={organizationId} />
+					<div className="divider divider-horizontal">OR</div>
+					<InviteByUser />
 				</div>
 			</div>
 		</div>

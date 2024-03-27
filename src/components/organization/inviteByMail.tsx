@@ -1,4 +1,3 @@
-import { useTranslations } from "next-intl";
 import InputField from "~/components/elements/inputField";
 import { api } from "~/utils/api";
 import { UserRolesList } from "~/utils/role";
@@ -8,28 +7,25 @@ interface Iprops {
 }
 
 const InviteByMail = ({ organizationId }: Iprops) => {
-	const t = useTranslations("admin");
-
 	const { mutate: generateInviteLink } = api.org.generateInviteLink.useMutation();
 
 	return (
 		<div>
-			<label className="label">
-				<span className="label-text">
-					Invited users who are not currently members of the application will need to
-					register through the provided link in the invitation email. Token is valid for 1
-					hour.
-				</span>
-			</label>
+			<p className="text-xl upp">Invite by mail</p>
+			<p className="text-sm text-gray-400 ">
+				Invited users who are not currently members of the application will need to
+				register through the provided link in the invitation email. Token is valid for 1
+				hour.
+			</p>
 			<InputField
 				isLoading={false}
 				label=""
 				openByDefault={true}
 				showCancelButton={false}
 				showSubmitButtons={true}
-				rootFormClassName="space-y-3 pt-2"
-				rootClassName="flex flex-col space-y-3"
-				buttonClassName="btn-block"
+				rootFormClassName="space-y-3 pt-2 "
+				rootClassName="flex flex-col space-y-10"
+				labelClassName="text-gray-600"
 				size="sm"
 				fields={[
 					{

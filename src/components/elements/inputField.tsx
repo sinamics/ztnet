@@ -315,7 +315,7 @@ const InputField = ({
 								return (
 									<div key={field.name} className="form-control">
 										{field.description ? (
-											<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+											<label className={`text-sm text-gray-500 ${labelClassName}`}>
 												{field.description}
 											</label>
 										) : null}
