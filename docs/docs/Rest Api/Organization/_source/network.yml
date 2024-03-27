@@ -137,5 +137,53 @@ paths:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
-
+    post:
+      summary: Update a specific organization network
+      operationId: updateNetworkInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type:
+                    - string
+                  required: false
+                  description: Name of the network. If not provided, a random name will be generated.
+      responses:
+        200:
+          description: Network Updated
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkResponse.yml#/UpdateNetworkShema'
+              example:
+                $ref: '../../_example/NetworkExample.yml#/NetworkExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
 
