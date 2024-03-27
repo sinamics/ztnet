@@ -361,6 +361,8 @@ model OrganizationInvitation {
   invitedById    String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime     @default(now())
+  mailSentAt     DateTime?
 }
 
 model MembershipRequest {

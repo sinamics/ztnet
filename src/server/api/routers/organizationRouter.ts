@@ -990,6 +990,101 @@ export const organizationRouter = createTRPCRouter({
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
 		}),
+	resendInvite: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				invitationId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const invitation = await ctx.prisma.organizationInvitation.findFirst({
+				where: {
+					id: input.invitationId,
+					organizationId: input.organizationId,
+				},
+			});
+
+			if (!invitation) {
+				throw new Error("Invitation not found.");
+			}
+
+			// make sure mailSentAt is more than 1 minute ago
+			if (invitation.mailSentAt && invitation.mailSentAt.getTime() > Date.now() - 60000) {
+				throw new Error("You can only resend an invitation after 1 minute.");
+			}
+			// make sure the user has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: invitation.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			try {
+				// get the org mail template
+				const globalOptions = await ctx.prisma.globalOptions.findFirst({
+					where: {
+						id: 1,
+					},
+				});
+
+				const defaultTemplate = inviteOrganizationTemplate();
+				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+
+				// create invitation link
+				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
+
+				// get organization name
+				const organization = await ctx.prisma.organization.findUnique({
+					where: {
+						id: invitation.organizationId,
+					},
+				});
+
+				if (!organization) {
+					throw new Error("Organization not found.");
+				}
+
+				const renderedTemplate = await ejs.render(
+					JSON.stringify(template),
+					{
+						toEmail: invitation.email,
+						fromAdmin: ctx.session.user.name,
+						fromOrganization: organization.orgName,
+						invitationLink: invitationLink,
+					},
+					{ async: true },
+				);
+
+				// create transporter
+				const transporter = createTransporter(globalOptions);
+				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+
+				// define mail options
+				const mailOptions = {
+					from: globalOptions.smtpEmail,
+					to: invitation.email,
+					subject: parsedTemplate.subject,
+					html: parsedTemplate.body,
+				};
+
+				//update mailSentAt: new Date()
+				await ctx.prisma.organizationInvitation.update({
+					where: {
+						id: input.invitationId,
+					},
+					data: {
+						mailSentAt: new Date(),
+					},
+				});
+				// send test mail to user
+				return await sendEmail(transporter, mailOptions);
+			} catch (error) {
+				return throwError(error.message);
+			}
+		}),
+
+	// define mail options
 	inviteUserByMail: protectedProcedure
 		.input(
 			z.object({
@@ -1134,6 +1229,7 @@ export const organizationRouter = createTRPCRouter({
 						role: role,
 						invitedById: ctx.session.user.id,
 						expiresAt: new Date(tokenPayload.expiresAt),
+						mailSentAt: new Date(),
 					},
 				});
 
