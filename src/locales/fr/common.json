@@ -78,6 +78,10 @@
 		}
 	},
 	"commonToast": {
+		"updatedSuccessfully": "Mis à jour avec succès",
+		"addedSuccessfully": "Ajouté avec succès",
+		"deletedSuccessfully": "Supprimé avec succès",
+		"errorOccurred": "Une erreur inconnue est survenue",
 		"organizationDeleted": "Organisation supprimée avec succès"
 	},
 	"sidebar": {

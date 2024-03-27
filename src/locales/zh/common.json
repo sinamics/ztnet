@@ -78,7 +78,11 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "组织已删除"
+		"updatedSuccessfully": "成功更新",
+		"addedSuccessfully": "成功添加",
+		"deletedSuccessfully": "成功删除",
+		"errorOccurred": "发生未知错误",
+		"organizationDeleted": "组织成功删除"
 	},
 	"sidebar": {
 		"navigation": "首页",
