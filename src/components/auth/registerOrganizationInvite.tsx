@@ -119,7 +119,7 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 	if (preValidateError) {
 		return (
 			<div className="flex flex-col items-center justify-center space-y-5">
-				<h1 className="text-center text-2xl font-semibold text-error">
+				<h1 className="text-center text-1xl font-semibold text-error">
 					{preValidateError.message}
 				</h1>
 				<button
