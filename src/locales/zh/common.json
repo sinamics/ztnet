@@ -28,7 +28,8 @@
 		"deleteOrganization": "删除组织",
 		"userActions": "用户操作",
 		"addWebhooks": "添加 Webhooks",
-		"options": "选项"
+		"options": "选项",
+		"resend": "重新发送"
 	},
 	"commonTable": {
 		"header": {
@@ -567,19 +568,6 @@
 				"numberOfMembers": "成员数量：",
 				"pendingInvitations": "待处理的邀请：",
 				"activeWebhooks": "活动的 Webhooks:",
-				"invitationModal": {
-					"title": "组织邀请",
-					"description": "在将用户添加到你的组织之前，请注意他们必须已经在应用中注册",
-					"inputFields": {
-						"searchUser": {
-							"title": "搜索你想添加的用户",
-							"placeholder": "搜索用户"
-						},
-						"userRole": {
-							"title": "选择用户角色"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "编辑 Webhook",
 					"webhookName": "Webhook 名称",
@@ -733,6 +721,33 @@
 			"toggleLogLabel": "日志",
 			"logHeader": "最近100个活动日志",
 			"loading": "正在获取日志..."
+		},
+		"invitation": {
+			"title": "团队扩展：邀请新成员",
+			"description": "邀请更多人加入您的团队！您可以通过电子邮件发送邀请，也可以找到并添加已经使用平台的人。 <br></br> 这样可以让您的团队更容易地扩展并包括更多成员。",
+			"pendingInvitations": {
+				"title": "待处理邀请"
+			},
+			"inviteByEmail": {
+				"title": "通过电子邮件邀请",
+				"description": "受邀用户如果当前不是应用程序的成员，将需要通过邀请电子邮件中提供的链接注册。链接有效期为 24 小时。",
+				"emailPlaceholder": "电子邮件地址",
+				"emailDescription": "输入您要邀请的人的电子邮件地址",
+				"selectRoleDescription": "选择用户的角色"
+			},
+			"inviteSiteUser": {
+				"title": "邀请网站用户",
+				"description": "在您可以将用户添加到组织之前，请注意他们必须已在应用程序中注册",
+				"inputFields": {
+					"searchUser": {
+						"title": "搜索要添加的用户",
+						"placeholder": "搜索用户"
+					},
+					"userRole": {
+						"title": "选择用户的角色"
+					}
+				}
+			}
 		}
 	}
 }
