@@ -34,7 +34,7 @@ export const encrypt = (text: string, secret: Buffer) => {
 };
 
 // Decryption Function
-export const decrypt = (text: string, secret: Buffer) => {
+export const decrypt = <T>(text: string, secret: Buffer) => {
 	try {
 		if (!secret) {
 			throw new Error("Secret is empty");
@@ -53,7 +53,7 @@ export const decrypt = (text: string, secret: Buffer) => {
 		const decipher = crypto.createDecipheriv("aes-256-cbc", secretBuffer, iv);
 
 		const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
-		return decrypted.toString();
+		return decrypted.toString() as T;
 	} catch (err) {
 		throw new Error(err);
 	}
@@ -86,7 +86,10 @@ export async function decryptAndVerifyToken({
 
 	// Try decrypting the token
 	try {
-		const decryptedString = decrypt(apiKey, generateInstanceSecret(API_TOKEN_SECRET));
+		const decryptedString = decrypt<string>(
+			apiKey,
+			generateInstanceSecret(API_TOKEN_SECRET),
+		);
 		decryptedData = JSON.parse(decryptedString);
 	} catch (_error) {
 		throw new Error("Invalid token");

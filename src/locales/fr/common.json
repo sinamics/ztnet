@@ -28,7 +28,8 @@
 		"deleteOrganization": "Supprimer l'organisation",
 		"userActions": "Gérer l'utilisateur",
 		"addWebhooks": "Ajouter des Webhooks",
-		"options": "Options"
+		"options": "Options",
+		"resend": "Renvoyer"
 	},
 	"commonTable": {
 		"header": {
@@ -78,6 +79,10 @@
 		}
 	},
 	"commonToast": {
+		"updatedSuccessfully": "Mis à jour avec succès",
+		"addedSuccessfully": "Ajouté avec succès",
+		"deletedSuccessfully": "Supprimé avec succès",
+		"errorOccurred": "Une erreur inconnue est survenue",
 		"organizationDeleted": "Organisation supprimée avec succès"
 	},
 	"sidebar": {
@@ -563,19 +568,6 @@
 				"numberOfMembers": "Nombre de membres :",
 				"pendingInvitations": "Invitations en attente :",
 				"activeWebhooks": "Webhooks actifs :",
-				"invitationModal": {
-					"title": "Invitations d'organisation",
-					"description": "Avant de pouvoir ajouter des utilisateurs à votre organisation, il est important de noter qu'ils doivent déjà être enregistrés dans l'application.",
-					"inputFields": {
-						"searchUser": {
-							"title": "Recherchez l'utilisateur que vous souhaitez ajouter",
-							"placeholder": "Rechercher un utilisateur"
-						},
-						"userRole": {
-							"title": "Sélectionnez le rôle de l'utilisateur"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "Modifier le webhook",
 					"createWebhookTitle": "Créer un webhook pour l'organisation  <span>{organization}</span>",
@@ -729,6 +721,33 @@
 			"toggleLogLabel": "LOG",
 			"logHeader": "100 derniers logs d'activité",
 			"loading": "Récupération des logs..."
+		},
+		"invitation": {
+			"title": "Expansion de l'équipe : Inviter de nouveaux membres",
+			"description": "Invitez plus de personnes dans votre équipe ! Vous pouvez envoyer des invitations par e-mail ou trouver et ajouter des personnes qui utilisent déjà la plateforme. <br></br> Cela facilite la croissance de votre équipe et inclut plus de membres.",
+			"pendingInvitations": {
+				"title": "Invitations en attente"
+			},
+			"inviteByEmail": {
+				"title": "Inviter par e-mail",
+				"description": "Les utilisateurs invités qui ne sont pas actuellement membres de l'application devront s'inscrire via le lien fourni dans l'e-mail d'invitation. Le lien est valide pendant 24 heures.",
+				"emailPlaceholder": "Adresse e-mail",
+				"emailDescription": "Entrez l'adresse e-mail de la personne que vous souhaitez inviter",
+				"selectRoleDescription": "Sélectionnez le rôle de l'utilisateur"
+			},
+			"inviteSiteUser": {
+				"title": "Inviter des utilisateurs du site",
+				"description": "Avant de pouvoir ajouter des utilisateurs à votre organisation, il est important de noter qu'ils doivent déjà être enregistrés dans l'application",
+				"inputFields": {
+					"searchUser": {
+						"title": "Rechercher l'utilisateur que vous souhaitez ajouter",
+						"placeholder": "Rechercher un utilisateur"
+					},
+					"userRole": {
+						"title": "Sélectionnez le rôle de l'utilisateur"
+					}
+				}
+			}
 		}
 	}
 }

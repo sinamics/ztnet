@@ -1,10 +1,11 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
 import OrganizationWebhook from "./webhookModal";
-import OrganizationInviteModal from "../adminPage/organization/organizationInviteModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 // Utility function to open modals
 const useOpenModal = (orgData) => {
@@ -39,15 +40,6 @@ const useOpenModal = (orgData) => {
 				),
 				content: <OrganizationWebhook organizationId={orgData.id} />,
 			},
-			inviteUser: {
-				rootStyle: "h-3/6",
-				title: (
-					<p>
-						<span>{t("admin.organization.listOrganization.invitationModal.title")}</span>
-					</p>
-				),
-				content: <OrganizationInviteModal organizationId={orgData.id} />,
-			},
 		};
 
 		callModal(modalTypes[type]);
@@ -56,8 +48,8 @@ const useOpenModal = (orgData) => {
 	return openModal;
 };
 
-const AdminHamburgerMenu = ({ orgData }) => {
-	const openModal = useOpenModal(orgData);
+const AdminHamburgerMenu = ({ organization }) => {
+	const openModal = useOpenModal(organization);
 	return (
 		<ul
 			tabIndex={0}
@@ -69,16 +61,21 @@ const AdminHamburgerMenu = ({ orgData }) => {
 			<li onClick={() => openModal("webhooks")}>
 				<a className="justify-between cursor-pointer">WEBHOOKS</a>
 			</li>
-			<li onClick={() => openModal("inviteUser")}>
-				<a className="justify-between cursor-pointer">INVITE USER</a>
+			<li>
+				<Link
+					href={`/organization/${organization}/invite`}
+					className="justify-between cursor-pointer"
+				>
+					INVITE USER
+				</Link>
 			</li>
 		</ul>
 	);
 };
 
-const AdminNavMenu = ({ orgData }) => {
+const AdminNavMenu = ({ organization }) => {
 	const { callModal } = useModalStore();
-	const openModal = useOpenModal(orgData);
+	const openModal = useOpenModal(organization);
 	const b = useTranslations("commonButtons");
 	const t = useTranslations();
 
@@ -95,7 +92,7 @@ const AdminNavMenu = ({ orgData }) => {
 					<li onClick={() => openModal("webhooks")}>
 						<a className="justify-between cursor-pointer">Create new webhook</a>
 					</li>
-					{orgData?.webhooks?.map((webhook) => {
+					{organization?.webhooks?.map((webhook) => {
 						return (
 							<li
 								onClick={() =>
@@ -111,7 +108,10 @@ const AdminNavMenu = ({ orgData }) => {
 											</p>
 										),
 										content: (
-											<OrganizationWebhook organizationId={orgData.id} hook={webhook} />
+											<OrganizationWebhook
+												organizationId={organization.id}
+												hook={webhook}
+											/>
 										),
 									})
 								}
@@ -124,14 +124,13 @@ const AdminNavMenu = ({ orgData }) => {
 				</ul>
 			</div>
 			<div className="dropdown dropdown-end">
-				<div
-					onClick={() => openModal("inviteUser")}
+				<Link
+					href={`/organization/${organization.id}/invite`}
 					tabIndex={0}
-					role="button"
-					className="btn btn-ghost"
+					className="btn btn-ghost text-md"
 				>
-					<div className="rounded-full">{b("inviteUser")}</div>
-				</div>
+					<div className="rounded-full uppercase">{b("inviteUser")}</div>
+				</Link>
 			</div>
 			<div className="dropdown dropdown-end">
 				<div
@@ -147,15 +146,22 @@ const AdminNavMenu = ({ orgData }) => {
 	);
 };
 
-export const OrgNavBar = ({ title, orgData }) => {
+export const OrgNavBar = () => {
+	const router = useRouter();
+	const orgId = router.query.orgid as string;
+
 	const { toggleChat } = useAsideChatStore();
 	const { hasNewMessages } = useSocketStore();
 	const { callModal } = useModalStore((state) => state);
 	const { data: session } = useSession();
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
-		organizationId: orgData.id,
+		organizationId: orgId,
 		userId: session.user.id,
+	});
+
+	const { data: organization } = api.org.getOrgById.useQuery({
+		organizationId: orgId,
 	});
 
 	return (
@@ -185,10 +191,10 @@ export const OrgNavBar = ({ title, orgData }) => {
 									title: (
 										<p>
 											<span>Edit Meta </span>
-											<span className="text-primary">{orgData.orgName}</span>
+											<span className="text-primary">{organization?.orgName}</span>
 										</p>
 									),
-									content: <EditOrganizationModal organizationId={orgData.id} />,
+									content: <EditOrganizationModal organizationId={organization?.id} />,
 								});
 							}}
 							tabIndex={0}
@@ -198,21 +204,28 @@ export const OrgNavBar = ({ title, orgData }) => {
 							<div className="rounded-full">META</div>
 						</div>
 					</div>
-					<AdminHamburgerMenu orgData={orgData} />
+					<AdminHamburgerMenu organization={organization} />
 				</div>
-				<a className="btn btn-ghost text-xl">{title}</a>
+				<Link
+					href={`/organization/${organization?.id}`}
+					className="btn btn-ghost text-xl"
+				>
+					{organization?.orgName}
+				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
-				{meOrgRole?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
+				{meOrgRole?.role === "ADMIN" ? (
+					<AdminNavMenu organization={organization} />
+				) : null}
 			</div>
 			<div className="navbar-end">
 				<button
 					onClick={() => {
-						toggleChat(orgData.id);
+						toggleChat(organization?.id);
 					}}
 					className="btn btn-ghost btn-circle"
 				>
-					<div className="indicator">
+					<div className="flex">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -228,8 +241,11 @@ export const OrgNavBar = ({ title, orgData }) => {
 							/>
 						</svg>
 
-						{hasNewMessages[orgData.id] ? (
-							<span className="badge badge-xs badge-primary indicator-item"></span>
+						{hasNewMessages[organization?.id] ? (
+							<span className="relative flex h-3 w-3">
+								<span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+								<span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+							</span>
 						) : null}
 					</div>
 				</button>

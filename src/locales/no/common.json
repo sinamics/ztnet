@@ -28,7 +28,8 @@
 		"deleteOrganization": "Slett Organisasjon",
 		"userActions": "Brukerhandlinger",
 		"addWebhooks": "Legg til Webhooks",
-		"options": "Alternativer"
+		"options": "Alternativer",
+		"resend": "Send på nytt"
 	},
 	"commonTable": {
 		"header": {
@@ -78,7 +79,11 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "Organisasjon slettet"
+		"updatedSuccessfully": "Oppdatert vellykket",
+		"addedSuccessfully": "Lagt til vellykket",
+		"deletedSuccessfully": "Slettet vellykket",
+		"errorOccurred": "En ukjent feil oppstod",
+		"organizationDeleted": "Organisasjonen ble slettet vellykket"
 	},
 	"sidebar": {
 		"navigation": "Hjem",
@@ -563,19 +568,6 @@
 				"numberOfMembers": "Antall Medlemmer:",
 				"pendingInvitations": "Ventende Invitasjoner:",
 				"activeWebhooks": "Aktive Webhooks:",
-				"invitationModal": {
-					"title": "Organisasjonsinvitasjoner",
-					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
-					"inputFields": {
-						"searchUser": {
-							"title": "Søk etter brukeren du ønsker å legge til",
-							"placeholder": "Søk Bruker"
-						},
-						"userRole": {
-							"title": "Velg brukerens rolle"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "Rediger Webhook",
 					"webhookName": "Webhook-navn",
@@ -729,6 +721,33 @@
 			"toggleLogLabel": "LOGG",
 			"logHeader": "Siste 100 aktivitetslogger",
 			"loading": "Henter logger..."
+		},
+		"invitation": {
+			"title": "Teamutvidelse: Inviter nye medlemmer",
+			"description": "Inviter flere personer til laget ditt! Du kan sende invitasjoner via e-post eller finne og legge til personer som allerede bruker plattformen. <br></br> Dette gjør det enkelt for laget ditt å vokse og inkludere flere medlemmer.",
+			"pendingInvitations": {
+				"title": "Ventende invitasjoner"
+			},
+			"inviteByEmail": {
+				"title": "Inviter via e-post",
+				"description": "Inviterte brukere som ikke er medlemmer av applikasjonen for øyeblikket, må registrere seg via lenken som er gitt i invitasjons-e-posten. Lenken er gyldig i 24 timer.",
+				"emailPlaceholder": "E-postadresse",
+				"emailDescription": "Skriv inn e-postadressen til personen du vil invitere",
+				"selectRoleDescription": "Velg brukerens rolle"
+			},
+			"inviteSiteUser": {
+				"title": "Inviter nettstedets brukere",
+				"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
+				"inputFields": {
+					"searchUser": {
+						"title": "Søk etter brukeren du vil legge til",
+						"placeholder": "Søk bruker"
+					},
+					"userRole": {
+						"title": "Velg brukerens rolle"
+					}
+				}
+			}
 		}
 	}
 }

@@ -28,7 +28,8 @@
 		"deleteOrganization": "Eliminar organización",
 		"userActions": "Acciones del usuario",
 		"addWebhooks": "Añadir Webhooks",
-		"options": "Opciones"
+		"options": "Opciones",
+		"resend": "Reenviar"
 	},
 	"commonTable": {
 		"header": {
@@ -78,7 +79,11 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "Organización eliminada"
+		"updatedSuccessfully": "Actualizado con éxito",
+		"addedSuccessfully": "Agregado con éxito",
+		"deletedSuccessfully": "Eliminado con éxito",
+		"errorOccurred": "Ocurrió un error desconocido",
+		"organizationDeleted": "Organización eliminada con éxito"
 	},
 	"sidebar": {
 		"navigation": "Inicio",
@@ -563,19 +568,6 @@
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
 				"activeWebhooks": "Webhooks Activos:",
-				"invitationModal": {
-					"title": "Invitaciones de la Organización",
-					"description": "Antes de que puedas agregar usuarios a tu organización, es importante tener en cuenta que deben estar ya registrados en la aplicación",
-					"inputFields": {
-						"searchUser": {
-							"title": "Busca el usuario que deseas añadir",
-							"placeholder": "Buscar Usuario"
-						},
-						"userRole": {
-							"title": "Selecciona el rol del usuario"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "Editar Webhook",
 					"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
@@ -729,6 +721,33 @@
 			"toggleLogLabel": "REG",
 			"logHeader": "Últimos 100 registros de actividad",
 			"loading": "Cargando registros..."
+		},
+		"invitation": {
+			"title": "Expansión del equipo: Invitar a nuevos miembros",
+			"description": "¡Invita a más personas a tu equipo! Puedes enviar invitaciones por correo electrónico o encontrar y agregar personas que ya estén utilizando la plataforma. <br></br> Esto facilita el crecimiento de tu equipo e incluir a más miembros.",
+			"pendingInvitations": {
+				"title": "Invitaciones pendientes"
+			},
+			"inviteByEmail": {
+				"title": "Invitar por correo electrónico",
+				"description": "Los usuarios invitados que actualmente no son miembros de la aplicación deberán registrarse a través del enlace proporcionado en el correo electrónico de invitación. El enlace es válido por 24 horas.",
+				"emailPlaceholder": "Dirección de correo electrónico",
+				"emailDescription": "Ingresa la dirección de correo electrónico de la persona que deseas invitar",
+				"selectRoleDescription": "Selecciona el rol del usuario"
+			},
+			"inviteSiteUser": {
+				"title": "Invitar usuarios del sitio",
+				"description": "Antes de poder agregar usuarios a tu organización, es importante tener en cuenta que ya deben estar registrados en la aplicación",
+				"inputFields": {
+					"searchUser": {
+						"title": "Buscar el usuario que deseas agregar",
+						"placeholder": "Buscar usuario"
+					},
+					"userRole": {
+						"title": "Selecciona el rol del usuario"
+					}
+				}
+			}
 		}
 	}
 }

@@ -353,11 +353,16 @@ model OrganizationSettings {
 }
 
 model OrganizationInvitation {
-  id             Int          @id @default(autoincrement())
+  id             String       @id @default(cuid())
   token          String       @unique
   email          String
+  role           Role         @default(READ_ONLY)
+  expiresAt      DateTime     @default(now())
+  invitedById    String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime     @default(now())
+  mailSentAt     DateTime?
 }
 
 model MembershipRequest {

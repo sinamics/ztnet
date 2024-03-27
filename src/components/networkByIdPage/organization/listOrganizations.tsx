@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
-import DeleteOrganizationModal from "~/components/adminPage/organization/deleteOrganizationModal";
-import OrganizationInviteModal from "~/components/adminPage/organization/organizationInviteModal";
+import DeleteOrganizationModal from "~/components/organization/deleteOrganizationModal";
 import EditOrganizationModal from "~/components/organization/editOrgModal";
 import { OrganizationUserTable } from "~/components/organization/userTable";
 import OrganizationWebhook from "~/components/organization/webhookModal";
@@ -45,39 +44,6 @@ const ListOrganizations = () => {
 							<strong>{t("admin.organization.listOrganization.numberOfMembers")}</strong>{" "}
 							{org?.users?.length}
 						</p>
-						<p className="pt-3">
-							{org?.invitations?.length > 0 ? (
-								<div>
-									<strong>
-										{t("admin.organization.listOrganization.pendingInvitations")}
-									</strong>
-									<div className="flex gap-3">
-										{org?.invitations?.map((invite) => (
-											<button
-												onClick={() =>
-													callModal({
-														title: (
-															<p>
-																<span>
-																	{t(
-																		"admin.organization.listOrganization.invitationModal.title",
-																	)}
-																</span>
-															</p>
-														),
-														content: <OrganizationInviteModal organizationId={org.id} />,
-													})
-												}
-												className="badge badge-primary cursor-pointer"
-												key={invite.id}
-											>
-												{invite.email}
-											</button>
-										))}
-									</div>
-								</div>
-							) : null}
-						</p>
 					</div>
 					<div className="">
 						{org?.webhooks?.length > 0 ? (
@@ -116,26 +82,6 @@ const ListOrganizations = () => {
 					<div>
 						<div className="p-3 pt-2 flex justify-between">
 							<div className="space-x-2">
-								<button
-									onClick={() =>
-										callModal({
-											rootStyle: "h-3/6",
-											title: (
-												<p>
-													<span>
-														{t(
-															"admin.organization.listOrganization.invitationModal.title",
-														)}
-													</span>
-												</p>
-											),
-											content: <OrganizationInviteModal organizationId={org.id} />,
-										})
-									}
-									className="btn btn-sm bg-base-300"
-								>
-									{b("inviteUser")}
-								</button>
 								<button
 									onClick={() => {
 										callModal({
