@@ -79,10 +79,10 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 						<li>{t("errorSteps.step1")}</li>
 						<li>{t("errorSteps.step2")}</li>
 					</ul>
-					<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+					<div className="w-5/5 divider mx-auto flex  py-4 text-sm sm:w-4/5 md:text-base">
 						Network Actions
 					</div>
-					<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+					<div className="w-5/5 mx-auto  py-4 text-sm sm:w-4/5 md:flex-row md:text-base">
 						<div className="flex items-end md:justify-end">
 							<button
 								onClick={() =>
@@ -115,7 +115,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<NetworkLoadingSkeleton />
+				<NetworkLoadingSkeleton className="w-6/6" />
 			</>
 		);
 	}
@@ -123,7 +123,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	return (
 		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
-			<div className="mx-auto text-sm sm:w-11/12 sm:p-10 md:text-base">
+			<div className="mx-auto text-sm sm:py-10 md:text-base">
 				<div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
 					{/* Left section with network ID, name, and description */}
 					<div className="xl:col-span-1">
@@ -163,7 +163,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 
-			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 mx-auto flex  text-sm md:text-base">
 				<div className="hidden lg:flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
 						<span className="text-muted font-medium">{t("networkStart")}</span>{" "}
@@ -197,10 +197,10 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					</div>
 				</div>
 			</div>
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				{t("networkSettings")}
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3  py-4 text-sm md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
 					<NetworkIpAssignment organizationId={organizationId} />
@@ -213,7 +213,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					<NettworkRoutes organizationId={organizationId} />
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3  py-4 text-sm md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
 					<NetworkDns organizationId={organizationId} />
@@ -226,10 +226,10 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					<NetworkMulticast organizationId={organizationId} />
 				</div>
 			</div>
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				{t("networkMembers")}
 			</div>
-			<div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 mx-auto w-full  py-4 text-sm md:text-base">
 				{members.length ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable
@@ -305,14 +305,14 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					</div>
 				)}
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3  py-4 text-sm md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="flex w-full flex-wrap space-x-0 space-y-5 xl:space-x-5 xl:space-y-0">
 					<InviteMemberByMail organizationId={organizationId} />
 					<AddMemberById organizationId={organizationId} />
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 mx-auto w-full  py-4 text-sm md:text-base">
 				<div className="mb-4 md:mb-0">
 					{networkById?.zombieMembers?.length > 0 ? (
 						<>
@@ -341,25 +341,25 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					) : null}
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkHelpText />
 			</div>
 
-			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkFlowRules organizationId={organizationId} />
 			</div>
-			{/* <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			{/* <div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				DEBUG
 			</div>
-			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base space-y-8">
+			<div className="w-5/5 mx-auto  py-4 text-sm md:text-base space-y-8">
 				<DebugMirror data={networkById?.network} title="Controler Networks" />
 				<DebugMirror data={networkById?.members} title="Controler Members" />
 			</div> */}
 
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:text-base">
+			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				Network Actions
 			</div>
-			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-11/12 sm:px-10 md:flex-row md:text-base">
+			<div className="w-5/5 mx-auto  py-4 text-sm md:flex-row md:text-base">
 				<div className="flex items-end md:justify-end">
 					<button
 						onClick={() =>

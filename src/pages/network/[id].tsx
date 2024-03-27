@@ -114,7 +114,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<NetworkLoadingSkeleton />
+				<NetworkLoadingSkeleton className="w-5/6" />
 			</>
 		);
 	}

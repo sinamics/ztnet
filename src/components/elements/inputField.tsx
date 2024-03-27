@@ -11,7 +11,7 @@ interface FieldConfig {
 	title?: string;
 	initialValue?: string;
 	type?: string;
-	placeholder: string;
+	placeholder?: string;
 	displayValue?: string;
 	defaultValue?: string | number | boolean;
 	value?: string | number | boolean;
@@ -115,18 +115,18 @@ const InputField = ({
 			| ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 			| { target: { name: string; value: string[] } },
 	) => {
-		const { name, value } = "target" in e ? e.target : e; // This line checks if the event has a target property to distinguish between standard events and custom ones.
+		const { name, value } = "target" in e ? e.target : e;
 
 		setFormValues((prevValues) => ({
 			...prevValues,
-			[name]: value, // Directly use the name and value, accommodating both single and multiple value changes.
+			[name]: value,
 		}));
 	};
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await submitHandler(formValues);
-		if (response) {
+		if (response && !openByDefault) {
 			setShowInputs(false);
 		}
 	};
@@ -315,7 +315,7 @@ const InputField = ({
 								return (
 									<div key={field.name} className="form-control">
 										{field.description ? (
-											<label className={`text-sm text-gray-500 pt-2 ${labelClassName}`}>
+											<label className={`text-sm text-gray-500 ${labelClassName}`}>
 												{field.description}
 											</label>
 										) : null}

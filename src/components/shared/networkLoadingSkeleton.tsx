@@ -1,8 +1,13 @@
 import React from "react";
+import cn from "classnames";
 
-const NetworkLoadingSkeleton = () => {
+interface IProps {
+	className?: string;
+}
+
+const NetworkLoadingSkeleton = ({ className }: IProps) => {
 	return (
-		<div role="skeleton" className="container mx-auto w-4/6 mt-12 space-y-10">
+		<div role="skeleton" className={cn("container mx-auto mt-12 space-y-10", className)}>
 			<div className="flex gap-4 justify-between">
 				<div className="flex flex-col gap-4">
 					<div className="skeleton h-4 w-72"></div>

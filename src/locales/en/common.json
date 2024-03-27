@@ -28,7 +28,8 @@
 		"deleteOrganization": "Delete Organization",
 		"userActions": "User Actions",
 		"addWebhooks": "Add Webhooks",
-		"options": "Options"
+		"options": "Options",
+		"resend": "Resend"
 	},
 	"commonTable": {
 		"header": {
@@ -78,6 +79,10 @@
 		}
 	},
 	"commonToast": {
+		"updatedSuccessfully": "Updated successfully",
+		"addedSuccessfully": "Added successfully",
+		"deletedSuccessfully": "Deleted successfully",
+		"errorOccurred": "An unknown error occurred",
 		"organizationDeleted": "Organization deleted successfully"
 	},
 	"sidebar": {
@@ -563,19 +568,6 @@
 				"numberOfMembers": "Number of Members:",
 				"pendingInvitations": "Pending Invitations:",
 				"activeWebhooks": "Active Webhooks:",
-				"invitationModal": {
-					"title": "Organization Invites",
-					"description": "Before you can add users to your organization, it's important to note that they must already be registered in the application",
-					"inputFields": {
-						"searchUser": {
-							"title": "Search the user you want to add",
-							"placeholder": "Search User"
-						},
-						"userRole": {
-							"title": "Select the role of the user"
-						}
-					}
-				},
 				"webhookModal": {
 					"editWebhookTitle": "Edit Webhook",
 					"createWebhookTitle": "Create Webhook for Organization <span>{organization}</span>",
@@ -729,6 +721,33 @@
 			"toggleLogLabel": "LOG",
 			"logHeader": "Last 100 Activity Logs",
 			"loading": "Fetching logs..."
+		},
+		"invitation": {
+			"title": "Team Expansion: Invite New Members",
+			"description": "Invite more people to your team! You can send invitations by email or find and add people who are already using the platform. <br></br> This makes it easy for your team to grow and include more members.",
+			"pendingInvitations": {
+				"title": "Pending Invitations"
+			},
+			"inviteByEmail": {
+				"title": "Invite by Email",
+				"description": "Invited users who are not currently members of the application will need to register through the provided link in the invitation email. Link is valid for 24 hour.",
+				"emailPlaceholder": "Email Address",
+				"emailDescription": "Enter the email address of the person you want to invite",
+				"selectRoleDescription": "Select the role of the user"
+			},
+			"inviteSiteUser": {
+				"title": "Invite site users",
+				"description": "Before you can add users to your organization, it's important to note that they must already be registered in the application",
+				"inputFields": {
+					"searchUser": {
+						"title": "Search the user you want to add",
+						"placeholder": "Search User"
+					},
+					"userRole": {
+						"title": "Select the role of the user"
+					}
+				}
+			}
 		}
 	}
 }

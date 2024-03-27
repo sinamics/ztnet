@@ -15,7 +15,6 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
-import { OrgNavBar } from "~/components/organization/orgNavBar";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -124,8 +123,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	return (
 		<main className="w-full bg-base-100 py-8 animate-fadeIn">
 			<MetaTags title={title} />
-			<div className="max-w-7xl mx-auto space-y-10">
-				<OrgNavBar title={orgData?.orgName} orgData={orgData} />
+			<div>
 				{orgData?.description ? (
 					<div
 						className="border-l-4 border-primary p-2 leading-snug"
