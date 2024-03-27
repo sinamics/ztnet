@@ -84,9 +84,6 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
 
-	const orgdata = {
-		id: orgId,
-	};
 	return (
 		<div className="outer-content">
 			{/* Header */}
@@ -106,8 +103,8 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>
-					<div className="max-w-7xl mx-auto space-y-5 pt-10">
-						<OrgNavBar title={"Org"} orgData={orgdata} />
+					<div className="px-24 space-y-5 pt-10">
+						<OrgNavBar />
 						{children}
 						{/* Logs Footer */}
 						<LogsFooter sidebarOpen={sidebarOpen} asideOpen={openChats.includes(orgId)} />

@@ -57,14 +57,13 @@ const MessagesList = ({ messages }) => {
 const ChatAside = () => {
 	const t = useTranslations("organization");
 
-	const { openChats, toggleChat } = useAsideChatStore();
+	const { openChats } = useAsideChatStore();
 	const [messages, setMessages] = useState([]);
-	const { messages: newMessages, hasNewMessages } = useSocketStore();
+	const { messages: newMessages } = useSocketStore();
 
 	const [inputMsg, setInputMsg] = useState({ chatMessage: "" });
 	const query = useRouter().query;
 	const orgId = query.orgid as string;
-	const networkId = query.id as string;
 	const messageEndRef = useRef(null);
 
 	const { mutate: markMessagesAsRead } = api.org.markMessagesAsRead.useMutation();
@@ -147,110 +146,54 @@ const ChatAside = () => {
 		);
 	};
 
-	// add showChatBtn = true if networkId is not null
-	const showChatBtn = networkId !== undefined;
-
 	return (
-		<>
-			{/* Chat Toggle Button */}
-			{showChatBtn ? (
-				<button
-					className={`w-14 z-10 fixed right-2 top-20 transition-all duration-150 ${
-						openChats.includes(orgId) ? "mr-72" : "w-0"
-					}`}
-					aria-label="Toggle chat"
-					onClick={() => toggleChat(orgId)}
-				>
-					<div className="flex items-center relative">
-						{openChats.includes(orgId) ? (
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="1.5"
-								stroke="currentColor"
-								className="w-6 h-6"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M8.25 4.5l7.5 7.5-7.5 7.5"
-								/>
-							</svg>
-						) : (
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth="1.5"
-								stroke="currentColor"
-								className="w-6 h-6"
-							>
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M15.75 19.5L8.25 12l7.5-7.5"
-								/>
-							</svg>
-						)}
-						<div className="relative">
-							<span className="text-xs">{t("chatSidebar.toggleChatLabel")}</span>
-							{hasNewMessages[orgId] ? (
-								<span className="absolute bg-red-400 w-2 h-2 rounded-lg -left-1 top-1 glow" />
-							) : null}
-						</div>
-					</div>
-				</button>
-			) : null}
-			{/* Chat Aside Panel */}
-			<aside
-				className={`fixed h-full right-0 bg-base-200 shadow-md transition-all duration-150 ${
-					openChats.includes(orgId) ? "w-72" : "w-0 opacity-0"
+		<aside
+			className={`fixed h-full right-0 bg-base-200 shadow-md transition-all duration-150 ${
+				openChats.includes(orgId) ? "w-72" : "w-0 opacity-0"
+			}`}
+		>
+			<div
+				className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
+					openChats.includes(orgId) ? "w-72" : "w-0"
 				}`}
 			>
-				<div
-					className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
-						openChats.includes(orgId) ? "w-72" : "w-0"
-					}`}
-				>
-					{/* Chat Header */}
-					<div className="p-4 border-b border-gray-200">
-						<h2 className="text-lg font-semibold">{t("chatSidebar.chatHeader")}</h2>
-					</div>
-
-					{/* Chat List with Scrollable Area */}
-					<div className="overflow-y-auto h-[calc(100%-20rem)] custom-scrollbar pb-5">
-						{/* Return No Messages if there is none */}
-						{messages?.length === 0 ? (
-							<div className="p-4 border-t border-gray-200 mt-auto">
-								<p className="text-xs">{t("chatSidebar.noMessages")}</p>
-							</div>
-						) : null}
-						{/* Repeat for other chats */}
-						{messages?.map((msg) => {
-							return <MessagesList key={msg.id} messages={msg} />;
-						})}
-						<div ref={messageEndRef} />
-					</div>
-
-					{/* Fixed Message Input at Bottom */}
-					<div className="p-4 border-t border-gray-200 mt-auto">
-						<form className="space-y-5">
-							<p className="text-xs">{t("chatSidebar.chatInfo")}</p>
-							<input
-								type="text"
-								value={inputMsg.chatMessage}
-								onChange={eventHandler}
-								name="chatMessage"
-								className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
-								placeholder={t("chatSidebar.messageInputPlaceholder")}
-							/>
-							<button type="submit" className="hidden" onClick={sendMessage} />
-						</form>
-					</div>
+				{/* Chat Header */}
+				<div className="p-4 border-b border-gray-200">
+					<h2 className="text-lg font-semibold">{t("chatSidebar.chatHeader")}</h2>
 				</div>
-			</aside>
-		</>
+
+				{/* Chat List with Scrollable Area */}
+				<div className="overflow-y-auto h-[calc(100%-20rem)] custom-scrollbar pb-5">
+					{/* Return No Messages if there is none */}
+					{messages?.length === 0 ? (
+						<div className="p-4 border-t border-gray-200 mt-auto">
+							<p className="text-xs">{t("chatSidebar.noMessages")}</p>
+						</div>
+					) : null}
+					{/* Repeat for other chats */}
+					{messages?.map((msg) => {
+						return <MessagesList key={msg.id} messages={msg} />;
+					})}
+					<div ref={messageEndRef} />
+				</div>
+
+				{/* Fixed Message Input at Bottom */}
+				<div className="p-4 border-t border-gray-200 mt-auto">
+					<form className="space-y-5">
+						<p className="text-xs">{t("chatSidebar.chatInfo")}</p>
+						<input
+							type="text"
+							value={inputMsg.chatMessage}
+							onChange={eventHandler}
+							name="chatMessage"
+							className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+							placeholder={t("chatSidebar.messageInputPlaceholder")}
+						/>
+						<button type="submit" className="hidden" onClick={sendMessage} />
+					</form>
+				</div>
+			</div>
+		</aside>
 	);
 };
 

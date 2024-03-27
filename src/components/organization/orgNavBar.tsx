@@ -6,6 +6,7 @@ import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 // Utility function to open modals
 const useOpenModal = (orgData) => {
@@ -57,8 +58,8 @@ const useOpenModal = (orgData) => {
 	return openModal;
 };
 
-const AdminHamburgerMenu = ({ orgData }) => {
-	const openModal = useOpenModal(orgData);
+const AdminHamburgerMenu = ({ organization }) => {
+	const openModal = useOpenModal(organization);
 	return (
 		<ul
 			tabIndex={0}
@@ -77,9 +78,9 @@ const AdminHamburgerMenu = ({ orgData }) => {
 	);
 };
 
-const AdminNavMenu = ({ orgData }) => {
+const AdminNavMenu = ({ organization }) => {
 	const { callModal } = useModalStore();
-	const openModal = useOpenModal(orgData);
+	const openModal = useOpenModal(organization);
 	const b = useTranslations("commonButtons");
 	const t = useTranslations();
 
@@ -96,7 +97,7 @@ const AdminNavMenu = ({ orgData }) => {
 					<li onClick={() => openModal("webhooks")}>
 						<a className="justify-between cursor-pointer">Create new webhook</a>
 					</li>
-					{orgData?.webhooks?.map((webhook) => {
+					{organization?.webhooks?.map((webhook) => {
 						return (
 							<li
 								onClick={() =>
@@ -112,7 +113,10 @@ const AdminNavMenu = ({ orgData }) => {
 											</p>
 										),
 										content: (
-											<OrganizationWebhook organizationId={orgData.id} hook={webhook} />
+											<OrganizationWebhook
+												organizationId={organization.id}
+												hook={webhook}
+											/>
 										),
 									})
 								}
@@ -126,7 +130,7 @@ const AdminNavMenu = ({ orgData }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${orgData.id}/invite`}
+					href={`/organization/${organization.id}/invite`}
 					tabIndex={0}
 					className="btn btn-ghost text-md"
 				>
@@ -147,15 +151,22 @@ const AdminNavMenu = ({ orgData }) => {
 	);
 };
 
-export const OrgNavBar = ({ title, orgData }) => {
+export const OrgNavBar = () => {
+	const router = useRouter();
+	const orgId = router.query.orgid as string;
+
 	const { toggleChat } = useAsideChatStore();
 	const { hasNewMessages } = useSocketStore();
 	const { callModal } = useModalStore((state) => state);
 	const { data: session } = useSession();
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
-		organizationId: orgData.id,
+		organizationId: orgId,
 		userId: session.user.id,
+	});
+
+	const { data: organization } = api.org.getOrgById.useQuery({
+		organizationId: orgId,
 	});
 
 	return (
@@ -185,10 +196,10 @@ export const OrgNavBar = ({ title, orgData }) => {
 									title: (
 										<p>
 											<span>Edit Meta </span>
-											<span className="text-primary">{orgData.orgName}</span>
+											<span className="text-primary">{organization?.orgName}</span>
 										</p>
 									),
-									content: <EditOrganizationModal organizationId={orgData.id} />,
+									content: <EditOrganizationModal organizationId={organization?.id} />,
 								});
 							}}
 							tabIndex={0}
@@ -198,19 +209,24 @@ export const OrgNavBar = ({ title, orgData }) => {
 							<div className="rounded-full">META</div>
 						</div>
 					</div>
-					<AdminHamburgerMenu orgData={orgData} />
+					<AdminHamburgerMenu organization={organization} />
 				</div>
-				<Link href={`/organization/${orgData.id}`} className="btn btn-ghost text-xl">
-					{title}
+				<Link
+					href={`/organization/${organization?.id}`}
+					className="btn btn-ghost text-xl"
+				>
+					{organization?.orgName}
 				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
-				{meOrgRole?.role === "ADMIN" ? <AdminNavMenu orgData={orgData} /> : null}
+				{meOrgRole?.role === "ADMIN" ? (
+					<AdminNavMenu organization={organization} />
+				) : null}
 			</div>
 			<div className="navbar-end">
 				<button
 					onClick={() => {
-						toggleChat(orgData.id);
+						toggleChat(organization?.id);
 					}}
 					className="btn btn-ghost btn-circle"
 				>
@@ -230,7 +246,7 @@ export const OrgNavBar = ({ title, orgData }) => {
 							/>
 						</svg>
 
-						{hasNewMessages[orgData.id] ? (
+						{hasNewMessages[organization?.id] ? (
 							<span className="badge badge-xs badge-primary indicator-item"></span>
 						) : null}
 					</div>
