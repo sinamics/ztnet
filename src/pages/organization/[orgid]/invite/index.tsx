@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
@@ -7,6 +8,7 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 
 const Invites = () => {
+	const b = useTranslations("commonButtons");
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
@@ -22,14 +24,21 @@ const Invites = () => {
 		<div className="">
 			<div className="space-y-5 bg-base-200 rounded-lg p-5">
 				<div className="space-y-2">
-					<h1 className="text-2xl font-bold">Invite users</h1>
-					<p className="text-gray-500 dark:text-gray-400">
-						Invite users to your team by email or by searching for existing users.
+					<h1 className="text-2xl font-bold">Team Expansion: Invite New Members</h1>
+					<p className="text-gray-400">
+						Invite more people to your team! You can send invitations by email or find and
+						add people who are already using the platform.
+						<br /> This makes it easy for your team to grow and include more members.
 					</p>
+				</div>
+				<div className="grid grid-cols-[1fr,auto,1fr] gap-3">
+					<InviteByMail organizationId={organizationId} />
+					<div className="divider divider-horizontal">OR</div>
+					<InviteByUser />
 				</div>
 				<div>
 					{orgInvites?.length > 0 ? (
-						<h2 className="font-semibold">Pending invites by email</h2>
+						<div className="divider pt-10">Pending Invites</div>
 					) : null}
 					<div className="grid grid-cols-3 gap-3">
 						{orgInvites?.map((invite) => {
@@ -53,18 +62,13 @@ const Invites = () => {
 											}
 											className="btn btn-xs"
 										>
-											Delete
+											{b("delete")}
 										</button>
 									</div>
 								</div>
 							);
 						})}
 					</div>
-				</div>
-				<div className="grid grid-cols-[1fr,auto,1fr] gap-3">
-					<InviteByMail organizationId={organizationId} />
-					<div className="divider divider-horizontal">OR</div>
-					<InviteByUser />
 				</div>
 			</div>
 		</div>
