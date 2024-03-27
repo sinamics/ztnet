@@ -826,13 +826,6 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (!input.email) {
-				throw new Error("Email cannot be empty.");
-			}
-			if (!input.organizationId) {
-				throw new Error("Organization ID cannot be empty.");
-			}
-
 			const payload = {
 				email: input.email,
 				organizationId: input.organizationId,
@@ -858,6 +851,7 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
+
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
 		}),
@@ -865,57 +859,146 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
+				role: z.nativeEnum(Role),
 				email: z.string().email(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { organizationId, email } = input;
-			const globalOptions = await ctx.prisma.globalOptions.findFirst({
+			const { organizationId, email, role } = input;
+
+			if (!email) {
+				throw new Error("Email cannot be empty.");
+			}
+
+			if (!organizationId) {
+				throw new Error("Organization ID cannot be empty.");
+			}
+
+			if (!role) {
+				throw new Error("Role cannot be empty.");
+			}
+
+			// make sure user has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// make sure the user does not exist in the organization
+			const isMember = await ctx.prisma.userOrganizationRole.findFirst({
 				where: {
-					id: 1,
+					organizationId: organizationId,
+					userId: ctx.session.user.id,
 				},
 			});
 
-			const defaultTemplate = inviteOrganizationTemplate();
-			const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+			if (isMember) {
+				throw new Error("User is already a member of the organization.");
+			}
 
-			const renderedTemplate = await ejs.render(
-				JSON.stringify(template),
-				{
-					toEmail: email,
-					fromAdmin: ctx.session.user.name,
-					fromOrganization: organizationId,
-				},
-				{ async: true },
-			);
-			// create transporter
-			const transporter = createTransporter(globalOptions);
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+			try {
+				const tokenPayload = {
+					email: email,
+					organizationId: organizationId,
+					role: role,
+					invitedById: ctx.session.user.id,
+					expiresAt: Date.now() + 7200000, // Current time + 2 hour
+				};
 
-			// define mail options
-			const mailOptions = {
-				from: globalOptions.smtpEmail,
-				to: email,
-				subject: parsedTemplate.subject,
-				html: parsedTemplate.body,
-			};
+				// Encrypt the payload
+				const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET); // Use SMTP_SECRET or any other relevant context
+				const encryptedToken = encrypt(JSON.stringify(tokenPayload), secret);
 
-			// send test mail to user
-			await sendEmail(transporter, mailOptions);
+				const globalOptions = await ctx.prisma.globalOptions.findFirst({
+					where: {
+						id: 1,
+					},
+				});
+
+				// get the org mail template
+				const defaultTemplate = inviteOrganizationTemplate();
+				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+
+				// create invitation link
+				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${encryptedToken}`;
+
+				// get organization name
+				const organization = await ctx.prisma.organization.findUnique({
+					where: {
+						id: organizationId,
+					},
+				});
+
+				if (!organization) {
+					throw new Error("Organization not found.");
+				}
+
+				const renderedTemplate = await ejs.render(
+					JSON.stringify(template),
+					{
+						toEmail: email,
+						fromAdmin: ctx.session.user.name,
+						fromOrganization: organization.orgName,
+						invitationLink: invitationLink,
+					},
+					{ async: true },
+				);
+
+				// create transporter
+				const transporter = createTransporter(globalOptions);
+				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+
+				// log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `Sent an invitation to ${email} to join organization ${organization.orgName}`,
+						performedById: ctx.session.user.id,
+						organizationId: organizationId,
+					},
+				});
+
+				// define mail options
+				const mailOptions = {
+					from: globalOptions.smtpEmail,
+					to: email,
+					subject: parsedTemplate.subject,
+					html: parsedTemplate.body,
+				};
+
+				// send test mail to user
+				await sendEmail(transporter, mailOptions);
+
+				// Store the token in the database
+				await ctx.prisma.organizationInvitation.create({
+					data: {
+						token: encryptedToken,
+						organizationId: organizationId,
+						email: email,
+						role: role,
+						invitedById: ctx.session.user.id,
+						expiresAt: new Date(tokenPayload.expiresAt),
+					},
+				});
+
+				return { invitationLink, encryptedToken };
+			} catch (error) {
+				return throwError(error.message);
+			}
 		}),
 	deleteInvite: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
-				token: z.string(),
+				invitationId: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { organizationId, token } = input;
+			const { organizationId, invitationId } = input;
 			const invite = await ctx.prisma.organizationInvitation.deleteMany({
 				where: {
 					organizationId,
-					token,
+					id: invitationId,
 				},
 			});
 			return invite;

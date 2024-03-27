@@ -10,11 +10,17 @@ const Invites = () => {
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
-	const { data: orgInvites } = api.org.getInvites.useQuery({ organizationId });
-
+	const { data: orgInvites, refetch: refetchInvites } = api.org.getInvites.useQuery({
+		organizationId,
+	});
+	const { mutate: deleteInvite } = api.org.deleteInvite.useMutation({
+		onSuccess: () => {
+			refetchInvites();
+		},
+	});
 	return (
 		<div className="">
-			<div className="space-y-10 bg-base-200 rounded-lg p-5">
+			<div className="space-y-5 bg-base-200 rounded-lg p-5">
 				<div className="space-y-2">
 					<h1 className="text-2xl font-bold">Invite users</h1>
 					<p className="text-gray-500 dark:text-gray-400">
@@ -22,7 +28,9 @@ const Invites = () => {
 					</p>
 				</div>
 				<div>
-					<h2 className="font-semibold">Pending invites</h2>
+					{orgInvites.length > 0 ? (
+						<h2 className="font-semibold">Pending invites by email</h2>
+					) : null}
 					<div className="grid grid-cols-3 gap-3">
 						{orgInvites?.map((invite) => {
 							return (
@@ -51,7 +59,14 @@ const Invites = () => {
 									</div>
 									<div className="flex justify-end gap-3">
 										<button className="btn btn-primary btn-xs">Resend</button>
-										<button className="btn btn-xs">Delete</button>
+										<button
+											onClick={() =>
+												deleteInvite({ invitationId: invite.id, organizationId })
+											}
+											className="btn btn-xs"
+										>
+											Delete
+										</button>
 									</div>
 								</div>
 							);

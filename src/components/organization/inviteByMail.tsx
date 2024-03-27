@@ -1,4 +1,8 @@
 import InputField from "~/components/elements/inputField";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
 import { UserRolesList } from "~/utils/role";
 
@@ -7,7 +11,9 @@ interface Iprops {
 }
 
 const InviteByMail = ({ organizationId }: Iprops) => {
-	const { mutate: generateInviteLink } = api.org.generateInviteLink.useMutation();
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const { mutate: inviteUserByMail } = api.org.inviteUserByMail.useMutation();
 
 	return (
 		<div>
@@ -49,16 +55,12 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 					},
 				]}
 				submitHandler={(params) => {
-					return new Promise((resolve, reject) => {
-						generateInviteLink(
+					return new Promise(() => {
+						return inviteUserByMail(
 							{ ...params },
 							{
-								onSuccess: (data) => {
-									resolve(data);
-								},
-								onError: (error) => {
-									reject(error);
-								},
+								onSuccess: handleApiSuccess,
+								onError: handleApiError,
 							},
 						);
 					});
