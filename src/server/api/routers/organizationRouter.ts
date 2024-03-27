@@ -23,9 +23,15 @@ import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
 import { nameGeneratorConfig } from "../services/networkService";
+import rateLimit from "~/utils/rateLimit";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
+
+const invitationRateLimit = rateLimit({
+	interval: 5 * 60 * 1000, // 300 seconds or 5 minutes
+	uniqueTokenPerInterval: 1000,
+});
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -835,93 +841,113 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET);
-			const decryptedToken = decrypt(input.token, secret) as string;
-			const tokenPayload = JSON.parse(decryptedToken);
-
-			// make sure the invitation exist
-			const invitation = await ctx.prisma.organizationInvitation.findFirst({
-				where: {
-					token: input.token,
-				},
-			});
-
-			// Check if the invitation is valid
-			if (!invitation) {
-				throw new Error("Invalid invitation link.");
+			if (!input.token) {
+				throw new Error("An error occurred while processing the invitation link.");
 			}
 
-			// Check if the token is expired
-			if (invitation.expiresAt.getTime() < Date.now()) {
-				throw new Error("Invalid invitation link.");
+			// add rate limit
+			const INVITATION_REQUEST_LIMIT = 5;
+			try {
+				await invitationRateLimit.check(
+					ctx.res,
+					INVITATION_REQUEST_LIMIT,
+					"ORGANIZATION_INVITATION",
+				);
+			} catch {
+				throwError("Rate limit exceeded, try again later.", "TOO_MANY_REQUESTS");
 			}
 
-			// Check if the user already exists, then add him to the organization
-			const doesUserExist = await ctx.prisma.user.findFirst({
-				where: {
-					email: tokenPayload.email,
-				},
-			});
+			try {
+				const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET);
+				const decryptedToken = decrypt(input.token, secret) as string;
+				const tokenPayload = JSON.parse(decryptedToken);
 
-			// if ctx user and the user has a valid invite add him.
-			if (doesUserExist) {
-				// make sure the user does not exist in the organization
-				const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+				// make sure the invitation exist
+				const invitation = await ctx.prisma.organizationInvitation.findFirst({
 					where: {
-						organizationId: tokenPayload.organizationId,
-						userId: doesUserExist.id,
+						token: input.token,
 					},
 				});
 
-				if (isMember) {
-					throw new Error("You are already a member of the organization.");
+				// Check if the invitation is valid
+				if (!invitation) {
+					throw new Error("An error occurred while processing the invitation link.");
 				}
 
-				// Add the user to the organization
-				// Add user to the organization
-				await ctx.prisma.organization.update({
-					where: {
-						id: tokenPayload.organizationId,
-					},
-					data: {
-						userRoles: {
-							create: {
-								userId: doesUserExist.id,
-								role: tokenPayload.role,
-							},
-						},
-						users: {
-							connect: {
-								id: doesUserExist.id,
-							},
-						},
-					},
-					include: {
-						users: true,
-					},
-				});
+				// Check if the token is expired
+				if (invitation.expiresAt.getTime() < Date.now()) {
+					throw new Error("An error occurred while processing the invitation link.");
+				}
 
-				// delete the invitation
-				await ctx.prisma.organizationInvitation.deleteMany({
+				// Check if the user already exists, then add him to the organization
+				const doesUserExist = await ctx.prisma.user.findFirst({
 					where: {
 						email: tokenPayload.email,
-						organizationId: tokenPayload.organizationId,
 					},
 				});
 
-				// Log the action
-				await ctx.prisma.activityLog.create({
-					data: {
-						action: `User ${doesUserExist.name} joined organization ${tokenPayload.organizationId}`,
-						performedById: tokenPayload.invitedById,
-						organizationId: tokenPayload.organizationId,
-					},
-				});
+				// if ctx user and the user has a valid invite add him.
+				if (doesUserExist) {
+					// make sure the user does not exist in the organization
+					const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+						where: {
+							organizationId: tokenPayload.organizationId,
+							userId: doesUserExist.id,
+						},
+					});
 
-				return {
-					user: doesUserExist,
-					organizationId: tokenPayload.organizationId,
-				};
+					if (isMember) {
+						throw new Error("You are already a member of the organization.");
+					}
+
+					// Add the user to the organization
+					// Add user to the organization
+					await ctx.prisma.organization.update({
+						where: {
+							id: tokenPayload.organizationId,
+						},
+						data: {
+							userRoles: {
+								create: {
+									userId: doesUserExist.id,
+									role: tokenPayload.role,
+								},
+							},
+							users: {
+								connect: {
+									id: doesUserExist.id,
+								},
+							},
+						},
+						include: {
+							users: true,
+						},
+					});
+
+					// delete the invitation
+					await ctx.prisma.organizationInvitation.deleteMany({
+						where: {
+							email: tokenPayload.email,
+							organizationId: tokenPayload.organizationId,
+						},
+					});
+
+					// Log the action
+					await ctx.prisma.activityLog.create({
+						data: {
+							action: `User ${doesUserExist.name} joined organization ${tokenPayload.organizationId}`,
+							performedById: tokenPayload.invitedById,
+							organizationId: tokenPayload.organizationId,
+						},
+					});
+
+					return {
+						user: doesUserExist,
+						organizationId: tokenPayload.organizationId,
+					};
+				}
+			} catch (_e) {
+				throw new Error("An error occurred while processing the invitation link.");
 			}
 			// if the user does not exist, return empty object
 			return {};
