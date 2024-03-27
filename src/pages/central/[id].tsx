@@ -65,7 +65,7 @@ const CentralNetworkById = ({ orgIds }) => {
 		return (
 			<>
 				<HeadSection title={pageTitleLoading} />
-				<NetworkLoadingSkeleton />
+				<NetworkLoadingSkeleton className="w-5/6" />
 			</>
 		);
 	}
