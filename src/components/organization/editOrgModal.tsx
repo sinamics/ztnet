@@ -82,7 +82,7 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 					value={input?.orgDescription}
 					onChange={inputHandler}
 					name="orgDescription"
-					className="textarea-bordered textarea-sm w-full"
+					className="textarea-bordered textarea-sm w-full bg-base-200 rounded-md"
 				/>
 			</label>
 
