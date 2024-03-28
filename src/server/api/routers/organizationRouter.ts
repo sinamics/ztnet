@@ -1271,10 +1271,20 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			return await ctx.prisma.organizationInvitation.findMany({
+			const invites = await ctx.prisma.organizationInvitation.findMany({
 				where: {
 					organizationId,
 				},
+			});
+
+			// add hasExpired field to the invites
+			return invites.map((invite) => {
+				return {
+					...invite,
+					hasExpired: invite.expiresAt.getTime() < Date.now(),
+					resendable:
+						!invite.mailSentAt || invite.mailSentAt.getTime() < Date.now() - 60000,
+				};
 			});
 		}),
 	transferNetworkOwnership: protectedProcedure
