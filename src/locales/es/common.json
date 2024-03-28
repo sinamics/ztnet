@@ -699,7 +699,8 @@
 			"title": "Información",
 			"name": "Nombre:",
 			"created": "Creado:",
-			"members": "Miembros:"
+			"members": "Miembros:",
+			"pendingInvitations": "Invitaciones Pendientes:"
 		},
 		"networkSection": {
 			"title": "Redes",
