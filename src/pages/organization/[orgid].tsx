@@ -220,11 +220,11 @@ const OrganizationById = ({ user, orgIds }) => {
 					</section>
 
 					{/* Network Table and Add Network Button */}
-					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg">
-						<div className="px-4 py-1 flex justify-between items-center border-b border-gray-700">
+					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg p-3">
+						<div className="py-1 flex justify-between items-center border-b border-gray-700">
 							<h2 className="text-xl font-semibold">{t("networkSection.title")}</h2>
 							<button
-								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
+								className="btn btn-primary btn-sm btn-outline font-semibold px-4 rounded-lg flex items-center"
 								onClick={() =>
 									createNetwork(
 										{
