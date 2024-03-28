@@ -41,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/UserResponse.yml#/UserResponse'
+                $ref: '../../_schema/UserSchema.yml#/UserResponse'
               example:
                 $ref: '../../_example/UserExample.yml#/UserExample'
         401:

@@ -41,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
         401:
@@ -88,7 +88,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
                 
@@ -128,7 +128,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
@@ -161,23 +161,18 @@ paths:
           description: Unique identifier of the organization
       requestBody:
         required: false
+        description: Each field is optional. Only the fields that are provided will be updated.
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type:
-                    - string
-                  required: false
-                  description: Name of the network. If not provided, a random name will be generated.
+              $ref: '../../_schema/NetworkSchema.yml#/UpdateNetworkShema'
       responses:
         200:
           description: Network Updated
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkResponse.yml#/UpdateNetworkShema'
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
