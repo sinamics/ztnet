@@ -20,11 +20,12 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 		organizationId,
 	});
 
-	const { mutate: inviteUserByMail } = api.org.inviteUserByMail.useMutation({
-		onSuccess: () => {
-			refetchInvites();
-		},
-	});
+	const { mutate: inviteUserByMail, isLoading: inviteLoading } =
+		api.org.inviteUserByMail.useMutation({
+			onSuccess: () => {
+				refetchInvites();
+			},
+		});
 
 	return (
 		<div>
@@ -33,7 +34,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 				{t("invitation.inviteByEmail.description")}
 			</p>
 			<InputField
-				isLoading={false}
+				isLoading={inviteLoading}
 				label=""
 				openByDefault={true}
 				showCancelButton={false}

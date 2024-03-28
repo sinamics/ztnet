@@ -133,7 +133,7 @@ const InputField = ({
 
 	const renderLoading = () => (
 		<div className="mt-1 text-sm">
-			<progress className="progress w-56"></progress>
+			<span className="loading loading-dots loading-md"></span>
 		</div>
 	);
 
@@ -335,29 +335,24 @@ const InputField = ({
 						</div>
 					</div>
 					<div className={cn("flex gap-3 justify-end", { hidden: !showSubmitButtons })}>
-						{isLoading ? (
-							renderLoading()
-						) : (
-							<>
-								<button
-									className={`btn btn-primary btn-${size} ${buttonClassName}`}
-									type="submit"
-								>
-									{t("submit")}
-								</button>
-								<button
-									className={cn(`btn btn-${size} ${buttonClassName}`, {
-										hidden: !showCancelButton,
-									})}
-									onClick={(e) => {
-										e.preventDefault();
-										handleEditClick();
-									}}
-								>
-									{t("cancel")}
-								</button>
-							</>
-						)}
+						<button
+							disabled={isLoading}
+							className={`btn btn-primary btn-${size} ${buttonClassName}`}
+							type="submit"
+						>
+							{isLoading ? renderLoading() : t("submit")}
+						</button>
+						<button
+							className={cn(`btn btn-${size} ${buttonClassName}`, {
+								hidden: !showCancelButton,
+							})}
+							onClick={(e) => {
+								e.preventDefault();
+								handleEditClick();
+							}}
+						>
+							{t("cancel")}
+						</button>
 					</div>
 				</form>
 			)}
