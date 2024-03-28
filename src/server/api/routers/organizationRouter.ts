@@ -847,7 +847,7 @@ export const organizationRouter = createTRPCRouter({
 			}
 
 			// add rate limit
-			const INVITATION_REQUEST_LIMIT = 10;
+			const INVITATION_REQUEST_LIMIT = 50;
 			try {
 				await invitationRateLimit.check(
 					ctx.res,
