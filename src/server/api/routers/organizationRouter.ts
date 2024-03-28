@@ -847,7 +847,7 @@ export const organizationRouter = createTRPCRouter({
 			}
 
 			// add rate limit
-			const INVITATION_REQUEST_LIMIT = 5;
+			const INVITATION_REQUEST_LIMIT = 10;
 			try {
 				await invitationRateLimit.check(
 					ctx.res,
@@ -1172,8 +1172,15 @@ export const organizationRouter = createTRPCRouter({
 				const defaultTemplate = inviteOrganizationTemplate();
 				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
 
+				function normalizeBaseUrl(baseUrl: string) {
+					// Ensure there's no trailing slash
+					return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+				}
+
 				// create invitation link
-				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${encryptedToken}`;
+				const invitationLink = `${normalizeBaseUrl(
+					process.env.NEXTAUTH_URL,
+				)}/auth/register?organizationInvite=${encryptedToken}`;
 
 				// get organization name
 				const organization = await ctx.prisma.organization.findUnique({
