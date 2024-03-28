@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
               example:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
               example:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
@@ -124,7 +124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/NetworkResponse.yml#/NetworkResponse'
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
               example:
                 $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
         401:

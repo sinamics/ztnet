@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/OrganizationResponse.yml#/OrganizationResponse'
+                $ref: '../../_schema/OrganizationSchema.yml#/OrganizationResponse'
               example:
                 $ref: '../../_example/OrganizationExample.yml#/OrganizationExample'
         401:
@@ -68,7 +68,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../../_schema/OrganizationResponse.yml#/OrganizationById'
+                $ref: '../../_schema/OrganizationSchema.yml#/OrganizationById'
               example:
                 $ref: '../../_example/OrganizationExample.yml#/OrganizationByIdExample'
         401:
