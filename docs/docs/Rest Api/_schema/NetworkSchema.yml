@@ -107,9 +107,9 @@ UpdateNetworkShema:
       items:
         type: object
         properties:
-          ipRangeEnd:
-            type: string
           ipRangeStart:
+            type: string
+          ipRangeEnd:
             type: string
     name:
       type: string
