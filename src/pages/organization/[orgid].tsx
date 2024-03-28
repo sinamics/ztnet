@@ -219,10 +219,6 @@ const OrganizationById = ({ user, orgIds }) => {
 								<span className="font-medium">Pending Invitations</span>
 								<span>{orgData?.invitations.length}</span>
 							</li>
-							{/* <li className="flex justify-between">
-								<span className="font-medium">Owner:</span>
-								<span>{orgData?.ownerName}</span>
-							</li> */}
 						</ul>
 					</section>
 
