@@ -43,9 +43,10 @@ const Invites = () => {
 						})}
 					</p>
 				</div>
-				<div className="grid grid-cols-[1fr,auto,1fr] gap-3">
+				<div className="grid grid-cols-1 lg:grid-cols-[1fr,auto,1fr] gap-3">
 					<InviteByMail organizationId={organizationId} />
-					<div className="divider divider-horizontal">OR</div>
+					<div className="divider divider-horizontal hidden lg:inline-flex">OR</div>
+					<div className="divider lg:hidden">OR</div>
 					<InviteByUser />
 				</div>
 				<div>

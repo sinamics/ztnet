@@ -314,6 +314,7 @@ export const organizationRouter = createTRPCRouter({
 					userRoles: true,
 					users: true,
 					webhooks: true,
+					invitations: true,
 					networks: {
 						include: {
 							networkMembers: true,
