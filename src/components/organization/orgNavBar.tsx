@@ -49,24 +49,28 @@ const useOpenModal = (orgData) => {
 };
 
 const AdminHamburgerMenu = ({ organization }) => {
+	const b = useTranslations("commonButtons");
 	const openModal = useOpenModal(organization);
 	return (
 		<ul
 			tabIndex={0}
 			className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 		>
+			{/* <li>
+				<Link href={`/organization/${organization?.id}`}>HOME</Link>
+			</li> */}
 			<li onClick={() => openModal("editMeta")}>
-				<a className="justify-between cursor-pointer">META</a>
+				<a className="justify-between cursor-pointer uppercase">{b("meta")}</a>
 			</li>
 			<li onClick={() => openModal("webhooks")}>
-				<a className="justify-between cursor-pointer">WEBHOOKS</a>
+				<a className="justify-between cursor-pointer uppercase">{b("addWebhooks")}</a>
 			</li>
 			<li>
 				<Link
-					href={`/organization/${organization}/invite`}
-					className="justify-between cursor-pointer"
+					href={`/organization/${organization?.id}/invite`}
+					className="justify-between cursor-pointer uppercase"
 				>
-					INVITE USER
+					{b("inviteUser")}
 				</Link>
 			</li>
 		</ul>
@@ -208,7 +212,7 @@ export const OrgNavBar = () => {
 				</div>
 				<Link
 					href={`/organization/${organization?.id}`}
-					className="btn btn-ghost text-xl"
+					className="btn btn-ghost text-xl hidden lg:inline-flex"
 				>
 					{organization?.orgName}
 				</Link>

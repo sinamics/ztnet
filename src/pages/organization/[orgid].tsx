@@ -15,6 +15,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
+import cn from "classnames";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -119,7 +120,6 @@ const OrganizationById = ({ user, orgIds }) => {
 
 	const truncatedOrgName =
 		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
-
 	return (
 		<main className="w-full bg-base-100 py-8 animate-fadeIn">
 			<MetaTags title={title} />
@@ -152,7 +152,10 @@ const OrganizationById = ({ user, orgIds }) => {
 									return (
 										<li
 											key={user.id}
-											className="py-2 px-3 hover:bg-gray-700 transition duration-150"
+											className={cn(
+												"py-2 px-3 hover:bg-gray-700 transition duration-150",
+												{ "cursor-pointer": meOrgRole.role === "ADMIN" },
+											)}
 											onClick={() => {
 												if (meOrgRole.role !== "ADMIN") return;
 												callModal({
@@ -212,19 +215,21 @@ const OrganizationById = ({ user, orgIds }) => {
 								<span className="font-medium">{t("informationSection.members")}</span>
 								<span>{orgData?.users.length}</span>
 							</li>
-							{/* <li className="flex justify-between">
-								<span className="font-medium">Owner:</span>
-								<span>{orgData?.ownerName}</span>
-							</li> */}
+							<li className="flex justify-between">
+								<span className="font-medium">
+									{t("informationSection.pendingInvitations")}
+								</span>
+								<span>{orgData?.invitations.length}</span>
+							</li>
 						</ul>
 					</section>
 
 					{/* Network Table and Add Network Button */}
-					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg">
-						<div className="px-4 py-1 flex justify-between items-center border-b border-gray-700">
+					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg p-3">
+						<div className="py-1 flex justify-between items-center border-b border-gray-700">
 							<h2 className="text-xl font-semibold">{t("networkSection.title")}</h2>
 							<button
-								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
+								className="btn btn-primary btn-sm btn-outline font-semibold px-4 rounded-lg flex items-center"
 								onClick={() =>
 									createNetwork(
 										{
