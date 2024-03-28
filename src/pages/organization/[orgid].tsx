@@ -15,6 +15,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
+import cn from "classnames";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -119,7 +120,6 @@ const OrganizationById = ({ user, orgIds }) => {
 
 	const truncatedOrgName =
 		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
-
 	return (
 		<main className="w-full bg-base-100 py-8 animate-fadeIn">
 			<MetaTags title={title} />
@@ -152,7 +152,10 @@ const OrganizationById = ({ user, orgIds }) => {
 									return (
 										<li
 											key={user.id}
-											className="py-2 px-3 hover:bg-gray-700 transition duration-150"
+											className={cn(
+												"py-2 px-3 hover:bg-gray-700 transition duration-150",
+												{ "cursor-pointer": meOrgRole.role === "ADMIN" },
+											)}
 											onClick={() => {
 												if (meOrgRole.role !== "ADMIN") return;
 												callModal({
@@ -211,6 +214,10 @@ const OrganizationById = ({ user, orgIds }) => {
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.members")}</span>
 								<span>{orgData?.users.length}</span>
+							</li>
+							<li className="flex justify-between">
+								<span className="font-medium">Pending Invitations</span>
+								<span>{orgData?.invitations.length}</span>
 							</li>
 							{/* <li className="flex justify-between">
 								<span className="font-medium">Owner:</span>
