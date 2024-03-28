@@ -14,7 +14,13 @@ servers:
 tags:
   - name: user
     description: Users API
-    x-displayName: Users dsd s
+    x-displayName: Users API
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
+
 paths:
   /user:
     post:
@@ -32,8 +38,6 @@ paths:
       description: |
         If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
         Keep in mind that first user created will be the admin user.
-      security:
-        - x-ztnet-auth: []
       requestBody:
         # required: true
         content:
