@@ -121,21 +121,23 @@ const OrganizationById = ({ user, orgIds }) => {
 	const truncatedOrgName =
 		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
 	return (
-		<main className="w-full bg-base-100 py-8 animate-fadeIn">
+		<main className="w-full bg-base-100 py-2 animate-fadeIn">
 			<MetaTags title={title} />
 			<div>
-				{orgData?.description ? (
-					<div
-						className="border-l-4 border-primary p-2 leading-snug"
-						style={{ caretColor: "transparent" }}
-					>
-						{/* add newline support if description has newlines */}
-						{orgData?.description.split("\n").map((str, index) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-							<p key={index}>{str}</p>
-						))}
-					</div>
-				) : null}
+				<div className="pb-3">
+					{orgData?.description ? (
+						<div
+							className="border-l-4 border-primary p-2 leading-snug"
+							style={{ caretColor: "transparent" }}
+						>
+							{/* add newline support if description has newlines */}
+							{orgData?.description.split("\n").map((str, index) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								<p key={index}>{str}</p>
+							))}
+						</div>
+					) : null}
+				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
