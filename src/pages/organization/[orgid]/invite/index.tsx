@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import InviteByMail from "~/components/organization/inviteByMail";
@@ -8,20 +8,52 @@ import InviteByUser from "~/components/organization/inviteByUser";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
+import cn from "classnames";
 
-const Invites = () => {
-	const t = useTranslations("organization");
+const ExpiryCountdown = ({ date, onExpire }) => {
 	const b = useTranslations("commonButtons");
-	const router = useRouter();
-	const organizationId = router.query.orgid as string;
+	const calculateTimeLeft = () => {
+		const expiryDate = new Date(date).getTime();
+		const now = Date.now();
+		const difference = expiryDate - now;
+		return Math.max(0, Math.floor(difference / 1000));
+	};
 
-	const { data: orgInvites, refetch: refetchInvites } = api.org.getInvites.useQuery({
+	const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+	useEffect(() => {
+		if (timeLeft <= 0) {
+			onExpire();
+			return;
+		}
+
+		// Sets up the countdown interval.
+		const intervalId = setInterval(() => {
+			const newTimeLeft = calculateTimeLeft();
+			if (newTimeLeft <= 0) {
+				clearInterval(intervalId);
+				onExpire();
+			}
+			setTimeLeft(newTimeLeft);
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	}, [timeLeft, onExpire, calculateTimeLeft]);
+
+	return timeLeft <= 0 ? <span>{b("resend")}</span> : <span>{timeLeft} seconds</span>;
+};
+
+const InviteCard = ({ invite, organizationId }) => {
+	const [resendable, setResendable] = useState(false);
+	const b = useTranslations("commonButtons");
+	const { refetch: refetchInvites } = api.org.getInvites.useQuery({
 		organizationId,
 	});
 	const { mutate: resendInvite, isLoading: resendLoading } =
 		api.org.resendInvite.useMutation({
 			onSuccess: () => {
 				refetchInvites();
+				setResendable(false);
 				toast.success("Invitation resent successfully");
 			},
 		});
@@ -32,6 +64,67 @@ const Invites = () => {
 		},
 	});
 
+	useEffect(() => {
+		setResendable(invite.resendable);
+	}, [invite.resendable]);
+
+	const resendTimeLimit = new Date(new Date(invite.mailSentAt).getTime() + 60000);
+	return (
+		<div
+			className={cn(
+				"border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md cursor-pointer",
+				{ "bg-red-500/30": invite.hasExpired },
+			)}
+		>
+			<div className="flex justify-between space-x-2">
+				<div>
+					<h3 className="text-sm font-semibold">{invite.email}</h3>
+					<p className="text-sm text-gray-500 dark:text-gray-400">{invite.role}</p>
+				</div>
+				<p className="text-sm">
+					{invite.hasExpired ? (
+						"EXPIRED"
+					) : (
+						<span>
+							Expires: <TimeAgo date={invite.expiresAt} />
+						</span>
+					)}
+				</p>
+			</div>
+			<div className="flex justify-end gap-3">
+				<button
+					// set disabled if invite.mailsentAt is less than 5min ago
+					// or if invite.mailsentAt is null
+					title="Resend invitation email"
+					disabled={!resendable || resendLoading}
+					onClick={() => resendInvite({ invitationId: invite.id, organizationId })}
+					className="btn btn-primary btn-xs"
+				>
+					<ExpiryCountdown
+						key={invite.mailSentAt}
+						date={resendTimeLimit}
+						onExpire={() => setResendable(true)}
+					/>
+				</button>
+				<button
+					onClick={() => deleteInvite({ invitationId: invite.id, organizationId })}
+					className="btn btn-xs"
+				>
+					{b("delete")}
+				</button>
+			</div>
+		</div>
+	);
+};
+
+const Invites = () => {
+	const t = useTranslations("organization");
+	const router = useRouter();
+	const organizationId = router.query.orgid as string;
+
+	const { data: orgInvites } = api.org.getInvites.useQuery({
+		organizationId,
+	});
 	return (
 		<div className="">
 			<div className="space-y-5 bg-base-200 rounded-lg p-5">
@@ -56,55 +149,13 @@ const Invites = () => {
 						</div>
 					) : null}
 					<div className="grid grid-cols-3 gap-3">
-						{orgInvites?.map((invite) => {
-							const resendLimit =
-								new Date(invite.mailSentAt) > new Date(Date.now() - 1 * 60 * 1000) ||
-								!invite.mailSentAt;
-							return (
-								<div className="border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md cursor-pointer">
-									<div className="flex items-center justify-between space-x-4">
-										<div className="flex items-center space-x-2">
-											<div>
-												<h3 className="text-sm font-semibold">{invite.email}</h3>
-												<p className="text-sm text-gray-500 dark:text-gray-400">
-													{invite.role}
-												</p>
-											</div>
-										</div>
-									</div>
-									<div className="flex justify-end gap-3">
-										<button
-											// set disabled if invite.mailsentAt is less than 5min ago
-											// or if invite.mailsentAt is null
-											title="Resend invitation email"
-											disabled={resendLimit || resendLoading}
-											onClick={() =>
-												resendInvite({ invitationId: invite.id, organizationId })
-											}
-											className="btn btn-primary btn-xs"
-										>
-											{resendLimit ? (
-												<TimeAgo
-													date={
-														new Date(new Date(invite.mailSentAt).getTime() + 1 * 60000)
-													}
-												/>
-											) : (
-												b("resend")
-											)}
-										</button>
-										<button
-											onClick={() =>
-												deleteInvite({ invitationId: invite.id, organizationId })
-											}
-											className="btn btn-xs"
-										>
-											{b("delete")}
-										</button>
-									</div>
-								</div>
-							);
-						})}
+						{orgInvites?.map((invite) => (
+							<InviteCard
+								key={invite.id}
+								invite={invite}
+								organizationId={organizationId}
+							/>
+						))}
 					</div>
 				</div>
 			</div>
