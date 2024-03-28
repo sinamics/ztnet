@@ -79,9 +79,9 @@
 		}
 	},
 	"commonToast": {
-		"updatedSuccessfully": "Zaktualizowany pomyślnie",
-		"addedSuccessfully": "Dodany pomyślnie",
-		"deletedSuccessfully": "Usunięty pomyślnie",
+		"updatedSuccessfully": "Zaktualizowano pomyślnie",
+		"addedSuccessfully": "Dodano pomyślnie",
+		"deletedSuccessfully": "Usunięto pomyślnie",
 		"errorOccurred": "Wystąpił nieznany błąd",
 		"organizationDeleted": "Organizacja została pomyślnie usunięta"
 	},
@@ -452,7 +452,7 @@
 		},
 		"notification": {
 			"authentication": "Uwierzytelnianie",
-			"whenUserRegister": "Kiedy użytkownik się zarejestruje",
+			"whenUserRegister": "Kiedy użytkownik zarejestruje się",
 			"allAdminsNotification": "Wszyscy administratorzy otrzymają powiadomienie"
 		},
 		"controller": {
