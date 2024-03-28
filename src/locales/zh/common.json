@@ -699,7 +699,8 @@
 			"title": "信息",
 			"name": "名称:",
 			"created": "创建时间:",
-			"members": "成员:"
+			"members": "成员:",
+			"pendingInvitations": "待处理邀请:"
 		},
 		"networkSection": {
 			"title": "网络",

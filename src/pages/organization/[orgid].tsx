@@ -216,7 +216,9 @@ const OrganizationById = ({ user, orgIds }) => {
 								<span>{orgData?.users.length}</span>
 							</li>
 							<li className="flex justify-between">
-								<span className="font-medium">Pending Invitations</span>
+								<span className="font-medium">
+									{t("informationSection.pendingInvitations")}
+								</span>
 								<span>{orgData?.invitations.length}</span>
 							</li>
 						</ul>

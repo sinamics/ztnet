@@ -699,7 +699,8 @@
 			"title": "Informasjon",
 			"name": "Navn:",
 			"created": "Opprettet:",
-			"members": "Medlemmer:"
+			"members": "Medlemmer:",
+			"pendingInvitations": "Ventende invitasjoner:"
 		},
 		"networkSection": {
 			"title": "Nettverk",

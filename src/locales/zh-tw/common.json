@@ -699,7 +699,8 @@
 			"title": "資訊",
 			"name": "名稱:",
 			"created": "建立時間:",
-			"members": "成員:"
+			"members": "成員:",
+			"pendingInvitations": "待處理邀請:"
 		},
 		"networkSection": {
 			"title": "網路",
