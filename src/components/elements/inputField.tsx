@@ -123,6 +123,14 @@ const InputField = ({
 		}));
 	};
 
+	const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const { name, checked } = e.target;
+		setFormValues((prevValues) => ({
+			...prevValues,
+			[name]: checked,
+		}));
+	};
+
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const response = await submitHandler(formValues);
@@ -219,8 +227,8 @@ const InputField = ({
 													type="checkbox"
 													name={field.name}
 													checked={!!formValues[field.name]}
-													onChange={handleChange}
-													className="checkbox checkbox-primary"
+													onChange={handleCheckboxChange}
+													className="checkbox checkbox-primary checkbox-sm"
 												/>
 												<span>{field.placeholder}</span>
 											</label>
