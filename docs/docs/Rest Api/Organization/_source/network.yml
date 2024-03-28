@@ -15,6 +15,11 @@ servers:
         default: v1
         description: API version
 
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
+
 paths:
   /org/:orgid/network:
     get:
@@ -35,6 +40,7 @@ paths:
           schema:
             type: string
           description: Unique identifier of the organization
+
       responses:
         200:
           description: An array of Network IDs

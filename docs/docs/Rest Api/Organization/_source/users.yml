@@ -15,6 +15,12 @@ tags:
   - name: organization_users
     description: Organization Users API
     x-displayName: Organization Users
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
+
 paths:
   /org/:orgid/users:
     get:

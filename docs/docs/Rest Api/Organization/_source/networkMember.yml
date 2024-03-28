@@ -14,6 +14,11 @@ servers:
       version:
         default: v1
         description: API version
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
 
 paths:                 
   /org/:orgid/network/{networkId}/member:
