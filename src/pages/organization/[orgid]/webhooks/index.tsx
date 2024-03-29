@@ -18,6 +18,15 @@ import { globalSiteTitle } from "~/utils/global";
 // Enhanced version of the ListWebHooks component for a more elegant and stylish presentation of webhook data.
 
 const ListWebHooks = ({ orgData }) => {
+	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation({
+		// onSuccess: () => {
+		// 	toast.success("Webhook deleted successfully");
+		// 	closeModal();
+		// 	refecthOrg();
+		// 	refecthAllOrg();
+		// },
+	});
+
 	return (
 		<div className="cursor-pointer">
 			{orgData?.webhooks?.map((hook: Webhook) => (
@@ -48,6 +57,30 @@ const ListWebHooks = ({ orgData }) => {
 							{(hook.eventTypes as string[])?.join(" - ")}
 						</div>
 					</div>
+					<button
+						onClick={() => {
+							deleteWebhook(
+								{
+									organizationId: organizationId,
+									webhookId: input.webhookId,
+								},
+								{
+									onSuccess: () => {
+										closeModal();
+										refecthOrg();
+										refecthAllOrg();
+									},
+									onError: (error) => {
+										handleErrors(error);
+									},
+								},
+							);
+						}}
+						type="submit"
+						className="btn btn-sm btn-error btn-outline"
+					>
+						{b("delete")}
+					</button>
 				</div>
 			))}
 		</div>
@@ -260,7 +293,7 @@ const OrganizationWebhook = () => {
 				) : null} */}
 					</div>
 				</form>
-				<div className="space-y-10">
+				<div className="space-y-2">
 					{orgData?.webhooks?.length > 0 ? (
 						<div className="text-md font-medium tracking-wide">Active Hooks:</div>
 					) : null}
