@@ -23,23 +23,25 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 	if (!Array.isArray(groups) || !groups) return null;
 	const t = useTranslations("admin");
 	const m = useTranslations("commonToast");
+
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { refetch } = api.admin.getUserGroups.useQuery();
+	const { refetch: refetchGroups } = api.admin.getUserGroups.useQuery();
 	const { callModal } = useModalStore((state) => state);
 
 	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			actions: [refetch],
+			actions: [refetchGroups],
 			toastMessage: m("updatedSuccessfully"),
 		}),
 	});
+
 	const { mutate: deleteGroup } = api.admin.deleteUserGroup.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			actions: [refetch],
+			actions: [refetchGroups],
 			toastMessage: m("deletedSuccessfully"),
 		}),
 	});
@@ -149,6 +151,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 		</div>
 	);
 };
+
 const UserGroups = () => {
 	const t = useTranslations("admin");
 	const handleApiError = useTrpcApiErrorHandler();
@@ -158,7 +161,7 @@ const UserGroups = () => {
 
 	const { mutate: addGroup } = api.admin.addUserGroup.useMutation({
 		onError: handleApiError,
-		onSuccess: () => handleApiSuccess({ actions: [refetch] }),
+		onSuccess: handleApiSuccess({ actions: [refetch] }),
 	});
 
 	return (
