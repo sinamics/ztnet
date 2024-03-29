@@ -1,69 +1,33 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
-import OrganizationWebhook from "./webhookModal";
 import EditOrganizationModal from "./editOrgModal";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-// Utility function to open modals
-const useOpenModal = (orgData) => {
-	const { callModal } = useModalStore();
-	const t = useTranslations();
-
-	const openModal = (type) => {
-		const modalTypes = {
-			editMeta: {
-				title: (
-					<p>
-						<span>Edit Meta </span>
-						<span className="text-primary">{orgData.orgName}</span>
-					</p>
-				),
-				content: <EditOrganizationModal organizationId={orgData.id} />,
-			},
-			webhooks: {
-				rootStyle: "h-10/12",
-				title: (
-					<p>
-						<span>
-							{t.rich(
-								"admin.organization.listOrganization.webhookModal.createWebhookTitle",
-								{
-									span: (children) => <span className="text-primary">{children}</span>,
-									organization: orgData.orgName,
-								},
-							)}
-						</span>
-					</p>
-				),
-				content: <OrganizationWebhook organizationId={orgData.id} />,
-			},
-		};
-
-		callModal(modalTypes[type]);
-	};
-
-	return openModal;
-};
-
 const AdminHamburgerMenu = ({ organization }) => {
 	const b = useTranslations("commonButtons");
-	const openModal = useOpenModal(organization);
 	return (
 		<ul
 			tabIndex={0}
 			className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
 		>
-			{/* <li>
-				<Link href={`/organization/${organization?.id}`}>HOME</Link>
-			</li> */}
-			<li onClick={() => openModal("editMeta")}>
-				<a className="justify-between cursor-pointer uppercase">{b("meta")}</a>
+			<li>
+				<Link
+					href={`/organization/${organization.id}/meta`}
+					className="justify-between cursor-pointer uppercase"
+				>
+					<div className="rounded-full uppercase">{b("meta")}</div>
+				</Link>
 			</li>
-			<li onClick={() => openModal("webhooks")}>
-				<a className="justify-between cursor-pointer uppercase">{b("addWebhooks")}</a>
+			<li>
+				<Link
+					href={`/organization/${organization.id}/webhooks`}
+					className="justify-between cursor-pointer uppercase"
+				>
+					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+				</Link>
 			</li>
 			<li>
 				<Link
@@ -83,52 +47,12 @@ const AdminNavMenu = ({ organization }) => {
 	return (
 		<div>
 			<div className="dropdown dropdown-end">
-				{/* <div tabIndex={0} role="button" className="btn btn-ghost">
-					<div className="rounded-full">{b("addWebhooks")}</div>
-				</div> */}
 				<Link
 					href={`/organization/${organization.id}/webhooks`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
 				</Link>
-				{/* <ul
-					tabIndex={0}
-					className="bg-base-300 menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow  rounded-box w-52"
-				>
-					<li onClick={() => openModal("webhooks")}>
-						<a className="justify-between cursor-pointer">Create new webhook</a>
-					</li>
-					{organization?.webhooks?.map((webhook) => {
-						return (
-							<li
-								onClick={() =>
-									void callModal({
-										title: (
-											<p>
-												<span>
-													{t(
-														"admin.organization.listOrganization.webhookModal.editWebhookTitle",
-													)}
-												</span>
-												<span className="text-primary">{webhook.name}</span>
-											</p>
-										),
-										content: (
-											<OrganizationWebhook
-												organizationId={organization.id}
-												hook={webhook}
-											/>
-										),
-									})
-								}
-								key={webhook.id}
-							>
-								<a className="justify-between cursor-pointer">{webhook.name}</a>
-							</li>
-						);
-					})}
-				</ul> */}
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
