@@ -137,10 +137,10 @@ const OrganizationById = ({ user, orgIds }) => {
 											key={user.id}
 											className={cn(
 												"py-2 px-3 hover:bg-gray-700 transition duration-150",
-												{ "cursor-pointer": meOrgRole.role === "ADMIN" },
+												{ "cursor-pointer": meOrgRole?.role === "ADMIN" },
 											)}
 											onClick={() => {
-												if (meOrgRole.role !== "ADMIN") return;
+												if (meOrgRole?.role !== "ADMIN") return;
 												callModal({
 													title: (
 														<p>

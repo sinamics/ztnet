@@ -8,16 +8,29 @@ import ForgotPasswordMailTemplate from "~/components/adminPage/mail/mailForgotPa
 import NotificationTemplate from "~/components/adminPage/mail/mailNotificationTemplate";
 import { useTranslations } from "use-intl";
 import OrganizationInviteTemplate from "~/components/adminPage/mail/mailOrganizationInviteTemplate";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Mail = () => {
 	const t = useTranslations("admin");
-	const { mutate: setMailOptions } = api.admin.setMail.useMutation();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: options,
 		refetch: refetchOptions,
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
+
+	const { mutate: setMailOptions } = api.admin.setMail.useMutation({
+		onSuccess: handleApiSuccess({
+			actions: [refetchOptions],
+		}),
+		onError: handleApiError,
+	});
 
 	const inputHandler = (e: Partial<GlobalOptions>) => {
 		return new Promise((resolve) => {

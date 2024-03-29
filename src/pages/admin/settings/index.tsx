@@ -3,11 +3,16 @@ import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
-import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Settings = () => {
 	const t = useTranslations("admin");
 	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const {
 		data: options,
 		isLoading: loadingOptions,
@@ -15,9 +20,7 @@ const Settings = () => {
 	} = api.admin.getAllOptions.useQuery();
 
 	const { mutate: setWelcomeMessage } = api.admin.updateGlobalOptions.useMutation({
-		onSuccess: () => {
-			refetchOptions();
-		},
+		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
 		onError: handleApiError,
 	});
 
