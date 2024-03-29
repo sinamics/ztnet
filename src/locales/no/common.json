@@ -79,11 +79,12 @@
 		}
 	},
 	"commonToast": {
-		"updatedSuccessfully": "Oppdatert vellykket",
+		"updatedSuccessfully": "Oppdatering vellykket",
 		"addedSuccessfully": "Lagt til vellykket",
 		"deletedSuccessfully": "Slettet vellykket",
 		"errorOccurred": "En ukjent feil oppstod",
-		"organizationDeleted": "Organisasjonen ble slettet vellykket"
+		"organizationDeleted": "Organisasjonen ble slettet vellykket",
+		"sentSuccessfully": "Sending vellykket"
 	},
 	"sidebar": {
 		"navigation": "Hjem",

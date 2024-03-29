@@ -6,12 +6,18 @@ import PrivateRoot from "~/components/adminPage/controller/privateRoot";
 import { api } from "~/utils/api";
 import DebugMirror from "~/components/adminPage/controller/debugController";
 import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
-import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
-import toast from "react-hot-toast";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Controller = () => {
 	const [error, setError] = useState(false);
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { data: controllerData, refetch: refetchStats } =
 		api.admin.getControllerStats.useQuery(null, {
 			retry: 1,
@@ -26,23 +32,10 @@ const Controller = () => {
 		api.admin.unlinkedNetwork.useQuery();
 	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
-		onSuccess: () => {
-			toast.success("Successfully updated ZeroTier options");
-			void refetchMe();
-			void refetchStats();
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError
-					.fieldErrors as ZodErrorFieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			}
-		},
+		onSuccess: handleApiSuccess({ actions: [refetchMe, refetchStats] }),
+		onError: handleApiError,
 	});
+
 	const { networkCount, totalMembers, controllerStatus } = controllerData || {};
 
 	const { allowManagementFrom, allowTcpFallbackRelay, listeningOn } =

@@ -5,12 +5,14 @@ import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/networkPage/networkTable";
 import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
-import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import MetaTags from "~/components/shared/metaTags";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type OrganizationId = {
 	id: string;
@@ -25,6 +27,9 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	useOrganizationWebsocket(orgIds);
 
 	const {
@@ -34,24 +39,10 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	} = api.network.getUserNetworks.useQuery({
 		central: false,
 	});
+
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Network created successfully");
-			refetch();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetch] }),
 	});
 
 	const addNewNetwork = () => {

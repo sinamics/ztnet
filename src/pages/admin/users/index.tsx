@@ -5,16 +5,26 @@ import UserInvitation from "~/components/adminPage/users/userInvitation";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import UserGroups from "~/components/adminPage/users/userGroups";
 import { api } from "~/utils/api";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Users = () => {
 	const t = useTranslations("admin");
-	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation();
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: options,
 		refetch: refetchOptions,
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
+
+	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
+		onError: handleApiError,
+	});
 
 	if (loadingOptions) {
 		return (
@@ -40,10 +50,7 @@ const Users = () => {
 						checked={options?.enableRegistration}
 						className="checkbox-primary checkbox checkbox-sm"
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							setRegistration(
-								{ enableRegistration: e.target.checked },
-								{ onSuccess: () => void refetchOptions() },
-							);
+							setRegistration({ enableRegistration: e.target.checked });
 						}}
 					/>
 				</div>

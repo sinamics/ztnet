@@ -4,9 +4,8 @@ import { api } from "~/utils/api";
 import { useAsideChatStore, useSocketStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
 import { stringToColor } from "~/utils/randomColor";
-import { ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 const TimeAgoFormatter = (value: string, unit: string) => {
 	// Map full unit names to their abbreviations
@@ -56,6 +55,7 @@ const MessagesList = ({ messages }) => {
 
 const ChatAside = () => {
 	const t = useTranslations("organization");
+	const handleApiError = useTrpcApiErrorHandler();
 
 	const { openChats } = useAsideChatStore();
 	const [messages, setMessages] = useState([]);
@@ -130,18 +130,7 @@ const ChatAside = () => {
 				onSuccess: () => {
 					setInputMsg({ chatMessage: "" });
 				},
-				onError: (error) => {
-					if ((error.data as ErrorData)?.zodError) {
-						const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-						for (const field in fieldErrors) {
-							toast.error(`${fieldErrors[field].join(", ")}`);
-						}
-					} else if (error.message) {
-						toast.error(error.message);
-					} else {
-						toast.error("An unknown error occurred");
-					}
-				},
+				onError: handleApiError,
 			},
 		);
 	};

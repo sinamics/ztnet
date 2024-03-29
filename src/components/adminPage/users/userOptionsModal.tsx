@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
 import UserRole from "./userRole";
 import UserGroup from "./userGroup";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import UserIsActive from "./userIsActive";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iprops {
 	userId: string;
@@ -17,6 +20,10 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 	const t = useTranslations("admin");
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { closeModal } = useModalStore((state) => state);
 
 	const { data: user, isLoading: loadingUser } = api.admin.getUser.useQuery({
@@ -25,25 +32,16 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
 		isAdmin: false,
 	});
+
 	const { mutate: deleteUser, isLoading: userDeleteLoading } =
 		api.admin.deleteUser.useMutation({
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error("An unknown error occurred");
-				}
-			},
-			onSuccess: () => {
-				closeModal();
-				refetchUsers();
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				actions: [refetchUsers, closeModal],
+				toastMessage: t("users.users.userOptionModal.toast.deleteUserSuccess"),
+			}),
 		});
+
 	const deleteUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		// check if input name is the same as the user name
@@ -51,16 +49,9 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 			toast.error(t("users.users.userOptionModal.toast.nameNotEqual"));
 			return;
 		}
-		deleteUser(
-			{
-				id: user.id,
-			},
-			{
-				onSuccess: () => {
-					toast.success(t("users.users.userOptionModal.toast.deleteUserSuccess"));
-				},
-			},
-		);
+		deleteUser({
+			id: user.id,
+		});
 	};
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInput({
