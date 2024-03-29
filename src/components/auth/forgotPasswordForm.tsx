@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { toast } from "react-hot-toast";
-import { type ErrorData } from "~/types/errorHandling";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 interface FormData {
 	email: string;
@@ -13,6 +13,7 @@ const ForgotPasswordForm: React.FC = () => {
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
 	});
+	const handleApiError = useTrpcApiErrorHandler();
 
 	const { mutate: resetPassword } = api.auth.passwordResetLink.useMutation();
 
@@ -38,17 +39,7 @@ const ForgotPasswordForm: React.FC = () => {
 			},
 			onError: (error) => {
 				setLoading(false);
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error("An unknown error occurred");
-				}
+				handleApiError(error);
 			},
 		});
 	};

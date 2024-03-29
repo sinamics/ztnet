@@ -13,6 +13,8 @@ interface Iprops {
 
 const InviteByMail = ({ organizationId }: Iprops) => {
 	const t = useTranslations("organization");
+	const m = useTranslations("commonToast");
+
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
@@ -22,9 +24,11 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 
 	const { mutate: inviteUserByMail, isLoading: inviteLoading } =
 		api.org.inviteUserByMail.useMutation({
-			onSuccess: () => {
-				refetchInvites();
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				actions: [refetchInvites],
+				toastMessage: m("sentSuccessfully"),
+			}),
 		});
 
 	return (
@@ -66,13 +70,10 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 				]}
 				submitHandler={(params) => {
 					return new Promise(() => {
-						return inviteUserByMail(
-							{ ...params, email: (params.email as string)?.trim() },
-							{
-								onSuccess: handleApiSuccess,
-								onError: handleApiError,
-							},
-						);
+						return inviteUserByMail({
+							...params,
+							email: (params.email as string)?.trim(),
+						});
 					});
 				}}
 			/>

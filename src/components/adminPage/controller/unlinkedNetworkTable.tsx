@@ -10,14 +10,16 @@ import {
 	type SortingState,
 } from "@tanstack/react-table";
 import { api } from "~/utils/api";
-import { type ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { type User } from "@prisma/client";
 import TimeAgo from "react-timeago";
 import { NetworkEntity } from "~/types/local/network";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface UnlinkedNetworkTableProps {
 	network: NetworkEntity;
@@ -29,6 +31,9 @@ const LOCAL_STORAGE_KEY = "unlinkedTableSorting";
 
 export const UnlinkedNetwork = () => {
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
@@ -43,24 +48,8 @@ export const UnlinkedNetwork = () => {
 	} = api.admin.unlinkedNetwork.useQuery();
 
 	const { mutate: assignNetworkToUser } = api.admin.assignNetworkToUser.useMutation({
-		onSuccess: () => {
-			void refetchNetworks();
-			toast.success("Network assigned to user");
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("users.users.toastMessages.errorOccurred"));
-			}
-			void refetchNetworks();
-		},
+		onSuccess: handleApiSuccess({ actions: [refetchNetworks] }),
+		onError: handleApiError,
 	});
 
 	// Save to localStorage whenever sorting changes

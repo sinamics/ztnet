@@ -4,6 +4,10 @@ import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import cn from "classnames";
 import { useTranslations } from "use-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type InviteUserTemplate = {
 	subject: string;
@@ -12,6 +16,9 @@ type InviteUserTemplate = {
 
 const ForgotPasswordMailTemplate = () => {
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const [changes, setChanges] = useState({
 		subject: false,
@@ -43,12 +50,10 @@ const ForgotPasswordMailTemplate = () => {
 
 	const { mutate: sendTestMail, isLoading: sendingMailLoading } =
 		api.admin.sendTestMail.useMutation({
-			onError: (err) => {
-				toast.error(err.message);
-			},
-			onSuccess: () => {
-				toast.success(t("mail.templates.successToastMailSent"));
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				toastMessage: t("mail.templates.successToastMailSent"),
+			}),
 		});
 
 	const { mutate: setMailTemplates } = api.admin.setMailTemplates.useMutation();

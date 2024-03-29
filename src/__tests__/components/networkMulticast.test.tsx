@@ -33,7 +33,9 @@ describe("<NetworkMulticast />", () => {
 	});
 
 	it("sends the correct multicastLimit to the server when submitted", async () => {
-		const mockMutation = jest.fn();
+		const mockMutation = jest.fn().mockReturnValue({
+			organizationId: "orgId",
+		});
 
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: {
@@ -72,11 +74,11 @@ describe("<NetworkMulticast />", () => {
 				expect.objectContaining({
 					central: false,
 					nwid: "test-id",
+					organizationId: undefined,
 					updateParams: {
 						multicastLimit: 10,
 					},
 				}),
-				expect.anything(),
 			);
 		});
 	});
@@ -117,11 +119,11 @@ describe("<NetworkMulticast />", () => {
 				expect.objectContaining({
 					central: false,
 					nwid: "test-id",
+					organizationId: undefined,
 					updateParams: {
 						enableBroadcast: true,
 					},
 				}),
-				expect.anything(),
 			);
 		});
 	});
