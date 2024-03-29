@@ -173,82 +173,83 @@ const OrganizationWebhook = () => {
 	const pageTitle = `${globalSiteTitle} - Webhooks`;
 
 	return (
-		<main className="grid grid-cols-2 space-y-10 w-full mx-auto bg-base-200 p-5 rounded-lg gap-5">
+		<main className="space-y-10 w-full bg-base-200 p-5 rounded-lg ">
 			<HeadSection title={pageTitle} />
-			<div className="col-span-2">
-				<h1 className="text-2xl font-bold">Organization Webhooks</h1>
-				<h1 className="text-md">
-					Empower your organization with our webhook integration, offering real-time
-					notifications for critical events.
-					<br />
-					Stay ahead with instant updates, directly piped into your system, ensuring
-					seamless workflow and immediate response capabilities.
-				</h1>
-			</div>
-			<form className="space-y-10 w-full">
-				<div className="form-control">
-					<h1 className="text-md font-medium tracking-wide">
-						{t("organization.listOrganization.webhookModal.webhookName")}
+			<div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+				<div className="xl:col-span-2">
+					<h1 className="text-2xl font-bold">Organization Webhooks</h1>
+					<h1 className="text-md">
+						Empower your organization with our webhook integration, offering real-time
+						notifications for critical events.
+						<br />
+						Stay ahead with instant updates, directly piped into your system, ensuring
+						seamless workflow and immediate response capabilities.
 					</h1>
-					<label className="text-sm text-gray-500">
-						{t("organization.listOrganization.webhookModal.webhookNameDescription")}
-					</label>
-					<Input
-						type="text"
-						placeholder="Name"
-						value={input?.webhookName}
-						onChange={inputHandler}
-						name="webhookName"
-						className="input-bordered input-sm w-full"
-					/>
 				</div>
-				<div className="dropdown dropdown-end z-50">
-					<h1 className="text-md font-medium tracking-wide">
-						{t("organization.listOrganization.webhookModal.selectWebhookActions")}
-					</h1>
-					<label className="text-sm text-gray-500">
-						{t(
-							"organization.listOrganization.webhookModal.selectWebhookActionsDescription",
-						)}
-					</label>
-					<div>
-						<MultiSelectDropdown
-							formFieldName={"hookType"}
-							options={Object.keys(HookType)}
-							value={input?.hookType}
-							// name="hookType"
-							onChange={selectHandler}
-							prompt="Select Webhook Actions"
+				<form className="space-y-10 w-full">
+					<div className="form-control">
+						<h1 className="text-md font-medium tracking-wide">
+							{t("organization.listOrganization.webhookModal.webhookName")}
+						</h1>
+						<label className="text-sm text-gray-500">
+							{t("organization.listOrganization.webhookModal.webhookNameDescription")}
+						</label>
+						<Input
+							type="text"
+							placeholder="Name"
+							value={input?.webhookName}
+							onChange={inputHandler}
+							name="webhookName"
+							className="input-bordered input-sm w-full"
 						/>
 					</div>
-				</div>
-				<div className="form-control">
-					<h1 className="text-md font-medium tracking-wide">
-						{t("organization.listOrganization.webhookModal.webhookUrl")}
-					</h1>
-					<label className="text-sm text-gray-500">
-						{t("organization.listOrganization.webhookModal.webhookUrlDescription")}
-					</label>
-					<Input
-						type="text"
-						placeholder="https://...."
-						value={input?.webhookUrl}
-						onChange={inputHandler}
-						name="webhookUrl"
-						className="input-bordered input-sm w-full"
-					/>
-				</div>
+					<div className="dropdown dropdown-end z-50">
+						<h1 className="text-md font-medium tracking-wide">
+							{t("organization.listOrganization.webhookModal.selectWebhookActions")}
+						</h1>
+						<label className="text-sm text-gray-500">
+							{t(
+								"organization.listOrganization.webhookModal.selectWebhookActionsDescription",
+							)}
+						</label>
+						<div>
+							<MultiSelectDropdown
+								formFieldName={"hookType"}
+								options={Object.keys(HookType)}
+								value={input?.hookType}
+								// name="hookType"
+								onChange={selectHandler}
+								prompt="Select Webhook Actions"
+							/>
+						</div>
+					</div>
+					<div className="form-control">
+						<h1 className="text-md font-medium tracking-wide">
+							{t("organization.listOrganization.webhookModal.webhookUrl")}
+						</h1>
+						<label className="text-sm text-gray-500">
+							{t("organization.listOrganization.webhookModal.webhookUrlDescription")}
+						</label>
+						<Input
+							type="text"
+							placeholder="https://...."
+							value={input?.webhookUrl}
+							onChange={inputHandler}
+							name="webhookUrl"
+							className="input-bordered input-sm w-full"
+						/>
+					</div>
 
-				<div className="pt-10 space-x-5 ">
-					<button
-						onClick={submitHandler}
-						type="submit"
-						className="btn btn-sm btn-primary"
-					>
-						{/* {hook ? b("update") : b("submit")} */}
-						{b("submit")}
-					</button>
-					{/* {hook ? (
+					<div className="pt-10 space-x-5 ">
+						<button
+							onClick={submitHandler}
+							type="submit"
+							className="btn btn-sm btn-primary"
+						>
+							{/* {hook ? b("update") : b("submit")} */}
+							{b("submit")}
+						</button>
+						{/* {hook ? (
 					<button
 						onClick={deleteHandler}
 						type="submit"
@@ -257,13 +258,14 @@ const OrganizationWebhook = () => {
 						{b("delete")}
 					</button>
 				) : null} */}
+					</div>
+				</form>
+				<div className="space-y-10">
+					{orgData?.webhooks?.length > 0 ? (
+						<div className="text-md font-medium tracking-wide">Active Hooks:</div>
+					) : null}
+					<ListWebHooks orgData={orgData} />
 				</div>
-			</form>
-			<div className="space-y-10">
-				{orgData?.webhooks?.length > 0 ? (
-					<div className="text-md font-medium tracking-wide">Active Hooks:</div>
-				) : null}
-				<ListWebHooks orgData={orgData} />
 			</div>
 		</main>
 	);

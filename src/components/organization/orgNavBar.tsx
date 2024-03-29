@@ -78,10 +78,7 @@ const AdminHamburgerMenu = ({ organization }) => {
 };
 
 const AdminNavMenu = ({ organization }) => {
-	const { callModal } = useModalStore();
-	const openModal = useOpenModal(organization);
 	const b = useTranslations("commonButtons");
-	const t = useTranslations();
 
 	return (
 		<div>
