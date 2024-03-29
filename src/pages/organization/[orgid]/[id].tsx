@@ -25,7 +25,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
-import { HeadSection } from "~/utils/head";
+import HeadSection from "~/components/shared/metaTags";
 
 type OrganizationId = {
 	id: string;
