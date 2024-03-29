@@ -21,20 +21,11 @@ import { InviteMemberByMail } from "~/components/networkByIdPage/inviteMemberbyM
 import { useTranslations } from "next-intl";
 import NetworkName from "~/components/networkByIdPage/networkName";
 import NetworkDescription from "~/components/networkByIdPage/networkDescription";
-import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
-
-const HeadSection = ({ title }: { title: string }) => (
-	<Head>
-		<title>{title}</title>
-		<link rel="icon" href="/favicon.ico" />
-		<meta property="og:title" content={title} key={title} />
-		<meta name="robots" content="noindex, nofollow" />
-	</Head>
-);
+import HeadSection from "~/components/shared/metaTags";
 
 type OrganizationId = {
 	id: string;
