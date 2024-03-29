@@ -12,6 +12,8 @@ import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import { useRouter } from "next/router";
 import TimeAgo from "react-timeago";
+import HeadSection from "~/components/shared/metaTags";
+import { globalSiteTitle } from "~/utils/global";
 
 // Enhanced version of the ListWebHooks component for a more elegant and stylish presentation of webhook data.
 
@@ -167,8 +169,12 @@ const OrganizationWebhook = () => {
 			toast.error("Error deleting webhook");
 		}
 	};
+
+	const pageTitle = `${globalSiteTitle} - Webhooks`;
+
 	return (
-		<div className="grid grid-cols-2 space-y-10 w-full mx-auto bg-base-200 p-5 rounded-lg gap-5">
+		<main className="grid grid-cols-2 space-y-10 w-full mx-auto bg-base-200 p-5 rounded-lg gap-5">
+			<HeadSection title={pageTitle} />
 			<div className="col-span-2">
 				<h1 className="text-2xl font-bold">Organization Webhooks</h1>
 				<h1 className="text-md">
@@ -259,7 +265,7 @@ const OrganizationWebhook = () => {
 				) : null}
 				<ListWebHooks orgData={orgData} />
 			</div>
-		</div>
+		</main>
 	);
 };
 
