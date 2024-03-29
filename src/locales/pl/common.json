@@ -83,7 +83,8 @@
 		"addedSuccessfully": "Dodano pomyślnie",
 		"deletedSuccessfully": "Usunięto pomyślnie",
 		"errorOccurred": "Wystąpił nieznany błąd",
-		"organizationDeleted": "Organizacja została pomyślnie usunięta"
+		"organizationDeleted": "Organizacja została pomyślnie usunięta",
+		"sentSuccessfully": "Wysłano pomyślnie"
 	},
 	"sidebar": {
 		"navigation": "Nawigacja",

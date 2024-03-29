@@ -1,10 +1,12 @@
 import { useRouter } from "next/router";
-import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import { type RoutesEntity } from "~/types/local/network";
 import { type ChangeEvent, useState } from "react";
-import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const initialRouteInput = {
 	target: "",
@@ -19,6 +21,10 @@ interface IProp {
 export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
@@ -37,28 +43,20 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateManageRoutes, isLoading: isUpdating } =
 		api.network.managedRoutes.useMutation({
-			onError: (e) => {
-				if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-					void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
-				} else {
-					void toast.error(e?.message);
-				}
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 		});
 
 	const deleteRoute = (route: RoutesEntity) => {
 		const _routes = [...network.routes];
 		const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
-		updateManageRoutes(
-			{
-				updateParams: { routes: [...newRouteArr] },
-				organizationId,
-				nwid: query.id as string,
-				central,
-			},
-			{ onSuccess: () => void refecthNetworkById() },
-		);
+		updateManageRoutes({
+			updateParams: { routes: [...newRouteArr] },
+			organizationId,
+			nwid: query.id as string,
+			central,
+		});
 	};
 	const routeHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setRouteInput({

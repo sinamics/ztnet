@@ -32,14 +32,14 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			refetch: [refetch],
+			actions: [refetch],
 			toastMessage: m("updatedSuccessfully"),
 		}),
 	});
 	const { mutate: deleteGroup } = api.admin.deleteUserGroup.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			refetch: [refetch],
+			actions: [refetch],
 			toastMessage: m("deletedSuccessfully"),
 		}),
 	});
@@ -158,7 +158,7 @@ const UserGroups = () => {
 
 	const { mutate: addGroup } = api.admin.addUserGroup.useMutation({
 		onError: handleApiError,
-		onSuccess: () => handleApiSuccess({ refetch: [refetch] }),
+		onSuccess: () => handleApiSuccess({ actions: [refetch] }),
 	});
 
 	return (

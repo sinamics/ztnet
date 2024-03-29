@@ -30,7 +30,7 @@ const UserRole = ({ user }: Iuser) => {
 
 	const { mutate: changeRole } = api.admin.changeRole.useMutation({
 		onSuccess: handleApiSuccess({
-			refetch: [refetchUsers, refetchUser],
+			actions: [refetchUsers, refetchUser],
 			toastMessage: t("users.users.toastMessages.roleChangeSuccess"),
 		}),
 		onError: handleApiError,

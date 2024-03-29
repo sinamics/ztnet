@@ -58,7 +58,7 @@ const OrganizationById = ({ user, orgIds }) => {
 
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ refetch: [refecthOrg] }),
+		onSuccess: handleApiSuccess({ actions: [refecthOrg] }),
 	});
 
 	useEffect(() => {

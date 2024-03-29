@@ -30,7 +30,7 @@ const UserRole = ({ user }: Iuser) => {
 	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			refetch: [refetchUser, refetchUsers],
+			actions: [refetchUser, refetchUsers],
 		}),
 	});
 

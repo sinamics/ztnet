@@ -37,7 +37,7 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 		api.admin.deleteUser.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({
-				refetch: [refetchUsers, closeModal],
+				actions: [refetchUsers, closeModal],
 				toastMessage: t("users.users.userOptionModal.toast.deleteUserSuccess"),
 			}),
 		});

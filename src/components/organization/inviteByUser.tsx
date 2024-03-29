@@ -18,6 +18,7 @@ type stateType = {
 const InviteByUsers = () => {
 	const t = useTranslations("organization");
 	const b = useTranslations("commonButtons");
+	const m = useTranslations("commonToast");
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -33,7 +34,7 @@ const InviteByUsers = () => {
 
 	const { mutate: addUser } = api.org.addUser.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({}),
+		onSuccess: handleApiSuccess({ toastMessage: m("addedSuccessfully") }),
 	});
 
 	const { data: allUsers } = api.org.getPlatformUsers.useQuery({ organizationId });

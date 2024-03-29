@@ -5,6 +5,10 @@ import cn from "classnames";
 import { useState } from "react";
 import { type IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -13,6 +17,9 @@ interface IProp {
 
 export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { query } = useRouter();
 	const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
@@ -30,19 +37,16 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	);
 
 	const { mutate: enableIpv4AutoAssign } = api.network.enableIpv4AutoAssign.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 	const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 
 	const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,21 +61,14 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				pool.ipRangeEnd !== poolToDelete?.ipRangeEnd,
 		);
 
-		advancedIpAssignment(
-			{
-				updateParams: {
-					ipAssignmentPools: newIpAssignmentPools,
-				},
-				organizationId,
-				nwid: query.id as string,
-				central,
+		advancedIpAssignment({
+			updateParams: {
+				ipAssignmentPools: newIpAssignmentPools,
 			},
-			{
-				onSuccess: () => {
-					void refecthNetworkById();
-				},
-			},
-		);
+			organizationId,
+			nwid: query.id as string,
+			central,
+		});
 	};
 
 	const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,7 +107,6 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 			},
 			{
 				onSuccess: () => {
-					void refecthNetworkById();
 					setIpRange({ rangeStart: "", rangeEnd: "" });
 				},
 			},
@@ -129,21 +125,14 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					checked={network?.v4AssignMode?.zt || false}
 					className="checkbox-primary checkbox checkbox-sm"
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-						enableIpv4AutoAssign(
-							{
-								nwid: query.id as string,
-								central,
-								organizationId,
-								updateParams: {
-									v4AssignMode: { zt: e.target.checked },
-								},
+						enableIpv4AutoAssign({
+							nwid: query.id as string,
+							central,
+							organizationId,
+							updateParams: {
+								v4AssignMode: { zt: e.target.checked },
 							},
-							{
-								onSuccess: () => {
-									void refecthNetworkById();
-								},
-							},
-						);
+						});
 					}}
 				/>
 			</div>
@@ -205,21 +194,14 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								<div
 									key={cidr}
 									onClick={() =>
-										easyIpAssignment(
-											{
-												updateParams: {
-													routes: [{ target: cidr, via: "" }],
-												},
-												organizationId,
-												nwid: query.id as string,
-												central,
+										easyIpAssignment({
+											updateParams: {
+												routes: [{ target: cidr, via: "" }],
 											},
-											{
-												onSuccess: () => {
-													void refecthNetworkById();
-												},
-											},
-										)
+											organizationId,
+											nwid: query.id as string,
+											central,
+										})
 									}
 									className={cn(
 										"badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",

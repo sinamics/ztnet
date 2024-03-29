@@ -83,7 +83,8 @@
 		"addedSuccessfully": "Added successfully",
 		"deletedSuccessfully": "Deleted successfully",
 		"errorOccurred": "An unknown error occurred",
-		"organizationDeleted": "Organization deleted successfully"
+		"organizationDeleted": "Organization deleted successfully",
+		"sentSuccessfully": "Sent successfully"
 	},
 	"sidebar": {
 		"navigation": "Home",
