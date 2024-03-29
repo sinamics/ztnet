@@ -41,7 +41,6 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 				showSubmitButtons={true}
 				rootFormClassName="space-y-3 pt-2 "
 				rootClassName="flex flex-col space-y-10"
-				labelClassName="text-gray-600"
 				size="sm"
 				fields={[
 					{
