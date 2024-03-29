@@ -107,14 +107,13 @@ const OrganizationWebhook = () => {
 	const [input, setInput] = useState(initialState);
 
 	// TODO make only one request instead of Orgbyid and AllOrgs
-	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
-	const { data: orgData, refetch: refecthOrg } = api.org.getOrgById.useQuery({
+	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
 
 	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation({
 		onSuccess: handleApiSuccess({
-			actions: [refecthOrg, refecthAllOrg],
+			actions: [refecthOrg],
 			toastMessage: m("addedSuccessfully"),
 		}),
 		onError: handleApiError,
@@ -232,24 +231,13 @@ const OrganizationWebhook = () => {
 							type="submit"
 							className="btn btn-sm btn-primary"
 						>
-							{/* {hook ? b("update") : b("submit")} */}
 							{b("submit")}
 						</button>
-						{/* {hook ? (
-					<button
-						onClick={deleteHandler}
-						type="submit"
-						className="btn btn-sm btn-error btn-outline"
-					>
-						{b("delete")}
-					</button>
-				) : null} */}
 					</div>
 				</form>
 				<div className="space-y-2">
-					{orgData?.webhooks?.length > 0 ? (
-						<div className="text-md font-medium tracking-wide">Active Hooks:</div>
-					) : null}
+					<div className="text-md font-medium tracking-wide">Active Hooks:</div>
+
 					<ListWebHooks organizationId={organizationId} />
 				</div>
 			</div>
