@@ -70,7 +70,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 						return inviteUserByMail(
 							{ ...params, email: (params.email as string)?.trim() },
 							{
-								onSuccess: handleApiSuccess,
+								onSuccess: handleApiSuccess({}),
 								onError: handleApiError,
 							},
 						);

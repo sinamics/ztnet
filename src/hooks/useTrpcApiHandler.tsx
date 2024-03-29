@@ -34,7 +34,7 @@ interface SuccessHandlerOptions {
 export const useTrpcApiSuccessHandler = () => {
 	const t = useTranslations("commonToast");
 
-	const handleSuccess = ({ refetch, toastMessage }: SuccessHandlerOptions) => {
+	const handleSuccess = ({ refetch = [], toastMessage }: SuccessHandlerOptions) => {
 		return () => {
 			// Display the custom toast message if provided, otherwise use the default
 			toast.success(toastMessage || t("addedSuccessfully"));
