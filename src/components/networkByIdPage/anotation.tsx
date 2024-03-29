@@ -4,7 +4,10 @@ import { api } from "~/utils/api";
 import { getRandomColor } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { toast } from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type IAnotationProps = {
 	name: string;
@@ -20,6 +23,10 @@ const initalState: IAnotationProps = {
 
 const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [input, setInput] = useState<IAnotationProps>(initalState);
 	const { refetch: refetchNetworkById } = api.network.getNetworkById.useQuery(
 		{
@@ -37,23 +44,6 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 				enabled: !!nwid,
 			},
 		);
-	const { mutate: removeAnotation } =
-		api.networkMember.removeMemberAnotations.useMutation({
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error(t("addMemberById.error.unknown"));
-				}
-			},
-		});
-
 	const { data: memberAnotationArray, refetch: refetchMemberAnotation } =
 		api.networkMember.getMemberAnotations.useQuery(
 			{
@@ -64,21 +54,19 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 				enabled: !!nodeid && !!nwid,
 			},
 		);
+	const { mutate: removeAnotation } =
+		api.networkMember.removeMemberAnotations.useMutation({
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				actions: [refetchMemberAnotation, refetchAnotation, refetchNetworkById],
+			}),
+		});
 
 	const { mutate: setAnotation } = api.network.addAnotation.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("addMemberById.error.unknown"));
-			}
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refetchMemberAnotation, refetchAnotation, refetchNetworkById],
+		}),
 	});
 
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,9 +87,6 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 				},
 				{
 					onSuccess: () => {
-						void refetchMemberAnotation();
-						void refetchAnotation();
-						void refetchNetworkById();
 						setInput({ name: "" });
 					},
 				},
@@ -185,20 +170,11 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 								stroke="currentColor"
 								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
 								onClick={() =>
-									removeAnotation(
-										{
-											organizationId,
-											nodeid,
-											notationId: anotation?.notationId,
-										},
-										{
-											onSuccess: () => {
-												void refetchMemberAnotation();
-												void refetchAnotation();
-												void refetchNetworkById();
-											},
-										},
-									)
+									removeAnotation({
+										organizationId,
+										nodeid,
+										notationId: anotation?.notationId,
+									})
 								}
 							>
 								<path

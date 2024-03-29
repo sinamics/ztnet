@@ -83,7 +83,8 @@
 		"addedSuccessfully": "Agregado con éxito",
 		"deletedSuccessfully": "Eliminado con éxito",
 		"errorOccurred": "Ocurrió un error desconocido",
-		"organizationDeleted": "Organización eliminada con éxito"
+		"organizationDeleted": "Organización eliminada con éxito",
+		"sentSuccessfully": "Enviado con éxito"
 	},
 	"sidebar": {
 		"navigation": "Inicio",

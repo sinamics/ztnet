@@ -2,11 +2,14 @@ import { useMemo } from "react";
 import { MemberOptionsModal } from "../../networkByIdPage/memberOptionsModal";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
-import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
 import { type ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -113,6 +116,10 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 	const b = useTranslations("commonButtons");
 	const c = useTranslations("commonTable");
 	const t = useTranslations();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { callModal } = useModalStore((state) => state);
 	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
@@ -125,10 +132,8 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 		);
 
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
-		onSuccess: () => void refetchNetworkById(),
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
 	});
 
 	const columnHelper = createColumnHelper<MemberEntity>();

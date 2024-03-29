@@ -6,8 +6,6 @@ import { OrganizationNetworkTable } from "~/components/organization/networkTable
 import { stringToColor } from "~/utils/randomColor";
 import { useModalStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
-import { ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
 import EditOrganizationUserModal from "~/components/organization/editUserModal";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
@@ -16,6 +14,10 @@ import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
 import cn from "classnames";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -27,6 +29,9 @@ const OrganizationById = ({ user, orgIds }) => {
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	useOrganizationWebsocket(orgIds);
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
@@ -35,18 +40,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	});
 
 	const { mutate: leaveOrg } = api.org.leave.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
+		onError: handleApiError,
 	});
 
 	const {
@@ -63,21 +57,8 @@ const OrganizationById = ({ user, orgIds }) => {
 	});
 
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			refecthOrg();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthOrg] }),
 	});
 
 	useEffect(() => {
@@ -156,10 +137,10 @@ const OrganizationById = ({ user, orgIds }) => {
 											key={user.id}
 											className={cn(
 												"py-2 px-3 hover:bg-gray-700 transition duration-150",
-												{ "cursor-pointer": meOrgRole.role === "ADMIN" },
+												{ "cursor-pointer": meOrgRole?.role === "ADMIN" },
 											)}
 											onClick={() => {
-												if (meOrgRole.role !== "ADMIN") return;
+												if (meOrgRole?.role !== "ADMIN") return;
 												callModal({
 													title: (
 														<p>

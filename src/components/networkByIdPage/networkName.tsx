@@ -11,6 +11,7 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import { type NetworkEntity } from "~/types/local/network";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -46,6 +47,9 @@ const updateCache = ({
 
 const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+
 	const client = useQueryClient();
 	const [state, setState] = useState({
 		editNetworkName: false,
@@ -78,9 +82,7 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 			};
 			updateCache({ client, data, input });
 		},
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
 	});
 	const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
 		e.preventDefault();

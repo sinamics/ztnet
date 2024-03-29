@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
 import { type ChangeEvent, useState } from "react";
-import toast from "react-hot-toast";
-import { type ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type User = {
 	memberid: string;
@@ -17,6 +19,9 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	const [user, setUser] = useState<User>({ memberid: "" });
 	const { query } = useRouter();
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
 		{
 			nwid: query.id as string,
@@ -26,20 +31,8 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	);
 
 	const { mutate: createUser } = api.networkMember.create.useMutation({
-		onSuccess: () => refecthNetworkById(),
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("addMemberById.error.unknown"));
-			}
-		},
+		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onError: handleApiError,
 	});
 
 	const inputHandler = (event: ChangeEvent<HTMLInputElement>) => {

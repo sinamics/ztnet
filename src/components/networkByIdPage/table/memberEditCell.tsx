@@ -9,7 +9,10 @@ import Input from "~/components/elements/input";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { type MemberEntity } from "~/types/local/member";
 import { toRfc4193Ip, sixPlane } from "~/utils/IPv6";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	nwid: string;
@@ -20,6 +23,9 @@ interface IProp {
 const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 	const c = useTranslations("commonTable");
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
@@ -33,55 +39,31 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 	const { data: me } = api.auth.me.useQuery();
 	const { mutate: updateMemberDatabaseOnly } =
 		api.networkMember.UpdateDatabaseOnly.useMutation({
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error(t("addMemberById.error.unknown"));
-				}
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				actions: [refetchNetworkById],
+				toastMessage: t("networkMembersTable.toastMessages.memberNameUpdated"),
+			}),
 		});
+
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/restrict-template-expressions
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("addMemberById.error.unknown"));
-			}
-		},
-		onSuccess: () => refetchNetworkById(),
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refetchNetworkById],
+		}),
 	});
 
 	const deleteIpAssignment = (ipAssignments: Array<string>, Ipv4: string, id: string) => {
 		const _ipv4 = [...ipAssignments];
 		const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
-		updateMember(
-			{
-				updateParams: { ipAssignments: [...newIpPool] },
-				memberId: id,
-				organizationId,
-				nwid,
-				central,
-			},
-			{
-				onSuccess: () => {
-					void refetchNetworkById();
-				},
-			},
-		);
+		updateMember({
+			updateParams: { ipAssignments: [...newIpPool] },
+			memberId: id,
+			organizationId,
+			nwid,
+			central,
+		});
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,23 +84,15 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 			const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
 				e.preventDefault();
-				updateMemberDatabaseOnly(
-					{
-						nwid,
-						id: original.id,
-						central,
-						organizationId,
-						updateParams: {
-							name: value as string,
-						},
+				updateMemberDatabaseOnly({
+					nwid,
+					id: original.id,
+					central,
+					organizationId,
+					updateParams: {
+						name: value as string,
 					},
-					{
-						onSuccess: () => {
-							void refetchNetworkById();
-							toast.success(t("networkMembersTable.toastMessages.memberNameUpdated"));
-						},
-					},
-				);
+				});
 
 				inputRef.current?.blur();
 				// updateMyData(index, id, value, original);
