@@ -86,10 +86,16 @@ const AdminNavMenu = ({ organization }) => {
 	return (
 		<div>
 			<div className="dropdown dropdown-end">
-				<div tabIndex={0} role="button" className="btn btn-ghost">
+				{/* <div tabIndex={0} role="button" className="btn btn-ghost">
 					<div className="rounded-full">{b("addWebhooks")}</div>
-				</div>
-				<ul
+				</div> */}
+				<Link
+					href={`/organization/${organization.id}/webhooks`}
+					className="btn btn-ghost text-md"
+				>
+					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+				</Link>
+				{/* <ul
 					tabIndex={0}
 					className="bg-base-300 menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow  rounded-box w-52"
 				>
@@ -125,26 +131,23 @@ const AdminNavMenu = ({ organization }) => {
 							</li>
 						);
 					})}
-				</ul>
+				</ul> */}
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
 					href={`/organization/${organization.id}/invite`}
-					tabIndex={0}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("inviteUser")}</div>
 				</Link>
 			</div>
 			<div className="dropdown dropdown-end">
-				<div
-					onClick={() => openModal("editMeta")}
-					tabIndex={0}
-					role="button"
-					className="btn btn-ghost"
+				<Link
+					href={`/organization/${organization.id}/meta`}
+					className="btn btn-ghost text-md"
 				>
-					<div className="rounded-full">{b("meta")}</div>
-				</div>
+					<div className="rounded-full uppercase">{b("meta")}</div>
+				</Link>
 			</div>
 		</div>
 	);
