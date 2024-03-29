@@ -8,7 +8,7 @@ import { ErrorData } from "~/types/errorHandling";
 type TRPCErrorLike = TRPCClientErrorLike<any> & { data?: ErrorData };
 
 export const useTrpcApiErrorHandler = () => {
-	const t = useTranslations("admin");
+	const t = useTranslations("commonToast");
 
 	const handleError = (error: TRPCErrorLike) => {
 		if ((error.data as ErrorData)?.zodError) {
@@ -19,18 +19,31 @@ export const useTrpcApiErrorHandler = () => {
 		} else if (error.message) {
 			toast.error(error.message);
 		} else {
-			toast.error(t("users.users.toastMessages.errorOccurred"));
+			toast.error(t("errorOccurred"));
 		}
 	};
 
 	return handleError;
 };
 
+interface SuccessHandlerOptions {
+	refetch: (() => void)[];
+	toastMessage?: string;
+}
+
 export const useTrpcApiSuccessHandler = () => {
 	const t = useTranslations("commonToast");
 
-	const handleSuccess = () => {
-		toast.success(t("addedSuccessfully"));
+	const handleSuccess = ({ refetch, toastMessage }: SuccessHandlerOptions) => {
+		return () => {
+			// Display the custom toast message if provided, otherwise use the default
+			toast.success(toastMessage || t("addedSuccessfully"));
+
+			// Refetch all provided queries using for...of loop
+			for (const refetchFunction of refetch) {
+				void refetchFunction();
+			}
+		};
 	};
 
 	return handleSuccess;
