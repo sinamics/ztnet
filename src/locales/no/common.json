@@ -79,7 +79,7 @@
 		}
 	},
 	"commonToast": {
-		"updatedSuccessfully": "Oppdatert vellykket",
+		"updatedSuccessfully": "Oppdatering vellykket",
 		"addedSuccessfully": "Lagt til vellykket",
 		"deletedSuccessfully": "Slettet vellykket",
 		"errorOccurred": "En ukjent feil oppstod",

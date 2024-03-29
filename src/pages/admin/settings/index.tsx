@@ -1,14 +1,13 @@
 import { ReactElement } from "react";
-import toast from "react-hot-toast";
 import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
-import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 const Settings = () => {
 	const t = useTranslations("admin");
-
+	const handleApiError = useTrpcApiErrorHandler();
 	const {
 		data: options,
 		isLoading: loadingOptions,
@@ -19,19 +18,7 @@ const Settings = () => {
 		onSuccess: () => {
 			refetchOptions();
 		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError
-					.fieldErrors as ZodErrorFieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("Unknown Error");
-			}
-		},
+		onError: handleApiError,
 	});
 
 	if (loadingOptions) {
