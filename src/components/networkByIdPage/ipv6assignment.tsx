@@ -2,6 +2,10 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import React from "react";
 import toast from "react-hot-toast";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
 
 interface IProp {
@@ -12,23 +16,25 @@ interface IProp {
 export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { query } = useRouter();
-	const {
-		data: networkByIdQuery,
-		// isLoading,
-		refetch: refecthNetworkById,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central,
-		},
-		{ enabled: !!query.id },
-	);
+	const { data: networkByIdQuery, refetch: refecthNetworkById } =
+		api.network.getNetworkById.useQuery(
+			{
+				nwid: query.id as string,
+				central,
+			},
+			{ enabled: !!query.id },
+		);
 
 	const { mutate: setIpv6 } = api.network.ipv6.useMutation({
-		onSuccess: () => {
-			refecthNetworkById();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refecthNetworkById],
+			toastMessage: t("networkIpAssignments.ipv6.rfc4193Updated"),
+		}),
 	});
 	const { network } = networkByIdQuery || {};
 	return (
@@ -42,21 +48,14 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 					checked={network?.v6AssignMode?.["rfc4193"]}
 					className="checkbox checkbox-primary checkbox-sm"
 					onChange={(e) => {
-						setIpv6(
-							{
-								nwid: query.id as string,
-								central,
-								organizationId,
-								v6AssignMode: {
-									rfc4193: e.target.checked,
-								},
+						setIpv6({
+							nwid: query.id as string,
+							central,
+							organizationId,
+							v6AssignMode: {
+								rfc4193: e.target.checked,
 							},
-							{
-								onSuccess: () => {
-									void toast.success(t("networkIpAssignments.ipv6.rfc4193Updated"));
-								},
-							},
-						);
+						});
 					}}
 				/>
 			</label>

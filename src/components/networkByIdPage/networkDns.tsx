@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
-import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -12,6 +14,10 @@ interface IProp {
 }
 export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [state, setState] = useState({
 		address: "",
 		servers: new Set<string>(),
@@ -32,13 +38,8 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 	);
 
 	const { mutate: updateNetwork } = api.network.dns.useMutation({
-		onError: (e) => {
-			if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-				void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
-			} else {
-				void toast.error(e?.message);
-			}
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
 	});
 
 	useEffect(() => {
@@ -84,8 +85,6 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 			},
 			{
 				onSuccess: () => {
-					void refetchNetwork();
-					toast.success("DNS updated successfully");
 					setState((prev) => ({
 						...prev,
 						servers: new Set(servers),

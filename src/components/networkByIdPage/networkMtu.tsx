@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
 import { useTranslations } from "use-intl";
-import { handleErrors } from "~/utils/errors";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -15,6 +17,9 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	const [state, setState] = useState({
 		mtu: "",
 	});
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { query } = useRouter();
 	const {
@@ -30,9 +35,8 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	);
 
 	const { mutate: updateNetwork } = api.network.mtu.useMutation({
-		onError: (e) => {
-			handleErrors(e);
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
 	});
 
 	useEffect(() => {
@@ -60,22 +64,14 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	const submitHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		updateNetwork(
-			{
-				nwid: network.nwid,
-				central,
-				organizationId,
-				updateParams: {
-					mtu: parseInt(state.mtu),
-				},
+		updateNetwork({
+			nwid: network.nwid,
+			central,
+			organizationId,
+			updateParams: {
+				mtu: parseInt(state.mtu),
 			},
-			{
-				onSuccess: () => {
-					toast.success("MTU updated successfully");
-					void refetchNetwork();
-				},
-			},
-		);
+		});
 	};
 
 	const { network } = networkByIdQuery || {};

@@ -14,7 +14,10 @@ import {
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
 import { useModalStore } from "~/utils/store";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface ModalContentProps {
 	nwid: string;
@@ -33,41 +36,16 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 }) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { closeModal } = useModalStore((state) => state);
 	const [state, setState] = useState(initialIpState);
 	const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 
 	const { query } = useRouter();
-	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: () => void refetchNetworkById(),
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("Unknown error");
-			}
-		},
-	});
-	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => void refetchNetworkById(),
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("Unknown error");
-			}
-		},
-	});
+
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -76,6 +54,17 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			{ enabled: !!query.id },
 		);
+
+	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+		onError: handleApiError,
+	});
+
+	const { mutate: stashUser } = api.networkMember.stash.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchNetworkById, closeModal] }),
+		onError: handleApiError,
+	});
+
 	const { data: memberById, refetch: refetchMemberById } =
 		api.networkMember.getMemberById.useQuery(
 			{
@@ -99,31 +88,21 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 	const { mutate: updateMember, isLoading: updateMemberLoading } =
 		api.networkMember.Update.useMutation({
-			onError: (e) => {
-				void toast.error(e?.message);
-			},
-			onSuccess: () => refetchNetworkById(),
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({ actions: [refetchNetworkById, refetchMemberById] }),
 		});
+
 	const { mutate: updateTags } = api.networkMember.Tags.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
-		onSuccess: () => refetchNetworkById(),
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
 	});
+
 	const stashMember = (id: string) => {
-		stashUser(
-			{
-				organizationId,
-				nwid,
-				id,
-			},
-			{
-				onSuccess: () => {
-					closeModal();
-					void refetchNetworkById();
-				},
-			},
-		);
+		stashUser({
+			organizationId,
+			nwid,
+			id,
+		});
 	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,24 +113,18 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			isValid: subnetMatch,
 		}));
 	};
+
 	const deleteIpAssignment = (ipAssignments: Array<string>, Ipv4: string, id: string) => {
 		const _ipv4 = [...ipAssignments];
 		const newIpPool = _ipv4.filter((r) => r !== Ipv4);
 
-		updateMember(
-			{
-				updateParams: { ipAssignments: [...newIpPool] },
-				organizationId,
-				memberId: id,
-				central,
-				nwid,
-			},
-			{
-				onSuccess: () => {
-					void refetchNetworkById();
-				},
-			},
-		);
+		updateMember({
+			updateParams: { ipAssignments: [...newIpPool] },
+			organizationId,
+			memberId: id,
+			central,
+			nwid,
+		});
 	};
 	const handleIpSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -195,7 +168,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			},
 			{
 				onSuccess: () => {
-					void refetchNetworkById();
 					setState(initialIpState);
 				},
 			},
@@ -222,22 +194,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			const capabilities = Array.from(capabilitiesSet);
 
 			// Update the state
-			updateMember(
-				{
-					updateParams: {
-						capabilities,
-					},
-					organizationId,
-					memberId,
-					central,
-					nwid,
+			updateMember({
+				updateParams: {
+					capabilities,
 				},
-				{
-					onSuccess: () => {
-						void refetchMemberById();
-					},
-				},
-			);
+				organizationId,
+				memberId,
+				central,
+				nwid,
+			});
 		};
 
 		const isCapabilitiesArray = (
@@ -299,22 +264,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			// Convert back to the array of arrays format
 			const tags = Array.from(tagMap.entries());
 
-			updateTags(
-				{
-					updateParams: {
-						tags,
-					},
-					organizationId,
-					memberId,
-					central,
-					nwid,
+			updateTags({
+				updateParams: {
+					tags,
 				},
-				{
-					onSuccess: () => {
-						void refetchMemberById();
-					},
-				},
-			);
+				organizationId,
+				memberId,
+				central,
+				nwid,
+			});
 		};
 
 		if (!tagsByName || Object.keys(tagsByName).length === 0) {
@@ -465,22 +423,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						checked={memberById?.activeBridge || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
-							updateMember(
-								{
-									updateParams: {
-										activeBridge: e.target.checked,
-									},
-									organizationId,
-									memberId,
-									central,
-									nwid,
+							updateMember({
+								updateParams: {
+									activeBridge: e.target.checked,
 								},
-								{
-									onSuccess: () => {
-										void refetchMemberById();
-									},
-								},
-							);
+								organizationId,
+								memberId,
+								central,
+								nwid,
+							});
 						}}
 					/>
 				</div>
@@ -498,22 +449,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						checked={memberById?.noAutoAssignIps || false}
 						className="checkbox-primary checkbox checkbox-sm justify-self-end"
 						onChange={(e) => {
-							updateMember(
-								{
-									updateParams: {
-										noAutoAssignIps: e.target.checked,
-									},
-									organizationId,
-									memberId,
-									central,
-									nwid,
+							updateMember({
+								updateParams: {
+									noAutoAssignIps: e.target.checked,
 								},
-								{
-									onSuccess: () => {
-										void refetchMemberById();
-									},
-								},
-							);
+								organizationId,
+								memberId,
+								central,
+								nwid,
+							});
 						}}
 					/>
 				</div>

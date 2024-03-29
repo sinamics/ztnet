@@ -1,13 +1,17 @@
 import { ReactElement } from "react";
-import toast from "react-hot-toast";
 import EditableField from "~/components/elements/inputField";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
-import { ErrorData, ZodErrorFieldErrors } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Settings = () => {
 	const t = useTranslations("admin");
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: options,
@@ -16,22 +20,8 @@ const Settings = () => {
 	} = api.admin.getAllOptions.useQuery();
 
 	const { mutate: setWelcomeMessage } = api.admin.updateGlobalOptions.useMutation({
-		onSuccess: () => {
-			refetchOptions();
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError
-					.fieldErrors as ZodErrorFieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("Unknown Error");
-			}
-		},
+		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
+		onError: handleApiError,
 	});
 
 	if (loadingOptions) {
