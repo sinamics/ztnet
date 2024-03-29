@@ -33,7 +33,7 @@ const InviteByUsers = () => {
 
 	const { mutate: addUser } = api.org.addUser.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess,
+		onSuccess: handleApiSuccess({}),
 	});
 
 	const { data: allUsers } = api.org.getPlatformUsers.useQuery({ organizationId });
