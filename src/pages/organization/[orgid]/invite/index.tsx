@@ -9,6 +9,8 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
 import cn from "classnames";
+import { globalSiteTitle } from "~/utils/global";
+import HeadSection from "~/components/shared/metaTags";
 
 const ExpiryCountdown = ({ date, onExpire }) => {
 	const b = useTranslations("commonButtons");
@@ -49,6 +51,7 @@ const InviteCard = ({ invite, organizationId }) => {
 	const { refetch: refetchInvites } = api.org.getInvites.useQuery({
 		organizationId,
 	});
+
 	const { mutate: resendInvite, isLoading: resendLoading } =
 		api.org.resendInvite.useMutation({
 			onSuccess: () => {
@@ -69,6 +72,7 @@ const InviteCard = ({ invite, organizationId }) => {
 	}, [invite.resendable]);
 
 	const resendTimeLimit = new Date(new Date(invite.mailSentAt).getTime() + 60000);
+	const pageTitle = `${globalSiteTitle} - Invitations`;
 	return (
 		<div
 			className={cn(
@@ -76,6 +80,7 @@ const InviteCard = ({ invite, organizationId }) => {
 				{ "bg-red-500/30": invite.hasExpired },
 			)}
 		>
+			<HeadSection title={pageTitle} />
 			<div className="flex justify-between space-x-2">
 				<div>
 					<h3 className="text-sm font-semibold">{invite.email}</h3>
