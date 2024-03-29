@@ -1,15 +1,18 @@
 import { User } from "@prisma/client";
-// import { useTranslations } from "next-intl";
 import React from "react";
-import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
-// import { useModalStore } from "~/utils/store";
 
 interface Iuser {
 	user: Partial<User>;
 }
 const UserRole = ({ user }: Iuser) => {
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	// const t = useTranslations("admin");
 	const { data: usergroups } = api.admin.getUserGroups.useQuery();
 	// will update the users table as it uses key "getUsers"
@@ -25,24 +28,10 @@ const UserRole = ({ user }: Iuser) => {
 	});
 
 	const { mutate: assignUserGroup } = api.admin.assignUserGroup.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Group added successfully");
-
-			refetchUser();
-			refetchUsers();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			refetch: [refetchUser, refetchUsers],
+		}),
 	});
 
 	return (

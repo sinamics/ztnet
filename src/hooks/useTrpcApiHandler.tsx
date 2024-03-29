@@ -27,7 +27,7 @@ export const useTrpcApiErrorHandler = () => {
 };
 
 interface SuccessHandlerOptions {
-	refetch: (() => void)[];
+	refetch?: (() => void)[];
 	toastMessage?: string;
 }
 

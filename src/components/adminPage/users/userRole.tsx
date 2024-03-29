@@ -1,8 +1,10 @@
 import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React from "react";
-import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
 
 interface Iuser {
@@ -10,6 +12,10 @@ interface Iuser {
 }
 const UserRole = ({ user }: Iuser) => {
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	// will update the users table as it uses key "getUsers"
 	// !TODO should rework to update local cache instead.. but this works for now
 	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
@@ -23,23 +29,11 @@ const UserRole = ({ user }: Iuser) => {
 	});
 
 	const { mutate: changeRole } = api.admin.changeRole.useMutation({
-		onSuccess: () => {
-			void refetchUsers();
-			void refetchUser();
-			toast.success(t("users.users.toastMessages.roleChangeSuccess"));
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("users.users.toastMessages.errorOccurred"));
-			}
-		},
+		onSuccess: handleApiSuccess({
+			refetch: [refetchUsers, refetchUser],
+			toastMessage: t("users.users.toastMessages.roleChangeSuccess"),
+		}),
+		onError: handleApiError,
 	});
 	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, id: string) => {
 		changeRole({

@@ -2,10 +2,13 @@ import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React, { ForwardedRef, forwardRef, MouseEvent } from "react";
 import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iuser {
 	user: Partial<User>;
@@ -35,6 +38,10 @@ const DateButton = forwardRef<HTMLButtonElement, DateButtonProps>(
 
 const UserIsActive = ({ user }: Iuser) => {
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	// Updates this modal as it uses key "getUser"
 	// !TODO should rework to update local cache instead.. but this works for now
 	const { refetch: refetchUser } = api.admin.getUser.useQuery({
@@ -45,22 +52,8 @@ const UserIsActive = ({ user }: Iuser) => {
 	});
 
 	const { mutate: updateUser } = api.admin.updateUser.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			refetchUser();
-			refetchUsers();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ refetch: [refetchUser, refetchUsers] }),
 	});
 
 	return (

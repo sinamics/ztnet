@@ -1,12 +1,14 @@
 import React from "react";
 import InputFields from "~/components/elements/inputField";
-import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { UserGroup } from "@prisma/client";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type UserGroupWithCount = UserGroup & {
 	_count: {
@@ -20,46 +22,26 @@ type GroupLabelProps = {
 const GroupLabel = ({ groups }: GroupLabelProps) => {
 	if (!Array.isArray(groups) || !groups) return null;
 	const t = useTranslations("admin");
+	const m = useTranslations("commonToast");
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch } = api.admin.getUserGroups.useQuery();
 	const { callModal } = useModalStore((state) => state);
+
 	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Group updated successfully");
-			refetch();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			refetch: [refetch],
+			toastMessage: m("updatedSuccessfully"),
+		}),
 	});
 	const { mutate: deleteGroup } = api.admin.deleteUserGroup.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Group deleted successfully");
-			refetch();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			refetch: [refetch],
+			toastMessage: m("deletedSuccessfully"),
+		}),
 	});
 	return (
 		<div className="flex flex-wrap gap-3 text-center">
@@ -169,26 +151,14 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 };
 const UserGroups = () => {
 	const t = useTranslations("admin");
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { data: usergroups, refetch } = api.admin.getUserGroups.useQuery();
 
 	const { mutate: addGroup } = api.admin.addUserGroup.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Group added successfully");
-			refetch();
-		},
+		onError: handleApiError,
+		onSuccess: () => handleApiSuccess({ refetch: [refetch] }),
 	});
 
 	return (
