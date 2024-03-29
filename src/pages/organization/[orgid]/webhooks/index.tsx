@@ -14,17 +14,23 @@ import { useRouter } from "next/router";
 import TimeAgo from "react-timeago";
 import HeadSection from "~/components/shared/metaTags";
 import { globalSiteTitle } from "~/utils/global";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 // Enhanced version of the ListWebHooks component for a more elegant and stylish presentation of webhook data.
 
 const ListWebHooks = ({ orgData }) => {
+	const b = useTranslations("commonButtons");
+	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation({
-		// onSuccess: () => {
-		// 	toast.success("Webhook deleted successfully");
-		// 	closeModal();
-		// 	refecthOrg();
-		// 	refecthAllOrg();
-		// },
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [] }),
 	});
 
 	return (
@@ -57,30 +63,20 @@ const ListWebHooks = ({ orgData }) => {
 							{(hook.eventTypes as string[])?.join(" - ")}
 						</div>
 					</div>
-					<button
-						onClick={() => {
-							deleteWebhook(
-								{
-									organizationId: organizationId,
-									webhookId: input.webhookId,
-								},
-								{
-									onSuccess: () => {
-										closeModal();
-										refecthOrg();
-										refecthAllOrg();
-									},
-									onError: (error) => {
-										handleErrors(error);
-									},
-								},
-							);
-						}}
-						type="submit"
-						className="btn btn-sm btn-error btn-outline"
-					>
-						{b("delete")}
-					</button>
+					<div className="flex justify-end">
+						<button
+							onClick={() =>
+								deleteWebhook({
+									organizationId: hook.organizationId,
+									webhookId: hook.id,
+								})
+							}
+							type="submit"
+							className="btn btn-sm btn-error btn-outline"
+						>
+							{b("delete")}
+						</button>
+					</div>
 				</div>
 			))}
 		</div>
