@@ -15,7 +15,7 @@ const AdminHamburgerMenu = ({ organization }) => {
 		>
 			<li>
 				<Link
-					href={`/organization/${organization.id}/meta`}
+					href={`/organization/${organization?.id}/meta`}
 					className="justify-between cursor-pointer uppercase"
 				>
 					<div className="rounded-full uppercase">{b("meta")}</div>
@@ -23,7 +23,7 @@ const AdminHamburgerMenu = ({ organization }) => {
 			</li>
 			<li>
 				<Link
-					href={`/organization/${organization.id}/webhooks`}
+					href={`/organization/${organization?.id}/webhooks`}
 					className="justify-between cursor-pointer uppercase"
 				>
 					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
@@ -48,7 +48,7 @@ const AdminNavMenu = ({ organization }) => {
 		<div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization.id}/webhooks`}
+					href={`/organization/${organization?.id}/webhooks`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
@@ -56,7 +56,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization.id}/invite`}
+					href={`/organization/${organization?.id}/invite`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("inviteUser")}</div>
@@ -64,7 +64,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization.id}/meta`}
+					href={`/organization/${organization?.id}/meta`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("meta")}</div>
