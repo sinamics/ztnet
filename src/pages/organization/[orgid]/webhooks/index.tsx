@@ -1,11 +1,9 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
-import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { Webhook } from "@prisma/client";
 import { HookType } from "~/types/webhooks";
-import { handleErrors } from "~/utils/errors";
 import Input from "~/components/elements/input";
 import MultiSelectDropdown from "~/components/elements/multiSelect";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
@@ -19,18 +17,23 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 
-// Enhanced version of the ListWebHooks component for a more elegant and stylish presentation of webhook data.
-
-const ListWebHooks = ({ orgData }) => {
+const ListWebHooks = ({ organizationId }) => {
 	const b = useTranslations("commonButtons");
-	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+	const m = useTranslations("commonToast");
+
+	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
+		organizationId,
+	});
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [] }),
+		onSuccess: handleApiSuccess({
+			actions: [refecthOrgById],
+			toastMessage: m("deletedSuccessfully"),
+		}),
 	});
 
 	return (
@@ -83,56 +86,39 @@ const ListWebHooks = ({ orgData }) => {
 	);
 };
 
+const initialState = {
+	webhookId: "",
+	webhookUrl: "",
+	webhookDescription: "",
+	webhookName: "",
+	hookType: [],
+};
 const OrganizationWebhook = () => {
 	const b = useTranslations("commonButtons");
+	const m = useTranslations("commonToast");
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
-	const [input, setInput] = useState({
-		webhookId: "",
-		webhookUrl: "",
-		webhookDescription: "",
-		webhookName: "",
-		hookType: [],
-	});
+	const [input, setInput] = useState(initialState);
 
 	// TODO make only one request instead of Orgbyid and AllOrgs
-	const { closeModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
 	const { data: orgData, refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
 
 	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation({
-		onSuccess: () => {
-			// toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
-			closeModal();
-			refecthOrg();
-			refecthAllOrg();
-		},
+		onSuccess: handleApiSuccess({
+			actions: [refecthOrg, refecthAllOrg],
+			toastMessage: m("addedSuccessfully"),
+		}),
+		onError: handleApiError,
 	});
-
-	const { mutate: deleteWebhook } = api.org.deleteOrgWebhooks.useMutation({
-		onSuccess: () => {
-			toast.success("Webhook deleted successfully");
-			closeModal();
-			refecthOrg();
-			refecthAllOrg();
-		},
-	});
-
-	// useEffect(() => {
-	// 	if (!hook) return;
-	// 	setInput({
-	// 		webhookId: hook.id,
-	// 		webhookUrl: hook.url,
-	// 		webhookName: hook.name,
-	// 		webhookDescription: "",
-	// 		hookType: hook.eventTypes as string[],
-	// 	});
-	// }, [hook]);
 
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setInput({
@@ -161,41 +147,12 @@ const OrganizationWebhook = () => {
 				},
 				{
 					onSuccess: () => {
-						// toast.success(`Webhook ${hook ? "updated" : "added"} successfully`);
-						closeModal();
-						refecthOrg();
-						refecthAllOrg();
-					},
-					onError: (error) => {
-						handleErrors(error);
+						setInput(initialState);
 					},
 				},
 			);
 		} catch (_err) {
 			toast.error("Error adding webhook");
-		}
-	};
-	const deleteHandler = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-		e.preventDefault();
-		try {
-			deleteWebhook(
-				{
-					organizationId: organizationId,
-					webhookId: input.webhookId,
-				},
-				{
-					onSuccess: () => {
-						closeModal();
-						refecthOrg();
-						refecthAllOrg();
-					},
-					onError: (error) => {
-						handleErrors(error);
-					},
-				},
-			);
-		} catch (_err) {
-			toast.error("Error deleting webhook");
 		}
 	};
 
@@ -293,7 +250,7 @@ const OrganizationWebhook = () => {
 					{orgData?.webhooks?.length > 0 ? (
 						<div className="text-md font-medium tracking-wide">Active Hooks:</div>
 					) : null}
-					<ListWebHooks orgData={orgData} />
+					<ListWebHooks organizationId={organizationId} />
 				</div>
 			</div>
 		</main>
