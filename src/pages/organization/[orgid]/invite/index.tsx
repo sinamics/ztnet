@@ -9,8 +9,8 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
 import cn from "classnames";
-import { HeadSection } from "~/utils/head";
 import { globalSiteTitle } from "~/utils/global";
+import HeadSection from "~/components/shared/metaTags";
 
 const ExpiryCountdown = ({ date, onExpire }) => {
 	const b = useTranslations("commonButtons");
