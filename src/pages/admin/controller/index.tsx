@@ -32,7 +32,7 @@ const Controller = () => {
 		api.admin.unlinkedNetwork.useQuery();
 	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
-		onSuccess: handleApiSuccess({ refetch: [refetchMe, refetchStats] }),
+		onSuccess: handleApiSuccess({ actions: [refetchMe, refetchStats] }),
 		onError: handleApiError,
 	});
 

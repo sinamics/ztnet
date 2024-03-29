@@ -3,8 +3,10 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { api } from "~/utils/api";
-import { ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iprops {
 	networkId: string;
@@ -13,6 +15,10 @@ interface Iprops {
 const NetworkOptionsModal = ({ networkId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [action, setAction] = useState({ deleteNetwork: false, moveNetwork: false });
 	const [input, setInput] = useState({ organizationId: null });
 	const { closeModal } = useModalStore((state) => state);
@@ -21,41 +27,13 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 		central: false,
 	});
 	const { mutate: transferNetwork } = api.org.transferNetworkOwnership.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			refetchNetwork();
-			closeModal();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refetchNetwork, closeModal] }),
 	});
 	const { mutate: deleteNetwork, isLoading: loadingDeleteNetwork } =
 		api.network.deleteNetwork.useMutation({
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-					for (const field in fieldErrors) {
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error("An unknown error occurred");
-				}
-			},
-			onSuccess: () => {
-				refetchNetwork();
-				closeModal();
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({ actions: [refetchNetwork, closeModal] }),
 		});
 
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

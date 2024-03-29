@@ -42,7 +42,7 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ refetch: [refetch] }),
+		onSuccess: handleApiSuccess({ actions: [refetch] }),
 	});
 
 	const addNewNetwork = () => {

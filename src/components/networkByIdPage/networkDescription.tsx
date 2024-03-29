@@ -8,6 +8,7 @@ import { type CentralNetwork } from "~/types/central/network";
 import { type NetworkEntity } from "~/types/local/network";
 import cn from "classnames";
 import toast from "react-hot-toast";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -44,6 +45,9 @@ const updateCache = ({
 };
 const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
+
+	const handleApiError = useTrpcApiErrorHandler();
+
 	const textareaRef = React.useRef<HTMLTextAreaElement>(null); // <-- Create a ref for the textarea
 	const [state, setState] = useState({
 		toggleDescriptionInput: false,
@@ -102,6 +106,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 			updateCache({ client, data, input });
 			toast.success("Description updated successfully");
 		},
+		onError: handleApiError,
 	});
 
 	const toggleDescriptionInput = () => {

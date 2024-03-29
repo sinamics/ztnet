@@ -48,7 +48,7 @@ export const UnlinkedNetwork = () => {
 	} = api.admin.unlinkedNetwork.useQuery();
 
 	const { mutate: assignNetworkToUser } = api.admin.assignNetworkToUser.useMutation({
-		onSuccess: handleApiSuccess({ refetch: [refetchNetworks] }),
+		onSuccess: handleApiSuccess({ actions: [refetchNetworks] }),
 		onError: handleApiError,
 	});
 

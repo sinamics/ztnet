@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-query";
 import { type NetworkEntity } from "~/types/local/network";
 import { type CentralNetwork } from "~/types/central/network";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -45,6 +46,9 @@ const updateCache = ({
 
 export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
+
+	const handleApiError = useTrpcApiErrorHandler();
+
 	const { query } = useRouter();
 	const client = useQueryClient();
 	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
@@ -55,9 +59,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 		{ enabled: !!query.id },
 	);
 	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
 	});
 	const privateHandler = (privateNetwork: boolean) => {
 		privatePublicNetwork(

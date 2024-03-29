@@ -1,16 +1,33 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 const DeleteOrganizationModal = ({ org }) => {
 	const b = useTranslations("commonButtons");
 	const m = useTranslations("commonToast");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [input, setInput] = useState({ orgNameDelete: "" });
+
 	const { closeModal } = useModalStore((state) => state);
-	const { mutate: deleteOrg } = api.org.deleteOrg.useMutation();
+
 	const { refetch: refetchOrg } = api.org.getAllOrg.useQuery();
+
+	const { mutate: deleteOrg } = api.org.deleteOrg.useMutation({
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refetchOrg, closeModal],
+			toastMessage: m("organizationDeleted"),
+		}),
+	});
+
 	const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInput({
 			...input,
@@ -38,18 +55,9 @@ const DeleteOrganizationModal = ({ org }) => {
 			<div>
 				<button
 					onClick={() =>
-						deleteOrg(
-							{
-								organizationId: org.id,
-							},
-							{
-								onSuccess: () => {
-									toast.success(m("organizationDeleted"));
-									refetchOrg();
-									closeModal();
-								},
-							},
-						)
+						deleteOrg({
+							organizationId: org.id,
+						})
 					}
 					disabled={input.orgNameDelete !== org.orgName}
 					className="btn btn-sm btn-error"

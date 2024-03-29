@@ -9,6 +9,7 @@ import { EditorView } from "@codemirror/view";
 // import { useDebounce } from "usehooks-ts";
 import { type CustomBackendError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
+import { useTrpcApiSuccessHandler } from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -17,6 +18,8 @@ interface IProp {
 const initialErrorState = { error: null, line: null };
 export const CentralFlowRules = ({ central = true }: IProp) => {
 	const { query } = useRouter();
+
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: defaultFlowRoute,
@@ -40,10 +43,7 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 	// const debouncedFlowRoute = useDebounce(flowRoute, 500);
 
 	const { mutate: updateFlowRoute } = api.network.setFlowRule.useMutation({
-		onSuccess: () => {
-			void refetchNetworkById();
-			void toast.success("Flow rules updated successfully");
-		},
+		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
 		onError: ({ message }) => {
 			try {
 				const err = JSON.parse(message) as CustomBackendError;

@@ -83,7 +83,8 @@
 		"addedSuccessfully": "成功添加",
 		"deletedSuccessfully": "成功刪除",
 		"errorOccurred": "發生未知錯誤",
-		"organizationDeleted": "組織成功刪除"
+		"organizationDeleted": "組織成功刪除",
+		"sentSuccessfully": "成功發送"
 	},
 	"sidebar": {
 		"navigation": "首頁",

@@ -103,7 +103,7 @@ const MailUserInviteTemplate = () => {
 			},
 			{
 				onSuccess: handleApiSuccess({
-					refetch: [refetchMailTemplates],
+					actions: [refetchMailTemplates],
 					toastMessage: t("mail.templates.successToastTemplateSaved"),
 				}),
 			},

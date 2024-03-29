@@ -1,9 +1,11 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
-import { toast } from "react-hot-toast";
-import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "use-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -12,6 +14,10 @@ interface IProp {
 
 export const NetworkMulticast = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [state, setState] = useState({
 		multicastLimit: "",
 		enableBroadcast: false,
@@ -31,13 +37,11 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 	);
 
 	const { mutate: updateNetwork } = api.network.multiCast.useMutation({
-		onError: (e) => {
-			if ((e?.data as ErrorData)?.zodError?.fieldErrors) {
-				void toast.error((e?.data as ErrorData)?.zodError?.fieldErrors?.updateParams);
-			} else {
-				void toast.error(e?.message);
-			}
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refetchNetwork],
+			toastMessage: t("networkMulticast.MulticastUpdatedSuccessfully"),
+		}),
 	});
 
 	useEffect(() => {
@@ -69,22 +73,14 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 	const submitHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		updateNetwork(
-			{
-				nwid: network.nwid,
-				central,
-				organizationId,
-				updateParams: {
-					multicastLimit: parseInt(state.multicastLimit),
-				},
+		updateNetwork({
+			nwid: network.nwid,
+			central,
+			organizationId,
+			updateParams: {
+				multicastLimit: parseInt(state.multicastLimit),
 			},
-			{
-				onSuccess: () => {
-					toast.success(t("networkMulticast.MulticastUpdatedSuccessfully"));
-					void refetchNetwork();
-				},
-			},
-		);
+		});
 	};
 
 	const { network } = networkByIdQuery || {};
@@ -148,22 +144,14 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 								checked={state.enableBroadcast || false}
 								className="checkbox-primary checkbox checkbox-sm"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									updateNetwork(
-										{
-											nwid: network.nwid,
-											central,
-											organizationId,
-											updateParams: {
-												enableBroadcast: e.target.checked,
-											},
+									updateNetwork({
+										nwid: network.nwid,
+										central,
+										organizationId,
+										updateParams: {
+											enableBroadcast: e.target.checked,
 										},
-										{
-											onSuccess: () => {
-												toast.success(t("networkMulticast.MulticastUpdatedSuccessfully"));
-												void refetchNetwork();
-											},
-										},
-									)
+									})
 								}
 							/>
 						</div>

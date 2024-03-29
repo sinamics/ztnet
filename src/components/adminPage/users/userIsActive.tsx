@@ -53,7 +53,7 @@ const UserIsActive = ({ user }: Iuser) => {
 
 	const { mutate: updateUser } = api.admin.updateUser.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ refetch: [refetchUser, refetchUsers] }),
+		onSuccess: handleApiSuccess({ actions: [refetchUser, refetchUsers] }),
 	});
 
 	return (

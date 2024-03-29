@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import Input from "../elements/input";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iprops {
 	organizationId: string;
@@ -13,32 +15,23 @@ interface Iprops {
 const EditOrganizationModal = ({ organizationId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [input, setInput] = useState({ orgDescription: "", orgName: "" });
 	const { closeModal } = useModalStore((state) => state);
+
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
 	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
+
 	const { mutate: updateOrg } = api.org.updateMeta.useMutation({
-		onSuccess: () => {
-			toast.success("Organization updated successfully");
-			refecthAllOrg();
-			refecthOrgById();
-			closeModal();
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
+		onSuccess: handleApiSuccess({ actions: [refecthAllOrg, refecthOrgById, closeModal] }),
+		onError: handleApiError,
 	});
+
 	useEffect(() => {
 		if (orgData) {
 			setInput({
@@ -89,19 +82,10 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 			<button
 				onClick={(e) => {
 					e.preventDefault();
-					updateOrg(
-						{
-							organizationId,
-							...input,
-						},
-						{
-							onSuccess: () => {
-								toast.success("Organization updated successfully");
-								refecthAllOrg();
-								closeModal();
-							},
-						},
-					);
+					updateOrg({
+						organizationId,
+						...input,
+					});
 				}}
 				type="submit"
 				className="btn btn-sm btn-primary"

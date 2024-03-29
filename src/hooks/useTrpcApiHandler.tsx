@@ -27,21 +27,21 @@ export const useTrpcApiErrorHandler = () => {
 };
 
 interface SuccessHandlerOptions {
-	refetch?: (() => void)[];
+	actions?: (() => void)[];
 	toastMessage?: string;
 }
 
 export const useTrpcApiSuccessHandler = () => {
 	const t = useTranslations("commonToast");
 
-	const handleSuccess = ({ refetch = [], toastMessage }: SuccessHandlerOptions) => {
+	const handleSuccess = ({ actions = [], toastMessage }: SuccessHandlerOptions) => {
 		return () => {
 			// Display the custom toast message if provided, otherwise use the default
-			toast.success(toastMessage || t("addedSuccessfully"));
+			toast.success(toastMessage || t("updatedSuccessfully"));
 
 			// Refetch all provided queries using for...of loop
-			for (const refetchFunction of refetch) {
-				void refetchFunction();
+			for (const action of actions) {
+				void action();
 			}
 		};
 	};
