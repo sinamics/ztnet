@@ -20,6 +20,7 @@ import {
 const ListWebHooks = ({ organizationId }) => {
 	const b = useTranslations("commonButtons");
 	const m = useTranslations("commonToast");
+	const t = useTranslations("organization");
 
 	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
 		organizationId,
@@ -47,21 +48,21 @@ const ListWebHooks = ({ organizationId }) => {
 						{hook.name}
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>Description:</span>
+						<span>{t("webhook.listWebhooks.description")}:</span>
 						<span className="font-medium">{hook.description}</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>URL:</span>
+						<span>{t("webhook.listWebhooks.url")}:</span>
 						<span className="font-medium">{hook.url}</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>Last Delivery:</span>
+						<span>{t("webhook.listWebhooks.lastDelivery")}:</span>
 						<span className="font-medium">
 							<TimeAgo date={hook.lastDelivery} />
 						</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400">
-						<div>Events:</div>
+						<div>{t("webhook.listWebhooks.events")}:</div>
 						<div className="font-medium">
 							{(hook.eventTypes as string[])?.join(" - ")}
 						</div>
@@ -96,7 +97,7 @@ const initialState = {
 const OrganizationWebhook = () => {
 	const b = useTranslations("commonButtons");
 	const m = useTranslations("commonToast");
-	const t = useTranslations("admin");
+	const t = useTranslations("organization");
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -162,22 +163,20 @@ const OrganizationWebhook = () => {
 			<HeadSection title={pageTitle} />
 			<div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
 				<div className="xl:col-span-2">
-					<h1 className="text-2xl font-bold">Organization Webhooks</h1>
+					<h1 className="text-2xl font-bold">{t("webhook.title")}</h1>
 					<h1 className="text-md">
-						Empower your organization with our webhook integration, offering real-time
-						notifications for critical events.
-						<br />
-						Stay ahead with instant updates, directly piped into your system, ensuring
-						seamless workflow and immediate response capabilities.
+						{t.rich("webhook.description", {
+							br: () => <br />,
+						})}
 					</h1>
 				</div>
 				<form className="space-y-10 w-full">
 					<div className="form-control">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.listOrganization.webhookModal.webhookName")}
+							{t("webhook.createWebhook.webhookName")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t("organization.listOrganization.webhookModal.webhookNameDescription")}
+							{t("webhook.createWebhook.webhookNameDescription")}
 						</label>
 						<Input
 							type="text"
@@ -190,12 +189,10 @@ const OrganizationWebhook = () => {
 					</div>
 					<div className="dropdown dropdown-end z-50">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.listOrganization.webhookModal.selectWebhookActions")}
+							{t("webhook.createWebhook.selectWebhookActions")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t(
-								"organization.listOrganization.webhookModal.selectWebhookActionsDescription",
-							)}
+							{t("webhook.createWebhook.selectWebhookActionsDescription")}
 						</label>
 						<div>
 							<MultiSelectDropdown
@@ -210,10 +207,10 @@ const OrganizationWebhook = () => {
 					</div>
 					<div className="form-control">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.listOrganization.webhookModal.webhookUrl")}
+							{t("webhook.createWebhook.webhookUrl")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t("organization.listOrganization.webhookModal.webhookUrlDescription")}
+							{t("webhook.createWebhook.webhookUrlDescription")}
 						</label>
 						<Input
 							type="text"
@@ -236,7 +233,9 @@ const OrganizationWebhook = () => {
 					</div>
 				</form>
 				<div className="space-y-2">
-					<div className="text-md font-medium tracking-wide">Active Hooks:</div>
+					<div className="text-md font-medium tracking-wide">
+						{t("webhook.listWebhooks.activeWebhooks")}
+					</div>
 
 					<ListWebHooks organizationId={organizationId} />
 				</div>
