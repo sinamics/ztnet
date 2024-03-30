@@ -568,17 +568,7 @@
 				"description": "描述：",
 				"numberOfMembers": "成員數量：",
 				"pendingInvitations": "待處理的邀請：",
-				"activeWebhooks": "活躍的 Webhooks:",
-				"webhookModal": {
-					"editWebhookTitle": "編輯 Webhook",
-					"webhookName": "Webhook 名稱",
-					"createWebhookTitle": "為組織建立 Webhook <span>{organization}</span>",
-					"webhookNameDescription": "此欄位用於輸入 webhook 的名稱。名稱用於識別 webhook，並應足夠具有描述性以將其與其他 webhook 區分開。",
-					"selectWebhookActions": "選擇 webhook 操作",
-					"selectWebhookActionsDescription": "此下拉選單允許您選擇 webhook 應執行的特定操作。每個選項代表一種不同類型的操作。",
-					"webhookUrl": "Webhook 網址 ( HTTPS )",
-					"webhookUrlDescription": "此欄位用於輸入 webhook 將發送資料的 URL。它必須是一個有效且可訪問的 URL 端點，能夠接收和處理傳入的 webhook 資料。"
-				}
+				"activeWebhooks": "活躍的 Webhooks:"
 			}
 		}
 	},
@@ -749,6 +739,27 @@
 						"title": "選擇用戶的角色"
 					}
 				}
+			}
+		},
+		"webhook": {
+			"title": "組織 Webhooks",
+			"description": "通過我們的 webhook 整合增強您的組織，為關鍵事件提供即時通知。<br></br>通過即時更新直接輸送到您的系統中，保持領先，確保無縫的工作流程和立即的響應能力。",
+			"createWebhook": {
+				"editWebhookTitle": "編輯 Webhook",
+				"createWebhookTitle": "為組織創建 Webhook <span>{organization}</span>",
+				"webhookName": "Webhook 名稱",
+				"webhookNameDescription": "此欄位用於輸入 webhook 的名稱。名稱用於標識 webhook，應該足夠描述性以將其與其他 webhooks 區分開來。",
+				"selectWebhookActions": "選擇 webhook 動作",
+				"selectWebhookActionsDescription": "此下拉菜單允許您選擇 webhook 應執行的具體動作。每個選項代表不同類型的動作。",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "此欄位用於輸入 webhook 將發送數據的 URL。它必須是一個有效且可訪問的 URL 終點，能夠接收和處理來自 webhook 的數據。"
+			},
+			"listWebhooks": {
+				"activeWebhooks": "活躍的 Webhooks",
+				"description": "描述",
+				"url": "網址",
+				"lastDelivery": "最後送達",
+				"events": "事件"
 			}
 		}
 	}

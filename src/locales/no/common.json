@@ -568,17 +568,7 @@
 				"description": "Beskrivelse:",
 				"numberOfMembers": "Antall Medlemmer:",
 				"pendingInvitations": "Ventende Invitasjoner:",
-				"activeWebhooks": "Aktive Webhooks:",
-				"webhookModal": {
-					"editWebhookTitle": "Rediger Webhook",
-					"webhookName": "Webhook-navn",
-					"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
-					"webhookNameDescription": "Dette feltet er for å angi navnet på webhook. Navnet brukes til å identifisere webhook og bør være beskrivende nok til å skille den fra andre webhooks.",
-					"selectWebhookActions": "Velg webhook-handlinger",
-					"selectWebhookActionsDescription": "Denne rullegardinmenyen lar deg velge de spesifikke handlingene din webhook skal utføre. Hver valgmulighet representerer en forskjellig type handling.",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "Dette feltet er for å angi URL-en hvor webhook vil sende data. Det må være et gyldig og tilgjengelig URL-endepunkt som kan motta og behandle innkommende webhook-data."
-				}
+				"activeWebhooks": "Aktive Webhooks:"
 			}
 		}
 	},
@@ -749,6 +739,27 @@
 						"title": "Velg brukerens rolle"
 					}
 				}
+			}
+		},
+		"webhook": {
+			"title": "Organisasjons Webhooks",
+			"description": "Styrk organisasjonen din med vår webhook-integrasjon, som tilbyr sanntidsvarsler for kritiske hendelser.<br></br>Hold deg i forkant med øyeblikkelige oppdateringer, direkte inn i systemet ditt, og sikre en sømløs arbeidsflyt og umiddelbare responsmuligheter.",
+			"createWebhook": {
+				"editWebhookTitle": "Rediger Webhook",
+				"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
+				"webhookName": "Navn på Webhook",
+				"webhookNameDescription": "Dette feltet er for å angi navnet på webhooken. Navnet brukes til å identifisere webhooken og bør være beskrivende nok til å skille den fra andre webhooks.",
+				"selectWebhookActions": "Velg webhook-aksjoner",
+				"selectWebhookActionsDescription": "Denne rullegardinmenyen lar deg velge de spesifikke handlingene din webhook skal utføre. Hver alternativ representerer en forskjellig type handling.",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "Dette feltet er for å angi URL-en hvor webhooken vil sende data. Det må være en gyldig og tilgjengelig URL-endepunkt som kan motta og behandle innkommende webhook-data."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Aktive Webhooks",
+				"description": "Beskrivelse",
+				"url": "URL",
+				"lastDelivery": "Siste Levering",
+				"events": "Hendelser"
 			}
 		}
 	}

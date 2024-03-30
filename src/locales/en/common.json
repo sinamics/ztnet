@@ -568,17 +568,7 @@
 				"description": "Description:",
 				"numberOfMembers": "Number of Members:",
 				"pendingInvitations": "Pending Invitations:",
-				"activeWebhooks": "Active Webhooks:",
-				"webhookModal": {
-					"editWebhookTitle": "Edit Webhook",
-					"createWebhookTitle": "Create Webhook for Organization <span>{organization}</span>",
-					"webhookName": "Webhook Name",
-					"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
-					"selectWebhookActions": "Select webhook actions",
-					"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "This field is for entering the URL where the webhook will send data. It must be a valid and accessible URL endpoint that can receive and process incoming webhook data."
-				}
+				"activeWebhooks": "Active Webhooks:"
 			}
 		}
 	},
@@ -749,6 +739,27 @@
 						"title": "Select the role of the user"
 					}
 				}
+			}
+		},
+		"webhook": {
+			"title": "Organization Webhooks",
+			"description": "Empower your organization with our webhook integration, offering real-time notifications for critical events.<br></br>Stay ahead with instant updates, directly piped into your system, ensuring seamless workflow and immediate response capabilities.",
+			"createWebhook": {
+				"editWebhookTitle": "Edit Webhook",
+				"createWebhookTitle": "Create Webhook for Organization <span>{organization}</span>",
+				"webhookName": "Webhook Name",
+				"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
+				"selectWebhookActions": "Select webhook actions",
+				"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "This field is for entering the URL where the webhook will send data. It must be a valid and accessible URL endpoint that can receive and process incoming webhook data."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Active Webhooks",
+				"description": "Description",
+				"url": "URL",
+				"lastDelivery": "Last Delivery",
+				"events": "Events"
 			}
 		}
 	}
