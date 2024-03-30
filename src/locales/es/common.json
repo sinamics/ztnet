@@ -568,17 +568,7 @@
 				"description": "Descripción:",
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
-				"activeWebhooks": "Webhooks Activos:",
-				"webhookModal": {
-					"editWebhookTitle": "Editar Webhook",
-					"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
-					"webhookName": "Webhook Name",
-					"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
-					"selectWebhookActions": "Select webhook actions",
-					"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
-				}
+				"activeWebhooks": "Webhooks Activos:"
 			}
 		}
 	},
@@ -749,6 +739,27 @@
 						"title": "Selecciona el rol del usuario"
 					}
 				}
+			}
+		},
+		"webhook": {
+			"title": "Webhooks de Organización",
+			"description": "Potencia tu organización con nuestra integración de webhook, ofreciendo notificaciones en tiempo real para eventos críticos.<br></br>Mantente adelante con actualizaciones instantáneas, directamente canalizadas a tu sistema, asegurando un flujo de trabajo sin interrupciones y capacidades de respuesta inmediata.",
+			"createWebhook": {
+				"editWebhookTitle": "Editar Webhook",
+				"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
+				"webhookName": "Nombre del Webhook",
+				"webhookNameDescription": "Este campo es para ingresar el nombre del webhook. El nombre se utiliza para identificar el webhook y debe ser lo suficientemente descriptivo para distinguirlo de otros webhooks.",
+				"selectWebhookActions": "Seleccionar acciones del webhook",
+				"selectWebhookActionsDescription": "Este menú desplegable te permite elegir las acciones específicas que tu webhook debería realizar. Cada opción representa un tipo diferente de acción.",
+				"webhookUrl": "URL del Webhook ( HTTPS )",
+				"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Webhooks Activos",
+				"description": "Descripción",
+				"url": "URL",
+				"lastDelivery": "Última Entrega",
+				"events": "Eventos"
 			}
 		}
 	}

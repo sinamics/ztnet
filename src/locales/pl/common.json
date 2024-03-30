@@ -568,17 +568,7 @@
 				"description": "Opis organizacji:",
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
-				"activeWebhooks": "Aktywne Webhooki:",
-				"webhookModal": {
-					"editWebhookTitle": "Edytuj Webhook",
-					"createWebhookTitle": "Utwórz Webhook dla organizacji <span>{organization}</span>",
-					"webhookName": "Nazwa Webhooka",
-					"webhookNameDescription": "To pole służy do wpisania nazwy webhooka. Nazwa służy do identyfikacji webhooka i powinna być na tyle unikalna, aby odróżnić ją od innych webhooków.",
-					"selectWebhookActions": "Wybierz akcje dla webhooka",
-					"selectWebhookActionsDescription": "To menu rozwijane pozwala wybrać konkretne działania, które powinien wykonać webhook. Każda opcja reprezentuje inny typ akcji.",
-					"webhookUrl": "URL Webhooka (HTTPS)",
-					"webhookUrlDescription": "To pole służy do wpisania adresu URL, pod który webhook będzie wysyłał dane. Musi to być prawidłowy i dostępny adres URL, który odbierze i przetworzy przychodzące dane."
-				}
+				"activeWebhooks": "Aktywne Webhooki:"
 			}
 		}
 	},
@@ -749,6 +739,27 @@
 						"title": "Wybierz rolę użytkownika"
 					}
 				}
+			}
+		},
+		"webhook": {
+			"title": "Webhooki Organizacji",
+			"description": "Wzmocnij swoją organizację naszą integracją webhook, oferując powiadomienia w czasie rzeczywistym o krytycznych wydarzeniach.<br></br>Bądź na bieżąco z natychmiastowymi aktualizacjami, bezpośrednio przekazywanymi do twojego systemu, zapewniając płynny przepływ pracy i natychmiastową zdolność reagowania.",
+			"createWebhook": {
+				"editWebhookTitle": "Edytuj Webhook",
+				"createWebhookTitle": "Utwórz Webhook dla Organizacji <span>{organization}</span>",
+				"webhookName": "Nazwa Webhooka",
+				"webhookNameDescription": "To pole służy do wprowadzenia nazwy webhooka. Nazwa służy do identyfikacji webhooka i powinna być wystarczająco opisowa, aby odróżnić go od innych webhooków.",
+				"selectWebhookActions": "Wybierz działania webhooka",
+				"selectWebhookActionsDescription": "To rozwijane menu pozwala wybrać konkretne akcje, które ma wykonywać twój webhook. Każda opcja reprezentuje inny typ akcji.",
+				"webhookUrl": "URL Webhooka ( HTTPS )",
+				"webhookUrlDescription": "To pole jest przeznaczone do wprowadzania URL, gdzie webhook będzie wysyłał dane. Musi to być ważny i dostępny punkt końcowy URL, który może odbierać i przetwarzać dane przychodzące z webhooka."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Aktywne Webhooki",
+				"description": "Opis",
+				"url": "URL",
+				"lastDelivery": "Ostatnia Dostawa",
+				"events": "Wydarzenia"
 			}
 		}
 	}
