@@ -74,17 +74,18 @@ model RootNodes {
 }
 
 model network_members {
-  nodeid       Int                     @id @default(autoincrement())
-  id           String
-  nwid_ref     network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
-  nwid         String
-  lastSeen     DateTime?
-  online       Boolean?                @default(false)
-  deleted      Boolean?                @default(false)
-  name         String?
-  address      String?                 @default("")
-  creationTime DateTime
-  notations    NetworkMemberNotation[]
+  nodeid          Int                     @id @default(autoincrement())
+  id              String
+  nwid_ref        network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  nwid            String
+  lastSeen        DateTime?
+  physicalAddress String?
+  online          Boolean?                @default(false)
+  deleted         Boolean?                @default(false)
+  name            String?
+  address         String?                 @default("")
+  creationTime    DateTime
+  notations       NetworkMemberNotation[]
 
   @@unique([id, nwid])
 }
@@ -199,14 +200,15 @@ model UserGroup {
 }
 
 model APIToken {
-  id        Int       @id @default(autoincrement())
-  name      String
-  token     String    @unique
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime  @default(now())
-  expiresAt DateTime? // null means it never expires
-  isActive  Boolean   @default(true)
+  id                   String    @id @default(cuid())
+  name                 String
+  token                String    @unique
+  userId               String
+  apiAuthorizationType Json      @default("[\"PERSONAL\"]")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt            DateTime  @default(now())
+  expiresAt            DateTime? // null means it never expires
+  isActive             Boolean   @default(true)
 }
 
 model User {
@@ -351,11 +353,16 @@ model OrganizationSettings {
 }
 
 model OrganizationInvitation {
-  id             Int          @id @default(autoincrement())
+  id             String       @id @default(cuid())
   token          String       @unique
   email          String
+  role           Role         @default(READ_ONLY)
+  expiresAt      DateTime     @default(now())
+  invitedById    String
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime     @default(now())
+  mailSentAt     DateTime?
 }
 
 model MembershipRequest {

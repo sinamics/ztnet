@@ -8,16 +8,29 @@ import ForgotPasswordMailTemplate from "~/components/adminPage/mail/mailForgotPa
 import NotificationTemplate from "~/components/adminPage/mail/mailNotificationTemplate";
 import { useTranslations } from "use-intl";
 import OrganizationInviteTemplate from "~/components/adminPage/mail/mailOrganizationInviteTemplate";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Mail = () => {
 	const t = useTranslations("admin");
-	const { mutate: setMailOptions } = api.admin.setMail.useMutation();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: options,
 		refetch: refetchOptions,
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
+
+	const { mutate: setMailOptions } = api.admin.setMail.useMutation({
+		onSuccess: handleApiSuccess({
+			actions: [refetchOptions],
+		}),
+		onError: handleApiError,
+	});
 
 	const inputHandler = (e: Partial<GlobalOptions>) => {
 		return new Promise((resolve) => {
@@ -58,6 +71,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.smtpHost")}
+					rootFormClassName="space-y-3 pt-2 w-3/6"
 					// buttonClassName="hidden"
 					size="sm"
 					fields={[
@@ -74,7 +88,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.smtpPort")}
-					// buttonClassName="hidden"
+					rootFormClassName="space-y-3 pt-2 w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -90,7 +104,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.senderEmail")}
-					// buttonClassName="hidden"
+					rootFormClassName="space-y-3 pt-2 w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -106,7 +120,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.username")}
-					// buttonClassName="hidden"
+					rootFormClassName="space-y-3 pt-2 w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -122,7 +136,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.password")}
-					// buttonClassName="hidden"
+					rootFormClassName="space-y-3 pt-2 w-3/6"
 					size="sm"
 					fields={[
 						{

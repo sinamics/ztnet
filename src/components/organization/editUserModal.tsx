@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import OrgUserRole from "./orgUserRole";
 import { User } from "@prisma/client";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iprops {
 	user: Partial<User>;
@@ -16,6 +19,10 @@ interface Iprops {
 const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
 	const { closeModal } = useModalStore((state) => state);
@@ -28,25 +35,13 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 	});
 
 	const { mutate: kickUser, isLoading: kickUserLoading } = api.org.leave.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			refecthOrg();
-			refecthOrgUsers();
-			closeModal();
-			toast.success(t("users.users.userOptionModal.toast.deleteUserSuccess"));
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({
+			actions: [refecthOrg, refecthOrgUsers, closeModal],
+			toastMessage: t("users.users.userOptionModal.toast.deleteUserSuccess"),
+		}),
 	});
+
 	const kickUserById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		e.preventDefault();
 		// check if input name is the same as the user name

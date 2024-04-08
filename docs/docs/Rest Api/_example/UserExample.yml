@@ -1,0 +1,11 @@
+UserExample:
+  - orgId: "aa01abcdefghijjkl"
+    userId: "cltnemyox00004vypy4u69r5x"
+    name: "John Doe"
+    email: "johndoe@ztnet.network"
+    role: "USER"
+  - orgId: "aa01abcdefghijjkm"
+    userId: "cltnemyox00004vypy4u69r5y"
+    name: "Jane Doe"
+    email: "janedoe@ztnet.network"
+    role: "ADMIN"

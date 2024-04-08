@@ -28,7 +28,8 @@
 		"deleteOrganization": "删除组织",
 		"userActions": "用户操作",
 		"addWebhooks": "添加 Webhooks",
-		"options": "选项"
+		"options": "选项",
+		"resend": "重新发送"
 	},
 	"commonTable": {
 		"header": {
@@ -78,7 +79,12 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "组织已删除"
+		"updatedSuccessfully": "成功更新",
+		"addedSuccessfully": "成功添加",
+		"deletedSuccessfully": "成功删除",
+		"errorOccurred": "发生未知错误",
+		"organizationDeleted": "组织成功删除",
+		"sentSuccessfully": "发送成功"
 	},
 	"sidebar": {
 		"navigation": "首页",
@@ -562,29 +568,7 @@
 				"description": "描述：",
 				"numberOfMembers": "成员数量：",
 				"pendingInvitations": "待处理的邀请：",
-				"activeWebhooks": "活动的 Webhooks:",
-				"invitationModal": {
-					"title": "组织邀请",
-					"description": "在将用户添加到你的组织之前，请注意他们必须已经在应用中注册",
-					"inputFields": {
-						"searchUser": {
-							"title": "搜索你想添加的用户",
-							"placeholder": "搜索用户"
-						},
-						"userRole": {
-							"title": "选择用户角色"
-						}
-					}
-				},
-				"webhookModal": {
-					"webhookName": "Webhook 名称",
-					"createWebhookTitle": "为组织创建 Webhook <span>{organization}</span>",
-					"webhookNameDescription": "此字段用于输入 webhook 的名称。名称用于识别 webhook，并应足够具有描述性以将其与其他 webhook 区分开。",
-					"selectWebhookActions": "选择 webhook 操作",
-					"selectWebhookActionsDescription": "此下拉菜单允许您选择 webhook 应执行的特定操作。每个选项代表一种不同类型的操作。",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "此字段用于输入 webhook 将发送数据的 URL。它必须是一个有效且可访问的 URL 端点，能够接收和处理传入的 webhook 数据。"
-				}
+				"activeWebhooks": "活动的 Webhooks:"
 			}
 		}
 	},
@@ -610,10 +594,33 @@
 			"restapi": {
 				"sectionTitle": "API访问令牌",
 				"description": "API访问令牌用于访问ZTNET公共API。",
-				"inputFields": {
+				"viewToken": {
+					"title": "令牌信息",
+					"name": "名称",
+					"authorizationType": "授权类型",
+					"expireAt": "过期时间",
+					"isActive": "是否激活"
+				},
+				"generateToken": {
+					"title": "Rest Api 令牌",
 					"tokenName": {
-						"label": "为您的令牌添加有意义的名称",
+						"label": "为您的令牌添加一个有意义的名称",
 						"placeholder": "我的超棒令牌"
+					},
+					"tokenAuthorizationType": {
+						"label": "选择 API 授权类型",
+						"placeholder": "选择授权类型"
+					},
+					"tokenExpireAt": {
+						"label": "选择令牌过期日期",
+						"placeholder": "选择日期",
+						"values": {
+							"never": "从不",
+							"1day": "1天",
+							"10day": "10天",
+							"1month": "1个月",
+							"1year": "1年"
+						}
 					}
 				},
 				"buttons": {
@@ -640,7 +647,8 @@
 			},
 			"accountPreferences": {
 				"title": "帐户首选项",
-				"languageLabel": "语言"
+				"languageLabel": "语言",
+				"fontSize": "字体大小"
 			},
 			"application": {
 				"title": "应用",
@@ -682,7 +690,8 @@
 			"title": "信息",
 			"name": "名称:",
 			"created": "创建时间:",
-			"members": "成员:"
+			"members": "成员:",
+			"pendingInvitations": "待处理邀请:"
 		},
 		"networkSection": {
 			"title": "网络",
@@ -704,6 +713,54 @@
 			"toggleLogLabel": "日志",
 			"logHeader": "最近100个活动日志",
 			"loading": "正在获取日志..."
+		},
+		"invitation": {
+			"title": "团队扩展：邀请新成员",
+			"description": "邀请更多人加入您的团队！您可以通过电子邮件发送邀请，也可以找到并添加已经使用平台的人。 <br></br> 这样可以让您的团队更容易地扩展并包括更多成员。",
+			"pendingInvitations": {
+				"title": "待处理邀请"
+			},
+			"inviteByEmail": {
+				"title": "通过电子邮件邀请",
+				"description": "受邀用户如果当前不是应用程序的成员，将需要通过邀请电子邮件中提供的链接注册。链接有效期为 24 小时。",
+				"emailPlaceholder": "电子邮件地址",
+				"emailDescription": "输入您要邀请的人的电子邮件地址",
+				"selectRoleDescription": "选择用户的角色"
+			},
+			"inviteSiteUser": {
+				"title": "邀请网站用户",
+				"description": "在您可以将用户添加到组织之前，请注意他们必须已在应用程序中注册",
+				"inputFields": {
+					"searchUser": {
+						"title": "搜索要添加的用户",
+						"placeholder": "搜索用户"
+					},
+					"userRole": {
+						"title": "选择用户的角色"
+					}
+				}
+			}
+		},
+		"webhook": {
+			"title": "组织 Webhooks",
+			"description": "通过我们的 webhook 集成增强您的组织，为关键事件提供实时通知。<br></br>通过即时更新直接输送到您的系统中，保持领先，确保无缝的工作流程和立即的响应能力。",
+			"createWebhook": {
+				"editWebhookTitle": "编辑 Webhook",
+				"createWebhookTitle": "为组织创建 Webhook <span>{organization}</span>",
+				"webhookName": "Webhook 名称",
+				"webhookNameDescription": "此字段用于输入 webhook 的名称。名称用于标识 webhook，应足够描述性以将其与其他 webhook 区分开。",
+				"selectWebhookActions": "选择 webhook 动作",
+				"selectWebhookActionsDescription": "此下拉菜单允许您选择 webhook 应执行的具体动作。每个选项代表不同类型的动作。",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "此字段用于输入 webhook 将发送数据的 URL。它必须是一个有效且可访问的 URL 终点，能够接收和处理来自 webhook 的数据。"
+			},
+			"listWebhooks": {
+				"activeWebhooks": "活跃的 Webhooks",
+				"description": "描述",
+				"url": "网址",
+				"lastDelivery": "最后交付",
+				"events": "事件"
+			}
 		}
 	}
 }

@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-query";
 import { type NetworkEntity } from "~/types/local/network";
 import { type CentralNetwork } from "~/types/central/network";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
 interface IProp {
 	central?: boolean;
@@ -45,6 +46,9 @@ const updateCache = ({
 
 export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
+
+	const handleApiError = useTrpcApiErrorHandler();
+
 	const { query } = useRouter();
 	const client = useQueryClient();
 	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
@@ -55,9 +59,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 		{ enabled: !!query.id },
 	);
 	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
-		onError: (e) => {
-			void toast.error(e?.message);
-		},
+		onError: handleApiError,
 	});
 	const privateHandler = (privateNetwork: boolean) => {
 		privatePublicNetwork(
@@ -96,7 +98,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 				onClick={() => privateHandler(true)}
 				faded={!network.private}
 				title={t("networkById.privatePublicSwitch.privateCardTitle")}
-				rootClassName="sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
+				rootClassName="flex-1 sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
 				iconClassName="text-green-500"
 				content={t("networkById.privatePublicSwitch.privateCardContent")}
 			/>
@@ -104,7 +106,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 				onClick={() => privateHandler(false)}
 				faded={network.private}
 				title={t("networkById.privatePublicSwitch.publicCardTitle")}
-				rootClassName="transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
+				rootClassName="flex-1 transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
 				iconClassName="text-warning"
 				content={t("networkById.privatePublicSwitch.publicCardContent")}
 			/>

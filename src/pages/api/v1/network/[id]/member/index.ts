@@ -1,8 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
+import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 
@@ -30,7 +30,7 @@ export default async function apiNetworkMembersHandler(
 			await GET_networkMembers(req, res);
 			break;
 		default: // Method Not Allowed
-			res.status(405).end();
+			res.status(405).json({ error: "Method Not Allowed" });
 			break;
 	}
 }
@@ -44,24 +44,22 @@ const GET_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => 
 		return res.status(400).json({ error: "Network ID is required" });
 	}
 
-	let decryptedData: { userId: string; name?: string };
 	try {
-		decryptedData = await decryptAndVerifyToken({ apiKey });
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
+		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
+			apiKey,
+			apiAuthorizationType: AuthorizationType.PERSONAL,
+		});
 
-	// assemble the context object
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
+		// assemble the context object
+		const ctx = {
+			session: {
+				user: {
+					id: decryptedData.userId as string,
+				},
 			},
-		},
-		prisma,
-	};
+			prisma,
+		};
 
-	try {
 		// make sure user has access to the network
 		const network = await prisma.network.findUnique({
 			where: { nwid: networkId, authorId: decryptedData.userId },
@@ -95,15 +93,6 @@ const GET_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => 
 
 		return res.status(200).json(arr);
 	} catch (cause) {
-		if (cause instanceof TRPCError) {
-			const httpCode = getHTTPStatusCodeFromError(cause);
-			try {
-				const parsedErrors = JSON.parse(cause.message);
-				return res.status(httpCode).json({ cause: parsedErrors });
-			} catch (_error) {
-				return res.status(httpCode).json({ error: cause.message });
-			}
-		}
-		return res.status(500).json({ message: "Internal server error" });
+		return handleApiErrors(cause, res);
 	}
 };

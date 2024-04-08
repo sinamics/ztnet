@@ -25,6 +25,8 @@ import {
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
 import { User, UserOptions } from "@prisma/client";
+import { validateOrganizationToken } from "../services/organizationAuthService";
+import rateLimit from "~/utils/rateLimit";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -35,6 +37,14 @@ import { User, UserOptions } from "@prisma/client";
 const mediumPassword = new RegExp(
 	"^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})",
 );
+
+// allow 15 requests per 10 minutes
+const limiter = rateLimit({
+	interval: 10 * 60 * 1000, // 600 seconds or 10 minutes
+	uniqueTokenPerInterval: 1000,
+});
+
+const GENERAL_REQUEST_LIMIT = 60;
 
 // create a zod password schema
 const passwordSchema = (errorMessage: string) =>
@@ -60,31 +70,56 @@ export const authRouter = createTRPCRouter({
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3).max(40),
 				expiresAt: z.string().optional(),
-				ztnetToken: z.string().optional(),
+				ztnetInvitationCode: z.string().optional(),
+				ztnetOrganizationToken: z.string().optional(),
 				token: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { email, password, name, ztnetToken, token, expiresAt } = input;
+			// add rate limit
+			try {
+				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "REGISTER_USER");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded",
+				});
+			}
+
+			const {
+				email,
+				password,
+				name,
+				ztnetInvitationCode,
+				ztnetOrganizationToken,
+				token,
+				expiresAt,
+			} = input;
 			const settings = await ctx.prisma.globalOptions.findFirst({
 				where: {
 					id: 1,
 				},
 			});
-			const invitationToken = ztnetToken?.trim() || token?.trim();
 
+			// Validate the organization token if it exists
+			const hasValidOrganizationToken = await validateOrganizationToken(
+				ztnetOrganizationToken,
+				email,
+			);
+
+			const invitationToken = ztnetInvitationCode?.trim() || token?.trim();
 			// ztnet user invitation
 			const hasValidCode =
 				invitationToken &&
 				(await (async () => {
-					if (!ztnetToken.trim()) {
+					if (!ztnetInvitationCode.trim()) {
 						throw new TRPCError({
 							code: "BAD_REQUEST",
 							message: "No invitation code provided",
 						});
 					}
 					const invitation = await ctx.prisma.userInvitation.findUnique({
-						where: { token: token.trim(), secret: ztnetToken.trim() },
+						where: { token: token.trim(), secret: ztnetInvitationCode.trim() },
 					});
 
 					if (
@@ -124,7 +159,7 @@ export const authRouter = createTRPCRouter({
 				})());
 
 			// check if enableRegistration is true
-			if (!settings.enableRegistration && !hasValidCode) {
+			if (!settings.enableRegistration && !hasValidCode && !hasValidOrganizationToken) {
 				throw new TRPCError({
 					code: "BAD_REQUEST",
 					message: "Registration is disabled! Please contact the administrator.",
@@ -142,6 +177,7 @@ export const authRouter = createTRPCRouter({
 					email: email,
 				},
 			});
+
 			// validate
 			if (registerUser) {
 				// eslint-disable-next-line no-throw-literal
@@ -190,6 +226,23 @@ export const authRouter = createTRPCRouter({
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
 					userGroupId: defaultUserGroup?.id,
+					// add user to organizationRoles if the token is valid
+					organizationRoles: hasValidOrganizationToken
+						? {
+								create: {
+									organizationId: hasValidOrganizationToken.organizationId,
+									role: hasValidOrganizationToken.role,
+								},
+						  }
+						: undefined,
+					// add the user to the organization if the token is valid
+					memberOfOrgs: hasValidOrganizationToken
+						? {
+								connect: {
+									id: hasValidOrganizationToken.organizationId,
+								},
+						  }
+						: undefined,
 					options: {
 						create: {
 							localControllerUrl: isRunningInDocker()
@@ -204,6 +257,12 @@ export const authRouter = createTRPCRouter({
 					email: true,
 					expiresAt: true,
 					role: true,
+					memberOfOrgs: {
+						select: {
+							id: true,
+							orgName: true,
+						},
+					},
 				},
 			});
 
@@ -254,7 +313,24 @@ export const authRouter = createTRPCRouter({
 					}
 				}
 			}
+			// add log if hasValidOrganizationToken is true
+			if (hasValidOrganizationToken) {
+				// Log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `User ${newUser.name} has registered with email ${newUser.email} and has been added to the organization ${hasValidOrganizationToken.organizationId} with the role ${hasValidOrganizationToken.role}!`,
+						performedById: hasValidOrganizationToken?.invitedById,
+						organizationId: hasValidOrganizationToken?.organizationId,
+					},
+				});
 
+				// delete the organization token
+				await ctx.prisma.organizationInvitation.delete({
+					where: {
+						token: ztnetOrganizationToken,
+					},
+				});
+			}
 			return {
 				user: newUser,
 			};
@@ -630,45 +706,107 @@ export const authRouter = createTRPCRouter({
 			return updated;
 		}),
 	getApiToken: protectedProcedure.query(async ({ ctx }) => {
-		return await ctx.prisma.aPIToken.findMany({
+		const tokens = await ctx.prisma.aPIToken.findMany({
 			where: {
 				userId: ctx.session.user.id,
 			},
+			orderBy: {
+				createdAt: "asc",
+			},
 		});
+
+		// if expiresAt is < now, set isActive to false. use for of loop to avoid async issues
+		for (const token of tokens) {
+			if (token.expiresAt) {
+				await ctx.prisma.aPIToken.update({
+					where: {
+						id: token.id,
+					},
+					data: {
+						isActive: token.expiresAt > new Date(),
+					},
+				});
+			}
+		}
+		return tokens;
 	}),
 	addApiToken: protectedProcedure
 		.input(
 			z.object({
-				name: z.string().min(5).max(50),
+				name: z.string().min(3).max(50),
+				daysToExpire: z.string(),
+				apiAuthorizationType: z.array(z.enum(["PERSONAL", "ORGANIZATION"])),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const token_content: string = JSON.stringify({
-				name: input.name,
-				userId: ctx.session.user.id,
-			});
+			try {
+				// generate daysToExpire date. If "never" is selected or an empty string, the token will never expire.
+				const daysToExpire = parseInt(input.daysToExpire);
+				let expiresAt: Date | null = new Date();
+				if (!Number.isNaN(daysToExpire) && daysToExpire > 0) {
+					expiresAt.setDate(expiresAt.getDate() + daysToExpire);
+				} else {
+					expiresAt = null; // Token never expires
+				}
 
-			const token_hash = encrypt(token_content, generateInstanceSecret(API_TOKEN_SECRET));
-			const token = await ctx.prisma.aPIToken.create({
-				data: {
-					token: token_hash,
-					name: input.name,
+				// token factory
+				const tokenContent = JSON.stringify({
 					userId: ctx.session.user.id,
-				},
-			});
-			return token;
+					apiAuthorizationType: input.apiAuthorizationType,
+				});
+
+				// hash token
+				const tokenHash = encrypt(tokenContent, generateInstanceSecret(API_TOKEN_SECRET));
+
+				// store token in database with tokenHash
+				const token = await ctx.prisma.aPIToken.create({
+					data: {
+						token: tokenHash,
+						name: input.name,
+						apiAuthorizationType: input.apiAuthorizationType,
+						userId: ctx.session.user.id,
+						expiresAt,
+					},
+				});
+
+				// Add the database token ID to the token hash for reference
+				const tokenId = token.id.toString(); // Just in case the token id is not a string ( old db structure )
+				const tokenWithIdContent = JSON.stringify({
+					...JSON.parse(tokenContent),
+					tokenId,
+				});
+
+				// hash token with token id
+				const tokenWithIdHash = encrypt(
+					tokenWithIdContent,
+					generateInstanceSecret(API_TOKEN_SECRET),
+				);
+
+				// Update the token in the database with the new hash that includes the tokenId
+				const updatedToken = await ctx.prisma.aPIToken.update({
+					where: { id: token.id },
+					data: { token: tokenWithIdHash },
+				});
+
+				return updatedToken;
+			} catch (error) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: error.message,
+				});
+			}
 		}),
 
 	deleteApiToken: protectedProcedure
 		.input(
 			z.object({
-				id: z.number(),
+				id: z.union([z.string(), z.number()]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
 			return await ctx.prisma.aPIToken.delete({
 				where: {
-					id: input.id,
+					id: input.id.toString(),
 					userId: ctx.session.user.id,
 				},
 			});

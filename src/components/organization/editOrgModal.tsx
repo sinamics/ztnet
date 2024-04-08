@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import Input from "../elements/input";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 interface Iprops {
 	organizationId: string;
@@ -12,13 +15,23 @@ interface Iprops {
 const EditOrganizationModal = ({ organizationId }: Iprops) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const [input, setInput] = useState({ orgDescription: "", orgName: "" });
 	const { closeModal } = useModalStore((state) => state);
+
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
-	const { data: orgData } = api.org.getOrgById.useQuery({
+	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
 		organizationId,
 	});
-	const { mutate: updateOrg } = api.org.updateMeta.useMutation();
+
+	const { mutate: updateOrg } = api.org.updateMeta.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refecthAllOrg, refecthOrgById, closeModal] }),
+		onError: handleApiError,
+	});
+
 	useEffect(() => {
 		if (orgData) {
 			setInput({
@@ -62,26 +75,17 @@ const EditOrganizationModal = ({ organizationId }: Iprops) => {
 					value={input?.orgDescription}
 					onChange={inputHandler}
 					name="orgDescription"
-					className="textarea-bordered textarea-sm w-full"
+					className="textarea-bordered textarea-sm w-full bg-base-200 rounded-md"
 				/>
 			</label>
 
 			<button
 				onClick={(e) => {
 					e.preventDefault();
-					updateOrg(
-						{
-							organizationId,
-							...input,
-						},
-						{
-							onSuccess: () => {
-								toast.success("Organization updated successfully");
-								refecthAllOrg();
-								closeModal();
-							},
-						},
-					);
+					updateOrg({
+						organizationId,
+						...input,
+					});
 				}}
 				type="submit"
 				className="btn btn-sm btn-primary"

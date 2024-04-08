@@ -160,8 +160,8 @@ describe("Update Network Members", () => {
 		);
 	});
 
-	it("should allow only POST method", async () => {
-		const methods = ["GET", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"];
+	it("should allow only POST and DELETE method", async () => {
+		const methods = ["GET", "PUT", "PATCH", "OPTIONS", "HEAD"];
 		const req = {} as NextApiRequest;
 		const res = createMockRes();
 
@@ -170,7 +170,11 @@ describe("Update Network Members", () => {
 			await apiNetworkUpdateMembersHandler(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(405);
-			expect(res.end).toHaveBeenCalled();
+
+			// expect json to be called with text "Method Not Allowed"
+			expect(res.json).toHaveBeenCalledWith(
+				expect.objectContaining({ error: "Method Not Allowed" }),
+			);
 		}
 	});
 });

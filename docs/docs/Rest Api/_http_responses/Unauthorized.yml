@@ -1,0 +1,20 @@
+Unauthorized:
+  description: Unauthorized access, indicating that the request has not been applied because it lacks valid authentication credentials for the target resource.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            description: A message detailing the reason for the unauthorized status.
+            example: 'Unauthorized: API key is missing or invalid.'
+      examples:
+        missingApiKey:
+          summary: API key is missing
+          value:
+            error: 'Unauthorized: API key is missing.'
+        invalidApiKey:
+          summary: API key is invalid
+          value:
+            error: 'Unauthorized: API key is invalid.'

@@ -1,8 +1,10 @@
 import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React from "react";
-import toast from "react-hot-toast";
-import { ErrorData } from "~/types/errorHandling";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { api } from "~/utils/api";
 
 interface Iuser {
@@ -11,6 +13,9 @@ interface Iuser {
 }
 const OrgUserRole = ({ user, organizationId }: Iuser) => {
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refecthOrg } = api.org.getOrgUsers.useQuery({
 		organizationId,
@@ -23,37 +28,19 @@ const OrgUserRole = ({ user, organizationId }: Iuser) => {
 		});
 
 	const { mutate: changeRole } = api.org.changeUserRole.useMutation({
-		onSuccess: () => {
-			toast.success(t("users.users.toastMessages.roleChangeSuccess"));
-		},
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error(t("users.users.toastMessages.errorOccurred"));
-			}
-		},
+		onSuccess: handleApiSuccess({
+			actions: [refecthOrg, refetchUserRole],
+			toastMessage: t("users.users.toastMessages.roleChangeSuccess"),
+		}),
+		onError: handleApiError,
 	});
 
 	const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, userId: string) => {
-		changeRole(
-			{
-				userId,
-				role: e.target.value,
-				organizationId,
-			},
-			{
-				onSuccess: () => {
-					refecthOrg();
-					refetchUserRole();
-				},
-			},
-		);
+		changeRole({
+			userId,
+			role: e.target.value,
+			organizationId,
+		});
 	};
 
 	return (
@@ -63,6 +50,7 @@ const OrgUserRole = ({ user, organizationId }: Iuser) => {
 				onChange={(e) => dropDownHandler(e, user?.id)}
 				className="select select-sm select-bordered  select-ghost max-w-xs"
 			>
+				<option>ADMIN</option>
 				<option>USER</option>
 				<option>READ_ONLY</option>
 			</select>

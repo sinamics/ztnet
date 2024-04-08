@@ -14,6 +14,11 @@ servers:
       version:
         default: v1
         description: API version
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
 
 paths:                 
   /network/{networkId}/member:
@@ -39,36 +44,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
 
   /network/{networkId}/member/{memberId}:
     post:
@@ -112,33 +96,45 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../_schema/NetworkMemberResponse.yml#/NetworkMemberResponse'
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
               example:
-                $ref: '../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+    delete:
+      summary: Delete a network member
+      description: This action flags the member as deleted, revokes their authorization, and updates their status in the database. Consequently, the member will be moved to the "Stashed Members" list, indicating their altered status.
+      operationId: deleteNetworkMember
+      parameters:
+        - in: path
+          name: networkId
+          required: true
+          schema:
+            type: string
+          description: ID of the network
+        - in: path
+          name: memberId
+          required: true
+          schema:
+            type: string
+          description: ID of the member
+      responses:
+        200:
+          description: Network Response
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
+              example:
+                $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

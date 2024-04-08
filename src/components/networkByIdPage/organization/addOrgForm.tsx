@@ -1,38 +1,26 @@
 import React from "react";
 import InputFields from "~/components/elements/inputField";
-import { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
-import toast from "react-hot-toast";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const AddOrgForm = () => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("admin");
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { refetch: refecthOrg } = api.org.getAllOrg.useQuery();
 	const { refetch: refetchMe } = api.auth.me.useQuery();
 	const { refetch: refetchUserOrg } = api.org.getOrgIdbyUserid.useQuery();
 
 	const { mutate: addOrg } = api.org.createOrg.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-call
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			toast.success("Organization added successfully");
-			refetchMe();
-			refecthOrg();
-			// will load websocket in _app.tsx
-			refetchUserOrg();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthOrg, refetchMe, refetchUserOrg] }),
 	});
 	return (
 		<div className="space-y-10">

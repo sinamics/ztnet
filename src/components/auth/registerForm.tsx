@@ -9,7 +9,7 @@ interface FormData {
 	email: string;
 	password: string;
 	name: string;
-	ztnetToken?: string;
+	ztnetInvitationCode?: string;
 	token: string;
 }
 
@@ -22,7 +22,7 @@ const RegisterForm: React.FC = () => {
 		email: "",
 		password: "",
 		name: "",
-		ztnetToken: "",
+		ztnetInvitationCode: "",
 		token: invite,
 	});
 
@@ -50,7 +50,7 @@ const RegisterForm: React.FC = () => {
 					setLoading(false);
 
 					if (!result.error) {
-						await router.push("/dashboard");
+						await router.push("/network");
 					}
 				})(),
 			onError: (error) => {
@@ -72,10 +72,10 @@ const RegisterForm: React.FC = () => {
 							<label className="text-sm font-medium tracking-wide">Code</label>
 							<input
 								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={formData.ztnetToken}
+								value={formData.ztnetInvitationCode}
 								onChange={handleChange}
 								type=""
-								name="ztnetToken"
+								name="ztnetInvitationCode"
 								placeholder="Inviation code"
 							/>
 						</div>

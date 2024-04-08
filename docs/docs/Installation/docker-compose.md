@@ -6,6 +6,13 @@ description: Docker Compose installation instructions for ZTNET
 sidebar_position: 1
 ---
 
+## System Requirements
+
+Your system should meet the following minimum requirements:
+
+- **Memory**: 1GB of RAM
+- **CPU**: 1 Core
+
 # Install Docker
 Docker is a containerization platform that allows you to quickly build, test, and deploy applications as portable, self-sufficient containers that can virtually run everywhere.
 
@@ -85,6 +92,7 @@ services:
       POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000" # !! Important !! Set the NEXTAUTH_URL environment variable to the canonical URL or IP of your site with port 3000
       NEXTAUTH_SECRET: "random_secret"
+      NEXTAUTH_URL_INTERNAL: "http://ztnet:3000" # Internal NextAuth URL for 'ztnet' container on port 3000. Do not change unless modifying container name.
     networks:
       - app-network
     links:

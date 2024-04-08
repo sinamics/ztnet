@@ -2,16 +2,27 @@ import { type ReactElement } from "react";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const Notification = () => {
 	const t = useTranslations("admin");
-	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation();
+
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const {
 		data: options,
 		refetch: refetchOptions,
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
+
+	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
+		onError: handleApiError,
+	});
 
 	if (loadingOptions) {
 		return (
@@ -41,10 +52,7 @@ const Notification = () => {
 						checked={options?.userRegistrationNotification || false}
 						className="checkbox-primary checkbox checkbox-sm"
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							setRegistration(
-								{ userRegistrationNotification: e.target.checked },
-								{ onSuccess: () => void refetchOptions() },
-							);
+							setRegistration({ userRegistrationNotification: e.target.checked });
 						}}
 					/>
 				</div>
