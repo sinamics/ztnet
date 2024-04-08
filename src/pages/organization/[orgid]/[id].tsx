@@ -26,6 +26,7 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import HeadSection from "~/components/shared/metaTags";
+import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 
 type OrganizationId = {
 	id: string;
@@ -115,40 +116,40 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
 			<div className="mx-auto text-sm sm:py-10 md:text-base">
-				<div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
 					{/* Left section with network ID, name, and description */}
-					<div className="xl:col-span-1">
-						<div className="space-y-1">
-							{/* Network ID */}
-							<div className="flex flex-col sm:flex-row justify-between">
-								<span className="font-semibold">{t("networkId")}</span>
-								<span className="flex items-center">
-									<CopyToClipboard
-										text={network?.nwid}
-										onCopy={() =>
-											toast.success(
-												t("copyToClipboard.success", { element: network?.nwid }),
-												{ id: "copyNwid" },
-											)
-										}
-										title={t("copyToClipboard.title")}
-									>
-										<div className="flex cursor-pointer items-center gap-2">
-											{network?.nwid}
-											<CopyIcon />
-										</div>
-									</CopyToClipboard>
-								</span>
-							</div>
-							{/* Network Name */}
-							<NetworkName organizationId={organizationId} />
-							{/* Network Description */}
-							<NetworkDescription organizationId={organizationId} />
+					<div className="space-y-1">
+						{/* Network ID */}
+						<div className="flex flex-col sm:flex-row justify-between">
+							<span className="font-semibold">{t("networkId")}</span>
+							<span className="flex items-center">
+								<CopyToClipboard
+									text={network?.nwid}
+									onCopy={() =>
+										toast.success(
+											t("copyToClipboard.success", { element: network?.nwid }),
+											{ id: "copyNwid" },
+										)
+									}
+									title={t("copyToClipboard.title")}
+								>
+									<div className="flex cursor-pointer items-center gap-2">
+										{network?.nwid}
+										<CopyIcon />
+									</div>
+								</CopyToClipboard>
+							</span>
 						</div>
+						{/* Network Name */}
+						<NetworkName organizationId={organizationId} />
+						{/* Network Description */}
+						<NetworkDescription organizationId={organizationId} />
 					</div>
-
+					<div className="cursor-pointer">
+						<NetworkQrCode networkId={network?.nwid} />
+					</div>
 					{/* Right section with NetworkPrivatePublic */}
-					<div className="xl:col-span-1">
+					<div>
 						<NetworkPrivatePublic organizationId={organizationId} />
 					</div>
 				</div>
