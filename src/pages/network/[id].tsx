@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState, type ReactElement, useEffect, useRef } from "react";
+import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
@@ -26,9 +26,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
-import { QRCodeSVG } from "qrcode.react";
-import daisyuiColors from "daisyui/src/theming/themes";
-import { useTheme } from "next-themes";
+import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -48,22 +46,11 @@ interface IProps {
 
 const NetworkById = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
-	const [themeRGBColor, setThemeRGBColor] = useState("");
-	const { theme } = useTheme();
 	const t = useTranslations("networkById");
-	// const { Image } = useQRCode();
-	const qrRef = useRef(null);
 	const [state, setState] = useState({
 		viewZombieTable: false,
 		isDebug: false,
 	});
-
-	useEffect(() => {
-		// console.log(theme);
-		// const selectedTheme = document.documentElement.getAttribute("data-theme");
-		// Assuming the themes are structured in an array or object
-		setThemeRGBColor(daisyuiColors[theme]?.primary);
-	}, [theme]);
 
 	useOrganizationWebsocket(orgIds);
 
@@ -132,74 +119,12 @@ const NetworkById = ({ orgIds }: IProps) => {
 			</>
 		);
 	}
-	const svgcopyToClipboard = () => {
-		if (qrRef.current) {
-			const originalSvgElement = qrRef.current.querySelector("svg");
-			if (!originalSvgElement) {
-				console.error("QR code SVG element not found");
-				return;
-			}
-
-			// Serialize and parse the original SVG to ensure a proper clone
-			const serializedSvg = new XMLSerializer().serializeToString(originalSvgElement);
-			const clonedSvgElement = new DOMParser().parseFromString(
-				serializedSvg,
-				"image/svg+xml",
-			).documentElement;
-
-			// Set the first path element to white
-			const firstPath = clonedSvgElement.querySelector("path");
-			if (firstPath) {
-				firstPath.setAttribute("fill", "#FFFFFF");
-			}
-
-			const canvas = document.createElement("canvas");
-			const ctx = canvas.getContext("2d");
-
-			const svgBlob = new Blob(
-				[new XMLSerializer().serializeToString(clonedSvgElement)],
-				{ type: "image/svg+xml" },
-			);
-			const url = URL.createObjectURL(svgBlob);
-
-			const image = new Image();
-			image.onload = () => {
-				canvas.width = image.width;
-				canvas.height = image.height;
-				ctx.drawImage(image, 0, 0);
-				URL.revokeObjectURL(url);
-
-				// Convert canvas to PNG
-				const pngUrl = canvas.toDataURL("image/png");
-
-				// Create a temporary link to trigger download
-				const downloadLink = document.createElement("a");
-				downloadLink.href = pngUrl;
-				downloadLink.download = `qr-${query.id}.png`;
-				document.body.appendChild(downloadLink);
-				downloadLink.click();
-				document.body.removeChild(downloadLink);
-			};
-
-			image.onerror = () => {
-				console.error("Error loading SVG image");
-				URL.revokeObjectURL(url);
-			};
-
-			image.src = url;
-		} else {
-			console.error("QR ref not found");
-		}
-	};
-
-	// In your React component
-	<button onClick={svgcopyToClipboard}>Download QR Code</button>;
 
 	return (
 		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
-			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-5/6 sm:p-10 md:text-base xl:space-y-0">
-				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
+			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkId")}</span>
@@ -226,31 +151,12 @@ const NetworkById = ({ orgIds }: IProps) => {
 						<NetworkName />
 						<NetworkDescription />
 					</div>
-				</div>
-				<div
-					ref={qrRef}
-					className="shadow-md cursor-pointer"
-					onClick={svgcopyToClipboard}
-				>
-					<QRCodeSVG
-						value={`https://joinzt.com/addnetwork?nwid=${network?.nwid}&v=1`}
-						size={100}
-						bgColor={themeRGBColor}
-						fgColor={"#000000"}
-						level={"M"}
-						includeMargin={true}
-						// imageSettings={{
-						// 	src: "https://github.com/sinamics/ztnet/raw/main/docs/images/logo/ztnet_original.png",
-						// 	x: undefined,
-						// 	y: undefined,
-						// 	height: 16,
-						// 	width: 16,
-						// 	excavate: true,
-						// }}
-					/>
-				</div>
-				<div>
-					<NetworkPrivatePublic />
+					<div className="cursor-pointer">
+						<NetworkQrCode networkId={network?.nwid} />
+					</div>
+					<div>
+						<NetworkPrivatePublic />
+					</div>
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
