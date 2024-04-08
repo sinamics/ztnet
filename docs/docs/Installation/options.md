@@ -19,17 +19,18 @@ To use these environment variables in a Docker Compose setup, define them in you
 services:
   ztnet:
     environment:
-      ZT_ADDR: "`http://zerotier:9993`"
-      ZT_SECRET: "`your-zerotier-secret`"
       NEXT_PUBLIC_SITE_NAME: "ZTNET"
+      NEXTAUTH_URL: http://your_server_ip:3000
       # ... other environment variables ...
 ```
 
-### In a Standalone Environment with .env File
+### In a Standalone Environment
+Edit the `.env` file in `/opt/ztnet` to set the environment variables. For example:
+
 ```bash
-ZT_ADDR="http://127.0.0.1:9993"
-ZT_SECRET="your-zerotier-secret"
-NEXT_PUBLIC_SITE_NAME="ZTNET"
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ztnet?schema=public
+NEXT_PUBLIC_SITE_NAME=ZTNET
+NEXTAUTH_URL=http://your_server_ip:3000
 ```
 
 ## Available Environment options

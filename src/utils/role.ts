@@ -7,6 +7,20 @@ enum Role {
 	ADMIN = 3,
 }
 
+export const UserRolesList = [
+	{
+		value: "READ_ONLY",
+		label: "READ_ONLY",
+	},
+	{
+		value: "USER",
+		label: "USER",
+	},
+	{
+		value: "ADMIN",
+		label: "ADMIN",
+	},
+];
 /**
  * Checks if a user's role within a specific organization meets or exceeds a required role level.
  *
@@ -25,7 +39,7 @@ enum Role {
 export const checkUserOrganizationRole = async ({
 	ctx,
 	organizationId,
-	requiredRole,
+	minimumRequiredRole,
 }) => {
 	const userId = ctx.session.user.id;
 
@@ -46,13 +60,14 @@ export const checkUserOrganizationRole = async ({
 			"You are not a member of this organization. Contact your organization administrator to request access.",
 		);
 	}
+
 	// Directly return true for admin role
 	if (orgUserRole.role === "ADMIN") {
 		return true;
 	}
 
 	const userRoleValue = Role[orgUserRole.role];
-	const requiredRoleValue = Role[requiredRole];
+	const requiredRoleValue = Role[minimumRequiredRole];
 
 	// Return true if the user's role value meets or exceeds the required role value, otherwise throw an error
 	if (userRoleValue >= requiredRoleValue) {

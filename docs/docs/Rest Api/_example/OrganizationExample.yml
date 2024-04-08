@@ -1,0 +1,22 @@
+OrganizationExample:
+  - id: "aa00abcdefghijjkl"
+    orgName: "My Awesome Organization"
+    ownerId: "aa10abcdefghijjkl"
+    description: ""
+    createdAt: "2024-03-11T21:18:00.524Z"
+  - id: "aa01abcdefghijjkl"
+    orgName: "Another Awesome Organization"
+    ownerId: "aa10abcdefghijjkl"
+    description: ""
+    createdAt: "2024-03-12T15:19:44.799Z"
+
+OrganizationByIdExample:
+  id: "dummy12345"
+  name: "Awesome Ztnet Organization"
+  createdAt: "2024-03-11T21:18:00.524Z"
+  ownerId: "dummyOwner12345"
+  networks:
+    - nwid: "8056c2e21c000001"
+      name: "ztnetNetworkName1"
+    - nwid: "8056c2e21c000001"
+      name: "ztnetNetworkName2"

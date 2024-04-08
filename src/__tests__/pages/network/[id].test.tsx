@@ -164,7 +164,7 @@ describe("NetworkById component", () => {
 		);
 		expect(
 			screen.getByText(
-				/This network has no members, see installation instructions bellow/,
+				/This network has no members, see installation instructions below/,
 			),
 		).toBeInTheDocument();
 	});
@@ -213,9 +213,7 @@ describe("NetworkById component", () => {
 						name: "members_name",
 						creationTime: 1691603143446,
 						ipAssignments: ["10.121.15.173"],
-						peers: {
-							physicalAddress: "10.10.10.10",
-						},
+						physicalAddress: "10.10.10.10",
 						conStatus: 0,
 					},
 				],

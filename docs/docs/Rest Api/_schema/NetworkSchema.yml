@@ -29,9 +29,9 @@ NetworkResponse:
       items:
         type: object
         properties:
-          ipRangeEnd:
-            type: string
           ipRangeStart:
+            type: string
+          ipRangeEnd:
             type: string
     mtu:
       type: integer
@@ -80,6 +80,51 @@ NetworkResponse:
       type: array
       items:
         type: string
+    v4AssignMode:
+      type: object
+      properties:
+        zt:
+          type: boolean
+    v6AssignMode:
+      type: object
+      properties:
+        6plane:
+          type: boolean
+        rfc4193:
+          type: boolean
+        zt:
+          type: boolean
+
+UpdateNetworkShema:
+  type: object
+  properties:
+    dns:
+      type: array
+      items:
+        type: string
+    ipAssignmentPools:
+      type: array
+      items:
+        type: object
+        properties:
+          ipRangeStart:
+            type: string
+          ipRangeEnd:
+            type: string
+    name:
+      type: string
+    private:
+      type: boolean
+    routes:
+      type: array
+      items:
+        type: object
+        properties:
+          target:
+            type: string
+          via:
+            type: string
+            nullable: true
     v4AssignMode:
       type: object
       properties:

@@ -43,9 +43,14 @@ Standard OAuth 2.0 is used by various providers, including GitHub and Facebook. 
 - `OAUTH_SCOPE`: Defines the scope of access. For example: `"read:user user:email"` for GitHub.
 
 
+### Callback URL
+- `https://awesome.ztnet.com/api/auth/callback/oauth`
+
+
 ## Examples
 
 ### Keycloak Configuration
+
 docker-compose.yml
 ```yml
 ztnet:
@@ -59,6 +64,7 @@ ztnet:
 ```
 
 ### GitHub Configuration
+
 
 Documentation: https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps
 ```yml
@@ -76,6 +82,7 @@ ztnet:
 
 ### Facebook Configuration
 
+
 Documentation: https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow/
 ```yml
 ztnet:
@@ -91,6 +98,7 @@ ztnet:
 ```
 
 ### Discord Configuration
+
 
 Documentation: https://discord.com/developers/docs/topics/oauth2
 **Note* on `OAUTH_AUTHORIZATION_URL`  

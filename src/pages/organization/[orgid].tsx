@@ -6,8 +6,6 @@ import { OrganizationNetworkTable } from "~/components/organization/networkTable
 import { stringToColor } from "~/utils/randomColor";
 import { useModalStore } from "~/utils/store";
 import TimeAgo from "react-timeago";
-import { ErrorData } from "~/types/errorHandling";
-import toast from "react-hot-toast";
 import EditOrganizationUserModal from "~/components/organization/editUserModal";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
@@ -15,6 +13,11 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import { globalSiteTitle } from "~/utils/global";
+import cn from "classnames";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const title = `${globalSiteTitle} - Organization`;
 
@@ -26,6 +29,9 @@ const OrganizationById = ({ user, orgIds }) => {
 	const organizationId = query.orgid as string;
 	const { callModal } = useModalStore((state) => state);
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	useOrganizationWebsocket(orgIds);
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
@@ -34,18 +40,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	});
 
 	const { mutate: leaveOrg } = api.org.leave.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
+		onError: handleApiError,
 	});
 
 	const {
@@ -62,21 +57,8 @@ const OrganizationById = ({ user, orgIds }) => {
 	});
 
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
-		onError: (error) => {
-			if ((error.data as ErrorData)?.zodError) {
-				const fieldErrors = (error.data as ErrorData)?.zodError.fieldErrors;
-				for (const field in fieldErrors) {
-					toast.error(`${fieldErrors[field].join(", ")}`);
-				}
-			} else if (error.message) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unknown error occurred");
-			}
-		},
-		onSuccess: () => {
-			refecthOrg();
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthOrg] }),
 	});
 
 	useEffect(() => {
@@ -116,18 +98,27 @@ const OrganizationById = ({ user, orgIds }) => {
 			</>
 		);
 	}
-	return (
-		<main className="w-full bg-base-100 p-5 animate-fadeIn">
-			<MetaTags title={title} />
-			<div className="max-w-7xl mx-auto">
-				<header className="py-5">
-					<div className="container mx-auto flex flex-col items-center justify-center space-y-3">
-						<h1 className="text-center text-4xl font-bold">{orgData?.orgName}</h1>
-						<p className="text-center text-sm font-bold">{orgData?.description}</p>
-						<p className="text-center text-xl">{t("organizationDashboard.header")}</p>
-					</div>
-				</header>
 
+	const truncatedOrgName =
+		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
+	return (
+		<main className="w-full bg-base-100 py-2 animate-fadeIn">
+			<MetaTags title={title} />
+			<div>
+				<div className="pb-3">
+					{orgData?.description ? (
+						<div
+							className="border-l-4 border-primary p-2 leading-snug"
+							style={{ caretColor: "transparent" }}
+						>
+							{/* add newline support if description has newlines */}
+							{orgData?.description.split("\n").map((str, index) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								<p key={index}>{str}</p>
+							))}
+						</div>
+					) : null}
+				</div>
 				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
 					{/* Organization Users */}
 					<section className="bg-base-200 rounded-lg shadow-lg overflow-hidden">
@@ -144,9 +135,12 @@ const OrganizationById = ({ user, orgIds }) => {
 									return (
 										<li
 											key={user.id}
-											className="py-2 px-3 hover:bg-gray-700 transition duration-150"
+											className={cn(
+												"py-2 px-3 hover:bg-gray-700 transition duration-150",
+												{ "cursor-pointer": meOrgRole?.role === "ADMIN" },
+											)}
 											onClick={() => {
-												if (meOrgRole.role !== "ADMIN") return;
+												if (meOrgRole?.role !== "ADMIN") return;
 												callModal({
 													title: (
 														<p>
@@ -172,7 +166,9 @@ const OrganizationById = ({ user, orgIds }) => {
 												</div>
 												<div>
 													<p className="font-medium">{user.name}</p>
-													<p className="text-sm text-gray-400">{user?.role}</p>
+													<p className="text-sm text-gray-400">
+														{user.id === orgData.ownerId ? "OWNER" : user?.role}
+													</p>
 												</div>
 											</div>
 										</li>
@@ -190,7 +186,7 @@ const OrganizationById = ({ user, orgIds }) => {
 						<ul className="space-y-2">
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.name")}</span>
-								<span>{orgData?.orgName}</span>
+								<span>{truncatedOrgName}</span>
 							</li>
 							<li className="flex justify-between">
 								<span className="font-medium">{t("informationSection.created")}</span>
@@ -202,19 +198,21 @@ const OrganizationById = ({ user, orgIds }) => {
 								<span className="font-medium">{t("informationSection.members")}</span>
 								<span>{orgData?.users.length}</span>
 							</li>
-							{/* <li className="flex justify-between">
-								<span className="font-medium">Owner:</span>
-								<span>{orgData?.ownerName}</span>
-							</li> */}
+							<li className="flex justify-between">
+								<span className="font-medium">
+									{t("informationSection.pendingInvitations")}
+								</span>
+								<span>{orgData?.invitations.length}</span>
+							</li>
 						</ul>
 					</section>
 
 					{/* Network Table and Add Network Button */}
-					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg">
-						<div className="px-4 py-1 flex justify-between items-center border-b border-gray-700">
+					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg p-3">
+						<div className="py-1 flex justify-between items-center border-b border-gray-700">
 							<h2 className="text-xl font-semibold">{t("networkSection.title")}</h2>
 							<button
-								className="btn btn-primary btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
+								className="btn btn-primary btn-sm btn-outline font-semibold px-4 rounded-lg flex items-center"
 								onClick={() =>
 									createNetwork(
 										{
@@ -276,7 +274,7 @@ const OrganizationById = ({ user, orgIds }) => {
 											{ organizationId, userId: user.id },
 											{
 												onSuccess: () => {
-													push("/dashboard");
+													push("/network");
 												},
 											},
 										);

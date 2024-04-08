@@ -28,7 +28,8 @@
 		"deleteOrganization": "Slett Organisasjon",
 		"userActions": "Brukerhandlinger",
 		"addWebhooks": "Legg til Webhooks",
-		"options": "Alternativer"
+		"options": "Alternativer",
+		"resend": "Send på nytt"
 	},
 	"commonTable": {
 		"header": {
@@ -78,7 +79,12 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "Organisasjon slettet"
+		"updatedSuccessfully": "Oppdatering vellykket",
+		"addedSuccessfully": "Lagt til vellykket",
+		"deletedSuccessfully": "Slettet vellykket",
+		"errorOccurred": "En ukjent feil oppstod",
+		"organizationDeleted": "Organisasjonen ble slettet vellykket",
+		"sentSuccessfully": "Sending vellykket"
 	},
 	"sidebar": {
 		"navigation": "Hjem",
@@ -562,29 +568,7 @@
 				"description": "Beskrivelse:",
 				"numberOfMembers": "Antall Medlemmer:",
 				"pendingInvitations": "Ventende Invitasjoner:",
-				"activeWebhooks": "Aktive Webhooks:",
-				"invitationModal": {
-					"title": "Organisasjonsinvitasjoner",
-					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
-					"inputFields": {
-						"searchUser": {
-							"title": "Søk etter brukeren du ønsker å legge til",
-							"placeholder": "Søk Bruker"
-						},
-						"userRole": {
-							"title": "Velg brukerens rolle"
-						}
-					}
-				},
-				"webhookModal": {
-					"webhookName": "Webhook-navn",
-					"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
-					"webhookNameDescription": "Dette feltet er for å angi navnet på webhook. Navnet brukes til å identifisere webhook og bør være beskrivende nok til å skille den fra andre webhooks.",
-					"selectWebhookActions": "Velg webhook-handlinger",
-					"selectWebhookActionsDescription": "Denne rullegardinmenyen lar deg velge de spesifikke handlingene din webhook skal utføre. Hver valgmulighet representerer en forskjellig type handling.",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "Dette feltet er for å angi URL-en hvor webhook vil sende data. Det må være et gyldig og tilgjengelig URL-endepunkt som kan motta og behandle innkommende webhook-data."
-				}
+				"activeWebhooks": "Aktive Webhooks:"
 			}
 		}
 	},
@@ -610,10 +594,33 @@
 			"restapi": {
 				"sectionTitle": "API-tilgangstokens",
 				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Token Informasjon",
+					"name": "Navn",
+					"authorizationType": "Autorisasjonstype",
+					"expireAt": "Utløper",
+					"isActive": "Er aktiv"
+				},
+				"generateToken": {
+					"title": "Rest Api-token",
 					"tokenName": {
-						"label": "Legg til et meningsfylt navn på tokenet ditt",
-						"placeholder": "Mitt fantastiske token"
+						"label": "Legg til et beskrivende navn for tokenet ditt",
+						"placeholder": "Mitt supre token"
+					},
+					"tokenAuthorizationType": {
+						"label": "Velg API-autorisasjonstype",
+						"placeholder": "Velg autorisasjonstype"
+					},
+					"tokenExpireAt": {
+						"label": "Velg utløpsdato for token",
+						"placeholder": "Velg dato",
+						"values": {
+							"never": "Aldri",
+							"1day": "1 dag",
+							"10day": "10 dager",
+							"1month": "1 måned",
+							"1year": "1 år"
+						}
 					}
 				},
 				"buttons": {
@@ -640,7 +647,8 @@
 			},
 			"accountPreferences": {
 				"title": "Kontoinnstillinger",
-				"languageLabel": "Språk"
+				"languageLabel": "Språk",
+				"fontSize": "Skriftstørrelse"
 			},
 			"application": {
 				"title": "Applikasjon",
@@ -682,7 +690,8 @@
 			"title": "Informasjon",
 			"name": "Navn:",
 			"created": "Opprettet:",
-			"members": "Medlemmer:"
+			"members": "Medlemmer:",
+			"pendingInvitations": "Ventende invitasjoner:"
 		},
 		"networkSection": {
 			"title": "Nettverk",
@@ -704,6 +713,54 @@
 			"toggleLogLabel": "LOGG",
 			"logHeader": "Siste 100 aktivitetslogger",
 			"loading": "Henter logger..."
+		},
+		"invitation": {
+			"title": "Teamutvidelse: Inviter nye medlemmer",
+			"description": "Inviter flere personer til laget ditt! Du kan sende invitasjoner via e-post eller finne og legge til personer som allerede bruker plattformen. <br></br> Dette gjør det enkelt for laget ditt å vokse og inkludere flere medlemmer.",
+			"pendingInvitations": {
+				"title": "Ventende invitasjoner"
+			},
+			"inviteByEmail": {
+				"title": "Inviter via e-post",
+				"description": "Inviterte brukere som ikke er medlemmer av applikasjonen for øyeblikket, må registrere seg via lenken som er gitt i invitasjons-e-posten. Lenken er gyldig i 24 timer.",
+				"emailPlaceholder": "E-postadresse",
+				"emailDescription": "Skriv inn e-postadressen til personen du vil invitere",
+				"selectRoleDescription": "Velg brukerens rolle"
+			},
+			"inviteSiteUser": {
+				"title": "Inviter nettstedets brukere",
+				"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
+				"inputFields": {
+					"searchUser": {
+						"title": "Søk etter brukeren du vil legge til",
+						"placeholder": "Søk bruker"
+					},
+					"userRole": {
+						"title": "Velg brukerens rolle"
+					}
+				}
+			}
+		},
+		"webhook": {
+			"title": "Organisasjons Webhooks",
+			"description": "Styrk organisasjonen din med vår webhook-integrasjon, som tilbyr sanntidsvarsler for kritiske hendelser.<br></br>Hold deg i forkant med øyeblikkelige oppdateringer, direkte inn i systemet ditt, og sikre en sømløs arbeidsflyt og umiddelbare responsmuligheter.",
+			"createWebhook": {
+				"editWebhookTitle": "Rediger Webhook",
+				"createWebhookTitle": "Opprett Webhook for Organisasjonen <span>{organization}</span>",
+				"webhookName": "Navn på Webhook",
+				"webhookNameDescription": "Dette feltet er for å angi navnet på webhooken. Navnet brukes til å identifisere webhooken og bør være beskrivende nok til å skille den fra andre webhooks.",
+				"selectWebhookActions": "Velg webhook-aksjoner",
+				"selectWebhookActionsDescription": "Denne rullegardinmenyen lar deg velge de spesifikke handlingene din webhook skal utføre. Hver alternativ representerer en forskjellig type handling.",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "Dette feltet er for å angi URL-en hvor webhooken vil sende data. Det må være en gyldig og tilgjengelig URL-endepunkt som kan motta og behandle innkommende webhook-data."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Aktive Webhooks",
+				"description": "Beskrivelse",
+				"url": "URL",
+				"lastDelivery": "Siste Levering",
+				"events": "Hendelser"
+			}
 		}
 	}
 }

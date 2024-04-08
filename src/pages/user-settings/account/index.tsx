@@ -8,8 +8,9 @@ import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { globalSiteVersion } from "~/utils/global";
 import Link from "next/link";
-import ApiToken from "~/components/userSettings/apiToken";
+import GenerateApiToken from "~/components/userSettings/apiToken";
 import { languageNames, supportedLocales } from "~/locales/lang";
+import ApplicationFontSize from "~/components/userSettings/fontSize";
 
 const defaultLocale = "en";
 
@@ -64,7 +65,7 @@ const Account = () => {
 					<InputField
 						label={t("account.accountSettings.nameLabel")}
 						isLoading={!session?.user}
-						rootClassName=""
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
 						fields={[
 							{
@@ -82,7 +83,7 @@ const Account = () => {
 					<InputField
 						label={t("account.accountSettings.emailLabel")}
 						isLoading={!session?.user}
-						rootClassName=""
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
 						// badge={
 						// 	session?.user?.emailVerified
@@ -113,7 +114,7 @@ const Account = () => {
 						label={t("account.accountSettings.passwordLabel")}
 						placeholder="******"
 						size="sm"
-						rootFormClassName="space-y-3 pt-2"
+						rootFormClassName="space-y-3 pt-2 w-3/6"
 						fields={[
 							{
 								name: "password",
@@ -156,7 +157,6 @@ const Account = () => {
 					</div>
 				</div>
 			</div>
-
 			<div>
 				<div className="text-gray-400 uppercase text-[0.7rem]">
 					{t("account.restapi.sectionTitle")}
@@ -169,14 +169,14 @@ const Account = () => {
 						<Link
 							className="link"
 							target="_blank"
-							href="https://ztnet.network/Rest%20Api"
+							href="https://ztnet.network/category/rest-api"
 						>
-							https://ztnet.network/Rest%20Api
+							https://ztnet.network/category/rest-api
 						</Link>
 					</p>
 				</div>
 				<div className="space-y-5">
-					<ApiToken />
+					<GenerateApiToken />
 				</div>
 			</div>
 
@@ -196,7 +196,7 @@ const Account = () => {
 							label="Zerotier Central API Key"
 							placeholder="******"
 							size="sm"
-							rootFormClassName="space-y-3 pt-2"
+							rootFormClassName="space-y-3 pt-2 w-3/6"
 							fields={[
 								{
 									name: "ztCentralApiKey",
@@ -231,7 +231,7 @@ const Account = () => {
 							label={t("account.zerotierCentral.apiUrlLabel")}
 							description={t("account.zerotierCentral.apiUrlLabelDescription")}
 							size="sm"
-							rootFormClassName="space-y-3 pt-2"
+							rootFormClassName="space-y-3 pt-2 w-3/6"
 							rootClassName="py-2"
 							fields={[
 								{
@@ -267,29 +267,31 @@ const Account = () => {
 				<p className="pt-10 text-[0.7rem] text-gray-400 uppercase">
 					{t("account.accountPreferences.title")}
 				</p>
-				<div className="divider mt-0 p-0 text-gray-500" />
-				<div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text font-medium">
-							{t("account.accountPreferences.languageLabel")}
-						</span>
-					</label>
-					<select
-						defaultValue={locale} // use `defaultValue` here
-						onChange={(e) => void ChangeLanguage(e.target.value)}
-						className="select select-bordered select-sm"
-					>
-						{locales.map((language) => (
-							<option key={language} value={language}>
-								{languageNames[language]}
-							</option>
-						))}
-					</select>
+				<div className="space-y-5">
+					<div className="divider mt-0 p-0 text-gray-500" />
+					<div className="form-control w-full max-w-xs">
+						<label className="label">
+							<span className="label-text font-medium">
+								{t("account.accountPreferences.languageLabel")}
+							</span>
+						</label>
+						<select
+							defaultValue={locale} // use `defaultValue` here
+							onChange={(e) => void ChangeLanguage(e.target.value)}
+							className="select select-bordered select-sm"
+						>
+							{locales.map((language) => (
+								<option key={language} value={language}>
+									{languageNames[language]}
+								</option>
+							))}
+						</select>
+					</div>
+					<ApplicationFontSize />
 				</div>
 			</div>
-
 			<div>
-				<div className="py-10">
+				<div className="pt-10">
 					<p className="text-gray-400 text-[0.7rem] uppercase">
 						{t("account.application.title")}
 					</p>

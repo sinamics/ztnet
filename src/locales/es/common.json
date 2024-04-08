@@ -28,7 +28,8 @@
 		"deleteOrganization": "Eliminar organización",
 		"userActions": "Acciones del usuario",
 		"addWebhooks": "Añadir Webhooks",
-		"options": "Opciones"
+		"options": "Opciones",
+		"resend": "Reenviar"
 	},
 	"commonTable": {
 		"header": {
@@ -78,7 +79,12 @@
 		}
 	},
 	"commonToast": {
-		"organizationDeleted": "Organización eliminada"
+		"updatedSuccessfully": "Actualizado con éxito",
+		"addedSuccessfully": "Agregado con éxito",
+		"deletedSuccessfully": "Eliminado con éxito",
+		"errorOccurred": "Ocurrió un error desconocido",
+		"organizationDeleted": "Organización eliminada con éxito",
+		"sentSuccessfully": "Enviado con éxito"
 	},
 	"sidebar": {
 		"navigation": "Inicio",
@@ -562,29 +568,7 @@
 				"description": "Descripción:",
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
-				"activeWebhooks": "Webhooks Activos:",
-				"invitationModal": {
-					"title": "Invitaciones de la Organización",
-					"description": "Antes de que puedas agregar usuarios a tu organización, es importante tener en cuenta que deben estar ya registrados en la aplicación",
-					"inputFields": {
-						"searchUser": {
-							"title": "Busca el usuario que deseas añadir",
-							"placeholder": "Buscar Usuario"
-						},
-						"userRole": {
-							"title": "Selecciona el rol del usuario"
-						}
-					}
-				},
-				"webhookModal": {
-					"webhookName": "Webhook Name",
-					"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
-					"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
-					"selectWebhookActions": "Select webhook actions",
-					"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
-					"webhookUrl": "Webhook URL ( HTTPS )",
-					"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
-				}
+				"activeWebhooks": "Webhooks Activos:"
 			}
 		}
 	},
@@ -610,10 +594,33 @@
 			"restapi": {
 				"sectionTitle": "Tokens de Acceso a la API",
 				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
-				"inputFields": {
+				"viewToken": {
+					"title": "Información del token",
+					"name": "Nombre",
+					"authorizationType": "Tipo de autorización",
+					"expireAt": "Expira en",
+					"isActive": "Está activo"
+				},
+				"generateToken": {
+					"title": "Token de API Rest",
 					"tokenName": {
 						"label": "Agrega un nombre significativo a tu token",
-						"placeholder": "Mi token asombroso"
+						"placeholder": "Mi token genial"
+					},
+					"tokenAuthorizationType": {
+						"label": "Selecciona el tipo de autorización de la API",
+						"placeholder": "Selecciona el tipo de autorización"
+					},
+					"tokenExpireAt": {
+						"label": "Selecciona la fecha de expiración del token",
+						"placeholder": "Selecciona la fecha",
+						"values": {
+							"never": "Nunca",
+							"1day": "1 día",
+							"10day": "10 días",
+							"1month": "1 mes",
+							"1year": "1 año"
+						}
 					}
 				},
 				"buttons": {
@@ -640,7 +647,8 @@
 			},
 			"accountPreferences": {
 				"title": "Preferencias de la cuenta",
-				"languageLabel": "Idioma"
+				"languageLabel": "Idioma",
+				"fontSize": "Tamaño de fuente"
 			},
 			"application": {
 				"title": "Aplicación",
@@ -682,7 +690,8 @@
 			"title": "Información",
 			"name": "Nombre:",
 			"created": "Creado:",
-			"members": "Miembros:"
+			"members": "Miembros:",
+			"pendingInvitations": "Invitaciones Pendientes:"
 		},
 		"networkSection": {
 			"title": "Redes",
@@ -704,6 +713,54 @@
 			"toggleLogLabel": "REG",
 			"logHeader": "Últimos 100 registros de actividad",
 			"loading": "Cargando registros..."
+		},
+		"invitation": {
+			"title": "Expansión del equipo: Invitar a nuevos miembros",
+			"description": "¡Invita a más personas a tu equipo! Puedes enviar invitaciones por correo electrónico o encontrar y agregar personas que ya estén utilizando la plataforma. <br></br> Esto facilita el crecimiento de tu equipo e incluir a más miembros.",
+			"pendingInvitations": {
+				"title": "Invitaciones pendientes"
+			},
+			"inviteByEmail": {
+				"title": "Invitar por correo electrónico",
+				"description": "Los usuarios invitados que actualmente no son miembros de la aplicación deberán registrarse a través del enlace proporcionado en el correo electrónico de invitación. El enlace es válido por 24 horas.",
+				"emailPlaceholder": "Dirección de correo electrónico",
+				"emailDescription": "Ingresa la dirección de correo electrónico de la persona que deseas invitar",
+				"selectRoleDescription": "Selecciona el rol del usuario"
+			},
+			"inviteSiteUser": {
+				"title": "Invitar usuarios del sitio",
+				"description": "Antes de poder agregar usuarios a tu organización, es importante tener en cuenta que ya deben estar registrados en la aplicación",
+				"inputFields": {
+					"searchUser": {
+						"title": "Buscar el usuario que deseas agregar",
+						"placeholder": "Buscar usuario"
+					},
+					"userRole": {
+						"title": "Selecciona el rol del usuario"
+					}
+				}
+			}
+		},
+		"webhook": {
+			"title": "Webhooks de Organización",
+			"description": "Potencia tu organización con nuestra integración de webhook, ofreciendo notificaciones en tiempo real para eventos críticos.<br></br>Mantente adelante con actualizaciones instantáneas, directamente canalizadas a tu sistema, asegurando un flujo de trabajo sin interrupciones y capacidades de respuesta inmediata.",
+			"createWebhook": {
+				"editWebhookTitle": "Editar Webhook",
+				"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
+				"webhookName": "Nombre del Webhook",
+				"webhookNameDescription": "Este campo es para ingresar el nombre del webhook. El nombre se utiliza para identificar el webhook y debe ser lo suficientemente descriptivo para distinguirlo de otros webhooks.",
+				"selectWebhookActions": "Seleccionar acciones del webhook",
+				"selectWebhookActionsDescription": "Este menú desplegable te permite elegir las acciones específicas que tu webhook debería realizar. Cada opción representa un tipo diferente de acción.",
+				"webhookUrl": "URL del Webhook ( HTTPS )",
+				"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Webhooks Activos",
+				"description": "Descripción",
+				"url": "URL",
+				"lastDelivery": "Última Entrega",
+				"events": "Eventos"
+			}
 		}
 	}
 }

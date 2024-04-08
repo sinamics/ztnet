@@ -1,0 +1,207 @@
+openapi: 3.1.0
+info:
+  title: ZTNet Organization Member Rest API
+  version: 1.0.0
+  description: |
+    Access the ZTNet Organization suite through our RESTful Web API, compatible with version 0.6.0 and beyond. 
+    
+    This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
+
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
+
+paths:                 
+  /org/:orgid/network/{networkId}/member:
+    get:
+      summary: Returns a list of Members in a organization network
+      operationId: getNetworkMemberInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        200:
+          description: Detailed information of the specified organization Network Member
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
+              example:
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+  /org/:orgid/network/{networkId}/member/{memberId}:
+    get:
+      summary: Returns a specific organization network member
+      operationId: getNetworkMemberByIdInfo
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API Key for the user
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the member
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        200:
+          description: Detailed information of the specified organization Network Member
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
+              example:
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+    post:
+      summary: Modify a organization network member
+      description: Modify a organization network member
+      parameters:
+        - name: x-ztnet-auth
+          in: header
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: networkId
+          required: true
+          schema:
+            type: string
+          description: ID of the network
+        - in: path
+          name: memberId
+          required: true
+          schema:
+            type: string
+          description: ID of the member
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: User defined name of the member
+                authorized:
+                  type: boolean
+                  description: Authorization status of the member
+              # required:
+              #   - name
+              #   - authorized
+              example:
+                name: "John Doe"
+                authorized: "false"
+      responses:
+        200:
+          description: Detailed information of the specified Network Member
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkMemberSchema.yml#/NetworkMemberResponse'
+              example:
+                $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
+    delete:
+      summary: Delete a organization network member
+      description: This action flags the member as deleted, revokes their authorization, and updates their status in the database. Consequently, the member will be moved to the "Stashed Members" list, indicating their altered status.
+      operationId: deleteNetworkMember
+      parameters:
+        - in: path
+          name: networkId
+          required: true
+          schema:
+            type: string
+          description: ID of the network
+        - in: path
+          name: memberId
+          required: true
+          schema:
+            type: string
+          description: ID of the member
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        200:
+          description: Organization Network Response
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/NetworkSchema.yml#/NetworkResponse'
+              example:
+                $ref: '../../_example/NetworkExample.yml#/NetworkArrayExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

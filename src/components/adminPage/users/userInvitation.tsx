@@ -8,14 +8,28 @@ import toast from "react-hot-toast";
 import cn from "classnames";
 import { useTranslations } from "next-intl";
 import { UserInvitation } from "@prisma/client";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const InvitationLink = () => {
 	const t = useTranslations();
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { callModal, closeModal } = useModalStore((state) => state);
-	const { mutate: deleteInvitation } = api.admin.deleteInvitationLink.useMutation();
 
 	const { data: invitationLink, refetch: refetchInvitations } =
 		api.admin.getInvitationLink.useQuery();
+
+	const { mutate: deleteInvitation } = api.admin.deleteInvitationLink.useMutation({
+		onSuccess: handleApiSuccess({
+			actions: [refetchInvitations, closeModal],
+			toastMessage: t("commonToast.deletedSuccessfully"),
+		}),
+		onError: handleApiError,
+	});
 
 	const showInviationDetails = (invite: UserInvitation) => {
 		const expired = new Date(invite.expires) < new Date() || invite?.used;
@@ -89,15 +103,7 @@ const InvitationLink = () => {
 					<div className="py-10">
 						<button
 							onClick={() => {
-								deleteInvitation(
-									{ id: invite.id },
-									{
-										onSuccess: () => {
-											void refetchInvitations();
-											closeModal();
-										},
-									},
-								);
+								deleteInvitation({ id: invite.id });
 							}}
 							className="btn btn-sm btn-error btn-outline"
 						>
@@ -117,23 +123,23 @@ const InvitationLink = () => {
 					<p className="pt-5 text-sm text-gray-400">
 						{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
 					</p>
-					<div className="flex gap-3">
+					<div className="flex flex-wrap gap-3 ">
 						{invitationLink?.map((invite) => {
 							const expired = new Date(invite.expires) < new Date() || invite?.used;
 							return (
 								<div
 									key={invite.id}
 									onClick={() => showInviationDetails(invite)}
-									className="cursor-pointer"
+									className="cursor-pointer "
 								>
 									<p
-										className={cn("text-md badge", {
-											"bg-primary": !expired,
-											"bg-error": expired,
+										className={cn("text-md badge text-gray-300", {
+											"bg-primary/30": !expired,
+											"bg-error/30": expired,
 										})}
 									>
 										{invite.secret}
-										<span className="pl-1">
+										<span className="pl-1 ">
 											{`${invite.timesUsed}/${invite.timesCanUse || 1}`} --{" "}
 										</span>
 										{`${expired ? "Expired" : "Expires in"}`}
@@ -156,8 +162,16 @@ const InvitationLink = () => {
 const UserInvitationLink = () => {
 	const t = useTranslations();
 
-	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation();
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { refetch: refetchInvitations } = api.admin.getInvitationLink.useQuery();
+
+	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchInvitations] }),
+		onError: handleApiError,
+	});
+
 	const { data: options } = api.admin.getAllOptions.useQuery();
 	return (
 		<div className="pt-5">
@@ -210,7 +224,6 @@ const UserInvitationLink = () => {
 							},
 							{
 								onSuccess: () => {
-									void refetchInvitations();
 									resolve(true);
 								},
 							},

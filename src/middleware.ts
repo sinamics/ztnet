@@ -7,6 +7,7 @@ export const config = {
 		"/dashboard/:path*",
 		"/organization/:path*",
 		"/network/:path*",
+		"/central/:path*",
 		"/user-settings/:path*", // user are redirected to dashboard
 		"/admin/:path*",
 	],

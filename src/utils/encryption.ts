@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
 
 const ZTNET_SECRET = process.env.NEXTAUTH_SECRET;
 
 export const SMTP_SECRET = "_smtp";
 export const API_TOKEN_SECRET = "_ztnet_api_token";
+export const ORG_API_TOKEN_SECRET = "_ztnet_organization_api_token";
 export const ORG_INVITE_TOKEN_SECRET = "_ztnet_org_invite";
 export const PASSWORD_RESET_SECRET = "_ztnet_passwd_reset";
 
@@ -32,7 +34,7 @@ export const encrypt = (text: string, secret: Buffer) => {
 };
 
 // Decryption Function
-export const decrypt = (text: string, secret: Buffer) => {
+export const decrypt = <T>(text: string, secret: Buffer) => {
 	try {
 		if (!secret) {
 			throw new Error("Secret is empty");
@@ -51,7 +53,7 @@ export const decrypt = (text: string, secret: Buffer) => {
 		const decipher = crypto.createDecipheriv("aes-256-cbc", secretBuffer, iv);
 
 		const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
-		return decrypted.toString();
+		return decrypted.toString() as T;
 	} catch (err) {
 		throw new Error(err);
 	}
@@ -60,16 +62,20 @@ export const decrypt = (text: string, secret: Buffer) => {
 type DecryptedTokenData = {
 	userId: string;
 	name: string;
+	apiAuthorizationType: AuthorizationType;
+	tokenId: string;
 };
 
 type VerifyToken = {
 	apiKey: string;
 	requireAdmin?: boolean;
+	apiAuthorizationType: AuthorizationType;
 };
 
 export async function decryptAndVerifyToken({
 	apiKey,
 	requireAdmin = false,
+	apiAuthorizationType,
 }: VerifyToken): Promise<DecryptedTokenData> {
 	// Check if API key is provided
 	if (!apiKey) {
@@ -80,15 +86,51 @@ export async function decryptAndVerifyToken({
 
 	// Try decrypting the token
 	try {
-		const decryptedString = decrypt(apiKey, generateInstanceSecret(API_TOKEN_SECRET));
+		const decryptedString = decrypt<string>(
+			apiKey,
+			generateInstanceSecret(API_TOKEN_SECRET),
+		);
 		decryptedData = JSON.parse(decryptedString);
 	} catch (_error) {
 		throw new Error("Invalid token");
 	}
-
 	// Validate the decrypted data structure (add more validations as necessary)
-	if (!decryptedData.userId || typeof decryptedData.userId !== "string") {
-		throw new Error("Invalid token structure");
+	if (
+		!decryptedData.userId ||
+		typeof decryptedData.userId !== "string" ||
+		!decryptedData.tokenId
+	) {
+		throw new Error("Invalid token");
+	}
+
+	// validate the authorization type in token with the required authorization type
+	if (
+		!Array.isArray(decryptedData.apiAuthorizationType) ||
+		!decryptedData.apiAuthorizationType.includes(apiAuthorizationType)
+	) {
+		throw new Error("Invalid Authorization Type");
+	}
+
+	// get the token from the database
+	const token = await prisma.aPIToken.findUnique({
+		where: {
+			id: decryptedData.tokenId,
+			userId: decryptedData.userId,
+		},
+		select: {
+			expiresAt: true,
+		},
+	});
+	if (!token) {
+		throw new Error("Invalid token");
+	}
+
+	// check if the token is expired
+	if (token.expiresAt) {
+		const expiresAt = new Date(token.expiresAt);
+		if (expiresAt < new Date()) {
+			throw new Error("Token expired");
+		}
 	}
 
 	// Verify if the user exists and has the required token

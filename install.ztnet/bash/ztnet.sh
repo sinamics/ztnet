@@ -91,8 +91,6 @@ print_ztnet() {
 setup_color
 print_ztnet
 
-# print when this ztnet.sh file was last updated
-printf "Last updated: %s\n" "$(date -d "$LAST_UPDATED" "+%d %b %Y")"
 
 ##     ##    ###    ########  ####    ###    ########  ##       ########  ######  
 ##     ##   ## ##   ##     ##  ##    ## ##   ##     ## ##       ##       ##    ## 
@@ -102,6 +100,7 @@ printf "Last updated: %s\n" "$(date -d "$LAST_UPDATED" "+%d %b %Y")"
   ## ##   ##     ## ##    ##   ##  ##     ## ##     ## ##       ##       ##    ## 
    ###    ##     ## ##     ## #### ##     ## ########  ######## ########  ######  
 
+INSTALLER_LAST_UPDATED=""
 APT_PROGRAMS=("git" "curl" "jq" "postgresql" "postgresql-contrib")
 HOST_OS=$(( lsb_release -ds || cat /etc/*release || uname -om ) 2>/dev/null | head -n1)
 INSTALL_NODE=false
@@ -216,31 +215,42 @@ ask_string() {
     eval "$varname='$ask_string'"
 }
 
-
 silent() {
     local output
     local status
     local command="$@"
     
     if [ "$SILENT_MODE" = "Yes" ]; then
-        output="$($command >/dev/null 2>&1)"
+        # Capture the output and get the exit status
+        output="$($command 2>&1)"
         status=$?
-      if [ $status -ne 0 ]; then
-          # An error occurred
-          failure $BASH_LINENO "$command" "$status" "$output"
-      fi
+
+        # Check for "heap out of memory" error in the output first
+        if echo "$output" | grep -q "out of memory"; then
+            # If "heap out of memory" error is found, change the output message
+            failure $BASH_LINENO "$command" "$status" "Out of Memory"
+        elif [ $status -ne 0 ]; then
+            # For other errors, pass the original output
+            failure $BASH_LINENO "$command" "$status" "$output"
+        fi
     fi
 }
-
 
 verbose() {
     local output
     local status
     local command="$@"
-    $command 2>&1
+
+    # Execute the command, capturing its output and also displaying it
+    output=$($command 2>&1 | tee /dev/tty)
     status=$?
-    if [ $status -ne 0 ]; then
-        # An error occurred
+
+    # Check for "out of memory" error in the output first
+    if echo "$output" | grep -q "out of memory"; then
+        # Handle the specific "out of memory" error
+        failure $BASH_LINENO "$command" "$status" "Out of Memory"
+    elif [ $status -ne 0 ]; then
+        # For other types of errors, pass the original output
         failure $BASH_LINENO "$command" "$status" "$output"
     fi
 }
@@ -311,6 +321,17 @@ fi
 ##       ##     ##  ##  ##       ##     ## ##    ##  ##       
 ##       ##     ## #### ########  #######  ##     ## ######## 
 
+# Example of a handler function for memory errors
+handle_memory_error() {
+    local lineno=$1
+    local command=$2
+    local status=$3
+    local output=$4
+
+    # Custom handling for memory errors
+    echo "Memory error detected in command '$command' at line $lineno. Status: $status"
+    # Add additional handling logic here
+}
 
 function failure() {
   cleanup
@@ -319,8 +340,15 @@ function failure() {
   local _last_command=$2
   local _exitcode=$3
   local _output=$4
+  local formatted_output=$(echo "$_output" | tr '\n' ' ' | sed 's/  */ /g')
 
   local uname=$(uname -a | sed -e 's/"//g')
+  local disk_space=$(df -m | awk 'NR>1 {print $1": "$4"MB"}' | xargs)
+
+  # Get total memory in KB and convert it to MB
+  local total_mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+  local total_mem_mb=$((total_mem_kb / 1024))
+  
 
   printf "\n${RED}An error occurred! ${NC}\n" >&2
 
@@ -333,13 +361,15 @@ function failure() {
           --arg os "$HOST_OS" \
           --arg command "$_last_command" \
           --arg exitcode "$_exitcode" \
-          --arg output "$_output" \
+          --arg disk "$disk_space" \
+          --arg memory "$total_mem_mb"MB \
+          --arg output "$formatted_output" \
           --arg timestamp "$(date +"%d-%m-%Y/%M:%S")" \
           --arg lineno "$_bash_lineno" \
-          '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
+          '{runner: $runner, kernel: $kernel, command: $command, output: $output, exitcode: $exitcode, disk: $disk, memory: $memory, lineno:$lineno, arch: $arch, os: $os, timestamp: $timestamp}')
   else
       # Manually create JSON string
-      jsonError="{\"kernel\": \"$uname\", \"runner\": \"ztnet standalone\", \"arch\": \"$ARCH\", \"os\": \"$HOST_OS\", \"command\": \"$_last_command\", \"output\": \"$_output\", \"exitcode\": \"$_exitcode\", \"timestamp\": \"$(date +"%d-%m-%Y/%M:%S")\", \"lineno\": \"$_bash_lineno\"}"
+      jsonError="{\"kernel\": \"$uname\", \"runner\": \"ztnet standalone\", \"arch\": \"$ARCH\", \"os\": \"$HOST_OS\", \"command\": \"$_last_command\",  \"disk\": \"$disk_space\",  \"memory\": \"$total_mem_mb\", \"output\": \"$formatted_output\", \"exitcode\": \"$_exitcode\", \"timestamp\": \"$(date +"%d-%m-%Y/%M:%S")\", \"lineno\": \"$_bash_lineno\"}"
       # Replace newlines in output with \n to make it a valid JSON string
       jsonError=$(echo $jsonError | sed ':a;N;$!ba;s/\n/\\n/g')
   fi
@@ -464,6 +494,18 @@ ztnet_postgres_user_permissions() {
     fi
 }
 
+memory_warning() {
+  # Get total memory in KB and convert it to MB
+  total_mem_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
+  total_mem_mb=$((total_mem_kb / 1024))
+
+  # Check if total memory is less than or equal to 1024MB (1GB)
+  if [ "$total_mem_mb" -le 1024 ]; then
+      printf "\n"
+      echo "${YELLOW}Warning: Your system's total memory is only ${total_mem_mb}MB. If the installation process fails, it might be due to insufficient memory. Consider upgrading your memory if possible.${NC}"
+      read -n 1 -s -r -p "Press any key to continue..." < /dev/tty
+  fi
+}
 
 # Check if the OS is Ubuntu
 if [[ $OS == "Ubuntu" ]]; then
@@ -602,6 +644,9 @@ fi
 ##  ##  ## ##       ##       ##    ## ##     ## ##     ## ##           ##  ##   ### ##       ##     ## 
  ###  ###  ######## ########  ######   #######  ##     ## ########    #### ##    ## ##        #######  
 
+# print when this ztnet.sh file was last updated
+printf "Last updated: %s\n" "$(date -d "$INSTALLER_LAST_UPDATED" "+%d %b %Y")"
+
 # Show info text to user
 printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
 printf "This script will perform the following actions:\n"
@@ -622,6 +667,10 @@ if ! command_exists psql; then
 fi
 
 ask_question "Use silent (non-verbose) installation with minimal output?" Yes SILENT_MODE
+
+# Check if the user has enough memory, and warn if not
+memory_warning
+
 printf "\n"
 print_status "Starting installation..."
 

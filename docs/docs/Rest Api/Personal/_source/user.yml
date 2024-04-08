@@ -14,7 +14,13 @@ servers:
 tags:
   - name: user
     description: Users API
-    x-displayName: Users dsd s
+    x-displayName: Users API
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+security:
+  - defaultApiKey: []
+
 paths:
   /user:
     post:
@@ -32,8 +38,6 @@ paths:
       description: |
         If no users have been created yet, no API key is required. Otherwise, an API key must be included in the request header.
         Keep in mind that first user created will be the admin user.
-      security:
-        - x-ztnet-auth: []
       requestBody:
         # required: true
         content:
@@ -59,11 +63,18 @@ paths:
                     Must be in ISO 8601 format (e.g. 2023-11-03T00:00:00.000Z).
 
                     Not applicable if the user is an admin (first user). Admin accounts never expire.
+                generateApiToken:
+                  type: boolean
+                  nullable: true
+                  description: |
+                    If set to true, the response will include an API token with a 24-hour validity period, applicable for both Personal and Organization API access.
+
             example:
               email: "post@ztnet.network"
               password: "strong_password"
               name: "Ztnet User"
               expiresAt: "2023-11-03T00:00:00.000Z"
+              generateApiToken: true
       # parameters:
       #   - name: x-ztnet-auth
       #     in: header
@@ -88,39 +99,22 @@ paths:
                     type: string
                   expiresAt:
                     type: string
+                  apiToken:
+                    type: string
                 example:
-                  id: "12345"
-                  email: "test@example.com"
-                  name: "Test User"
+                  id: "abcd1234"
+                  email: "johndoe@ztnet.network"
+                  name: "John Doe"
                   expiresAt: "2023-10-28T00:00:00Z"
+                  apiToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9ihuihfds78tewgyre67dtfeswr7gyu3q8gfrv78ewrtgf8wrb98SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 
         401:
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         429:
-          description: Rate limit exceeded
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
+
     components:
       operationId: postNewUser
       securitySchemes:

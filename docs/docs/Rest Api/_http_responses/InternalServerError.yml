@@ -1,0 +1,16 @@
+InternalServerError:
+  description: Internal Server Error, indicating that the server encountered an unexpected condition that prevented it from fulfilling the request.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            description: A message detailing the unexpected condition encountered by the server.
+            example: 'Internal server error. Please try again later.'
+      examples:
+        internalServerErrorExample:
+          summary: Example response for an internal server error
+          value:
+            error: 'Internal server error. Please try again later.'

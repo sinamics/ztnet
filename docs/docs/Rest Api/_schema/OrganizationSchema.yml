@@ -1,0 +1,64 @@
+Organization:
+  type: object
+  properties:
+    id:
+      type: string
+      example: cltng0000000abcdefghijjkl
+      description: Unique identifier for the organization.
+    orgName:
+      type: string
+      example: My Awesome Organization
+      description: Name of the organization.
+    ownerId:
+      type: string
+      example: cltng0000001abcdefghijjkl
+      description: Unique identifier for the owner of the organization.
+    description:
+      type: string
+      example: ''
+      description: A brief description of the organization.
+    createdAt:
+      type: string
+      format: date-time
+      example: '2024-03-11T21:18:00.524Z'
+      description: The ISO 8601 date format of the time that the organization was created.
+            
+OrganizationResponse:
+  type: array
+  items:
+    $ref: '#/Organization'
+    
+OrganizationById:
+  type: object
+  properties:
+    id:
+      type: string
+      example: "dummy12345id"
+      description: Unique identifier for the organization.
+    name:
+      type: string
+      example: "Awesome Egeland Test"
+      description: Name of the organization.
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-03-11T21:18:00.524Z"
+      description: The ISO 8601 date format of the time that the organization was created.
+    ownerId:
+      type: string
+      example: "dummyOwner12345"
+      description: Unique identifier for the owner of the organization.
+    networks:
+      type: array
+      items:
+        type: object
+        properties:
+          nwid:
+            type: string
+            example: "dummyNetwork12345"
+            description: Unique network identifier within the organization.
+          name:
+            type: string
+            example: "Awesome Uncertain Butterfly"
+            description: Name of the network.
+

@@ -1,21 +1,15 @@
 import { useRouter } from "next/router";
 import { type ChangeEvent, useState } from "react";
-import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
-import { type ErrorData } from "~/types/errorHandling";
 import { useTranslations } from "next-intl";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 type User = {
 	email: string;
 };
-interface ZodErrorIssue {
-	message: string;
-	// Include other properties of the issue object if necessary.
-}
-interface ZodErrorFieldErrors {
-	[key: string]: ZodErrorIssue[];
-}
-
 interface IProps {
 	organizationId?: string;
 }
@@ -25,21 +19,17 @@ export const InviteMemberByMail = ({ organizationId }: IProps) => {
 	const [user, setUser] = useState<User>({ email: "" });
 	const { query } = useRouter();
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { mutate: invite, isLoading: loadingInvite } =
 		api.network.inviteUserByMail.useMutation({
-			onError: (error) => {
-				if ((error.data as ErrorData)?.zodError) {
-					const fieldErrors = (error.data as ErrorData)?.zodError
-						.fieldErrors as ZodErrorFieldErrors;
-					for (const field in fieldErrors) {
-						toast.error(`${fieldErrors[field].join(", ")}`);
-					}
-				} else if (error.message) {
-					toast.error(error.message);
-				} else {
-					toast.error(t("inviteMemberByMail.errorMessage.unknownError"));
-				}
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({
+				toastMessage: t("inviteMemberByMail.successMessage", {
+					email: user.email,
+				}),
+			}),
 		});
 
 	const inputHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -80,12 +70,6 @@ export const InviteMemberByMail = ({ organizationId }: IProps) => {
 							{
 								onSuccess: () => {
 									setUser({ email: "" });
-									toast.success(
-										t("inviteMemberByMail.successMessage", {
-											email: user.email,
-										}),
-										{ duration: 10000 },
-									);
 								},
 							},
 						);

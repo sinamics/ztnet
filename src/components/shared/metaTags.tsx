@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 
-const MetaTags = ({ title }: { title: string }) => {
+const HeadSection = ({ title }: { title: string }) => {
 	return (
 		<Head>
 			<title>{title}</title>
@@ -12,4 +12,4 @@ const MetaTags = ({ title }: { title: string }) => {
 	);
 };
 
-export default MetaTags;
+export default HeadSection;

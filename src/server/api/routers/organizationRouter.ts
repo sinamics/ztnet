@@ -4,12 +4,14 @@ import {
 	createTRPCRouter,
 	adminRoleProtectedRoute,
 	protectedProcedure,
+	publicProcedure,
 } from "~/server/api/trpc";
 import { IPv4gen } from "~/utils/IPv4gen";
-import { customConfig, networkRouter } from "./networkRouter";
+import { networkRouter } from "./networkRouter";
 import * as ztController from "~/utils/ztApi";
 import {
 	ORG_INVITE_TOKEN_SECRET,
+	decrypt,
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
@@ -20,9 +22,16 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
+import { nameGeneratorConfig } from "../services/networkService";
+import rateLimit from "~/utils/rateLimit";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
+
+const invitationRateLimit = rateLimit({
+	interval: 5 * 60 * 1000, // 300 seconds or 5 minutes
+	uniqueTokenPerInterval: 1000,
+});
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -75,7 +84,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 			const caller = networkRouter.createCaller(ctx);
 			// make sure the user is the owner of the organization
@@ -114,11 +123,11 @@ export const organizationRouter = createTRPCRouter({
 				});
 			});
 		}),
-	updateMeta: adminRoleProtectedRoute
+	updateMeta: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().optional(),
+				orgName: z.string().min(3).max(40),
 				orgDescription: z.string().optional(),
 			}),
 		)
@@ -127,17 +136,17 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
-			// make sure the user is the owner of the organization
-			const org = await ctx.prisma.organization.findUnique({
-				where: {
-					id: input.organizationId,
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Updated organization meta: ${input.orgName}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
 				},
 			});
-			if (org?.ownerId !== ctx.session.user.id) {
-				throw new Error("You are not the owner of this organization.");
-			}
 			// update the organization
 			return await ctx.prisma.organization.update({
 				where: {
@@ -215,6 +224,30 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	getPlatformUsers: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// get all users
+			return await ctx.prisma.user.findMany({
+				select: {
+					id: true,
+					name: true,
+					email: true,
+				},
+			});
+		}),
+
 	getOrgUsers: protectedProcedure
 		.input(
 			z.object({
@@ -222,6 +255,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.READ_ONLY,
+			});
+
 			// get all organizations related to the user
 			const organization = await ctx.prisma.organization.findUnique({
 				where: {
@@ -239,14 +279,16 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			// return user with role flatten
-			const users = organization?.users.map((user) => {
-				const role = organization.userRoles.find((role) => role.userId === user.id);
-				return {
-					...user,
-					role: role?.role,
-				};
-			});
+			// return user with role flatten and sort by id
+			const users = organization?.users
+				.map((user) => {
+					const role = organization.userRoles.find((role) => role.userId === user.id);
+					return {
+						...user,
+						role: role?.role,
+					};
+				})
+				.sort((a, b) => a.id.localeCompare(b.id)); // Sort users by id in ascending order
 
 			return users;
 		}),
@@ -261,7 +303,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// get all organizations related to the user
 			return await ctx.prisma.organization.findUnique({
@@ -271,6 +313,8 @@ export const organizationRouter = createTRPCRouter({
 				include: {
 					userRoles: true,
 					users: true,
+					webhooks: true,
+					invitations: true,
 					networks: {
 						include: {
 							networkMembers: true,
@@ -292,7 +336,7 @@ export const organizationRouter = createTRPCRouter({
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.USER,
+					minimumRequiredRole: Role.USER,
 				});
 			}
 
@@ -310,7 +354,7 @@ export const organizationRouter = createTRPCRouter({
 
 			if (!input?.networkName) {
 				// Generate adjective and noun word
-				input.networkName = uniqueNamesGenerator(customConfig);
+				input.networkName = uniqueNamesGenerator(nameGeneratorConfig);
 			}
 
 			// Create ZT network
@@ -374,14 +418,34 @@ export const organizationRouter = createTRPCRouter({
 			if (input.userId === ctx.session.user.id) {
 				throw new Error("You cannot change your own role.");
 			}
+
 			// Check if the user has permission to update the network
 			if (input.organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: input.organizationId,
-					requiredRole: Role.ADMIN,
+					minimumRequiredRole: Role.ADMIN,
 				});
 			}
+
+			// get the user name
+			const user = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userId,
+				},
+				select: {
+					name: true,
+				},
+			});
+
+			// Log the action
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Changed user ${user.name} role to ${input.role} in organization.`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId || null,
+				},
+			});
 			// chagne the user's role in the organization
 			return await ctx.prisma.userOrganizationRole.update({
 				where: {
@@ -411,7 +475,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
@@ -469,7 +533,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 
 			const userId = ctx.session.user.id;
@@ -601,16 +665,33 @@ export const organizationRouter = createTRPCRouter({
 			return notifications;
 		}),
 
-	addUser: adminRoleProtectedRoute
+	addUser: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
 				userId: z.string(),
 				userName: z.string(),
-				organizationRole: z.enum(["READ_ONLY", "USER"]),
+				organizationRole: z.enum(["READ_ONLY", "USER", "ADMIN"]),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// check if the user is already a member of the organization
+			const userRole = await ctx.prisma.userOrganizationRole.findFirst({
+				where: {
+					organizationId: input.organizationId,
+					userId: input.userId,
+				},
+			});
+			if (userRole) {
+				throw new Error("User is already a member of the organization.");
+			}
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -668,7 +749,7 @@ export const organizationRouter = createTRPCRouter({
 
 			// make sure the user is not the owner of the organization
 			if (org?.ownerId === input.userId) {
-				throw new Error("You cannot leave an organization you own.");
+				throw new Error("You cannot kick the organization owner.");
 			}
 
 			// Find the email of the user
@@ -693,7 +774,7 @@ export const organizationRouter = createTRPCRouter({
 			}
 
 			// leave organization
-			return await ctx.prisma.organization.update({
+			await ctx.prisma.organization.update({
 				where: {
 					id: input.organizationId,
 				},
@@ -711,6 +792,15 @@ export const organizationRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			// Log the action
+			return await ctx.prisma.activityLog.create({
+				data: {
+					action: `User ${user.email} left organization.`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId,
+				},
+			});
 		}),
 	getLogs: protectedProcedure
 		.input(
@@ -723,7 +813,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.READ_ONLY,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 			// Get all messages associated with the current user
 			const logs = await ctx.prisma.activityLog.findMany({
@@ -745,24 +835,139 @@ export const organizationRouter = createTRPCRouter({
 
 			return logs;
 		}),
-	generateInviteLink: adminRoleProtectedRoute
+	preValidateUserInvite: publicProcedure
+		.input(
+			z.object({
+				token: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			if (!input.token) {
+				throw new Error("An error occurred while processing the invitation link.");
+			}
+
+			// add rate limit
+			const INVITATION_REQUEST_LIMIT = 50;
+			try {
+				await invitationRateLimit.check(
+					ctx.res,
+					INVITATION_REQUEST_LIMIT,
+					"ORGANIZATION_INVITATION",
+				);
+			} catch {
+				throwError("Rate limit exceeded, try again later.", "TOO_MANY_REQUESTS");
+			}
+
+			try {
+				const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET);
+				const decryptedToken = decrypt(input.token, secret) as string;
+				const tokenPayload = JSON.parse(decryptedToken);
+
+				// make sure the invitation exist
+				const invitation = await ctx.prisma.organizationInvitation.findFirst({
+					where: {
+						token: input.token,
+					},
+				});
+
+				// Check if the invitation is valid
+				if (!invitation) {
+					throw new Error("An error occurred while processing the invitation link.");
+				}
+
+				// Check if the token is expired
+				if (invitation.expiresAt.getTime() < Date.now()) {
+					throw new Error("An error occurred while processing the invitation link.");
+				}
+
+				// Check if the user already exists, then add him to the organization
+				const doesUserExist = await ctx.prisma.user.findFirst({
+					where: {
+						email: tokenPayload.email,
+					},
+				});
+
+				// if ctx user and the user has a valid invite add him.
+				if (doesUserExist) {
+					// make sure the user does not exist in the organization
+					const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+						where: {
+							organizationId: tokenPayload.organizationId,
+							userId: doesUserExist.id,
+						},
+					});
+
+					if (isMember) {
+						throw new Error("You are already a member of the organization.");
+					}
+
+					// Add the user to the organization
+					// Add user to the organization
+					await ctx.prisma.organization.update({
+						where: {
+							id: tokenPayload.organizationId,
+						},
+						data: {
+							userRoles: {
+								create: {
+									userId: doesUserExist.id,
+									role: tokenPayload.role,
+								},
+							},
+							users: {
+								connect: {
+									id: doesUserExist.id,
+								},
+							},
+						},
+						include: {
+							users: true,
+						},
+					});
+
+					// delete the invitation
+					await ctx.prisma.organizationInvitation.deleteMany({
+						where: {
+							email: tokenPayload.email,
+							organizationId: tokenPayload.organizationId,
+						},
+					});
+
+					// Log the action
+					await ctx.prisma.activityLog.create({
+						data: {
+							action: `User ${doesUserExist.name} joined organization ${tokenPayload.organizationId}`,
+							performedById: tokenPayload.invitedById,
+							organizationId: tokenPayload.organizationId,
+						},
+					});
+
+					return {
+						user: doesUserExist,
+						organizationId: tokenPayload.organizationId,
+					};
+				}
+			} catch (_e) {
+				throw new Error("An error occurred while processing the invitation link.");
+			}
+			// if the user does not exist, return empty object
+			return {};
+		}),
+	generateInviteLink: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
+				role: z.nativeEnum(Role),
 				email: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (!input.email) {
-				throw new Error("Email cannot be empty.");
-			}
-			if (!input.organizationId) {
-				throw new Error("Organization ID cannot be empty.");
-			}
 			const payload = {
 				email: input.email,
 				organizationId: input.organizationId,
-				expires: Date.now() + 3600000, // Current time + 1 hour
+				role: input.role,
+				invitedById: ctx.session.user.id,
+				expiresAt: Date.now() + 3600000, // Current time + 1 hour
 			};
 
 			// Encrypt the payload
@@ -775,6 +980,9 @@ export const organizationRouter = createTRPCRouter({
 					token: encryptedToken,
 					organizationId: input.organizationId,
 					email: input.email,
+					role: input.role,
+					invitedById: ctx.session.user.id,
+					expiresAt: new Date(payload.expiresAt),
 				},
 			});
 
@@ -783,64 +991,308 @@ export const organizationRouter = createTRPCRouter({
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
 		}),
-	inviteUserByMail: adminRoleProtectedRoute
+	resendInvite: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
+				invitationId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const invitation = await ctx.prisma.organizationInvitation.findFirst({
+				where: {
+					id: input.invitationId,
+					organizationId: input.organizationId,
+				},
+			});
+
+			if (!invitation) {
+				throw new Error("Invitation not found.");
+			}
+
+			// make sure mailSentAt is more than 1 minute ago
+			if (invitation.mailSentAt && invitation.mailSentAt.getTime() > Date.now() - 60000) {
+				throw new Error("You can only resend an invitation after 1 minute.");
+			}
+			// make sure the user has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: invitation.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			try {
+				// get the org mail template
+				const globalOptions = await ctx.prisma.globalOptions.findFirst({
+					where: {
+						id: 1,
+					},
+				});
+
+				const defaultTemplate = inviteOrganizationTemplate();
+				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+
+				// create invitation link
+				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
+
+				// get organization name
+				const organization = await ctx.prisma.organization.findUnique({
+					where: {
+						id: invitation.organizationId,
+					},
+				});
+
+				if (!organization) {
+					throw new Error("Organization not found.");
+				}
+
+				const renderedTemplate = await ejs.render(
+					JSON.stringify(template),
+					{
+						toEmail: invitation.email,
+						fromAdmin: ctx.session.user.name,
+						fromOrganization: organization.orgName,
+						invitationLink: invitationLink,
+					},
+					{ async: true },
+				);
+
+				// create transporter
+				const transporter = createTransporter(globalOptions);
+				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+
+				// define mail options
+				const mailOptions = {
+					from: globalOptions.smtpEmail,
+					to: invitation.email,
+					subject: parsedTemplate.subject,
+					html: parsedTemplate.body,
+				};
+
+				//update mailSentAt: new Date()
+				await ctx.prisma.organizationInvitation.update({
+					where: {
+						id: input.invitationId,
+					},
+					data: {
+						mailSentAt: new Date(),
+					},
+				});
+				// send test mail to user
+				return await sendEmail(transporter, mailOptions);
+			} catch (error) {
+				return throwError(error.message);
+			}
+		}),
+
+	// define mail options
+	inviteUserByMail: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				role: z.nativeEnum(Role),
 				email: z.string().email(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { organizationId, email } = input;
-			const globalOptions = await ctx.prisma.globalOptions.findFirst({
+			const { organizationId, email, role } = input;
+
+			if (!email) {
+				throw new Error("Email cannot be empty.");
+			}
+
+			if (!organizationId) {
+				throw new Error("Organization ID cannot be empty.");
+			}
+
+			if (!role) {
+				throw new Error("Role cannot be empty.");
+			}
+
+			// make sure user has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// check if the user already exists
+			const doesUserExist = await ctx.prisma.user.findFirst({
 				where: {
-					id: 1,
+					email: email,
 				},
 			});
 
-			const defaultTemplate = inviteOrganizationTemplate();
-			const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+			if (doesUserExist) {
+				// make sure the user does not exist in the organization
+				const isMember = await ctx.prisma.userOrganizationRole.findFirst({
+					where: {
+						organizationId: organizationId,
+						userId: doesUserExist.id,
+					},
+				});
 
-			const renderedTemplate = await ejs.render(
-				JSON.stringify(template),
-				{
-					toEmail: email,
-					fromAdmin: ctx.session.user.name,
-					fromOrganization: organizationId,
+				if (isMember) {
+					throw new Error("User is already a member of the organization.");
+				}
+			}
+
+			// check if the user has pending invitation
+			const existingInvitation = await ctx.prisma.organizationInvitation.findFirst({
+				where: {
+					organizationId: organizationId,
+					email: email,
 				},
-				{ async: true },
-			);
-			// create transporter
-			const transporter = createTransporter(globalOptions);
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+			});
 
-			// define mail options
-			const mailOptions = {
-				from: globalOptions.smtpEmail,
-				to: email,
-				subject: parsedTemplate.subject,
-				html: parsedTemplate.body,
-			};
+			if (existingInvitation) {
+				throw new Error("User already has a pending invitation.");
+			}
 
-			// send test mail to user
-			await sendEmail(transporter, mailOptions);
+			try {
+				const tokenPayload = {
+					email: email,
+					organizationId: organizationId,
+					role: role,
+					invitedById: ctx.session.user.id,
+					expiresAt: Date.now() + 86400000, // Current time + 24 hour
+				};
+
+				// Encrypt the payload
+				const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET); // Use SMTP_SECRET or any other relevant context
+				const encryptedToken = encrypt(JSON.stringify(tokenPayload), secret);
+
+				const globalOptions = await ctx.prisma.globalOptions.findFirst({
+					where: {
+						id: 1,
+					},
+				});
+
+				// get the org mail template
+				const defaultTemplate = inviteOrganizationTemplate();
+				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
+
+				function normalizeBaseUrl(baseUrl: string) {
+					// Ensure there's no trailing slash
+					return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+				}
+
+				// create invitation link
+				const invitationLink = `${normalizeBaseUrl(
+					process.env.NEXTAUTH_URL,
+				)}/auth/register?organizationInvite=${encryptedToken}`;
+
+				// get organization name
+				const organization = await ctx.prisma.organization.findUnique({
+					where: {
+						id: organizationId,
+					},
+				});
+
+				if (!organization) {
+					throw new Error("Organization not found.");
+				}
+
+				const renderedTemplate = await ejs.render(
+					JSON.stringify(template),
+					{
+						toEmail: email,
+						fromAdmin: ctx.session.user.name,
+						fromOrganization: organization.orgName,
+						invitationLink: invitationLink,
+					},
+					{ async: true },
+				);
+
+				// create transporter
+				const transporter = createTransporter(globalOptions);
+				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
+
+				// log the action
+				await ctx.prisma.activityLog.create({
+					data: {
+						action: `Sent an invitation to ${email} to join organization ${organization.orgName}`,
+						performedById: ctx.session.user.id,
+						organizationId: organizationId,
+					},
+				});
+
+				// define mail options
+				const mailOptions = {
+					from: globalOptions.smtpEmail,
+					to: email,
+					subject: parsedTemplate.subject,
+					html: parsedTemplate.body,
+				};
+
+				// send test mail to user
+				await sendEmail(transporter, mailOptions);
+
+				// Store the token in the database
+				await ctx.prisma.organizationInvitation.create({
+					data: {
+						token: encryptedToken,
+						organizationId: organizationId,
+						email: email,
+						role: role,
+						invitedById: ctx.session.user.id,
+						expiresAt: new Date(tokenPayload.expiresAt),
+						mailSentAt: new Date(),
+					},
+				});
+
+				return { invitationLink, encryptedToken };
+			} catch (error) {
+				return throwError(error.message);
+			}
 		}),
-	deleteInvite: adminRoleProtectedRoute
+	deleteInvite: protectedProcedure
 		.input(
 			z.object({
 				organizationId: z.string(),
-				token: z.string(),
+				invitationId: z.string(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { organizationId, token } = input;
+			const { organizationId, invitationId } = input;
 			const invite = await ctx.prisma.organizationInvitation.deleteMany({
 				where: {
 					organizationId,
-					token,
+					id: invitationId,
 				},
 			});
 			return invite;
+		}),
+	getInvites: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { organizationId } = input;
+			// make sure the user is member of the organization and has the required permissions
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			const invites = await ctx.prisma.organizationInvitation.findMany({
+				where: {
+					organizationId,
+				},
+			});
+
+			// add hasExpired field to the invites
+			return invites.map((invite) => {
+				return {
+					...invite,
+					hasExpired: invite.expiresAt.getTime() < Date.now(),
+					resendable:
+						!invite.mailSentAt || invite.mailSentAt.getTime() < Date.now() - 60000,
+				};
+			});
 		}),
 	transferNetworkOwnership: protectedProcedure
 		.input(
@@ -854,7 +1306,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.USER,
+				minimumRequiredRole: Role.USER,
 			});
 
 			// Update the network with the new organization ID
@@ -884,7 +1336,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 
 			// create webhook
@@ -910,8 +1362,9 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
+
 			// Validate the URL to be HTTPS
 			if (!input.webhookUrl.startsWith("https://")) {
 				// throw error
@@ -956,7 +1409,7 @@ export const organizationRouter = createTRPCRouter({
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: input.organizationId,
-				requiredRole: Role.ADMIN,
+				minimumRequiredRole: Role.ADMIN,
 			});
 
 			// get all organizations related to the user

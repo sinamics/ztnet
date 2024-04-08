@@ -1,0 +1,16 @@
+RateLimitExceeded:
+  description: Rate limit exceeded, indicating that the request was not accepted because the application has exceeded the rate limit for the API.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            description: A message detailing the reason for exceeding the rate limit.
+            example: 'Rate limit exceeded. Try again in X minutes.'
+      examples:
+        rateLimitExceededExample:
+          summary: Example response for rate limit exceeded
+          value:
+            error: 'Rate limit exceeded. Try again in 1 minute.'

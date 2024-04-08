@@ -7,6 +7,7 @@ import cn from "classnames";
 import { useModalStore } from "~/utils/store";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { useTranslations } from "next-intl";
+import { AuthorizationType } from "~/types/apiTypes";
 
 const ApiLables = ({ tokens }) => {
 	if (!Array.isArray(tokens) || !tokens) return null;
@@ -39,29 +40,47 @@ const ApiLables = ({ tokens }) => {
 				return (
 					<div
 						key={token.id}
-						className={cn("badge badge-lg rounded-md flex items-center badge-primary")}
+						className={cn("badge badge-lg rounded-md flex items-center badge-primary", {
+							"bg-error": !token.isActive,
+						})}
 					>
 						<div
 							onClick={() => {
+								const joinedAuthorizationType = Array.isArray(token?.apiAuthorizationType)
+									? token.apiAuthorizationType.join(" - ")
+									: "Not Set";
+
 								callModal({
-									title: <p>Token Info</p>,
+									title: <p>{t("account.restapi.viewToken.title")}</p>,
 									rootStyle: "text-left",
 									showButtons: true,
 									closeModalOnSubmit: true,
 									content: (
 										<div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">Name:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.name")}:
+												</span>
 												<span>{token.name}</span>
 											</div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">Expires At:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.authorizationType")}:
+												</span>
+												<span>{joinedAuthorizationType}</span>
+											</div>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.expireAt")}:
+												</span>
 												{token.expiresAt
-													? new Date(token.expiresAt).toDateString()
+													? new Date(token.expiresAt).toLocaleString()
 													: "Never"}
 											</div>
-											<div className="flex justify-between w-3/6">
-												<span className="text-sm text-gray-500">isActive:</span>
+											<div className="flex justify-between w-5/6">
+												<span className="text-sm text-gray-500">
+													{t("account.restapi.viewToken.isActive")}:
+												</span>
 												{token.isActive ? "True" : "False"}
 											</div>
 										</div>
@@ -70,7 +89,7 @@ const ApiLables = ({ tokens }) => {
 							}}
 							className="cursor-pointer"
 						>
-							<p>{token.name}</p>
+							<p>{!token.isActive ? `Expired: ${token.name}` : token.name}</p>
 						</div>
 
 						<div>
@@ -134,18 +153,59 @@ const ApiToken = () => {
 	return (
 		<div className="space-y-5">
 			<InputFields
-				label="Api Token"
-				rootFormClassName="flex flex-col space-y-2"
+				label={t("account.restapi.generateToken.title")}
+				rootFormClassName="flex flex-col space-y-2 w-3/6"
+				labelClassName="text-gray-500"
 				size="sm"
 				placeholder=""
+				rootClassName=""
 				buttonText={t("account.restapi.buttons.submitToken")}
 				fields={[
 					{
 						name: "name",
 						type: "text",
 						elementType: "input",
-						placeholder: t("account.restapi.inputFields.tokenName.placeholder"),
-						description: t("account.restapi.inputFields.tokenName.label"),
+						placeholder: t("account.restapi.generateToken.tokenName.placeholder"),
+						description: t("account.restapi.generateToken.tokenName.label"),
+					},
+					{
+						name: "apiAuthorizationType",
+						type: "dropdown",
+						elementType: "dropdown",
+						selectOptions: Object.keys(AuthorizationType),
+						placeholder: t(
+							"account.restapi.generateToken.tokenAuthorizationType.placeholder",
+						),
+						title: t("account.restapi.generateToken.tokenAuthorizationType.label"),
+					},
+					{
+						name: "daysToExpire",
+						type: "select",
+						elementType: "select",
+						selectOptions: [
+							{
+								label: t("account.restapi.generateToken.tokenExpireAt.values.never"),
+								value: "never",
+							},
+							{
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1day"),
+								value: "1",
+							},
+							{
+								label: t("account.restapi.generateToken.tokenExpireAt.values.10day"),
+								value: "10",
+							},
+							{
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1month"),
+								value: "30",
+							},
+							{
+								label: t("account.restapi.generateToken.tokenExpireAt.values.1year"),
+								value: "365",
+							},
+						],
+						description: t("account.restapi.generateToken.tokenExpireAt.label"),
+						placeholder: t("account.restapi.generateToken.tokenExpireAt.placeholder"),
 					},
 				]}
 				submitHandler={(params) =>
@@ -186,6 +246,7 @@ const ApiToken = () => {
 					})
 				}
 			/>
+
 			<ApiLables tokens={apiTokens} />
 		</div>
 	);

@@ -5,7 +5,18 @@ import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
 
-const Themes = ["light", "dark", "black", "business", "system", "forest"];
+const Themes = [
+	"light",
+	"dark",
+	"system",
+	"black",
+	"business",
+	"forest",
+	"sunset",
+	"luxury",
+	"night",
+	"dim",
+];
 
 const Header = () => {
 	const session = useSession();
@@ -64,7 +75,7 @@ const Header = () => {
 						</label>
 						<ul
 							tabIndex={0}
-							className="menu dropdown-content rounded-box z-30 w-52 bg-primary p-2 shadow"
+							className="menu dropdown-content rounded-box z-30 w-52 bg-base-300 p-2 shadow"
 						>
 							{Themes.map((theme) => {
 								return (

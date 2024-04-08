@@ -1,0 +1,766 @@
+{
+	"input": {
+		"enterToSave": "按 Enter 儲存"
+	},
+	"commonButtons": {
+		"add": "新增",
+		"change": "修改",
+		"create": "建立",
+		"submit": "送出",
+		"cancel": "取消",
+		"delete": "刪除",
+		"remove": "移除",
+		"update": "更新",
+		"close": "關閉",
+		"stash": "隱藏",
+		"yes": "是",
+		"imSure": "我確定",
+		"generate": "產生",
+		"addNetwork": "新增網路",
+		"deleteNetwork": "刪除網路",
+		"moveNetwork": "移動網路",
+		"moveNetworkToOrganization": "將網路移至組織",
+		"leaveOrganization": "離開組織",
+		"inviteUser": "邀請使用者",
+		"meta": "元資料",
+		"users": "使用者",
+		"kickUser": "踢出使用者",
+		"deleteOrganization": "刪除組織",
+		"userActions": "使用者操作",
+		"addWebhooks": "新增 Webhooks",
+		"options": "選項",
+		"resend": "重新發送"
+	},
+	"commonTable": {
+		"header": {
+			"name": "名稱",
+			"description": "描述",
+			"networkId": "網路ID",
+			"members": "成員",
+			"actions": "操作",
+			"role": "角色",
+			"email": "電子郵件",
+			"authorized": "授權",
+			"id": "ID",
+			"created": "建立時間",
+			"networks": "網路",
+			"group": "群組",
+			"account": "帳戶",
+			"ipAssignments": {
+				"header": "管理的IP / 延遲",
+				"notAssigned": "未分配"
+			},
+			"physicalIp": {
+				"header": "實體IP",
+				"unknownValue": "未知"
+			},
+			"conStatus": {
+				"header": "狀態",
+				"toolTip": "無法建立直接連接，目前通過zerotier伺服器中繼，延遲更高",
+				"relayed": "中繼",
+				"directLan": "已建立直接LAN連接",
+				"directWan": "已建立直接WAN連接",
+				"direct": "直接連接{version}",
+				"offline": "離線"
+			},
+			"status": "狀態"
+		},
+		"search": {
+			"networkSearchPlaceholder": "搜尋網路",
+			"searchUserPlaceholder": "搜尋使用者"
+		},
+		"tableFooter": {
+			"show": "顯示",
+			"page": "頁",
+			"of": "共"
+		},
+		"cell": {
+			"Options": "選項"
+		}
+	},
+	"commonToast": {
+		"updatedSuccessfully": "成功更新",
+		"addedSuccessfully": "成功添加",
+		"deletedSuccessfully": "成功刪除",
+		"errorOccurred": "發生未知錯誤",
+		"organizationDeleted": "組織成功刪除",
+		"sentSuccessfully": "成功發送"
+	},
+	"sidebar": {
+		"navigation": "首頁",
+		"dashboard": "儀表板",
+		"networks": "本地控制器",
+		"ztCentral": "ZT 中心",
+		"admin": "管理員",
+		"settings": "設定",
+		"mail": "郵件",
+		"users": "使用者",
+		"notification": "通知",
+		"controller": "控制器",
+		"organization": "組織",
+		"account": "帳戶",
+		"user-settings": "使用者設定",
+		"logout": "登出"
+	},
+	"networks": {
+		"loading": "載入中",
+		"title": "網路",
+		"description": "VPN網路",
+		"noNetworksMessage": "尚未建立任何網路。首先建立一個，它將出現在這裡。",
+		"networkActionModal": {
+			"modalTitle": "網路操作 <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "移動網路",
+				"description": "您可以在組織的URL中找到ID。",
+				"warningText": "<strong>警告：</strong>轉移網路將把網路及其成員移至所選組織。此操作不可逆轉，也無法復原。在進行之前，請仔細確認組織的ID。<br></br>另外，請確保您有權將網路轉移到目標組織的寫入權限。"
+			},
+			"deleteNetwork": {
+				"title": "刪除網路",
+				"description": "刪除網路將永久移除它以及所有相關資料。",
+				"warningText": "<strong>警告：</strong>此操作將不可逆轉地刪除網路及其所有相關成員、設定和資料。此過程無法復原。請在進行刪除前確保已備份所有必要資訊。"
+			}
+		}
+	},
+	"networkById": {
+		"loading": "載入中...",
+		"errorSteps": {
+			"step1": "請確認 ZeroTier 容器是否運行正常",
+			"step2": "如果其他 ZeroTier 實例在本地處於活動狀態，請關閉它們，因為可能會造成衝突。"
+		},
+		"networkId": "網路 ID:",
+		"networkName": "網路名稱:",
+		"addDescription": "新增描述",
+		"descriptionPlaceholder": "描述",
+		"networkStart": "網路開始:",
+		"notSet": "未設定",
+		"networkEnd": "網路結束:",
+		"networkCidr": "網路 CIDR:",
+		"networkSettings": "網路設定",
+		"networkMembers": "網路成員",
+		"noMembersInformation": {
+			"title": "沒有成員資訊",
+			"installZerotier": "安裝 ZeroTier",
+			"joinNetwork": "加入網路"
+		},
+		"networkMembersAlert": {
+			"message": "加入這個網路 ID，裝置會自動顯示"
+		},
+		"viewStashedMembers": "查看儲存的成員",
+		"networkActions": "網路操作",
+		"deleteNetwork": {
+			"title": "刪除網路 {networkName}",
+			"description": "你確定要刪除這個網路嗎？這個操作無法復原，所有成員將從這個網路中刪除",
+			"yesAction": "是的，刪除它",
+			"noAction": "不，保留它"
+		},
+		"copyToClipboard": {
+			"title": "複製到剪貼簿",
+			"success": "{element} 已複製到剪貼簿"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "你的網路現在是 {authType}",
+			"privateCardTitle": "私人",
+			"privateCardContent": "每個使用者都需要網路管理員的授權。",
+			"publicCardTitle": "公開",
+			"publicCardContent": "所有使用者都可以無需授權就可以連接到這個網路",
+			"loading": "載入中"
+		},
+		"networkIpAssignments": {
+			"header": "IP 分配",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6",
+				"mtu": "MTU"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 對於每一台裝置)",
+				"plane6Label": "ZeroTier 6PLANE (/80 可路由對於每一台裝置)",
+				"rfc4193Updated": "rfc4193 已更新",
+				"plane6Updated": "6plane 已更新"
+			},
+			"ipv4": {
+				"please_enter_valid_ip_range": "請輸入有效的 IP 範圍",
+				"ip_range_already_exists": "IP 範圍已存在",
+				"auto_assign_from_range": "自動從範圍分配",
+				"easy": "簡單",
+				"advanced": "進階",
+				"delete_ip_assignment": "刪除 IP 分配",
+				"range_start": "範圍起始",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "範圍結束",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "送出"
+			},
+			"mtu": {
+				"title": "MTU (最大傳輸單元)",
+				"description": "此設定決定了可以通過網路傳輸的最大封包大小。調整MTU值可以影響網路性能和效率。",
+				"acceptedValue": "接受的值在1280到10000之間"
+			}
+		},
+		"nettworkRoutes": {
+			"managedRoutesTitle": "管理路由",
+			"noManagedRoutesTitle": "沒有定義管理路由。",
+			"noManagedRoutesDescription1": "沒有匹配路由的裝置將無法獲得 IP 地址。",
+			"noManagedRoutesDescription2": "如果您沒有特殊要求，嘗試 IPv4 自動分配簡單模式。",
+			"destinationPlaceholder": "目的地",
+			"viaPlaceholder": "目標"
+		},
+		"networkDns": {
+			"DNS": "域名系統",
+			"requiresZeroTierVersion": "需要 ZeroTier 版本 1.6。",
+			"clearDNS": "清除 DNS",
+			"searchDomain": "搜尋網域",
+			"serverAddress": "伺服器地址",
+			"submit": "送出",
+			"servers": "伺服器",
+			"addressAndDomainRequired": "需要地址和網域名稱"
+		},
+		"networkMulticast": {
+			"Multicast": "多播",
+			"MulticastRecipientLimit": "多播接收者限制",
+			"Submit": "送出",
+			"EnableBroadcast": "啟用廣播",
+			"NumberPlaceholder": "數字",
+			"MulticastUpdatedSuccessfully": "多播更新成功"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "搜尋任何東西...",
+			"optionModalTitle": "成員選項",
+			"tableRow": {
+				"updateName": "點擊修改名稱"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "成員名稱更新成功"
+			},
+			"unauthorizedRowMessage": "未經授權的訪問",
+			"tableFooter": {
+				"RowsPerPage": "每頁行數",
+				"Of": "的"
+			},
+			"search": {
+				"placeholder": "搜尋任何東西..."
+			}
+		},
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "顯示隱藏的成員"
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "郵件",
+			"labelText": "電子郵件邀請說明",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "邀請",
+			"loadingText": "載入中...",
+			"successMessage": "成功！邀請郵件已送出至 {email}",
+			"errorMessage": {
+				"unknownError": "發生未知錯誤"
+			}
+		},
+		"addMemberById": {
+			"labelText": "手動新增成員。可用於取消刪除成員。",
+			"memberIdInput": "成員 ID",
+			"placeholder": "10位十六進位數",
+			"submitButton": "新增",
+			"error": {
+				"unknown": "發生未知錯誤"
+			}
+		},
+		"memberOptionModal": {
+			"loading": {
+				"text": "載入中..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} 已分配",
+				"errorNotValidIp": "IP {target} 不是有效的IP地址"
+			},
+			"ipAssignment": {
+				"header": "IP分配",
+				"description": "為此成員新增或刪除IP地址。"
+			},
+			"deleteIpAssignment": {
+				"title": "刪除IP分配"
+			},
+			"addressInput": {
+				"label": "地址"
+			},
+			"addButton": {
+				"text": "新增"
+			},
+			"allowEthernetBridging": {
+				"header": "允許乙太網橋接",
+				"description": "橋接在設備上需要額外的設定。請參閱手冊和知識庫以取得更多資訊。行動設備不能成為橋。"
+			},
+			"doNotAutoAssignIPs": {
+				"header": "不自動分配IPs",
+				"description": "這將禁止自動分配IP地址給這個成員。"
+			},
+			"capabilities": {
+				"header": "能力:"
+			},
+			"tags": {
+				"header": "標籤:"
+			},
+			"anotation": {
+				"header": "註解",
+				"description": "透過新增註解來增強您的成員組織",
+				"placeholder": "新增註解"
+			}
+		},
+		"networkHelp": {
+			"title": "網路幫助",
+			"networkID": "網路 ID",
+			"networkIDText": "網路的全球唯一16位 ID。目前這不能被修改。",
+			"networkName": "網路名稱",
+			"networkNameText": "使用者為這個網路定義的簡短名稱，對成員可見。我們建議使用類似域名（例如，zerotier.com）或電子郵件地址。",
+			"accessControl": "訪問控制",
+			"accessControlText": "如何控制成員資格？除非您想建立一個完全開放的網路用於測試、遊戲等，否則應保留其預設設定。",
+			"multicastRecipientLimit": "多播接收者限制",
+			"multicastRecipientLimitText": "可以接收乙太網多播或廣播的最大接收者數量。如果接收者數量超過此限制，則隨機子集將接收通告。提高此設定會使多播在大型網路上更可靠，但代價是頻寬。",
+			"multicastRecipientLimitText2": "設置為0將禁用多播，但請注意，只有IPv6與NDP模擬（RFC4193或6PLANE寻址模式）或其他僅單播協議在沒有多播的情況下才能工作。",
+			"managedRoutes": "管理路由",
+			"managedRoutesText": "將發布給網路成員的IPv4路由。這可用於透過ZeroTier網路上的閘道建立到其他網路的路由。請注意，出於安全原因，除非使用者特別允許，大多數客戶端不會使用預設路由或與公共IP地址空間重疊的路由。公共IP範圍標有圖標：",
+			"ipv4AutoAssign": "IPv4 自動分配",
+			"ipv4AutoAssignText": "用於自動分配 IP 的 IPv4 範圍。請注意，只有當 IP 也位於定義的路由內時，才會分配 IP。簡易模式允許使用者選擇 IP 範圍，並且路由和池定義將自動建立。",
+			"dnsPush": "DNS 推送",
+			"dnsPushText1": "需要 ZeroTier 1.6 版或更新版本。",
+			"dnsPushText2": "舊版本的 ZeroTier 將忽略這些設定。",
+			"dnsPushText3": "在 macOS、iOS、Windows 和 Android 上，ZeroTier 可以自動為特定域新增 DNS 伺服器。它不設置或托管 DNS 伺服器。您必須托管您自己的伺服器。",
+			"dnsPushText4": "如果您將 zt.example.com 配置為您的搜索域，並且將 10.147.20.1 配置為伺服器地址，那麼您的計算機將要求 10.147.20.1 查找以 zt.example.com 結尾的主機名的 IP 地址。",
+			"dnsPushText5": "必須在每個客戶端上啟用 allowDNS 選項。在每個網路詳情的 UI 中，靠近允許管理複選框附近有一個複選框。"
+		}
+	},
+	"admin": {
+		"tabs": {
+			"settings": "設定",
+			"network": "網路",
+			"mail": "郵件",
+			"users": "使用者",
+			"notification": "通知",
+			"controller": "控制器",
+			"organization": "組織"
+		},
+		"settings": {
+			"publicPages": {
+				"sectionTitle": "公開頁面",
+				"description": "自訂登入和註冊頁面上顯示的文字，以更好地與您的品牌保持一致或向您的使用者提供具體說明。"
+			}
+		},
+		"mail": {
+			"mailSMTP": "郵件SMTP",
+			"smtpHost": "SMTP主機",
+			"smtpPort": "SMTP端口",
+			"senderEmail": "寄件人電子郵件",
+			"mailPlaceholder": "mail@example.com",
+			"username": "使用者名稱",
+			"password": "密碼",
+			"useSSL": "使用SSL",
+			"inviteUserTemplate": "邀請使用者模板",
+			"forgotPasswordTemplate": "忘記密碼模板",
+			"notificationTemplate": "通知模板",
+			"organizationInviteTemplate": "組織邀請模板",
+			"templates": {
+				"availableTags": "可用的標籤：",
+				"subject": "主題",
+				"inputPlaceholderSubject": "主題",
+				"htmlBody": "HTML正文",
+				"textareaPlaceholderBody": "郵件模板",
+				"saveTemplateButton": "儲存模板",
+				"resetButton": "重設",
+				"sendTestMailButton": "發送測試郵件",
+				"sendTestMailButtonLoading": "正在處理...",
+				"errorFields": "請填寫所有欄位",
+				"successToastMailSent": "郵件已發送",
+				"successToastTemplateSaved": "模板已儲存"
+			}
+		},
+		"users": {
+			"authentication": {
+				"header": "身分驗證",
+				"enableUserRegistration": "啟用使用者註冊？",
+				"generateInvitation": {
+					"header": "建立邀請連結",
+					"secretMessageLabel": "使用者註冊時將被要求輸入此訊息（區分大小寫）",
+					"secretMessagePlaceholder": "新增秘密訊息",
+					"expireTimeLabel": "邀請連結將在此時間後過期",
+					"expireTimePlaceholder": "過期時間（分鐘）",
+					"timeUsedLabel": "此連結可以使用多少次？（可選，預設1次）",
+					"timeUsedPlaceholder": "可使用次數",
+					"activeInvitationsLabel": "有效邀請（點擊取得更多資訊）",
+					"invitationModal": {
+						"header": "邀請詳情",
+						"secretLabel": "秘鑰:",
+						"expiresLabel": "狀態:",
+						"timesUsedLabel": "使用次數:",
+						"invitationLinkLabel": "邀請連結:",
+						"clickToCopyLabel": "點擊複製",
+						"linkCopiedToast": "連結已複製到剪貼簿",
+						"deleteButton": "刪除"
+					}
+				}
+			},
+			"users": {
+				"sectionTitle": "使用者",
+				"description": "平台上的所有已註冊使用者。",
+				"userOptionModal": {
+					"userGroupLabel": "使用者群組",
+					"userRoleLabel": "使用者角色",
+					"account": {
+						"title": "ZTNet 每天進行一次檢查，查找是否有使用者已過期。如果發現使用者已過期，所有相關的節點將被取消授權，使用者帳戶將被停用。",
+						"userAccountLabel": "帳戶狀態",
+						"userExpireLabel": "帳戶到期"
+					},
+					"userActionsLabel": "使用者操作",
+					"typeUserName": "輸入使用者的名稱。",
+					"buttons": {
+						"deleteUser": "刪除使用者",
+						"cancle": "取消"
+					},
+					"toast": {
+						"deleteUserSuccess": "使用者刪除成功",
+						"nameNotEqual": "您輸入的使用者名稱與使用者的名稱不同。"
+					}
+				},
+				"roleDescriptions": {
+					"admin": "作為管理員，此使用者將擁有完全的權限，包括訪問管理面板的權限。",
+					"user": "如果設定為使用者，此使用者將只擁有有限的權限，並且不能訪問管理面板。"
+				},
+				"changeRoleModal": {
+					"title": "修改{name}的角色"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "角色成功修改",
+					"errorOccurred": "發生未知錯誤"
+				}
+			},
+			"groups": {
+				"sectionTitle": "使用者群組",
+				"description": "建立一個新的使用者群組以更好地組織平台使用者。將使用者分配到特定群組可以進行受控訪問，設定限制，並根據使用者類型調整設定。",
+				"addGroup": {
+					"editGroupTitle": "編輯群組",
+					"deleteGroupTitle": "刪除群組",
+					"deleteGroupDescription": "您確定要刪除此使用者群組嗎？如果已分配，它將從使用者中移除。",
+					"addGroupLabel": "新增群組",
+					"addGroupButton": "新增群組",
+					"groupNamePlaceholder": "群組名稱",
+					"groupNameDescription": "為新群組輸入名稱",
+					"networkLimitPlaceholder": "網路限制",
+					"networkLimitDescription": "設定此群組中使用者可建立的網路數量的最大值",
+					"useAsDefaultPlaceholder": "預設使用",
+					"useAsDefaultDescription": "將此群組設為新使用者的預設群組"
+				}
+			}
+		},
+		"notification": {
+			"authentication": "身份驗證",
+			"whenUserRegister": "當使用者註冊時",
+			"allAdminsNotification": "所有管理員將收到通知"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "網路與成員",
+				"totalNetworks": "總網路數：",
+				"totalMembers": "總成員數：",
+				"totalUnlinkedNetworks": "總未連結網路：",
+				"unlinkedNetworks": {
+					"title": "未連結的網路",
+					"description": "此部分提供了ZTNET資料庫中所有尚未連結到任何使用者的網路的表格。這些網路通常源自使用者新增的但尚未在ZTNET中管理的自定義ZeroTier控制器。該表格使您有機會將這些未管理的網路分配給特定的管理員使用者。如果使用者新增了一個尚未被ZTNET管理的自定義ZeroTier控制器，這可能特別有幫助。",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "網路名稱",
+						"creationTime": "建立時間",
+						"members": "成員",
+						"assign": "分配"
+					},
+					"assignModal": {
+						"title": "您確定要將使用者 {user} 分配給網路 {network} 嗎？",
+						"description": "此操作無法復原"
+					}
+				}
+			},
+			"management": {
+				"title": "管理",
+				"allowManagementFrom": "允許從以下位置管理：",
+				"allowTcpFallbackRelay": "允許 TCP Fallback Relay：",
+				"listeningOn": "正在監聽："
+			},
+			"controllerStatus": {
+				"title": "控制器狀態",
+				"online": "在線：",
+				"tcpFallbackActive": "TCP Fallback 啟動：",
+				"version": "版本："
+			},
+			"controllerConfig": {
+				"danger_zone": "危險區域",
+				"proceed_with_caution": "<span>請小心操作：</span>",
+				"modification_warning": "修改 ZeroTier 控制器 URL 將影響所有使用者。雖然這為想要自訂控制器的人提供了彈性，但請注意可能的中斷和相容性問題。修改前請備份配置。",
+				"local_zerotier_url": "本地 ZeroTier 網路 URL",
+				"zerotier_secret": "ZeroTier 密碼",
+				"submit_empty_field_default": "送出空欄位以使用預設值。",
+				"isUsingEnvVariablesAlert": "環境變數<span>ZT_ADDR 或 ZT_SECRET</span>將優先覆蓋透過使用者介面所做的任何 URL 修改。要透過使用者介面更新相應欄位，您必須先刪除 ZT_ADDR 或 ZT_SECRET 環境變數。"
+			},
+			"generatePlanet": {
+				"updatePlanetWarning": "更新行星(Planet)配置檔將修改您的 ZeroTier 網路的核心結構，可能會影響路由、彈性和可用性。小心進行，理解其中的含義。",
+				"customPlanetInUse": "自訂行星(Planet)目前正在使用中！",
+				"customPortIsInUse": "注意！使用了自訂埠",
+				"customPortIsInUseDescription": "你需要在 ZeroTier Docker Compose 的環境變數中新增 <kbd>ZT_PRIMARY_PORT:埠</kbd>。",
+				"downloadPlanetInfo": "如果您需要，可以從以下網址下載行星(Planet)配置檔：",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "生成私有根",
+				"generatePrivateRootPlaceholder": "為您的控制器新增私有根",
+				"commentDescription": "為此行星(Planet)新增註釋（可選）",
+				"commentPlaceholder": "輸入註釋",
+				"identityDescription": "身份（可選）。預設值是當前 identity.public 的內容",
+				"endpointsDescription": "輸入您控制器的外部 IP 地址。對於多個地址，請使用逗號分隔的格式（IP/埠）。例如：'84.17.53.155/9993,2a02:6ea0:d405::/9993'。如果您希望本地網路外的節點連接，請確保這些地址可以全球訪問。",
+				"endpointsPlaceholder": "外部 IP/9993",
+				"plRecommend": "自動生成ID",
+				"birthLabel": "出生 (plBirth)",
+				"birthPlaceholder": "輸入出生日期",
+				"idLabel": "身份 (plID)",
+				"idPlaceholder": "輸入ID",
+				"buttons": {
+					"editPlanetConfig": "編輯行星(Planet)配置",
+					"createPlanet": "建立行星(Planet)",
+					"uploadConfig": "上傳配置",
+					"updateWorld": "更新世界",
+					"downloadPlanetButton": "下載配置",
+					"restoreOriginalPlanetButton": "恢復原始行星(Planet)"
+				},
+				"modal": {
+					"noteTitle": "注意！",
+					"customPlanetGenerated": "已生成自訂行星(Planet)。",
+					"restartContainerInstructions": "您需要重新啟動 zerotier 容器以載入新設定：<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "恢復原始行星(Planet)",
+					"restoreOriginalPlanetContent": "您確定要恢復原始行星(Planet)配置檔嗎？如果您想保留當前的密鑰，請確保備份您當前的行星(Planet)配置檔"
+				}
+			},
+			"yes": "是",
+			"no": "否"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "團隊管理",
+				"description": "探索組織以開始塑造團隊的合作方式。分配角色，邀請新成員，並監督組織內的基本權限。此beta功能為團隊協作提供了基礎，設計簡單易用。我們將繼續開發和完善這些設置，邀請您提供反饋，以幫助我們完善體驗。",
+				"inputFields": {
+					"label": "新增組織",
+					"description": "建立一個新的組織",
+					"organizationName": {
+						"description": "組織名稱"
+					},
+					"organizationDescription": {
+						"description": "組織描述（可選）"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "刪除組織",
+					"description": "你確定要刪除這個組織嗎？",
+					"description2": "此操作將永久刪除該組織及其所有網路、成員和相關資料。此操作無法復原。",
+					"confirmation": "請確認你想繼續刪除組織。",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "輸入組織名稱以確認"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "組織名稱：",
+				"description": "描述：",
+				"numberOfMembers": "成員數量：",
+				"pendingInvitations": "待處理的邀請：",
+				"activeWebhooks": "活躍的 Webhooks:"
+			}
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "帳戶",
+			"network": "網路",
+			"user": "使用者"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "帳戶設定",
+				"nameLabel": "姓名",
+				"emailLabel": "電子郵件",
+				"verifiedBadge": "已驗證",
+				"notVerifiedBadge": "未驗證",
+				"passwordLabel": "密碼",
+				"currentPasswordPlaceholder": "當前密碼",
+				"newPasswordPlaceholder": "新密碼",
+				"repeatNewPasswordPlaceholder": "重複新密碼",
+				"role": "角色"
+			},
+			"restapi": {
+				"sectionTitle": "API存取Token",
+				"description": "API存取Token用於訪問ZTNET公共API。",
+				"viewToken": {
+					"title": "令牌資訊",
+					"name": "名稱",
+					"authorizationType": "授權類型",
+					"expireAt": "過期時間",
+					"isActive": "是否啟用"
+				},
+				"generateToken": {
+					"title": "Rest Api 令牌",
+					"tokenName": {
+						"label": "為您的令牌添加一個有意義的名稱",
+						"placeholder": "我的超棒令牌"
+					},
+					"tokenAuthorizationType": {
+						"label": "選擇 API 授權類型",
+						"placeholder": "選擇授權類型"
+					},
+					"tokenExpireAt": {
+						"label": "選擇令牌過期日期",
+						"placeholder": "選擇日期",
+						"values": {
+							"never": "從不",
+							"1day": "1天",
+							"10day": "10天",
+							"1month": "1個月",
+							"1year": "1年"
+						}
+					}
+				},
+				"buttons": {
+					"submitToken": "生成Token",
+					"cancle": "刪除Token"
+				},
+				"response": {
+					"title": "點擊Token以複製",
+					"info": "此Token只會顯示一次。請立即複製它！"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "刪除Token",
+						"description": "您確定要刪除此Token嗎？此操作無法復原。"
+					}
+				}
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "整合您的ZeroTier Central API將使您能夠直接從ZTNET管理您的中央網路。集成金鑰後，側邊欄中將出現一個新選單，以增強可訪問性和控制。<br></br>您可以從ZeroTier Central官方網站取得金鑰。https://my.zerotier.com/account",
+				"apiKeyLabel": "Zerotier Central API Token",
+				"apiUrlLabel": "Zerotier API網址",
+				"apiUrlLabelDescription": "ZeroTier Central API的網址，默認為https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "帳戶偏好設定",
+				"languageLabel": "語言",
+				"fontSize": "字體大小"
+			},
+			"application": {
+				"title": "應用程式",
+				"version": "版本",
+				"developerMode": "開發者模式"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "成員註釋",
+				"showMarkerInTable": "在表格中顯示標記",
+				"showMarkerInTableDescription": "這將在成員名稱前新增一個帶有註釋顏色的圓圈。<br></br>如果禁用，您仍然可以搜索註釋。",
+				"addBackgroundColorInTable": "在表格中新增背景顏色",
+				"addBackgroundColorInTableDescription": "這將根據註釋顏色新增行背景顏色。<br></br>如果禁用，您仍然可以搜索註釋。"
+			},
+			"memberTable": {
+				"memberTableTitle": "成員表格",
+				"deAuthorizationWarningTitle": "在取消成員授權時顯示警告",
+				"deAuthorizationWarningLabel": "顯示確認模態框以防止意外取消授權。",
+				"addMemberIdAsNameTitle": "註冊時將成員ID新增為姓名",
+				"addMemberIdAsNameLabel": "網路成員註冊時，成員ID（nodeid）將作為姓名新增。"
+			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "聯繫組織管理員以確保你擁有適當的權限"
+		},
+		"loading": "載入中...",
+		"organizationDashboard": {
+			"header": "組織儀表板"
+		},
+		"membersSection": {
+			"title": "成員",
+			"editUser": "編輯使用者",
+			"role": "角色"
+		},
+		"informationSection": {
+			"title": "資訊",
+			"name": "名稱:",
+			"created": "建立時間:",
+			"members": "成員:",
+			"pendingInvitations": "待處理邀請:"
+		},
+		"networkSection": {
+			"title": "網路",
+			"noNetworksToShow": "沒有網路顯示。"
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "離開組織？",
+			"confirmationMessage": "你確定要離開這個組織嗎？",
+			"note": "注意：如果你將來決定重新加入這個組織，管理員將需要發送一個新的邀請。"
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "訊息",
+			"chatHeader": "組織訊息",
+			"chatInfo": "組織內的每個人都能看到你的訊息。",
+			"messageInputPlaceholder": "輸入訊息...",
+			"noMessages": "還沒有訊息。"
+		},
+		"logFooter": {
+			"toggleLogLabel": "日誌",
+			"logHeader": "最近100個活動日誌",
+			"loading": "正在取得日誌..."
+		},
+		"invitation": {
+			"title": "團隊擴展：邀請新成員",
+			"description": "邀請更多人加入您的團隊！您可以通過電子郵件發送邀請，也可以找到並添加已經使用平台的人。 <br></br> 這樣可以讓您的團隊更容易地擴展並包括更多成員。",
+			"pendingInvitations": {
+				"title": "待處理邀請"
+			},
+			"inviteByEmail": {
+				"title": "通過電子郵件邀請",
+				"description": "受邀用戶如果當前不是應用程式的成員，將需要通過邀請電子郵件中提供的鏈接註冊。鏈接有效期為 24 小時。",
+				"emailPlaceholder": "電子郵件地址",
+				"emailDescription": "輸入您要邀請的人的電子郵件地址",
+				"selectRoleDescription": "選擇用戶的角色"
+			},
+			"inviteSiteUser": {
+				"title": "邀請網站用戶",
+				"description": "在您可以將用戶添加到組織之前，請注意他們必須已在應用程式中註冊",
+				"inputFields": {
+					"searchUser": {
+						"title": "搜索要添加的用戶",
+						"placeholder": "搜索用戶"
+					},
+					"userRole": {
+						"title": "選擇用戶的角色"
+					}
+				}
+			}
+		},
+		"webhook": {
+			"title": "組織 Webhooks",
+			"description": "通過我們的 webhook 整合增強您的組織，為關鍵事件提供即時通知。<br></br>通過即時更新直接輸送到您的系統中，保持領先，確保無縫的工作流程和立即的響應能力。",
+			"createWebhook": {
+				"editWebhookTitle": "編輯 Webhook",
+				"createWebhookTitle": "為組織創建 Webhook <span>{organization}</span>",
+				"webhookName": "Webhook 名稱",
+				"webhookNameDescription": "此欄位用於輸入 webhook 的名稱。名稱用於標識 webhook，應該足夠描述性以將其與其他 webhooks 區分開來。",
+				"selectWebhookActions": "選擇 webhook 動作",
+				"selectWebhookActionsDescription": "此下拉菜單允許您選擇 webhook 應執行的具體動作。每個選項代表不同類型的動作。",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "此欄位用於輸入 webhook 將發送數據的 URL。它必須是一個有效且可訪問的 URL 終點，能夠接收和處理來自 webhook 的數據。"
+			},
+			"listWebhooks": {
+				"activeWebhooks": "活躍的 Webhooks",
+				"description": "描述",
+				"url": "網址",
+				"lastDelivery": "最後送達",
+				"events": "事件"
+			}
+		}
+	}
+}
