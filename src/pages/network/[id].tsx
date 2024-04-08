@@ -233,9 +233,8 @@ const NetworkById = ({ orgIds }: IProps) => {
 					className="shadow-md cursor-pointer"
 					onClick={svgcopyToClipboard}
 				>
-					{/* <QRCodeCanvas */}
 					<QRCodeSVG
-						value={network?.nwid}
+						value={`https://joinzt.com/addnetwork?nwid=${network?.nwid}&v=1`}
 						size={100}
 						bgColor={themeRGBColor}
 						fgColor={"#000000"}
