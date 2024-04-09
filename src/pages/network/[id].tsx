@@ -26,6 +26,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
+import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -122,8 +123,8 @@ const NetworkById = ({ orgIds }: IProps) => {
 	return (
 		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
-			<div className="w-5/5 mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:w-5/6 sm:p-10 md:text-base xl:space-y-0">
-				<div className="w-5/5 h-fit w-full xl:w-2/6 ">
+			<div className="w-5/5 mx-auto flex py-10 px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkId")}</span>
@@ -150,9 +151,12 @@ const NetworkById = ({ orgIds }: IProps) => {
 						<NetworkName />
 						<NetworkDescription />
 					</div>
-				</div>
-				<div>
-					<NetworkPrivatePublic />
+					<div className="cursor-pointer">
+						<NetworkQrCode networkId={network?.nwid} />
+					</div>
+					<div>
+						<NetworkPrivatePublic />
+					</div>
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
