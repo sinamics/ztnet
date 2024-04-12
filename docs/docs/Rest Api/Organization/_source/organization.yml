@@ -17,9 +17,10 @@ servers:
         
 components:
   $ref: '../../_schema/security.yml#/components'
-security:
-  - defaultApiKey: []
 
+security:
+  - x-ztnet-auth: []
+  
 paths:
   /org:
     get:
@@ -27,13 +28,6 @@ paths:
       description: |
         Returns an array of Organizations you have access to.
       operationId: getOrganization
-      parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
       responses:
         200:
           description: An array of Network IDs
@@ -55,12 +49,6 @@ paths:
       summary: Returns information of the specified Organization.
       operationId: getOrganizationInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: orgid
           in: path
           required: true

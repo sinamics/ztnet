@@ -17,8 +17,9 @@ servers:
         
 components:
   $ref: '../../_schema/security.yml#/components'
+
 security:
-  - defaultApiKey: []
+  - x-ztnet-auth: []
 
 paths:                 
   /org/:orgid/network/{networkId}/member:
@@ -26,12 +27,6 @@ paths:
       summary: Returns a list of Members in a organization network
       operationId: getNetworkMemberInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: networkId
           in: path
           required: true
@@ -65,12 +60,6 @@ paths:
       summary: Returns a specific organization network member
       operationId: getNetworkMemberByIdInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: networkId
           in: path
           required: true
@@ -109,11 +98,6 @@ paths:
       summary: Modify a organization network member
       description: Modify a organization network member
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
         - in: path
           name: networkId
           required: true
