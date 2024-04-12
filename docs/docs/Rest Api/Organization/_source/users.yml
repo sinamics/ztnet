@@ -18,8 +18,9 @@ tags:
         
 components:
   $ref: '../../_schema/security.yml#/components'
+
 security:
-  - defaultApiKey: []
+  - x-ztnet-auth: []
 
 paths:
   /org/:orgid/users:
@@ -29,12 +30,6 @@ paths:
       summary: Returns a list of Users in the organization
       operationId: getOrganizationUsers
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: orgid
           in: path
           required: true

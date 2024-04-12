@@ -17,8 +17,9 @@ servers:
 
 components:
   $ref: '../../_schema/security.yml#/components'
+
 security:
-  - defaultApiKey: []
+  - x-ztnet-auth: []
 
 paths:
   /org/:orgid/network:
@@ -28,12 +29,6 @@ paths:
         Returns an array of Networks you have access to.
       operationId: getUserNetworks
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: orgid
           in: path
           required: true
@@ -62,12 +57,6 @@ paths:
       summary: Create New Network within the Organization
       operationId: createNewNetwork
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: orgid
           in: path
           required: true
@@ -110,12 +99,6 @@ paths:
       summary: Returns information about a specific organization network
       operationId: getNetworkInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: networkId
           in: path
           required: true
@@ -147,12 +130,6 @@ paths:
       summary: Update a specific organization network
       operationId: updateNetworkInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: networkId
           in: path
           required: true

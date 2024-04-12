@@ -17,8 +17,9 @@ servers:
         
 components:
   $ref: '../../_schema/security.yml#/components'
+
 security:
-  - defaultApiKey: []
+  - x-ztnet-auth: []
 
 paths:                 
   /network/{networkId}/member:
@@ -26,12 +27,6 @@ paths:
       summary: Returns a list of Members on the network
       operationId: getNetworkMemberInfo
       parameters:
-        - name: x-ztnet-auth
-          in: header
-          required: true
-          schema:
-            type: string
-          description: API Key for the user
         - name: networkId
           in: path
           required: true

@@ -1,7 +1,7 @@
 components:
   securitySchemes:
-    defaultApiKey:
-      description: API key required for access
+    x-ztnet-auth:
       type: apiKey
-      name: x-ztnet-auth
       in: header
+      name: x-ztnet-auth
+      description: API key required for access
