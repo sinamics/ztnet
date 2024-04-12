@@ -17,9 +17,14 @@ NetworkResponse:
     creationTime:
       type: integer
     dns:
-      type: array
-      items:
-        type: string
+      type: object
+      properties:
+        domain:
+          type: string
+        servers:
+          type: array
+          items:
+            type: string
     enableBroadcast:
       type: boolean
     id:
@@ -99,9 +104,15 @@ UpdateNetworkShema:
   type: object
   properties:
     dns:
-      type: array
-      items:
-        type: string
+      type: object
+      properties:
+        domain:
+          type: string
+        servers:
+          type: array
+          items:
+            type: string
+          
     ipAssignmentPools:
       type: array
       items:
