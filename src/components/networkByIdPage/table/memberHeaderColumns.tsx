@@ -10,6 +10,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import cn from "classnames";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -130,7 +131,12 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 			},
 			{ enabled: !!nwid },
 		);
-
+	const { mutate: stashUser } = api.networkMember.stash.useMutation({
+		onSuccess: () => refetchNetworkById(),
+	});
+	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+		onSuccess: () => refetchNetworkById(),
+	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
@@ -160,46 +166,70 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				header: () => <span>{c("header.authorized")}</span>,
 				id: "authorized",
 				cell: ({ getValue, row: { original } }) => {
+					// const options = [
+					// 	original?.activeBridge ? (
+					// 		<span className="text-sm text-primary tracking-tighter">
+					// 			<Br />
+					// 		</span>
+					// 	) : null,
+					// 	original?.noAutoAssignIps ? <Aa /> : null,
+					// ]
+					// 	.filter(Boolean)
+					// 	.reduce(
+					// 		(acc, elem, index) => (
+					// 			<>
+					// 				{acc}
+					// 				{index > 0 ? "" : ""}
+					// 				{elem}
+					// 			</>
+					// 		),
+					// 		null,
+					// 	);
 					return (
-						<label className="label cursor-pointer justify-center">
-							<input
-								type="checkbox"
-								checked={getValue()}
-								onChange={(event) => {
-									const authorized = event.target.checked;
-									if (me?.options?.deAuthorizeWarning && !authorized) {
-										callModal({
-											title: "Warning",
-											description: "Are you sure you want to deauthorize this member?",
-											yesAction: () => {
-												updateMember(
-													{
-														nwid,
-														memberId: original.id,
-														central,
-														organizationId,
-														updateParams: { authorized },
-													},
-													{ onSuccess: () => void refetchNetworkById() },
-												);
-											},
-										});
-									} else {
-										updateMember(
-											{
-												nwid,
-												memberId: original.id,
-												central,
-												organizationId,
-												updateParams: { authorized: event.target.checked },
-											},
-											{ onSuccess: () => void refetchNetworkById() },
-										);
-									}
-								}}
-								className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
-							/>
-						</label>
+						<span className="flex items-center gap-2">
+							<label className="label cursor-pointer justify-center">
+								{/* add a letter B if bridge has been enabled */}
+
+								<input
+									type="checkbox"
+									checked={getValue()}
+									onChange={(event) => {
+										const authorized = event.target.checked;
+										if (me?.options?.deAuthorizeWarning && !authorized) {
+											callModal({
+												title: "Warning",
+												description: "Are you sure you want to deauthorize this member?",
+												yesAction: () => {
+													updateMember(
+														{
+															nwid,
+															memberId: original.id,
+															central,
+															organizationId,
+															updateParams: { authorized },
+														},
+														{ onSuccess: () => void refetchNetworkById() },
+													);
+												},
+											});
+										} else {
+											updateMember(
+												{
+													nwid,
+													memberId: original.id,
+													central,
+													organizationId,
+													updateParams: { authorized: event.target.checked },
+												},
+												{ onSuccess: () => void refetchNetworkById() },
+											);
+										}
+									}}
+									className="checkbox-success checkbox checkbox-xs sm:checkbox-sm"
+								/>
+							</label>
+							{/* {options} */}
+						</span>
 					);
 				},
 			}),
@@ -420,6 +450,38 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 							>
 								{b("options")}
 							</button>
+							{central ? (
+								<button
+									onClick={() =>
+										deleteMember({
+											central,
+											id: original.id,
+											nwid: original.nwid,
+										})
+									}
+									className="btn btn-error btn-outline btn-xs rounded-sm"
+								>
+									{b("delete")}
+								</button>
+							) : (
+								<button
+									onClick={() =>
+										stashUser(
+											{
+												nwid,
+												id: original.id,
+											},
+											{ onSuccess: () => void refetchNetworkById() },
+										)
+									}
+									className={cn("btn btn-outline btn-xs rounded-sm", {
+										"btn-warning": !central,
+										"btn-error": central,
+									})}
+								>
+									{b("stash")}
+								</button>
+							)}
 						</div>
 					);
 				},

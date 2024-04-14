@@ -4,6 +4,7 @@ import Image from "next/image";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
+import Link from "next/link";
 
 const Themes = [
 	"light",
@@ -27,7 +28,7 @@ const Header = () => {
 		<header className="header bg-base-200 px-4 py-1 shadow-md shadow-base">
 			<div className="header-content flex flex-row items-center">
 				<div className="hidden md:inline-flex">
-					<a href="#" className="inline-flex flex-row items-center gap-2">
+					<Link href="/network" className="inline-flex flex-row items-center gap-2">
 						<Image
 							style={{ width: 25, height: 25 }}
 							alt="ztnet logo"
@@ -37,7 +38,7 @@ const Header = () => {
 						<span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
 							{globalSiteTitle}
 						</span>
-					</a>
+					</Link>
 				</div>
 				<div className="md:pl-12 flex items-center pt-1">
 					<label className={`${open ? "swap-active" : ""} swap swap-rotate`}>
