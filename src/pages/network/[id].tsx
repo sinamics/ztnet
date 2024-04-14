@@ -80,10 +80,10 @@ const NetworkById = ({ orgIds }: IProps) => {
 						<li>{t("errorSteps.step1")}</li>
 						<li>{t("errorSteps.step2")}</li>
 					</ul>
-					<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
+					<div className="divider mx-auto flex px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:text-base">
 						Network Actions
 					</div>
-					<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
+					<div className="mx-auto px-4 py-4 text-sm sm:w-4/5 sm:px-10 md:flex-row md:text-base">
 						<div className="flex items-end md:justify-end">
 							<button
 								onClick={() =>
@@ -123,7 +123,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 	return (
 		<div className="animate-fadeIn">
 			<HeadSection title={pageTitle} />
-			<div className="w-5/5 mx-auto flex py-10 px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto py-10 px-4 text-sm sm:px-10 md:text-base">
 				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
@@ -159,7 +159,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 					</div>
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto flex px-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto flex px-4 text-sm sm:px-10 md:text-base">
 				<div className="hidden lg:flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
 						<span className="text-muted font-medium">{t("networkStart")}</span>{" "}
@@ -193,10 +193,10 @@ const NetworkById = ({ orgIds }: IProps) => {
 					</div>
 				</div>
 			</div>
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				{t("networkSettings")}
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
 					<NetworkIpAssignment />
@@ -209,7 +209,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 					<NettworkRoutes />
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="w-6/6 xl:w-3/6">
 					<NetworkDns />
@@ -222,10 +222,10 @@ const NetworkById = ({ orgIds }: IProps) => {
 					<NetworkMulticast />
 				</div>
 			</div>
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				{t("networkMembers")}
 			</div>
-			<div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
 				{members.length ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable nwid={network.nwid} central={false} />
@@ -297,14 +297,14 @@ const NetworkById = ({ orgIds }: IProps) => {
 					</div>
 				)}
 			</div>
-			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="flex w-full flex-wrap space-x-0 space-y-5 xl:space-x-5 xl:space-y-0">
 					<InviteMemberByMail />
 					<AddMemberById />
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto w-full px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
 				<div className="mb-4 md:mb-0">
 					{networkById?.zombieMembers?.length > 0 ? (
 						<>
@@ -330,25 +330,25 @@ const NetworkById = ({ orgIds }: IProps) => {
 					) : null}
 				</div>
 			</div>
-			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkHelpText />
 			</div>
 
-			<div className="w-5/5 mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkFlowRules />
 			</div>
-			{/* <div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			{/* <div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				DEBUG
 			</div>
-			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base space-y-8">
+			<div className="mx-auto px-4 py-4 text-sm sm:px-10 md:text-base space-y-8">
 				<DebugMirror data={networkById?.network} title="Controler Networks" />
 				<DebugMirror data={networkById?.members} title="Controler Members" />
 			</div> */}
 
-			<div className="w-5/5 divider mx-auto flex px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:text-base">
+			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				{t("networkActions")}
 			</div>
-			<div className="w-5/5 mx-auto px-4 py-4 text-sm sm:w-5/6 sm:px-10 md:flex-row md:text-base">
+			<div className="mx-auto px-4 py-4 text-sm sm:px-10 md:flex-row md:text-base">
 				<div className="flex items-end md:justify-end">
 					<button
 						onClick={() =>
