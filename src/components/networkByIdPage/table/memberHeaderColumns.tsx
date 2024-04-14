@@ -10,6 +10,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import cn from "classnames";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -130,7 +131,12 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 			},
 			{ enabled: !!nwid },
 		);
-
+	const { mutate: stashUser } = api.networkMember.stash.useMutation({
+		onSuccess: () => refetchNetworkById(),
+	});
+	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+		onSuccess: () => refetchNetworkById(),
+	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
@@ -420,6 +426,38 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 							>
 								{b("options")}
 							</button>
+							{central ? (
+								<button
+									onClick={() =>
+										deleteMember({
+											central,
+											id: original.id,
+											nwid: original.nwid,
+										})
+									}
+									className="btn btn-error btn-outline btn-xs rounded-sm"
+								>
+									{b("delete")}
+								</button>
+							) : (
+								<button
+									onClick={() =>
+										stashUser(
+											{
+												nwid,
+												id: original.id,
+											},
+											{ onSuccess: () => void refetchNetworkById() },
+										)
+									}
+									className={cn("btn btn-outline btn-xs rounded-sm", {
+										"btn-warning": !central,
+										"btn-error": central,
+									})}
+								>
+									{b("stash")}
+								</button>
+							)}
 						</div>
 					);
 				},
