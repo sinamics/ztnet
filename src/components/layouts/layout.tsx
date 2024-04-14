@@ -103,7 +103,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>
-					<div className="px-5 lg:px-24 space-y-5 pt-10">
+					<div className="px-5 lg:px-10 space-y-5 pt-10">
 						<OrgNavBar />
 						{children}
 						{/* Logs Footer */}
