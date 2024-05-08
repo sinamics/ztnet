@@ -108,6 +108,9 @@ export const POST_network = async (req: NextApiRequest, res: NextApiResponse) =>
 		// structure of the updateableFields object:
 		const updateableFields = {
 			name: { type: "string", destinations: ["controller", "database"] },
+			description: { type: "string", destinations: ["database"] },
+			flowRule: { type: "string", destinations: ["custom"] },
+			mtu: { type: "string", destinations: ["controller"] },
 			private: { type: "boolean", destinations: ["controller"] },
 			// capabilities: { type: "array", destinations: ["controller"] },
 			dns: { type: "array", destinations: ["controller"] },
@@ -122,6 +125,9 @@ export const POST_network = async (req: NextApiRequest, res: NextApiResponse) =>
 		const databasePayload: Partial<network> = {};
 		const controllerPayload: Partial<network> = {};
 
+		// @ts-expect-error
+		const caller = appRouter.createCaller(ctx);
+
 		// Iterate over keys in the request body
 		for (const key in requestBody) {
 			// Check if the key is not in updateableFields
@@ -131,7 +137,17 @@ export const POST_network = async (req: NextApiRequest, res: NextApiResponse) =>
 
 			try {
 				const parsedValue = parseField(key, requestBody[key], updateableFields[key].type);
-
+				// if custom and flowRule call the caller.setFlowRule
+				if (key === "flowRule") {
+					// @ts-expect-error
+					const caller = appRouter.createCaller(ctx);
+					await caller.network.setFlowRule({
+						nwid: networkId,
+						updateParams: {
+							flowRoute: parsedValue,
+						},
+					});
+				}
 				if (updateableFields[key].destinations.includes("database")) {
 					databasePayload[key] = parsedValue;
 				}
@@ -143,8 +159,6 @@ export const POST_network = async (req: NextApiRequest, res: NextApiResponse) =>
 			}
 		}
 
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
 		const network = await caller.network
 			.getNetworkById({ nwid: networkId })
 			.then(async (res) => {
