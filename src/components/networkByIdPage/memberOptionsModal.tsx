@@ -13,7 +13,7 @@ import {
 	type TagDetails,
 } from "~/types/local/member";
 import { type TagsByName } from "~/types/local/network";
-import { useModalStore } from "~/utils/store";
+// import { useModalStore } from "~/utils/store";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
@@ -34,13 +34,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	central = false,
 	organizationId,
 }) => {
-	const b = useTranslations("commonButtons");
+	// const b = useTranslations("commonButtons");
 	const t = useTranslations();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { closeModal } = useModalStore((state) => state);
+	// const { closeModal } = useModalStore((state) => state);
 	const [state, setState] = useState(initialIpState);
 	const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 
@@ -55,15 +55,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			{ enabled: !!query.id },
 		);
 
-	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
-		onError: handleApiError,
-	});
+	// const { mutate: deleteMember } = api.networkMember.delete.useMutation({
+	// 	onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+	// 	onError: handleApiError,
+	// });
 
-	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refetchNetworkById, closeModal] }),
-		onError: handleApiError,
-	});
+	// const { mutate: stashUser } = api.networkMember.stash.useMutation({
+	// 	onSuccess: handleApiSuccess({ actions: [refetchNetworkById, closeModal] }),
+	// 	onError: handleApiError,
+	// });
 
 	const { data: memberById, refetch: refetchMemberById } =
 		api.networkMember.getMemberById.useQuery(
@@ -97,13 +97,13 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
 	});
 
-	const stashMember = (id: string) => {
-		stashUser({
-			organizationId,
-			nwid,
-			id,
-		});
-	};
+	// const stashMember = (id: string) => {
+	// 	stashUser({
+	// 		organizationId,
+	// 		nwid,
+	// 		id,
+	// 	});
+	// };
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const subnetMatch = isIPInSubnet(e.target.value, networkById?.network?.routes);
@@ -488,7 +488,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					</div>
 				) : null}
 
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
+				{/* <div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4 space-y-4">
 						<p>{b("userActions")}</p>
 
@@ -515,7 +515,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 							</button>
 						)}
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
