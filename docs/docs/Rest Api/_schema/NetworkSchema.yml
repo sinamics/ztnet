@@ -103,6 +103,12 @@ NetworkResponse:
 UpdateNetworkShema:
   type: object
   properties:
+    name:
+      type: string
+    description:
+      type: string
+    mtu:
+      type: integer
     dns:
       type: object
       properties:
@@ -122,8 +128,6 @@ UpdateNetworkShema:
             type: string
           ipRangeEnd:
             type: string
-    name:
-      type: string
     private:
       type: boolean
     routes:
@@ -136,6 +140,8 @@ UpdateNetworkShema:
           via:
             type: string
             nullable: true
+    flowRules:
+      type: string
     v4AssignMode:
       type: object
       properties:
