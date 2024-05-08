@@ -109,6 +109,7 @@ UpdateNetworkShema:
       type: string
     mtu:
       type: integer
+      default: 2800
     dns:
       type: object
       properties:
@@ -142,6 +143,7 @@ UpdateNetworkShema:
             nullable: true
     flowRules:
       type: string
+      default: "drop not ethertype ipv4 and not ethertype arp and not ethertype ipv6; accept;"
     v4AssignMode:
       type: object
       properties:
