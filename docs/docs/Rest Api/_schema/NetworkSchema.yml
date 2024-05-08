@@ -103,6 +103,13 @@ NetworkResponse:
 UpdateNetworkShema:
   type: object
   properties:
+    name:
+      type: string
+    description:
+      type: string
+    mtu:
+      type: integer
+      default: 2800
     dns:
       type: object
       properties:
@@ -122,8 +129,6 @@ UpdateNetworkShema:
             type: string
           ipRangeEnd:
             type: string
-    name:
-      type: string
     private:
       type: boolean
     routes:
@@ -136,6 +141,9 @@ UpdateNetworkShema:
           via:
             type: string
             nullable: true
+    flowRules:
+      type: string
+      default: "drop not ethertype ipv4 and not ethertype arp and not ethertype ipv6; accept;"
     v4AssignMode:
       type: object
       properties:
