@@ -37,7 +37,7 @@ const Users = () => {
 	}
 
 	return (
-		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-6/12">
+		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-8/12">
 			<div className="pb-10">
 				<p className="text-sm text-gray-400 ">{t("users.authentication.header")}</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>

@@ -152,6 +152,8 @@ export const adminRouter = createTRPCRouter({
 					email: true,
 					emailVerified: true,
 					lastLogin: true,
+					createdAt: true,
+					expiresAt: true,
 					lastseen: true,
 					online: true,
 					role: true,

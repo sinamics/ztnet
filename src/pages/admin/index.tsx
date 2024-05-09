@@ -71,7 +71,7 @@ const AdminSettings = ({ orgIds }) => {
 			<MetaTags title={title} />
 			<div
 				role="tablist"
-				className="tabs tabs-bordered flex flex-wrap mx-auto p-3 pb-10 sm:w-6/12 "
+				className="tabs tabs-bordered flex flex-wrap mx-auto p-3 pb-10 sm:w-8/12 "
 			>
 				{tabs.map((t) => (
 					<a
