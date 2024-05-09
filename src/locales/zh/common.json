@@ -110,6 +110,10 @@
 		"loading": "加载中",
 		"title": "网络",
 		"description": "VPN网络",
+		"unlinkedNetworks": {
+			"title": "有{amount}个未分配的网络注册在控制器上。",
+			"navigate": "前往控制器"
+		},
 		"noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。",
 		"networkActionModal": {
 			"modalTitle": "网络操作 <span>{networkName}</span>",

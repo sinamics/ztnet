@@ -110,6 +110,10 @@
 		"loading": "Chargement",
 		"title": "Réseaux",
 		"description": "Réseaux VPN",
+		"unlinkedNetworks": {
+			"title": "Il y a {amount} réseau non assigné enregistré avec le contrôleur.",
+			"navigate": "Aller au Contrôleur"
+		},
 		"noNetworksMessage": "Aucun réseau n'a encore été créé. Commencez par en créer un et il apparaîtra ici.",
 		"networkActionModal": {
 			"modalTitle": "Options pour le réseau <span>{networkName}</span>",
