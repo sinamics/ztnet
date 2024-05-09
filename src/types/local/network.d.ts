@@ -6,6 +6,7 @@ export interface NetworkEntity {
 	private?: boolean;
 	description?: string;
 	remoteTraceLevel?: number;
+	autoAssignIp?: boolean;
 	remoteTraceTarget?: null;
 	revision?: number;
 	tags?: Tag[];

@@ -7,7 +7,7 @@ import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
 import { type TagsByName, type NetworkEntity } from "~/types/local/network";
-import { type CapabilitiesByName } from "~/types/local/member";
+import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
@@ -173,7 +173,7 @@ export const networkRouter = createTRPCRouter({
 					...networkFromDatabase,
 					cidr: cidrOptions,
 				},
-				members: mergedMembers,
+				members: mergedMembers as MemberEntity[],
 				zombieMembers,
 			};
 		}),
