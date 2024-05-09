@@ -18,6 +18,9 @@ import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "../shared/tableFooter";
 import { useModalStore } from "~/utils/store";
 import NetworkOptionsModal from "./networkOptionsModal";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import toast from "react-hot-toast";
+import CopyIcon from "~/icons/copy";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
@@ -41,7 +44,9 @@ const TruncateText = ({ text }: { text: string }) => {
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
 	const t = useTranslations("networks");
+	const n = useTranslations("networkById");
 	const ct = useTranslations("commonTable");
+
 	const { callModal } = useModalStore((state) => state);
 
 	// Load initial state from localStorage or set to default
@@ -73,9 +78,27 @@ export const NetworkTable = ({ tableData = [] }) => {
 				header: () => <span>{ct("header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
-				cell: (info) => info.getValue(),
+				// cell: (info) => info.getValue(),
 				header: () => <span>{ct("header.networkId")}</span>,
 				// footer: (info) => info.column.id,
+				cell: ({ row: { original } }) => {
+					return (
+						<div onClick={(e) => e.stopPropagation()}>
+							<CopyToClipboard
+								text={original.nwid}
+								onCopy={() => {
+									toast.success(n("copyToClipboard.success", { element: original.nwid }));
+								}}
+								title={n("copyToClipboard.title")}
+							>
+								<div className="cursor-pointer flex items-center justify-center">
+									{original.nwid}
+									<CopyIcon />
+								</div>
+							</CopyToClipboard>
+						</div>
+					);
+				},
 			}),
 			columnHelper.accessor("members", {
 				header: () => <span>{ct("header.members")}</span>,
