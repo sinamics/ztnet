@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "成功刪除",
 		"errorOccurred": "發生未知錯誤",
 		"organizationDeleted": "組織成功刪除",
-		"sentSuccessfully": "成功發送"
+		"sentSuccessfully": "成功發送",
+		"copyToClipboard": {
+			"title": "複製到剪貼簿",
+			"success": "{element} 已複製到剪貼簿"
+		}
 	},
 	"sidebar": {
 		"navigation": "首頁",
@@ -152,10 +156,6 @@
 			"description": "你確定要刪除這個網路嗎？這個操作無法復原，所有成員將從這個網路中刪除",
 			"yesAction": "是的，刪除它",
 			"noAction": "不，保留它"
-		},
-		"copyToClipboard": {
-			"title": "複製到剪貼簿",
-			"success": "{element} 已複製到剪貼簿"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "你的網路現在是 {authType}",

@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "Eliminado con éxito",
 		"errorOccurred": "Ocurrió un error desconocido",
 		"organizationDeleted": "Organización eliminada con éxito",
-		"sentSuccessfully": "Enviado con éxito"
+		"sentSuccessfully": "Enviado con éxito",
+		"copyToClipboard": {
+			"title": "copiar al portapapeles",
+			"success": "{element} copiado al portapapeles"
+		}
 	},
 	"sidebar": {
 		"navigation": "Inicio",
@@ -152,10 +156,6 @@
 			"description": "¿Estás seguro de que quieres eliminar esta red? Esto no se puede deshacer y todos los miembros serán eliminados de esta red",
 			"yesAction": "Sí, eliminar",
 			"noAction": "No, conservarlo"
-		},
-		"copyToClipboard": {
-			"title": "copiar al portapapeles",
-			"success": "{element} copiado al portapapeles"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "Tu red es ahora {authType}",
