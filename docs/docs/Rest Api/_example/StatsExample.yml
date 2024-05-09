@@ -1,0 +1,11 @@
+StatsExample:
+  - users: 1
+    networks: 8
+    networkMembers: 7
+    appVersion: "v0.6.3"
+    loginsLast24h: 1
+    pendingUserInvitations: 0
+    activeWebhooks: 0
+    ztnetUptime: 735.491790795
+    registrationEnabled: false
+    hasPrivatRoot: true

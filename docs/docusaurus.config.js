@@ -40,6 +40,13 @@ const config = {
         id: "api", // plugin id
         docsPluginId: "classic", // id of plugin-content-docs or preset for rendering docs
         config: {
+          stats:{
+            specPath: "docs/Rest Api/Application/_source/stats.yml", // path to OpenAPI spec, URLs supported
+            outputDir: "docs/Rest Api/Application/Statistics", // output directory for generated files
+            sidebarOptions: { // optional, instructs plugin to generate sidebar.js
+              groupPathsBy: "tag", // group sidebar items by operation "tag"
+            },
+          },
           // Personal Controller
           personal_user: {
             specPath: "docs/Rest Api/Personal/_source/user.yml", // path to OpenAPI spec, URLs supported
