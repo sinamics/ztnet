@@ -25,6 +25,7 @@ import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
+import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -220,12 +221,20 @@ export const adminRouter = createTRPCRouter({
 		try {
 			const isCentral = false;
 			const networks = await ztController.get_controller_networks(ctx, isCentral);
-
 			const networkCount = networks.length;
 			let totalMembers = 0;
+			const assignedIPs = new Set<string>();
 			for (const network of networks) {
-				const members = await ztController.network_members(ctx, network as string);
-				totalMembers += Object.keys(members).length;
+				const networkDetails = await ztController.local_network_detail(
+					ctx,
+					network as string,
+					isCentral,
+				);
+				totalMembers += networkDetails?.members.length;
+
+				// @ts-expect-error
+				const usedIp = getNetworkClassCIDR(networkDetails?.network?.ipAssignmentPools);
+				if (usedIp[0]?.target) assignedIPs.add(usedIp[0]?.target);
 			}
 
 			const controllerStatus = (await ztController.get_controller_status(
@@ -236,6 +245,7 @@ export const adminRouter = createTRPCRouter({
 				networkCount,
 				totalMembers,
 				controllerStatus,
+				assignedIPs: Array.from(assignedIPs),
 			};
 		} catch (error) {
 			return throwError(error);
