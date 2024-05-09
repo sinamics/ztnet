@@ -46,7 +46,7 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery(undefined, {
 		enabled: user?.role === "ADMIN",
 	});
-	console.log("unlinkedNetworks", unlinkedNetworks);
+
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refetch] }),
