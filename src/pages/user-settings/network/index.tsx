@@ -17,7 +17,7 @@ const UserNetworkSetting = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery<UserExtended>();
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
 				<p className="text-sm text-gray-400">
 					{t("network.annotations.memberAnotations")}

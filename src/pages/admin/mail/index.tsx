@@ -54,7 +54,7 @@ const Mail = () => {
 	}
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			{options?.error ? (
 				<div className="alert alert-warning alert-sm">
 					<div className="flex-1">

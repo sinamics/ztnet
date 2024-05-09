@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Autentisering",
 				"enableUserRegistration": "Aktiver brukerregistrering?",
+				"enableUserRegistrationDescription": "Dette vil tillate brukere å klikke på Registrer-knappen på landingssiden.",
 				"generateInvitation": {
 					"header": "Generer invitasjonslenke",
 					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",

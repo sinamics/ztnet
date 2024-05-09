@@ -126,7 +126,7 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 							<button
 								onClick={() => setDelete(!deleted)}
 								type="submit"
-								className="btn-sm btn btn-error btn-outline"
+								className="btn-xs btn btn-error btn-outline"
 							>
 								{t("users.users.userOptionModal.buttons.deleteUser")}
 							</button>
