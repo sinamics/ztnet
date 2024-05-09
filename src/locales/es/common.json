@@ -110,6 +110,10 @@
 		"loading": "Cargando",
 		"title": "Redes",
 		"description": "Redes VPN",
+		"unlinkedNetworks": {
+			"title": "Hay {amount} red no asignada registrada con el controlador.",
+			"navigate": "Ir al Controlador"
+		},
 		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí.",
 		"networkActionModal": {
 			"modalTitle": "Acciones de red <span>{networkName}</span>",

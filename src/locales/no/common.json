@@ -110,6 +110,10 @@
 		"loading": "Laster",
 		"title": "Nettverk",
 		"description": "VPN-nettverk",
+		"unlinkedNetworks": {
+			"title": "Det er {amount} ufordelt nettverk registrert med kontrolleren.",
+			"navigate": "Gå til Kontroller"
+		},
 		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her.",
 		"networkActionModal": {
 			"modalTitle": "Aksjon for Nettverk <span>{networkName}</span>",
