@@ -175,6 +175,24 @@ export const authOptions: NextAuthOptions = {
 		 */
 		async signIn({ user, account }) {
 			if (account.provider === "credentials") {
+				// Check if the user already exists
+				const existingUser = await prisma.user.findUnique({
+					where: {
+						email: user.email,
+					},
+				});
+
+				if (existingUser) {
+					// User exists, update last login or other fields as necessary
+					await prisma.user.update({
+						where: {
+							id: existingUser.id,
+						},
+						data: {
+							lastLogin: new Date().toISOString(),
+						},
+					});
+				}
 				return true;
 			}
 			if (account.provider === "oauth") {
