@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "身分驗證",
 				"enableUserRegistration": "啟用使用者註冊？",
+				"enableUserRegistrationDescription": "這將允許用戶在登陸頁面上點擊註冊按鈕。",
 				"generateInvitation": {
 					"header": "建立邀請連結",
 					"secretMessageLabel": "使用者註冊時將被要求輸入此訊息（區分大小寫）",

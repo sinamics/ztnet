@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Authentication",
 				"enableUserRegistration": "Enable user registration?",
+				"enableUserRegistrationDescription": "This will allow users to click the Sign-Up button at the landing page.",
 				"generateInvitation": {
 					"header": "Generate invitation link",
 					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",

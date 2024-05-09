@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Authentification",
 				"enableUserRegistration": "Activer l'enregistrement des utilisateurs ?",
+				"enableUserRegistrationDescription": "Cela permettra aux utilisateurs de cliquer sur le bouton S'inscrire sur la page d'accueil.",
 				"generateInvitation": {
 					"header": "Générer un lien d'invitation",
 					"secretMessageLabel": "L'utilisateur sera invité à saisir ce message lors de l'inscription (sensible à la casse)",
