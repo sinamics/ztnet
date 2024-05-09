@@ -10,6 +10,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 jest.mock("../../../utils/api", () => ({
 	api: {
+		admin: {
+			unlinkedNetwork: {
+				useQuery: jest.fn(),
+			},
+		},
 		network: {
 			getUserNetworks: {
 				useQuery: jest.fn(),
@@ -48,6 +53,11 @@ describe("Networks page", () => {
 
 	it("displays loading when fetching networks", () => {
 		(api.network.getUserNetworks.useQuery as jest.Mock).mockReturnValue({
+			data: undefined,
+			isLoading: true,
+			refetch: jest.fn(),
+		});
+		(api.admin.unlinkedNetwork.useQuery as jest.Mock).mockReturnValue({
 			data: undefined,
 			isLoading: true,
 			refetch: jest.fn(),
