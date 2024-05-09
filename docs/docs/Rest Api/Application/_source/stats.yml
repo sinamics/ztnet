@@ -1,0 +1,45 @@
+openapi: 3.1.0
+info:
+  title: ZTNet Network Rest API
+  version: 1.0.0
+  description: |
+    Access the ZTNet suite through our RESTful Web API, compatible with version 0.4.0 and beyond. 
+    
+    This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
+
+servers:
+  - url: https://ztnet.network/api/v1
+    description: ZTNet API
+    variables:
+      version:
+        default: v1
+        description: API version
+        
+components:
+  $ref: '../../_schema/security.yml#/components'
+
+security:
+  - x-ztnet-auth: []
+
+paths:
+  /stats:
+    get:
+      summary: Returns statistics for ztnet
+      description: |
+        Returns various statistics that can be used in 3rd party applications.
+      operationId: getAppStats
+      responses:
+        200:
+          description: An object of statistics
+          content:
+            application/json:
+              schema:
+                $ref: '../../_schema/StatsSchema.yml#/StatsResponse'
+              example:
+                $ref: '../../_example/StatsExample.yml#/StatsExample'
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
