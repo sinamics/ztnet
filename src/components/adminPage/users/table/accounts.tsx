@@ -69,6 +69,10 @@ export const Accounts = () => {
 				header: () => <span>{ct("header.email")}</span>,
 				id: "email",
 			}),
+			columnHelper.accessor("createdAt", {
+				header: () => <span>{ct("header.email")}</span>,
+				id: "email",
+			}),
 			// columnHelper.accessor("emailVerified", {
 			// 	header: () => <span>{t("users.users.table.emailVerified")}</span>,
 			// 	id: "emailVerified",
