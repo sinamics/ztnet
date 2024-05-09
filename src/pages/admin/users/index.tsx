@@ -37,14 +37,19 @@ const Users = () => {
 	}
 
 	return (
-		<main className="mx-auto flex-col w-full bg-base-100 p-3 sm:w-8/12">
-			<div className="pb-10">
+		<main className="flex-col w-full bg-base-100 p-3">
+			<div className="pb-10 sm:w-6/12">
 				<p className="text-sm text-gray-400 ">{t("users.authentication.header")}</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex items-center justify-between">
-					<p className="font-medium">
-						{t("users.authentication.enableUserRegistration")}
-					</p>
+					<label>
+						<p className="font-medium">
+							{t("users.authentication.enableUserRegistration")}
+						</p>
+						<p className="text-sm text-gray-500">
+							{t("users.authentication.enableUserRegistrationDescription")}
+						</p>
+					</label>
 					<input
 						type="checkbox"
 						checked={options?.enableRegistration}
@@ -56,20 +61,20 @@ const Users = () => {
 				</div>
 				<UserInvitation />
 			</div>
-			<div>
+			<div className="sm:w-6/12">
 				<p className="text-sm text-gray-400">{t("users.groups.sectionTitle")}</p>
-				<div className="divider mt-0 text-gray-500"></div>
+				<div className="divider m-0 text-gray-500"></div>
 			</div>
-			<div className="space-y-5 ">
+			<div className="space-y-5 sm:w-6/12">
 				<div className="w-full">
 					<UserGroups />
 				</div>
 			</div>
-			<div className="pt-10 ">
+			<div className="pt-10 sm:w-6/12">
 				<p className="text-sm text-gray-400">{t("users.users.sectionTitle")}</p>
-				<div className="divider mt-0 text-gray-500"></div>
+				<div className="divider m-0 text-gray-500"></div>
 			</div>
-			<div className="w-full">
+			<div className="w-10/12">
 				<Accounts />
 			</div>
 		</main>

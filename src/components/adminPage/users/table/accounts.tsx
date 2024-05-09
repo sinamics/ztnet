@@ -220,9 +220,8 @@ export const Accounts = () => {
 	}
 	return (
 		<div className="overflow-x-auto w-full">
-			<div className="pb-5">
-				<p className="text-sm text-gray-500">{t("users.users.description")}</p>
-			</div>
+			<p className="text-sm text-gray-500">{t("users.users.description")}</p>
+
 			<div className="inline-block py-5 ">
 				<div className="p-2">
 					<DebouncedInput

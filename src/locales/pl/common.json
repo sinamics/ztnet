@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Uwierzytelnianie",
 				"enableUserRegistration": "Włączyć rejestrację użytkowników?",
+				"enableUserRegistrationDescription": "To pozwoli użytkownikom kliknąć przycisk Zarejestruj się na stronie startowej.",
 				"generateInvitation": {
 					"header": "Generuj link zaproszenia",
 					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej wiadomości podczas rejestracji (wielkość liter ma znaczenie)",
