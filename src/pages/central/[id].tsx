@@ -37,7 +37,7 @@ const HeadSection = ({ title }: { title: string }) => (
 );
 
 const CentralNetworkById = ({ orgIds }) => {
-	const t = useTranslations("networkById");
+	const t = useTranslations();
 	// const [state, setState] = useState({
 	//   viewZombieTable: false,
 	// });
@@ -80,8 +80,8 @@ const CentralNetworkById = ({ orgIds }) => {
 				<div className="flex flex-col items-center justify-center">
 					<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
 					<ul className="list-disc">
-						<li>{t("errorSteps.step1")}</li>
-						<li>{t("errorSteps.step2")}</li>
+						<li>{t("networkById.errorSteps.step1")}</li>
+						<li>{t("networkById.errorSteps.step2")}</li>
 					</ul>
 				</div>
 			</>
@@ -95,19 +95,21 @@ const CentralNetworkById = ({ orgIds }) => {
 				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
-							<span className="font-semibold">{t("networkId")}</span>
+							<span className="font-semibold">{t("networkById.networkId")}</span>
 							<span className="relative flex items-center gap-2">
 								<CopyToClipboard
 									text={network?.nwid}
 									onCopy={() =>
 										toast.success(
-											t("copyToClipboard.success", { element: network?.nwid }),
+											t("commonToast.copyToClipboard.success", {
+												element: network?.nwid,
+											}),
 											{
 												id: "copyNwid",
 											},
 										)
 									}
-									title={t("copyToClipboard.title")}
+									title={t("commonToast.copyToClipboard.title")}
 								>
 									<div className="flex cursor-pointer items-center gap-2">
 										{network?.nwid}
@@ -130,39 +132,41 @@ const CentralNetworkById = ({ orgIds }) => {
 			<div className="mx-auto flex px-4 text-sm sm:px-10 md:text-base">
 				<div className="flex flex-col justify-between space-y-3 whitespace-nowrap lg:flex-row lg:space-x-3 lg:space-y-0">
 					<div>
-						<span className="text-muted font-medium">{t("networkStart")}</span>{" "}
+						<span className="text-muted font-medium">
+							{t("networkById.networkStart")}
+						</span>{" "}
 						<span
 							className={cn("badge badge-lg rounded-md", {
 								"badge-accent": network?.ipAssignmentPools?.[0]?.ipRangeStart,
 							})}
 						>
-							{network?.ipAssignmentPools?.[0]?.ipRangeStart || t("notSet")}
+							{network?.ipAssignmentPools?.[0]?.ipRangeStart || t("networkById.notSet")}
 						</span>
 					</div>
 					<div>
-						<span className="text-muted font-medium">{t("networkEnd")}</span>{" "}
+						<span className="text-muted font-medium">{t("networkById.networkEnd")}</span>{" "}
 						<span
 							className={cn("badge badge-lg rounded-md", {
 								"badge-accent": network?.ipAssignmentPools?.[0]?.ipRangeEnd,
 							})}
 						>
-							{network?.ipAssignmentPools?.[0]?.ipRangeEnd || t("notSet")}
+							{network?.ipAssignmentPools?.[0]?.ipRangeEnd || t("networkById.notSet")}
 						</span>
 					</div>
 					<div>
-						<span className="text-muted font-medium">{t("networkCidr")}</span>{" "}
+						<span className="text-muted font-medium">{t("networkById.networkCidr")}</span>{" "}
 						<span
 							className={cn("badge badge-lg rounded-md", {
 								"badge-accent": network?.routes?.[0]?.target,
 							})}
 						>
-							{network?.routes?.[0]?.target || t("notSet")}
+							{network?.routes?.[0]?.target || t("networkById.notSet")}
 						</span>
 					</div>
 				</div>
 			</div>
 			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
-				{t("networkSettings")}
+				{t("networkById.networkSettings")}
 			</div>
 			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
 				{/* Ipv4 assignment  */}
@@ -192,7 +196,7 @@ const CentralNetworkById = ({ orgIds }) => {
 				</div>
 			</div>
 			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
-				{t("networkMembers")}
+				{t("networkById.networkMembers")}
 			</div>
 			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
 				{members?.length ? (
@@ -216,21 +220,24 @@ const CentralNetworkById = ({ orgIds }) => {
 						</svg>
 						<div className="w-full space-y-5 font-medium tracking-wide">
 							<div className="w-full flex justify-center">
-								<p>{t("noMembersInformation.title")}</p>
+								<p>{t("networkById.noMembersInformation.title")}</p>
 							</div>
 							<div>
 								<div className="w-full flex justify-center">
-									<p>{t("noMembersInformation.installZerotier")}</p>
+									<p>{t("networkById.noMembersInformation.installZerotier")}</p>
 								</div>
 								<div className="w-full flex justify-center">
 									<CopyToClipboard
 										text="curl -s https://install.zerotier.com | sudo bash"
 										onCopy={() =>
-											toast.success(t("copyToClipboard.success", { element: "" }), {
-												id: "copyNwid",
-											})
+											toast.success(
+												t("commonToast.copyToClipboard.success", { element: "" }),
+												{
+													id: "copyNwid",
+												},
+											)
 										}
-										title={t("copyToClipboard.title")}
+										title={t("commonToast.copyToClipboard.title")}
 									>
 										<div className="flex cursor-pointer items-center gap-2">
 											<kbd className="kbd kbd-md">
@@ -243,17 +250,20 @@ const CentralNetworkById = ({ orgIds }) => {
 							</div>
 							<div>
 								<div className="w-full flex justify-center">
-									<p>{t("noMembersInformation.joinNetwork")}</p>
+									<p>{t("networkById.noMembersInformation.joinNetwork")}</p>
 								</div>
 								<div className="w-full flex justify-center">
 									<CopyToClipboard
 										text={`zerotier-cli join ${network.nwid}`}
 										onCopy={() =>
-											toast.success(t("copyToClipboard.success", { element: "" }), {
-												id: "copyNwid",
-											})
+											toast.success(
+												t("commonToast.copyToClipboard.success", { element: "" }),
+												{
+													id: "copyNwid",
+												},
+											)
 										}
-										title={t("copyToClipboard.title")}
+										title={t("commonToast.copyToClipboard.title")}
 									>
 										<div className="flex cursor-pointer items-center gap-2">
 											<kbd className="kbd kbd-md">zerotier-cli join {network.nwid}</kbd>

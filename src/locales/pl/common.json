@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "Usunięto pomyślnie",
 		"errorOccurred": "Wystąpił nieznany błąd",
 		"organizationDeleted": "Organizacja została pomyślnie usunięta",
-		"sentSuccessfully": "Wysłano pomyślnie"
+		"sentSuccessfully": "Wysłano pomyślnie",
+		"copyToClipboard": {
+			"title": "skopiuj do schowka",
+			"success": "{element} skopiowano do schowka"
+		}
 	},
 	"sidebar": {
 		"navigation": "Nawigacja",
@@ -152,10 +156,6 @@
 			"description": "Czy na pewno chcesz usunąć tę sieć? Tej czynności nie będzie można cofnąć. Wszyscy członkowie sieci zostaną z niej usunięci.",
 			"yesAction": "Tak, usuń ją",
 			"noAction": "Nie, zostaw ją"
-		},
-		"copyToClipboard": {
-			"title": "skopiuj do schowka",
-			"success": "{element} skopiowano do schowka"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "Twoja sieć jest teraz {authType}",

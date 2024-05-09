@@ -21,8 +21,7 @@ interface IProp {
 }
 
 const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
-	const c = useTranslations("commonTable");
-	const t = useTranslations("networkById");
+	const t = useTranslations();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -42,7 +41,9 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({
 				actions: [refetchNetworkById],
-				toastMessage: t("networkMembersTable.toastMessages.memberNameUpdated"),
+				toastMessage: t(
+					"networkById.networkMembersTable.toastMessages.memberNameUpdated",
+				),
 			}),
 		});
 
@@ -122,7 +123,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 							<Input
 								useTooltip
 								ref={inputRef}
-								placeholder={t("networkMembersTable.tableRow.updateName")}
+								placeholder={t("networkById.networkMembersTable.tableRow.updateName")}
 								name="networkName"
 								onChange={(e) => setValue(e.target.value)}
 								onBlur={onBlur}
@@ -140,7 +141,11 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				const has6plane = networkById?.network?.v6AssignMode?.["6plane"];
 
 				if (!original.ipAssignments?.length && !hasRfc4193 && !has6plane) {
-					return <p className="text-gray-500">{c("header.ipAssignments.notAssigned")}</p>;
+					return (
+						<p className="text-gray-500">
+							{t("commonTable.header.ipAssignments.notAssigned")}
+						</p>
+					);
 				}
 
 				const rfc4193Ip = hasRfc4193 ? toRfc4193Ip(nwid, original?.id) : undefined;
@@ -150,8 +155,10 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 					return hasIp ? (
 						<CopyToClipboard
 							text={ip}
-							onCopy={() => toast.success(t("copyToClipboard.success", { element: ip }))}
-							title={t("copyToClipboard.title")}
+							onCopy={() =>
+								toast.success(t("commonToast.copyToClipboard.success", { element: ip }))
+							}
+							title={t("commonToast.copyToClipboard.title")}
 						>
 							<div className="cursor-pointer">
 								<div className="badge badge-ghost rounded-md">{ip}</div>
@@ -181,10 +188,12 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 											text={assignedIp}
 											onCopy={() =>
 												toast.success(
-													t("copyToClipboard.success", { element: assignedIp }),
+													t("commonToast.copyToClipboard.success", {
+														element: assignedIp,
+													}),
 												)
 											}
-											title={t("copyToClipboard.title")}
+											title={t("commonToast.copyToClipboard.title")}
 										>
 											<div className="cursor-pointer">{assignedIp}</div>
 										</CopyToClipboard>

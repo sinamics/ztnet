@@ -43,9 +43,7 @@ const TruncateText = ({ text }: { text: string }) => {
 };
 export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
-	const t = useTranslations("networks");
-	const n = useTranslations("networkById");
-	const ct = useTranslations("commonTable");
+	const t = useTranslations();
 
 	const { callModal } = useModalStore((state) => state);
 
@@ -70,16 +68,16 @@ export const NetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => info.getValue(),
-				header: () => <span>{ct("header.name")}</span>,
+				header: () => <span>{t("commonTable.header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{ct("header.description")}</span>,
+				header: () => <span>{t("commonTable.header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
 				// cell: (info) => info.getValue(),
-				header: () => <span>{ct("header.networkId")}</span>,
+				header: () => <span>{t("commonTable.header.networkId")}</span>,
 				// footer: (info) => info.column.id,
 				cell: ({ row: { original } }) => {
 					return (
@@ -87,9 +85,11 @@ export const NetworkTable = ({ tableData = [] }) => {
 							<CopyToClipboard
 								text={original.nwid}
 								onCopy={() => {
-									toast.success(n("copyToClipboard.success", { element: original.nwid }));
+									toast.success(
+										t("commonToast.copyToClipboard.success", { element: original.nwid }),
+									);
 								}}
-								title={n("copyToClipboard.title")}
+								title={t("commonToast.copyToClipboard.title")}
 							>
 								<div className="cursor-pointer flex items-center justify-center">
 									{original.nwid}
@@ -101,14 +101,14 @@ export const NetworkTable = ({ tableData = [] }) => {
 				},
 			}),
 			columnHelper.accessor("members", {
-				header: () => <span>{ct("header.members")}</span>,
+				header: () => <span>{t("commonTable.header.members")}</span>,
 				cell: ({ row: { original } }) => {
 					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
 					return <span>{original.networkMembers.length}</span>;
 				},
 			}),
 			columnHelper.accessor("action", {
-				header: () => <span>{ct("header.actions")}</span>,
+				header: () => <span>{t("commonTable.header.actions")}</span>,
 				id: "action",
 				cell: ({ row: { original } }) => {
 					return (
@@ -120,7 +120,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 										title: (
 											<p>
 												<span>
-													{t.rich("networkActionModal.modalTitle", {
+													{t.rich("networks.networkActionModal.modalTitle", {
 														span: (children) => (
 															<span className="text-primary">{children}</span>
 														),
@@ -135,7 +135,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 								}}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								{ct("cell.Options")}
+								{t("commonTable.cell.Options")}
 							</button>
 						</div>
 					);
@@ -201,7 +201,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={ct("search.networkSearchPlaceholder")}
+					placeholder={t("commonTable.search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">

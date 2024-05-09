@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "Supprimé avec succès",
 		"errorOccurred": "Une erreur inconnue est survenue",
 		"organizationDeleted": "Organisation supprimée avec succès",
-		"sentSuccessfully": "Envoyé avec succès"
+		"sentSuccessfully": "Envoyé avec succès",
+		"copyToClipboard": {
+			"title": "copier dans le presse-papier",
+			"success": "{element} copié dans le presse-papier"
+		}
 	},
 	"sidebar": {
 		"navigation": "Accueil",
@@ -152,10 +156,6 @@
 			"description": "Êtes-vous sûr de vouloir supprimer ce réseau ? Cela ne peut pas être annulé et tous les membres seront supprimés de ce réseau.",
 			"yesAction": "Oui, supprime-le",
 			"noAction": "Non, garde-le"
-		},
-		"copyToClipboard": {
-			"title": "copier dans le presse-papier",
-			"success": "{element} copié dans le presse-papier"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "Votre réseau est maintenant {authType}",
