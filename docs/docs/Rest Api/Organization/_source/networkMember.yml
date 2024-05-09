@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: ZTNet Organization Member Rest API
-  version: 1.0.0
+  title: ZTNet Organization Network Member Rest API
+  # version: 1.0.0
   description: |
-    Access the ZTNet Organization suite through our RESTful Web API, compatible with version 0.6.0 and beyond. 
+    Access the ZTNet Organization suite through our RESTful Web API. 
     
     This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
 
