@@ -218,16 +218,10 @@ model User {
   emailVerified      DateTime?
   lastLogin          DateTime
   lastseen           DateTime?
-  expirationDate     String                 @default("")
   online             Boolean?               @default(false)
   role               Role                   @default(USER)
   image              String?
   hash               String?
-  licenseStatus      String?
-  orderStatus        String?
-  orderId            Int                    @default(0)
-  product_id         Int?                   @default(0)
-  licenseKey         String?                @default("")
   tempPassword       String?
   firstTime          Boolean                @default(true)
   userGroupId        Int?
