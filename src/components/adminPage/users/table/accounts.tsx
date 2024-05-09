@@ -19,6 +19,8 @@ import { User } from "@prisma/client";
 import UserOptionsModal from "../userOptionsModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
+import TimeAgo from "react-timeago";
+import { timeAgoFormatter } from "~/utils/time";
 
 type ExtendedUser = {
 	action?: string;
@@ -70,8 +72,20 @@ export const Accounts = () => {
 				id: "email",
 			}),
 			columnHelper.accessor("createdAt", {
-				header: () => <span>{ct("header.email")}</span>,
-				id: "email",
+				header: () => <span>Created</span>,
+				id: "createdAt",
+				cell: ({ getValue }) => {
+					const date = getValue();
+					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "N/A";
+				},
+			}),
+			columnHelper.accessor("expiresAt", {
+				header: () => <span>Expires</span>,
+				id: "expiresAt",
+				cell: ({ getValue }) => {
+					const date = getValue();
+					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "Never";
+				},
 			}),
 			// columnHelper.accessor("emailVerified", {
 			// 	header: () => <span>{t("users.users.table.emailVerified")}</span>,
