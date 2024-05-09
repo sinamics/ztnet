@@ -49,6 +49,11 @@ describe("Networks page", () => {
 				id: "test-id",
 			},
 		}));
+		(api.admin.unlinkedNetwork.useQuery as jest.Mock).mockReturnValue({
+			data: [1, 2],
+			isLoading: true,
+			refetch: jest.fn(),
+		});
 	});
 
 	it("displays loading when fetching networks", () => {
@@ -57,11 +62,7 @@ describe("Networks page", () => {
 			isLoading: true,
 			refetch: jest.fn(),
 		});
-		(api.admin.unlinkedNetwork.useQuery as jest.Mock).mockReturnValue({
-			data: undefined,
-			isLoading: true,
-			refetch: jest.fn(),
-		});
+
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
@@ -71,7 +72,25 @@ describe("Networks page", () => {
 		);
 		expect(screen.getByRole("skeleton")).toBeInTheDocument();
 	});
+	it("displays notification if there is unlinked networks on the controller", async () => {
+		(api.network.getUserNetworks.useQuery as jest.Mock).mockReturnValue({
+			data: [],
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
+					<Networks />
+				</NextIntlClientProvider>
+			</QueryClientProvider>,
+		);
+
+		expect(
+			screen.getByText("There is 2 unassigned network registered with the controller."),
+		).toBeInTheDocument();
+	});
 	it("displays networks and handles add network button", async () => {
 		const mockRefetch = jest.fn();
 		// const mockCreateNetwork = jest.fn().mockResolvedValue({});
