@@ -72,7 +72,7 @@ const InviteCard = ({ invite, organizationId }) => {
 	}, [invite.resendable]);
 
 	const resendTimeLimit = new Date(new Date(invite.mailSentAt).getTime() + 60000);
-	const pageTitle = `${globalSiteTitle} - Invitations`;
+
 	return (
 		<div
 			className={cn(
@@ -80,7 +80,6 @@ const InviteCard = ({ invite, organizationId }) => {
 				{ "bg-red-500/30": invite.hasExpired },
 			)}
 		>
-			<HeadSection title={pageTitle} />
 			<div className="flex justify-between space-x-2">
 				<div>
 					<h3 className="text-sm font-semibold">{invite.email}</h3>
@@ -130,8 +129,11 @@ const Invites = () => {
 	const { data: orgInvites } = api.org.getInvites.useQuery({
 		organizationId,
 	});
+
+	const pageTitle = `${globalSiteTitle} - Invitations`;
 	return (
-		<div className="">
+		<main>
+			<HeadSection title={pageTitle} />
 			<div className="space-y-5 bg-base-200 rounded-lg p-5">
 				<div className="space-y-2">
 					<h1 className="text-2xl font-bold">{t("invitation.title")}</h1>
@@ -164,7 +166,7 @@ const Invites = () => {
 					</div>
 				</div>
 			</div>
-		</div>
+		</main>
 	);
 };
 
