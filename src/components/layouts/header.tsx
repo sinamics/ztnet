@@ -17,6 +17,7 @@ const Themes = [
 	"luxury",
 	"night",
 	"dim",
+	"cyberpunk",
 ];
 
 const Header = () => {
