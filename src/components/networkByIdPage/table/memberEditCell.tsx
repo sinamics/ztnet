@@ -137,6 +137,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				);
 			}
 			if (id === "ipAssignments") {
+				const { noAutoAssignIps, activeBridge } = original || null;
 				const hasRfc4193 = networkById?.network?.v6AssignMode?.rfc4193;
 				const has6plane = networkById?.network?.v6AssignMode?.["6plane"];
 
@@ -224,6 +225,22 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 													/>
 												</svg>
 											</div>
+										)}
+									</div>
+									<div className="flex gap-1 pl-1">
+										{noAutoAssignIps ? (
+											<kbd title="Do Not Auto-Assign IPs" className="kbd kbd-xs">
+												AA
+											</kbd>
+										) : (
+											""
+										)}
+										{activeBridge ? (
+											<kbd title="Allow Ethernet Bridging" className="kbd kbd-xs">
+												EB
+											</kbd>
+										) : (
+											""
 										)}
 									</div>
 								</div>
