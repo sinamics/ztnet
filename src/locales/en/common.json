@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "Deleted successfully",
 		"errorOccurred": "An unknown error occurred",
 		"organizationDeleted": "Organization deleted successfully",
-		"sentSuccessfully": "Sent successfully"
+		"sentSuccessfully": "Sent successfully",
+		"copyToClipboard": {
+			"title": "copy to clipboard",
+			"success": "{element} copied to clipboard"
+		}
 	},
 	"sidebar": {
 		"navigation": "Home",
@@ -152,10 +156,6 @@
 			"description": "Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 			"yesAction": "Yes, delete it",
 			"noAction": "No, keep it"
-		},
-		"copyToClipboard": {
-			"title": "copy to clipboard",
-			"success": "{element} copied to clipboard"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "Your network is now {authType}",

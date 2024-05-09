@@ -15,7 +15,7 @@ const urlBuilder = (networkId: string) => {
 };
 
 const NetworkQrCode = ({ networkId }: IProps) => {
-	const t = useTranslations("networkById");
+	const t = useTranslations();
 	const [themeRGBColor, setThemeRGBColor] = useState("");
 	const { theme } = useTheme();
 
@@ -28,7 +28,7 @@ const NetworkQrCode = ({ networkId }: IProps) => {
 			text={urlBuilder(networkId)}
 			onCopy={() =>
 				toast.success(
-					t("copyToClipboard.success", {
+					t("commonToast.copyToClipboard.success", {
 						element: urlBuilder(networkId),
 					}),
 					{
@@ -36,7 +36,7 @@ const NetworkQrCode = ({ networkId }: IProps) => {
 					},
 				)
 			}
-			title={t("copyToClipboard.title")}
+			title={t("commonToast.copyToClipboard.title")}
 		>
 			<QRCodeSVG
 				value={urlBuilder(networkId)}
