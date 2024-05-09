@@ -46,7 +46,7 @@ interface OrgMemberEntity extends CentralMemberEntity {
 export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
-		{ id: "id", desc: true },
+		{ id: "nwid", desc: true },
 	]);
 
 	const router = useRouter();
