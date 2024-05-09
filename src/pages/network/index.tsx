@@ -13,17 +13,20 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import Link from "next/link";
+import { User } from "@prisma/client";
 
 type OrganizationId = {
 	id: string;
 };
 interface IProps {
 	orgIds: OrganizationId[];
+	user: User;
 }
 
 const title = `${globalSiteTitle} - Local Controller`;
 
-const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
+const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 
@@ -38,6 +41,10 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 		refetch,
 	} = api.network.getUserNetworks.useQuery({
 		central: false,
+	});
+
+	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery(undefined, {
+		enabled: user?.role === "ADMIN",
 	});
 
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
@@ -65,7 +72,37 @@ const Networks: NextPageWithLayout = ({ orgIds }: IProps) => {
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">{t("title")}</h5>
 				</div>
+
 				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
+					{unlinkedNetworks?.length > 0 && (
+						<div className="col-span-3  flex justify-center pb-5">
+							<div role="alert" className="alert w-3/6">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									className="stroke-info shrink-0 w-6 h-6"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth="2"
+										d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+									></path>
+								</svg>
+								<span>
+									{t.rich("unlinkedNetworks.title", {
+										amount: unlinkedNetworks?.length,
+									})}
+								</span>
+								<div>
+									<Link href="/admin/?tab=controller" className="btn btn-sm">
+										{t("unlinkedNetworks.navigate")}
+									</Link>
+								</div>
+							</div>
+						</div>
+					)}
 					<div className="flex justify-center">
 						<button className={"btn btn-primary btn-outline"} onClick={addNewNetwork}>
 							<svg
