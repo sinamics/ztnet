@@ -110,6 +110,10 @@
 		"loading": "Loading",
 		"title": "Networks",
 		"description": "VPN Networks",
+		"unlinkedNetworks": {
+			"title": "There is {amount} unassigned network registered with the controller.",
+			"navigate": "Goto Controller"
+		},
 		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
 		"networkActionModal": {
 			"modalTitle": "Options for Network <span>{networkName}</span>",

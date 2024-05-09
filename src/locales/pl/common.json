@@ -110,6 +110,10 @@
 		"loading": "Ładowanie",
 		"title": "Sieci",
 		"description": "Sieci VPN",
+		"unlinkedNetworks": {
+			"title": "Jest {amount} nieprzypisana sieć zarejestrowana z kontrolerem.",
+			"navigate": "Przejdź do Kontrolera"
+		},
 		"noNetworksMessage": "Nie utworzono jeszcze żadnych sieci. Utwórz nową sieć, a pojawi się ona właśnie tutaj...",
 		"networkActionModal": {
 			"modalTitle": "Opcje dla sieci <span>{networkName}</span>",

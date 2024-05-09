@@ -110,6 +110,10 @@
 		"loading": "載入中",
 		"title": "網路",
 		"description": "VPN網路",
+		"unlinkedNetworks": {
+			"title": "有{amount}個未分配的網絡註冊在控制器上。",
+			"navigate": "前往控制器"
+		},
 		"noNetworksMessage": "尚未建立任何網路。首先建立一個，它將出現在這裡。",
 		"networkActionModal": {
 			"modalTitle": "網路操作 <span>{networkName}</span>",
