@@ -14,7 +14,8 @@ const Controller = () => {
 		api.admin.getControllerStats.useQuery();
 	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery();
 
-	const { networkCount, totalMembers, controllerStatus } = controllerData || {};
+	const { networkCount, totalMembers, controllerStatus, assignedIPs } =
+		controllerData || {};
 
 	const { allowManagementFrom, allowTcpFallbackRelay, listeningOn } =
 		controllerStatus?.config?.settings || {};
@@ -59,6 +60,22 @@ const Controller = () => {
 							<p>{t("controller.networkMembers.totalUnlinkedNetworks")}</p>
 							<p>{unlinkedNetworks?.length}</p>
 						</div>
+						<div className="grid grid-cols-3">
+							<div>
+								<p>Assigned Network IP's</p>
+							</div>
+							<div className="col-span-3 xl:col-span-2 ml-auto">
+								<div className="grid grid-cols-2 gap-1">
+									{assignedIPs?.map((ip, index) => (
+										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+										<p key={index} className="badge badge-primary">
+											{ip}
+										</p>
+									))}
+								</div>
+							</div>
+						</div>
+
 						{unlinkedNetworks && unlinkedNetworks?.length > 0 ? (
 							<div className="py-4">
 								<p>{t("controller.networkMembers.unlinkedNetworks.title")}</p>
@@ -86,10 +103,14 @@ const Controller = () => {
 						</div>
 						<div className="grid grid-cols-3">
 							<p>{t("controller.management.listeningOn")}</p>
-							<div className="col-span-2 gap-1 flex flex-col items-end">
-								{listeningOn?.map((address) => (
-									<span key={address}>{address}</span>
-								))}
+							<div className="col-span-3 xl:col-span-2 ml-auto">
+								<div className="grid grid-cols-2 gap-1">
+									{listeningOn?.map((address) => (
+										<span key={address} className="w-full badge badge-primary text-left">
+											{address}
+										</span>
+									))}
+								</div>
 							</div>
 						</div>
 					</div>
