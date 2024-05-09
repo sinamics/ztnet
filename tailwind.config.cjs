@@ -11,7 +11,18 @@ const config = {
 	//@ts-ignore
 	plugins: [require("daisyui")],
 	daisyui: {
-		themes: ["dark", "light", "black", "business", "forest", "sunset", "luxury", "night", "dim"],
+		themes: [
+			"dark",
+			"light",
+			"black",
+			"business",
+			"forest",
+			"sunset",
+			"luxury",
+			"night",
+			"dim",
+			"cyberpunk",
+		],
 	},
 };
 
