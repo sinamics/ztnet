@@ -1,0 +1,34 @@
+StatsResponse:
+  type: object
+  properties:
+    users:
+      type: integer
+      description: The number of users.
+    networks:
+      type: integer
+      description: The number of networks.
+    networkMembers:
+      type: integer
+      description: The total number of network members.
+    appVersion:
+      type: string
+      description: The current version of the ztnet application.
+    loginsLast24h:
+      type: integer
+      description: The number of logins in the last 24 hours.
+    pendingUserInvitations:
+      type: integer
+      description: The number of pending user invitations.
+    activeWebhooks:
+      type: integer
+      description: The number of active webhooks.
+    ztnetUptime:
+      type: number
+      format: float
+      description: The uptime of ztnet in minutes.
+    registrationEnabled:
+      type: boolean
+      description: Indicates if registration is enabled.
+    hasPrivatRoot:
+      type: boolean
+      description: Indicates if a private root is currently in use.
