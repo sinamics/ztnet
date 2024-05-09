@@ -16,6 +16,9 @@ import { useTranslations } from "next-intl";
 import { CentralMemberEntity } from "~/types/central/members";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import toast from "react-hot-toast";
+import CopyIcon from "~/icons/copy";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -47,7 +50,8 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 	]);
 
 	const router = useRouter();
-	const t = useTranslations("commonTable");
+	const t = useTranslations();
+
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 
@@ -57,20 +61,40 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 		() => [
 			columnHelper.accessor("name", {
 				cell: (info) => <span className="truncate">{info.getValue()}</span>,
-				header: () => <span>{t("header.name")}</span>,
+				header: () => <span>{t("commonTable.header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
 				size: 300,
 				cell: (info) => <TruncateText text={info.getValue()} />,
-				header: () => <span>{t("header.description")}</span>,
+				header: () => <span>{t("commonTable.header.description")}</span>,
 			}),
-			// columnHelper.accessor("nwid", {
-			// 	cell: (info) => info.getValue(),
-			// 	header: () => <span>{t("networkId")}</span>,
-			// 	// footer: (info) => info.column.id,
-			// }),
+			columnHelper.accessor("nwid", {
+				// cell: (info) => info.getValue(),
+				header: () => <span>{t("commonTable.header.networkId")}</span>,
+				// footer: (info) => info.column.id,
+				cell: ({ row: { original } }) => {
+					return (
+						<div onClick={(e) => e.stopPropagation()}>
+							<CopyToClipboard
+								text={original.nwid}
+								onCopy={() => {
+									toast.success(
+										t("commonToast.copyToClipboard.success", { element: original.nwid }),
+									);
+								}}
+								title={t("commonToast.copyToClipboard.title")}
+							>
+								<div className="cursor-pointer flex items-center justify-center">
+									{original.nwid}
+									<CopyIcon />
+								</div>
+							</CopyToClipboard>
+						</div>
+					);
+				},
+			}),
 			columnHelper.accessor("networkMembers", {
-				header: () => <span>{t("header.members")}</span>,
+				header: () => <span>{t("commonTable.header.members")}</span>,
 				cell: (info) => {
 					const data = info.getValue();
 					return data.length;
@@ -137,7 +161,7 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
 					className="font-lg border-block border p-2 shadow"
-					placeholder={t("search.networkSearchPlaceholder")}
+					placeholder={t("commonTable.search.networkSearchPlaceholder")}
 				/>
 			</div>
 			<div className="overflow-auto rounded-lg border border-base-200/50">

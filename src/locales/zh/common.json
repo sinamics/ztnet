@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "成功删除",
 		"errorOccurred": "发生未知错误",
 		"organizationDeleted": "组织成功删除",
-		"sentSuccessfully": "发送成功"
+		"sentSuccessfully": "发送成功",
+		"copyToClipboard": {
+			"title": "复制到剪贴板",
+			"success": "{element} 已复制到剪贴板"
+		}
 	},
 	"sidebar": {
 		"navigation": "首页",
@@ -152,10 +156,6 @@
 			"description": "你确定要删除这个网络吗？这个操作无法撤销，所有成员将从这个网络中删除",
 			"yesAction": "是的，删除它",
 			"noAction": "不，保留它"
-		},
-		"copyToClipboard": {
-			"title": "复制到剪贴板",
-			"success": "{element} 已复制到剪贴板"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "你的网络现在是 {authType}",

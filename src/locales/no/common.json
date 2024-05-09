@@ -84,7 +84,11 @@
 		"deletedSuccessfully": "Slettet vellykket",
 		"errorOccurred": "En ukjent feil oppstod",
 		"organizationDeleted": "Organisasjonen ble slettet vellykket",
-		"sentSuccessfully": "Sending vellykket"
+		"sentSuccessfully": "Sending vellykket",
+		"copyToClipboard": {
+			"title": "kopier til utklippstavlen",
+			"success": "{element} kopiert til utklippstavlen"
+		}
 	},
 	"sidebar": {
 		"navigation": "Hjem",
@@ -152,10 +156,6 @@
 			"description": "Er du sikker på at du vil slette dette nettverket? Dette kan ikke angres og alle medlemmer vil bli slettet fra dette nettverket",
 			"yesAction": "Ja, slett det",
 			"noAction": "Nei, behold det"
-		},
-		"copyToClipboard": {
-			"title": "kopier til utklippstavlen",
-			"success": "{element} kopiert til utklippstavlen"
 		},
 		"privatePublicSwitch": {
 			"accessControllMessage": "Nettverket ditt er nå {authType}",
