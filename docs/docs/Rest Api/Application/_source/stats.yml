@@ -1,9 +1,10 @@
 openapi: 3.1.0
 info:
-  title: ZTNet Network Rest API
-  version: 1.0.0
+  title: ZTNet Statistics Rest API
+  # version: 1.0.0
   description: |
-    Access the ZTNet suite through our RESTful Web API, compatible with version 0.4.0 and beyond. 
+    Access the ZTNet Statistics API to get various statistics that can be used in 3rd party applications.  
+    Available from version v0.6.4.
     
     This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
 
@@ -26,7 +27,8 @@ paths:
     get:
       summary: Returns statistics for ztnet
       description: |
-        Returns various statistics that can be used in 3rd party applications.
+        Returns various statistics that can be used in 3rd party applications.  
+        Available from version v0.6.4
       operationId: getAppStats
       responses:
         200:

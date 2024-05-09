@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
   title: ZTNet Organization User Rest API
-  version: 1.0.0
+  # version: 1.0.0
   description: |
-      The official ZTNet Organization Web API, beginning with version 0.6.0, provides public access with a rate limit of 50 requests per minute to maintain optimal service performance.
+      The official ZTNet Organization Web API, provides public access with a rate limit of 50 requests per minute to maintain optimal service performance.
 servers:
   - url: https://ztnet.network/api/v1
     description: ZTNet API
