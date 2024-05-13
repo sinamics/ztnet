@@ -103,7 +103,7 @@ export interface TagEnums {
 export interface TagDetails {
 	id: number;
 	enums: TagEnums;
-	flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+	flags: Record<number, number>;
 	default: number | null;
 }
 
@@ -117,7 +117,7 @@ export interface Tag {
 	id: number;
 	default: number;
 	enums: TagEnums;
-	flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+	flags: Record<string, number>;
 }
 
 // Notations

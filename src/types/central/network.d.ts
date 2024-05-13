@@ -73,7 +73,7 @@ interface CapabilitiesByName {
 interface TagDetails {
 	default: number | null;
 	enums: Record<string, number>;
-	flags: Record<string, string>;
+	flags: Record<string, number>;
 	id: number;
 }
 

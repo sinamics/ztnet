@@ -7,17 +7,14 @@ import { useState, useEffect } from "react";
 import { type Prisma } from "@prisma/client";
 import Anotation from "./anotation";
 import { useTranslations } from "next-intl";
-import {
-	type MemberEntity,
-	type CapabilitiesByName,
-	type TagDetails,
-} from "~/types/local/member";
-import { type TagsByName } from "~/types/local/network";
+import { type MemberEntity, type CapabilitiesByName } from "~/types/local/member";
+
 // import { useModalStore } from "~/utils/store";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import FlagsTags from "./flowRule/flags";
 
 interface ModalContentProps {
 	nwid: string;
@@ -91,11 +88,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({ actions: [refetchNetworkById, refetchMemberById] }),
 		});
-
-	const { mutate: updateTags } = api.networkMember.Tags.useMutation({
-		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
-	});
 
 	// const stashMember = (id: string) => {
 	// 	stashUser({
@@ -242,88 +234,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		);
 	};
 
-	const TagDropdowns: React.FC = (tagsByName: TagsByName) => {
-		const handleDropdownChange = (
-			e: React.ChangeEvent<HTMLSelectElement>,
-			tagDetails: TagDetails,
-		) => {
-			const selectedOption = e.target.value;
-			const selectedValue = tagDetails.enums[selectedOption];
-			const tagId = tagDetails.id;
-
-			// Create a Map from existing tags for easy lookup and update
-			const tagMap = new Map(memberById.tags);
-
-			if (selectedOption === "None") {
-				tagMap.delete(tagId); // Delete the entry if "None" is selected
-			} else {
-				// Update the value for this tagId in the map
-				tagMap.set(tagId, selectedValue);
-			}
-
-			// Convert back to the array of arrays format
-			const tags = Array.from(tagMap.entries());
-
-			updateTags({
-				updateParams: {
-					tags,
-				},
-				organizationId,
-				memberId,
-				central,
-				nwid,
-			});
-		};
-
-		if (!tagsByName || Object.keys(tagsByName).length === 0) {
-			return <p className="text-sm text-gray-500">None</p>;
-		}
-		// Create a Map from existing tags for easy lookup
-		const tagMap = new Map(memberById?.tags as [number, number][]);
-
-		return (
-			<div className="flex flex-wrap gap-2">
-				{Object.entries(tagsByName).map(([tagName, tagDetails]) => {
-					if (!tagDetails || typeof tagDetails !== "object" || !tagDetails.enums) {
-						return null;
-					}
-
-					// Find the value for this tag in memberById
-					const tagValue = tagMap.get(tagDetails.id);
-
-					// Find the corresponding option for this value
-					const selectedOption =
-						Object.entries(tagDetails.enums).find(
-							([_, value]) => value === tagValue,
-						)?.[0] ?? "None";
-
-					// console.log(selectedOption);
-					return (
-						<div
-							key={tagName}
-							className="form-control w-5/12 rounded-md border border-base-100 p-2"
-						>
-							<label className="label">
-								<span className="label-text">{tagName.toUpperCase()}</span>
-							</label>
-							<select
-								className="select select-bordered select-sm"
-								onChange={(e) => handleDropdownChange(e, tagDetails)}
-								value={selectedOption}
-							>
-								<option value="None">None</option>
-								{Object.entries(tagDetails.enums).map(([option]) => (
-									<option key={option} value={option}>
-										{option}
-									</option>
-								))}
-							</select>
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
 	return (
 		<div>
 			{updateMemberLoading ? (
@@ -472,7 +382,12 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
 						<header>{t("networkById.memberOptionModal.tags.header")}</header>
-						{TagDropdowns(networkById?.network?.tagsByName)}
+						<FlagsTags
+							organizationId={organizationId}
+							nwid={nwid}
+							memberId={memberId}
+							central={central}
+						/>
 					</div>
 				</div>
 				{!central ? (
