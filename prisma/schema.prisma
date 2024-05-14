@@ -218,16 +218,10 @@ model User {
   emailVerified      DateTime?
   lastLogin          DateTime
   lastseen           DateTime?
-  expirationDate     String                 @default("")
   online             Boolean?               @default(false)
   role               Role                   @default(USER)
   image              String?
   hash               String?
-  licenseStatus      String?
-  orderStatus        String?
-  orderId            Int                    @default(0)
-  product_id         Int?                   @default(0)
-  licenseKey         String?                @default("")
   tempPassword       String?
   firstTime          Boolean                @default(true)
   userGroupId        Int?
@@ -239,6 +233,7 @@ model User {
   ActivityLog        ActivityLog[]
   expiresAt          DateTime? // null means it never expires
   isActive           Boolean                @default(true)
+  createdAt          DateTime               @default(now())
   userGroup          UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
   options            UserOptions?
   accounts           Account[]
@@ -262,6 +257,7 @@ model UserInvitation {
   used        Boolean  @default(false)
   email       String?
   secret      String
+  groupId     String?
   url         String
   expires     DateTime
   timesCanUse Int      @default(1)

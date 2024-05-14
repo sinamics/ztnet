@@ -26,6 +26,7 @@ import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
+import { InvitationLinkType } from "~/types/invitation";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -152,6 +153,8 @@ export const adminRouter = createTRPCRouter({
 					email: true,
 					emailVerified: true,
 					lastLogin: true,
+					createdAt: true,
+					expiresAt: true,
 					lastseen: true,
 					online: true,
 					role: true,
@@ -175,20 +178,24 @@ export const adminRouter = createTRPCRouter({
 				secret: z.string(),
 				expireTime: z.string(),
 				timesCanUse: z.string().optional(),
+				groupId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { secret, expireTime, timesCanUse } = input;
+			const { secret, expireTime, timesCanUse, groupId } = input;
+
 			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
 				expiresIn: `${expireTime}m`,
 			});
 			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
+
 			// Store the token, email, createdBy, and expiration in the UserInvitation table
 			await ctx.prisma.userInvitation.create({
 				data: {
 					token,
 					url,
 					secret,
+					groupId,
 					timesCanUse: parseInt(timesCanUse) || 1,
 					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
 					createdBy: ctx.session.user.id,
@@ -198,11 +205,32 @@ export const adminRouter = createTRPCRouter({
 			return token;
 		}),
 	getInvitationLink: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		return await ctx.prisma.userInvitation.findMany({
+		const invite = await ctx.prisma.userInvitation.findMany({
 			where: {
 				createdBy: ctx.session.user.id,
 			},
 		});
+
+		// map over and check if groupId exists, and if so get the group name
+		const invitationLinks: InvitationLinkType[] = await Promise.all(
+			invite.map(async (inv) => {
+				let groupName = null;
+				if (inv.groupId) {
+					const group = await ctx.prisma.userGroup.findUnique({
+						where: {
+							id: parseInt(inv.groupId, 10),
+						},
+					});
+					groupName = group?.name || null;
+				}
+				return {
+					...inv,
+					groupName,
+				};
+			}),
+		);
+
+		return invitationLinks;
 	}),
 	deleteInvitationLink: adminRoleProtectedRoute
 		.input(

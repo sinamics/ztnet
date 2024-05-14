@@ -6,22 +6,7 @@ import TimeAgo from "react-timeago";
 import { stringToColor } from "~/utils/randomColor";
 import { useTranslations } from "next-intl";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
-
-const TimeAgoFormatter = (value: string, unit: string) => {
-	// Map full unit names to their abbreviations
-	const unitAbbreviations: { [key: string]: string } = {
-		second: "s ago",
-		minute: "m ago",
-		hour: "h ago",
-		day: "d ago",
-		week: "w ago",
-		month: "mo ago",
-		year: "ye ago",
-	};
-	const abbreviation = unitAbbreviations[unit] || unit;
-
-	return `${value} ${abbreviation}`;
-};
+import { timeAgoFormatter } from "~/utils/time";
 
 const MessagesList = ({ messages }) => {
 	// Generate a color for the user
@@ -44,7 +29,7 @@ const MessagesList = ({ messages }) => {
 				<div className="flex justify-between items-center">
 					<p className="text-sm font-medium truncate">{messages.user.name}</p>
 					<p className="text-xs text-gray-400 ml-2 whitespace-nowrap">
-						<TimeAgo date={messages.createdAt} formatter={TimeAgoFormatter} />
+						<TimeAgo date={messages.createdAt} formatter={timeAgoFormatter} />
 					</p>
 				</div>
 				<p className="text-xs text-gray-400">{messages.content}</p>

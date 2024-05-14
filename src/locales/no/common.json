@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Autentisering",
 				"enableUserRegistration": "Aktiver brukerregistrering?",
+				"enableUserRegistrationDescription": "Dette vil tillate brukere å klikke på Registrer-knappen på landingssiden.",
 				"generateInvitation": {
 					"header": "Generer invitasjonslenke",
 					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",
@@ -390,11 +391,13 @@
 					"expireTimePlaceholder": "Utløp tid i minutter",
 					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
 					"timeUsedPlaceholder": "Ganger kan brukes",
+					"assignGroupLabel": "Tildele bruker til en gruppe",
 					"activeInvitationsLabel": "Aktive invitasjoner (klikk for mer info)",
 					"invitationModal": {
 						"header": "Invitasjonsdetaljer",
 						"secretLabel": "Hemmelighet:",
 						"expiresLabel": "Status:",
+						"groupIdLabel": "Gruppe ID:",
 						"timesUsedLabel": "Ganger brukt:",
 						"invitationLinkLabel": "Invitasjonslenke:",
 						"clickToCopyLabel": "klikk for å kopiere",

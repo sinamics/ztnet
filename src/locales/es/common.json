@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Autenticación",
 				"enableUserRegistration": "¿Habilitar el registro de usuarios?",
+				"enableUserRegistrationDescription": "Esto permitirá a los usuarios hacer clic en el botón de Registro en la página de inicio.",
 				"generateInvitation": {
 					"header": "Generar enlace de invitación",
 					"secretMessageLabel": "Se le pedirá al usuario que ingrese este mensaje al registrarse (sensible a mayúsculas y minúsculas)",
@@ -390,11 +391,13 @@
 					"expireTimePlaceholder": "Tiempo de expiración en minutos",
 					"timeUsedLabel": "¿Cuántas veces se puede utilizar este enlace? (Opcional, por defecto 1)",
 					"timeUsedPlaceholder": "Veces que se puede utilizar",
+					"assignGroupLabel": "Asignar usuario a un grupo",
 					"activeInvitationsLabel": "Invitaciones activas (haz clic para más información)",
 					"invitationModal": {
 						"header": "Detalles de la Invitación",
 						"secretLabel": "Secreto:",
 						"expiresLabel": "Estado:",
+						"groupIdLabel": "ID de grupo:",
 						"timesUsedLabel": "Veces usado:",
 						"invitationLinkLabel": "Enlace de invitación:",
 						"clickToCopyLabel": "haz clic para copiar",
