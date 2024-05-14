@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Authentification",
 				"enableUserRegistration": "Activer l'enregistrement des utilisateurs ?",
+				"enableUserRegistrationDescription": "Cela permettra aux utilisateurs de cliquer sur le bouton S'inscrire sur la page d'accueil.",
 				"generateInvitation": {
 					"header": "Générer un lien d'invitation",
 					"secretMessageLabel": "L'utilisateur sera invité à saisir ce message lors de l'inscription (sensible à la casse)",
@@ -390,13 +391,15 @@
 					"expireTimePlaceholder": "Délai d'expiration en minutes",
 					"timeUsedLabel": "Combien de fois ce lien peut-il être utilisé ? (Facultatif, par défaut 1)",
 					"timeUsedPlaceholder": "Nombre d'utilisation",
+					"assignGroupLabel": "Attribuer l'utilisateur à un groupe",
 					"activeInvitationsLabel": "Invitations actives (cliquez pour plus d'informations)",
 					"invitationModal": {
 						"header": "Détails de l'invitation",
 						"secretLabel": "Code secret:",
 						"expiresLabel": "Statut:",
-						"timesUsedLabel": "Nombre d'utilisation :",
-						"invitationLinkLabel": "Lien d'invitation :",
+						"groupIdLabel": "Groupe d'utilisateurs:",
+						"timesUsedLabel": "Nombre d'utilisation:",
+						"invitationLinkLabel": "Lien d'invitation:",
 						"clickToCopyLabel": "cliquez pour copier",
 						"linkCopiedToast": "lien copié dans le presse-papiers",
 						"deleteButton": "Supprimer"

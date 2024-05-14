@@ -55,7 +55,7 @@ const Account = () => {
 	}
 
 	return (
-		<main className="mx-auto flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
 			<div>
 				<p className="text-[0.7rem] text-gray-400">
 					{t("account.accountSettings.title").toUpperCase()}

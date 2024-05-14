@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "身份验证",
 				"enableUserRegistration": "启用用户注册？",
+				"enableUserRegistrationDescription": "这将允许用户在着陆页上点击注册按钮。",
 				"generateInvitation": {
 					"header": "生成邀请链接",
 					"secretMessageLabel": "用户注册时将被要求输入此消息（区分大小写）",
@@ -390,11 +391,13 @@
 					"expireTimePlaceholder": "过期时间（分钟）",
 					"timeUsedLabel": "此链接可以使用多少次？（可选，默认1次）",
 					"timeUsedPlaceholder": "可使用次数",
+					"assignGroupLabel": "将用户分配到组",
 					"activeInvitationsLabel": "有效邀请（点击获取更多信息）",
 					"invitationModal": {
 						"header": "邀请详情",
 						"secretLabel": "密钥:",
 						"expiresLabel": "状态:",
+						"groupIdLabel": "组ID:",
 						"timesUsedLabel": "使用次数:",
 						"invitationLinkLabel": "邀请链接:",
 						"clickToCopyLabel": "点击复制",

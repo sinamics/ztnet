@@ -19,6 +19,8 @@ import { User } from "@prisma/client";
 import UserOptionsModal from "../userOptionsModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
+import TimeAgo from "react-timeago";
+import { timeAgoFormatter } from "~/utils/time";
 
 type ExtendedUser = {
 	action?: string;
@@ -52,11 +54,6 @@ export const Accounts = () => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
-			columnHelper.accessor("id", {
-				id: "id",
-				minSize: 70,
-				enableHiding: true,
-			}),
 			columnHelper.accessor("name", {
 				header: () => <span>{ct("header.name")}</span>,
 				id: "name",
@@ -68,6 +65,28 @@ export const Accounts = () => {
 			columnHelper.accessor("email", {
 				header: () => <span>{ct("header.email")}</span>,
 				id: "email",
+			}),
+			columnHelper.accessor("id", {
+				header: () => <span>{ct("header.id")}</span>,
+				id: "id",
+				minSize: 70,
+				enableHiding: true,
+			}),
+			columnHelper.accessor("createdAt", {
+				header: () => <span>Created</span>,
+				id: "createdAt",
+				cell: ({ getValue }) => {
+					const date = getValue();
+					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "N/A";
+				},
+			}),
+			columnHelper.accessor("expiresAt", {
+				header: () => <span>Expires</span>,
+				id: "expiresAt",
+				cell: ({ getValue }) => {
+					const date = getValue();
+					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "Never";
+				},
 			}),
 			// columnHelper.accessor("emailVerified", {
 			// 	header: () => <span>{t("users.users.table.emailVerified")}</span>,
@@ -163,7 +182,7 @@ export const Accounts = () => {
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		initialState: { columnVisibility: { id: false } },
+		initialState: { columnVisibility: { id: true } },
 		autoResetPageIndex,
 		meta: {
 			updateData: (rowIndex, columnId, value) => {
@@ -202,9 +221,8 @@ export const Accounts = () => {
 	}
 	return (
 		<div className="overflow-x-auto w-full">
-			<div className="pb-5">
-				<p className="text-sm text-gray-500">{t("users.users.description")}</p>
-			</div>
+			<p className="text-sm text-gray-500">{t("users.users.description")}</p>
+
 			<div className="inline-block py-5 ">
 				<div className="p-2">
 					<DebouncedInput

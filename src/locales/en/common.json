@@ -382,6 +382,7 @@
 			"authentication": {
 				"header": "Authentication",
 				"enableUserRegistration": "Enable user registration?",
+				"enableUserRegistrationDescription": "This will allow users to click the Sign-Up button at the landing page.",
 				"generateInvitation": {
 					"header": "Generate invitation link",
 					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",
@@ -390,11 +391,13 @@
 					"expireTimePlaceholder": "Expire time in minutes",
 					"timeUsedLabel": "How many times can this link be used? (Optional, default 1)",
 					"timeUsedPlaceholder": "Times can be used",
+					"assignGroupLabel": "Assign user to a group",
 					"activeInvitationsLabel": "Active invitations (click for more info)",
 					"invitationModal": {
 						"header": "Invitation Details",
 						"secretLabel": "Secret:",
 						"expiresLabel": "Status:",
+						"groupIdLabel": "Assigned to Group:",
 						"timesUsedLabel": "Times used:",
 						"invitationLinkLabel": "Invitation Link:",
 						"clickToCopyLabel": "click to copy",

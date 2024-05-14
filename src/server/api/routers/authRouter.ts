@@ -24,7 +24,7 @@ import {
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
-import { User, UserOptions } from "@prisma/client";
+import { User, UserInvitation, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 
@@ -108,6 +108,10 @@ export const authRouter = createTRPCRouter({
 			);
 
 			const invitationToken = ztnetInvitationCode?.trim() || token?.trim();
+
+			// ztnet user invitation
+			let invitation: UserInvitation | null = null;
+
 			// ztnet user invitation
 			const hasValidCode =
 				invitationToken &&
@@ -118,7 +122,7 @@ export const authRouter = createTRPCRouter({
 							message: "No invitation code provided",
 						});
 					}
-					const invitation = await ctx.prisma.userInvitation.findUnique({
+					invitation = await ctx.prisma.userInvitation.findUnique({
 						where: { token: token.trim(), secret: ztnetInvitationCode.trim() },
 					});
 
@@ -131,7 +135,7 @@ export const authRouter = createTRPCRouter({
 							code: "BAD_REQUEST",
 							message: invitation
 								? "Code has already been used"
-								: "Invalid code provided",
+								: "Invitation has expired or is invalid",
 						});
 					}
 
@@ -225,7 +229,25 @@ export const authRouter = createTRPCRouter({
 					lastLogin: new Date().toISOString(),
 					role: userCount === 0 ? "ADMIN" : "USER",
 					hash,
-					userGroupId: defaultUserGroup?.id,
+
+					// Conditionally assign user to a group
+					...(invitation?.groupId
+						? {
+								userGroup: {
+									connect: {
+										id: parseInt(invitation.groupId, 10),
+									},
+								},
+						  }
+						: defaultUserGroup
+						  ? {
+									userGroup: {
+										connect: {
+											id: defaultUserGroup.id,
+										},
+									},
+							  }
+						  : {}),
 					// add user to organizationRoles if the token is valid
 					organizationRoles: hasValidOrganizationToken
 						? {
