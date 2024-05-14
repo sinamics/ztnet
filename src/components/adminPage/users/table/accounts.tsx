@@ -54,11 +54,6 @@ export const Accounts = () => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	const columns = useMemo<ColumnDef<ExtendedUser>[]>(
 		() => [
-			columnHelper.accessor("id", {
-				id: "id",
-				minSize: 70,
-				enableHiding: true,
-			}),
 			columnHelper.accessor("name", {
 				header: () => <span>{ct("header.name")}</span>,
 				id: "name",
@@ -70,6 +65,12 @@ export const Accounts = () => {
 			columnHelper.accessor("email", {
 				header: () => <span>{ct("header.email")}</span>,
 				id: "email",
+			}),
+			columnHelper.accessor("id", {
+				header: () => <span>{ct("header.id")}</span>,
+				id: "id",
+				minSize: 70,
+				enableHiding: true,
 			}),
 			columnHelper.accessor("createdAt", {
 				header: () => <span>Created</span>,
@@ -181,7 +182,7 @@ export const Accounts = () => {
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		initialState: { columnVisibility: { id: false } },
+		initialState: { columnVisibility: { id: true } },
 		autoResetPageIndex,
 		meta: {
 			updateData: (rowIndex, columnId, value) => {
