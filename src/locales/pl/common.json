@@ -391,11 +391,13 @@
 					"expireTimePlaceholder": "Czas wygaśnięcia w minutach",
 					"timeUsedLabel": "Ile razy można użyć tego linku? (Opcjonalne, domyślnie 1)",
 					"timeUsedPlaceholder": "Można użyć okresów",
+					"assignGroupLabel": "Przypisz użytkownika do grupy",
 					"activeInvitationsLabel": "Aktywne zaproszenia (kliknij po więcej informacji)",
 					"invitationModal": {
 						"header": "Szczegóły zaproszenia",
 						"secretLabel": "Sekret:",
 						"expiresLabel": "Status:",
+						"groupIdLabel": "Grupa użytkownika:",
 						"timesUsedLabel": "Użyte okresy:",
 						"invitationLinkLabel": "Link zaproszenia:",
 						"clickToCopyLabel": "kliknij aby skopiować",

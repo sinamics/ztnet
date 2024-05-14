@@ -391,13 +391,15 @@
 					"expireTimePlaceholder": "Délai d'expiration en minutes",
 					"timeUsedLabel": "Combien de fois ce lien peut-il être utilisé ? (Facultatif, par défaut 1)",
 					"timeUsedPlaceholder": "Nombre d'utilisation",
+					"assignGroupLabel": "Attribuer l'utilisateur à un groupe",
 					"activeInvitationsLabel": "Invitations actives (cliquez pour plus d'informations)",
 					"invitationModal": {
 						"header": "Détails de l'invitation",
 						"secretLabel": "Code secret:",
 						"expiresLabel": "Statut:",
-						"timesUsedLabel": "Nombre d'utilisation :",
-						"invitationLinkLabel": "Lien d'invitation :",
+						"groupIdLabel": "Groupe d'utilisateurs:",
+						"timesUsedLabel": "Nombre d'utilisation:",
+						"invitationLinkLabel": "Lien d'invitation:",
 						"clickToCopyLabel": "cliquez pour copier",
 						"linkCopiedToast": "lien copié dans le presse-papiers",
 						"deleteButton": "Supprimer"

@@ -17,3 +17,6 @@ DROP COLUMN "orderId",
 DROP COLUMN "orderStatus",
 DROP COLUMN "product_id",
 ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "UserInvitation" ADD COLUMN     "groupId" TEXT;
