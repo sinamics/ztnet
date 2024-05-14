@@ -70,11 +70,11 @@ const Users = () => {
 					<UserGroups />
 				</div>
 			</div>
-			<div className="pt-10 sm:w-6/12">
+			<div className="pt-10 sm:w-12/12">
 				<p className="text-sm text-gray-400">{t("users.users.sectionTitle")}</p>
 				<div className="divider m-0 text-gray-500"></div>
 			</div>
-			<div className="w-10/12">
+			<div className="w-12/12">
 				<Accounts />
 			</div>
 		</main>
