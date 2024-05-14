@@ -8,13 +8,11 @@ import { type Prisma } from "@prisma/client";
 import Anotation from "./anotation";
 import { useTranslations } from "next-intl";
 import { type MemberEntity, type CapabilitiesByName } from "~/types/local/member";
-
-// import { useModalStore } from "~/utils/store";
+import FlagsAndTags from "./flowRule/flagsAndTags";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-import FlagsTags from "./flowRule/flags";
 
 interface ModalContentProps {
 	nwid: string;
@@ -382,7 +380,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-4">
 						<header>{t("networkById.memberOptionModal.tags.header")}</header>
-						<FlagsTags
+						<FlagsAndTags
 							organizationId={organizationId}
 							nwid={nwid}
 							memberId={memberId}
