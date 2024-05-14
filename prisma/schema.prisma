@@ -257,6 +257,7 @@ model UserInvitation {
   used        Boolean  @default(false)
   email       String?
   secret      String
+  groupId     String?
   url         String
   expires     DateTime
   timesCanUse Int      @default(1)

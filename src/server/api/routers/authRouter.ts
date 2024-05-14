@@ -131,7 +131,7 @@ export const authRouter = createTRPCRouter({
 							code: "BAD_REQUEST",
 							message: invitation
 								? "Code has already been used"
-								: "Invalid code provided",
+								: "Invitation has expired or is invalid",
 						});
 					}
 

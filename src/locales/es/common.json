@@ -391,11 +391,13 @@
 					"expireTimePlaceholder": "Tiempo de expiración en minutos",
 					"timeUsedLabel": "¿Cuántas veces se puede utilizar este enlace? (Opcional, por defecto 1)",
 					"timeUsedPlaceholder": "Veces que se puede utilizar",
+					"assignGroupLabel": "Asignar usuario a un grupo",
 					"activeInvitationsLabel": "Invitaciones activas (haz clic para más información)",
 					"invitationModal": {
 						"header": "Detalles de la Invitación",
 						"secretLabel": "Secreto:",
 						"expiresLabel": "Estado:",
+						"groupIdLabel": "ID de grupo:",
 						"timesUsedLabel": "Veces usado:",
 						"invitationLinkLabel": "Enlace de invitación:",
 						"clickToCopyLabel": "haz clic para copiar",

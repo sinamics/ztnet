@@ -391,11 +391,13 @@
 					"expireTimePlaceholder": "過期時間（分鐘）",
 					"timeUsedLabel": "此連結可以使用多少次？（可選，預設1次）",
 					"timeUsedPlaceholder": "可使用次數",
+					"assignGroupLabel": "將使用者分配到組",
 					"activeInvitationsLabel": "有效邀請（點擊取得更多資訊）",
 					"invitationModal": {
 						"header": "邀請詳情",
 						"secretLabel": "秘鑰:",
 						"expiresLabel": "狀態:",
+						"groupIdLabel": "群組 ID:",
 						"timesUsedLabel": "使用次數:",
 						"invitationLinkLabel": "邀請連結:",
 						"clickToCopyLabel": "點擊複製",

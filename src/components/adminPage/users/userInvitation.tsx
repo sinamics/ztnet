@@ -7,11 +7,11 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import cn from "classnames";
 import { useTranslations } from "next-intl";
-import { UserInvitation } from "@prisma/client";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { InvitationLinkType } from "~/types/invitation";
 
 const InvitationLink = () => {
 	const t = useTranslations();
@@ -19,8 +19,7 @@ const InvitationLink = () => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { callModal, closeModal } = useModalStore((state) => state);
-
-	const { data: invitationLink, refetch: refetchInvitations } =
+	const { data: invitationData, refetch: refetchInvitations } =
 		api.admin.getInvitationLink.useQuery();
 
 	const { mutate: deleteInvitation } = api.admin.deleteInvitationLink.useMutation({
@@ -31,7 +30,7 @@ const InvitationLink = () => {
 		onError: handleApiError,
 	});
 
-	const showInviationDetails = (invite: UserInvitation) => {
+	const showInviationDetails = (invite: InvitationLinkType) => {
 		const expired = new Date(invite.expires) < new Date() || invite?.used;
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
@@ -48,6 +47,16 @@ const InvitationLink = () => {
 						</span>
 						<span className="text-primary pl-1">{invite.secret}</span>
 					</p>
+					{invite?.groupName ? (
+						<p>
+							<span className="text-gray-400">
+								{t(
+									"admin.users.authentication.generateInvitation.invitationModal.groupIdLabel",
+								)}
+							</span>
+							<span className="text-primary pl-1">{invite?.groupName}</span>
+						</p>
+					) : null}
 					<p>
 						<span className="text-gray-400">
 							{t(
@@ -118,13 +127,13 @@ const InvitationLink = () => {
 	};
 	return (
 		<div>
-			{invitationLink?.length > 0 ? (
+			{invitationData?.length > 0 ? (
 				<>
 					<p className="pt-5 text-sm text-gray-400">
 						{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
 					</p>
 					<div className="flex flex-wrap gap-3 ">
-						{invitationLink?.map((invite) => {
+						{invitationData?.map((invite) => {
 							const expired = new Date(invite.expires) < new Date() || invite?.used;
 							return (
 								<div
@@ -166,13 +175,21 @@ const UserInvitationLink = () => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refetchInvitations } = api.admin.getInvitationLink.useQuery();
-
+	const { data: userGroups } = api.admin.getUserGroups.useQuery();
 	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchInvitations] }),
 		onError: handleApiError,
 	});
 
 	const { data: options } = api.admin.getAllOptions.useQuery();
+
+	const groupOptions = userGroups?.map((group) => ({
+		label: `${group.name} (Max ${group.maxNetworks} Networks)`,
+		value: group?.id.toString(),
+	}));
+
+	// add default none group
+	groupOptions?.unshift({ label: "None", value: null });
 	return (
 		<div className="pt-5">
 			<InputFields
@@ -213,6 +230,15 @@ const UserInvitationLink = () => {
 							"admin.users.authentication.generateInvitation.timeUsedPlaceholder",
 						),
 						description: t("admin.users.authentication.generateInvitation.timeUsedLabel"),
+						defaultValue: "",
+					},
+					{
+						name: "groupId",
+						description: t(
+							"admin.users.authentication.generateInvitation.assignGroupLabel",
+						),
+						selectOptions: groupOptions,
+						elementType: "select",
 						defaultValue: "",
 					},
 				]}
