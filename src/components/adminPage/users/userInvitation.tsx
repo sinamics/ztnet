@@ -151,7 +151,7 @@ const InvitationLink = () => {
 										<span className="pl-1">
 											{`${invite.timesUsed}/${invite.timesCanUse || 1}`} --
 										</span>
-										{`${expired ? " Expired" : "Expires in"}`}
+										{`${expired ? " Expired" : " Expires in"}`}
 										{!expired && (
 											<span className="pl-1">
 												<TimeAgo date={invite.expires} />
