@@ -132,7 +132,7 @@ const InvitationLink = () => {
 					<p className="pt-5 text-sm text-gray-400">
 						{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
 					</p>
-					<div className="flex flex-wrap gap-3 ">
+					<div className="flex flex-wrap gap-3">
 						{invitationData?.map((invite) => {
 							const expired = new Date(invite.expires) < new Date() || invite?.used;
 							return (
@@ -142,16 +142,16 @@ const InvitationLink = () => {
 									className="cursor-pointer "
 								>
 									<p
-										className={cn("text-md badge text-gray-300", {
+										className={cn("text-md badge-lg rounded-md text-gray-300", {
 											"bg-primary/30": !expired,
 											"bg-error/30": expired,
 										})}
 									>
 										{invite.secret}
-										<span className="pl-1 ">
-											{`${invite.timesUsed}/${invite.timesCanUse || 1}`} --{" "}
+										<span className="pl-1">
+											{`${invite.timesUsed}/${invite.timesCanUse || 1}`} --
 										</span>
-										{`${expired ? "Expired" : "Expires in"}`}
+										{`${expired ? " Expired" : "Expires in"}`}
 										{!expired && (
 											<span className="pl-1">
 												<TimeAgo date={invite.expires} />
