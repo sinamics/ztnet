@@ -66,7 +66,7 @@ interface TagsByName {
 interface TagDetails {
 	id: number;
 	enums: TagEnums;
-	flags: Record<string, unknown>; // replace 'unknown' with the appropriate type if you know it
+	flags: Record<string, number>;
 	default: number | null;
 }
 interface TagEnums {
