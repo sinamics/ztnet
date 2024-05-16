@@ -14,6 +14,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export type NextPageWithLayout = NextPage & {
 	getLayout?: (page: ReactElement) => ReactNode;
@@ -77,30 +80,32 @@ const App: AppType<{ session: Session | null }> = ({
 		return null;
 	}
 	return (
-		<ThemeProvider defaultTheme="system">
-			<NextIntlClientProvider
-				locale={locale}
-				onError={(err) => console.warn(err)}
-				messages={messages}
-			>
-				<ReactQueryDevtools initialIsOpen={false} />
-				<Toaster
-					position="bottom-right"
-					toastOptions={{
-						style: {
-							border: "1px solid #191919",
-							color: "#fff",
-							background: "#404040",
-							wordWrap: "break-word",
-							overflowWrap: "anywhere",
-						},
-					}}
-				/>
-				<SessionProvider session={session}>
-					{getLayout(<Component {...pageProps} />)}
-				</SessionProvider>
-			</NextIntlClientProvider>
-		</ThemeProvider>
+		<main className={inter.className}>
+			<ThemeProvider defaultTheme="system">
+				<NextIntlClientProvider
+					locale={locale}
+					onError={(err) => console.warn(err)}
+					messages={messages}
+				>
+					<ReactQueryDevtools initialIsOpen={false} />
+					<Toaster
+						position="bottom-right"
+						toastOptions={{
+							style: {
+								border: "1px solid #191919",
+								color: "#fff",
+								background: "#404040",
+								wordWrap: "break-word",
+								overflowWrap: "anywhere",
+							},
+						}}
+					/>
+					<SessionProvider session={session}>
+						{getLayout(<Component {...pageProps} />)}
+					</SessionProvider>
+				</NextIntlClientProvider>
+			</ThemeProvider>
+		</main>
 	);
 };
 
