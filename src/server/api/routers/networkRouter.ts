@@ -78,7 +78,7 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// First, retrieve the network with organization details
-			const networkFromDatabase = await ctx.prisma.network.findUnique({
+			let networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
 					nwid: input.nwid,
 				},
@@ -164,6 +164,23 @@ export const networkRouter = createTRPCRouter({
 				}
 			}
 
+			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
+			if (
+				JSON.stringify(networkFromDatabase.routes) !==
+				JSON.stringify(ztControllerResponse.network.routes)
+			) {
+				networkFromDatabase = await ctx.prisma.network.update({
+					where: {
+						nwid: input.nwid,
+					},
+					data: {
+						routes: ztControllerResponse.network.routes as string[],
+					},
+					include: {
+						organization: true,
+					},
+				});
+			}
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
 			// Construct the final response object
