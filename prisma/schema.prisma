@@ -191,14 +191,14 @@ enum AccessLevel {
 }
 
 model UserGroup {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique
+  id             Int          @id @default(autoincrement())
+  name           String       @unique
   description    String?
-  maxNetworks    Int              @default(5)
-  accessLevel    AccessLevel      @default(WRITE)
-  isDefault      Boolean          @default(false)
+  maxNetworks    Int          @default(5)
+  accessLevel    AccessLevel  @default(WRITE)
+  isDefault      Boolean      @default(false)
   users          User[]
-  userInvitation UserInvitation[]
+  userInvitation Invitation[]
 }
 
 model APIToken {
@@ -243,7 +243,7 @@ model User {
   network            network[]
   apiTokens          APIToken[]
   webhooks           Webhook[]
-  invitations        UserInvitation[]       @relation("InvitationsSent")
+  invitations        Invitation[]           @relation("InvitationsSent")
 }
 
 model VerificationToken {
@@ -254,31 +254,33 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model UserInvitation {
+model Invitation {
   id            Int                      @id @default(autoincrement())
   token         String                   @unique
   used          Boolean                  @default(false)
   email         String?
-  secret        String
+  secret        String?
   groupId       String?
   userGroupId   Int?
   url           String
-  expires       DateTime
+  expiresAt     DateTime
+  mailSentAt    DateTime?
   timesCanUse   Int                      @default(1)
   timesUsed     Int                      @default(0)
+  invitedById   String
   createdAt     DateTime                 @default(now())
-  createdById   String
-  createdBy     User                     @relation(fields: [createdById], references: [id], onDelete: Cascade, name: "InvitationsSent")
+  role          Role                     @default(READ_ONLY)
+  createdBy     User                     @relation(fields: [invitedById], references: [id], onDelete: Cascade, name: "InvitationsSent")
   userGroup     UserGroup?               @relation(fields: [userGroupId], references: [id], onDelete: Cascade)
   organizations OrganizationInvitation[]
 }
 
 model OrganizationInvitation {
-  id             String         @id @default(cuid())
+  id             String       @id @default(cuid())
   invitationId   Int
   organizationId String
-  invitation     UserInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
-  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitation     Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 //

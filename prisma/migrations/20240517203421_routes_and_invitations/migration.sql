@@ -8,9 +8,8 @@
   - You are about to drop the column `role` on the `OrganizationInvitation` table. All the data in the column will be lost.
   - You are about to drop the column `token` on the `OrganizationInvitation` table. All the data in the column will be lost.
   - You are about to drop the column `updatedAt` on the `OrganizationInvitation` table. All the data in the column will be lost.
-  - You are about to drop the column `createdBy` on the `UserInvitation` table. All the data in the column will be lost.
+  - You are about to drop the `UserInvitation` table. If the table is not empty, all the data it contains will be lost.
   - Added the required column `invitationId` to the `OrganizationInvitation` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `createdById` to the `UserInvitation` table without a default value. This is not possible if the table is not empty.
 
 */
 -- DropIndex
@@ -27,18 +26,40 @@ DROP COLUMN "updatedAt",
 ADD COLUMN     "invitationId" INTEGER NOT NULL;
 
 -- AlterTable
-ALTER TABLE "UserInvitation" DROP COLUMN "createdBy",
-ADD COLUMN     "createdById" TEXT NOT NULL,
-ADD COLUMN     "userGroupId" INTEGER;
-
--- AlterTable
 ALTER TABLE "network" ADD COLUMN     "routes" JSONB;
 
--- AddForeignKey
-ALTER TABLE "UserInvitation" ADD CONSTRAINT "UserInvitation_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- DropTable
+DROP TABLE "UserInvitation";
+
+-- CreateTable
+CREATE TABLE "Invitation" (
+    "id" SERIAL NOT NULL,
+    "token" TEXT NOT NULL,
+    "used" BOOLEAN NOT NULL DEFAULT false,
+    "email" TEXT,
+    "secret" TEXT,
+    "groupId" TEXT,
+    "userGroupId" INTEGER,
+    "url" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "mailSentAt" TIMESTAMP(3),
+    "timesCanUse" INTEGER NOT NULL DEFAULT 1,
+    "timesUsed" INTEGER NOT NULL DEFAULT 0,
+    "invitedById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "role" "Role" NOT NULL DEFAULT 'READ_ONLY',
+
+    CONSTRAINT "Invitation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Invitation_token_key" ON "Invitation"("token");
 
 -- AddForeignKey
-ALTER TABLE "UserInvitation" ADD CONSTRAINT "UserInvitation_userGroupId_fkey" FOREIGN KEY ("userGroupId") REFERENCES "UserGroup"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Invitation" ADD CONSTRAINT "Invitation_invitedById_fkey" FOREIGN KEY ("invitedById") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrganizationInvitation" ADD CONSTRAINT "OrganizationInvitation_invitationId_fkey" FOREIGN KEY ("invitationId") REFERENCES "UserInvitation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Invitation" ADD CONSTRAINT "Invitation_userGroupId_fkey" FOREIGN KEY ("userGroupId") REFERENCES "UserGroup"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrganizationInvitation" ADD CONSTRAINT "OrganizationInvitation_invitationId_fkey" FOREIGN KEY ("invitationId") REFERENCES "Invitation"("id") ON DELETE CASCADE ON UPDATE CASCADE;

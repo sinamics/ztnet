@@ -190,24 +190,24 @@ export const adminRouter = createTRPCRouter({
 			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
 
 			// Store the token, email, createdBy, and expiration in the UserInvitation table
-			await ctx.prisma.userInvitation.create({
+			await ctx.prisma.invitation.create({
 				data: {
 					token,
 					url,
 					secret,
 					groupId,
 					timesCanUse: parseInt(timesCanUse) || 1,
-					expires: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
-					createdBy: ctx.session.user.id,
+					expiresAt: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					invitedById: ctx.session.user.id,
 				},
 			});
 
 			return token;
 		}),
 	getInvitationLink: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		const invite = await ctx.prisma.userInvitation.findMany({
+		const invite = await ctx.prisma.invitation.findMany({
 			where: {
-				createdBy: ctx.session.user.id,
+				invitedById: ctx.session.user.id,
 			},
 		});
 
@@ -239,7 +239,7 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			return await ctx.prisma.userInvitation.delete({
+			return await ctx.prisma.invitation.delete({
 				where: {
 					id: input.id,
 				},

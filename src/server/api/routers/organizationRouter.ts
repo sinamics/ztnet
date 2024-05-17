@@ -182,7 +182,11 @@ export const organizationRouter = createTRPCRouter({
 			include: {
 				userRoles: true,
 				users: true,
-				invitations: true,
+				invitations: {
+					include: {
+						invitation: true,
+					},
+				},
 				webhooks: true,
 			},
 			//order by desc
@@ -195,10 +199,10 @@ export const organizationRouter = createTRPCRouter({
 		const organizationsWithInvitationLinks = organizations?.map((org) => {
 			return {
 				...org,
-				invitations: org.invitations.map((invitation) => {
+				invitations: org.invitations.map((orgInvitation) => {
 					return {
-						...invitation,
-						tokenUrl: `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`,
+						...orgInvitation,
+						tokenUrl: `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${orgInvitation.invitation.token}`,
 					};
 				}),
 			};
@@ -864,7 +868,7 @@ export const organizationRouter = createTRPCRouter({
 				const tokenPayload = JSON.parse(decryptedToken);
 
 				// make sure the invitation exist
-				const invitation = await ctx.prisma.organizationInvitation.findFirst({
+				const invitation = await ctx.prisma.invitation.findFirst({
 					where: {
 						token: input.token,
 					},
@@ -900,7 +904,6 @@ export const organizationRouter = createTRPCRouter({
 					if (isMember) {
 						throw new Error("You are already a member of the organization.");
 					}
-
 					// Add the user to the organization
 					// Add user to the organization
 					await ctx.prisma.organization.update({
@@ -926,10 +929,10 @@ export const organizationRouter = createTRPCRouter({
 					});
 
 					// delete the invitation
-					await ctx.prisma.organizationInvitation.deleteMany({
+					await ctx.prisma.invitation.deleteMany({
 						where: {
 							email: tokenPayload.email,
-							organizationId: tokenPayload.organizationId,
+							organizations: tokenPayload.organizationId,
 						},
 					});
 
@@ -975,14 +978,19 @@ export const organizationRouter = createTRPCRouter({
 			const encryptedToken = encrypt(JSON.stringify(payload), secret);
 
 			// Store the token in the database
-			const invitation = await ctx.prisma.organizationInvitation.create({
+			const invitation = await ctx.prisma.invitation.create({
 				data: {
-					token: encryptedToken,
-					organizationId: input.organizationId,
 					email: input.email,
-					role: input.role,
-					invitedById: ctx.session.user.id,
+					token: encryptedToken,
+					url: null,
+					invitedById: ctx.session.user.id as string,
 					expiresAt: new Date(payload.expiresAt),
+					role: input.role,
+					organizations: {
+						create: {
+							organizationId: input.organizationId,
+						},
+					},
 				},
 			});
 
@@ -999,25 +1007,31 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const invitation = await ctx.prisma.organizationInvitation.findFirst({
+			const orgInvite = await ctx.prisma.organizationInvitation.findFirst({
 				where: {
 					id: input.invitationId,
 					organizationId: input.organizationId,
 				},
+				include: {
+					invitation: true,
+				},
 			});
 
-			if (!invitation) {
+			if (!orgInvite) {
 				throw new Error("Invitation not found.");
 			}
 
 			// make sure mailSentAt is more than 1 minute ago
-			if (invitation.mailSentAt && invitation.mailSentAt.getTime() > Date.now() - 60000) {
+			if (
+				orgInvite.invitation.mailSentAt &&
+				orgInvite.invitation.mailSentAt.getTime() > Date.now() - 60000
+			) {
 				throw new Error("You can only resend an invitation after 1 minute.");
 			}
 			// make sure the user has the required permissions
 			await checkUserOrganizationRole({
 				ctx,
-				organizationId: invitation.organizationId,
+				organizationId: orgInvite.organizationId,
 				minimumRequiredRole: Role.ADMIN,
 			});
 
@@ -1033,12 +1047,12 @@ export const organizationRouter = createTRPCRouter({
 				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
 
 				// create invitation link
-				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
+				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${orgInvite.invitation.token}`;
 
 				// get organization name
 				const organization = await ctx.prisma.organization.findUnique({
 					where: {
-						id: invitation.organizationId,
+						id: orgInvite.organizationId,
 					},
 				});
 
@@ -1049,7 +1063,7 @@ export const organizationRouter = createTRPCRouter({
 				const renderedTemplate = await ejs.render(
 					JSON.stringify(template),
 					{
-						toEmail: invitation.email,
+						toEmail: orgInvite.invitation.email,
 						fromAdmin: ctx.session.user.name,
 						fromOrganization: organization.orgName,
 						invitationLink: invitationLink,
@@ -1064,15 +1078,15 @@ export const organizationRouter = createTRPCRouter({
 				// define mail options
 				const mailOptions = {
 					from: globalOptions.smtpEmail,
-					to: invitation.email,
+					to: orgInvite.invitation.email,
 					subject: parsedTemplate.subject,
 					html: parsedTemplate.body,
 				};
 
 				//update mailSentAt: new Date()
-				await ctx.prisma.organizationInvitation.update({
+				await ctx.prisma.invitation.update({
 					where: {
-						id: input.invitationId,
+						id: orgInvite.invitationId,
 					},
 					data: {
 						mailSentAt: new Date(),
@@ -1141,7 +1155,9 @@ export const organizationRouter = createTRPCRouter({
 			const existingInvitation = await ctx.prisma.organizationInvitation.findFirst({
 				where: {
 					organizationId: organizationId,
-					email: email,
+					invitation: {
+						email: email,
+					},
 				},
 			});
 
@@ -1229,15 +1245,21 @@ export const organizationRouter = createTRPCRouter({
 				await sendEmail(transporter, mailOptions);
 
 				// Store the token in the database
-				await ctx.prisma.organizationInvitation.create({
+				await ctx.prisma.invitation.create({
 					data: {
 						token: encryptedToken,
-						organizationId: organizationId,
 						email: email,
-						role: role,
+						url: invitationLink,
+						timesCanUse: 1,
 						invitedById: ctx.session.user.id,
 						expiresAt: new Date(tokenPayload.expiresAt),
 						mailSentAt: new Date(),
+						role: role,
+						organizations: {
+							create: {
+								organizationId: organizationId,
+							},
+						},
 					},
 				});
 
@@ -1278,19 +1300,23 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			const invites = await ctx.prisma.organizationInvitation.findMany({
+			const orgInvite = await ctx.prisma.organizationInvitation.findMany({
 				where: {
 					organizationId,
+				},
+				include: {
+					invitation: true,
 				},
 			});
 
 			// add hasExpired field to the invites
-			return invites.map((invite) => {
+			return orgInvite.map((org) => {
 				return {
-					...invite,
-					hasExpired: invite.expiresAt.getTime() < Date.now(),
+					...org,
+					hasExpired: org.invitation.expiresAt.getTime() < Date.now(),
 					resendable:
-						!invite.mailSentAt || invite.mailSentAt.getTime() < Date.now() - 60000,
+						!org.invitation.mailSentAt ||
+						org.invitation.mailSentAt.getTime() < Date.now() - 60000,
 				};
 			});
 		}),

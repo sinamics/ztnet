@@ -1,6 +1,6 @@
 // utility.ts or a relevant utility file
 import { TRPCError } from "@trpc/server";
-import { PrismaClient, Role } from "@prisma/client";
+import { Invitation, PrismaClient } from "@prisma/client";
 import {
 	ORG_INVITE_TOKEN_SECRET,
 	decrypt,
@@ -9,19 +9,17 @@ import {
 
 const prisma = new PrismaClient();
 
-interface OrganizationToken {
-	id: string;
-	email: string;
+interface OrganizationInvitationData {
 	organizationId: string;
-	role: Role;
-	expiresAt: Date;
-	invitedById: string;
+	role: string;
+	email: string;
+	invitation: Partial<Invitation>;
 }
 
 export async function validateOrganizationToken(
 	organizationToken: string,
 	inputEmail: string,
-): Promise<OrganizationToken> {
+): Promise<Partial<OrganizationInvitationData>> {
 	if (!organizationToken?.trim()) {
 		return null;
 	}
@@ -31,8 +29,7 @@ export async function validateOrganizationToken(
 			generateInstanceSecret(ORG_INVITE_TOKEN_SECRET),
 		);
 
-		const decryptedOrganizationToken: OrganizationToken =
-			JSON.parse(decryptedTokenString);
+		const decryptedOrganizationToken: Invitation = JSON.parse(decryptedTokenString);
 
 		// Verify token is not expired by checking the expiry against the current time
 		if (new Date(decryptedOrganizationToken.expiresAt) < new Date()) {
@@ -42,15 +39,18 @@ export async function validateOrganizationToken(
 			});
 		}
 
-		const orgInvitationData = await prisma.organizationInvitation.findUnique({
+		const orgInvitationData = await prisma.organizationInvitation.findFirst({
 			where: {
-				token: organizationToken.trim(),
-				email: decryptedOrganizationToken.email,
-				role: decryptedOrganizationToken.role,
-				organizationId: decryptedOrganizationToken.organizationId,
+				invitation: {
+					role: decryptedOrganizationToken.role,
+					token: organizationToken.trim(),
+					email: decryptedOrganizationToken.email,
+				},
+			},
+			include: {
+				invitation: true,
 			},
 		});
-
 		if (!orgInvitationData) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
