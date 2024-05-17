@@ -183,6 +183,13 @@
 				"plane6Updated": "6plane mis à jour"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} autre(s) réseau(x) ont été trouvés avec le même sous-réseau.",
+					"modal": {
+						"title": "Sous-réseau dupliqué détecté",
+						"description": "Les réseaux suivants ont le même sous-réseau que le réseau actuel ({name}). Cela peut ne pas poser de problème, mais si vous connectez les deux réseaux depuis le même PC, cela pourrait entraîner des conflits d'adresses IP et des problèmes de connectivité."
+					}
+				},
 				"please_enter_valid_ip_range": "Veuillez entrer une plage IP valide",
 				"ip_range_already_exists": "La plage IP existe déjà",
 				"auto_assign_from_range": "Attribution automatique à partir de la plage",
