@@ -6,11 +6,11 @@ import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
 import ejs from "ejs";
-import { type TagsByName, type NetworkEntity } from "~/types/local/network";
+import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
@@ -181,6 +181,37 @@ export const networkRouter = createTRPCRouter({
 					},
 				});
 			}
+			// check if there is other network using same routes and return a notification
+			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
+
+			interface DuplicateRoutes {
+				authorId: string;
+				routes: RoutesEntity[];
+				name: string;
+			}
+
+			const duplicateRoutes: DuplicateRoutes[] = await ctx.prisma.$queryRaw`
+				SELECT "authorId", "routes", "name", "nwid"
+				FROM "network"
+				WHERE "authorId" = ${ctx.session.user.id}
+					AND EXISTS (
+						SELECT 1
+						FROM jsonb_array_elements("routes") as route
+						WHERE route->>'target' IN (${Prisma.join(targetIPs)})
+					)
+					AND "nwid" != ${input.nwid};
+			`;
+
+			// Extract duplicated IPs
+			const duplicatedIPs = duplicateRoutes.flatMap((network) =>
+				network.routes
+					.filter((route) => targetIPs.includes(route.target))
+					.map((route) => route.target),
+			);
+
+			// Remove duplicates from the list of duplicated IPs
+			const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
+
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
 			// Construct the final response object
@@ -189,6 +220,10 @@ export const networkRouter = createTRPCRouter({
 					...ztControllerResponse?.network,
 					...networkFromDatabase,
 					cidr: cidrOptions,
+					duplicateRoutes: duplicateRoutes.map((network) => ({
+						...network,
+						duplicatedIPs: uniqueDuplicatedIPs,
+					})),
 				},
 				members: mergedMembers as MemberEntity[],
 				zombieMembers,
