@@ -107,6 +107,7 @@ model network {
   organization       Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   networkMembers     network_members[]
   notations          Notation[]
+  routes             Json?
 }
 
 model Notation {
@@ -190,13 +191,14 @@ enum AccessLevel {
 }
 
 model UserGroup {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
-  description String?
-  maxNetworks Int         @default(5)
-  accessLevel AccessLevel @default(WRITE)
-  isDefault   Boolean     @default(false)
-  users       User[]
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  description    String?
+  maxNetworks    Int              @default(5)
+  accessLevel    AccessLevel      @default(WRITE)
+  isDefault      Boolean          @default(false)
+  users          User[]
+  userInvitation UserInvitation[]
 }
 
 model APIToken {
@@ -241,6 +243,7 @@ model User {
   network            network[]
   apiTokens          APIToken[]
   webhooks           Webhook[]
+  invitations        UserInvitation[]       @relation("InvitationsSent")
 }
 
 model VerificationToken {
@@ -252,18 +255,32 @@ model VerificationToken {
 }
 
 model UserInvitation {
-  id          Int      @id @default(autoincrement())
-  token       String   @unique
-  used        Boolean  @default(false)
-  email       String?
-  secret      String
-  groupId     String?
-  url         String
-  expires     DateTime
-  timesCanUse Int      @default(1)
-  timesUsed   Int      @default(0)
-  createdBy   String
-  createdAt   DateTime @default(now())
+  id            Int                      @id @default(autoincrement())
+  token         String                   @unique
+  used          Boolean                  @default(false)
+  email         String?
+  secret        String
+  groupId       String?
+  userGroupId   Int?
+  url           String
+  expires       DateTime
+  timesCanUse   Int                      @default(1)
+  timesUsed     Int                      @default(0)
+  createdAt     DateTime                 @default(now())
+  createdById   String
+  createdBy     User                     @relation(fields: [createdById], references: [id], onDelete: Cascade, name: "InvitationsSent")
+  userGroup     UserGroup?               @relation(fields: [userGroupId], references: [id], onDelete: Cascade)
+  organizations OrganizationInvitation[]
+}
+
+model OrganizationInvitation {
+  id             Int            @id @default(autoincrement())
+  invitationId   Int
+  organizationId String
+  invitation     UserInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([invitationId, organizationId])
 }
 
 //
@@ -279,7 +296,6 @@ model Organization {
   users              User[]                   @relation("MemberRelation")
   networks           network[]
   settings           OrganizationSettings?
-  invitations        OrganizationInvitation[]
   membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
   isActive           Boolean                  @default(true)
   userRoles          UserOrganizationRole[]
@@ -287,6 +303,7 @@ model Organization {
   lastReadByUsers    LastReadMessage[]
   ActivityLog        ActivityLog[]
   webhooks           Webhook[]
+  invitations        OrganizationInvitation[]
 }
 
 model Webhook {
@@ -346,19 +363,6 @@ model OrganizationSettings {
   organizationId String       @unique
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   // Add specific settings fields here
-}
-
-model OrganizationInvitation {
-  id             String       @id @default(cuid())
-  token          String       @unique
-  email          String
-  role           Role         @default(READ_ONLY)
-  expiresAt      DateTime     @default(now())
-  invitedById    String
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  updatedAt      DateTime     @default(now())
-  mailSentAt     DateTime?
 }
 
 model MembershipRequest {
