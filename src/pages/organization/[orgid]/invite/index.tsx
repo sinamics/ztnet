@@ -71,8 +71,9 @@ const InviteCard = ({ invite, organizationId }) => {
 		setResendable(invite.resendable);
 	}, [invite.resendable]);
 
-	const resendTimeLimit = new Date(new Date(invite.mailSentAt).getTime() + 60000);
-
+	const resendTimeLimit = new Date(
+		new Date(invite.invitation.mailSentAt).getTime() + 60000,
+	);
 	return (
 		<div
 			className={cn(
@@ -82,15 +83,17 @@ const InviteCard = ({ invite, organizationId }) => {
 		>
 			<div className="flex justify-between space-x-2">
 				<div>
-					<h3 className="text-sm font-semibold">{invite.email}</h3>
-					<p className="text-sm text-gray-500 dark:text-gray-400">{invite.role}</p>
+					<h3 className="text-sm font-semibold">{invite.invitation.email}</h3>
+					<p className="text-sm text-gray-500 dark:text-gray-400">
+						{invite.invitation.role}
+					</p>
 				</div>
 				<p className="text-sm">
 					{invite.hasExpired ? (
 						"EXPIRED"
 					) : (
 						<span>
-							Expires: <TimeAgo date={invite.expiresAt} />
+							Expires: <TimeAgo date={invite.invitation.expiresAt} />
 						</span>
 					)}
 				</p>
@@ -105,7 +108,7 @@ const InviteCard = ({ invite, organizationId }) => {
 					className="btn btn-primary btn-xs"
 				>
 					<ExpiryCountdown
-						key={invite.mailSentAt}
+						key={invite.invitation.mailSentAt}
 						date={resendTimeLimit}
 						onExpire={() => setResendable(true)}
 					/>

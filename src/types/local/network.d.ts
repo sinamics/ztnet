@@ -24,6 +24,7 @@ export interface NetworkEntity {
 	mtu?: number;
 	multicastLimit?: number;
 	routes: RoutesEntity[];
+	duplicateRoutes?: RoutesEntity[];
 	rules?: RulesEntity[];
 	rulesSource?: string;
 	ssoEnabled?: boolean;

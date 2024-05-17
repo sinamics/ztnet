@@ -26,6 +26,7 @@ interface NetworkConfig {
 	remoteTraceLevel: number;
 	remoteTraceTarget: string;
 	routes: Route[];
+	duplicateRoutes?: RoutesEntity[];
 	rules: Rule[];
 	tags: Tag[];
 	v4AssignMode: { zt: boolean };

@@ -53,6 +53,7 @@ describe("<NetworkIpAssignment />", () => {
 	it("renders the IP assignment content after loading", async () => {
 		const mockData = {
 			network: {
+				duplicateRoutes: [],
 				v4AssignMode: {
 					zt: false,
 				},
@@ -84,6 +85,7 @@ describe("<NetworkIpAssignment />", () => {
 		const mockData = {
 			// This object is used to mock the data returned by the API
 			network: {
+				duplicateRoutes: [],
 				v4AssignMode: {
 					zt: false,
 				},
@@ -126,6 +128,7 @@ describe("<NetworkIpAssignment />", () => {
 	it("should handle easy IP assignment", async () => {
 		const mockData = {
 			network: {
+				duplicateRoutes: [],
 				v4AssignMode: {
 					zt: true, // Ensure checkbox is checked to show easy IP assignment
 				},
@@ -161,6 +164,7 @@ describe("<NetworkIpAssignment />", () => {
 	it("should handle advanced IP assignment - addition of IP range", async () => {
 		const mockData = {
 			network: {
+				duplicateRoutes: [],
 				v4AssignMode: {
 					zt: true, // Ensure checkbox is checked to show advanced IP assignment
 				},
