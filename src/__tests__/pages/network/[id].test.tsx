@@ -90,6 +90,7 @@ describe("NetworkById component", () => {
 				network: {
 					nwid: "1234567890",
 					name: "Test Network",
+					duplicateRoutes: [],
 					private: true,
 					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
@@ -198,6 +199,7 @@ describe("NetworkById component", () => {
 				network: {
 					nwid: "network_id",
 					name: "Test Network",
+					duplicateRoutes: [],
 					private: true,
 					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
@@ -252,6 +254,7 @@ describe("NetworkById component", () => {
 					nwid: "network_id",
 					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
+					duplicateRoutes: [],
 					multicastLimit: 32,
 				},
 				members: [
@@ -291,6 +294,7 @@ describe("NetworkById component", () => {
 					nwid: "network_id",
 					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
+					duplicateRoutes: [],
 					multicastLimit: 32,
 				},
 				members: [
@@ -330,6 +334,7 @@ describe("NetworkById component", () => {
 					nwid: "network_id",
 					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 					routes: [{ target: "10.0.0.0/24" }],
+					duplicateRoutes: [],
 					multicastLimit: 32,
 				},
 				members: [
