@@ -13,6 +13,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { RoutesEntity } from "~/types/local/network";
 
 interface IProp {
 	nwid: string;
@@ -175,7 +176,10 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 						</div>
 
 						{original?.ipAssignments?.map((assignedIp) => {
-							const subnetMatch = isIPInSubnet(assignedIp, networkById.network?.routes);
+							const subnetMatch = isIPInSubnet(
+								assignedIp,
+								networkById.network?.routes as RoutesEntity[],
+							);
 							return (
 								<div key={assignedIp} className="flex">
 									<div

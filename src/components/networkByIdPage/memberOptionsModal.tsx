@@ -13,6 +13,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { RoutesEntity } from "~/types/local/network";
 
 interface ModalContentProps {
 	nwid: string;
@@ -96,7 +97,10 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	// };
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const subnetMatch = isIPInSubnet(e.target.value, networkById?.network?.routes);
+		const subnetMatch = isIPInSubnet(
+			e.target.value,
+			networkById?.network?.routes as RoutesEntity[],
+		);
 		setState((prevState) => ({
 			...prevState,
 			[e.target.name]: e.target.value,
@@ -250,7 +254,10 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="flex flex-wrap gap-3 text-center">
 					{ipAssignments.map((assignedIp) => {
-						const subnetMatch = isIPInSubnet(assignedIp, networkById?.network?.routes);
+						const subnetMatch = isIPInSubnet(
+							assignedIp,
+							networkById?.network?.routes as RoutesEntity[],
+						);
 						return (
 							<div
 								key={assignedIp}
