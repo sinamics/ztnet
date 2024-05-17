@@ -3,7 +3,7 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
-import ZtnetLogo from "docs/images/logo/ztnet_100x100.png";
+import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
 
 const Themes = [
