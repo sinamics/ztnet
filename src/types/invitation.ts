@@ -1,3 +1,3 @@
-import { UserInvitation } from "@prisma/client";
+import { Invitation } from "@prisma/client";
 
-export type InvitationLinkType = UserInvitation & { groupName: string | null };
+export type InvitationLinkType = Invitation & { groupName: string | null };
