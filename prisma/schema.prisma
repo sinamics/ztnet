@@ -274,13 +274,11 @@ model UserInvitation {
 }
 
 model OrganizationInvitation {
-  id             Int            @id @default(autoincrement())
+  id             String         @id @default(cuid())
   invitationId   Int
   organizationId String
   invitation     UserInvitation @relation(fields: [invitationId], references: [id], onDelete: Cascade)
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@unique([invitationId, organizationId])
 }
 
 //
