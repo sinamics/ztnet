@@ -3,12 +3,14 @@ import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
-import { type IpAssignmentPoolsEntity } from "~/types/local/network";
+import { RoutesEntity, type IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useModalStore } from "~/utils/store";
+import Link from "next/link";
 
 interface IProp {
 	central?: boolean;
@@ -17,6 +19,7 @@ interface IProp {
 
 export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
+	const { callModal } = useModalStore((state) => state);
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -44,6 +47,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
+
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
@@ -117,6 +121,70 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 
 	return (
 		<div>
+			{/* if  network.duplicateRoutes.length > 0 show badge */}
+			{network?.duplicateRoutes.length > 0 ? (
+				<div role="alert" className="alert bg-base-100 mb-5">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						className="stroke-info shrink-0 w-6 h-6"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+						></path>
+					</svg>
+					<span>
+						{network?.duplicateRoutes?.length} other network(s) have been found with the
+						same subnet.
+					</span>
+					<div>
+						<button
+							onClick={() => {
+								// Extract IP addresses from duplicate routes
+								// const duplicateIPs = network?.duplicateRoutes.map((duplicateRoute) =>
+								// 	duplicateRoute.duplicatedIPs.join(", "),
+								// );
+
+								callModal({
+									title: <p>Duplicate subets detected</p>,
+									content: (
+										<div>
+											<p className="pb-3">
+												The following networks have the same subnet as the current network
+												({network.name}). This may not be an issue, but if you connect
+												both networks from the same PC, it could cause IP address
+												conflicts and connectivity problems.
+											</p>
+											{network?.duplicateRoutes?.map((duplicateNetwork) => (
+												<div key={duplicateNetwork.nwid}>
+													<p>
+														<span className="uppercase mr-1">
+															<Link
+																href={`/network/${duplicateNetwork.nwid}`}
+																className="text-primary"
+															>
+																{duplicateNetwork.name}
+															</Link>
+														</span>
+														{duplicateNetwork.duplicatedIPs}.
+													</p>
+												</div>
+											))}
+										</div>
+									),
+								});
+							}}
+							className="btn btn-sm btn-primary"
+						>
+							More Info
+						</button>
+					</div>
+				</div>
+			) : null}
 			<div className="flex items-center gap-4">
 				<p>{t("networkIpAssignments.ipv4.auto_assign_from_range")}</p>
 				<input
@@ -179,7 +247,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					}}
 				>
 					{network?.cidr?.map((cidr: string) => {
-						return network?.routes?.some((route) => route.target === cidr) ? (
+						return (network?.routes as RoutesEntity[])?.some(
+							(route) => route.target === cidr,
+						) ? (
 							<div
 								key={cidr}
 								className={cn(
