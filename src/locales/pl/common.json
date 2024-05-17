@@ -183,6 +183,13 @@
 				"plane6Updated": "zaktualizowane 6plane"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} inne sieci zostały znalezione z tą samą podsiecią.",
+					"modal": {
+						"title": "Wykryto zduplikowaną podsieć",
+						"description": "Następujące sieci mają tę samą podsieć co bieżąca sieć ({name}). Może to nie być problem, ale jeśli podłączysz obie sieci do tego samego komputera, może to spowodować konflikty adresów IP i problemy z łącznością."
+					}
+				},
 				"please_enter_valid_ip_range": "Podaj prawidłowy zakres adresów IP",
 				"ip_range_already_exists": "Zakres IP już istnieje",
 				"auto_assign_from_range": "Automatycznie przypisuj adres IP",

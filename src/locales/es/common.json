@@ -183,6 +183,13 @@
 				"plane6Updated": "6plane actualizado"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} otra(s) red(es) han sido encontradas con la misma subred.",
+					"modal": {
+						"title": "Subred duplicada detectada",
+						"description": "Las siguientes redes tienen la misma subred que la red actual ({name}). Esto puede no ser un problema, pero si conecta ambas redes desde el mismo PC, podría causar conflictos de direcciones IP y problemas de conectividad."
+					}
+				},
 				"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
 				"ip_range_already_exists": "El rango de IP ya existe",
 				"auto_assign_from_range": "Asignar automáticamente desde el rango",

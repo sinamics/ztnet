@@ -138,8 +138,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 						></path>
 					</svg>
 					<span>
-						{network?.duplicateRoutes?.length} other network(s) have been found with the
-						same subnet.
+						{t.rich("networkIpAssignments.ipv4.duplicateIpNotification.title", {
+							count: network?.duplicateRoutes?.length,
+						})}
 					</span>
 					<div>
 						<button
@@ -150,14 +151,20 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								// );
 
 								callModal({
-									title: <p>Duplicate subets detected</p>,
+									title: (
+										<p>
+											{t("networkIpAssignments.ipv4.duplicateIpNotification.modal.title")}
+										</p>
+									),
 									content: (
 										<div>
 											<p className="pb-3">
-												The following networks have the same subnet as the current network
-												({network.name}). This may not be an issue, but if you connect
-												both networks from the same PC, it could cause IP address
-												conflicts and connectivity problems.
+												{t.rich(
+													"networkIpAssignments.ipv4.duplicateIpNotification.modal.description",
+													{
+														name: network?.name,
+													},
+												)}
 											</p>
 											{network?.duplicateRoutes?.map((duplicateNetwork) => (
 												<div key={duplicateNetwork.nwid}>
