@@ -183,6 +183,13 @@
 				"plane6Updated": "6plane updated"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} other network(s) have been found with the same subnet.",
+					"modal": {
+						"title": "Duplicate subnet detected",
+						"description": "The following networks have the same subnet as the current network ({name}). This may not be an issue, but if you connect both networks from the same PC, it could cause IP address conflicts and connectivity problems."
+					}
+				},
 				"please_enter_valid_ip_range": "Please enter a valid IP range",
 				"ip_range_already_exists": "The IP range already exists",
 				"auto_assign_from_range": "Auto-Assign from Range",

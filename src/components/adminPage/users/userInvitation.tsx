@@ -31,7 +31,7 @@ const InvitationLink = () => {
 	});
 
 	const showInviationDetails = (invite: InvitationLinkType) => {
-		const expired = new Date(invite.expires) < new Date() || invite?.used;
+		const expired = new Date(invite.expiresAt) < new Date() || invite?.used;
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
 			rootStyle: "text-left",
@@ -67,7 +67,7 @@ const InvitationLink = () => {
 							<span className="text-error">Expired</span>
 						) : (
 							<span>
-								Expires in <TimeAgo date={invite.expires} />
+								Expires in <TimeAgo date={invite.expiresAt} />
 							</span>
 						)}
 					</p>
@@ -134,7 +134,7 @@ const InvitationLink = () => {
 					</p>
 					<div className="flex flex-wrap gap-3">
 						{invitationData?.map((invite) => {
-							const expired = new Date(invite.expires) < new Date() || invite?.used;
+							const expired = new Date(invite.expiresAt) < new Date() || invite?.used;
 							return (
 								<div
 									key={invite.id}
@@ -154,7 +154,7 @@ const InvitationLink = () => {
 										{`${expired ? " Expired" : " Expires in"}`}
 										{!expired && (
 											<span className="pl-1">
-												<TimeAgo date={invite.expires} />
+												<TimeAgo date={invite.expiresAt} />
 											</span>
 										)}
 									</p>

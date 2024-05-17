@@ -69,7 +69,7 @@ export const GET_stats = async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 
 		// get UserInvitation
-		const pendingUserInvitations = await prisma.userInvitation.count();
+		const pendingUserInvitations = await prisma.invitation.count();
 
 		// get pending Webhook
 		const activeWebhooks = await prisma.webhook.count();

@@ -183,6 +183,13 @@
 				"plane6Updated": "6plane oppdatert"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} andre nettverk er funnet med det samme subnettet.",
+					"modal": {
+						"title": "Duplisert subnett oppdaget",
+						"description": "Følgende nettverk har samme subnett som det nåværende nettverket ({name}). Dette er kanskje ikke et problem, men hvis du kobler begge nettverkene fra samme PC, kan det forårsake IP-adressekonflikter og tilkoblingsproblemer."
+					}
+				},
 				"please_enter_valid_ip_range": "Vennligst skriv inn en gyldig IP-range",
 				"ip_range_already_exists": "IP-rangen eksisterer allerede",
 				"auto_assign_from_range": "Auto-Tildel fra Range",

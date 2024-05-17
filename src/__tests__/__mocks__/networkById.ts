@@ -81,6 +81,7 @@ jest.mock("../../utils/api", () => ({
 						network: {
 							nwid: "1234567890",
 							name: "Test Network",
+							duplicateRoutes: [],
 							private: true,
 							ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
 							routes: [{ target: "10.0.0.0/24" }],

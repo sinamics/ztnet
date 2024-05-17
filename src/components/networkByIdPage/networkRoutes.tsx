@@ -48,7 +48,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 		});
 
 	const deleteRoute = (route: RoutesEntity) => {
-		const _routes = [...network.routes];
+		const _routes = [...(network.routes as RoutesEntity[])];
 		const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
 		updateManageRoutes({
@@ -70,7 +70,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 		updateManageRoutes(
 			{
 				updateParams: {
-					routes: [...network.routes, { ...routeInput }],
+					routes: [...(network.routes as RoutesEntity[]), { ...routeInput }],
 				},
 				organizationId,
 				nwid: query.id as string,
@@ -93,7 +93,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 			<input type="checkbox" />
 			<div className="collapse-title">{t("nettworkRoutes.managedRoutesTitle")}</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
-				{network?.routes.length === 0 ? (
+				{(network?.routes as RoutesEntity[]).length === 0 ? (
 					<div className="alert alert-warning p-2">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +118,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 					</div>
 				) : null}
 				<div className="grid grid-cols-1 pt-3">
-					{network?.routes.map((route) => {
+					{(network?.routes as RoutesEntity[]).map((route) => {
 						return (
 							<div
 								key={route.target}

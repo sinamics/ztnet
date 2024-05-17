@@ -183,6 +183,13 @@
 				"plane6Updated": "6plane 已更新"
 			},
 			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "找到 {count} 个具有相同子网的其他网络。",
+					"modal": {
+						"title": "检测到重复的子网",
+						"description": "以下网络与当前网络 ({name}) 具有相同的子网。这可能不是问题，但如果您从同一台电脑连接这两个网络，可能会导致IP地址冲突和连接问题。"
+					}
+				},
 				"please_enter_valid_ip_range": "请输入有效的 IP 范围",
 				"ip_range_already_exists": "IP 范围已存在",
 				"auto_assign_from_range": "自动从范围分配",
