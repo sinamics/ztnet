@@ -169,56 +169,56 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				</div>
 			) : null}
 			{network?.v4AssignMode?.zt && ipTabs.easy ? (
-				<div>
-					<div
-						className={cn("flex cursor-pointer flex-wrap", {
-							"pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-								!network?.v4AssignMode?.zt,
-						})}
-					>
-						{network?.cidr?.map((cidr: string) => {
-							return network?.routes?.some((route) => route.target === cidr) ? (
-								<div
-									key={cidr}
-									className={cn(
-										"badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
-										{
-											"badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
-												network?.v4AssignMode?.zt,
+				<div
+					className={cn("grid cursor-pointer w-full gap-2", {
+						"pointer-events-none cursor-no-drop text-gray-500 opacity-25":
+							!network?.v4AssignMode?.zt,
+					})}
+					style={{
+						gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+					}}
+				>
+					{network?.cidr?.map((cidr: string) => {
+						return network?.routes?.some((route) => route.target === cidr) ? (
+							<div
+								key={cidr}
+								className={cn(
+									"badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+									{
+										"badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
+											network?.v4AssignMode?.zt,
+									},
+									"flex items-center justify-center w-full",
+								)}
+							>
+								{cidr}
+							</div>
+						) : (
+							<div
+								key={cidr}
+								onClick={() =>
+									easyIpAssignment({
+										updateParams: {
+											routes: [{ target: cidr, via: "" }],
 										},
-										"flex items-center justify-center",
-									)}
-									style={{ flex: "1 1 150px", maxWidth: "150px" }} // Responsive width ensuring equal size badges
-								>
-									{cidr}
-								</div>
-							) : (
-								<div
-									key={cidr}
-									onClick={() =>
-										easyIpAssignment({
-											updateParams: {
-												routes: [{ target: cidr, via: "" }],
-											},
-											organizationId,
-											nwid: query.id as string,
-											central,
-										})
-									}
-									className={cn(
-										"badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
-										{ "hover:bg-primary": network?.v4AssignMode?.zt },
-										"flex items-center justify-center",
-									)}
-									style={{ flex: "1 1 150px", maxWidth: "150px" }} // Responsive width ensuring equal size badges
-								>
-									{cidr}
-								</div>
-							);
-						})}
-					</div>
+										organizationId,
+										nwid: query.id as string,
+										central,
+									})
+								}
+								className={cn(
+									"badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
+									{ "hover:bg-primary": network?.v4AssignMode?.zt },
+									"flex items-center justify-center w-full",
+								)}
+							>
+								{cidr}
+							</div>
+						);
+					})}
 				</div>
 			) : null}
+
 			{network?.v4AssignMode?.zt && ipTabs.advanced ? (
 				<div className="mt-4 space-y-2">
 					{network?.ipAssignmentPools?.map((pool) => {
