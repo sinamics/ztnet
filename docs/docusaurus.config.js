@@ -9,7 +9,8 @@ const darkCodeTheme = require("prism-react-renderer/themes/oceanicNext");
 const config = {
   title: 'ZTNET - ZeroTier Web UI',
   tagline: 'Zerotier Controller Web UI',
-  favicon: 'img/ztnet_16x16.png',
+  // favicon: 'img/ztnet_16x14.png',
+  favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
   url: 'https://ztnet.network',
@@ -159,7 +160,7 @@ const config = {
         title: 'ZTNET',
         logo: {
           alt: 'ZTNET',
-          src: 'img/ztnet_100x100.png',
+          src: 'img/ztnet_100x89.png',
           // height: '20px,
           width: '35px',
         },
