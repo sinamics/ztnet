@@ -186,7 +186,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 											"badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
 												network?.v4AssignMode?.zt,
 										},
+										"flex items-center justify-center",
 									)}
+									style={{ flex: "1 1 150px", maxWidth: "150px" }} // Responsive width ensuring equal size badges
 								>
 									{cidr}
 								</div>
@@ -206,7 +208,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 									className={cn(
 										"badge badge-ghost badge-outline badge-lg m-1 rounded-md text-xs opacity-30 md:text-base",
 										{ "hover:bg-primary": network?.v4AssignMode?.zt },
+										"flex items-center justify-center",
 									)}
+									style={{ flex: "1 1 150px", maxWidth: "150px" }} // Responsive width ensuring equal size badges
 								>
 									{cidr}
 								</div>
