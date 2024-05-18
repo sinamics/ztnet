@@ -32,6 +32,7 @@ const InvitationLink = () => {
 
 	const showInviationDetails = (invite: InvitationLinkType) => {
 		const expired = new Date(invite.expiresAt) < new Date() || invite?.used;
+
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),
 			rootStyle: "text-left",
@@ -47,6 +48,14 @@ const InvitationLink = () => {
 						</span>
 						<span className="text-primary pl-1">{invite.secret}</span>
 					</p>
+					{invite?.organizations?.length > 0 ? (
+						<p>
+							<span className="text-gray-400">Organization: </span>
+							<span className="text-primary pl-1">
+								{invite?.organizations?.map((org) => org.organization.orgName).join(",")}
+							</span>
+						</p>
+					) : null}
 					{invite?.groupName ? (
 						<p>
 							<span className="text-gray-400">
@@ -176,6 +185,8 @@ const UserInvitationLink = () => {
 
 	const { refetch: refetchInvitations } = api.admin.getInvitationLink.useQuery();
 	const { data: userGroups } = api.admin.getUserGroups.useQuery();
+	const { data: userOrganizations } = api.org.getAllOrg.useQuery();
+
 	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchInvitations] }),
 		onError: handleApiError,
@@ -188,8 +199,15 @@ const UserInvitationLink = () => {
 		value: group?.id.toString(),
 	}));
 
+	const orgOptions = userOrganizations?.map((org) => ({
+		label: org.orgName,
+		value: org?.id.toString(),
+	}));
+
 	// add default none group
 	groupOptions?.unshift({ label: "None", value: null });
+	orgOptions?.unshift({ label: "None", value: null });
+
 	return (
 		<div className="pt-5">
 			<InputFields
@@ -238,6 +256,13 @@ const UserInvitationLink = () => {
 							"admin.users.authentication.generateInvitation.assignGroupLabel",
 						),
 						selectOptions: groupOptions,
+						elementType: "select",
+						defaultValue: "",
+					},
+					{
+						name: "organizationId",
+						description: "Assign user to an Organization",
+						selectOptions: orgOptions,
 						elementType: "select",
 						defaultValue: "",
 					},

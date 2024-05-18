@@ -24,7 +24,7 @@ import {
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
-import { Invitation, User, UserOptions } from "@prisma/client";
+import { Invitation, OrganizationInvitation, User, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 
@@ -108,8 +108,12 @@ export const authRouter = createTRPCRouter({
 			);
 			const invitationToken = ztnetInvitationCode?.trim() || token?.trim();
 
+			interface InviteProp extends Invitation {
+				organizations?: OrganizationInvitation[];
+			}
+
 			// ztnet user invitation
-			let invitation: Invitation | null = null;
+			let invitation: InviteProp | null = null;
 
 			// ztnet user invitation
 			const hasValidCode =
@@ -121,8 +125,12 @@ export const authRouter = createTRPCRouter({
 							message: "No invitation code provided",
 						});
 					}
+
 					invitation = await ctx.prisma.invitation.findUnique({
 						where: { token: token.trim(), secret: ztnetInvitationCode.trim() },
+						include: {
+							organizations: true,
+						},
 					});
 
 					if (
@@ -247,6 +255,18 @@ export const authRouter = createTRPCRouter({
 									},
 							  }
 						  : {}),
+
+					// conditionally add the user to the organization if the token is valid
+					...(invitation?.organizations.length > 0
+						? {
+								organizationRoles: {
+									create: {
+										id: invitation.organizations[0].id,
+									},
+								},
+						  }
+						: {}),
+
 					// add user to organizationRoles if the token is valid
 					organizationRoles: decryptedOrgToken
 						? {

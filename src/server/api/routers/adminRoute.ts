@@ -179,11 +179,11 @@ export const adminRouter = createTRPCRouter({
 				expireTime: z.string(),
 				timesCanUse: z.string().optional(),
 				groupId: z.string().optional(),
+				organizationId: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { secret, expireTime, timesCanUse, groupId } = input;
-
+			const { secret, expireTime, timesCanUse, groupId, organizationId } = input;
 			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
 				expiresIn: `${expireTime}m`,
 			});
@@ -199,6 +199,15 @@ export const adminRouter = createTRPCRouter({
 					timesCanUse: parseInt(timesCanUse) || 1,
 					expiresAt: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
 					invitedById: ctx.session.user.id,
+					organizations: organizationId
+						? {
+								create: {
+									organization: {
+										connect: { id: organizationId },
+									},
+								},
+						  }
+						: undefined,
 				},
 			});
 
@@ -208,6 +217,13 @@ export const adminRouter = createTRPCRouter({
 		const invite = await ctx.prisma.invitation.findMany({
 			where: {
 				invitedById: ctx.session.user.id,
+			},
+			include: {
+				organizations: {
+					include: {
+						organization: true,
+					},
+				},
 			},
 		});
 

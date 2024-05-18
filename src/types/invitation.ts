@@ -1,3 +1,10 @@
-import { Invitation } from "@prisma/client";
+import { Invitation, Organization, OrganizationInvitation } from "@prisma/client";
 
-export type InvitationLinkType = Invitation & { groupName: string | null };
+interface ExtedendOrganizationInvitation extends OrganizationInvitation {
+	organization: Organization;
+}
+
+export type InvitationLinkType = Invitation & {
+	groupName: string | null;
+	organizations: ExtedendOrganizationInvitation[];
+};
