@@ -122,7 +122,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	return (
 		<div>
 			{/* if  network.duplicateRoutes.length > 0 show badge */}
-			{network?.duplicateRoutes.length > 0 ? (
+			{network?.duplicateRoutes?.length > 0 ? (
 				<div role="alert" className="alert bg-base-100 mb-5">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

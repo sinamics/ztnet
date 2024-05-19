@@ -59,7 +59,7 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 
 		// Flatten the array
 		// Generate ipv4 address, cidr, start & end
-		const ipAssignmentPools = IPv4gen(null, usedIPs);
+		const ipAssignmentPools = IPv4gen(null, usedIPs, input.central);
 
 		if (!input?.name) {
 			// Generate adjective and noun word
