@@ -47,6 +47,9 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 		}
 		// get used IPs from the database
 		const usedCidr = await ctx.prisma.network.findMany({
+			where: {
+				authorId: ctx.session.user.id,
+			},
 			select: {
 				routes: true,
 			},

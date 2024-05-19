@@ -24,6 +24,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
 import { nameGeneratorConfig } from "../services/networkService";
 import rateLimit from "~/utils/rateLimit";
+import { RoutesEntity } from "~/types/local/network";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -353,8 +354,22 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
+			// get used IPs from the database
+			const usedCidr = await ctx.prisma.network.findMany({
+				where: {
+					organizationId: input.organizationId,
+				},
+				select: {
+					routes: true,
+				},
+			});
+			// Extract the target from the routes
+			const usedIPs = usedCidr.map((nw) =>
+				(nw.routes as RoutesEntity[])?.map((r) => r.target),
+			);
+
 			// Generate ipv4 address, cidr, start & end
-			const ipAssignmentPools = IPv4gen(null);
+			const ipAssignmentPools = IPv4gen(null, usedIPs);
 
 			if (!input?.networkName) {
 				// Generate adjective and noun word
@@ -378,6 +393,7 @@ export const organizationRouter = createTRPCRouter({
 							name: input.networkName,
 							nwid: newNw.nwid,
 							description: input.orgName,
+							routes: ipAssignmentPools.routes,
 						},
 					},
 				},
