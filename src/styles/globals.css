@@ -47,14 +47,20 @@
 .glow {
   box-shadow: 0 0 2px 2px rgb(189, 93, 93);
 }
-/* table,
-th,
-td {
-  border: 1px solid black;
-  border-collapse: collapse;
-} */
+
+/* Prevent text from being transformed to lowercase */
 .theme-black {
-  text-transform: none; /* This prevents text from being transformed to lowercase */
+  text-transform: none; 
+}
+
+/* There is a bug issue over at Mozilla that is still open, given that it was created 5 years ago.
+https://bugzilla.mozilla.org/show_bug.cgi?id=1576820
+
+https://github.com/sinamics/ztnet/issues/416 */
+@-moz-document url-prefix() {
+  option {
+    font-family: 'Inter', sans-serif;
+  }
 }
 
 @keyframes fadeIn {
