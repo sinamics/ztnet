@@ -50,6 +50,7 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				return await ztController.get_controller_networks(ctx, input.central);
 			}
+
 			const networks = await ctx.prisma.network.findMany({
 				where: {
 					authorId: ctx.session.user.id,
@@ -139,7 +140,7 @@ export const networkRouter = createTRPCRouter({
 			);
 
 			// Generate CIDR options for IP configuration
-			const { cidrOptions } = IPv4gen(null);
+			const { cidrOptions } = IPv4gen(null, []);
 
 			/**
 			 * Merging logic to ensure that members who only exist in local database ( added manually ) are also included in the response
@@ -541,6 +542,7 @@ export const networkRouter = createTRPCRouter({
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
+				[],
 			);
 
 			// prepare update params

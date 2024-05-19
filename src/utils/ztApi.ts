@@ -489,7 +489,10 @@ export const central_network_detail = async (
 			: [];
 
 		// Get available cidr options.
-		const ipAssignmentPools = IPv4gen(null);
+		const getRandomCidr = true;
+		const usedIps = [];
+		const ipAssignmentPools = IPv4gen(null, usedIps, getRandomCidr);
+
 		const { cidrOptions } = ipAssignmentPools;
 		const { id: networkId, config: networkConfig, ...restData } = network;
 
