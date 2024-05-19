@@ -23,16 +23,40 @@ const cidrOptions = [
 	"172.25.30.0/24",
 ];
 
-// const generateCidr = () => {
-// 	return cidrOptions[Math.floor(Math.random() * cidrOptions.length)];
-// };
 const generateCidr = (usedCidr: string[][]) => {
 	// Flatten the usedCidr array
 	const flattenedUsedCidr = usedCidr.flat();
 
+	// Count the frequency of each CIDR in the usedCidr array
+	const cidrFrequency: { [key: string]: number } = {};
+	for (const cidr of flattenedUsedCidr) {
+		if (cidrFrequency[cidr]) {
+			cidrFrequency[cidr]++;
+		} else {
+			cidrFrequency[cidr] = 1;
+		}
+	}
+
 	// Filter the available CIDRs
 	const availableCidr = cidrOptions.filter((cidr) => !flattenedUsedCidr.includes(cidr));
-	return availableCidr.length > 0 ? availableCidr[0] : cidrOptions[0];
+
+	// If there are available CIDRs, return the first one
+	if (availableCidr.length > 0) {
+		return availableCidr[0];
+	}
+
+	// If no available CIDRs, find the CIDR with the fewest occurrences
+	let leastUsedCidr = cidrOptions[0];
+	let minCount = Infinity;
+	for (const cidr of cidrOptions) {
+		const count = cidrFrequency[cidr] || 0;
+		if (count < minCount) {
+			minCount = count;
+			leastUsedCidr = cidr;
+		}
+	}
+
+	return leastUsedCidr;
 };
 export const IPv4gen = (CIDR: string | null, usedCidr) => {
 	const cidr = CIDR ? CIDR : generateCidr(usedCidr);
