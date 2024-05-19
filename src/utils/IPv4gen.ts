@@ -23,12 +23,19 @@ const cidrOptions = [
 	"172.25.30.0/24",
 ];
 
-const generateCidr = () => {
-	return cidrOptions[Math.floor(Math.random() * cidrOptions.length)];
-};
+// const generateCidr = () => {
+// 	return cidrOptions[Math.floor(Math.random() * cidrOptions.length)];
+// };
+const generateCidr = (usedCidr: string[][]) => {
+	// Flatten the usedCidr array
+	const flattenedUsedCidr = usedCidr.flat();
 
-export const IPv4gen = (CIDR: string | null) => {
-	const cidr = CIDR ? CIDR : generateCidr();
+	// Filter the available CIDRs
+	const availableCidr = cidrOptions.filter((cidr) => !flattenedUsedCidr.includes(cidr));
+	return availableCidr.length > 0 ? availableCidr[0] : cidrOptions[0];
+};
+export const IPv4gen = (CIDR: string | null, usedCidr) => {
+	const cidr = CIDR ? CIDR : generateCidr(usedCidr);
 
 	const [start, prefix] = cidr.split("/");
 	const host32 = ((1 << (32 - parseInt(prefix))) - 1) >>> 0;
