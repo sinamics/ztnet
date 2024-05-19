@@ -63,6 +63,7 @@ export const networkRouter = createTRPCRouter({
 					},
 				},
 			});
+
 			return networks;
 		}),
 

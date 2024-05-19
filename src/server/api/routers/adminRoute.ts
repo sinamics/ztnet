@@ -591,34 +591,43 @@ export const adminRouter = createTRPCRouter({
 	 * @param {Object} input - input object that contains possible query parameters or payload
 	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
 	 */
-	unlinkedNetwork: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		try {
-			const ztNetworks = (await ztController.get_controller_networks(ctx)) as string[];
-			const dbNetworks = await ctx.prisma.network.findMany({
-				select: { nwid: true },
-			});
+	unlinkedNetwork: adminRoleProtectedRoute
+		.input(
+			z.object({
+				getDetails: z.boolean().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			try {
+				const ztNetworks = (await ztController.get_controller_networks(ctx)) as string[];
+				const dbNetworks = await ctx.prisma.network.findMany({
+					select: { nwid: true },
+				});
 
-			// create a set of nwid for faster lookup
-			const dbNetworkIds = new Set(dbNetworks.map((network) => network.nwid));
+				// create a set of nwid for faster lookup
+				const dbNetworkIds = new Set(dbNetworks.map((network) => network.nwid));
 
-			// find networks that are not in database
-			const unlinkedNetworks = ztNetworks.filter(
-				(networkId) => !dbNetworkIds.has(networkId),
-			);
+				// find networks that are not in database
+				const unlinkedNetworks = ztNetworks.filter(
+					(networkId) => !dbNetworkIds.has(networkId),
+				);
 
-			if (unlinkedNetworks.length === 0) return [];
+				if (unlinkedNetworks.length === 0) return [];
 
-			const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
-				unlinkedNetworks.map((unlinked) =>
-					ztController.local_network_detail(ctx, unlinked, false),
-				),
-			);
+				if (input.getDetails) {
+					const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
+						unlinkedNetworks.map((unlinked) =>
+							ztController.local_network_detail(ctx, unlinked, false),
+						),
+					);
+					return unlinkArr;
+				}
 
-			return unlinkArr;
-		} catch (_error) {
-			return throwError("Failed to fetch unlinked networks", _error);
-		}
-	}),
+				return unlinkedNetworks;
+			} catch (_error) {
+				return throwError("Failed to fetch unlinked networks", _error);
+			}
+		}),
 	assignNetworkToUser: adminRoleProtectedRoute
 		.input(
 			z.object({

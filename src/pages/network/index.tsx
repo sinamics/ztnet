@@ -43,9 +43,12 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 		central: false,
 	});
 
-	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery(undefined, {
-		enabled: user?.role === "ADMIN",
-	});
+	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery(
+		{ getDetails: false },
+		{
+			enabled: user?.role === "ADMIN",
+		},
+	);
 
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation({
 		onError: handleApiError,
