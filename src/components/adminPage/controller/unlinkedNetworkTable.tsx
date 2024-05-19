@@ -179,12 +179,20 @@ export const UnlinkedNetwork = () => {
 		},
 	};
 
-	const data = useMemo(() => unlinkedNetworks || [], [unlinkedNetworks]);
+	const data = useMemo(() => {
+		if (Array.isArray(unlinkedNetworks) && unlinkedNetworks.length > 0) {
+			if (typeof unlinkedNetworks[0] === "string") {
+				return [];
+			}
+
+			return unlinkedNetworks as unknown as UnlinkedNetworkTableProps[];
+		}
+		return [];
+	}, [unlinkedNetworks]);
+
 	const table = useReactTable({
 		data,
-		//@ts-expect-error
 		columns,
-		//@ts-expect-error
 		defaultColumn,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
