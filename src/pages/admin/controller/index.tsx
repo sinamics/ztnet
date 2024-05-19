@@ -12,7 +12,9 @@ const Controller = () => {
 
 	const { data: controllerData, error: controllerError } =
 		api.admin.getControllerStats.useQuery();
-	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery();
+	const { data: unlinkedNetworks } = api.admin.unlinkedNetwork.useQuery({
+		getDetails: false,
+	});
 
 	const { networkCount, totalMembers, controllerStatus, assignedIPs } =
 		controllerData || {};

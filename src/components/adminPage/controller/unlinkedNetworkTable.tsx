@@ -45,7 +45,9 @@ export const UnlinkedNetwork = () => {
 		data: unlinkedNetworks,
 		refetch: refetchNetworks,
 		isLoading: loadingNetworks,
-	} = api.admin.unlinkedNetwork.useQuery();
+	} = api.admin.unlinkedNetwork.useQuery({
+		getDetails: true,
+	});
 
 	const { mutate: assignNetworkToUser } = api.admin.assignNetworkToUser.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchNetworks] }),
