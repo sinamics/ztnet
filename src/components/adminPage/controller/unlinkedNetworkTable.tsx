@@ -45,7 +45,9 @@ export const UnlinkedNetwork = () => {
 		data: unlinkedNetworks,
 		refetch: refetchNetworks,
 		isLoading: loadingNetworks,
-	} = api.admin.unlinkedNetwork.useQuery();
+	} = api.admin.unlinkedNetwork.useQuery({
+		getDetails: true,
+	});
 
 	const { mutate: assignNetworkToUser } = api.admin.assignNetworkToUser.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchNetworks] }),
@@ -177,12 +179,20 @@ export const UnlinkedNetwork = () => {
 		},
 	};
 
-	const data = useMemo(() => unlinkedNetworks || [], [unlinkedNetworks]);
+	const data = useMemo(() => {
+		if (Array.isArray(unlinkedNetworks) && unlinkedNetworks.length > 0) {
+			if (typeof unlinkedNetworks[0] === "string") {
+				return [];
+			}
+
+			return unlinkedNetworks as unknown as UnlinkedNetworkTableProps[];
+		}
+		return [];
+	}, [unlinkedNetworks]);
+
 	const table = useReactTable({
 		data,
-		//@ts-expect-error
 		columns,
-		//@ts-expect-error
 		defaultColumn,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
