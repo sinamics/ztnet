@@ -24,7 +24,13 @@ import {
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
-import { Invitation, OrganizationInvitation, User, UserOptions } from "@prisma/client";
+import {
+	Invitation,
+	OrganizationInvitation,
+	Role,
+	User,
+	UserOptions,
+} from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 
@@ -256,34 +262,41 @@ export const authRouter = createTRPCRouter({
 							  }
 						  : {}),
 
-					// conditionally add the user to the organization if the token is valid
+					// Conditionally add the user to organizationRoles and memberOfOrgs if the invitation has organizations
 					...(invitation?.organizations.length > 0
 						? {
 								organizationRoles: {
-									create: {
-										id: invitation.organizations[0].id,
-									},
+									create: invitation.organizations.map((org) => ({
+										organizationId: org.organizationId,
+										role: invitation.role as Role,
+									})),
+								},
+								memberOfOrgs: {
+									connect: invitation.organizations.map((org) => ({
+										id: org.organizationId,
+									})),
 								},
 						  }
 						: {}),
 
-					// add user to organizationRoles if the token is valid
-					organizationRoles: decryptedOrgToken
+					// Add user to organizationRoles and memberOfOrgs if the decryptedOrgToken is valid
+					...(decryptedOrgToken
 						? {
-								create: {
-									organizationId: decryptedOrgToken.organizationId,
-									role: decryptedOrgToken.invitation.role,
+								organizationRoles: {
+									create: [
+										{
+											organizationId: decryptedOrgToken.organizationId,
+											role: decryptedOrgToken.role as Role, // Ensure role is of type Role
+										},
+									],
+								},
+								memberOfOrgs: {
+									connect: {
+										id: decryptedOrgToken.organizationId,
+									},
 								},
 						  }
-						: undefined,
-					// add the user to the organization if the token is valid
-					memberOfOrgs: decryptedOrgToken
-						? {
-								connect: {
-									id: decryptedOrgToken.organizationId,
-								},
-						  }
-						: undefined,
+						: {}),
 					options: {
 						create: {
 							localControllerUrl: isRunningInDocker()
