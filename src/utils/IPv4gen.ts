@@ -23,7 +23,12 @@ const cidrOptions = [
 	"172.25.30.0/24",
 ];
 
-const generateCidr = (usedCidr: string[][]) => {
+const generateCidr = (usedCidr: string[][], getRandom = false) => {
+	// If getRandom is true, return one randomly
+	if (getRandom) {
+		return cidrOptions[Math.floor(Math.random() * cidrOptions.length)];
+	}
+
 	// Flatten the usedCidr array
 	const flattenedUsedCidr = usedCidr.flat();
 
@@ -58,8 +63,8 @@ const generateCidr = (usedCidr: string[][]) => {
 
 	return leastUsedCidr;
 };
-export const IPv4gen = (CIDR: string | null, usedCidr) => {
-	const cidr = CIDR ? CIDR : generateCidr(usedCidr);
+export const IPv4gen = (CIDR: string | null, usedCidr, getRandom = false) => {
+	const cidr = CIDR ? CIDR : generateCidr(usedCidr, getRandom);
 
 	const [start, prefix] = cidr.split("/");
 	const host32 = ((1 << (32 - parseInt(prefix))) - 1) >>> 0;
