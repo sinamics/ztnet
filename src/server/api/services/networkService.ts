@@ -45,9 +45,18 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 				);
 			}
 		}
+		// get used IPs from the database
+		const usedCidr = await ctx.prisma.network.findMany({
+			select: {
+				routes: true,
+			},
+		});
+		// Extract the target from the routes
+		const usedIPs = usedCidr.map((nw) => nw.routes?.map((r) => r.target));
 
+		// Flatten the array
 		// Generate ipv4 address, cidr, start & end
-		const ipAssignmentPools = IPv4gen(null);
+		const ipAssignmentPools = IPv4gen(null, usedIPs);
 
 		if (!input?.name) {
 			// Generate adjective and noun word
@@ -74,6 +83,7 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 					create: {
 						name: newNw.name,
 						nwid: newNw.nwid,
+						routes: ipAssignmentPools.routes,
 					},
 				},
 			},
