@@ -1,9 +1,3 @@
-// function randomOctet() {
-//   return Math.floor(Math.random() * 255);
-
-import { throwError } from "~/server/helpers/errorHandler";
-
-// }
 const cidrOptions = [
 	"10.121.15.0/24",
 	"10.121.16.0/24",
@@ -128,7 +122,7 @@ export const getNetworkClassCIDR = (
 
 	for (const range of ipRanges) {
 		if (ipToNumber(range.ipRangeStart) >= ipToNumber(range.ipRangeEnd)) {
-			return throwError("Invalid IP range provided");
+			continue;
 		}
 
 		const binaryStart = ipToBinary(range.ipRangeStart);
