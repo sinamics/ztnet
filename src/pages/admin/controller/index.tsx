@@ -23,7 +23,6 @@ const Controller = () => {
 		controllerStatus?.config?.settings || {};
 
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
-
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12 pb-80">
 			{controllerError ? (
@@ -41,7 +40,7 @@ const Controller = () => {
 							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
 						/>
 					</svg>
-					<span>Error! Controller unreachable</span>
+					<span>{controllerError?.message}</span>
 				</div>
 			) : (
 				<>
