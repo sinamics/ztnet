@@ -248,7 +248,7 @@ export const get_controller_networks = async (
 		return await getData<ZTControllerListNetworks>(addr, headers);
 	} catch (error) {
 		const prefix = isCentral ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting get_controller_networks`;
+		const message = `${prefix} ${error} (get_controller_networks)`;
 		throw new APIError(message, axios.isAxiosError(error) ? error : undefined);
 	}
 };
@@ -276,7 +276,7 @@ export const get_controller_status = async (
 		return await getData<ZTControllerNodeStatus>(addr, headers);
 	} catch (error) {
 		const prefix = isCentral ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting get_controller_status`;
+		const message = `${prefix} ${error} (get_controller_status)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -324,7 +324,7 @@ export const network_create = async (
 		);
 	} catch (error) {
 		const prefix = isCentral ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting network_create`;
+		const message = `${prefix} ${error} (network_create)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -352,7 +352,7 @@ export async function network_delete(
 		return { status: response.status, data: undefined };
 	} catch (error) {
 		const prefix = isCentral ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting network_delete`;
+		const message = `${prefix} ${error} (network_delete)`;
 		throw new APIError(message, error as AxiosError);
 	}
 }
@@ -507,7 +507,7 @@ export const central_network_detail = async (
 		};
 	} catch (error) {
 		const source = isCentral ? "[ZT CENTRAL]" : "";
-		const message = `${source} An error occurred while getting data from network_details function`;
+		const message = `${source} ${error} (central_network_detail)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -537,7 +537,7 @@ export const network_update = async ({
 		return await postData<NetworkEntity>(addr, headers, payload);
 	} catch (error) {
 		const prefix = central ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting network_update`;
+		const message = `${prefix} ${error} (network_update)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -562,7 +562,7 @@ export const member_delete = async ({
 		return response.status as MemberDeleteResponse;
 	} catch (error) {
 		const prefix = central ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting member_delete`;
+		const message = `${prefix} ${error} (member_delete)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -594,7 +594,7 @@ export const member_update = async ({
 		return await postData<MemberEntity>(addr, headers, payload);
 	} catch (error) {
 		const prefix = central ? "[CENTRAL] " : "";
-		const message = `${prefix}An error occurred while getting member_update`;
+		const message = `${prefix} ${error} (member_update)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -618,7 +618,7 @@ export const member_details = async (
 
 		return await getData<MemberEntity>(addr, headers);
 	} catch (error) {
-		const message = "An error occurred while getting member_detail";
+		const message = `${error} (member_details)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -637,7 +637,7 @@ export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer> => {
 		const response: AxiosResponse = await axios.get(addr, { headers });
 		return response.data as ZTControllerGetPeer;
 	} catch (error) {
-		const message = "An error occurred while getting peers";
+		const message = `${error} (peers)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
