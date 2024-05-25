@@ -6,7 +6,9 @@ on:
 
   workflow_dispatch:
 permissions:
-  contents: read
+  # write permission is required to create a github release
+  contents: write
+  pull-requests: write
 jobs:
   update_release_draft:
     permissions:
