@@ -1,4 +1,4 @@
-ARG NODEJS_IMAGE=node:18-bullseye-slim
+ARG NODEJS_IMAGE=node:22.1-bookworm-slim
 FROM --platform=$BUILDPLATFORM $NODEJS_IMAGE AS base
 
 # Install dependencies only when needed
