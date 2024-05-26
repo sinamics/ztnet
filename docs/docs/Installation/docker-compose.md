@@ -13,6 +13,10 @@ Your system should meet the following minimum requirements:
 - **Memory**: 1GB of RAM
 - **CPU**: 1 Core
 
+<center>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/itzkpfBC58w?si=nYEKfTajRoKX4UWn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</center>
+
 # Install Docker
 Docker is a containerization platform that allows you to quickly build, test, and deploy applications as portable, self-sufficient containers that can virtually run everywhere.
 
@@ -37,6 +41,7 @@ Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of y
 - If your server's IP address is 123.456.78.90, set NEXTAUTH_URL to http://123.456.78.90:3000.
 - If you have a domain name, use it in place of the IP address.
 :::
+
 
 ```yml title="Create a docker-compose.yml file and populate it as follows:"
 services:
