@@ -102,8 +102,11 @@ services:
 
   ############################################################################
   #                                                                          #
-  # Uncomment the following section to enable HTTPS reverse proxy with Caddy #
-  # Replace <YOUR-PUBLIC-HOST-NAME> with your actual public domain name      #
+  # Uncomment the section below to enable HTTPS reverse proxy with Caddy.    #
+  #                                                                          #
+  # Steps:                                                                   #
+  # 1. Replace <YOUR-PUBLIC-HOST-NAME> with your actual public domain name.  #
+  # 2. Uncomment the caddy_data volume definition in the volumes section.    #
   #                                                                          #
   ############################################################################
 
