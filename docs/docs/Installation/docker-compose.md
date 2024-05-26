@@ -39,7 +39,6 @@ Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of y
 :::
 
 ```yml title="Create a docker-compose.yml file and populate it as follows:"
-version: "3.1"
 services:
   postgres:
     image: postgres:15.2-alpine
