@@ -99,9 +99,38 @@ services:
     depends_on:
       - postgres
       - zerotier
+
+  ############################################################################
+  #                                                                          #
+  # Uncomment the section below to enable HTTPS reverse proxy with Caddy.    #
+  #                                                                          #
+  # Steps:                                                                   #
+  # 1. Replace <YOUR-PUBLIC-HOST-NAME> with your actual public domain name.  #
+  # 2. Uncomment the caddy_data volume definition in the volumes section.    #
+  #                                                                          #
+  ############################################################################
+
+  # https-proxy:
+  #   image: caddy:latest
+  #   container_name: ztnet-https-proxy
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - ztnet
+  #   command: caddy reverse-proxy --from <YOUR-PUBLIC-HOST-NAME> --to ztnet:3000
+  #   volumes:
+  #     - caddy_data:/data
+  #   networks:
+  #     - app-network
+  #   links:
+  #     - ztnet
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+
 volumes:
   zerotier:
   postgres-data:
+  # caddy_data:
 
 networks:
   app-network:
