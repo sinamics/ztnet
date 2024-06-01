@@ -1038,7 +1038,7 @@ Description=ZTnet Service
 After=network.target
 
 [Service]
-EnvironmentFile="$TARGET_DIR/.env"
+EnvironmentFile=$TARGET_DIR/.env
 ExecStart=/usr/bin/node "$TARGET_DIR/server.js"
 Restart=always
 
