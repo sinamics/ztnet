@@ -192,17 +192,24 @@ export const networkRouter = createTRPCRouter({
 				name: string;
 			}
 
-			const duplicateRoutes: DuplicateRoutes[] = await ctx.prisma.$queryRaw`
-				SELECT "authorId", "routes", "name", "nwid"
-				FROM "network"
-				WHERE "authorId" = ${ctx.session.user.id}
-					AND EXISTS (
-						SELECT 1
-						FROM jsonb_array_elements("routes") as route
-						WHERE route->>'target' IN (${Prisma.join(targetIPs)})
-					)
-					AND "nwid" != ${input.nwid};
-			`;
+			// check if there are any other networks with the same routes.
+			let duplicateRoutes: DuplicateRoutes[] = [];
+			if (targetIPs.length > 0) {
+				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
+							SELECT "authorId", "routes", "name", "nwid"
+							FROM "network"
+							WHERE "authorId" = ${ctx.session.user.id}
+									AND EXISTS (
+											SELECT 1
+											FROM jsonb_array_elements("routes") as route
+											WHERE route->>'target' IN (${Prisma.join(targetIPs)})
+									)
+									AND "nwid" != ${input.nwid};
+					`;
+			} else {
+				// Handle the case when targetIPs is empty
+				duplicateRoutes = [];
+			}
 
 			// Extract duplicated IPs
 			const duplicatedIPs = duplicateRoutes.flatMap((network) =>
