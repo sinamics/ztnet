@@ -13,7 +13,7 @@ import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
-import useUpdateVhAndHeaderHeight from "~/hooks/useUpdateVhAndHeaderHeight";
+import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 
 type TUser = {
 	user: User;
@@ -56,7 +56,7 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
-	const headerRef = useUpdateVhAndHeaderHeight();
+	const headerRef = useDynamicViewportHeight();
 
 	return (
 		<div className="outer-content">
@@ -82,7 +82,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	// if not session.user redirect to login
 	const sidebarOpen = useSidebarStore((state) => state.open);
 	const openChats = useAsideChatStore((state) => state.openChats);
-	const headerRef = useUpdateVhAndHeaderHeight();
+	const headerRef = useDynamicViewportHeight();
 
 	const router = useRouter();
 	const orgId = router.query.orgid as string;

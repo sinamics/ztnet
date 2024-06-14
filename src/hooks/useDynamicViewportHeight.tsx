@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useRef } from "react";
 
-const useUpdateVhAndHeaderHeight = () => {
+const useDynamicViewportHeight = () => {
 	const headerRef = useRef<HTMLDivElement>(null);
 
 	const updateVhAndHeaderHeight = useCallback(() => {
@@ -19,4 +19,4 @@ const useUpdateVhAndHeaderHeight = () => {
 	return headerRef;
 };
 
-export default useUpdateVhAndHeaderHeight;
+export default useDynamicViewportHeight;
