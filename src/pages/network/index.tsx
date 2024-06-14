@@ -15,6 +15,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import Link from "next/link";
 import { User } from "@prisma/client";
+import { useRouter } from "next/router";
 
 type OrganizationId = {
 	id: string;
@@ -29,6 +30,7 @@ const title = `${globalSiteTitle} - Local Controller`;
 const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
+	const router = useRouter();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -56,7 +58,17 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	});
 
 	const addNewNetwork = () => {
-		createNetwork({ central: false }, { onSuccess: () => void refetch() });
+		createNetwork(
+			{ central: false },
+			{
+				onSuccess: (createdNetwork) => {
+					if (createdNetwork?.id) {
+						return void router.push(`/network/${createdNetwork.id}`);
+					}
+					void refetch();
+				},
+			},
+		);
 	};
 
 	if (isLoading) {
