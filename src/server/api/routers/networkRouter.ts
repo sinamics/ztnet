@@ -1121,7 +1121,7 @@ export const networkRouter = createTRPCRouter({
 		)
 		.mutation(async (props) => {
 			// abstracted due to pages/api/v1/network/index.ts
-			await networkProvisioningFactory(props);
+			return await networkProvisioningFactory(props);
 		}),
 	setFlowRule: protectedProcedure
 		.input(
