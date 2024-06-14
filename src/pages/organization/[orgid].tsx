@@ -55,10 +55,14 @@ const OrganizationById = ({ user, orgIds }) => {
 	const { data: orgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,
 	});
-
 	const { mutate: createNetwork } = api.org.createOrgNetwork.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthOrg] }),
+		onSuccess: (createdNetwork) => {
+			if (createdNetwork?.id) {
+				return void push(`/organization/${organizationId}/${createdNetwork.id}`);
+			}
+			void handleApiSuccess({ actions: [refecthOrg] });
+		},
 	});
 
 	useEffect(() => {

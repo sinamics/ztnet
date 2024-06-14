@@ -8,6 +8,7 @@ import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import { useRouter } from "next/router";
 
 const title = `${globalSiteTitle} - Zerotier Central`;
 
@@ -30,6 +31,7 @@ interface IProps {
 const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
+	const router = useRouter();
 	const {
 		data: centralNetworks,
 		isLoading,
@@ -42,7 +44,17 @@ const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 
 	const { mutate: createNetwork } = api.network.createNetwork.useMutation();
 	const addNewNetwork = () => {
-		createNetwork({ central: true }, { onSuccess: () => void refetch() });
+		createNetwork(
+			{ central: true },
+			{
+				onSuccess: (createdNetwork) => {
+					if (createdNetwork?.nwid) {
+						return void router.push(`/central/${createdNetwork.nwid}`);
+					}
+					void refetch();
+				},
+			},
+		);
 	};
 
 	if (isLoading) {
