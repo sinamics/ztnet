@@ -16,6 +16,7 @@ import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
 import { Inter } from "next/font/google";
 import { useFontSizeStore } from "~/utils/store";
+import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -77,6 +78,10 @@ const App: AppType<{ session: Session | null }> = ({
 			document.documentElement.style.setProperty("--vh", `${vh}px`);
 		});
 	}, []);
+
+	// Update viewport height on font size change
+	useDynamicViewportHeight([fontSize]);
+
 	const getLayout = Component.getLayout ?? ((page) => page);
 
 	if (!isClient) {
