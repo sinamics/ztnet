@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import { useHandleResize } from "~/hooks/useHandleResize";
 import { supportedLocales } from "~/locales/lang";
 import { Inter } from "next/font/google";
+import { useFontSizeStore } from "~/utils/store";
+import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,12 +28,20 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout;
 };
 
+const fontSizeOptions = {
+	Small: "text-[0.75rem]",
+	Medium: "text-[1rem]",
+	Large: "text-[1.25rem]",
+	"Extra Large": "text-[1.5rem]",
+};
+
 const App: AppType<{ session: Session | null }> = ({
 	Component,
 	pageProps: { session, messages, ...pageProps },
 }: AppPropsWithLayout) => {
 	const { asPath, locale, push } = useRouter();
 	const [isClient, setIsClient] = useState(false);
+	const { fontSize } = useFontSizeStore();
 
 	useHandleResize();
 
@@ -39,17 +49,11 @@ const App: AppType<{ session: Session | null }> = ({
 	useEffect(() => {
 		setIsClient(true);
 	}, []);
-	// font size
+
+	// Apply font size from store
 	useEffect(() => {
-		const savedFontSize = localStorage.getItem("appFontSize");
-		const fontSizeOptions = {
-			Small: "text-xs",
-			Medium: "text-base",
-			Large: "text-lg",
-			"Extra Large": "text-xl",
-		};
-		document.documentElement.className = fontSizeOptions[savedFontSize] || "text-base";
-	}, []);
+		document.documentElement.className = fontSizeOptions[fontSize] || "text-[1rem]";
+	}, [fontSize]);
 
 	useEffect(() => {
 		// On component initialization, retrieve the preferred language from local storage
@@ -74,6 +78,10 @@ const App: AppType<{ session: Session | null }> = ({
 			document.documentElement.style.setProperty("--vh", `${vh}px`);
 		});
 	}, []);
+
+	// Update viewport height on font size change
+	useDynamicViewportHeight([fontSize]);
+
 	const getLayout = Component.getLayout ?? ((page) => page);
 
 	if (!isClient) {

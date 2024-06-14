@@ -1,6 +1,23 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Socket, io } from "socket.io-client";
+
+interface FontSizeStoreState {
+	fontSize: string;
+	setFontSize: (size: string) => void;
+}
+
+export const useFontSizeStore = create(
+	persist<FontSizeStoreState>(
+		(set) => ({
+			fontSize: "Medium",
+			setFontSize: (size: string) => set(() => ({ fontSize: size })),
+		}),
+		{
+			name: "app-font-size",
+		},
+	),
+);
 interface StoreI {
 	open: boolean;
 	toggle: (orgId?: string) => void;

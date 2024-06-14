@@ -8,11 +8,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
 import { api } from "~/utils/api";
-import { useSidebarStore, useAsideChatStore } from "~/utils/store";
+import { useSidebarStore, useAsideChatStore, useFontSizeStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
+import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 
 type TUser = {
 	user: User;
@@ -55,11 +56,13 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
+	const { fontSize } = useFontSizeStore();
+	const headerRef = useDynamicViewportHeight([fontSize]);
 
 	return (
 		<div className="outer-content">
 			<Modal />
-			<Header />
+			<Header ref={headerRef} />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
@@ -81,6 +84,9 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	const sidebarOpen = useSidebarStore((state) => state.open);
 	const openChats = useAsideChatStore((state) => state.openChats);
 
+	const { fontSize } = useFontSizeStore();
+	const headerRef = useDynamicViewportHeight([fontSize]);
+
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
 
@@ -88,11 +94,10 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 		<div className="outer-content">
 			{/* Header */}
 			<Modal />
-			<Header />
+			<Header ref={headerRef} />
 
 			{/* Main Content including Sidebar, Content, and Chat Aside */}
 			<div className="flex flex-grow relative ">
-				{/* Sidebar */}
 				<aside className={`duration-150 ${sidebarOpen ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
 				</aside>
