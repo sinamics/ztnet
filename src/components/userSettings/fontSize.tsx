@@ -1,26 +1,24 @@
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useState } from "react";
+import { useFontSizeStore } from "~/utils/store";
+
+const fontSizeOptions = {
+	Small: "text-xs",
+	Medium: "text-base",
+	Large: "text-lg",
+};
 
 const ApplicationFontSize = () => {
 	const t = useTranslations("userSettings");
-	const [fontSize, setFontSize] = useState(() => {
-		// Get font size from local storage or default to "Medium"
-		const savedFontSize = localStorage.getItem("appFontSize");
-		return savedFontSize || "Medium";
-	});
+	const { fontSize, setFontSize } = useFontSizeStore();
+	const [localFontSize, setLocalFontSize] = useState(fontSize);
 
 	useEffect(() => {
 		// Apply the font size class to the document element
-		document.documentElement.className = fontSizeOptions[fontSize];
-		// Save the font size to local storage whenever it changes
-		localStorage.setItem("appFontSize", fontSize);
-	}, [fontSize]);
-
-	const fontSizeOptions = {
-		Small: "text-xs",
-		Medium: "text-base",
-		Large: "text-lg",
-	};
+		document.documentElement.className = fontSizeOptions[localFontSize];
+		// Save the font size to the store whenever it changes
+		setFontSize(localFontSize);
+	}, [localFontSize, setFontSize]);
 
 	return (
 		<div>
@@ -31,8 +29,8 @@ const ApplicationFontSize = () => {
 					</span>
 				</label>
 				<select
-					value={fontSize}
-					onChange={(e) => setFontSize(e.target.value)}
+					value={localFontSize}
+					onChange={(e) => setLocalFontSize(e.target.value)}
 					className="select select-bordered select-sm"
 				>
 					{Object.keys(fontSizeOptions).map((name) => (
