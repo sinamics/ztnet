@@ -26,6 +26,7 @@ chmod +x /usr/local/bin/ztmkworld
 # apply migrations to the database
 echo "Applying migrations to the database..."
 npx prisma migrate deploy
+# npm install && npm run dev
 echo "Migrations applied successfully!"
 
 while sleep 1000; do :; done
