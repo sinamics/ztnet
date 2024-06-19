@@ -18,6 +18,7 @@ type NextAuthError = {
 
 interface IProps {
 	hasOauth: boolean;
+	hasAzureAD: boolean;
 	oauthExlusiveLogin: boolean;
 }
 
@@ -31,6 +32,19 @@ const OauthLoginButton = ({ oAuthHandler, loading }) => (
 	>
 		{loading.oauth ? <span className="loading loading-spinner"></span> : null}
 		Sign in with oAuth
+	</button>
+);
+
+const AzureAdLoginButton = ({ AzureAdAuthHandler, loading }) => (
+	<button
+		type="button"
+		onClick={(e) => AzureAdAuthHandler(e)}
+		className={cn(
+			"btn btn-block btn-primary cursor-pointer rounded-full font-semibold tracking-wide shadow-lg",
+		)}
+	>
+		{loading.azuread ? <span className="loading loading-spinner"></span> : null}
+		Sign in with Azure AD
 	</button>
 );
 
@@ -53,6 +67,7 @@ const CredentialsLoginForm = ({
 	submitHandler,
 	loading,
 	hasOauth,
+	hasAzureAD,
 }) => {
 	return (
 		<>
@@ -103,14 +118,20 @@ const CredentialsLoginForm = ({
 					<div className="divider divider-error">OR</div>
 				</div>
 			) : null}
+			{hasAzureAD ? (
+				<div className="flex flex-col w-full">
+					<div className="divider divider-error">OR</div>
+				</div>
+			) : null}
 		</>
 	);
 };
 
-const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
+const LoginForm: React.FC<IProps> = ({ hasOauth, hasAzureAD, oauthExlusiveLogin}) => {
 	const router = useRouter();
 	const { error: oauthError } = router.query;
-	const [loading, setLoading] = useState({ credentials: false, oauth: false });
+	const { error: azureadError } = router.query;
+	const [loading, setLoading] = useState({ credentials: false, oauth: false, azuread: false });
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
 		password: "",
@@ -166,22 +187,47 @@ const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
 			});
 	};
 
+	const AzureAdAuthHandler = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		event.preventDefault();
+		setLoading((prev) => ({ ...prev, azuread: true }));
+
+		await signIn("azure-ad")
+			.then(async () => {
+				if (!azureadError) {
+					return await router.push("/network");
+				}
+				toast.error(`Error occured: ${azureadError}` as string, { duration: 10000 });
+				setLoading((prev) => ({ ...prev, azuread: false }));
+			})
+			.catch((_error: NextAuthError) => {
+				// Handle any errors that might occur during the signIn process
+				toast.error(`Error occured: ${azureadError}` as string);
+				setLoading((prev) => ({ ...prev, azuread: false }));
+			});
+	};
 	return (
 		<div className="z-10 flex justify-center self-center">
 			<div className="w-100 mx-auto rounded-2xl border p-12">
-				{!oauthExlusiveLogin || !hasOauth ? (
+				{(!oauthExlusiveLogin || !hasOauth) && (!oauthExlusiveLogin || !hasAzureAD) ? (
 					<CredentialsLoginForm
 						formData={formData}
 						handleChange={handleChange}
 						submitHandler={submitHandler}
 						loading={loading}
 						hasOauth={hasOauth}
+						hasAzureAD={hasAzureAD}
 					/>
 				) : null}
 
 				{hasOauth ? (
 					<div className="">
 						<OauthLoginButton oAuthHandler={oAuthHandler} loading={loading} />
+					</div>
+				) : null}
+
+				{hasAzureAD ? (
+					<div className="">
+						<AzureAdLoginButton AzureAdAuthHandler={AzureAdAuthHandler} loading={loading} />
 					</div>
 				) : null}
 				<div className="pt-5 text-center text-xs text-gray-400">

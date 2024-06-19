@@ -1,10 +1,11 @@
-import { type GetServerSidePropsContext } from "next";
+import type { GetServerSidePropsContext } from "next";
 import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import AzureADProvider from "next-auth/providers/azure-ad";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
-import { type User as IUser } from "@prisma/client";
+import type { User as IUser } from "@prisma/client";
 import { isRunningInDocker } from "~/utils/docker";
 
 /**
@@ -107,6 +108,37 @@ export const authOptions: NextAuthOptions = {
 				});
 			},
 		},
+		// {
+		// 	id: 'azure-ad',
+		// 	name: 'Azure Active Directory',
+		// 	type: 'oauth',
+		// 	version: '2.0',
+		// 	authorization: { params: { scope: "openid profile user.Read email" } },
+		// 	accessTokenUrl: 'https://login.microsoftonline.com/2fa1f708-9c18-4add-88b7-d761eac5c493/oauth2/v2.0/token',
+		// 	authorizationUrl: 'https://login.microsoftonline.com/2fa1f708-9c18-4add-88b7-d761eac5c493/oauth2/v2.0/authorize',
+		// 	clientId: process.env.AZURE_AD_CLIENT_ID,
+		// 	clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+		// },		
+		AzureADProvider({	
+			// id: "azure-ad",
+			// name: "Active Directory Azure AD ",
+			// checks: ["state", "pkce"],
+			// authorization: { params: { scope: "openid profile user.Read email" } },
+			allowDangerousEmailAccountLinking:
+				Boolean(process.env.ALLOW_DANGEROUS_EMAIL_LINKING) || true,
+			clientId: process.env.AZURE_AD_CLIENT_ID,
+			clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
+			tenantId: process.env.AZURE_AD_TENANT_ID,
+			profile(profile) {
+				return Promise.resolve({
+					id: profile.sub || profile.id.toString(), // Handle ID based on provider
+					name: profile.name || profile.login || profile.username,
+					email: profile.email,
+					image: profile.picture || profile.avatar_url || profile.image_url || profile.image,
+					role: "USER",
+				});
+			},
+		}),
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. "Sign in with...")
 			name: "Credentials",
@@ -167,13 +199,17 @@ export const authOptions: NextAuthOptions = {
 	],
 	session: {
 		strategy: "jwt",
-		maxAge: parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE, 10) || 30 * 24 * 60 * 60, // 30 Days
+		maxAge: Number.parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE, 10) || 30 * 24 * 60 * 60, // 30 Days
 	},
 	callbacks: {
 		/**
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
-		async signIn({ user, account }) {
+		async signIn({ user, account}) {
+			// const email = user.email
+      // const provider = account.provider
+      // const providerAccountId = account.id
+
 			if (account.provider === "credentials") {
 				// Check if the user already exists
 				const existingUser = await prisma.user.findUnique({
@@ -226,6 +262,80 @@ export const authOptions: NextAuthOptions = {
 						data: {
 							name: user.name,
 							email: user.email,
+							lastLogin: new Date().toISOString(),
+							role: userCount === 0 ? "ADMIN" : "USER",
+							image: user.image,
+							userGroupId: defaultUserGroup?.id,
+							options: {
+								create: {
+									localControllerUrl: isRunningInDocker()
+										? "http://zerotier:9993"
+										: "http://127.0.0.1:9993",
+								},
+							},
+						},
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							role: true,
+						},
+					});
+				}
+				return true;
+			}
+			if (account.provider === "azure-ad") {
+				// Check if the user already exists
+				const existingUser = await prisma.user.findUnique({
+					where: {
+						email: user.email,
+					},
+					include: {
+						accounts: true
+					}
+				});
+
+				if (existingUser) {
+					// User exists, update last login or other fields as necessary
+					// const existingAccount = existingUser.accounts.find(
+					// 	acc => acc.provider === provider && acc.providerAccountId === providerAccountId
+					// )
+					// if (!existingAccount) {
+					// 	await prisma.account.create({
+					// 		data: {
+					// 			userId: existingUser.id,
+					// 			// provider: provider,
+					// 			// providerAccountId: providerAccountId,
+					// 		}
+					// 	})
+					// }
+					await prisma.user.update({
+						where: {
+							id: existingUser.id,
+						},
+						data: {
+							lastLogin: new Date().toISOString(),
+						},
+					});
+				} else {
+					// User does not exist, create new user
+					const userCount = await prisma.user.count();
+					const defaultUserGroup = await prisma.userGroup.findFirst({
+						where: {
+							isDefault: true,
+						},
+					});
+
+					await prisma.user.create({
+						data: {
+							name: user.name,
+							email: user.email,
+							// accounts: {
+							// 	create: {
+							// 		provider: provider,
+							// 		providerAccountId: providerAccountId,
+							// 	}
+							// },
 							lastLogin: new Date().toISOString(),
 							role: userCount === 0 ? "ADMIN" : "USER",
 							image: user.image,

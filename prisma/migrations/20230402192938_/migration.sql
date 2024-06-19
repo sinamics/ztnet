@@ -59,6 +59,8 @@ CREATE TABLE "Account" (
     "refresh_token" TEXT,
     "access_token" TEXT,
     "expires_at" INTEGER,
+    "expires_in" INTEGER,
+    "ext_expires_in" INTEGER,
     "token_type" TEXT,
     "scope" TEXT,
     "id_token" TEXT,
