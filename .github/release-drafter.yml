@@ -4,9 +4,9 @@ categories:
   - title: 'ztnet'
     labels:
       - 'ztnet'
-  - title: 'docs'
+  - title: 'documentation'
     labels:
-      - 'docs'
+      - 'documentation'
   - title: 'installer'
     labels:
       - 'installer'
@@ -19,7 +19,7 @@ categories:
       - 'fix'
       - 'bugfix'
       - 'bug'
-change-template: '- [$CATEGORY] $TITLE (#$NUMBER)'
+change-template: '- $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 exclude-contributors:
   - sinamics
