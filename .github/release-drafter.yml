@@ -1,13 +1,13 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 categories:
-  - title: 'ztnet'
+  - title: '🔧 ztnet'
     labels:
       - 'ztnet'
-  - title: 'documentation'
+  - title: '📝 Documentation'
     labels:
       - 'documentation'
-  - title: 'installer'
+  - title: '📦 Installer'
     labels:
       - 'installer'
   - title: '🚀 Features'
@@ -36,7 +36,7 @@ version-resolver:
   default: patch
 
 template: |
-  ## 📝 Release Notes
+  ## Release Notes
 
   $CHANGES
 
