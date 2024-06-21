@@ -1,0 +1,6 @@
+ztnet:
+  - '/'
+docs:
+  - 'docs/**'
+installer:
+  - 'install.ztnet/**'

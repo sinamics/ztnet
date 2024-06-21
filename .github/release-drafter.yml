@@ -1,6 +1,15 @@
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
 categories:
+  - title: 'ztnet'
+    labels:
+      - 'ztnet'
+  - title: 'docs'
+    labels:
+      - 'docs'
+  - title: 'installer'
+    labels:
+      - 'installer'
   - title: '🚀 Features'
     labels:
       - 'feature'
@@ -10,7 +19,7 @@ categories:
       - 'fix'
       - 'bugfix'
       - 'bug'
-change-template: '- $TITLE (#$NUMBER)'
+change-template: '- [$CATEGORY] $TITLE (#$NUMBER)'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 exclude-contributors:
   - sinamics
