@@ -1,6 +1,5 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import Image from "next/image";
 import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
@@ -36,11 +35,11 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 				<div className="header-content flex flex-row items-center">
 					<div className="hidden md:inline-flex">
 						<Link href="/network" className="inline-flex flex-row items-center gap-2">
-							<Image
+							<img
 								style={{ width: 25, height: 25 }}
 								alt="ztnet logo"
 								title="ztnet logo"
-								src={ZtnetLogo}
+								src={ZtnetLogo.src}
 							/>
 							<span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent">
 								{globalSiteTitle}
