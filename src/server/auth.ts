@@ -107,23 +107,8 @@ export const authOptions: NextAuthOptions = {
 					role: "USER",
 				});
 			},
-		},
-		// {
-		// 	id: 'azure-ad',
-		// 	name: 'Azure Active Directory',
-		// 	type: 'oauth',
-		// 	version: '2.0',
-		// 	authorization: { params: { scope: "openid profile user.Read email" } },
-		// 	accessTokenUrl: 'https://login.microsoftonline.com/{tenantID}/oauth2/v2.0/token',
-		// 	authorizationUrl: 'https://login.microsoftonline.com/{tenantID}/oauth2/v2.0/authorize',
-		// 	clientId: process.env.AZURE_AD_CLIENT_ID,
-		// 	clientSecret: process.env.AZURE_AD_CLIENT_SECRET,
-		// },		
+		},	
 		AzureADProvider({	
-			// id: "azure-ad",
-			// name: "Active Directory Azure AD ",
-			// checks: ["state", "pkce"],
-			// authorization: { params: { scope: "openid profile user.Read email" } },
 			allowDangerousEmailAccountLinking:
 				Boolean(process.env.ALLOW_DANGEROUS_EMAIL_LINKING) || true,
 			clientId: process.env.AZURE_AD_CLIENT_ID,
@@ -206,10 +191,6 @@ export const authOptions: NextAuthOptions = {
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
 		async signIn({ user, account}) {
-			// const email = user.email
-      // const provider = account.provider
-      // const providerAccountId = account.id
-
 			if (account.provider === "credentials") {
 				// Check if the user already exists
 				const existingUser = await prisma.user.findUnique({
@@ -297,18 +278,6 @@ export const authOptions: NextAuthOptions = {
 
 				if (existingUser) {
 					// User exists, update last login or other fields as necessary
-					// const existingAccount = existingUser.accounts.find(
-					// 	acc => acc.provider === provider && acc.providerAccountId === providerAccountId
-					// )
-					// if (!existingAccount) {
-					// 	await prisma.account.create({
-					// 		data: {
-					// 			userId: existingUser.id,
-					// 			// provider: provider,
-					// 			// providerAccountId: providerAccountId,
-					// 		}
-					// 	})
-					// }
 					await prisma.user.update({
 						where: {
 							id: existingUser.id,
@@ -330,12 +299,6 @@ export const authOptions: NextAuthOptions = {
 						data: {
 							name: user.name,
 							email: user.email,
-							// accounts: {
-							// 	create: {
-							// 		provider: provider,
-							// 		providerAccountId: providerAccountId,
-							// 	}
-							// },
 							lastLogin: new Date().toISOString(),
 							role: userCount === 0 ? "ADMIN" : "USER",
 							image: user.image,
