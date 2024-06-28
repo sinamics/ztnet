@@ -11,21 +11,23 @@ export const sendWebhook = async <T extends HookBase>(data: T): Promise<void> =>
 
 	for (const webhook of webhookData) {
 		if ((webhook.eventTypes as string[]).includes(data.hookType)) {
-			try {
-				const response = await fetch(webhook.url, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(data),
-				});
+			(async () => {
+				try {
+					const response = await fetch(webhook.url, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(data),
+					});
 
-				if (!response.ok) {
-					throw new Error(
-						`Failed to send webhook: ${response.status} ${response.statusText}`,
-					);
+					if (!response.ok) {
+						console.error(
+							`Failed to send webhook: ${response.status} ${response.statusText}`,
+						);
+					}
+				} catch (error) {
+					console.error(`Error sending webhooks: ${error.message}`);
 				}
-			} catch (error) {
-				throw new Error(`Error sending webhook: ${error.message}`);
-			}
+			})();
 		}
 	}
 };
