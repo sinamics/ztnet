@@ -1,6 +1,18 @@
+# Add 'ztnet' label to any file changes within 'root' EXCEPT for the docs and install sub-folder
 ztnet:
-  - '/'
+- all:
+  - changed-files:
+    - any-glob-to-any-file: '**'
+    - all-globs-to-all-files: ['!docs/*', '!install.ztnet/*']
+
+# Add 'Documentation' label to any file changes within 'docs' folders
 documentation:
-  - 'docs/**'
+- changed-files:
+  - any-glob-to-any-file:
+    - docs/**
+
+# Add 'installer' label to any file changes within 'install.ztnet' folders
 installer:
-  - 'install.ztnet/**'
+- changed-files:
+  - any-glob-to-any-file:
+    - install.ztnet/**
