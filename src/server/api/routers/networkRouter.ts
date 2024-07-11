@@ -10,7 +10,7 @@ import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { Prisma, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
@@ -193,23 +193,23 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// check if there are any other networks with the same routes.
-			let duplicateRoutes: DuplicateRoutes[] = [];
-			if (targetIPs.length > 0) {
-				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
-							SELECT "authorId", "routes", "name", "nwid"
-							FROM "network"
-							WHERE "authorId" = ${ctx.session.user.id}
-									AND EXISTS (
-											SELECT 1
-											FROM jsonb_array_elements("routes") as route
-											WHERE route->>'target' IN (${Prisma.join(targetIPs)})
-									)
-									AND "nwid" != ${input.nwid};
-					`;
-			} else {
-				// Handle the case when targetIPs is empty
-				duplicateRoutes = [];
-			}
+			const duplicateRoutes: DuplicateRoutes[] = [];
+			// if (targetIPs.length > 0) {
+			// 	duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
+			// 				SELECT "authorId", "routes", "name", "nwid"
+			// 				FROM "network"
+			// 				WHERE "authorId" = ${ctx.session.user.id}
+			// 						AND EXISTS (
+			// 								SELECT 1
+			// 								FROM jsonb_array_elements("routes") as route
+			// 								WHERE route->>'target' IN (${Prisma.join(targetIPs)})
+			// 						)
+			// 						AND "nwid" != ${input.nwid};
+			// 		`;
+			// } else {
+			// 	// Handle the case when targetIPs is empty
+			// 	duplicateRoutes = [];
+			// }
 
 			// Extract duplicated IPs
 			const duplicatedIPs = duplicateRoutes.flatMap((network) =>
