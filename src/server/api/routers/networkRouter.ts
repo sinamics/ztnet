@@ -75,6 +75,7 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			console.time("Total time for loading Networks Details");
 			if (input.central) {
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
@@ -223,6 +224,8 @@ export const networkRouter = createTRPCRouter({
 
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
+
+			console.timeEnd("Total time for loading Networks Details");
 			// Construct the final response object
 			return {
 				network: {
