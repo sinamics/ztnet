@@ -10,7 +10,7 @@ import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { Role } from "@prisma/client";
+import { Prisma, Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
@@ -79,7 +79,7 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
-
+			console.time("Loading Network from Database");
 			// First, retrieve the network with organization details
 			let networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
@@ -93,8 +93,9 @@ export const networkRouter = createTRPCRouter({
 			if (!networkFromDatabase) {
 				return throwError("Network not found!");
 			}
+			console.timeEnd("Loading Network from Database");
 
-			// Check if the user is the author of the network or part of the associated organization
+			console.time("Fetch Organization Details"); // Check if the user is the author of the network or part of the associated organization
 			const isAuthor = networkFromDatabase.authorId === ctx.session.user.id;
 			const isMemberOfOrganization =
 				networkFromDatabase.organizationId &&
@@ -110,7 +111,9 @@ export const networkRouter = createTRPCRouter({
 			if (!isAuthor && !isMemberOfOrganization) {
 				return throwError("You do not have access to this network!");
 			}
+			console.timeEnd("Fetch Organization Details");
 
+			console.time("Loading Network Details from Controller");
 			/**
 			 * Response from the ztController.local_network_detail method.
 			 * @type {Promise<any>}
@@ -120,9 +123,9 @@ export const networkRouter = createTRPCRouter({
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
-
+			console.timeEnd("Loading Network Details from Controller");
 			if (!ztControllerResponse) return throwError("Failed to get network details!");
-
+			console.time("Syncing Member Peers and Status");
 			/**
 			 * Syncs member peers and status.
 			 */
@@ -131,7 +134,9 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				ztControllerResponse.members,
 			);
+			console.timeEnd("Syncing Member Peers and Status");
 
+			console.time("Fetch Zombie Members");
 			/**
 			 * Fetches zombie members.
 			 */
@@ -139,6 +144,7 @@ export const networkRouter = createTRPCRouter({
 				input.nwid,
 				ztControllerResponse.members,
 			);
+			console.timeEnd("Fetch Zombie Members");
 
 			// Generate CIDR options for IP configuration
 			const { cidrOptions } = IPv4gen(null, []);
@@ -152,6 +158,7 @@ export const networkRouter = createTRPCRouter({
 				mergedMembersMap.set(member.id, member);
 			}
 
+			console.time("Fetch Members from Database");
 			// Fetch members from the database for a given network ID where the members are not deleted
 			const databaseMembers = await ctx.prisma.network_members.findMany({
 				where: {
@@ -159,14 +166,14 @@ export const networkRouter = createTRPCRouter({
 					deleted: false,
 				},
 			});
-
+			console.timeEnd("Fetch Members from Database");
 			// Process databaseMembers
 			for (const member of databaseMembers) {
 				if (!mergedMembersMap.has(member.id)) {
 					mergedMembersMap.set(member.id, member);
 				}
 			}
-
+			console.time("Update Network Routes in Database");
 			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
 			if (
 				JSON.stringify(networkFromDatabase.routes) !==
@@ -186,31 +193,32 @@ export const networkRouter = createTRPCRouter({
 			}
 			// check if there is other network using same routes and return a notification
 			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
-
+			console.timeEnd("Update Network Routes in Database");
 			interface DuplicateRoutes {
 				authorId: string;
 				routes: RoutesEntity[];
 				name: string;
 			}
 
+			console.time("Check for Duplicate Routes");
 			// check if there are any other networks with the same routes.
-			const duplicateRoutes: DuplicateRoutes[] = [];
-			// if (targetIPs.length > 0) {
-			// 	duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
-			// 				SELECT "authorId", "routes", "name", "nwid"
-			// 				FROM "network"
-			// 				WHERE "authorId" = ${ctx.session.user.id}
-			// 						AND EXISTS (
-			// 								SELECT 1
-			// 								FROM jsonb_array_elements("routes") as route
-			// 								WHERE route->>'target' IN (${Prisma.join(targetIPs)})
-			// 						)
-			// 						AND "nwid" != ${input.nwid};
-			// 		`;
-			// } else {
-			// 	// Handle the case when targetIPs is empty
-			// 	duplicateRoutes = [];
-			// }
+			let duplicateRoutes: DuplicateRoutes[] = [];
+			if (targetIPs.length > 0) {
+				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
+							SELECT "authorId", "routes", "name", "nwid"
+							FROM "network"
+							WHERE "authorId" = ${ctx.session.user.id}
+									AND EXISTS (
+											SELECT 1
+											FROM jsonb_array_elements("routes") as route
+											WHERE route->>'target' IN (${Prisma.join(targetIPs)})
+									)
+									AND "nwid" != ${input.nwid};
+					`;
+			} else {
+				// Handle the case when targetIPs is empty
+				duplicateRoutes = [];
+			}
 
 			// Extract duplicated IPs
 			const duplicatedIPs = duplicateRoutes.flatMap((network) =>
@@ -218,6 +226,7 @@ export const networkRouter = createTRPCRouter({
 					.filter((route) => targetIPs.includes(route.target))
 					.map((route) => route.target),
 			);
+			console.timeEnd("Check for Duplicate Routes");
 
 			// Remove duplicates from the list of duplicated IPs
 			const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
