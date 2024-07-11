@@ -121,6 +121,11 @@ export const authOptions: NextAuthOptions = {
 					placeholder: "mail@example.com",
 				},
 				password: { label: "Password", type: "password" },
+				totpCode: {
+					label: "Two-factor Code",
+					type: "input",
+					placeholder: "Code from authenticator app",
+				},
 			},
 			async authorize(_credentials, _req) {
 				// if (!_credentials?.email) return;
@@ -148,6 +153,36 @@ export const authOptions: NextAuthOptions = {
 					);
 				}
 
+				if (user.twoFactorEnabled) {
+					if (!_credentials.totpCode) {
+						throw new Error("ErrorCode.SecondFactorRequired");
+					}
+
+					if (!user.twoFactorSecret) {
+						console.error(
+							`Two factor is enabled for user ${user.email} but they have no secret`,
+						);
+						throw new Error("ErrorCode.InternalServerError");
+					}
+
+					if (!process.env.ENCRYPTION_KEY) {
+						console.error(
+							`"Missing encryption key; cannot proceed with two factor login."`,
+						);
+						throw new Error("ErrorCode.InternalServerError");
+					}
+
+					// const secret = symmetricDecrypt(user.twoFactorSecret!, process.env.ENCRYPTION_KEY!);
+					// if (secret.length !== 32) {
+					//   console.error(`Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`);
+					//   throw new Error("ErrorCode.InternalServerError");
+					// }
+
+					// const isValidToken = authenticator.check(credentials.totpCode, secret);
+					// if (!isValidToken) {
+					//   throw new Error(ErrorCode.IncorrectTwoFactorCode);
+					// }
+				}
 				return {
 					...user,
 					hash: null,

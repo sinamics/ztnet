@@ -11,10 +11,13 @@ import Link from "next/link";
 import GenerateApiToken from "~/components/userSettings/apiToken";
 import { languageNames, supportedLocales } from "~/locales/lang";
 import ApplicationFontSize from "~/components/userSettings/fontSize";
+import TOTPSetup from "~/components/auth/totpSetup";
+import { useModalStore } from "~/utils/store";
 
 const defaultLocale = "en";
 
 const Account = () => {
+	const { callModal } = useModalStore((state) => state);
 	const { asPath, locale, locales, push } = useRouter();
 	const t = useTranslations("userSettings");
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
@@ -154,6 +157,26 @@ const Account = () => {
 							<p className="font-medium">{t("account.accountSettings.role")}</p>
 							<p className="text-gray-500">{session?.user?.role}</p>
 						</div>
+					</div>
+					{/* TOTP  */}
+					<div>
+						<button
+							// onClick={() => {
+							// 	//  run modal to enable 2fa
+							// 	<TOTPSetup />
+							// }}
+							className="btn btn-primary btn-sm"
+							onClick={() =>
+								callModal({
+									// title: "TOTP",
+									// description:
+									// 	"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+									content: <TOTPSetup />,
+								})
+							}
+						>
+							Two Factor Authentication
+						</button>
 					</div>
 				</div>
 			</div>
