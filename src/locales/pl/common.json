@@ -61,7 +61,7 @@
 				"directLan": "Nawiązano bezpośrednie połączenie LAN",
 				"directWan": "Nawiązano bezpośrednie połączenie WAN",
 				"direct": "BEZPOŚREDNIO{version}",
-				"offline": "OFFLINE "
+				"offline": "OFFLINE"
 			},
 			"status": "Status"
 		},
