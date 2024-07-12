@@ -1,15 +1,42 @@
 import { UserContext } from "~/types/ctx";
 import { MemberEntity, Peers } from "~/types/local/member";
-import * as ztController from "~/utils/ztApi";
 import { determineConnectionStatus } from "../utils/memberUtils";
+import * as ztController from "~/utils/ztApi";
 import { prisma } from "~/server/db";
 import { sendWebhook } from "~/utils/webhook";
 import { HookType, MemberJoined } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { network_members } from "@prisma/client";
-import pLimit from "p-limit";
 
-const limit = pLimit(5);
+// create a dummy array of 30 member
+// export const dummyMembers = Array.from({ length: 10 }, (_, i) => ({
+// 	activeBridge: false,
+// 	address: "efcc1b0947",
+// 	authenticationExpiryTime: 0,
+// 	authorized: true,
+// 	capabilities: [],
+// 	creationTime: 1719608117618,
+// 	id: "efcc1b0947",
+// 	identity:
+// 		"efcc1b0947:0:0152e4bbdf517c0218ff096db3195f65b7f66cb544d6506cb13fe01f9851212652f2cabe6133bd0e83e0c2930c7db23a2e14574782256e94e831711d04c48979",
+// 	ipAssignments: [],
+// 	lastAuthorizedCredential: null,
+// 	lastAuthorizedCredentialType: "api",
+// 	lastAuthorizedTime: 1720759395643,
+// 	lastDeauthorizedTime: 0,
+// 	noAutoAssignIps: false,
+// 	nwid: "fc6b977f183f6a65",
+// 	objtype: "member",
+// 	remoteTraceLevel: 0,
+// 	remoteTraceTarget: null,
+// 	revision: 2,
+// 	ssoExempt: false,
+// 	tags: [],
+// 	vMajor: -1,
+// 	vMinor: -1,
+// 	vProto: -1,
+// 	vRev: -1,
+// }));
 
 /**
  * syncMemberPeersAndStatus
@@ -24,25 +51,23 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
-
-	// Create a list of limited peer requests to control the number of concurrent requests
-	const limitedPeerRequests = ztMembers.map((ztMember) =>
-		limit(() => ztController.peer(ctx, ztMember.address)),
-	);
+	// get peers
+	const controllerPeers = await ztController.peers(ctx);
 
 	const updatedMembers = await Promise.all(
-		ztMembers.map(async (ztMember, idx) => {
+		ztMembers.map(async (ztMember) => {
 			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
 			// this will make the node active in all networks it is part of if it is active in one of them.
 			// Should open a issue at ZeroTier
-			const peers = (await limitedPeerRequests[idx]) as unknown as Peers;
+			const peers = controllerPeers.filter(
+				(peer) => peer.address === ztMember.address,
+			)[0];
 
 			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			// Find the active preferred path in the peers object
 			const activePreferredPath = findActivePreferredPeerPath(peers);
-
 			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
 			// Merge the data from the database with the data from Controller
@@ -50,7 +75,7 @@ export const syncMemberPeersAndStatus = async (
 				...restOfDbMembers,
 				...ztMember,
 				physicalAddress: activePreferredPath?.address ?? physicalAddress,
-				peers,
+				peers: peers || {},
 			} as MemberEntity;
 
 			// Update the connection status
@@ -107,7 +132,7 @@ export const syncMemberPeersAndStatus = async (
  * @param peers - The peers object containing paths.
  * @returns The active preferred path, or undefined if not found.
  */
-const findActivePreferredPeerPath = (peers: Peers) => {
+const findActivePreferredPeerPath = (peers: Peers | null) => {
 	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
 		return null;
 	}

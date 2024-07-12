@@ -67,22 +67,16 @@ interface CentralMemberConfig {
 }
 
 export interface Peers {
-	active: boolean;
 	address: string;
 	isBonded: boolean;
 	latency: number;
-	lastReceive: number;
-	lastSend: number;
-	localSocket?: number;
 	paths?: Paths[];
 	role: string;
 	version: string;
-	physicalAddress: string;
+	physicalAddress?: string;
 	versionMajor: number;
 	versionMinor: number;
 	versionRev: number;
-	preferred: boolean;
-	trustedPathId: number;
 }
 
 export interface Paths {
