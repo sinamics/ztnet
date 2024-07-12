@@ -245,6 +245,7 @@ export const networkRouter = createTRPCRouter({
 				};
 			} catch (error) {
 				console.error(error);
+				return throwError("Failed to get network details! See logs for more details.");
 			}
 		}),
 	deleteNetwork: protectedProcedure
