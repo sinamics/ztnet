@@ -7,6 +7,9 @@ import { sendWebhook } from "~/utils/webhook";
 import { HookType, MemberJoined } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { network_members } from "@prisma/client";
+import pLimit from "p-limit";
+
+const limit = pLimit(5);
 
 /**
  * syncMemberPeersAndStatus
@@ -21,12 +24,18 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
+
+	// Create a list of limited peer requests to control the number of concurrent requests
+	const limitedPeerRequests = ztMembers.map((ztMember) =>
+		limit(() => ztController.peer(ctx, ztMember.address)),
+	);
+
 	const updatedMembers = await Promise.all(
-		ztMembers.map(async (ztMember) => {
+		ztMembers.map(async (ztMember, idx) => {
 			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
 			// this will make the node active in all networks it is part of if it is active in one of them.
 			// Should open a issue at ZeroTier
-			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
+			const peers = (await limitedPeerRequests[idx]) as unknown as Peers;
 
 			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
