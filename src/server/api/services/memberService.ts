@@ -1,7 +1,7 @@
 import { UserContext } from "~/types/ctx";
 import { MemberEntity, Peers } from "~/types/local/member";
-import * as ztController from "~/utils/ztApi";
 import { determineConnectionStatus } from "../utils/memberUtils";
+import * as ztController from "~/utils/ztApi";
 import { prisma } from "~/server/db";
 import { sendWebhook } from "~/utils/webhook";
 import { HookType, MemberJoined } from "~/types/webhooks";
@@ -21,19 +21,23 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
+	// get peers
+	const controllerPeers = await ztController.peers(ctx);
+
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
 			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
 			// this will make the node active in all networks it is part of if it is active in one of them.
 			// Should open a issue at ZeroTier
-			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
+			const peers = controllerPeers.filter(
+				(peer) => peer.address === ztMember.address,
+			)[0];
 
 			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			// Find the active preferred path in the peers object
 			const activePreferredPath = findActivePreferredPeerPath(peers);
-
 			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
 			// Merge the data from the database with the data from Controller
@@ -41,7 +45,7 @@ export const syncMemberPeersAndStatus = async (
 				...restOfDbMembers,
 				...ztMember,
 				physicalAddress: activePreferredPath?.address ?? physicalAddress,
-				peers,
+				peers: peers || {},
 			} as MemberEntity;
 
 			// Update the connection status
@@ -98,7 +102,7 @@ export const syncMemberPeersAndStatus = async (
  * @param peers - The peers object containing paths.
  * @returns The active preferred path, or undefined if not found.
  */
-const findActivePreferredPeerPath = (peers: Peers) => {
+const findActivePreferredPeerPath = (peers: Peers | null) => {
 	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
 		return null;
 	}

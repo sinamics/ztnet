@@ -78,7 +78,6 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
-
 			// First, retrieve the network with organization details
 			let networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
@@ -185,7 +184,6 @@ export const networkRouter = createTRPCRouter({
 			}
 			// check if there is other network using same routes and return a notification
 			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
-
 			interface DuplicateRoutes {
 				authorId: string;
 				routes: RoutesEntity[];
@@ -223,6 +221,7 @@ export const networkRouter = createTRPCRouter({
 
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
+
 			// Construct the final response object
 			return {
 				network: {
