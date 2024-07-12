@@ -61,7 +61,7 @@
 				"directLan": "Connexion LAN directe établie",
 				"directWan": "Connexion WAN directe établie",
 				"direct": "DIRECTE{version}",
-				"offline": "hors ligne "
+				"offline": "hors ligne"
 			},
 			"status": "Statut"
 		},
