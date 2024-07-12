@@ -75,7 +75,6 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			console.time("Total time for loading Networks Details");
 			try {
 				if (input.central) {
 					return await ztController.central_network_detail(
@@ -84,7 +83,6 @@ export const networkRouter = createTRPCRouter({
 						input.central,
 					);
 				}
-				console.time("Loading Network from Database");
 				// First, retrieve the network with organization details
 				let networkFromDatabase = await ctx.prisma.network.findUnique({
 					where: {
@@ -98,9 +96,8 @@ export const networkRouter = createTRPCRouter({
 				if (!networkFromDatabase) {
 					return throwError("Network not found!");
 				}
-				console.timeEnd("Loading Network from Database");
 
-				console.time("Fetch Organization Details"); // Check if the user is the author of the network or part of the associated organization
+				// Check if the user is the author of the network or part of the associated organization
 				const isAuthor = networkFromDatabase.authorId === ctx.session.user.id;
 				const isMemberOfOrganization =
 					networkFromDatabase.organizationId &&
@@ -116,9 +113,7 @@ export const networkRouter = createTRPCRouter({
 				if (!isAuthor && !isMemberOfOrganization) {
 					return throwError("You do not have access to this network!");
 				}
-				console.timeEnd("Fetch Organization Details");
 
-				console.time("Loading Network Details from Controller");
 				/**
 				 * Response from the ztController.local_network_detail method.
 				 * @type {Promise<any>}
@@ -128,9 +123,9 @@ export const networkRouter = createTRPCRouter({
 					.catch((err: APIError) => {
 						throwError(`${err.message}`);
 					});
-				console.timeEnd("Loading Network Details from Controller");
+
 				if (!ztControllerResponse) return throwError("Failed to get network details!");
-				console.time("Syncing Member Peers and Status");
+
 				/**
 				 * Syncs member peers and status.
 				 */
@@ -139,9 +134,7 @@ export const networkRouter = createTRPCRouter({
 					input.nwid,
 					ztControllerResponse.members,
 				);
-				console.timeEnd("Syncing Member Peers and Status");
 
-				console.time("Fetch Zombie Members");
 				/**
 				 * Fetches zombie members.
 				 */
@@ -149,7 +142,6 @@ export const networkRouter = createTRPCRouter({
 					input.nwid,
 					ztControllerResponse.members,
 				);
-				console.timeEnd("Fetch Zombie Members");
 
 				// Generate CIDR options for IP configuration
 				const { cidrOptions } = IPv4gen(null, []);
@@ -163,7 +155,6 @@ export const networkRouter = createTRPCRouter({
 					mergedMembersMap.set(member.id, member);
 				}
 
-				console.time("Fetch Members from Database");
 				// Fetch members from the database for a given network ID where the members are not deleted
 				const databaseMembers = await ctx.prisma.network_members.findMany({
 					where: {
@@ -171,14 +162,14 @@ export const networkRouter = createTRPCRouter({
 						deleted: false,
 					},
 				});
-				console.timeEnd("Fetch Members from Database");
+
 				// Process databaseMembers
 				for (const member of databaseMembers) {
 					if (!mergedMembersMap.has(member.id)) {
 						mergedMembersMap.set(member.id, member);
 					}
 				}
-				console.time("Update Network Routes in Database");
+
 				// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
 				if (
 					JSON.stringify(networkFromDatabase.routes) !==
@@ -200,14 +191,12 @@ export const networkRouter = createTRPCRouter({
 				const targetIPs = ztControllerResponse.network.routes.map(
 					(route) => route.target,
 				);
-				console.timeEnd("Update Network Routes in Database");
 				interface DuplicateRoutes {
 					authorId: string;
 					routes: RoutesEntity[];
 					name: string;
 				}
 
-				console.time("Check for Duplicate Routes");
 				// check if there are any other networks with the same routes.
 				let duplicateRoutes: DuplicateRoutes[] = [];
 				if (targetIPs.length > 0) {
@@ -233,7 +222,6 @@ export const networkRouter = createTRPCRouter({
 						.filter((route) => targetIPs.includes(route.target))
 						.map((route) => route.target),
 				);
-				console.timeEnd("Check for Duplicate Routes");
 
 				// Remove duplicates from the list of duplicated IPs
 				const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
@@ -241,7 +229,6 @@ export const networkRouter = createTRPCRouter({
 				// Convert the map back to an array of merged members
 				const mergedMembers = [...mergedMembersMap.values()];
 
-				console.timeEnd("Total time for loading Networks Details");
 				// Construct the final response object
 				return {
 					network: {
@@ -257,7 +244,6 @@ export const networkRouter = createTRPCRouter({
 					zombieMembers,
 				};
 			} catch (error) {
-				console.timeEnd("Total time for loading Networks Details");
 				console.error(error);
 			}
 		}),
