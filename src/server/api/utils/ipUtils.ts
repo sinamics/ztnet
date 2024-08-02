@@ -94,8 +94,8 @@ export function getNextIP(
  */
 export function isValidCIDR(cidr: string): boolean {
 	const [ip, prefix] = cidr.split("/");
-	const isIPv4 = isValidIP(ip);
-	const isIPv6 = isValidIP(ip);
+	const isIPv4 = Address4.isValid(ip);
+	const isIPv6 = Address6.isValid(ip);
 	const prefixNumber = parseInt(prefix);
 
 	if (isIPv4) {
