@@ -79,9 +79,22 @@ const UserNetworkSetting = () => {
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
-						<p className="font-medium">Rename node name globally</p>
+						<p className="font-medium">Enable global node naming</p>
 						<p className="text-sm text-gray-500">
-							When a node is renamed, the name will be updated globally in all networks.
+							When enabled, this feature will:
+							<ul className="list-disc list-inside mt-2">
+								<li>
+									Maintain a consistent name for each node across all networks you manage.
+								</li>
+								<li>
+									Update the node's name in all your networks when you rename it in one
+									network
+								</li>
+							</ul>
+							<p className="mt-2">
+								Note: This affects only the networks where you are the author. It does not
+								change node names in networks managed by others or orgainzations.
+							</p>
 						</p>
 					</div>
 					<input
