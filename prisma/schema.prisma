@@ -360,10 +360,10 @@ model LastReadMessage {
 }
 
 model OrganizationSettings {
-  id             Int          @id @default(autoincrement())
-  organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  // Add specific settings fields here
+  id                 Int          @id @default(autoincrement())
+  renameNodeGlobally Boolean?     @default(true)
+  organizationId     String       @unique
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model MembershipRequest {
@@ -380,7 +380,7 @@ model ActivityLog {
   createdAt      DateTime      @default(now())
   performedById  String
   performedBy    User          @relation(fields: [performedById], references: [id], onDelete: Cascade)
-  organizationId String? // Make this optional
+  organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
