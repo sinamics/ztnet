@@ -79,6 +79,27 @@ const UserNetworkSetting = () => {
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
+						<p className="font-medium">Rename node name globally</p>
+						<p className="text-sm text-gray-500">
+							When a node is renamed, the name will be updated globally in all networks.
+						</p>
+					</div>
+					<input
+						type="checkbox"
+						checked={me?.options?.renameNodeGlobally || false}
+						className="checkbox-primary checkbox checkbox-sm justify-self-end"
+						onChange={(e) => {
+							updateSettings(
+								{
+									renameNodeGlobally: e.target.checked,
+								},
+								{ onSuccess: () => void refetchMe() },
+							);
+						}}
+					/>
+				</div>
+				<div className="flex justify-between py-2">
+					<div>
 						<p className="font-medium">
 							{t("network.memberTable.deAuthorizationWarningTitle")}
 						</p>
