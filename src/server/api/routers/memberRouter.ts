@@ -392,6 +392,37 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 			}
 
+			// get the user options
+			const userOptions = await ctx.prisma.userOptions.findFirst({
+				where: {
+					userId: ctx.session.user.id,
+				},
+			});
+
+			// check if the user wants to update the name globally
+			const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
+			if (shouldUpdateNameGlobally && input.updateParams.name && !input.organizationId) {
+				// Find all networks where the user is the author
+				const userNetworks = await ctx.prisma.network.findMany({
+					where: {
+						authorId: ctx.session.user.id,
+						organizationId: null, // Only private networks
+					},
+					select: { nwid: true },
+				});
+
+				// Update the node name across all user's private networks
+				await ctx.prisma.network_members.updateMany({
+					where: {
+						id: input.id,
+						nwid: { in: userNetworks.map((network) => network.nwid) },
+					},
+					data: {
+						name: input.updateParams.name,
+					},
+				});
+			}
+
 			// if users click the re-generate icon on IP address
 			const response = await ctx.prisma.network.update({
 				where: {
