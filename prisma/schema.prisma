@@ -182,6 +182,7 @@ model UserOptions {
   // member table
   deAuthorizeWarning           Boolean? @default(false)
   addMemberIdAsName            Boolean? @default(false)
+  renameNodeGlobally           Boolean? @default(true)
 }
 
 enum AccessLevel {
