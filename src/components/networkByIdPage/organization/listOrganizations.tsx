@@ -1,7 +1,6 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 import DeleteOrganizationModal from "~/components/organization/deleteOrganizationModal";
-// import EditOrganizationModal from "~/components/organization/editOrgModal";
 // import { OrganizationUserTable } from "~/components/organization/userTable";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";

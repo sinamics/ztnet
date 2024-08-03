@@ -2,6 +2,25 @@
 	"input": {
 		"enterToSave": "Trykk Enter for å lagre"
 	},
+	"commonMenuTabs": {
+		"settings": "Innstillinger",
+		"network": "Nettverk",
+		"mail": "E-post",
+		"users": "Brukere",
+		"notification": "Varsling",
+		"controller": "Kontroller",
+		"organization": "Organisasjon",
+		"webhooks": "Webhooks",
+		"invites": "Invitasjoner"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Organisasjonsinnstillinger",
+		"invites": "Invitasjoner",
+		"pendingInvites": "Ventende Invitasjoner",
+		"members": "Medlemmer",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Aktive Webhooks"
+	},
 	"commonButtons": {
 		"add": "Legg til",
 		"change": "Endre",
@@ -29,6 +48,7 @@
 		"userActions": "Brukerhandlinger",
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
+		"settings": "Innstillinger",
 		"resend": "Send på nytt"
 	},
 	"commonTable": {
@@ -342,15 +362,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Innstillinger",
-			"network": "Nettverk",
-			"mail": "Post",
-			"users": "Brukere",
-			"notification": "Varsling",
-			"controller": "Kontroller",
-			"organization": "Organisasjon"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
@@ -728,30 +739,40 @@
 			"logHeader": "Siste 100 aktivitetslogger",
 			"loading": "Henter logger..."
 		},
-		"invitation": {
-			"title": "Teamutvidelse: Inviter nye medlemmer",
-			"description": "Inviter flere personer til laget ditt! Du kan sende invitasjoner via e-post eller finne og legge til personer som allerede bruker plattformen. <br></br> Dette gjør det enkelt for laget ditt å vokse og inkludere flere medlemmer.",
-			"pendingInvitations": {
-				"title": "Ventende invitasjoner"
-			},
-			"inviteByEmail": {
-				"title": "Inviter via e-post",
-				"description": "Inviterte brukere som ikke er medlemmer av applikasjonen for øyeblikket, må registrere seg via lenken som er gitt i invitasjons-e-posten. Lenken er gyldig i 24 timer.",
-				"emailPlaceholder": "E-postadresse",
-				"emailDescription": "Skriv inn e-postadressen til personen du vil invitere",
-				"selectRoleDescription": "Velg brukerens rolle"
-			},
-			"inviteSiteUser": {
-				"title": "Inviter nettstedets brukere",
-				"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
-				"inputFields": {
-					"searchUser": {
-						"title": "Søk etter brukeren du vil legge til",
-						"placeholder": "Søk bruker"
-					},
-					"userRole": {
-						"title": "Velg brukerens rolle"
+		"settings": {
+			"invitation": {
+				"title": "Teamutvidelse: Inviter nye medlemmer",
+				"description": "Inviter flere personer til laget ditt! Du kan sende invitasjoner via e-post eller finne og legge til personer som allerede bruker plattformen. <br></br> Dette gjør det enkelt for laget ditt å vokse og inkludere flere medlemmer.",
+				"pendingInvitations": {
+					"title": "Ventende invitasjoner"
+				},
+				"inviteByEmail": {
+					"title": "Inviter via e-post",
+					"description": "Inviterte brukere som ikke er medlemmer av applikasjonen for øyeblikket, må registrere seg via lenken som er gitt i invitasjons-e-posten. Lenken er gyldig i 24 timer.",
+					"emailPlaceholder": "E-postadresse",
+					"emailDescription": "Skriv inn e-postadressen til personen du vil invitere",
+					"selectRoleDescription": "Velg brukerens rolle"
+				},
+				"inviteSiteUser": {
+					"title": "Inviter nettstedets brukere",
+					"description": "Før du kan legge til brukere i organisasjonen din, er det viktig å merke seg at de allerede må være registrert i applikasjonen",
+					"inputFields": {
+						"searchUser": {
+							"title": "Søk etter brukeren du vil legge til",
+							"placeholder": "Søk bruker"
+						},
+						"userRole": {
+							"title": "Velg brukerens rolle"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Aktiver global nodenavngivning",
+					"description": "Når denne funksjonen er aktivert, vil den:",
+					"bulletPoints": "Opprettholde et konsistent navn for hver node på tvers av alle nettverk i organisasjonen.\nOppdatere nodens navn i alle nettverk når du endrer navnet i ett nettverk.\nVed registrering av medlem, sjekke om medlemmet eksisterer i organisasjonen din og bruke det første navnet som blir funnet.",
+					"note": "Merk: Dette gjelder utelukkende for nettverk innenfor denne spesifikke organisasjonen."
 				}
 			}
 		},

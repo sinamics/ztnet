@@ -2,6 +2,25 @@
 	"input": {
 		"enterToSave": "按 Enter 儲存"
 	},
+	"commonMenuTabs": {
+		"settings": "設定",
+		"network": "網路",
+		"mail": "郵件",
+		"users": "使用者",
+		"notification": "通知",
+		"controller": "控制器",
+		"organization": "組織",
+		"webhooks": "網路鉤子",
+		"invites": "邀請"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "組織設定",
+		"invites": "邀請",
+		"pendingInvites": "待處理邀請",
+		"members": "成員",
+		"webhooks": "網路鉤子",
+		"activeWebhooks": "活躍的網路鉤子"
+	},
 	"commonButtons": {
 		"add": "新增",
 		"change": "修改",
@@ -29,6 +48,7 @@
 		"userActions": "使用者操作",
 		"addWebhooks": "新增 Webhooks",
 		"options": "選項",
+		"settings": "設定",
 		"resend": "重新發送"
 	},
 	"commonTable": {
@@ -342,15 +362,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "設定",
-			"network": "網路",
-			"mail": "郵件",
-			"users": "使用者",
-			"notification": "通知",
-			"controller": "控制器",
-			"organization": "組織"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "公開頁面",
@@ -728,30 +739,40 @@
 			"logHeader": "最近100個活動日誌",
 			"loading": "正在取得日誌..."
 		},
-		"invitation": {
-			"title": "團隊擴展：邀請新成員",
-			"description": "邀請更多人加入您的團隊！您可以通過電子郵件發送邀請，也可以找到並添加已經使用平台的人。 <br></br> 這樣可以讓您的團隊更容易地擴展並包括更多成員。",
-			"pendingInvitations": {
-				"title": "待處理邀請"
-			},
-			"inviteByEmail": {
-				"title": "通過電子郵件邀請",
-				"description": "受邀用戶如果當前不是應用程式的成員，將需要通過邀請電子郵件中提供的鏈接註冊。鏈接有效期為 24 小時。",
-				"emailPlaceholder": "電子郵件地址",
-				"emailDescription": "輸入您要邀請的人的電子郵件地址",
-				"selectRoleDescription": "選擇用戶的角色"
-			},
-			"inviteSiteUser": {
-				"title": "邀請網站用戶",
-				"description": "在您可以將用戶添加到組織之前，請注意他們必須已在應用程式中註冊",
-				"inputFields": {
-					"searchUser": {
-						"title": "搜索要添加的用戶",
-						"placeholder": "搜索用戶"
-					},
-					"userRole": {
-						"title": "選擇用戶的角色"
+		"settings": {
+			"invitation": {
+				"title": "團隊擴展：邀請新成員",
+				"description": "邀請更多人加入您的團隊！您可以通過電子郵件發送邀請，也可以找到並添加已經使用平台的人。 <br></br> 這樣可以讓您的團隊更容易地擴展並包括更多成員。",
+				"pendingInvitations": {
+					"title": "待處理邀請"
+				},
+				"inviteByEmail": {
+					"title": "通過電子郵件邀請",
+					"description": "受邀用戶如果當前不是應用程式的成員，將需要通過邀請電子郵件中提供的鏈接註冊。鏈接有效期為 24 小時。",
+					"emailPlaceholder": "電子郵件地址",
+					"emailDescription": "輸入您要邀請的人的電子郵件地址",
+					"selectRoleDescription": "選擇用戶的角色"
+				},
+				"inviteSiteUser": {
+					"title": "邀請網站用戶",
+					"description": "在您可以將用戶添加到組織之前，請注意他們必須已在應用程式中註冊",
+					"inputFields": {
+						"searchUser": {
+							"title": "搜索要添加的用戶",
+							"placeholder": "搜索用戶"
+						},
+						"userRole": {
+							"title": "選擇用戶的角色"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "啟用全局節點命名",
+					"description": "啟用後，此功能將：",
+					"bulletPoints": "在組織的所有網路中為每個節點維護一致的名稱。\n當你在一個網路中重新命名節點時，會在所有網路中更新該節點的名稱。\n在成員註冊時，檢查該成員是否存在於你的組織中，並使用找到的第一個名稱。",
+					"note": "注意：這僅適用於此特定組織內的網路。"
 				}
 			}
 		},

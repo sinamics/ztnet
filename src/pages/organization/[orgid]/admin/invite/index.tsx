@@ -77,7 +77,7 @@ const InviteCard = ({ invite, organizationId }) => {
 	return (
 		<div
 			className={cn(
-				"border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md cursor-pointer",
+				"border border-dashed border-gray-200 rounded-lg p-4 dark:border-gray-800 bg-primary/10 shadow-md",
 				{ "bg-red-500/30": invite.hasExpired },
 			)}
 		>
@@ -124,8 +124,8 @@ const InviteCard = ({ invite, organizationId }) => {
 	);
 };
 
-const Invites = () => {
-	const t = useTranslations("organization");
+const OrganizationInvites = () => {
+	const t = useTranslations();
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
@@ -135,30 +135,28 @@ const Invites = () => {
 
 	const pageTitle = `${globalSiteTitle} - Invitations`;
 	return (
-		<main>
+		<main className="flex w-full flex-col space-y-5 justify-center bg-base-100 p-3">
 			<HeadSection title={pageTitle} />
-			<div className="space-y-5 bg-base-200 rounded-lg p-5">
-				<div className="space-y-2">
-					<h1 className="text-2xl font-bold">{t("invitation.title")}</h1>
-					<p className="text-gray-400">
-						{t.rich("invitation.description", {
-							br: () => <br />,
-						})}
-					</p>
-				</div>
-				<div className="grid grid-cols-1 lg:grid-cols-[1fr,auto,1fr] gap-3">
-					<InviteByMail organizationId={organizationId} />
-					<div className="divider divider-horizontal hidden lg:inline-flex">OR</div>
-					<div className="divider lg:hidden">OR</div>
-					<InviteByUser />
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+				<div className="rounded-lg space-y-10">
+					<div>
+						<p className="text-[0.7rem] text-gray-400 uppercase">
+							{t("commonMenuTiles.invites")}
+						</p>
+						<div className="divider mt-0 p-0 text-gray-500"></div>
+
+						<InviteByMail organizationId={organizationId} />
+					</div>
+					<div>
+						<InviteByUser />
+					</div>
 				</div>
 				<div>
-					{orgInvites?.length > 0 ? (
-						<div className="divider pt-10">
-							{t("invitation.pendingInvitations.title")}
-						</div>
-					) : null}
-					<div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
+					<p className="text-[0.7rem] text-gray-400 uppercase">
+						{t("commonMenuTiles.pendingInvites")}
+					</p>
+					<div className="divider mt-0 p-0 text-gray-500"></div>
+					<div className="">
 						{orgInvites?.map((invite) => (
 							<InviteCard
 								key={invite.id}
@@ -173,10 +171,10 @@ const Invites = () => {
 	);
 };
 
-Invites.getLayout = function getLayout(page: ReactElement) {
+OrganizationInvites.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
 };
 
 export { getServerSideProps };
 
-export default Invites;
+export default OrganizationInvites;

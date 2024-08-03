@@ -18,7 +18,7 @@ const AdminSettings = ({ orgIds }) => {
 
 	const router = useRouter();
 	const { tab = "members" } = router.query;
-	const t = useTranslations("admin");
+	const t = useTranslations("commonMenuTabs");
 
 	useOrganizationWebsocket(orgIds);
 	interface ITab {
@@ -29,32 +29,32 @@ const AdminSettings = ({ orgIds }) => {
 
 	const tabs: ITab[] = [
 		{
-			name: t("tabs.settings"),
+			name: t("settings"),
 			value: "site-setting",
 			component: <Settings />,
 		},
 		{
-			name: t("tabs.mail"),
+			name: t("mail"),
 			value: "mail-setting",
 			component: <Mail />,
 		},
 		{
-			name: t("tabs.users"),
+			name: t("users"),
 			value: "users",
 			component: <Users />,
 		},
 		{
-			name: t("tabs.notification"),
+			name: t("notification"),
 			value: "notification",
 			component: <Notification />,
 		},
 		{
-			name: t("tabs.controller"),
+			name: t("controller"),
 			value: "controller",
 			component: <Controller />,
 		},
 		{
-			name: t("tabs.organization"),
+			name: t("organization"),
 			value: "organization",
 			component: <Organization />,
 		},
