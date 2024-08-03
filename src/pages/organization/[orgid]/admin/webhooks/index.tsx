@@ -37,7 +37,7 @@ const ListWebHooks = ({ organizationId }) => {
 
 	return (
 		<div>
-			<div className="pb-10">
+			<div>
 				<p className="text-[0.7rem] text-gray-400 uppercase">
 					{t("commonMenuTiles.activeWebhooks")}
 				</p>
