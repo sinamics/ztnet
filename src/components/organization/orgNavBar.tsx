@@ -22,18 +22,18 @@ const AdminHamburgerMenu = ({ organization }) => {
 			</li>
 			<li>
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
-					className="justify-between cursor-pointer uppercase"
-				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
-				</Link>
-			</li>
-			<li>
-				<Link
 					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
 					className="justify-between cursor-pointer uppercase"
 				>
 					{b("inviteUser")}
+				</Link>
+			</li>
+			<li>
+				<Link
+					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
+					className="justify-between cursor-pointer uppercase"
+				>
+					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
 				</Link>
 			</li>
 		</ul>
@@ -44,29 +44,37 @@ const AdminNavMenu = ({ organization }) => {
 	const b = useTranslations("commonButtons");
 
 	return (
-		<div>
-			<div className="dropdown dropdown-end">
+		<div className="flex gap-5 ">
+			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
-					className="btn btn-ghost text-md"
+					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
+					className="text-md "
 				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</div>
-			<div className="dropdown dropdown-end">
+			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
 					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
-					className="btn btn-ghost text-md"
+					className="text-md"
 				>
 					<div className="rounded-full uppercase">{b("inviteUser")}</div>
 				</Link>
 			</div>
-			<div className="dropdown dropdown-end">
+			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
-					className="btn btn-ghost text-md"
+					href={`/organization/${organization?.id}/admin?tab=network-setting`}
+					className="text-md"
 				>
-					<div className="rounded-full uppercase">{b("settings")}</div>
+					<div className="rounded-full uppercase">Networks</div>
+				</Link>
+			</div>
+			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+				<Link
+					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
+					className="text-md"
+				>
+					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
 				</Link>
 			</div>
 		</div>
