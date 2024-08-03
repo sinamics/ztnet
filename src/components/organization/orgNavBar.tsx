@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const AdminHamburgerMenu = ({ organization }) => {
+const AdminHamburgerMenu = ({ organization, userRole }) => {
 	const b = useTranslations("commonButtons");
 	return (
 		<ul
@@ -20,27 +20,31 @@ const AdminHamburgerMenu = ({ organization }) => {
 					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</li>
-			<li>
-				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
-					className="justify-between cursor-pointer uppercase"
-				>
-					{b("inviteUser")}
-				</Link>
-			</li>
-			<li>
-				<Link
-					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
-					className="justify-between cursor-pointer uppercase"
-				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
-				</Link>
-			</li>
+			{userRole === "ADMIN" && (
+				<>
+					<li>
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-invites`}
+							className="justify-between cursor-pointer uppercase"
+						>
+							{b("inviteUser")}
+						</Link>
+					</li>
+					<li>
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
+							className="justify-between cursor-pointer uppercase"
+						>
+							<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+						</Link>
+					</li>
+				</>
+			)}
 		</ul>
 	);
 };
 
-const AdminNavMenu = ({ organization }) => {
+const AdminNavMenu = ({ organization, userRole }) => {
 	const b = useTranslations("commonMenuTabs");
 
 	return (
@@ -53,30 +57,35 @@ const AdminNavMenu = ({ organization }) => {
 					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</div>
-			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
-				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
-					className="text-md"
-				>
-					<div className="rounded-full uppercase">{b("invites")}</div>
-				</Link>
-			</div>
-			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
-				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-network-settings`}
-					className="text-md"
-				>
-					<div className="rounded-full uppercase">{b("network")}</div>
-				</Link>
-			</div>
-			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
-				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-webhook-settings`}
-					className="text-md"
-				>
-					<div className="rounded-full uppercase">{b("webhooks")}</div>
-				</Link>
-			</div>
+
+			{userRole === "ADMIN" && (
+				<>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-invites`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("invites")}</div>
+						</Link>
+					</div>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-network-settings`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("network")}</div>
+						</Link>
+					</div>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-webhook-settings`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("webhooks")}</div>
+						</Link>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
@@ -118,7 +127,7 @@ export const OrgNavBar = () => {
 							/>
 						</svg>
 					</div>
-					<AdminHamburgerMenu organization={organization} />
+					<AdminHamburgerMenu organization={organization} userRole={meOrgRole?.role} />
 				</div>
 				<Link
 					href={`/organization/${organization?.id}`}
@@ -130,9 +139,7 @@ export const OrgNavBar = () => {
 				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
-				{meOrgRole?.role === "ADMIN" ? (
-					<AdminNavMenu organization={organization} />
-				) : null}
+				<AdminNavMenu organization={organization} userRole={meOrgRole?.role} />
 			</div>
 			<div className="navbar-end">
 				<button

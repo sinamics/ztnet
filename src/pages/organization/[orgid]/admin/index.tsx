@@ -11,7 +11,7 @@ import OrganizationWebhook from "./webhooks";
 import OrganizationNetworkSetting from "./network";
 import OrganizationInvites from "./invite";
 
-const OrganizationAdminSettings = ({ orgIds }) => {
+const OrganizationAdminSettings = ({ orgIds, user }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
 
 	const router = useRouter();
@@ -20,6 +20,7 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 
 	useOrganizationWebsocket(orgIds);
 	interface ITab {
+		userRole: string;
 		name: string;
 		value: string;
 		component: ReactElement;
@@ -27,21 +28,25 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 
 	const tabs: ITab[] = [
 		{
+			userRole: "USER",
 			name: t("settings"),
 			value: "organization-settings",
-			component: <OrganizationSettings />,
+			component: <OrganizationSettings user={user} />,
 		},
 		{
+			userRole: "ADMIN",
 			name: t("invites"),
 			value: "organization-invites",
 			component: <OrganizationInvites />,
 		},
 		{
+			userRole: "ADMIN",
 			name: t("network"),
 			value: "organization-network-settings",
 			component: <OrganizationNetworkSetting />,
 		},
 		{
+			userRole: "ADMIN",
 			name: t("webhooks"),
 			value: "organization-webhook-settings",
 			component: <OrganizationWebhook />,
@@ -58,18 +63,23 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 		<div className="animate-fadeIn py-5">
 			<MetaTags title={title} />
 			<div role="tablist" className="tabs tabs-bordered flex flex-wrap p-3 pb-10 ">
-				{tabs.map((t) => (
-					<a
-						key={t.value}
-						role="tab"
-						onClick={() => void changeTab(t)}
-						className={`text-md uppercase tab ${
-							t.value === tab ? "tab-active" : "text-gray-600"
-						}`}
-					>
-						{t.name}
-					</a>
-				))}
+				{tabs.map((t) => {
+					if (user.role === "USER" && t.userRole === "ADMIN") {
+						return null;
+					}
+					return (
+						<a
+							key={t.value}
+							role="tab"
+							onClick={() => void changeTab(t)}
+							className={`text-md uppercase tab ${
+								t.value === tab ? "tab-active" : "text-gray-600"
+							}`}
+						>
+							{t.name}
+						</a>
+					);
+				})}
 			</div>
 			{tabs.find((t) => t.value === tab)?.component}
 		</div>
