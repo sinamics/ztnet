@@ -10,15 +10,21 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import HeadSection from "~/components/shared/metaTags";
 import { globalSiteTitle } from "~/utils/global";
 import InputField from "~/components/elements/inputField";
+import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 
-const OrganizationSettings = () => {
+const OrganizationSettings = ({ user }) => {
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
 	const t = useTranslations();
+	const handleApiError = useTrpcApiErrorHandler();
 
-	const { closeModal } = useModalStore((state) => state);
+	const { closeModal, callModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+
+	const { mutate: leaveOrg } = api.org.leave.useMutation({
+		onError: handleApiError,
+	});
 
 	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery(
 		{
@@ -52,86 +58,135 @@ const OrganizationSettings = () => {
 	const pageTitle = `${globalSiteTitle} - Meta`;
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+			<HeadSection title={pageTitle} />
+
 			<div>
 				<p className="text-[0.7rem] text-gray-400 uppercase">
 					{t("commonMenuTiles.organizationSettings")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
 			</div>
-			<div className="space-y-5">
-				<InputField
-					label={t("admin.organization.listOrganization.organizationName")}
-					// isLoading={loadingUpdate}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
-					size="sm"
-					fields={[
-						{
-							name: "orgName",
-							type: "text",
-							placeholder: orgData?.orgName,
-							value: orgData?.orgName,
-						},
-					]}
-					submitHandler={async (params) => {
-						return new Promise((resolve, reject) =>
-							updateOrg(
-								{
-									organizationId,
-									...params,
-								},
-								{
-									onSuccess: () => {
-										resolve(true);
+			{user?.role === "ADMIN" ? (
+				<div className="space-y-5 pb-[10%]">
+					<InputField
+						label={t("admin.organization.listOrganization.organizationName")}
+						// isLoading={loadingUpdate}
+						rootFormClassName="space-y-3 pt-2 w-3/6"
+						size="sm"
+						fields={[
+							{
+								name: "orgName",
+								type: "text",
+								placeholder: orgData?.orgName,
+								value: orgData?.orgName,
+							},
+						]}
+						submitHandler={async (params) => {
+							return new Promise((resolve, reject) =>
+								updateOrg(
+									{
+										organizationId,
+										...params,
 									},
-									onError: (error) => {
-										reject(error);
+									{
+										onSuccess: () => {
+											resolve(true);
+										},
+										onError: (error) => {
+											reject(error);
+										},
 									},
-								},
-							),
-						);
-					}}
-				/>
-				<InputField
-					label={t("admin.organization.listOrganization.description")}
-					isLoading={loadingUpdate}
-					rootFormClassName="space-y-3 pt-2 w-5/6"
-					size="sm"
-					fields={[
-						{
-							name: "orgDescription",
-							type: "text",
-							elementType: "textarea",
-							placeholder: orgData?.description,
-							value: orgData?.description,
-						},
-					]}
-					submitHandler={async (params) => {
-						return new Promise((resolve, reject) =>
-							updateOrg(
-								{
-									organizationId,
-									...params,
-								},
-								{
-									onSuccess: () => {
-										resolve(true);
+								),
+							);
+						}}
+					/>
+					<InputField
+						label={t("admin.organization.listOrganization.description")}
+						isLoading={loadingUpdate}
+						rootFormClassName="space-y-3 pt-2 w-5/6"
+						size="sm"
+						fields={[
+							{
+								name: "orgDescription",
+								type: "text",
+								elementType: "textarea",
+								placeholder: orgData?.description,
+								value: orgData?.description,
+							},
+						]}
+						submitHandler={async (params) => {
+							return new Promise((resolve, reject) =>
+								updateOrg(
+									{
+										organizationId,
+										...params,
 									},
-									onError: (error) => {
-										reject(error);
+									{
+										onSuccess: () => {
+											resolve(true);
+										},
+										onError: (error) => {
+											reject(error);
+										},
 									},
-								},
-							),
-						);
-					}}
-				/>
+								),
+							);
+						}}
+					/>
+				</div>
+			) : null}
+
+			<div>
+				<div className="pb-10 border-t border-b border-red-600/25 rounded-md p-2">
+					<p className="text-sm text-error uppercase">danger zone</p>
+					<div className="divider mt-0 p-0 text-error"></div>
+
+					<div className="space-y-5">
+						<p className="text-sm text-gray-500">
+							Leaving this organization will remove you from all networks and
+							organizations associated with it. This cannot be undone.
+						</p>
+						<button
+							onClick={() =>
+								callModal({
+									title: <p>{t("organization.leaveOrganization.confirmationTitle")}</p>,
+									content: (
+										<div>
+											<p>{t("organization.leaveOrganization.confirmationMessage")}</p>
+											<p className="mt-2 text-sm text-gray-500">
+												{t("organization.leaveOrganization.note")}
+											</p>
+										</div>
+									),
+									yesAction: () => {
+										return leaveOrg(
+											{ organizationId, userId: user.id },
+											{
+												onSuccess: () => {
+													router.push("/network");
+												},
+											},
+										);
+									},
+								})
+							}
+							className="btn btn-sm btn-error btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
+						>
+							{t("commonButtons.leaveOrganization")}
+						</button>
+					</div>
+				</div>
 			</div>
-			<HeadSection title={pageTitle} />
 		</main>
 	);
 };
 
 OrganizationSettings.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutOrganizationAuthenticated>{page}</LayoutOrganizationAuthenticated>;
+	return (
+		<LayoutOrganizationAuthenticated props={page?.props}>
+			{page}
+		</LayoutOrganizationAuthenticated>
+	);
 };
 
 export { getServerSideProps };
