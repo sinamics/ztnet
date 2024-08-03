@@ -143,7 +143,7 @@ export const organizationRouter = createTRPCRouter({
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
-					action: `Updated organization meta: ${input.orgName}`,
+					action: `Updated organization Name: ${input.orgName}`,
 					performedById: ctx.session.user.id,
 					organizationId: input.organizationId || null,
 				},
