@@ -20,7 +20,9 @@ const OrganizationSettings = ({ user }) => {
 	const handleApiError = useTrpcApiErrorHandler();
 
 	const { closeModal, callModal } = useModalStore((state) => state);
-	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
+	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery(null, {
+		enabled: user?.role === "ADMIN",
+	});
 
 	const { mutate: leaveOrg } = api.org.leave.useMutation({
 		onError: handleApiError,
