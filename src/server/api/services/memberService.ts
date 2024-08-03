@@ -120,62 +120,40 @@ const findActivePreferredPeerPath = (peers: Peers | null) => {
  * @returns A promise that resolves to the created network member.
  */
 const addNetworkMember = async (ctx, member: MemberEntity) => {
-	const user = await prisma.user.findFirst({
-		where: {
-			id: ctx.session.user.id,
-		},
-		select: {
-			options: true,
-		},
-	});
+	// 1. get the user options
+	// 2. check if the new member is joining a organization network
+	const [user, memberOfOrganization] = await Promise.all([
+		prisma.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: { options: true },
+		}),
+		prisma.network.findFirst({
+			where: { nwid: member.nwid },
+			select: { organizationId: true, organization: { select: { settings: true } } },
+		}),
+	]);
 
-	const memberData = {
-		id: member.id,
-		lastSeen: new Date(),
-		creationTime: new Date(),
-		name: user.options?.addMemberIdAsName ? member.id : null,
-	};
-
-	// check if the new member is joining a organization network
-	const memberOfOrganization = await prisma.network.findFirst({
-		where: { nwid: member.nwid },
-		select: { organizationId: true, organization: { select: { settings: true } } },
-	});
-
-	// check if global naming is enabled, and if so find the first available name
-	if (user.options?.renameNodeGlobally && !memberOfOrganization) {
-		const firstNamedMember = await prisma.network_members.findFirst({
+	const findNamedMember = async ({ orgId }: { orgId: string }) => {
+		return await prisma.network_members.findFirst({
 			where: {
 				id: member.id,
 				name: { not: null },
-				nwid_ref: {
-					organizationId: null,
-				},
+				nwid_ref: { organizationId: orgId },
 			},
 			select: { name: true },
 		});
-		if (firstNamedMember) {
-			memberData.name = firstNamedMember.name;
-		}
-	}
+	};
+
+	let name = null;
 
 	// send webhook if the new member is joining a organization network
 	if (memberOfOrganization) {
 		// check if global organization member naming is enabled, and if so find the first available name
 		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
-			const firstNamedOrgMember = await prisma.network_members.findFirst({
-				where: {
-					id: member.id,
-					name: { not: null },
-					nwid_ref: {
-						organizationId: memberOfOrganization.organizationId,
-					},
-				},
-				select: { name: true },
+			const namedOrgMember = await findNamedMember({
+				orgId: memberOfOrganization.organizationId,
 			});
-			if (firstNamedOrgMember) {
-				memberData.name = firstNamedOrgMember.name;
-			}
+			name = namedOrgMember?.name;
 		}
 		try {
 			// Send webhook
@@ -191,12 +169,19 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		}
 	}
 
+	// check if global naming is enabled, and if so find the first available name
+	if (user.options?.renameNodeGlobally && !memberOfOrganization.organizationId) {
+		const namedPrivateMember = await findNamedMember({ orgId: null });
+		name = namedPrivateMember?.name;
+	}
+
 	return await prisma.network_members.create({
 		data: {
-			...memberData,
-			nwid_ref: {
-				connect: { nwid: member.nwid },
-			},
+			id: member.id,
+			lastSeen: new Date(),
+			creationTime: new Date(),
+			name,
+			nwid_ref: { connect: { nwid: member.nwid } },
 		},
 	});
 };

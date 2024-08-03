@@ -276,6 +276,9 @@ model Invitation {
   organizations OrganizationInvitation[]
 }
 
+//
+// ORGANIZATION
+//
 model OrganizationInvitation {
   id             String       @id @default(cuid())
   invitationId   Int
@@ -283,10 +286,6 @@ model OrganizationInvitation {
   invitation     Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
-
-//
-// ORGANIZATION
-//
 
 model Organization {
   id                 String                   @id @default(cuid())
