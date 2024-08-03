@@ -29,6 +29,7 @@
 		"userActions": "Gérer l'utilisateur",
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
+		"settings": "Paramètres",
 		"resend": "Renvoyer"
 	},
 	"commonTable": {

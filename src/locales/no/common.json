@@ -29,6 +29,7 @@
 		"userActions": "Brukerhandlinger",
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
+		"settings": "Innstillinger",
 		"resend": "Send på nytt"
 	},
 	"commonTable": {
