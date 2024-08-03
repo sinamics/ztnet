@@ -15,8 +15,7 @@ const OrganizationSettings = () => {
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
-	const b = useTranslations("commonButtons");
-	const t = useTranslations("admin");
+	const t = useTranslations();
 
 	const { closeModal } = useModalStore((state) => state);
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery();
@@ -54,12 +53,14 @@ const OrganizationSettings = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div>
-				<p className="text-[0.7rem] text-gray-400 uppercase">Organization Settings</p>
+				<p className="text-[0.7rem] text-gray-400 uppercase">
+					{t("commonMenuTiles.organizationSettings")}
+				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
 			</div>
 			<div className="space-y-5">
 				<InputField
-					label={t("organization.listOrganization.organizationName")}
+					label={t("admin.organization.listOrganization.organizationName")}
 					// isLoading={loadingUpdate}
 					rootFormClassName="space-y-3 pt-2 w-3/6"
 					size="sm"
@@ -91,7 +92,7 @@ const OrganizationSettings = () => {
 					}}
 				/>
 				<InputField
-					label={t("organization.listOrganization.description")}
+					label={t("admin.organization.listOrganization.description")}
 					isLoading={loadingUpdate}
 					rootFormClassName="space-y-3 pt-2 w-5/6"
 					size="sm"

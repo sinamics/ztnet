@@ -18,9 +18,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 
 const ListWebHooks = ({ organizationId }) => {
-	const b = useTranslations("commonButtons");
-	const m = useTranslations("commonToast");
-	const t = useTranslations("organization");
+	const t = useTranslations();
 
 	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery({
 		organizationId,
@@ -33,15 +31,15 @@ const ListWebHooks = ({ organizationId }) => {
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
 			actions: [refecthOrgById],
-			toastMessage: m("deletedSuccessfully"),
+			toastMessage: t("commonToast.deletedSuccessfully"),
 		}),
 	});
 
 	return (
-		<div className="cursor-pointer">
+		<div>
 			<div className="pb-10">
 				<p className="text-[0.7rem] text-gray-400 uppercase">
-					{t("webhook.listWebhooks.activeWebhooks")}
+					{t("commonMenuTiles.activeWebhooks")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 			</div>
@@ -54,21 +52,21 @@ const ListWebHooks = ({ organizationId }) => {
 						{hook.name}
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("webhook.listWebhooks.description")}:</span>
+						<span>{t("organization.webhook.listWebhooks.description")}:</span>
 						<span className="font-medium">{hook.description}</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("webhook.listWebhooks.url")}:</span>
+						<span>{t("organization.webhook.listWebhooks.url")}:</span>
 						<span className="font-medium">{hook.url}</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("webhook.listWebhooks.lastDelivery")}:</span>
+						<span>{t("organization.webhook.listWebhooks.lastDelivery")}:</span>
 						<span className="font-medium">
 							<TimeAgo date={hook.lastDelivery} />
 						</span>
 					</div>
 					<div className="text-sm text-gray-600 dark:text-gray-400">
-						<div>{t("webhook.listWebhooks.events")}:</div>
+						<div>{t("organization.webhook.listWebhooks.events")}:</div>
 						<div className="font-medium">
 							{(hook.eventTypes as string[])?.join(" - ")}
 						</div>
@@ -84,7 +82,7 @@ const ListWebHooks = ({ organizationId }) => {
 							type="submit"
 							className="btn btn-sm btn-error btn-outline"
 						>
-							{b("delete")}
+							{t("commonButtons.delete")}
 						</button>
 					</div>
 				</div>
@@ -101,10 +99,7 @@ const initialState = {
 	hookType: [],
 };
 const OrganizationWebhook = () => {
-	const b = useTranslations("commonButtons");
-	const m = useTranslations("commonToast");
-	const t = useTranslations("organization");
-
+	const t = useTranslations();
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
@@ -121,7 +116,7 @@ const OrganizationWebhook = () => {
 	const { mutate: addWebhook } = api.org.addOrgWebhooks.useMutation({
 		onSuccess: handleApiSuccess({
 			actions: [refecthOrg],
-			toastMessage: m("addedSuccessfully"),
+			toastMessage: t("commonToast.addedSuccessfully"),
 		}),
 		onError: handleApiError,
 	});
@@ -171,20 +166,22 @@ const OrganizationWebhook = () => {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				<form className="space-y-5 w-full">
 					<div className="">
-						<p className="text-[0.7rem] text-gray-400 uppercase">webhooks</p>
+						<p className="text-[0.7rem] text-gray-400 uppercase">
+							{t("commonMenuTiles.webhooks")}
+						</p>
 						<div className="divider mt-0 p-0 text-gray-500"></div>
 					</div>
 					<h1 className="text-sm text-gray-500">
-						{t.rich("webhook.description", {
+						{t.rich("organization.webhook.description", {
 							br: () => <br />,
 						})}
 					</h1>
 					<div className="form-control">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("webhook.createWebhook.webhookName")}
+							{t("organization.webhook.createWebhook.webhookName")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t("webhook.createWebhook.webhookNameDescription")}
+							{t("organization.webhook.createWebhook.webhookNameDescription")}
 						</label>
 						<Input
 							type="text"
@@ -197,10 +194,10 @@ const OrganizationWebhook = () => {
 					</div>
 					<div className="dropdown dropdown-end z-50">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("webhook.createWebhook.selectWebhookActions")}
+							{t("organization.webhook.createWebhook.selectWebhookActions")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t("webhook.createWebhook.selectWebhookActionsDescription")}
+							{t("organization.webhook.createWebhook.selectWebhookActionsDescription")}
 						</label>
 						<div>
 							<MultiSelectDropdown
@@ -215,10 +212,10 @@ const OrganizationWebhook = () => {
 					</div>
 					<div className="form-control">
 						<h1 className="text-md font-medium tracking-wide">
-							{t("webhook.createWebhook.webhookUrl")}
+							{t("organization.webhook.createWebhook.webhookUrl")}
 						</h1>
 						<label className="text-sm text-gray-500">
-							{t("webhook.createWebhook.webhookUrlDescription")}
+							{t("organization.webhook.createWebhook.webhookUrlDescription")}
 						</label>
 						<Input
 							type="text"
@@ -236,7 +233,7 @@ const OrganizationWebhook = () => {
 							type="submit"
 							className="btn btn-sm btn-primary"
 						>
-							{b("submit")}
+							{t("commonButtons.submit")}
 						</button>
 					</div>
 				</form>

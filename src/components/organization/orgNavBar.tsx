@@ -47,7 +47,7 @@ const AdminNavMenu = ({ organization }) => {
 		<div className="flex gap-5 ">
 			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
+					href={`/organization/${organization?.id}/admin?tab=organization-settings`}
 					className="text-md "
 				>
 					<div className="rounded-full uppercase">{b("settings")}</div>
@@ -63,7 +63,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=network-setting`}
+					href={`/organization/${organization?.id}/admin?tab=organization-network-settings`}
 					className="text-md"
 				>
 					<div className="rounded-full uppercase">Networks</div>
@@ -71,7 +71,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
+					href={`/organization/${organization?.id}/admin?tab=organization-webhook-settings`}
 					className="text-md"
 				>
 					<div className="rounded-full uppercase">{b("webhooks")}</div>
