@@ -66,7 +66,7 @@ const AdminNavMenu = ({ organization }) => {
 					href={`/organization/${organization?.id}/admin?tab=organization-network-settings`}
 					className="text-md"
 				>
-					<div className="rounded-full uppercase">Networks</div>
+					<div className="rounded-full uppercase">{b("network")}</div>
 				</Link>
 			</div>
 			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
