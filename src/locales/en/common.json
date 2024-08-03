@@ -2,6 +2,25 @@
 	"input": {
 		"enterToSave": "Hit Enter to save"
 	},
+	"commonMenuTabs": {
+		"settings": "Settings",
+		"network": "Network",
+		"mail": "Mail",
+		"users": "Users",
+		"notification": "Notification",
+		"controller": "Controller",
+		"organization": "Organization",
+		"webhooks": "Webhooks",
+		"invites": "Invites"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Organization Settings",
+		"invites": "Invites",
+		"pendingInvites": "Pending Invites",
+		"members": "Members",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Active Webhooks"
+	},
 	"commonButtons": {
 		"add": "Add",
 		"change": "Change",
@@ -29,6 +48,7 @@
 		"userActions": "User Actions",
 		"addWebhooks": "Add Webhooks",
 		"options": "Options",
+		"settings": "Settings",
 		"resend": "Resend"
 	},
 	"commonTable": {
@@ -342,15 +362,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Settings",
-			"network": "Network",
-			"mail": "Mail",
-			"users": "Users",
-			"notification": "Notification",
-			"controller": "Controller",
-			"organization": "Organization"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Public Pages",
@@ -728,30 +739,40 @@
 			"logHeader": "Last 100 Activity Logs",
 			"loading": "Fetching logs..."
 		},
-		"invitation": {
-			"title": "Team Expansion: Invite New Members",
-			"description": "Invite more people to your team! You can send invitations by email or find and add people who are already using the platform. <br></br> This makes it easy for your team to grow and include more members.",
-			"pendingInvitations": {
-				"title": "Pending Invitations"
-			},
-			"inviteByEmail": {
-				"title": "Invite by Email",
-				"description": "Invited users who are not currently members of the application will need to register through the provided link in the invitation email. Link is valid for 24 hour.",
-				"emailPlaceholder": "Email Address",
-				"emailDescription": "Enter the email address of the person you want to invite",
-				"selectRoleDescription": "Select the role of the user"
-			},
-			"inviteSiteUser": {
-				"title": "Invite site users",
-				"description": "Before you can add users to your organization, it's important to note that they must already be registered in the application",
-				"inputFields": {
-					"searchUser": {
-						"title": "Search the user you want to add",
-						"placeholder": "Search User"
-					},
-					"userRole": {
-						"title": "Select the role of the user"
+		"settings": {
+			"invitation": {
+				"title": "Team Expansion: Invite New Members",
+				"description": "Invite more people to your team! You can send invitations by email or find and add people who are already using the platform. <br></br> This makes it easy for your team to grow and include more members.",
+				"pendingInvitations": {
+					"title": "Pending Invitations"
+				},
+				"inviteByEmail": {
+					"title": "Invite by Email",
+					"description": "Invited users who are not currently members of the application will need to register through the provided link in the invitation email. Link is valid for 24 hour.",
+					"emailPlaceholder": "Email Address",
+					"emailDescription": "Enter the email address of the person you want to invite",
+					"selectRoleDescription": "Select the role of the user"
+				},
+				"inviteSiteUser": {
+					"title": "Invite site users",
+					"description": "Before you can add users to your organization, it's important to note that they must already be registered in the application",
+					"inputFields": {
+						"searchUser": {
+							"title": "Search the user you want to add",
+							"placeholder": "Search User"
+						},
+						"userRole": {
+							"title": "Select the role of the user"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Enable global node naming",
+					"description": "When enabled, this feature will:",
+					"bulletPoints": "Maintain a consistent name for each node across all networks in the organization.\nUpdate the node's name in all networks when you rename it in one network.\nUpon member registration, check if the member exists in your organization and use the first name found.",
+					"note": "Note: This is applicable exclusively to networks within this particular organization."
 				}
 			}
 		},

@@ -1,12 +1,11 @@
 import { useTranslations } from "next-intl";
-import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
-import EditOrganizationModal from "./editOrgModal";
+import { useAsideChatStore, useSocketStore } from "~/utils/store";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const AdminHamburgerMenu = ({ organization }) => {
+const AdminHamburgerMenu = ({ organization, userRole }) => {
 	const b = useTranslations("commonButtons");
 	return (
 		<ul
@@ -15,61 +14,78 @@ const AdminHamburgerMenu = ({ organization }) => {
 		>
 			<li>
 				<Link
-					href={`/organization/${organization?.id}/meta`}
+					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
 					className="justify-between cursor-pointer uppercase"
 				>
-					<div className="rounded-full uppercase">{b("meta")}</div>
+					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</li>
-			<li>
-				<Link
-					href={`/organization/${organization?.id}/webhooks`}
-					className="justify-between cursor-pointer uppercase"
-				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
-				</Link>
-			</li>
-			<li>
-				<Link
-					href={`/organization/${organization?.id}/invite`}
-					className="justify-between cursor-pointer uppercase"
-				>
-					{b("inviteUser")}
-				</Link>
-			</li>
+			{userRole === "ADMIN" && (
+				<>
+					<li>
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-invites`}
+							className="justify-between cursor-pointer uppercase"
+						>
+							{b("inviteUser")}
+						</Link>
+					</li>
+					<li>
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
+							className="justify-between cursor-pointer uppercase"
+						>
+							<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+						</Link>
+					</li>
+				</>
+			)}
 		</ul>
 	);
 };
 
-const AdminNavMenu = ({ organization }) => {
-	const b = useTranslations("commonButtons");
+const AdminNavMenu = ({ organization, userRole }) => {
+	const b = useTranslations("commonMenuTabs");
 
 	return (
-		<div>
-			<div className="dropdown dropdown-end">
+		<div className="flex gap-5 ">
+			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
 				<Link
-					href={`/organization/${organization?.id}/webhooks`}
-					className="btn btn-ghost text-md"
+					href={`/organization/${organization?.id}/admin?tab=organization-settings`}
+					className="text-md "
 				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</div>
-			<div className="dropdown dropdown-end">
-				<Link
-					href={`/organization/${organization?.id}/invite`}
-					className="btn btn-ghost text-md"
-				>
-					<div className="rounded-full uppercase">{b("inviteUser")}</div>
-				</Link>
-			</div>
-			<div className="dropdown dropdown-end">
-				<Link
-					href={`/organization/${organization?.id}/meta`}
-					className="btn btn-ghost text-md"
-				>
-					<div className="rounded-full uppercase">{b("meta")}</div>
-				</Link>
-			</div>
+
+			{userRole === "ADMIN" && (
+				<>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-invites`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("invites")}</div>
+						</Link>
+					</div>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-network-settings`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("network")}</div>
+						</Link>
+					</div>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-webhook-settings`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("webhooks")}</div>
+						</Link>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
@@ -80,7 +96,6 @@ export const OrgNavBar = () => {
 
 	const { toggleChat } = useAsideChatStore();
 	const { hasNewMessages } = useSocketStore();
-	const { callModal } = useModalStore((state) => state);
 	const { data: session } = useSession();
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
@@ -112,39 +127,19 @@ export const OrgNavBar = () => {
 							/>
 						</svg>
 					</div>
-					<div className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-						<div
-							onClick={() => {
-								callModal({
-									title: (
-										<p>
-											<span>Edit Meta </span>
-											<span className="text-primary">{organization?.orgName}</span>
-										</p>
-									),
-									content: <EditOrganizationModal organizationId={organization?.id} />,
-								});
-							}}
-							tabIndex={0}
-							role="button"
-							className="btn btn-ghost"
-						>
-							<div className="rounded-full">META</div>
-						</div>
-					</div>
-					<AdminHamburgerMenu organization={organization} />
+					<AdminHamburgerMenu organization={organization} userRole={meOrgRole?.role} />
 				</div>
 				<Link
 					href={`/organization/${organization?.id}`}
-					className="btn btn-ghost text-xl hidden lg:inline-flex"
+					className="btn btn-ghost text-sm lg:text-xl"
 				>
-					{organization?.orgName}
+					<span className="truncate lg:max-w-full max-w-[200px] inline-block">
+						{organization?.orgName}
+					</span>
 				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">
-				{meOrgRole?.role === "ADMIN" ? (
-					<AdminNavMenu organization={organization} />
-				) : null}
+				<AdminNavMenu organization={organization} userRole={meOrgRole?.role} />
 			</div>
 			<div className="navbar-end">
 				<button

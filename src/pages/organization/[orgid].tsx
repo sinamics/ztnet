@@ -39,10 +39,6 @@ const OrganizationById = ({ user, orgIds }) => {
 		userId: user.id,
 	});
 
-	const { mutate: leaveOrg } = api.org.leave.useMutation({
-		onError: handleApiError,
-	});
-
 	const {
 		data: orgData,
 		refetch: refecthOrg,
@@ -258,38 +254,6 @@ const OrganizationById = ({ user, orgIds }) => {
 							)}
 						</div>
 					</section>
-
-					<div className="col-start-1 lg:col-start-4 justify-end flex">
-						{/* Footer content */}
-						<button
-							onClick={() =>
-								callModal({
-									title: <p>{t("leaveOrganization.confirmationTitle")}</p>,
-									content: (
-										<div>
-											<p>{t("leaveOrganization.confirmationMessage")}</p>
-											<p className="mt-2 text-sm text-gray-500">
-												{t("leaveOrganization.note")}
-											</p>
-										</div>
-									),
-									yesAction: () => {
-										return leaveOrg(
-											{ organizationId, userId: user.id },
-											{
-												onSuccess: () => {
-													push("/network");
-												},
-											},
-										);
-									},
-								})
-							}
-							className="btn btn-sm btn-error btn-outline font-semibold py-2 px-4 rounded-lg flex items-center"
-						>
-							{b("leaveOrganization")}
-						</button>
-					</div>
 				</div>
 			</div>
 		</main>
