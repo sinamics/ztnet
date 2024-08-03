@@ -50,8 +50,8 @@ const InviteByUsers = () => {
 		<div className="space-y-5">
 			<div className="form-control w-full space-y-5">
 				<div>
-					<h2 className="text-xl">{t("invitation.inviteSiteUser.title")}</h2>
-					<p className="text-sm text-gray-400">
+					<h2 className="font-medium">{t("invitation.inviteSiteUser.title")}</h2>
+					<p className="text-sm text-gray-500">
 						{t("invitation.inviteSiteUser.description")}
 					</p>
 				</div>
