@@ -771,7 +771,7 @@
 				"globalNodeNaming": {
 					"title": "Włącz globalne nazewnictwo węzłów",
 					"description": "Po włączeniu, ta funkcja będzie:",
-					"bulletPoints": "Utrzymywać spójną nazwę dla każdego węzła we wszystkich sieciach w organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka, sprawdzać czy członek istnieje w Twojej organizacji i używać pierwszej znalezionej nazwy.",
+					"bulletPoints": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach tej organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka sprawdzać, czy członek istnieje w Twojej organizacji i będzie używać pierwszej znalezionej nazwy.",
 					"note": "Uwaga: Dotyczy to wyłącznie sieci w ramach tej konkretnej organizacji."
 				}
 			}
