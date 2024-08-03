@@ -445,19 +445,6 @@ export const networkMemberRouter = createTRPCRouter({
 							name: input.updateParams.name,
 						},
 					});
-				} else if (input.updateParams.name) {
-					// Update only the specific network member if global renaming is off
-					await ctx.prisma.network_members.updateMany({
-						where: {
-							id: input.id,
-							nwid_ref: {
-								organizationId: input.organizationId,
-							},
-						},
-						data: {
-							name: input.updateParams.name,
-						},
-					});
 				}
 			}
 			// if users click the re-generate icon on IP address

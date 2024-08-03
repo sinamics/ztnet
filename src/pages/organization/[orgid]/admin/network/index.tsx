@@ -26,7 +26,7 @@ const OrganizationNetworkSetting = () => {
 				<div className="flex justify-between py-2">
 					<div>
 						<p className="font-medium">Enable global node naming</p>
-						<p className="text-sm text-gray-500">
+						<span className="text-sm text-gray-500">
 							When enabled, this feature will:
 							<ul className="list-disc list-inside mt-2">
 								<li>
@@ -45,7 +45,7 @@ const OrganizationNetworkSetting = () => {
 							<p className="mt-2">
 								Note: It applies only to networks within the organizations.
 							</p>
-						</p>
+						</span>
 					</div>
 					<input
 						type="checkbox"
