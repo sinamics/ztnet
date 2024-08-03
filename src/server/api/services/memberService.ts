@@ -137,18 +137,51 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 	};
 
 	// check if the new member is joining a organization network
-	const org = await prisma.network.findFirst({
+	const memberOfOrganization = await prisma.network.findFirst({
 		where: { nwid: member.nwid },
-		select: { organizationId: true },
+		select: { organizationId: true, organization: { select: { settings: true } } },
 	});
 
+	// check if global naming is enabled, and if so find the first available name
+	if (user.options?.renameNodeGlobally && !memberOfOrganization) {
+		const firstNamedMember = await prisma.network_members.findFirst({
+			where: {
+				id: member.id,
+				name: { not: null },
+				nwid_ref: {
+					organizationId: null,
+				},
+			},
+			select: { name: true },
+		});
+		if (firstNamedMember) {
+			memberData.name = firstNamedMember.name;
+		}
+	}
+
 	// send webhook if the new member is joining a organization network
-	if (org) {
+	if (memberOfOrganization) {
+		// check if global organization member naming is enabled, and if so find the first available name
+		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
+			const firstNamedOrgMember = await prisma.network_members.findFirst({
+				where: {
+					id: member.id,
+					name: { not: null },
+					nwid_ref: {
+						organizationId: memberOfOrganization.organizationId,
+					},
+				},
+				select: { name: true },
+			});
+			if (firstNamedOrgMember) {
+				memberData.name = firstNamedOrgMember.name;
+			}
+		}
 		try {
 			// Send webhook
 			await sendWebhook<MemberJoined>({
 				hookType: HookType.NETWORK_JOIN,
-				organizationId: org.organizationId,
+				organizationId: memberOfOrganization.organizationId,
 				memberId: member.id,
 				networkId: member.nwid,
 			});
