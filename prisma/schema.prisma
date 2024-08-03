@@ -182,7 +182,7 @@ model UserOptions {
   // member table
   deAuthorizeWarning           Boolean? @default(false)
   addMemberIdAsName            Boolean? @default(false)
-  renameNodeGlobally           Boolean? @default(true)
+  renameNodeGlobally           Boolean? @default(false)
 }
 
 enum AccessLevel {
@@ -360,7 +360,7 @@ model LastReadMessage {
 
 model OrganizationSettings {
   id                 Int          @id @default(autoincrement())
-  renameNodeGlobally Boolean?     @default(true)
+  renameNodeGlobally Boolean?     @default(false)
   organizationId     String       @unique
   organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
