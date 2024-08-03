@@ -13,6 +13,14 @@
 		"webhooks": "Webhooki",
 		"invites": "Zaproszenia"
 	},
+	"commonMenuTiles": {
+		"organizationSettings": "Ustawienia Organizacji",
+		"invites": "Zaproszenia",
+		"pendingInvites": "Oczekujące Zaproszenia",
+		"members": "Członkowie",
+		"webhooks": "Webhooki",
+		"activeWebhooks": "Aktywne Webhooki"
+	},
 	"commonButtons": {
 		"add": "Dodaj",
 		"change": "Zmień",

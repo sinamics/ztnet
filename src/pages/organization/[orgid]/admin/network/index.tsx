@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 const OrganizationNetworkSetting = () => {
 	const router = useRouter();
 	const { orgid: organizationId } = router.query;
-	const t = useTranslations("organization");
+	const t = useTranslations();
 
 	// const t = useTranslations("userSettings");
 	const { mutate: updateSettings } = api.org.updateOrganizationSettings.useMutation();
@@ -20,15 +20,19 @@ const OrganizationNetworkSetting = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
-				<p className="text-[0.7rem] text-gray-400 uppercase">Members</p>
+				<p className="text-[0.7rem] text-gray-400 uppercase">
+					{t("commonMenuTiles.members")}
+				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
-						<p className="font-medium">{t("settings.network.globalNodeNaming.title")}</p>
+						<p className="font-medium">
+							{t("organization.settings.network.globalNodeNaming.title")}
+						</p>
 						<span className="text-sm text-gray-500">
-							{t("settings.network.globalNodeNaming.description")}
+							{t("organization.settings.network.globalNodeNaming.description")}
 							<ul className="list-disc list-inside mt-2">
-								{t("settings.network.globalNodeNaming.bulletPoints")
+								{t("organization.settings.network.globalNodeNaming.bulletPoints")
 									.split("\n")
 									.filter((point) => point.trim() !== "")
 									.map((point, index) => (
@@ -36,7 +40,9 @@ const OrganizationNetworkSetting = () => {
 										<li key={index}>{point.trim()}</li>
 									))}
 							</ul>
-							<p className="mt-2">{t("settings.network.globalNodeNaming.note")}</p>
+							<p className="mt-2">
+								{t("organization.settings.network.globalNodeNaming.note")}
+							</p>
 						</span>
 					</div>
 					<input

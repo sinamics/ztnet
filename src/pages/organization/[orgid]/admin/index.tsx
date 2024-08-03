@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
-import OrganizationSettings from "./organization-setting";
+import OrganizationSettings from "./settings";
 import OrganizationWebhook from "./webhooks";
 import OrganizationNetworkSetting from "./network";
 import OrganizationInvites from "./invite";
@@ -28,7 +28,7 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 	const tabs: ITab[] = [
 		{
 			name: t("settings"),
-			value: "organization-setting",
+			value: "organization-settings",
 			component: <OrganizationSettings />,
 		},
 		{
@@ -38,12 +38,12 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 		},
 		{
 			name: t("network"),
-			value: "network-setting",
+			value: "organization-network-settings",
 			component: <OrganizationNetworkSetting />,
 		},
 		{
 			name: t("webhooks"),
-			value: "webhook-setting",
+			value: "organization-webhook-settings",
 			component: <OrganizationWebhook />,
 		},
 	];

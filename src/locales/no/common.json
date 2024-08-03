@@ -13,6 +13,14 @@
 		"webhooks": "Webhooks",
 		"invites": "Invitasjoner"
 	},
+	"commonMenuTiles": {
+		"organizationSettings": "Organisasjonsinnstillinger",
+		"invites": "Invitasjoner",
+		"pendingInvites": "Ventende Invitasjoner",
+		"members": "Medlemmer",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Aktive Webhooks"
+	},
 	"commonButtons": {
 		"add": "Legg til",
 		"change": "Endre",

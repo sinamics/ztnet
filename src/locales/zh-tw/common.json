@@ -13,6 +13,14 @@
 		"webhooks": "網路鉤子",
 		"invites": "邀請"
 	},
+	"commonMenuTiles": {
+		"organizationSettings": "組織設定",
+		"invites": "邀請",
+		"pendingInvites": "待處理邀請",
+		"members": "成員",
+		"webhooks": "網路鉤子",
+		"activeWebhooks": "活躍的網路鉤子"
+	},
 	"commonButtons": {
 		"add": "新增",
 		"change": "修改",

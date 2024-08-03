@@ -125,7 +125,7 @@ const InviteCard = ({ invite, organizationId }) => {
 };
 
 const OrganizationInvites = () => {
-	const t = useTranslations("organization");
+	const t = useTranslations();
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
 
@@ -148,7 +148,9 @@ const OrganizationInvites = () => {
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				<div className="rounded-lg space-y-10">
 					<div>
-						<p className="text-[0.7rem] text-gray-400 uppercase">Invites</p>
+						<p className="text-[0.7rem] text-gray-400 uppercase">
+							{t("commonMenuTiles.invites")}
+						</p>
 						<div className="divider mt-0 p-0 text-gray-500"></div>
 
 						<InviteByMail organizationId={organizationId} />
@@ -164,11 +166,13 @@ const OrganizationInvites = () => {
 					</div>
 				</div>
 				<div>
-					<p className="text-[0.7rem] text-gray-400 uppercase">Pending Invites</p>
+					<p className="text-[0.7rem] text-gray-400 uppercase">
+						{t("commonMenuTiles.pendingInvites")}
+					</p>
 					<div className="divider mt-0 p-0 text-gray-500"></div>
 					{orgInvites?.length > 0 ? (
 						<div className="divider pt-10">
-							{t("settings.invitation.pendingInvitations.title")}
+							{t("organization.settings.invitation.pendingInvitations.title")}
 						</div>
 					) : null}
 					<div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
