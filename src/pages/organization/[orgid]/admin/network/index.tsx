@@ -43,7 +43,8 @@ const OrganizationNetworkSetting = () => {
 								</li>
 							</ul>
 							<p className="mt-2">
-								Note: It applies only to networks within the organizations.
+								Note: This is applicable exclusively to networks within this particular
+								organization.
 							</p>
 						</span>
 					</div>
