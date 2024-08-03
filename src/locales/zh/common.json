@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "按 Enter 保存"
 	},
+	"commonMenuTabs": {
+		"settings": "设置",
+		"network": "网络",
+		"mail": "邮件",
+		"users": "用户",
+		"notification": "通知",
+		"controller": "控制器",
+		"organization": "组织",
+		"webhooks": "网络钩子",
+		"invites": "邀请"
+	},
 	"commonButtons": {
 		"add": "添加",
 		"change": "更改",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "设置",
-			"network": "网络",
-			"mail": "邮件",
-			"users": "用户",
-			"notification": "通知",
-			"controller": "控制器",
-			"organization": "组织"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "公共页面",

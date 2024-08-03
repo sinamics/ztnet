@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "按 Enter 儲存"
 	},
+	"commonMenuTabs": {
+		"settings": "設定",
+		"network": "網路",
+		"mail": "郵件",
+		"users": "使用者",
+		"notification": "通知",
+		"controller": "控制器",
+		"organization": "組織",
+		"webhooks": "網路鉤子",
+		"invites": "邀請"
+	},
 	"commonButtons": {
 		"add": "新增",
 		"change": "修改",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "設定",
-			"network": "網路",
-			"mail": "郵件",
-			"users": "使用者",
-			"notification": "通知",
-			"controller": "控制器",
-			"organization": "組織"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "公開頁面",

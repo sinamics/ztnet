@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "Appuyez sur Entrée pour sauvegarder"
 	},
+	"commonMenuTabs": {
+		"settings": "Paramètres",
+		"network": "Réseau",
+		"mail": "Courrier",
+		"users": "Utilisateurs",
+		"notification": "Notification",
+		"controller": "Contrôleur",
+		"organization": "Organisation",
+		"webhooks": "Webhooks",
+		"invites": "Invitations"
+	},
 	"commonButtons": {
 		"add": "Ajouter",
 		"change": "Changer",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Paramètres",
-			"network": "Réseau",
-			"mail": "Mail",
-			"users": "Utilisateurs",
-			"notification": "Notification",
-			"controller": "Controleur",
-			"organization": "Organisation"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Pages publiques",

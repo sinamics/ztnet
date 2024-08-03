@@ -41,7 +41,7 @@ const AdminHamburgerMenu = ({ organization }) => {
 };
 
 const AdminNavMenu = ({ organization }) => {
-	const b = useTranslations("commonButtons");
+	const b = useTranslations("commonMenuTabs");
 
 	return (
 		<div className="flex gap-5 ">
@@ -58,7 +58,7 @@ const AdminNavMenu = ({ organization }) => {
 					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
 					className="text-md"
 				>
-					<div className="rounded-full uppercase">{b("inviteUser")}</div>
+					<div className="rounded-full uppercase">{b("invites")}</div>
 				</Link>
 			</div>
 			<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
@@ -74,7 +74,7 @@ const AdminNavMenu = ({ organization }) => {
 					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
 					className="text-md"
 				>
-					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
+					<div className="rounded-full uppercase">{b("webhooks")}</div>
 				</Link>
 			</div>
 		</div>

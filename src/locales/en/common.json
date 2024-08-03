@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "Hit Enter to save"
 	},
+	"commonMenuTabs": {
+		"settings": "Settings",
+		"network": "Network",
+		"mail": "Mail",
+		"users": "Users",
+		"notification": "Notification",
+		"controller": "Controller",
+		"organization": "Organization",
+		"webhooks": "Webhooks",
+		"invites": "Invites"
+	},
 	"commonButtons": {
 		"add": "Add",
 		"change": "Change",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Settings",
-			"network": "Network",
-			"mail": "Mail",
-			"users": "Users",
-			"notification": "Notification",
-			"controller": "Controller",
-			"organization": "Organization"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Public Pages",
