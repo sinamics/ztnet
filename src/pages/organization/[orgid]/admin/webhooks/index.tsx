@@ -39,6 +39,12 @@ const ListWebHooks = ({ organizationId }) => {
 
 	return (
 		<div className="cursor-pointer">
+			<div className="pb-10">
+				<p className="text-[0.7rem] text-gray-400 uppercase">
+					{t("webhook.listWebhooks.activeWebhooks")}
+				</p>
+				<div className="divider mt-0 p-0 text-gray-500"></div>
+			</div>
 			{orgData?.webhooks?.map((hook: Webhook) => (
 				<div
 					key={hook.id}
@@ -159,18 +165,20 @@ const OrganizationWebhook = () => {
 	const pageTitle = `${globalSiteTitle} - Webhooks`;
 
 	return (
-		<main className="space-y-10 w-full bg-base-200 p-5 rounded-lg ">
+		<main className="flex w-full flex-col justify-center bg-base-100 p-3">
 			<HeadSection title={pageTitle} />
-			<div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-				<div className="xl:col-span-2">
-					<h1 className="text-2xl font-bold">{t("webhook.title")}</h1>
-					<h1 className="text-md">
+
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+				<form className="space-y-5 w-full">
+					<div className="">
+						<p className="text-[0.7rem] text-gray-400 uppercase">webhooks</p>
+						<div className="divider mt-0 p-0 text-gray-500"></div>
+					</div>
+					<h1 className="text-sm text-gray-500">
 						{t.rich("webhook.description", {
 							br: () => <br />,
 						})}
 					</h1>
-				</div>
-				<form className="space-y-10 w-full">
 					<div className="form-control">
 						<h1 className="text-md font-medium tracking-wide">
 							{t("webhook.createWebhook.webhookName")}
@@ -233,10 +241,6 @@ const OrganizationWebhook = () => {
 					</div>
 				</form>
 				<div className="space-y-2">
-					<div className="text-md font-medium tracking-wide">
-						{t("webhook.listWebhooks.activeWebhooks")}
-					</div>
-
 					<ListWebHooks organizationId={organizationId} />
 				</div>
 			</div>

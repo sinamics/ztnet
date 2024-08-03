@@ -8,12 +8,14 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import OrganizationSettings from "./organization-setting";
 import OrganizationWebhook from "./webhooks";
+import OrganizationNetworkSetting from "./network";
+import OrganizationInvites from "./invite";
 
 const OrganizationAdminSettings = ({ orgIds }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
 
 	const router = useRouter();
-	const { tab = "members" } = router.query;
+	const { tab = "members", orgid: organizationId } = router.query;
 	const t = useTranslations("admin");
 
 	useOrganizationWebsocket(orgIds);
@@ -30,6 +32,16 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 			component: <OrganizationSettings />,
 		},
 		{
+			name: "Invites",
+			value: "organization-invites",
+			component: <OrganizationInvites />,
+		},
+		{
+			name: "Networks",
+			value: "network-setting",
+			component: <OrganizationNetworkSetting />,
+		},
+		{
 			name: "Webhooks",
 			value: "webhook-setting",
 			component: <OrganizationWebhook />,
@@ -38,7 +50,7 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 
 	const changeTab = async (tab: ITab) => {
 		await router.push({
-			pathname: "/admin/organization-setting",
+			pathname: `/organization/${organizationId}/admin`,
 			query: { tab: tab.value },
 		});
 	};

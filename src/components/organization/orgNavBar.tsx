@@ -15,15 +15,15 @@ const AdminHamburgerMenu = ({ organization }) => {
 		>
 			<li>
 				<Link
-					href={`/organization/${organization?.id}/meta`}
+					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
 					className="justify-between cursor-pointer uppercase"
 				>
-					<div className="rounded-full uppercase">{b("meta")}</div>
+					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</li>
 			<li>
 				<Link
-					href={`/organization/${organization?.id}/webhooks`}
+					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
 					className="justify-between cursor-pointer uppercase"
 				>
 					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
@@ -31,7 +31,7 @@ const AdminHamburgerMenu = ({ organization }) => {
 			</li>
 			<li>
 				<Link
-					href={`/organization/${organization?.id}/invite`}
+					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
 					className="justify-between cursor-pointer uppercase"
 				>
 					{b("inviteUser")}
@@ -56,7 +56,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization?.id}/admin?tab=invite-setting`}
+					href={`/organization/${organization?.id}/admin?tab=organization-invites`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("inviteUser")}</div>
@@ -136,9 +136,11 @@ export const OrgNavBar = () => {
 				</div>
 				<Link
 					href={`/organization/${organization?.id}`}
-					className="btn btn-ghost text-xl hidden lg:inline-flex"
+					className="btn btn-ghost text-sm lg:text-xl"
 				>
-					{organization?.orgName}
+					<span className="truncate lg:max-w-full max-w-[200px] inline-block">
+						{organization?.orgName}
+					</span>
 				</Link>
 			</div>
 			<div className="navbar-center hidden xl:flex ">

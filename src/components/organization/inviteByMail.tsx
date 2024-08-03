@@ -33,10 +33,8 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 
 	return (
 		<div>
-			<p className="text-xl">{t("invitation.inviteByEmail.title")}</p>
-			<p className="text-sm text-gray-400 ">
-				{t("invitation.inviteByEmail.description")}
-			</p>
+			<p className="font-medium">{t("invitation.inviteByEmail.title")}</p>
+			<p className="text-sm text-gray-500">{t("invitation.inviteByEmail.description")}</p>
 			<InputField
 				isLoading={inviteLoading}
 				label=""

@@ -133,7 +133,6 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			console.log(input);
 			// make sure the user is member of the organization
 			await checkUserOrganizationRole({
 				ctx,
@@ -1459,6 +1458,55 @@ export const organizationRouter = createTRPCRouter({
 			return await ctx.prisma.webhook.findMany({
 				where: {
 					id: input.organizationId,
+				},
+			});
+		}),
+	updateOrganizationSettings: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				renameNodeGlobally: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// update organization name
+			return await ctx.prisma.organizationSettings.upsert({
+				where: {
+					organizationId: input.organizationId,
+				},
+				create: {
+					organizationId: input.organizationId,
+					renameNodeGlobally: input.renameNodeGlobally,
+				},
+				update: {
+					renameNodeGlobally: input.renameNodeGlobally,
+				},
+			});
+		}),
+	getOrganizationSettings: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			return await ctx.prisma.organizationSettings.findFirst({
+				where: {
+					organizationId: input.organizationId,
 				},
 			});
 		}),
