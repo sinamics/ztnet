@@ -33,8 +33,10 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 
 	return (
 		<div>
-			<p className="font-medium">{t("invitation.inviteByEmail.title")}</p>
-			<p className="text-sm text-gray-500">{t("invitation.inviteByEmail.description")}</p>
+			<p className="font-medium">{t("settings.invitation.inviteByEmail.title")}</p>
+			<p className="text-sm text-gray-500">
+				{t("settings.invitation.inviteByEmail.description")}
+			</p>
 			<InputField
 				isLoading={inviteLoading}
 				label=""
@@ -53,15 +55,15 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 					{
 						name: "email",
 						type: "text",
-						description: t("invitation.inviteByEmail.emailDescription"),
-						placeholder: t("invitation.inviteByEmail.emailPlaceholder"),
+						description: t("settings.invitation.inviteByEmail.emailDescription"),
+						placeholder: t("settings.invitation.inviteByEmail.emailPlaceholder"),
 						// value: options?.smtpPort,
 					},
 					{
 						name: "role",
 						elementType: "select",
 						placeholder: "user role",
-						description: t("invitation.inviteByEmail.selectRoleDescription"),
+						description: t("settings.invitation.inviteByEmail.selectRoleDescription"),
 						initialValue: "READ_ONLY",
 						selectOptions: UserRolesList,
 					},
