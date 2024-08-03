@@ -29,6 +29,7 @@
 		"userActions": "用户操作",
 		"addWebhooks": "添加 Webhooks",
 		"options": "选项",
+		"settings": "设置",
 		"resend": "重新发送"
 	},
 	"commonTable": {

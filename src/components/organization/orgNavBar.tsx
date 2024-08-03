@@ -48,7 +48,7 @@ const AdminNavMenu = ({ organization }) => {
 		<div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization?.id}/webhooks`}
+					href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("addWebhooks")}</div>
@@ -56,7 +56,7 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization?.id}/invite`}
+					href={`/organization/${organization?.id}/admin?tab=invite-setting`}
 					className="btn btn-ghost text-md"
 				>
 					<div className="rounded-full uppercase">{b("inviteUser")}</div>
@@ -64,10 +64,10 @@ const AdminNavMenu = ({ organization }) => {
 			</div>
 			<div className="dropdown dropdown-end">
 				<Link
-					href={`/organization/${organization?.id}/meta`}
+					href={`/organization/${organization?.id}/admin?tab=organization-setting`}
 					className="btn btn-ghost text-md"
 				>
-					<div className="rounded-full uppercase">{b("meta")}</div>
+					<div className="rounded-full uppercase">{b("settings")}</div>
 				</Link>
 			</div>
 		</div>

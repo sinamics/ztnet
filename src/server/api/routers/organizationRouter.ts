@@ -128,11 +128,12 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().min(3).max(40),
+				orgName: z.string().min(3).max(40).optional(),
 				orgDescription: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			console.log(input);
 			// make sure the user is member of the organization
 			await checkUserOrganizationRole({
 				ctx,
