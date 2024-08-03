@@ -16,7 +16,7 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 
 	const router = useRouter();
 	const { tab = "members", orgid: organizationId } = router.query;
-	const t = useTranslations("admin");
+	const t = useTranslations("commonMenuTabs");
 
 	useOrganizationWebsocket(orgIds);
 	interface ITab {
@@ -27,22 +27,22 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 
 	const tabs: ITab[] = [
 		{
-			name: "Settings",
+			name: t("settings"),
 			value: "organization-setting",
 			component: <OrganizationSettings />,
 		},
 		{
-			name: "Invites",
+			name: t("invites"),
 			value: "organization-invites",
 			component: <OrganizationInvites />,
 		},
 		{
-			name: "Networks",
+			name: t("network"),
 			value: "network-setting",
 			component: <OrganizationNetworkSetting />,
 		},
 		{
-			name: "Webhooks",
+			name: t("webhooks"),
 			value: "webhook-setting",
 			component: <OrganizationWebhook />,
 		},
@@ -55,7 +55,7 @@ const OrganizationAdminSettings = ({ orgIds }) => {
 		});
 	};
 	return (
-		<div className="animate-fadeIn py-5 sm:w-11/12 mx-auto">
+		<div className="animate-fadeIn py-5">
 			<MetaTags title={title} />
 			<div role="tablist" className="tabs tabs-bordered flex flex-wrap p-3 pb-10 ">
 				{tabs.map((t) => (

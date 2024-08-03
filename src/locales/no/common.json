@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "Trykk Enter for å lagre"
 	},
+	"commonMenuTabs": {
+		"settings": "Innstillinger",
+		"network": "Nettverk",
+		"mail": "E-post",
+		"users": "Brukere",
+		"notification": "Varsling",
+		"controller": "Kontroller",
+		"organization": "Organisasjon",
+		"webhooks": "Webhooks",
+		"invites": "Invitasjoner"
+	},
 	"commonButtons": {
 		"add": "Legg til",
 		"change": "Endre",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Innstillinger",
-			"network": "Nettverk",
-			"mail": "Post",
-			"users": "Brukere",
-			"notification": "Varsling",
-			"controller": "Kontroller",
-			"organization": "Organisasjon"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",

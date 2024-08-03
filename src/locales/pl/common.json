@@ -2,6 +2,17 @@
 	"input": {
 		"enterToSave": "Aby zapisać wciśnij Enter"
 	},
+	"commonMenuTabs": {
+		"settings": "Ustawienia",
+		"network": "Sieć",
+		"mail": "Poczta",
+		"users": "Użytkownicy",
+		"notification": "Powiadomienie",
+		"controller": "Kontroler",
+		"organization": "Organizacja",
+		"webhooks": "Webhooki",
+		"invites": "Zaproszenia"
+	},
 	"commonButtons": {
 		"add": "Dodaj",
 		"change": "Zmień",
@@ -343,15 +354,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Ustawienia",
-			"network": "Sieć",
-			"mail": "Mail",
-			"users": "Użytkownicy",
-			"notification": "Powiadomienia",
-			"controller": "Kontroler",
-			"organization": "Organizacje"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Strony startowe",
