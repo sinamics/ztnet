@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
-import { useAsideChatStore, useModalStore, useSocketStore } from "~/utils/store";
-import EditOrganizationModal from "./editOrgModal";
+import { useAsideChatStore, useSocketStore } from "~/utils/store";
 import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import Link from "next/link";
@@ -80,7 +79,6 @@ export const OrgNavBar = () => {
 
 	const { toggleChat } = useAsideChatStore();
 	const { hasNewMessages } = useSocketStore();
-	const { callModal } = useModalStore((state) => state);
 	const { data: session } = useSession();
 
 	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery({
@@ -111,26 +109,6 @@ export const OrgNavBar = () => {
 								d="M4 6h16M4 12h8m-8 6h16"
 							/>
 						</svg>
-					</div>
-					<div className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-						<div
-							onClick={() => {
-								callModal({
-									title: (
-										<p>
-											<span>Edit Meta </span>
-											<span className="text-primary">{organization?.orgName}</span>
-										</p>
-									),
-									content: <EditOrganizationModal organizationId={organization?.id} />,
-								});
-							}}
-							tabIndex={0}
-							role="button"
-							className="btn btn-ghost"
-						>
-							<div className="rounded-full">META</div>
-						</div>
 					</div>
 					<AdminHamburgerMenu organization={organization} />
 				</div>
