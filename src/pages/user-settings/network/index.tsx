@@ -88,12 +88,17 @@ const UserNetworkSetting = () => {
 								</li>
 								<li>
 									Update the node's name in all your networks when you rename it in one
-									network
+									network.
+								</li>
+								<li>
+									Upon member / node registration, check if the member exists in your
+									other networks and use the first name found.
 								</li>
 							</ul>
 							<p className="mt-2">
-								Note: This affects only the networks where you are the author. It does not
-								change node names in networks managed by others or orgainzations.
+								Note: This feature has priority over "Add Member ID as Name". It applies
+								only to networks where you are the author and doesn't affect networks
+								managed by others or organizations.
 							</p>
 						</p>
 					</div>
