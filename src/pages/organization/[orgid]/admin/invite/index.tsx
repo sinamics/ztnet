@@ -168,7 +168,7 @@ const OrganizationInvites = () => {
 					<div className="divider mt-0 p-0 text-gray-500"></div>
 					{orgInvites?.length > 0 ? (
 						<div className="divider pt-10">
-							{t("invitation.pendingInvitations.title")}
+							{t("settings.invitation.pendingInvitations.title")}
 						</div>
 					) : null}
 					<div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-3">

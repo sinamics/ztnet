@@ -731,30 +731,40 @@
 			"logHeader": "Últimos 100 registros de actividad",
 			"loading": "Cargando registros..."
 		},
-		"invitation": {
-			"title": "Expansión del equipo: Invitar a nuevos miembros",
-			"description": "¡Invita a más personas a tu equipo! Puedes enviar invitaciones por correo electrónico o encontrar y agregar personas que ya estén utilizando la plataforma. <br></br> Esto facilita el crecimiento de tu equipo e incluir a más miembros.",
-			"pendingInvitations": {
-				"title": "Invitaciones pendientes"
-			},
-			"inviteByEmail": {
-				"title": "Invitar por correo electrónico",
-				"description": "Los usuarios invitados que actualmente no son miembros de la aplicación deberán registrarse a través del enlace proporcionado en el correo electrónico de invitación. El enlace es válido por 24 horas.",
-				"emailPlaceholder": "Dirección de correo electrónico",
-				"emailDescription": "Ingresa la dirección de correo electrónico de la persona que deseas invitar",
-				"selectRoleDescription": "Selecciona el rol del usuario"
-			},
-			"inviteSiteUser": {
-				"title": "Invitar usuarios del sitio",
-				"description": "Antes de poder agregar usuarios a tu organización, es importante tener en cuenta que ya deben estar registrados en la aplicación",
-				"inputFields": {
-					"searchUser": {
-						"title": "Buscar el usuario que deseas agregar",
-						"placeholder": "Buscar usuario"
-					},
-					"userRole": {
-						"title": "Selecciona el rol del usuario"
+		"settings": {
+			"invitation": {
+				"title": "Expansión del equipo: Invitar a nuevos miembros",
+				"description": "¡Invita a más personas a tu equipo! Puedes enviar invitaciones por correo electrónico o encontrar y agregar personas que ya estén utilizando la plataforma. <br></br> Esto facilita el crecimiento de tu equipo e incluir a más miembros.",
+				"pendingInvitations": {
+					"title": "Invitaciones pendientes"
+				},
+				"inviteByEmail": {
+					"title": "Invitar por correo electrónico",
+					"description": "Los usuarios invitados que actualmente no son miembros de la aplicación deberán registrarse a través del enlace proporcionado en el correo electrónico de invitación. El enlace es válido por 24 horas.",
+					"emailPlaceholder": "Dirección de correo electrónico",
+					"emailDescription": "Ingresa la dirección de correo electrónico de la persona que deseas invitar",
+					"selectRoleDescription": "Selecciona el rol del usuario"
+				},
+				"inviteSiteUser": {
+					"title": "Invitar usuarios del sitio",
+					"description": "Antes de poder agregar usuarios a tu organización, es importante tener en cuenta que ya deben estar registrados en la aplicación",
+					"inputFields": {
+						"searchUser": {
+							"title": "Buscar el usuario que deseas agregar",
+							"placeholder": "Buscar usuario"
+						},
+						"userRole": {
+							"title": "Selecciona el rol del usuario"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Habilitar nomenclatura global de nodos",
+					"description": "Cuando se habilita, esta función:",
+					"bulletPoints": "Mantendrá un nombre consistente para cada nodo en todas las redes de la organización.\nActualizará el nombre del nodo en todas las redes cuando lo renombres en una red.\nAl registrar un miembro, verificará si el miembro existe en tu organización y usará el primer nombre encontrado.",
+					"note": "Nota: Esto se aplica exclusivamente a las redes dentro de esta organización en particular."
 				}
 			}
 		},
