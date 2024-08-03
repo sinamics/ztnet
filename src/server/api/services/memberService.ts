@@ -125,7 +125,7 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 	const [user, memberOfOrganization] = await Promise.all([
 		prisma.user.findUnique({
 			where: { id: ctx.session.user.id },
-			select: { options: true },
+			select: { options: true, network: { select: { nwid: true } } },
 		}),
 		prisma.network.findFirst({
 			where: { nwid: member.nwid },
@@ -138,7 +138,10 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 			where: {
 				id: member.id,
 				name: { not: null },
-				nwid_ref: { organizationId: orgId },
+				nwid_ref: {
+					organizationId: orgId,
+					authorId: orgId ? null : ctx.session.user.id,
+				},
 			},
 			select: { name: true },
 		});
