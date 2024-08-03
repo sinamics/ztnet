@@ -79,6 +79,45 @@ const UserNetworkSetting = () => {
 				<div className="divider mt-0 p-0 text-gray-500"></div>
 				<div className="flex justify-between py-2">
 					<div>
+						<p className="font-medium">Enable global node naming</p>
+						<p className="text-sm text-gray-500">
+							When enabled, this feature will:
+							<ul className="list-disc list-inside mt-2">
+								<li>
+									Maintain a consistent name for each node across all networks you manage.
+								</li>
+								<li>
+									Update the node's name in all your networks when you rename it in one
+									network.
+								</li>
+								<li>
+									Upon member / node registration, check if the member exists in your
+									other networks and use the first name found.
+								</li>
+							</ul>
+							<p className="mt-2">
+								Note: This feature has priority over "Add Member ID as Name". It applies
+								only to networks where you are the author and doesn't affect networks
+								managed by others or organizations.
+							</p>
+						</p>
+					</div>
+					<input
+						type="checkbox"
+						checked={me?.options?.renameNodeGlobally || false}
+						className="checkbox-primary checkbox checkbox-sm justify-self-end"
+						onChange={(e) => {
+							updateSettings(
+								{
+									renameNodeGlobally: e.target.checked,
+								},
+								{ onSuccess: () => void refetchMe() },
+							);
+						}}
+					/>
+				</div>
+				<div className="flex justify-between py-2">
+					<div>
 						<p className="font-medium">
 							{t("network.memberTable.deAuthorizationWarningTitle")}
 						</p>

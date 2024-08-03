@@ -182,6 +182,7 @@ model UserOptions {
   // member table
   deAuthorizeWarning           Boolean? @default(false)
   addMemberIdAsName            Boolean? @default(false)
+  renameNodeGlobally           Boolean? @default(false)
 }
 
 enum AccessLevel {
@@ -275,6 +276,9 @@ model Invitation {
   organizations OrganizationInvitation[]
 }
 
+//
+// ORGANIZATION
+//
 model OrganizationInvitation {
   id             String       @id @default(cuid())
   invitationId   Int
@@ -282,10 +286,6 @@ model OrganizationInvitation {
   invitation     Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
-
-//
-// ORGANIZATION
-//
 
 model Organization {
   id                 String                   @id @default(cuid())
@@ -359,10 +359,10 @@ model LastReadMessage {
 }
 
 model OrganizationSettings {
-  id             Int          @id @default(autoincrement())
-  organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  // Add specific settings fields here
+  id                 Int          @id @default(autoincrement())
+  renameNodeGlobally Boolean?     @default(false)
+  organizationId     String       @unique
+  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model MembershipRequest {
@@ -379,7 +379,7 @@ model ActivityLog {
   createdAt      DateTime      @default(now())
   performedById  String
   performedBy    User          @relation(fields: [performedById], references: [id], onDelete: Cascade)
-  organizationId String? // Make this optional
+  organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
