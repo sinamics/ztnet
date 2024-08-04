@@ -45,7 +45,7 @@ export const NetworkTable = ({ tableData = [] }) => {
 	const router = useRouter();
 	const t = useTranslations();
 
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [

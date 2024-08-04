@@ -19,7 +19,7 @@ interface IProp {
 
 export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();

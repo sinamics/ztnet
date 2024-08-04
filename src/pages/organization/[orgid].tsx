@@ -27,7 +27,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	const [maxHeight, setMaxHeight] = useState("auto");
 	const { query, push } = useRouter();
 	const organizationId = query.orgid as string;
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();

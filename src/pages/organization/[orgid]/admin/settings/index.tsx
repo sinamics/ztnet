@@ -19,7 +19,9 @@ const OrganizationSettings = ({ user }) => {
 	const t = useTranslations();
 	const handleApiError = useTrpcApiErrorHandler();
 
-	const { closeModal, callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
+	const closeModal = useModalStore((state) => state.closeModal);
+
 	const { refetch: refecthAllOrg } = api.org.getAllOrg.useQuery(null, {
 		enabled: user?.role === "ADMIN",
 	});
