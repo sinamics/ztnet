@@ -88,7 +88,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 
 6. Populate the PostgreSQL database with the necessary tables:
     ```bash
-    npx prisma migrate deploy
+    npx prisma generate && npx prisma migrate deploy
     npx prisma db seed
     ```
 
