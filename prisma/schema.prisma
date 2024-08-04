@@ -215,39 +215,41 @@ model APIToken {
 }
 
 model User {
-  id                    String                 @id @default(cuid())
-  name                  String
-  email                 String                 @unique
-  emailVerified         DateTime?
-  lastLogin             DateTime
-  lastseen              DateTime?
-  online                Boolean?               @default(false)
-  role                  Role                   @default(USER)
-  image                 String?
-  hash                  String?
-  tempPassword          String?
-  firstTime             Boolean                @default(true)
-  twoFactorEnabled      Boolean                @default(false)
-  twoFactorSecret       String?
-  requestChangePassword Boolean                @default(false)
-  userGroupId           Int?
-  memberOfOrgs          Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
-  organizationRoles     UserOrganizationRole[]
-  membershipRequests    MembershipRequest[]    @relation("MembershipRequestsForUser")
-  messages              Messages[]
-  lastReadByUsers       LastReadMessage[]
-  ActivityLog           ActivityLog[]
-  expiresAt             DateTime? // null means it never expires
-  isActive              Boolean                @default(true)
-  createdAt             DateTime               @default(now())
-  userGroup             UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-  options               UserOptions?
-  accounts              Account[]
-  sessions              Session[]
-  network               network[]
-  apiTokens             APIToken[]
-  webhooks              Webhook[]
-  invitations           Invitation[]           @relation("InvitationsSent")
+  id                     String                 @id @default(cuid())
+  name                   String
+  email                  String                 @unique
+  emailVerified          DateTime?
+  lastLogin              DateTime
+  lastseen               DateTime?
+  online                 Boolean?               @default(false)
+  role                   Role                   @default(USER)
+  image                  String?
+  hash                   String?
+  tempPassword           String?
+  firstTime              Boolean                @default(true)
+  twoFactorEnabled       Boolean                @default(false)
+  twoFactorSecret        String?
+  failedLoginAttempts    Int                    @default(0)
+  lastFailedLoginAttempt DateTime?
+  requestChangePassword  Boolean                @default(false)
+  userGroupId            Int?
+  memberOfOrgs           Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
+  organizationRoles      UserOrganizationRole[]
+  membershipRequests     MembershipRequest[]    @relation("MembershipRequestsForUser")
+  messages               Messages[]
+  lastReadByUsers        LastReadMessage[]
+  ActivityLog            ActivityLog[]
+  expiresAt              DateTime? // null means it never expires
+  isActive               Boolean                @default(true)
+  createdAt              DateTime               @default(now())
+  userGroup              UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+  options                UserOptions?
+  accounts               Account[]
+  sessions               Session[]
+  network                network[]
+  apiTokens              APIToken[]
+  webhooks               Webhook[]
+  invitations            Invitation[]           @relation("InvitationsSent")
 }
 
 model VerificationToken {

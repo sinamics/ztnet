@@ -16,6 +16,11 @@ import { authenticator } from "otplib";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+// Constants
+const MAX_FAILED_ATTEMPTS = 5;
+const COOLDOWN_PERIOD = 1 * 60 * 1000; // 15 minutes in milliseconds
+
 declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: IUser;
@@ -144,9 +149,35 @@ export const authOptions: NextAuthOptions = {
 					//  return a nextauth error message
 					throw new Error("User does not exist!");
 
+				// Check if the user is in a cooldown period
+				if (
+					user.lastFailedLoginAttempt &&
+					user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS
+				) {
+					const timeSinceLastFailedAttempt =
+						Date.now() - user.lastFailedLoginAttempt.getTime();
+					if (timeSinceLastFailedAttempt < COOLDOWN_PERIOD) {
+						const remainingCooldown = Math.ceil(
+							(COOLDOWN_PERIOD - timeSinceLastFailedAttempt) / 60000,
+						);
+						throw new Error(
+							`Too many failed attempts. Please try again in ${remainingCooldown} minutes.`,
+						);
+					}
+				}
 				const isValid = await compare(_credentials?.password ?? "", user.hash);
 
 				if (!isValid) {
+					// Increment failed login attempts
+					await prisma.user.update({
+						where: { id: user.id },
+						data: {
+							failedLoginAttempts: {
+								increment: 1,
+							},
+							lastFailedLoginAttempt: new Date(),
+						},
+					});
 					throw new Error("email or password is wrong!");
 				}
 
@@ -188,9 +219,27 @@ export const authOptions: NextAuthOptions = {
 
 					const isValidToken = authenticator.check(_credentials.totpCode, secret);
 					if (!isValidToken) {
+						await prisma.user.update({
+							where: { id: user.id },
+							data: {
+								failedLoginAttempts: {
+									increment: 1,
+								},
+								lastFailedLoginAttempt: new Date(),
+							},
+						});
 						throw new Error(ErrorCode.IncorrectTwoFactorCode);
 					}
 				}
+
+				// Reset failed login attempts on successful login
+				await prisma.user.update({
+					where: { id: user.id },
+					data: {
+						failedLoginAttempts: 0,
+						lastFailedLoginAttempt: null,
+					},
+				});
 				return {
 					...user,
 					hash: null,
