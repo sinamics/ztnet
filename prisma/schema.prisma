@@ -274,6 +274,7 @@ model Invitation {
   invitedById   String
   createdAt     DateTime                 @default(now())
   role          Role                     @default(READ_ONLY)
+  require2FA    Boolean                  @default(false)
   createdBy     User                     @relation(fields: [invitedById], references: [id], onDelete: Cascade, name: "InvitationsSent")
   userGroup     UserGroup?               @relation(fields: [userGroupId], references: [id], onDelete: Cascade)
   organizations OrganizationInvitation[]
@@ -301,6 +302,7 @@ model Organization {
   settings           OrganizationSettings?
   membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
   isActive           Boolean                  @default(true)
+  require2FA         Boolean                  @default(false)
   userRoles          UserOrganizationRole[]
   messages           Messages[]
   lastReadByUsers    LastReadMessage[]
