@@ -52,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		);
 		return res.status(500).json({ error: ErrorCode.InternalServerError });
 	}
+
 	const isValidToken = authenticator.check(req.body.totpCode, secret);
 	if (!isValidToken) {
 		return res.status(400).json({ error: ErrorCode.IncorrectTwoFactorCode });
