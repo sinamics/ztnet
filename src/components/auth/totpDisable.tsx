@@ -4,7 +4,7 @@ import { ErrorCode } from "~/utils/errorCode";
 import { useModalStore } from "~/utils/store";
 
 const DisableTwoFactSetupModal = () => {
-	const { closeModal } = useModalStore((state) => state);
+	const closeModal = useModalStore((state) => state.closeModal);
 	const [totpCode, setTotpCode] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 

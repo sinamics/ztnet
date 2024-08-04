@@ -1,4 +1,4 @@
-import React, { useState, useRef, KeyboardEvent, ChangeEvent } from "react";
+import React, { useState, useRef, KeyboardEvent, ChangeEvent, useEffect } from "react";
 import { z } from "zod";
 
 const TwoFactAuthSchema = z.object({
@@ -30,6 +30,12 @@ export default function TwoFactAuth({
 			}
 		}
 	};
+
+	useEffect(() => {
+		if (inputRefs.current[0]) {
+			inputRefs.current[0].focus();
+		}
+	}, []);
 
 	const updateDigits = (newDigits: string[]) => {
 		setDigits(newDigits);
@@ -70,6 +76,7 @@ export default function TwoFactAuth({
 					<input
 						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						key={index}
+						tabIndex={0}
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						ref={(el) => (inputRefs.current[index] = el)}
 						className="input input-bordered input-sm w-10 text-center"
