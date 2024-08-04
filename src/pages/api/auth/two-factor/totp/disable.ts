@@ -48,12 +48,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			console.error(
 				`Two factor is enabled for user ${user.email} but they have no secret`,
 			);
-			throw new Error("ErrorCode.InternalServerError");
+			throw new Error(ErrorCode.InternalServerError);
 		}
 
 		if (!process.env.NEXTAUTH_SECRET) {
 			console.error(`"Missing encryption key; cannot proceed with two factor login."`);
-			throw new Error("ErrorCode.InternalServerError");
+			throw new Error(ErrorCode.InternalServerError);
 		}
 
 		const secret = decrypt<string>(
@@ -64,13 +64,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			console.error(
 				`Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`,
 			);
-			throw new Error("ErrorCode.InternalServerError");
+			throw new Error(ErrorCode.InternalServerError);
 		}
 
 		// If user has 2fa enabled, check if body.totpCode is correct
 		const isValidToken = authenticator.check(req.body.totpCode, secret);
 		if (!isValidToken) {
-			return res.status(400).json({ error: "ErrorCode.IncorrectTwoFactorCode" });
+			return res.status(400).json({ error: ErrorCode.IncorrectTwoFactorCode });
 		}
 	}
 

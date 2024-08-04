@@ -186,7 +186,7 @@ const Account = () => {
 								})
 							}
 						>
-							{me?.twoFactorEnabled ? "Disable 2FA" : "Set 2FA"}
+							{me?.twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
 						</button>
 					</div>
 				</div>

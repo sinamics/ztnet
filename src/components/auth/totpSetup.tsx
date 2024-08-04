@@ -55,6 +55,7 @@ const ShowSteps = ({ step }: { step: number }) => [
 const TOTPSetup: React.FC = () => {
 	const { closeModal } = useModalStore((state) => state);
 	const [dataUri, setDataUri] = useState("");
+	const [secret, setSecret] = useState("");
 	const [totpCode, setTotpCode] = useState<string>("");
 	const [password, setPassword] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,7 +75,9 @@ const TOTPSetup: React.FC = () => {
 				}),
 			});
 			const body = await response.json();
+			console.log(body);
 			if (response.status === 200) {
+				setSecret(body.secret);
 				setDataUri(body.dataUri);
 				setStep(SetupStep.DisplayQrCode);
 				return;
@@ -107,7 +110,6 @@ const TOTPSetup: React.FC = () => {
 				}),
 			});
 			const body = await response.json();
-
 			if (body.error === ErrorCode.IncorrectTwoFactorCode) {
 				toast.error("Incorrect code. Please try again");
 			} else if (body.error) {
@@ -125,17 +127,17 @@ const TOTPSetup: React.FC = () => {
 		}
 	}
 	return (
-		<div>
+		<div className="space-y-10">
 			<ShowSteps step={step} />
 			<WithStep step={SetupStep.ConfirmPassword} current={step}>
-				<div className="space-y-10">
-					<h3 className="mb-2 text-lg">Confirm your password</h3>
+				<form className="">
+					<p className="text-sm">Type in your password</p>
 					<input
 						type="password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						className="input-bordered input-sm mt-2 rounded border p-2"
-						placeholder="Enter your password"
+						className="input input-bordered input-sm mt-2 rounded border p-2"
+						placeholder="Password"
 					/>
 					<button
 						onClick={handleSetup}
@@ -145,48 +147,58 @@ const TOTPSetup: React.FC = () => {
 					>
 						{isSubmitting ? "Checking..." : "Confirm Password"}
 					</button>
-				</div>
+				</form>
 			</WithStep>
 			<WithStep step={SetupStep.DisplayQrCode} current={step}>
-				<div className="mt-4 space-y-5">
-					<h3 className="mb-2">Scan this QR code with your authenticator app</h3>
-					{/* <QRCode value={dataUri} size={256} /> */}
-					<img src={dataUri} alt="totp" width={100} />
-					{/* <p className="mt-2">
+				<form className="mt-4 space-y-10">
+					<div className="grid grid-cols-2">
+						<p className="mb-2">Scan this QR code with your authenticator app.</p>
+						<section className="flex justify-center">
+							<img src={dataUri} alt="totp" width={150} />
+						</section>
+					</div>
+					<p className="mt-2">
 						If you can't scan the QR code, enter this secret manually:{" "}
-						<strong>{secret}</strong>
-					</p> */}
-					<button
-						onClick={() => setStep(SetupStep.EnterTotpCode)}
-						className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
-					>
-						Next
-					</button>
-				</div>
+						<kbd className="kbd kbd-md">{secret}</kbd>
+					</p>
+					<footer className="flex justify-end">
+						<button
+							onClick={() => setStep(SetupStep.EnterTotpCode)}
+							className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+							type="submit"
+						>
+							Next
+						</button>
+					</footer>
+				</form>
 			</WithStep>
 			<WithStep step={SetupStep.EnterTotpCode} current={step}>
-				{/* <form className="mt-4"> */}
-				<div>
-					<h3 className="mb-2">Verify your TOTP setup</h3>
-					<p>Enter the code from your authenticator app to verify and enable TOTP.</p>
-					<TwoFactAuthDigits
-						value={totpCode}
-						onChange={setTotpCode}
-						onValidationChange={(isValid) => {
-							// Handle validation state change
-							// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-							console.log("Is input valid:", isValid);
-						}}
-					/>
-					<button
-						onClick={() => handleEnable(totpCode)}
-						disabled={isSubmitting}
-						className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
-					>
-						{isSubmitting ? "Verifying..." : "Verify and Enable"}
-					</button>
-				</div>
-				{/* </form> */}
+				<form className="mt-4">
+					<div className="mt-4 space-y-10">
+						<div className="grid grid-cols-1 gap-3">
+							<h3 className="mb-2">Verify your TOTP setup</h3>
+							<p>Enter the code from your authenticator app to verify and enable TOTP.</p>
+							<TwoFactAuthDigits value={totpCode} onChange={setTotpCode} />
+						</div>
+						<footer className="flex justify-end">
+							<button
+								type="button"
+								className="btn btn-sm ml-2 rounded px-4 py-2 btn-outline"
+								onClick={() => setStep(SetupStep.DisplayQrCode)}
+							>
+								Back
+							</button>
+							<button
+								onClick={() => handleEnable(totpCode)}
+								disabled={isSubmitting}
+								type="submit"
+								className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+							>
+								{isSubmitting ? "Verifying..." : "Verify and Enable"}
+							</button>
+						</footer>
+					</div>
+				</form>
 			</WithStep>
 		</div>
 	);

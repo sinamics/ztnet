@@ -46,13 +46,13 @@ const DisableTwoFactSetupModal = () => {
 
 	return (
 		<form className="space-y-10">
-			<p>Enter your code to disable 2FA</p>
+			<p>Enter your 2FA code to disable 2FA</p>
 			<input
 				type="password"
 				value={totpCode}
 				onChange={(e) => setTotpCode(e.target.value)}
-				className="input-bordered input-sm mt-2 rounded border p-2"
-				placeholder="Enter your password"
+				className="input input-bordered input-sm mt-2 rounded border p-2"
+				placeholder="Enter 2FA code"
 			/>
 			<button
 				onClick={handleDisable}
