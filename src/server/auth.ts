@@ -6,6 +6,9 @@ import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
 import { isRunningInDocker } from "~/utils/docker";
+import { ErrorCode } from "~/utils/errorCode";
+import { decrypt, generateInstanceSecret } from "~/utils/encryption";
+import { authenticator } from "otplib";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -155,33 +158,38 @@ export const authOptions: NextAuthOptions = {
 
 				if (user.twoFactorEnabled) {
 					if (!_credentials.totpCode) {
-						throw new Error("ErrorCode.SecondFactorRequired");
+						throw new Error(ErrorCode.SecondFactorRequired);
 					}
 
 					if (!user.twoFactorSecret) {
 						console.error(
 							`Two factor is enabled for user ${user.email} but they have no secret`,
 						);
-						throw new Error("ErrorCode.InternalServerError");
+						throw new Error(ErrorCode.InternalServerError);
 					}
 
-					if (!process.env.ENCRYPTION_KEY) {
+					if (!process.env.NEXTAUTH_SECRET) {
 						console.error(
 							`"Missing encryption key; cannot proceed with two factor login."`,
 						);
-						throw new Error("ErrorCode.InternalServerError");
+						throw new Error(ErrorCode.InternalServerError);
 					}
 
-					// const secret = symmetricDecrypt(user.twoFactorSecret!, process.env.ENCRYPTION_KEY!);
-					// if (secret.length !== 32) {
-					//   console.error(`Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`);
-					//   throw new Error("ErrorCode.InternalServerError");
-					// }
+					const secret = decrypt<string>(
+						user.twoFactorSecret,
+						generateInstanceSecret(process.env.NEXTAUTH_SECRET),
+					);
+					if (secret.length !== 32) {
+						console.error(
+							`Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`,
+						);
+						throw new Error(ErrorCode.InternalServerError);
+					}
 
-					// const isValidToken = authenticator.check(credentials.totpCode, secret);
-					// if (!isValidToken) {
-					//   throw new Error(ErrorCode.IncorrectTwoFactorCode);
-					// }
+					const isValidToken = authenticator.check(_credentials.totpCode, secret);
+					if (!isValidToken) {
+						throw new Error(ErrorCode.IncorrectTwoFactorCode);
+					}
 				}
 				return {
 					...user,
