@@ -25,7 +25,7 @@ describe("LoginForm", () => {
 		(useRouter as jest.Mock).mockReturnValue({
 			query: { error: "OAuthError" },
 		});
-		render(<LoginForm hasOauth />);
+		render(<LoginForm hasOauth oauthExlusiveLogin={false} />);
 		expect(screen.getByRole("heading", { name: /Sign In/i })).toBeInTheDocument();
 	});
 
@@ -34,7 +34,7 @@ describe("LoginForm", () => {
 		(useRouter as jest.Mock).mockReturnValue({
 			query: { error: "OAuthError" },
 		});
-		render(<LoginForm hasOauth />);
+		render(<LoginForm hasOauth oauthExlusiveLogin={false} />);
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -51,7 +51,7 @@ describe("LoginForm", () => {
 		(useRouter as jest.Mock).mockReturnValue({
 			query: { error: "OAuthError" },
 		});
-		render(<LoginForm hasOauth />);
+		render(<LoginForm hasOauth oauthExlusiveLogin={false} />);
 
 		(signIn as jest.Mock).mockResolvedValue({});
 
@@ -67,6 +67,7 @@ describe("LoginForm", () => {
 			redirect: false,
 			email: "test@example.com",
 			password: "testpassword",
+			totpCode: "",
 		});
 	});
 });
