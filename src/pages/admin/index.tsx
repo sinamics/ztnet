@@ -1,4 +1,4 @@
-import React, { type ReactElement } from "react";
+import { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
@@ -12,6 +12,7 @@ import Settings from "./settings";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
+import Link from "next/link";
 
 const AdminSettings = ({ orgIds }) => {
 	const title = `${globalSiteTitle} - Admin Settings`;
@@ -60,27 +61,21 @@ const AdminSettings = ({ orgIds }) => {
 		},
 	];
 
-	const changeTab = async (tab: ITab) => {
-		await router.push({
-			pathname: "/admin",
-			query: { tab: tab.value },
-		});
-	};
 	return (
 		<div className="animate-fadeIn py-5 sm:w-11/12 mx-auto">
 			<MetaTags title={title} />
 			<div role="tablist" className="tabs tabs-bordered flex flex-wrap p-3 pb-10 ">
 				{tabs.map((t) => (
-					<a
+					<Link
 						key={t.value}
+						href={`/admin?tab=${t.value}`}
 						role="tab"
-						onClick={() => void changeTab(t)}
 						className={`text-md uppercase tab ${
 							t.value === tab ? "tab-active" : "text-gray-600"
 						}`}
 					>
 						{t.name}
-					</a>
+					</Link>
 				))}
 			</div>
 			{tabs.find((t) => t.value === tab)?.component}
