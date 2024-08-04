@@ -10,11 +10,9 @@ const TwoFactAuthSchema = z.object({
 export default function TwoFactAuth({
 	value,
 	onChange,
-	onValidationChange,
 }: {
 	value: string;
 	onChange: (value: string) => void;
-	onValidationChange: (isValid: boolean) => void;
 }) {
 	const [digits, setDigits] = useState<string[]>(
 		value.split("").concat(Array(6 - value.length).fill("")),
@@ -26,11 +24,9 @@ export default function TwoFactAuth({
 		try {
 			TwoFactAuthSchema.parse({ code: input });
 			setError(null);
-			onValidationChange(true);
 		} catch (err) {
 			if (err instanceof z.ZodError) {
 				setError(err.errors[0].message);
-				onValidationChange(false);
 			}
 		}
 	};
@@ -76,7 +72,7 @@ export default function TwoFactAuth({
 						key={index}
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						ref={(el) => (inputRefs.current[index] = el)}
-						className="input-bordered input-sm w-10 text-center"
+						className="input input-bordered input-sm w-10 text-center"
 						type="text"
 						inputMode="numeric"
 						maxLength={1}
@@ -90,7 +86,7 @@ export default function TwoFactAuth({
 					/>
 				))}
 			</div>
-			{error && <p className="text-error py-5">{error}</p>}
+			{error && <p className="text-sm text-error py-5">{error}</p>}
 		</div>
 	);
 }
