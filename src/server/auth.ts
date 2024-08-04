@@ -19,7 +19,7 @@ import { authenticator } from "otplib";
 
 // Constants
 const MAX_FAILED_ATTEMPTS = 5;
-const COOLDOWN_PERIOD = 1 * 60 * 1000; // 15 minutes in milliseconds
+const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute in milliseconds
 
 declare module "next-auth" {
 	interface Session extends DefaultSession {
