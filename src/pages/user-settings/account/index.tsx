@@ -112,8 +112,14 @@ const Account = () => {
 							await sessionUpdate({ update: { ...params } })
 						}
 					/>
+					<div className="flex justify-between">
+						<div>
+							<p className="font-medium">{t("account.accountSettings.role")}</p>
+							<p className="text-gray-500">{session?.user?.role}</p>
+						</div>
+					</div>
 					<div>
-						<p className="text-[0.7rem] text-gray-400 uppercase">Authentication</p>
+						<p className="text-[0.7rem] text-gray-400 uppercase">SECURITY</p>
 						<div className="divider mt-0 p-0 text-gray-500" />
 					</div>
 					<InputField
@@ -156,16 +162,17 @@ const Account = () => {
 						}}
 					/>
 
+					{/* TOTP  */}
 					<div className="flex justify-between">
 						<div>
-							<p className="font-medium">{t("account.accountSettings.role")}</p>
-							<p className="text-gray-500">{session?.user?.role}</p>
+							<p className="text-md font-semibold">Multifactor Authentication</p>
+							<span className="text-sm text-gray-500">
+								This will enhance the security of user accounts by requiring an additional
+								verification step.
+							</span>
 						</div>
-					</div>
-					{/* TOTP  */}
-					<div>
 						<button
-							className="btn btn-primary btn-sm"
+							className="btn  btn-sm"
 							onClick={() =>
 								callModal({
 									showButtons: false,
@@ -179,9 +186,7 @@ const Account = () => {
 								})
 							}
 						>
-							{me?.twoFactorEnabled
-								? "Disable Two Factor Authentication"
-								: "Two Factor Authentication"}
+							{me?.twoFactorEnabled ? "Disable 2FA" : "Set 2FA"}
 						</button>
 					</div>
 				</div>
