@@ -76,7 +76,7 @@ export default function TwoFactAuth({
 						key={index}
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						ref={(el) => (inputRefs.current[index] = el)}
-						className="input input-bordered input-sm w-10 text-center"
+						className="input-bordered input-sm w-10 text-center"
 						type="text"
 						inputMode="numeric"
 						maxLength={1}
