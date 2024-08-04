@@ -361,7 +361,14 @@ describe("NetworkById component", () => {
 		);
 		await waitFor(
 			() => {
-				expect(screen.getByText("offline")).toHaveClass("text-error");
+				expect(screen.getByText("offline"));
+			},
+			{ timeout: 2000 },
+		);
+		await waitFor(
+			() => {
+				const parentSpan = screen.getByTitle("User is offline");
+				expect(parentSpan).toHaveClass("text-error");
 			},
 			{ timeout: 2000 },
 		);

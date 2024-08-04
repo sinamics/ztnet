@@ -2,6 +2,25 @@
 	"input": {
 		"enterToSave": "Appuyez sur Entrée pour sauvegarder"
 	},
+	"commonMenuTabs": {
+		"settings": "Paramètres",
+		"network": "Réseau",
+		"mail": "Courrier",
+		"users": "Utilisateurs",
+		"notification": "Notification",
+		"controller": "Contrôleur",
+		"organization": "Organisation",
+		"webhooks": "Webhooks",
+		"invites": "Invitations"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Paramètres de l'Organisation",
+		"invites": "Invitations",
+		"pendingInvites": "Invitations en Attente",
+		"members": "Membres",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Webhooks Actifs"
+	},
 	"commonButtons": {
 		"add": "Ajouter",
 		"change": "Changer",
@@ -29,6 +48,7 @@
 		"userActions": "Gérer l'utilisateur",
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
+		"settings": "Paramètres",
 		"resend": "Renvoyer"
 	},
 	"commonTable": {
@@ -61,7 +81,7 @@
 				"directLan": "Connexion LAN directe établie",
 				"directWan": "Connexion WAN directe établie",
 				"direct": "DIRECTE{version}",
-				"offline": "hors ligne "
+				"offline": "hors ligne"
 			},
 			"status": "Statut"
 		},
@@ -103,7 +123,7 @@
 		"controller": "Contrôleur ZT",
 		"organization": "Organisation",
 		"account": "Compte",
-		"user-settings": "Paramètres utilisateur",
+		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
 	},
 	"networks": {
@@ -342,15 +362,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Paramètres",
-			"network": "Réseau",
-			"mail": "Mail",
-			"users": "Utilisateurs",
-			"notification": "Notification",
-			"controller": "Controleur",
-			"organization": "Organisation"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Pages publiques",
@@ -728,30 +739,40 @@
 			"logHeader": "100 derniers logs d'activité",
 			"loading": "Récupération des logs..."
 		},
-		"invitation": {
-			"title": "Expansion de l'équipe : Inviter de nouveaux membres",
-			"description": "Invitez plus de personnes dans votre équipe ! Vous pouvez envoyer des invitations par e-mail ou trouver et ajouter des personnes qui utilisent déjà la plateforme. <br></br> Cela facilite la croissance de votre équipe et inclut plus de membres.",
-			"pendingInvitations": {
-				"title": "Invitations en attente"
-			},
-			"inviteByEmail": {
-				"title": "Inviter par e-mail",
-				"description": "Les utilisateurs invités qui ne sont pas actuellement membres de l'application devront s'inscrire via le lien fourni dans l'e-mail d'invitation. Le lien est valide pendant 24 heures.",
-				"emailPlaceholder": "Adresse e-mail",
-				"emailDescription": "Entrez l'adresse e-mail de la personne que vous souhaitez inviter",
-				"selectRoleDescription": "Sélectionnez le rôle de l'utilisateur"
-			},
-			"inviteSiteUser": {
-				"title": "Inviter des utilisateurs du site",
-				"description": "Avant de pouvoir ajouter des utilisateurs à votre organisation, il est important de noter qu'ils doivent déjà être enregistrés dans l'application",
-				"inputFields": {
-					"searchUser": {
-						"title": "Rechercher l'utilisateur que vous souhaitez ajouter",
-						"placeholder": "Rechercher un utilisateur"
-					},
-					"userRole": {
-						"title": "Sélectionnez le rôle de l'utilisateur"
+		"settings": {
+			"invitation": {
+				"title": "Expansion de l'équipe : Inviter de nouveaux membres",
+				"description": "Invitez plus de personnes dans votre équipe ! Vous pouvez envoyer des invitations par e-mail ou trouver et ajouter des personnes qui utilisent déjà la plateforme. <br></br> Cela facilite la croissance de votre équipe et inclut plus de membres.",
+				"pendingInvitations": {
+					"title": "Invitations en attente"
+				},
+				"inviteByEmail": {
+					"title": "Inviter par e-mail",
+					"description": "Les utilisateurs invités qui ne sont pas actuellement membres de l'application devront s'inscrire via le lien fourni dans l'e-mail d'invitation. Le lien est valide pendant 24 heures.",
+					"emailPlaceholder": "Adresse e-mail",
+					"emailDescription": "Entrez l'adresse e-mail de la personne que vous souhaitez inviter",
+					"selectRoleDescription": "Sélectionnez le rôle de l'utilisateur"
+				},
+				"inviteSiteUser": {
+					"title": "Inviter des utilisateurs du site",
+					"description": "Avant de pouvoir ajouter des utilisateurs à votre organisation, il est important de noter qu'ils doivent déjà être enregistrés dans l'application",
+					"inputFields": {
+						"searchUser": {
+							"title": "Rechercher l'utilisateur que vous souhaitez ajouter",
+							"placeholder": "Rechercher un utilisateur"
+						},
+						"userRole": {
+							"title": "Sélectionnez le rôle de l'utilisateur"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Activer la dénomination globale des nœuds",
+					"description": "Lorsqu'elle est activée, cette fonctionnalité va :",
+					"bulletPoints": "Maintenir un nom cohérent pour chaque nœud dans tous les réseaux de l'organisation.\nMettre à jour le nom du nœud dans tous les réseaux lorsque vous le renommez dans un réseau.\nLors de l'enregistrement d'un membre, vérifier si le membre existe dans votre organisation et utiliser le premier nom trouvé.",
+					"note": "Remarque : Ceci s'applique exclusivement aux réseaux au sein de cette organisation particulière."
 				}
 			}
 		},

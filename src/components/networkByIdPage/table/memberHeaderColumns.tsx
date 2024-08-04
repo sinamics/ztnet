@@ -360,8 +360,10 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 						// The user is considered offline
 						return (
 							<span style={cursorStyle} className="text-error" title="User is offline">
-								{c("header.conStatus.offline")}
-								<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+								<span>{c("header.conStatus.offline")}</span>
+								<span>
+									<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+								</span>
 							</span>
 						);
 					}
@@ -411,9 +413,15 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 					}
 
 					return (
-						<span style={cursorStyle} className="text-error" title="User is offline">
-							{c("header.conStatus.offline")}
-							<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+						<span
+							style={cursorStyle}
+							className="text-error space-x-1"
+							title="User is offline"
+						>
+							<span>{c("header.conStatus.offline")}</span>
+							<span>
+								<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+							</span>
 						</span>
 					);
 				},

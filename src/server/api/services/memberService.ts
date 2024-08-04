@@ -1,7 +1,7 @@
 import { UserContext } from "~/types/ctx";
 import { MemberEntity, Peers } from "~/types/local/member";
-import * as ztController from "~/utils/ztApi";
 import { determineConnectionStatus } from "../utils/memberUtils";
+import * as ztController from "~/utils/ztApi";
 import { prisma } from "~/server/db";
 import { sendWebhook } from "~/utils/webhook";
 import { HookType, MemberJoined } from "~/types/webhooks";
@@ -21,19 +21,23 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
+	// get peers
+	const controllerPeers = await ztController.peers(ctx);
+
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
 			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
 			// this will make the node active in all networks it is part of if it is active in one of them.
 			// Should open a issue at ZeroTier
-			const peers = await ztController.peer(ctx, ztMember.address).catch(() => null);
+			const peers = controllerPeers.filter(
+				(peer) => peer.address === ztMember.address,
+			)[0];
 
 			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
 			// Find the active preferred path in the peers object
 			const activePreferredPath = findActivePreferredPeerPath(peers);
-
 			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
 			// Merge the data from the database with the data from Controller
@@ -41,7 +45,7 @@ export const syncMemberPeersAndStatus = async (
 				...restOfDbMembers,
 				...ztMember,
 				physicalAddress: activePreferredPath?.address ?? physicalAddress,
-				peers,
+				peers: peers || {},
 			} as MemberEntity;
 
 			// Update the connection status
@@ -98,7 +102,7 @@ export const syncMemberPeersAndStatus = async (
  * @param peers - The peers object containing paths.
  * @returns The active preferred path, or undefined if not found.
  */
-const findActivePreferredPeerPath = (peers: Peers) => {
+const findActivePreferredPeerPath = (peers: Peers | null) => {
 	if (!peers || typeof peers !== "object" || !Array.isArray(peers.paths)) {
 		return null;
 	}
@@ -116,35 +120,49 @@ const findActivePreferredPeerPath = (peers: Peers) => {
  * @returns A promise that resolves to the created network member.
  */
 const addNetworkMember = async (ctx, member: MemberEntity) => {
-	const user = await prisma.user.findFirst({
-		where: {
-			id: ctx.session.user.id,
-		},
-		select: {
-			options: true,
-		},
-	});
+	// 1. get the user options
+	// 2. check if the new member is joining a organization network
+	const [user, memberOfOrganization] = await Promise.all([
+		prisma.user.findUnique({
+			where: { id: ctx.session.user.id },
+			select: { options: true, network: { select: { nwid: true } } },
+		}),
+		prisma.network.findFirst({
+			where: { nwid: member.nwid },
+			select: { organizationId: true, organization: { select: { settings: true } } },
+		}),
+	]);
 
-	const memberData = {
-		id: member.id,
-		lastSeen: new Date(),
-		creationTime: new Date(),
-		name: user.options?.addMemberIdAsName ? member.id : null,
+	const findNamedMember = async ({ orgId }: { orgId: string }) => {
+		return await prisma.network_members.findFirst({
+			where: {
+				id: member.id,
+				name: { not: null },
+				nwid_ref: {
+					organizationId: orgId,
+					authorId: orgId ? null : ctx.session.user.id,
+				},
+			},
+			select: { name: true },
+		});
 	};
 
-	// check if the new member is joining a organization network
-	const org = await prisma.network.findFirst({
-		where: { nwid: member.nwid },
-		select: { organizationId: true },
-	});
+	let name = null;
 
 	// send webhook if the new member is joining a organization network
-	if (org) {
+	if (memberOfOrganization) {
+		// check if global organization member naming is enabled, and if so find the first available name
+		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
+			const namedOrgMember = await findNamedMember({
+				orgId: memberOfOrganization.organizationId,
+			});
+			name = namedOrgMember?.name;
+		}
 		try {
 			// Send webhook
 			await sendWebhook<MemberJoined>({
 				hookType: HookType.NETWORK_JOIN,
-				organizationId: org.organizationId,
+				organizationId: memberOfOrganization.organizationId,
 				memberId: member.id,
 				networkId: member.nwid,
 			});
@@ -154,12 +172,19 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		}
 	}
 
+	// check if global naming is enabled, and if so find the first available name
+	if (user.options?.renameNodeGlobally && !memberOfOrganization.organizationId) {
+		const namedPrivateMember = await findNamedMember({ orgId: null });
+		name = namedPrivateMember?.name;
+	}
+
 	return await prisma.network_members.create({
 		data: {
-			...memberData,
-			nwid_ref: {
-				connect: { nwid: member.nwid },
-			},
+			id: member.id,
+			lastSeen: new Date(),
+			creationTime: new Date(),
+			name,
+			nwid_ref: { connect: { nwid: member.nwid } },
 		},
 	});
 };

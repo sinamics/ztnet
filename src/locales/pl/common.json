@@ -2,6 +2,25 @@
 	"input": {
 		"enterToSave": "Aby zapisać wciśnij Enter"
 	},
+	"commonMenuTabs": {
+		"settings": "Ustawienia",
+		"network": "Sieć",
+		"mail": "Poczta",
+		"users": "Użytkownicy",
+		"notification": "Powiadomienie",
+		"controller": "Kontroler",
+		"organization": "Organizacja",
+		"webhooks": "Webhooki",
+		"invites": "Zaproszenia"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Ustawienia Organizacji",
+		"invites": "Zaproszenia",
+		"pendingInvites": "Oczekujące Zaproszenia",
+		"members": "Członkowie",
+		"webhooks": "Webhooki",
+		"activeWebhooks": "Aktywne Webhooki"
+	},
 	"commonButtons": {
 		"add": "Dodaj",
 		"change": "Zmień",
@@ -29,6 +48,7 @@
 		"userActions": "Akcje",
 		"addWebhooks": "Dodaj Webhooki",
 		"options": "Opcje",
+		"settings": "Ustawienia",
 		"resend": "Wyślij ponownie"
 	},
 	"commonTable": {
@@ -61,7 +81,7 @@
 				"directLan": "Nawiązano bezpośrednie połączenie LAN",
 				"directWan": "Nawiązano bezpośrednie połączenie WAN",
 				"direct": "BEZPOŚREDNIO{version}",
-				"offline": "OFFLINE "
+				"offline": "OFFLINE"
 			},
 			"status": "Status"
 		},
@@ -342,15 +362,6 @@
 		}
 	},
 	"admin": {
-		"tabs": {
-			"settings": "Ustawienia",
-			"network": "Sieć",
-			"mail": "Mail",
-			"users": "Użytkownicy",
-			"notification": "Powiadomienia",
-			"controller": "Kontroler",
-			"organization": "Organizacje"
-		},
 		"settings": {
 			"publicPages": {
 				"sectionTitle": "Strony startowe",
@@ -728,30 +739,40 @@
 			"logHeader": "Ostatnie 100 logów aktywności",
 			"loading": "Pobieranie logów..."
 		},
-		"invitation": {
-			"title": "Rozszerzenie zespołu: Zaproszenie nowych członków",
-			"description": "Zaproś więcej osób do swojego zespołu! Możesz wysyłać zaproszenia drogą mailową lub znaleźć i dodać osoby, które już korzystają z platformy. <br></br> To ułatwia rozwój Twojego zespołu i włączenie do niego większej liczby członków.",
-			"pendingInvitations": {
-				"title": "Oczekujące zaproszenia"
-			},
-			"inviteByEmail": {
-				"title": "Zaproś drogą mailową",
-				"description": "Zaproszeni użytkownicy, którzy obecnie nie są członkami aplikacji, będą musieli zarejestrować się za pomocą udostępnionego linku w mailu z zaproszeniem. Link jest ważny przez 24 godziny.",
-				"emailPlaceholder": "Adres e-mail",
-				"emailDescription": "Wpisz adres e-mail osoby, którą chcesz zaprosić",
-				"selectRoleDescription": "Wybierz rolę użytkownika"
-			},
-			"inviteSiteUser": {
-				"title": "Zaproś użytkowników witryny",
-				"description": "Zanim będziesz mógł dodać użytkowników do swojej organizacji, ważne jest, aby wiedzieć, że muszą oni już być zarejestrowani w aplikacji",
-				"inputFields": {
-					"searchUser": {
-						"title": "Wyszukaj użytkownika, którego chcesz dodać",
-						"placeholder": "Wyszukaj użytkownika"
-					},
-					"userRole": {
-						"title": "Wybierz rolę użytkownika"
+		"settings": {
+			"invitation": {
+				"title": "Rozszerzenie zespołu: Zaproszenie nowych członków",
+				"description": "Zaproś więcej osób do swojego zespołu! Możesz wysyłać zaproszenia drogą mailową lub znaleźć i dodać osoby, które już korzystają z platformy. <br></br> To ułatwia rozwój Twojego zespołu i włączenie do niego większej liczby członków.",
+				"pendingInvitations": {
+					"title": "Oczekujące zaproszenia"
+				},
+				"inviteByEmail": {
+					"title": "Zaproś drogą mailową",
+					"description": "Zaproszeni użytkownicy, którzy obecnie nie są członkami aplikacji, będą musieli zarejestrować się za pomocą udostępnionego linku w mailu z zaproszeniem. Link jest ważny przez 24 godziny.",
+					"emailPlaceholder": "Adres e-mail",
+					"emailDescription": "Wpisz adres e-mail osoby, którą chcesz zaprosić",
+					"selectRoleDescription": "Wybierz rolę użytkownika"
+				},
+				"inviteSiteUser": {
+					"title": "Zaproś użytkowników witryny",
+					"description": "Zanim będziesz mógł dodać użytkowników do swojej organizacji, ważne jest, aby wiedzieć, że muszą oni już być zarejestrowani w aplikacji",
+					"inputFields": {
+						"searchUser": {
+							"title": "Wyszukaj użytkownika, którego chcesz dodać",
+							"placeholder": "Wyszukaj użytkownika"
+						},
+						"userRole": {
+							"title": "Wybierz rolę użytkownika"
+						}
 					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Włącz globalne nazewnictwo węzłów",
+					"description": "Po włączeniu, ta funkcja będzie:",
+					"bulletPoints": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach tej organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka sprawdzać, czy członek istnieje w Twojej organizacji i będzie używać pierwszej znalezionej nazwy.",
+					"note": "Uwaga: Dotyczy to wyłącznie sieci w ramach tej konkretnej organizacji."
 				}
 			}
 		},
