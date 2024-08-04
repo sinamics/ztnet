@@ -8,6 +8,13 @@
 const config = {
 	experimental: {
 		instrumentationHook: true,
+		/**
+		 *
+		 * If any issues with "Compiler client unexpectedly exited with code: null and signal: SIGTERM" during build, try the following:
+		 * https://github.com/sinamics/ztnet/issues/469
+		 */
+		// workerThreads: false,
+		// cpus: 1,
 	},
 	reactStrictMode: true,
 	swcMinify: true,
