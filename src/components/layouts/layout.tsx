@@ -131,7 +131,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	}
 	return (
 		<div className="outer-content">
-			{/* <Modal /> */}
+			<Modal />
 			<Header />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
