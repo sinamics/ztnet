@@ -133,7 +133,7 @@ export const UnlinkedNetwork = () => {
 			});
 			const initialValue = getValue();
 			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const { callModal } = useModalStore((state) => state);
+			const callModal = useModalStore((state) => state.callModal);
 
 			const dropDownHandler = (e: React.ChangeEvent<HTMLSelectElement>, nwid: string) => {
 				const userId = e.target.value;

@@ -28,7 +28,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			desc: true,
 		},
 	]);
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{

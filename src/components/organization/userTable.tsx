@@ -47,7 +47,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 		organizationId,
 	});
 	const [data, setData] = useState(tableData || []);
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	// Load initial state from localStorage or set to default
 	const initialSortingState = getLocalStorageItem(LOCAL_STORAGE_KEY, [
