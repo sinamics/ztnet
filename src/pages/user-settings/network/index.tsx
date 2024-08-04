@@ -19,7 +19,7 @@ const UserNetworkSetting = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
 			<div className="pb-10">
-				<p className="text-sm text-gray-400">
+				<p className="text-gray-400 uppercase text-[0.7rem]">
 					{t("network.annotations.memberAnotations")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
@@ -73,7 +73,7 @@ const UserNetworkSetting = () => {
 				</div>
 			</div>
 			<div className="pb-10">
-				<p className="text-sm text-gray-400">
+				<p className="text-gray-400 uppercase text-[0.7rem]">
 					{t("network.memberTable.memberTableTitle")}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500"></div>
