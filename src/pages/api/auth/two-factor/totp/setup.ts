@@ -8,6 +8,16 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
 import { encrypt, generateInstanceSecret } from "~/utils/encryption";
 
+function generateOTPAuthURL(
+	name: string,
+	secret: string,
+	issuer: string,
+	logoUrl: string,
+) {
+	const keyUri = authenticator.keyuri(name, issuer, secret);
+	return `${keyUri}&image=${encodeURIComponent(logoUrl)}`;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method !== "POST") {
 		return res.status(405).json({ message: "Method not allowed" });
@@ -65,8 +75,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		},
 	});
 
+	// const name = user.email;
+	// const keyUri = authenticator.keyuri(name, "ZTNET", secret);
+	// const dataUri = await qrcode.toDataURL(keyUri);
+
 	const name = user.email;
-	const keyUri = authenticator.keyuri(name, "ZTNET", secret);
+	const issuer = "ZTNET";
+	const logoUrl =
+		"https://github.com/sinamics/ztnet/blob/main/docs/images/logo/ztnet_16x14.png?raw=true";
+	const keyUri = generateOTPAuthURL(name, secret, issuer, logoUrl);
 	const dataUri = await qrcode.toDataURL(keyUri);
 
 	return res.json({ secret, keyUri, dataUri });
