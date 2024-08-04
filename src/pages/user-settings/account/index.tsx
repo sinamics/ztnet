@@ -112,7 +112,10 @@ const Account = () => {
 							await sessionUpdate({ update: { ...params } })
 						}
 					/>
-
+					<div>
+						<p className="text-[0.7rem] text-gray-400 uppercase">Authentication</p>
+						<div className="divider mt-0 p-0 text-gray-500" />
+					</div>
 					<InputField
 						isLoading={!session?.user}
 						label={t("account.accountSettings.passwordLabel")}
@@ -165,9 +168,9 @@ const Account = () => {
 							className="btn btn-primary btn-sm"
 							onClick={() =>
 								callModal({
-									// title: "TOTP",
-									// description:
-									// 	"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+									showButtons: false,
+									title: "Two Factor Authentication",
+									// description: "Two Factor Authentication",
 									content: me?.twoFactorEnabled ? (
 										<DisableTwoFactSetupModal />
 									) : (

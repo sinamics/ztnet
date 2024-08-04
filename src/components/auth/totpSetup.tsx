@@ -134,7 +134,7 @@ const TOTPSetup: React.FC = () => {
 						type="password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
-						className="input input-sm mt-2 rounded border p-2"
+						className="input-bordered input-sm mt-2 rounded border p-2"
 						placeholder="Enter your password"
 					/>
 					<button
@@ -169,13 +169,6 @@ const TOTPSetup: React.FC = () => {
 				<div>
 					<h3 className="mb-2">Verify your TOTP setup</h3>
 					<p>Enter the code from your authenticator app to verify and enable TOTP.</p>
-					{/* <input
-						type="text"
-						value={totpCode}
-						onChange={(e) => setTotpCode(e.target.value)}
-						className="mt-2 rounded border p-2"
-						placeholder="Enter TOTP code"
-					/> */}
 					<TwoFactAuthDigits
 						value={totpCode}
 						onChange={setTotpCode}
