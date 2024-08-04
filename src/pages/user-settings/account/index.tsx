@@ -169,11 +169,10 @@ const Account = () => {
 
 					<div className="flex justify-between">
 						<div>
-							<p className="text-md font-semibold">Multifactor Authentication</p>
+							<p className="text-md font-semibold">{t("account.totp.title")}</p>
 
 							<span className="text-sm text-gray-500">
-								This will enhance the security of user accounts by requiring an additional
-								verification step.
+								{t("account.totp.description")}
 							</span>
 						</div>
 						<button
@@ -181,8 +180,7 @@ const Account = () => {
 							onClick={() =>
 								callModal({
 									showButtons: false,
-									title: "Two Factor Authentication",
-									// description: "Two Factor Authentication",
+									title: t("account.totp.totpActivation.title"),
 									content: me?.twoFactorEnabled ? (
 										<DisableTwoFactSetupModal />
 									) : (

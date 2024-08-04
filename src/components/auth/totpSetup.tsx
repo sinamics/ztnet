@@ -8,6 +8,7 @@ import { api } from "~/utils/api";
 import { IOSIcon } from "~/icons/IOSIcon";
 import { AndroidIcon } from "~/icons/androidIcon";
 import { WindowsIcon } from "~/icons/windowsIcon";
+import { useTranslations } from "next-intl";
 
 enum SetupStep {
 	ConfirmPassword = 0,
@@ -57,6 +58,7 @@ const ShowSteps = ({ step }: { step: number }) => [
 
 const TOTPSetup: React.FC = () => {
 	const closeModal = useModalStore((state) => state.closeModal);
+	const t = useTranslations("userSettings");
 	const [state, setState] = useState({
 		secret: "",
 		dataUri: "",
@@ -135,7 +137,9 @@ const TOTPSetup: React.FC = () => {
 			<ShowSteps step={step} />
 			<WithStep step={SetupStep.ConfirmPassword} current={step}>
 				<form className="">
-					<p className="text-sm">Type in your password</p>
+					<p className="text-sm">
+						{t("account.totp.totpActivation.confirmPassword.description")}
+					</p>
 					<input
 						type="password"
 						value={state.password}
@@ -158,12 +162,12 @@ const TOTPSetup: React.FC = () => {
 					<div className="grid grid-cols-2 space-y-5">
 						<div className="col-span-2 space-y-5">
 							<p className="text-sm">
-								Trenger du en 2-trinnsinnloggingsapp? Last ned en av de følgende
+								{t("account.totp.totpActivation.displayQrCode.description")}
 							</p>
 							<ul>
 								<li className="flex items-center text-sm">
 									<IOSIcon className="w-5 h-5 mr-1" fill="none" />
-									iOS-enheter:
+									{t("account.totp.totpActivation.displayQrCode.IOS")}
 									<a
 										href="https://itunes.apple.com/us/app/authy/id494168017?mt=8"
 										target="_blank"
@@ -175,7 +179,7 @@ const TOTPSetup: React.FC = () => {
 								</li>
 								<li className="flex items-center text-sm">
 									<AndroidIcon className="w-5 h-5 mr-1" fill="none" />
-									Android-enheter:
+									{t("account.totp.totpActivation.displayQrCode.Android")}
 									<a
 										href="https://play.google.com/store/apps/details?id=com.authy.authy"
 										target="_blank"
@@ -187,7 +191,8 @@ const TOTPSetup: React.FC = () => {
 								</li>
 								<li className="flex items-center text-sm">
 									<WindowsIcon className="w-5 h-5 mr-1" fill="none" />
-									Windows-enheter:
+									{t("account.totp.totpActivation.displayQrCode.Windows")}
+
 									<a
 										href="https://www.microsoft.com/p/authenticator/9wzdncrfj3rj"
 										target="_blank"
@@ -199,16 +204,18 @@ const TOTPSetup: React.FC = () => {
 								</li>
 							</ul>
 							<p className="text-sm">
-								Disse appene er anbefalt, men andre autentiseringsapper vil også fungere.
+								{t("account.totp.totpActivation.displayQrCode.appDescription")}
 							</p>
 						</div>
-						<p className="mb-2 text-sm">Scan this QR code with your authenticator app.</p>
+						<p className="mb-2 text-sm">
+							{t("account.totp.totpActivation.displayQrCode.scanQrDescription")}
+						</p>
 						<section className="flex justify-center">
 							<img src={state.dataUri} alt="totp" width={150} />
 						</section>
 					</div>
 					<p className="mt-2 text-sm">
-						If you can't scan the QR code, enter this secret manually:{" "}
+						{t("account.totp.totpActivation.displayQrCode.manualEntry")}
 						<kbd className="kbd kbd-lg">{state.secret}</kbd>
 					</p>
 					<footer className="flex justify-end">
@@ -226,8 +233,10 @@ const TOTPSetup: React.FC = () => {
 				<form className="mt-4">
 					<div className="mt-4 space-y-10">
 						<div className="grid grid-cols-1 gap-3">
-							<h3 className="mb-2">Verify your TOTP setup</h3>
-							<p>Enter the code from your authenticator app to verify and enable TOTP.</p>
+							<h3 className="mb-2">
+								{t("account.totp.totpActivation.enterTotpCode.description")}
+							</h3>
+							<p> {t("account.totp.totpActivation.enterTotpCode.enterCode")}</p>
 							<TwoFactAuthDigits value={totpCode} onChange={setTotpCode} />
 						</div>
 						<footer className="flex justify-end">
