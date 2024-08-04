@@ -16,7 +16,7 @@ const DeleteOrganizationModal = ({ org }) => {
 
 	const [input, setInput] = useState({ orgNameDelete: "" });
 
-	const { closeModal } = useModalStore((state) => state);
+	const closeModal = useModalStore((state) => state.closeModal);
 
 	const { refetch: refetchOrg } = api.org.getAllOrg.useQuery();
 

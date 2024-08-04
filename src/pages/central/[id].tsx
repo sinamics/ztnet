@@ -41,7 +41,7 @@ const CentralNetworkById = ({ orgIds }) => {
 	// const [state, setState] = useState({
 	//   viewZombieTable: false,
 	// });
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { query, push: router } = useRouter();
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
