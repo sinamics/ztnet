@@ -18,7 +18,9 @@ const InvitationLink = () => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { callModal, closeModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
+	const closeModal = useModalStore((state) => state.closeModal);
+
 	const { data: invitationData, refetch: refetchInvitations } =
 		api.admin.getInvitationLink.useQuery();
 

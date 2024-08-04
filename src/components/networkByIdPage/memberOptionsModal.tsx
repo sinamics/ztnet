@@ -36,7 +36,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	// const { closeModal } = useModalStore((state) => state);
+	// const closeModal = useModalStore((state) => state.closeModal);
 	const [state, setState] = useState(initialIpState);
 	const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 

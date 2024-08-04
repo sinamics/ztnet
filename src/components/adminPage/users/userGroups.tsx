@@ -28,7 +28,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refetchGroups } = api.admin.getUserGroups.useQuery();
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	const { mutate: updateGroup } = api.admin.addUserGroup.useMutation({
 		onError: handleApiError,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
 	useReactTable,
 	getCoreRowModel,
@@ -58,14 +58,21 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		);
 
 	const { data: me } = api.auth.me.useQuery();
+
+	// memorize the members for better performance.
+	const memoizedMembers = useMemo(
+		() => networkById?.members ?? [],
+		[networkById?.members],
+	);
+
 	// Save to localStorage whenever sorting changes
 	useEffect(() => {
 		setLocalStorageItem(LOCAL_STORAGE_KEY, sorting);
 	}, [sorting]);
 
 	useEffect(() => {
-		setData(networkById?.members ?? []);
-	}, [networkById?.members]);
+		setData(memoizedMembers);
+	}, [memoizedMembers]);
 
 	// const [data, setData] = useState(() => makeNetworkMemberData(11));
 	const [data, setData] = useState(networkById?.members ?? []);

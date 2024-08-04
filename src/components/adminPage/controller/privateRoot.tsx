@@ -10,7 +10,7 @@ import CreatePlanet from "./createPlanet";
 const PrivateRoot = () => {
 	const t = useTranslations("admin");
 	const [open, setOpen] = useState(false);
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
 
 	const closeForm = () => setOpen(false);

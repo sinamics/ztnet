@@ -25,7 +25,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 
 	const [deleted, setDelete] = useState(false);
 	const [input, setInput] = useState({ name: "" });
-	const { closeModal } = useModalStore((state) => state);
+	const closeModal = useModalStore((state) => state.closeModal);
 
 	const { refetch: refecthOrgUsers } = api.org.getOrgUsers.useQuery({
 		organizationId,

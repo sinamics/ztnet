@@ -1,5 +1,5 @@
 import cn from "classnames";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
@@ -7,18 +7,19 @@ import { useTranslations } from "next-intl";
 const Modal = () => {
 	const t = useTranslations("commonButtons");
 	const ref = useRef(null);
-	const {
-		isOpen,
-		description,
-		content,
-		title,
-		rootStyle,
-		showButtons = true,
-		yesAction,
-		toggleModal,
-		disableClickOutside,
-		closeModal,
-	} = useModalStore((state) => state);
+	// Select only the necessary state
+	const isOpen = useModalStore((state) => state.isOpen);
+	const description = useModalStore((state) => state.description);
+	const content = useModalStore((state) => state.content);
+	const title = useModalStore((state) => state.title);
+	const rootStyle = useModalStore((state) => state.rootStyle);
+	const showButtons = useModalStore((state) => state.showButtons);
+	const yesAction = useModalStore((state) => state.yesAction);
+	const disableClickOutside = useModalStore((state) => state.disableClickOutside);
+
+	// Use separate selectors for actions to prevent unnecessary re-renders
+	const toggleModal = useModalStore(useCallback((state) => state.toggleModal, []));
+	const closeModal = useModalStore(useCallback((state) => state.closeModal, []));
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 	useOnClickOutside(ref, () => {
@@ -26,10 +27,12 @@ const Modal = () => {
 			closeModal();
 		}
 	});
-	const actionHandler = () => {
-		yesAction();
+
+	const actionHandler = useCallback(() => {
+		yesAction?.();
 		toggleModal();
-	};
+	}, [yesAction, toggleModal]);
+
 	const modalClass = cn({
 		"modal transition-none z-20": true,
 		"modal-open": isOpen,

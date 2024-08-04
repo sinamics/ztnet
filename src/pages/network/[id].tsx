@@ -54,7 +54,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 	useOrganizationWebsocket(orgIds);
 
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { query, push: router } = useRouter();
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
