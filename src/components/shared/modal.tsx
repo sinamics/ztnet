@@ -28,10 +28,10 @@ const Modal = () => {
 		}
 	});
 
-	const actionHandler = useCallback(() => {
+	const actionHandler = () => {
 		yesAction?.();
 		toggleModal();
-	}, [yesAction, toggleModal]);
+	};
 
 	const modalClass = cn({
 		"modal transition-none z-20": true,
