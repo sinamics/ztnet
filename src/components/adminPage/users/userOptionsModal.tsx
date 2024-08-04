@@ -24,7 +24,7 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { closeModal } = useModalStore((state) => state);
+	const closeModal = useModalStore((state) => state.closeModal);
 
 	const { data: user, isLoading: loadingUser } = api.admin.getUser.useQuery({
 		userId: userId,

@@ -9,7 +9,7 @@ const ListOrganizations = () => {
 	const t = useTranslations();
 	const b = useTranslations("commonButtons");
 	const { data: userOrgs } = api.org.getAllOrg.useQuery();
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 
 	return (
 		<div className="space-y-10">

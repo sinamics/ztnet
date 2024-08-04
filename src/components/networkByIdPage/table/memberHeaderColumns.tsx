@@ -121,7 +121,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(

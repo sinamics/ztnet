@@ -88,7 +88,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 
 const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 	const t = useTranslations("admin");
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
 
 	const { data: getIdentity } = api.admin.getIdentity.useQuery();

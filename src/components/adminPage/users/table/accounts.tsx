@@ -44,7 +44,7 @@ export const Accounts = () => {
 	const t = useTranslations("admin");
 
 	const [globalFilter, setGlobalFilter] = useState("");
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
 	const { data: users, isLoading: loadingUsers } = api.admin.getUsers.useQuery({
 		isAdmin: false,
