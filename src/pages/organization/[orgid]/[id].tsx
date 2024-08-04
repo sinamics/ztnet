@@ -41,7 +41,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		viewZombieTable: false,
 		isDebug: false,
 	});
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { query, push: router } = useRouter();
 	const organizationId = query.orgid as string;
 

@@ -21,7 +21,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 
 	const [action, setAction] = useState({ deleteNetwork: false, moveNetwork: false });
 	const [input, setInput] = useState({ organizationId: null });
-	const { closeModal } = useModalStore((state) => state);
+	const closeModal = useModalStore((state) => state.closeModal);
 
 	const { refetch: refetchNetwork } = api.network.getUserNetworks.useQuery({
 		central: false,
