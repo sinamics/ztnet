@@ -15,7 +15,7 @@ const ApiLables = ({ tokens }) => {
 
 	const { refetch } = api.auth.getApiToken.useQuery();
 
-	const { callModal } = useModalStore((state) => state);
+	const callModal = useModalStore((state) => state.callModal);
 	const { mutate: deleteToken } = api.auth.deleteApiToken.useMutation({
 		onError: (error) => {
 			if ((error.data as ErrorData)?.zodError) {
