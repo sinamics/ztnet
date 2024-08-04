@@ -616,6 +616,33 @@
 				"repeatNewPasswordPlaceholder": "重複新密碼",
 				"role": "角色"
 			},
+			"totp": {
+				"title": "雙因素驗證",
+				"description": "這將通過要求額外的驗證步驟來增強用戶帳戶的安全性。",
+				"notification": {
+					"title": "未啟用雙因素驗證（2FA）",
+					"description": "我們強烈建議啟用2FA以增強您的帳戶安全性。"
+				},
+				"totpActivation": {
+					"title": "雙因素驗證",
+					"confirmPassword": {
+						"description": "輸入您的密碼"
+					},
+					"displayQrCode": {
+						"description": "需要雙因素驗證應用程式嗎？下載以下之一",
+						"IOS": "iOS設備",
+						"Android": "安卓設備",
+						"Windows": "Windows設備",
+						"appDescription": "推薦使用這些應用程式，但其他驗證應用程式也可以使用。",
+						"scanQrDescription": "使用您的驗證應用程式掃描此QR碼。",
+						"manualEntry": "如果您無法掃描QR碼，可以手動輸入以下代碼："
+					},
+					"enterTotpCode": {
+						"description": "驗證您的TOTP設置",
+						"enterCode": "輸入您的驗證應用程式中的代碼以驗證並啟用TOTP。"
+					}
+				}
+			},
 			"restapi": {
 				"sectionTitle": "API存取Token",
 				"description": "API存取Token用於訪問ZTNET公共API。",

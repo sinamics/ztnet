@@ -616,6 +616,33 @@
 				"repeatNewPasswordPlaceholder": "Powtórz nowe hasło",
 				"role": "Rola"
 			},
+			"totp": {
+				"title": "Uwierzytelnianie dwuskładnikowe",
+				"description": "To zwiększy bezpieczeństwo kont użytkowników, wymagając dodatkowego kroku weryfikacji.",
+				"notification": {
+					"title": "Uwierzytelnianie dwuskładnikowe (2FA) nie jest włączone",
+					"description": "Zdecydowanie zalecamy włączenie 2FA, aby zwiększyć bezpieczeństwo konta."
+				},
+				"totpActivation": {
+					"title": "Uwierzytelnianie dwuskładnikowe",
+					"confirmPassword": {
+						"description": "Wpisz swoje hasło"
+					},
+					"displayQrCode": {
+						"description": "Potrzebujesz aplikacji do uwierzytelniania dwuskładnikowego? Pobierz jedną z następujących",
+						"IOS": "Urządzenia iOS",
+						"Android": "Urządzenia Android",
+						"Windows": "Urządzenia Windows",
+						"appDescription": "Te aplikacje są zalecane, ale inne aplikacje uwierzytelniające również będą działać.",
+						"scanQrDescription": "Zeskanuj ten kod QR za pomocą aplikacji uwierzytelniającej.",
+						"manualEntry": "Jeśli nie możesz zeskanować kodu QR, możesz ręcznie wprowadzić następujący kod:"
+					},
+					"enterTotpCode": {
+						"description": "Zweryfikuj konfigurację TOTP",
+						"enterCode": "Wprowadź kod z aplikacji uwierzytelniającej, aby zweryfikować i włączyć TOTP."
+					}
+				}
+			},
 			"restapi": {
 				"sectionTitle": "Tokeny dostępowe API",
 				"description": "Dzięki temu możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",

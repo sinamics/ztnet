@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import React from "react";
 
 interface MultifactorNotEnabledProps {
@@ -7,6 +8,8 @@ interface MultifactorNotEnabledProps {
 const MultifactorNotEnabled: React.FC<MultifactorNotEnabledProps> = ({
 	className = "",
 }) => {
+	const t = useTranslations("userSettings");
+
 	return (
 		<div role="alert" className={`alert bg-primary/20 shadow-lg ${className}`}>
 			<svg
@@ -24,10 +27,8 @@ const MultifactorNotEnabled: React.FC<MultifactorNotEnabledProps> = ({
 				></path>
 			</svg>
 			<div>
-				<h3 className="font-bold">Two-Factor Authentication (2FA) Not Enabled</h3>
-				<div className="text-sm">
-					We strongly recommend enabling 2FA to enhance your account security.
-				</div>
+				<h3 className="font-bold">{t("account.totp.notification.title")}</h3>
+				<div className="text-sm">{t("account.totp.notification.description")}</div>
 			</div>
 		</div>
 	);

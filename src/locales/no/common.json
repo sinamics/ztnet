@@ -616,6 +616,33 @@
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
 				"role": "Rolle"
 			},
+			"totp": {
+				"title": "Tofaktorautentisering",
+				"description": "Dette vil forbedre sikkerheten til brukerkontoer ved å kreve et ekstra verifiseringstrinn.",
+				"notification": {
+					"title": "Tofaktorautentisering (2FA) ikke aktivert",
+					"description": "Vi anbefaler sterkt å aktivere 2FA for å forbedre kontosikkerheten din."
+				},
+				"totpActivation": {
+					"title": "Tofaktorautentisering",
+					"confirmPassword": {
+						"description": "Skriv inn passordet ditt"
+					},
+					"displayQrCode": {
+						"description": "Trenger du en tofaktorautentiserings-app? Last ned en av følgende",
+						"IOS": "iOS-enheter",
+						"Android": "Android-enheter",
+						"Windows": "Windows-enheter",
+						"appDescription": "Disse appene er anbefalt, men andre autentiseringsapper vil også fungere.",
+						"scanQrDescription": "Skann denne QR-koden med autentiseringsappen din.",
+						"manualEntry": "Hvis du ikke kan skanne QR-koden, kan du manuelt taste inn følgende kode:"
+					},
+					"enterTotpCode": {
+						"description": "Bekreft TOTP-oppsettet ditt",
+						"enterCode": "Skriv inn koden fra autentiseringsappen din for å bekrefte og aktivere TOTP."
+					}
+				}
+			},
 			"restapi": {
 				"sectionTitle": "API-tilgangstokens",
 				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",

@@ -616,6 +616,33 @@
 				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
 				"role": "Rol"
 			},
+			"totp": {
+				"title": "Autenticación de dos factores",
+				"description": "Esto mejorará la seguridad de las cuentas de usuario al requerir un paso de verificación adicional.",
+				"notification": {
+					"title": "Autenticación de dos factores (2FA) no habilitada",
+					"description": "Recomendamos encarecidamente habilitar 2FA para mejorar la seguridad de su cuenta."
+				},
+				"totpActivation": {
+					"title": "Autenticación de dos factores",
+					"confirmPassword": {
+						"description": "Escriba su contraseña"
+					},
+					"displayQrCode": {
+						"description": "¿Necesita una aplicación de autenticación de dos factores? Descargue una de las siguientes",
+						"IOS": "Dispositivos iOS",
+						"Android": "Dispositivos Android",
+						"Windows": "Dispositivos Windows",
+						"appDescription": "Estas aplicaciones son recomendadas, pero otras aplicaciones de autenticación también funcionarán.",
+						"scanQrDescription": "Escanee este código QR con su aplicación de autenticación.",
+						"manualEntry": "Si no puede escanear el código QR, puede ingresar manualmente el siguiente código:"
+					},
+					"enterTotpCode": {
+						"description": "Verifique su configuración TOTP",
+						"enterCode": "Ingrese el código de su aplicación de autenticación para verificar y habilitar TOTP."
+					}
+				}
+			},
 			"restapi": {
 				"sectionTitle": "Tokens de Acceso a la API",
 				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
