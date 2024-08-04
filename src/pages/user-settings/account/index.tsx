@@ -13,6 +13,7 @@ import { languageNames, supportedLocales } from "~/locales/lang";
 import ApplicationFontSize from "~/components/userSettings/fontSize";
 import TOTPSetup from "~/components/auth/totpSetup";
 import { useModalStore } from "~/utils/store";
+import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
 
 const defaultLocale = "en";
 
@@ -161,21 +162,23 @@ const Account = () => {
 					{/* TOTP  */}
 					<div>
 						<button
-							// onClick={() => {
-							// 	//  run modal to enable 2fa
-							// 	<TOTPSetup />
-							// }}
 							className="btn btn-primary btn-sm"
 							onClick={() =>
 								callModal({
 									// title: "TOTP",
 									// description:
 									// 	"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
-									content: <TOTPSetup />,
+									content: me?.twoFactorEnabled ? (
+										<DisableTwoFactSetupModal />
+									) : (
+										<TOTPSetup />
+									),
 								})
 							}
 						>
-							Two Factor Authentication
+							{me?.twoFactorEnabled
+								? "Disable Two Factor Authentication"
+								: "Two Factor Authentication"}
 						</button>
 					</div>
 				</div>
