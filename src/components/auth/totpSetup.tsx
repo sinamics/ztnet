@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
 import { useModalStore } from "~/utils/store";
+import TwoFactAuthDigits from "./totpDigits";
+import { api } from "~/utils/api";
 
 enum SetupStep {
 	ConfirmPassword = 0,
@@ -57,6 +59,7 @@ const TOTPSetup: React.FC = () => {
 	const [password, setPassword] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [step, setStep] = useState(SetupStep.ConfirmPassword);
+	const { refetch: refetchMe } = api.auth.me.useQuery();
 
 	async function handleSetup() {
 		setIsSubmitting(true);
@@ -71,7 +74,6 @@ const TOTPSetup: React.FC = () => {
 				}),
 			});
 			const body = await response.json();
-
 			if (response.status === 200) {
 				setDataUri(body.dataUri);
 				setStep(SetupStep.DisplayQrCode);
@@ -88,7 +90,6 @@ const TOTPSetup: React.FC = () => {
 			console.error(error);
 		} finally {
 			setIsSubmitting(false);
-			closeModal();
 		}
 	}
 
@@ -113,6 +114,8 @@ const TOTPSetup: React.FC = () => {
 				toast.error("Sorry something went wrong");
 			} else {
 				toast.success("Successfully enabled 2FA");
+				refetchMe();
+				closeModal();
 			}
 		} catch (error) {
 			toast.error("Sorry something went wrong");
@@ -125,7 +128,7 @@ const TOTPSetup: React.FC = () => {
 		<div>
 			<ShowSteps step={step} />
 			<WithStep step={SetupStep.ConfirmPassword} current={step}>
-				<form className="space-y-10">
+				<div className="space-y-10">
 					<h3 className="mb-2 text-lg">Confirm your password</h3>
 					<input
 						type="password"
@@ -142,7 +145,7 @@ const TOTPSetup: React.FC = () => {
 					>
 						{isSubmitting ? "Checking..." : "Confirm Password"}
 					</button>
-				</form>
+				</div>
 			</WithStep>
 			<WithStep step={SetupStep.DisplayQrCode} current={step}>
 				<div className="mt-4 space-y-5">
@@ -166,12 +169,21 @@ const TOTPSetup: React.FC = () => {
 				<div>
 					<h3 className="mb-2">Verify your TOTP setup</h3>
 					<p>Enter the code from your authenticator app to verify and enable TOTP.</p>
-					<input
+					{/* <input
 						type="text"
 						value={totpCode}
 						onChange={(e) => setTotpCode(e.target.value)}
 						className="mt-2 rounded border p-2"
 						placeholder="Enter TOTP code"
+					/> */}
+					<TwoFactAuthDigits
+						value={totpCode}
+						onChange={setTotpCode}
+						onValidationChange={(isValid) => {
+							// Handle validation state change
+							// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+							console.log("Is input valid:", isValid);
+						}}
 					/>
 					<button
 						onClick={() => handleEnable(totpCode)}
