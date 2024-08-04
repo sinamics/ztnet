@@ -53,11 +53,14 @@ const ShowSteps = ({ step }: { step: number }) => [
 ];
 
 const TOTPSetup: React.FC = () => {
-	const { closeModal } = useModalStore((state) => state);
-	const [dataUri, setDataUri] = useState("");
-	const [secret, setSecret] = useState("");
+	const closeModal = useModalStore((state) => state.closeModal);
+	const [state, setState] = useState({
+		secret: "",
+		dataUri: "",
+		password: "",
+		totpCode: "",
+	});
 	const [totpCode, setTotpCode] = useState<string>("");
-	const [password, setPassword] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [step, setStep] = useState(SetupStep.ConfirmPassword);
 	const { refetch: refetchMe } = api.auth.me.useQuery();
@@ -71,14 +74,12 @@ const TOTPSetup: React.FC = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					password,
+					password: state.password,
 				}),
 			});
 			const body = await response.json();
-			console.log(body);
 			if (response.status === 200) {
-				setSecret(body.secret);
-				setDataUri(body.dataUri);
+				setState((prev) => ({ ...prev, secret: body.secret, dataUri: body.dataUri }));
 				setStep(SetupStep.DisplayQrCode);
 				return;
 			}
@@ -134,8 +135,8 @@ const TOTPSetup: React.FC = () => {
 					<p className="text-sm">Type in your password</p>
 					<input
 						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						value={state.password}
+						onChange={(e) => setState({ ...state, password: e.target.value })}
 						className="input input-bordered input-sm mt-2 rounded border p-2"
 						placeholder="Password"
 					/>
@@ -154,12 +155,12 @@ const TOTPSetup: React.FC = () => {
 					<div className="grid grid-cols-2">
 						<p className="mb-2">Scan this QR code with your authenticator app.</p>
 						<section className="flex justify-center">
-							<img src={dataUri} alt="totp" width={150} />
+							<img src={state.dataUri} alt="totp" width={150} />
 						</section>
 					</div>
 					<p className="mt-2">
 						If you can't scan the QR code, enter this secret manually:{" "}
-						<kbd className="kbd kbd-md">{secret}</kbd>
+						<kbd className="kbd kbd-md">{state.secret}</kbd>
 					</p>
 					<footer className="flex justify-end">
 						<button

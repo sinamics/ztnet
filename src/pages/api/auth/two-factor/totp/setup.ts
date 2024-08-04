@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	}
 
 	if (!session.user?.email) {
-		return res.status(500).json({ error: "ErrorCode.InternalServerError" });
+		return res.status(500).json({ error: ErrorCode.InternalServerError });
 	}
 
 	const user = await prisma.user.findUnique({
@@ -41,13 +41,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	if (!process.env.NEXTAUTH_SECRET) {
 		console.error("Missing encryption key; cannot proceed with two factor setup.");
-		return res.status(500).json({ error: "ErrorCode.InternalServerError" });
+		return res.status(500).json({ error: ErrorCode.InternalServerError });
 	}
 
 	const isCorrectPassword = await compare(req.body.password, user.hash);
 
 	if (!isCorrectPassword) {
-		return res.status(400).json({ error: "ErrorCode.IncorrectPassword" });
+		return res.status(400).json({ error: ErrorCode.IncorrectPassword });
 	}
 
 	// This generates a secret 32 characters in length. Do not modify the number of
