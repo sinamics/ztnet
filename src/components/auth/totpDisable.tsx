@@ -2,11 +2,14 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
 import { useModalStore } from "~/utils/store";
+import TwoFactAuth from "./totpDigits";
+import { api } from "~/utils/api";
 
 const DisableTwoFactSetupModal = () => {
 	const closeModal = useModalStore((state) => state.closeModal);
 	const [totpCode, setTotpCode] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { refetch: refetchMe } = api.auth.me.useQuery();
 
 	async function handleDisable() {
 		if (isSubmitting) {
@@ -35,6 +38,7 @@ const DisableTwoFactSetupModal = () => {
 				toast.success("Successfully disabled 2FA");
 			}
 
+			refetchMe();
 			closeModal();
 		} catch (error) {
 			toast.error("Sorry something went wrong");
@@ -46,22 +50,20 @@ const DisableTwoFactSetupModal = () => {
 
 	return (
 		<form className="space-y-10">
-			<p>Enter your 2FA code to disable 2FA</p>
-			<input
-				type="password"
-				value={totpCode}
-				onChange={(e) => setTotpCode(e.target.value)}
-				className="input input-bordered input-sm mt-2 rounded border p-2"
-				placeholder="Enter 2FA code"
-			/>
-			<button
-				onClick={handleDisable}
-				disabled={isSubmitting}
-				type="submit"
-				className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
-			>
-				{isSubmitting ? "Working..." : "Disable"}
-			</button>
+			<p className="text-sm ">
+				Enter your current 2FA code to confirm and disable Multifactor Authentication
+			</p>
+			<TwoFactAuth value={totpCode} onChange={(val) => setTotpCode(val)} />
+			<div className="flex justify-end">
+				<button
+					onClick={handleDisable}
+					disabled={isSubmitting}
+					type="submit"
+					className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+				>
+					{isSubmitting ? "Working..." : "Disable"}
+				</button>
+			</div>
 		</form>
 	);
 };
