@@ -16,6 +16,7 @@ import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
 import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
+import { Address4, Address6 } from "ip-address";
 
 const RouteSchema = z.object({
 	target: z
@@ -78,7 +79,6 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
-
 			// First, retrieve the network with organization details
 			let networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
@@ -121,7 +121,6 @@ export const networkRouter = createTRPCRouter({
 				});
 
 			if (!ztControllerResponse) return throwError("Failed to get network details!");
-
 			/**
 			 * Syncs member peers and status.
 			 */
@@ -185,7 +184,6 @@ export const networkRouter = createTRPCRouter({
 			}
 			// check if there is other network using same routes and return a notification
 			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
-
 			interface DuplicateRoutes {
 				authorId: string;
 				routes: RoutesEntity[];
@@ -223,6 +221,7 @@ export const networkRouter = createTRPCRouter({
 
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
+
 			// Construct the final response object
 			return {
 				network: {
@@ -588,8 +587,8 @@ export const networkRouter = createTRPCRouter({
 				updateParams: z.object({
 					ipAssignmentPools: z.array(
 						z.object({
-							ipRangeStart: z.string(),
-							ipRangeEnd: z.string(),
+							ipRangeStart: z.string().trim(),
+							ipRangeEnd: z.string().trim(),
 						}),
 					),
 				}),
@@ -616,9 +615,16 @@ export const networkRouter = createTRPCRouter({
 				});
 			}
 
-			// validate the ip ranges
+			// Validate the IP ranges
 			for (const ipRange of input.updateParams.ipAssignmentPools) {
-				if (!isValidIP(ipRange.ipRangeStart) || !isValidIP(ipRange.ipRangeEnd)) {
+				if (
+					!(
+						(Address6.isValid(ipRange.ipRangeStart) &&
+							Address6.isValid(ipRange.ipRangeEnd)) ||
+						(Address4.isValid(ipRange.ipRangeStart) &&
+							Address4.isValid(ipRange.ipRangeEnd))
+					)
+				) {
 					return throwError("Invalid IP range provided");
 				}
 			}

@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useMemo } from "react";
 import { useState, useRef, useEffect } from "react";
 import Input from "~/components/elements/input";
 import cn from "classnames";
@@ -82,21 +82,33 @@ const InputField = ({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const selectRef = useRef<HTMLSelectElement>(null);
 
-	useEffect(() => {
-		setFormValues(
-			fields.reduce((acc, field) => {
-				let value;
-				if (field.type === "checkbox") {
-					value = !!field.value || !!field.initialValue;
-				} else {
-					value = field.value || field.initialValue || "";
-				}
-				acc[field.name] = value;
-				return acc;
-			}, {}),
-		);
+	// Extract primitive values from fields
+	const fieldsDependency = useMemo(() => {
+		return fields
+			.map((field) => `${field.name}:${field.type}:${field.value}:${field.initialValue}`)
+			.join("|");
 	}, [fields]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <extracting fieldsDependency to get the primitive types used for useEffect.>
+	useEffect(() => {
+		setFormValues(
+			fields.reduce(
+				(acc, field) => {
+					let value;
+					if (field.type === "checkbox") {
+						value = !!field.value || !!field.initialValue;
+					} else {
+						value = field.value || field.initialValue || "";
+					}
+					acc[field.name] = value;
+					return acc;
+				},
+				{} as Record<string, string | boolean | string[]>,
+			),
+		);
+	}, [fieldsDependency]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <extracting fieldsDependency to get the primitive types used for useEffect.>
 	useEffect(() => {
 		// When showInputs is true, focus the appropriate field based on its type
 		if (showInputs) {
@@ -106,7 +118,7 @@ const InputField = ({
 				inputRef.current?.focus();
 			}
 		}
-	}, [showInputs, fields]);
+	}, [showInputs, fieldsDependency]);
 
 	const handleEditClick = () => !disabled && setShowInputs(!showInputs);
 
@@ -116,7 +128,6 @@ const InputField = ({
 			| { target: { name: string; value: string[] } },
 	) => {
 		const { name, value } = "target" in e ? e.target : e;
-
 		setFormValues((prevValues) => ({
 			...prevValues,
 			[name]: value,

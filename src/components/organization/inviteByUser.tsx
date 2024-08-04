@@ -50,14 +50,14 @@ const InviteByUsers = () => {
 		<div className="space-y-5">
 			<div className="form-control w-full space-y-5">
 				<div>
-					<h2 className="text-xl">{t("invitation.inviteSiteUser.title")}</h2>
-					<p className="text-sm text-gray-400">
-						{t("invitation.inviteSiteUser.description")}
+					<h2 className="font-medium">{t("settings.invitation.inviteSiteUser.title")}</h2>
+					<p className="text-sm text-gray-500">
+						{t("settings.invitation.inviteSiteUser.description")}
 					</p>
 				</div>
 				<div>
 					<p className="text-sm text-gray-500">
-						{t("invitation.inviteSiteUser.inputFields.searchUser.title")}
+						{t("settings.invitation.inviteSiteUser.inputFields.searchUser.title")}
 					</p>
 					<ScrollableDropdown
 						items={allUsers}
@@ -65,7 +65,7 @@ const InviteByUsers = () => {
 						inputClassName="w-full"
 						idField="id"
 						placeholder={t(
-							"invitation.inviteSiteUser.inputFields.searchUser.placeholder",
+							"settings.invitation.inviteSiteUser.inputFields.searchUser.placeholder",
 						)}
 						onOptionSelect={(selectedItem) => {
 							setState({
@@ -80,7 +80,7 @@ const InviteByUsers = () => {
 			<div className="form-control space-y-8">
 				<div className="form-control w-full">
 					<p className="text-sm text-gray-500">
-						{t("invitation.inviteSiteUser.inputFields.userRole.title")}
+						{t("settings.invitation.inviteSiteUser.inputFields.userRole.title")}
 					</p>
 					<select
 						value={state?.role}

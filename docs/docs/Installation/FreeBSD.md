@@ -32,7 +32,7 @@ zerotier-one -d
 ### Build Prisma Binary
 ```bash
 git clone https://github.com/prisma/prisma-engines.git
-cd prisma-engines
+cd prisma-engines && git checkout 5.16.0
 
 # Build all workspace binaries
 cargo build --release
@@ -88,7 +88,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 
 6. Populate the PostgreSQL database with the necessary tables:
     ```bash
-    npx prisma migrate deploy
+    npx prisma generate && npx prisma migrate deploy
     npx prisma db seed
     ```
 

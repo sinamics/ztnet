@@ -128,7 +128,7 @@ export const organizationRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string(),
-				orgName: z.string().min(3).max(40),
+				orgName: z.string().min(3).max(40).optional(),
 				orgDescription: z.string().optional(),
 			}),
 		)
@@ -143,7 +143,7 @@ export const organizationRouter = createTRPCRouter({
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
-					action: `Updated organization meta: ${input.orgName}`,
+					action: `Updated organization Name: ${input.orgName}`,
 					performedById: ctx.session.user.id,
 					organizationId: input.organizationId || null,
 				},
@@ -1458,6 +1458,55 @@ export const organizationRouter = createTRPCRouter({
 			return await ctx.prisma.webhook.findMany({
 				where: {
 					id: input.organizationId,
+				},
+			});
+		}),
+	updateOrganizationSettings: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				renameNodeGlobally: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// update organization name
+			return await ctx.prisma.organizationSettings.upsert({
+				where: {
+					organizationId: input.organizationId,
+				},
+				create: {
+					organizationId: input.organizationId,
+					renameNodeGlobally: input.renameNodeGlobally,
+				},
+				update: {
+					renameNodeGlobally: input.renameNodeGlobally,
+				},
+			});
+		}),
+	getOrganizationSettings: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			return await ctx.prisma.organizationSettings.findFirst({
+				where: {
+					organizationId: input.organizationId,
 				},
 			});
 		}),

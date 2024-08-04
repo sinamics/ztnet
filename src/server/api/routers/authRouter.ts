@@ -619,6 +619,7 @@ export const authRouter = createTRPCRouter({
 				showNotationMarkerInTableRow: z.boolean().optional(),
 				deAuthorizeWarning: z.boolean().optional(),
 				addMemberIdAsName: z.boolean().optional(),
+				renameNodeGlobally: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
