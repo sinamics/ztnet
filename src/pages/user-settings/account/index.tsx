@@ -14,6 +14,7 @@ import ApplicationFontSize from "~/components/userSettings/fontSize";
 import TOTPSetup from "~/components/auth/totpSetup";
 import { useModalStore } from "~/utils/store";
 import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
+import MultifactorNotEnabled from "~/components/auth/multifactorNotEnabledAlert";
 
 const defaultLocale = "en";
 
@@ -128,6 +129,7 @@ const Account = () => {
 						placeholder="******"
 						size="sm"
 						rootFormClassName="space-y-3 pt-2 w-3/6"
+						description="Ensure your account is using a long, random password to stay secure."
 						fields={[
 							{
 								name: "password",
@@ -163,6 +165,8 @@ const Account = () => {
 					/>
 
 					{/* TOTP  */}
+					<div>{!me?.twoFactorEnabled ? <MultifactorNotEnabled /> : null}</div>
+
 					<div className="flex justify-between">
 						<div>
 							<p className="text-md font-semibold">Multifactor Authentication</p>
