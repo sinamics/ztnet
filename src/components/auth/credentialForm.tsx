@@ -88,7 +88,7 @@ const CredentialsForm: React.FC<CredentialsFormProps> = ({
 						<div className="text-sm">
 							<Link
 								href="/auth/forgotPassword"
-								className="cursor-pointer text-blue-500 hover:text-base-200"
+								className="cursor-pointer text-blue-500  hover:text-blue-700"
 							>
 								Forgot your password?
 							</Link>
