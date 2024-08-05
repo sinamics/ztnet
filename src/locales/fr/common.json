@@ -21,7 +21,12 @@
 		"webhooks": "Webhooks",
 		"activeWebhooks": "Webhooks Actifs"
 	},
+	"commonSpinners": {
+		"loading": "Chargement...",
+		"Checking": "Vérification..."
+	},
 	"commonButtons": {
+		"confirm": "Confirmer",
 		"add": "Ajouter",
 		"change": "Changer",
 		"create": "Créer",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
 		"settings": "Paramètres",
-		"resend": "Renvoyer"
+		"resend": "Renvoyer",
+		"enable2fa": "Activer 2FA",
+		"disable2fa": "Désactiver 2FA",
+		"next": "Suivant",
+		"back": "Retour"
 	},
 	"commonTable": {
 		"header": {
@@ -625,6 +634,11 @@
 				},
 				"totpActivation": {
 					"title": "Authentification à deux facteurs",
+					"steps": {
+						"step1": "Mot de passe",
+						"step2": "Scanner le code QR",
+						"step3": "Soumettre"
+					},
 					"confirmPassword": {
 						"description": "Saisissez votre mot de passe"
 					},

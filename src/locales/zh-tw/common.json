@@ -21,7 +21,12 @@
 		"webhooks": "網路鉤子",
 		"activeWebhooks": "活躍的網路鉤子"
 	},
+	"commonSpinners": {
+		"loading": "正在載入...",
+		"Checking": "正在檢查..."
+	},
 	"commonButtons": {
+		"confirm": "確認",
 		"add": "新增",
 		"change": "修改",
 		"create": "建立",
@@ -49,7 +54,11 @@
 		"addWebhooks": "新增 Webhooks",
 		"options": "選項",
 		"settings": "設定",
-		"resend": "重新發送"
+		"resend": "重新發送",
+		"enable2fa": "啟用雙重認證",
+		"disable2fa": "停用雙重認證",
+		"next": "下一步",
+		"back": "返回"
 	},
 	"commonTable": {
 		"header": {
@@ -625,6 +634,11 @@
 				},
 				"totpActivation": {
 					"title": "雙因素驗證",
+					"steps": {
+						"step1": "密碼",
+						"step2": "掃描 QR 碼",
+						"step3": "提交"
+					},
 					"confirmPassword": {
 						"description": "輸入您的密碼"
 					},
