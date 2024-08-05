@@ -9,11 +9,13 @@ import { IOSIcon } from "~/icons/IOSIcon";
 import { AndroidIcon } from "~/icons/androidIcon";
 import { WindowsIcon } from "~/icons/windowsIcon";
 import { useTranslations } from "next-intl";
+import { downloadFile } from "~/utils/downloadFile";
 
 enum SetupStep {
 	ConfirmPassword = 0,
 	DisplayQrCode = 1,
 	EnterTotpCode = 2,
+	StoreRecoveryCodes = 3,
 }
 
 const WithStep = ({
@@ -67,6 +69,7 @@ const TOTPSetup: React.FC = () => {
 		dataUri: "",
 		password: "",
 		totpCode: "",
+		recoveryCodes: [],
 	});
 	const [totpCode, setTotpCode] = useState<string>("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -125,8 +128,8 @@ const TOTPSetup: React.FC = () => {
 				toast.error("Sorry something went wrong");
 			} else {
 				toast.success("Successfully enabled 2FA");
-				refetchMe();
-				closeModal();
+				setState((prev) => ({ ...prev, recoveryCodes: body.recoveryCodes }));
+				setStep(SetupStep.StoreRecoveryCodes);
 			}
 		} catch (error) {
 			toast.error("Sorry something went wrong");
@@ -135,6 +138,11 @@ const TOTPSetup: React.FC = () => {
 			setIsSubmitting(false);
 		}
 	}
+
+	const completed = () => {
+		refetchMe();
+		closeModal();
+	};
 	return (
 		<div className="space-y-10">
 			<ShowSteps step={step} />
@@ -273,6 +281,53 @@ const TOTPSetup: React.FC = () => {
 								{isSubmitting
 									? t("commonSpinners.loading")
 									: t("commonButtons.enable2fa")}
+							</button>
+						</footer>
+					</div>
+				</form>
+			</WithStep>
+			<WithStep step={SetupStep.StoreRecoveryCodes} current={step}>
+				<form className="mt-4">
+					<div className="mt-4 space-y-10">
+						<div className="grid grid-cols-1 text-center">
+							<h3 className="text-lg font-semibold mb-4">Recovery Codes</h3>
+							<p className="text-sm mb-4">
+								Store these recovery codes in a safe place. You can use them to regain
+								access to your account if you lose your 2FA device.
+							</p>
+							<div className="p-4 rounded-lg shadow-inner border">
+								<ul className="grid grid-cols-2 gap-2">
+									{state.recoveryCodes.map((code) => (
+										<li
+											key={code}
+											className="font-mono text-sm bg-primary/50 p-2 rounded shadow"
+										>
+											{code}
+										</li>
+									))}
+								</ul>
+							</div>
+						</div>
+						<button
+							className="btn btn-sm btn-primary btn-outline w-full"
+							type="button"
+							onClick={() =>
+								downloadFile(
+									state.recoveryCodes?.join("\n"),
+									"ztnet-2FA-recovery-codes.txt",
+								)
+							}
+						>
+							Download Recovery Codes
+						</button>
+						<footer className="flex justify-end ">
+							<button
+								onClick={() => completed()}
+								disabled={isSubmitting}
+								type="submit"
+								className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+							>
+								{isSubmitting ? t("commonSpinners.loading") : t("commonButtons.close")}
 							</button>
 						</footer>
 					</div>

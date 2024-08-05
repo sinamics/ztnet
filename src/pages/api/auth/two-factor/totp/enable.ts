@@ -4,7 +4,22 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
 import { ErrorCode } from "~/utils/errorCode";
 import { prisma } from "~/server/db";
-import { decrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	decrypt,
+	generateInstanceSecret,
+	TOTP_MFA_TOKEN_SECRET,
+} from "~/utils/encryption";
+import crypto from "crypto";
+import { hash } from "bcryptjs";
+
+function generateRecoveryCodes() {
+	const codes = [];
+	for (let i = 0; i < 6; i++) {
+		const code = crypto.randomBytes(4).toString("hex");
+		codes.push(code);
+	}
+	return codes;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method !== "POST") {
@@ -44,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 	const secret = decrypt<string>(
 		user.twoFactorSecret,
-		generateInstanceSecret(process.env.NEXTAUTH_SECRET),
+		generateInstanceSecret(TOTP_MFA_TOKEN_SECRET),
 	);
 	if (secret.length !== 32) {
 		console.error(
@@ -57,11 +72,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	if (!isValidToken) {
 		return res.status(400).json({ error: ErrorCode.IncorrectTwoFactorCode });
 	}
+
+	const recoveryCodes = generateRecoveryCodes();
+	const hashedRecoveryCodes = await Promise.all(
+		recoveryCodes.map((code) => hash(code, 10)),
+	);
+
 	await prisma.user.update({
 		where: { email: session.user.email },
 		data: {
 			twoFactorEnabled: true,
+			twoFactorRecoveryCodes: hashedRecoveryCodes,
 		},
 	});
-	return res.json({ message: "Two-factor enabled" });
+	return res.json({ message: "Two-factor enabled", recoveryCodes });
 }
