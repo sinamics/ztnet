@@ -6,7 +6,11 @@ import { compare } from "bcryptjs";
 import { ErrorCode } from "~/utils/errorCode";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
-import { encrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	encrypt,
+	generateInstanceSecret,
+	TOTP_MFA_TOKEN_SECRET,
+} from "~/utils/encryption";
 
 function generateOTPAuthURL(
 	name: string,
@@ -67,10 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		where: { email: session.user.email },
 		data: {
 			twoFactorEnabled: false,
-			twoFactorSecret: encrypt(
-				secret,
-				generateInstanceSecret(process.env.NEXTAUTH_SECRET),
-			),
+			twoFactorSecret: encrypt(secret, generateInstanceSecret(TOTP_MFA_TOKEN_SECRET)),
 		},
 	});
 

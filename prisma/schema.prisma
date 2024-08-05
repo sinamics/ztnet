@@ -229,6 +229,7 @@ model User {
   firstTime              Boolean                @default(true)
   twoFactorEnabled       Boolean                @default(false)
   twoFactorSecret        String?
+  twoFactorRecoveryCodes String[]               @default([])
   failedLoginAttempts    Int                    @default(0)
   lastFailedLoginAttempt DateTime?
   requestChangePassword  Boolean                @default(false)

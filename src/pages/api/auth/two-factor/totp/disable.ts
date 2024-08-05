@@ -3,7 +3,11 @@ import { getServerSession } from "next-auth";
 import { authenticator } from "otplib";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { decrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	decrypt,
+	generateInstanceSecret,
+	TOTP_MFA_TOKEN_SECRET,
+} from "~/utils/encryption";
 import { ErrorCode } from "~/utils/errorCode";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -58,7 +62,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 		const secret = decrypt<string>(
 			user.twoFactorSecret,
-			generateInstanceSecret(process.env.NEXTAUTH_SECRET),
+			generateInstanceSecret(TOTP_MFA_TOKEN_SECRET),
 		);
 		if (secret.length !== 32) {
 			console.error(
