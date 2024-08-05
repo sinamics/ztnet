@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "Tofaktorautentisering",
 				"description": "Dette vil forbedre sikkerheten til brukerkontoer ved å kreve et ekstra verifiseringstrinn.",
+				"mfaNote": "Merk: 2FA vil bare fungere hvis du logger inn med epost/passord. OAuth vil ikke bruke denne 2FA, selv om den er konfigurert, da den administreres av OAuth-leverandøren.",
 				"notification": {
 					"title": "Tofaktorautentisering (2FA) ikke aktivert",
 					"description": "Vi anbefaler sterkt å aktivere 2FA for å forbedre kontosikkerheten din."
