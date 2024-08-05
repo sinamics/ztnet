@@ -80,7 +80,7 @@ const MfaRecoveryReset = () => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
-				<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 p-12">
+				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
 					<div className="mb-4">
 						<h3 className="text-2xl font-semibold">2FA Recovery</h3>
 						<p className="text-gray-500">
