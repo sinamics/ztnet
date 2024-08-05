@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "Two Factor Authentication",
 				"description": "This will enhance the security of user accounts by requiring an additional verification step.",
+				"mfaNote": "Note: 2FA will only work if you sign in with credentials. OAuth will not use this 2FA, even if configured, as it is managed by the OAuth provider.",
 				"notification": {
 					"title": "Two-Factor Authentication (2FA) Not Enabled",
 					"description": "We strongly recommend enabling 2FA to enhance your account security."

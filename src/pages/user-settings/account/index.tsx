@@ -177,14 +177,19 @@ const Account = () => {
 					<div>{!me?.twoFactorEnabled ? <MultifactorNotEnabled /> : null}</div>
 
 					<div className="flex justify-between">
-						<div>
-							<p className="text-md font-semibold">
-								{t("userSettings.account.totp.title")}
-							</p>
+						<div className="space-y-5">
+							<span>
+								<p className="text-md font-semibold">
+									{t("userSettings.account.totp.title")}
+								</p>
 
-							<span className="text-sm text-gray-500">
-								{t("userSettings.account.totp.description")}
+								<p className="text-sm text-gray-500">
+									{t("userSettings.account.totp.description")}
+								</p>
 							</span>
+							<p className="text-sm text-primary">
+								{t("userSettings.account.totp.mfaNote")}
+							</p>
 						</div>
 						<button
 							className="btn  btn-sm"

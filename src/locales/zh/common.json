@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "双因素认证",
 				"description": "这将通过要求额外的验证步骤来增强用户帐户的安全性。",
+				"mfaNote": "注意：2FA 只有在您使用凭据登录时才会生效。即使配置了 2FA，OAuth 也不会使用它，因为它由 OAuth 提供商管理。",
 				"notification": {
 					"title": "未启用双因素认证（2FA）",
 					"description": "我们强烈建议启用2FA以增强您的帐户安全性。"

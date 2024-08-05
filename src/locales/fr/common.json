@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "Authentification à deux facteurs",
 				"description": "Cela renforcera la sécurité des comptes utilisateurs en exigeant une étape de vérification supplémentaire.",
+				"mfaNote": "Remarque : La 2FA ne fonctionnera que si vous vous connectez avec des identifiants. OAuth n'utilisera pas cette 2FA, même si elle est configurée, car elle est gérée par le fournisseur OAuth.",
 				"notification": {
 					"title": "Authentification à deux facteurs (2FA) non activée",
 					"description": "Nous vous recommandons vivement d'activer la 2FA pour renforcer la sécurité de votre compte."

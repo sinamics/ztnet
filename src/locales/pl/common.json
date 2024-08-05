@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "Uwierzytelnianie dwuskładnikowe",
 				"description": "To zwiększy bezpieczeństwo kont użytkowników, wymagając dodatkowego kroku weryfikacji.",
+				"mfaNote": "Uwaga: 2FA będzie działać tylko wtedy, gdy zalogujesz się przy użyciu poświadczeń. OAuth nie będzie korzystać z tego 2FA, nawet jeśli jest skonfigurowane, ponieważ jest zarządzane przez dostawcę OAuth.",
 				"notification": {
 					"title": "Uwierzytelnianie dwuskładnikowe (2FA) nie jest włączone",
 					"description": "Zdecydowanie zalecamy włączenie 2FA, aby zwiększyć bezpieczeństwo konta."

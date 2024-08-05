@@ -628,6 +628,7 @@
 			"totp": {
 				"title": "Autenticación de dos factores",
 				"description": "Esto mejorará la seguridad de las cuentas de usuario al requerir un paso de verificación adicional.",
+				"mfaNote": "Nota: 2FA solo funcionará si inicia sesión con credenciales. OAuth no utilizará este 2FA, incluso si está configurado, ya que es gestionado por el proveedor de OAuth.",
 				"notification": {
 					"title": "Autenticación de dos factores (2FA) no habilitada",
 					"description": "Recomendamos encarecidamente habilitar 2FA para mejorar la seguridad de su cuenta."
