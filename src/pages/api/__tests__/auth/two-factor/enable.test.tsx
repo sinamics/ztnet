@@ -165,6 +165,7 @@ describe("Enable 2FA Endpoint", () => {
 			email: "test@example.com",
 			twoFactorEnabled: false,
 			twoFactorSecret: "encryptedSecret",
+			twoFactorRecoveryCodes: [],
 		});
 		// Mock the database to return a network
 		prisma.user.update = jest.fn().mockResolvedValueOnce({
@@ -184,7 +185,7 @@ describe("Enable 2FA Endpoint", () => {
 		// expect(mockResponse.json).toHaveBeenCalledWith({ message: "Two-factor enabled" });
 		expect(prisma.user.update).toHaveBeenCalledWith({
 			where: { email: "test@example.com" },
-			data: { twoFactorEnabled: true },
+			data: { twoFactorEnabled: true, twoFactorRecoveryCodes: expect.any(Array) },
 		});
 	});
 });

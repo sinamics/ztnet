@@ -203,7 +203,7 @@ describe("LoginPage", () => {
 		await userEvent.click(submitButton);
 
 		// check that "TOTP Code" text is displayed
-		expect(screen.getByText(/TOTP Code/i)).toBeInTheDocument();
+		expect(screen.getByText(/Enter 2FA Code/i)).toBeInTheDocument();
 
 		// make sure input with test-id="totp-input" is displayed, and there is 6 of them
 		const totpCodeInputs = screen.getAllByTestId("totp-input-digit");
