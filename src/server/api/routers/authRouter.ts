@@ -27,6 +27,7 @@ import { isRunningInDocker } from "~/utils/docker";
 import { Invitation, User, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
+import { ErrorCode } from "~/utils/errorCode";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -45,6 +46,7 @@ const limiter = rateLimit({
 });
 
 const GENERAL_REQUEST_LIMIT = 60;
+const SHORT_REQUEST_LIMIT = 5;
 
 // create a zod password schema
 const passwordSchema = (errorMessage: string) =>
@@ -483,6 +485,43 @@ export const authRouter = createTRPCRouter({
 				},
 			});
 		}),
+	validateResetPasswordToken: publicProcedure
+		.input(
+			z.object({
+				token: z.string({ required_error: "Token is required!" }),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { token } = input;
+			if (!token) return { error: ErrorCode.InvalidToken };
+			try {
+				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
+				const decoded = jwt.verify(token, secret) as { id: string; email: string };
+
+				// add rate limit
+				try {
+					await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+				} catch {
+					throw new TRPCError({
+						code: "TOO_MANY_REQUESTS",
+						message: "Rate limit exceeded",
+					});
+				}
+
+				const user = await ctx.prisma.user.findFirst({
+					where: {
+						id: decoded.id,
+						email: decoded.email,
+					},
+				});
+
+				if (!user) return { error: ErrorCode.InvalidToken };
+
+				return { email: user.email };
+			} catch (_error) {
+				return { error: ErrorCode.InvalidToken };
+			}
+		}),
 	passwordResetLink: publicProcedure
 		.input(
 			z.object({
@@ -494,6 +533,14 @@ export const authRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { email } = input;
+			try {
+				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded, please try again later",
+				});
+			}
 			if (!email) throwError("Email is required!");
 
 			const user = await ctx.prisma.user.findFirst({
@@ -561,6 +608,15 @@ export const authRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { token, password, newPassword } = input;
+			try {
+				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded, please try again later",
+				});
+			}
+
 			if (!token) throwError("token is required!");
 
 			if (password !== newPassword) throwError("Passwords does not match!");

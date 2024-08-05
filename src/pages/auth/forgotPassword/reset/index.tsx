@@ -12,6 +12,22 @@ const ForgotPassword = () => {
 	const [state, setState] = useState({ password: "", newPassword: "" });
 
 	const { mutate: resetPassword } = api.auth.changePasswordFromJwt.useMutation();
+	const { data: tokenData, isLoading: validateTokenLoading } =
+		api.auth.validateResetPasswordToken.useQuery(
+			{
+				token: token as string,
+			},
+			{
+				onSuccess: (response) => {
+					if (response?.error) {
+						router.push("/auth/login");
+					}
+				},
+				onError: () => {
+					router.push("/auth/login");
+				},
+			},
+		);
 
 	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -52,6 +68,9 @@ const ForgotPassword = () => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
+	if (validateTokenLoading || !tokenData || tokenData.error) {
+		return null;
+	}
 	const title = `${globalSiteTitle} - Reset Password`;
 	return (
 		<div>
@@ -61,7 +80,7 @@ const ForgotPassword = () => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
-				<div className="w-100 mx-auto rounded-2xl border border-1 border-base-300 p-12">
+				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
 					<div className="mb-4">
 						<h3 className="text-2xl font-semibold">Reset Password</h3>
 						<p className="text-gray-500">Please enter your new password</p>
@@ -70,7 +89,7 @@ const ForgotPassword = () => {
 						<div className="space-y-2">
 							<label className="text-sm font-medium tracking-wide">Password</label>
 							<input
-								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
+								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 								value={state.password}
 								onChange={handleChange}
 								type="password"
@@ -83,7 +102,7 @@ const ForgotPassword = () => {
 								Confirm New Password
 							</label>
 							<input
-								className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
+								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 								value={state.newPassword}
 								onChange={handleChange}
 								type="password"
