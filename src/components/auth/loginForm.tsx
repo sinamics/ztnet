@@ -53,9 +53,6 @@ const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
 			}
 
 			switch (response?.error) {
-				case ErrorCode.IncorrectPassword:
-					toast.error(response.error, { duration: 10000 });
-					break;
 				case ErrorCode.SecondFactorRequired:
 					setShowOTP(true);
 					break;
