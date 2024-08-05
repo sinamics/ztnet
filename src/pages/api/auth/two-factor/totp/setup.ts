@@ -35,7 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	const user = await prisma.user.findUnique({
 		where: { email: session.user.email },
 	});
-
 	if (!user) {
 		console.error("Session references user that no longer exists.");
 		return res.status(401).json({ message: "Not authenticated" });
@@ -85,6 +84,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		"https://github.com/sinamics/ztnet/blob/main/docs/images/logo/ztnet_16x14.png?raw=true";
 	const keyUri = generateOTPAuthURL(name, secret, issuer, logoUrl);
 	const dataUri = await qrcode.toDataURL(keyUri);
-
 	return res.json({ secret, keyUri, dataUri });
 }
