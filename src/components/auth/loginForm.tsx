@@ -91,7 +91,7 @@ const LoginForm: React.FC<IProps> = ({ hasOauth, oauthExlusiveLogin }) => {
 					<h3 className="text-xl font-semibold">Sign in to your account</h3>
 					{/* <p className="text-gray-500">Sign in to your account.</p> */}
 				</div>
-				{oauthExlusiveLogin && hasOauth ? (
+				{oauthExlusiveLogin && hasOauth && !showOTP ? (
 					<OAuthLoginButton oAuthHandler={oAuthHandler} loading={loading.oauth} />
 				) : (
 					<CredentialsForm
