@@ -21,7 +21,12 @@
 		"webhooks": "Webhooks",
 		"activeWebhooks": "Aktive Webhooks"
 	},
+	"commonSpinners": {
+		"loading": "Laster...",
+		"Checking": "Sjekker..."
+	},
 	"commonButtons": {
+		"confirm": "Bekreft",
 		"add": "Legg til",
 		"change": "Endre",
 		"create": "Opprett",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
 		"settings": "Innstillinger",
-		"resend": "Send på nytt"
+		"resend": "Send på nytt",
+		"enable2fa": "Aktiver 2FA",
+		"disable2fa": "Deaktiver 2FA",
+		"next": "Neste",
+		"back": "Tilbake"
 	},
 	"commonTable": {
 		"header": {
@@ -625,6 +634,11 @@
 				},
 				"totpActivation": {
 					"title": "Tofaktorautentisering",
+					"steps": {
+						"step1": "Passord",
+						"step2": "Skann QR-kode",
+						"step3": "Send inn"
+					},
 					"confirmPassword": {
 						"description": "Skriv inn passordet ditt"
 					},

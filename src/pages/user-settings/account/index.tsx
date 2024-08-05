@@ -21,7 +21,8 @@ const defaultLocale = "en";
 const Account = () => {
 	const { callModal } = useModalStore((state) => state);
 	const { asPath, locale, locales, push } = useRouter();
-	const t = useTranslations("userSettings");
+	const t = useTranslations();
+
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
@@ -63,12 +64,12 @@ const Account = () => {
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
 			<div>
 				<p className="text-[0.7rem] text-gray-400">
-					{t("account.accountSettings.title").toUpperCase()}
+					{t("userSettings.account.accountSettings.title").toUpperCase()}
 				</p>
 				<div className="divider mt-0 p-0 text-gray-500" />
 				<div className="space-y-5">
 					<InputField
-						label={t("account.accountSettings.nameLabel")}
+						label={t("userSettings.account.accountSettings.nameLabel")}
 						isLoading={!session?.user}
 						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
@@ -86,18 +87,18 @@ const Account = () => {
 					/>
 
 					<InputField
-						label={t("account.accountSettings.emailLabel")}
+						label={t("userSettings.account.accountSettings.emailLabel")}
 						isLoading={!session?.user}
 						rootFormClassName="space-y-3 pt-2 w-3/6"
 						size="sm"
 						// badge={
 						// 	session?.user?.emailVerified
 						// 		? {
-						// 				text: t("account.accountSettings.verifiedBadge"),
+						// 				text: t("userSettings.account.accountSettings.verifiedBadge"),
 						// 				color: "success",
 						// 		  }
 						// 		: {
-						// 				text: t("account.accountSettings.notVerifiedBadge"),
+						// 				text: t("userSettings.account.accountSettings.notVerifiedBadge"),
 						// 				color: "warning",
 						// 		  }
 						// }
@@ -115,7 +116,9 @@ const Account = () => {
 					/>
 					<div className="flex justify-between">
 						<div>
-							<p className="font-medium">{t("account.accountSettings.role")}</p>
+							<p className="font-medium">
+								{t("userSettings.account.accountSettings.role")}
+							</p>
 							<p className="text-gray-500">{session?.user?.role}</p>
 						</div>
 					</div>
@@ -125,7 +128,7 @@ const Account = () => {
 					</div>
 					<InputField
 						isLoading={!session?.user}
-						label={t("account.accountSettings.passwordLabel")}
+						label={t("userSettings.account.accountSettings.passwordLabel")}
 						placeholder="******"
 						size="sm"
 						rootFormClassName="space-y-3 pt-2 w-3/6"
@@ -134,17 +137,23 @@ const Account = () => {
 							{
 								name: "password",
 								type: "password",
-								placeholder: t("account.accountSettings.currentPasswordPlaceholder"),
+								placeholder: t(
+									"userSettings.account.accountSettings.currentPasswordPlaceholder",
+								),
 							},
 							{
 								name: "newPassword",
 								type: "password",
-								placeholder: t("account.accountSettings.newPasswordPlaceholder"),
+								placeholder: t(
+									"userSettings.account.accountSettings.newPasswordPlaceholder",
+								),
 							},
 							{
 								name: "repeatNewPassword",
 								type: "password",
-								placeholder: t("account.accountSettings.repeatNewPasswordPlaceholder"),
+								placeholder: t(
+									"userSettings.account.accountSettings.repeatNewPasswordPlaceholder",
+								),
 							},
 						]}
 						submitHandler={(params) => {
@@ -169,10 +178,12 @@ const Account = () => {
 
 					<div className="flex justify-between">
 						<div>
-							<p className="text-md font-semibold">{t("account.totp.title")}</p>
+							<p className="text-md font-semibold">
+								{t("userSettings.account.totp.title")}
+							</p>
 
 							<span className="text-sm text-gray-500">
-								{t("account.totp.description")}
+								{t("userSettings.account.totp.description")}
 							</span>
 						</div>
 						<button
@@ -180,7 +191,7 @@ const Account = () => {
 							onClick={() =>
 								callModal({
 									showButtons: false,
-									title: t("account.totp.totpActivation.title"),
+									title: t("userSettings.account.totp.totpActivation.title"),
 									content: me?.twoFactorEnabled ? (
 										<DisableTwoFactSetupModal />
 									) : (
@@ -189,19 +200,21 @@ const Account = () => {
 								})
 							}
 						>
-							{me?.twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
+							{me?.twoFactorEnabled
+								? t("commonButtons.disable2fa")
+								: t("commonButtons.enable2fa")}
 						</button>
 					</div>
 				</div>
 			</div>
 			<div>
 				<div className="text-gray-400 uppercase text-[0.7rem]">
-					{t("account.restapi.sectionTitle")}
+					{t("userSettings.account.restapi.sectionTitle")}
 				</div>
 				<div className="divider m-0 p-0 text-gray-500" />
 				<div>
 					<p className="text-sm text-gray-500">
-						{t("account.restapi.description")}
+						{t("userSettings.account.restapi.description")}
 						<br />
 						<Link
 							className="link"
@@ -219,12 +232,12 @@ const Account = () => {
 
 			<div>
 				<div className="pt-10 text-[0.7rem] text-gray-400">
-					{t("account.zerotierCentral.title").toUpperCase()}
+					{t("userSettings.account.zerotierCentral.title").toUpperCase()}
 				</div>
 				<div className="divider m-0 p-0 text-gray-500" />
 				<div>
 					<p className="text-sm text-gray-500">
-						{t.rich("account.zerotierCentral.description", {
+						{t.rich("userSettings.account.zerotierCentral.description", {
 							br: () => <br />,
 						})}
 					</p>
@@ -265,8 +278,10 @@ const Account = () => {
 				<div className="form-control w-full">
 					<div className="pt-3">
 						<InputField
-							label={t("account.zerotierCentral.apiUrlLabel")}
-							description={t("account.zerotierCentral.apiUrlLabelDescription")}
+							label={t("userSettings.account.zerotierCentral.apiUrlLabel")}
+							description={t(
+								"userSettings.account.zerotierCentral.apiUrlLabelDescription",
+							)}
 							size="sm"
 							rootFormClassName="space-y-3 pt-2 w-3/6"
 							rootClassName="py-2"
@@ -302,14 +317,14 @@ const Account = () => {
 			</div>
 			<div>
 				<p className="pt-10 text-[0.7rem] text-gray-400 uppercase">
-					{t("account.accountPreferences.title")}
+					{t("userSettings.account.accountPreferences.title")}
 				</p>
 				<div className="space-y-5">
 					<div className="divider mt-0 p-0 text-gray-500" />
 					<div className="form-control w-full max-w-xs">
 						<label className="label">
 							<span className="label-text font-medium">
-								{t("account.accountPreferences.languageLabel")}
+								{t("userSettings.account.accountPreferences.languageLabel")}
 							</span>
 						</label>
 						<select
@@ -330,16 +345,16 @@ const Account = () => {
 			<div>
 				<div className="pt-10">
 					<p className="text-gray-400 text-[0.7rem] uppercase">
-						{t("account.application.title")}
+						{t("userSettings.account.application.title")}
 					</p>
 					<div className="divider mt-0 p-0 text-gray-500"></div>
 					<div className="flex items-center justify-between">
-						<p>{t("account.application.version")}</p>
+						<p>{t("userSettings.account.application.version")}</p>
 						<a
 							className="link text-primary"
 							href="https://github.com/sinamics/ztnet/releases"
 						>
-							{globalSiteVersion ?? t("account.application.developerMode")}
+							{globalSiteVersion ?? t("userSettings.account.application.developerMode")}
 						</a>
 					</div>
 				</div>
