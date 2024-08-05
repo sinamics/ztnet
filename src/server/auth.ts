@@ -7,7 +7,11 @@ import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
 import { isRunningInDocker } from "~/utils/docker";
 import { ErrorCode } from "~/utils/errorCode";
-import { decrypt, generateInstanceSecret } from "~/utils/encryption";
+import {
+	decrypt,
+	generateInstanceSecret,
+	TOTP_MFA_TOKEN_SECRET,
+} from "~/utils/encryption";
 import { authenticator } from "otplib";
 
 /**
@@ -208,7 +212,7 @@ export const authOptions: NextAuthOptions = {
 
 					const secret = decrypt<string>(
 						user.twoFactorSecret,
-						generateInstanceSecret(process.env.NEXTAUTH_SECRET),
+						generateInstanceSecret(TOTP_MFA_TOKEN_SECRET),
 					);
 					if (secret.length !== 32) {
 						console.error(

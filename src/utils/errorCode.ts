@@ -7,6 +7,8 @@ export enum ErrorCode {
 	TwoFactorDisabled = "two-factor-disabled",
 	TwoFactorAlreadyEnabled = "two-factor-already-enabled",
 	TwoFactorSetupRequired = "two-factor-setup-required",
+	InvalidToken = "invalid-token",
+	TokenRequired = "token-required",
 	SecondFactorRequired = "second-factor-required",
 	IncorrectTwoFactorCode = "incorrect-two-factor-code",
 	InternalServerError = "internal-server-error",
