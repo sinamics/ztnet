@@ -37,11 +37,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	if (!user.twoFactorSecret) {
 		return res.status(400).json({ error: ErrorCode.TwoFactorSetupRequired });
 	}
-
 	if (!process.env.NEXTAUTH_SECRET) {
 		console.error("Missing encryption key; cannot proceed with two factor setup.");
 		return res.status(500).json({ error: ErrorCode.InternalServerError });
 	}
+
 	const secret = decrypt<string>(
 		user.twoFactorSecret,
 		generateInstanceSecret(process.env.NEXTAUTH_SECRET),
@@ -57,7 +57,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 	if (!isValidToken) {
 		return res.status(400).json({ error: ErrorCode.IncorrectTwoFactorCode });
 	}
-
 	await prisma.user.update({
 		where: { email: session.user.email },
 		data: {
