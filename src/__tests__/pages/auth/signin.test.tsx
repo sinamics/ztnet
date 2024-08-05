@@ -59,11 +59,11 @@ describe("LoginPage", () => {
 		jest.clearAllMocks();
 	});
 
-	const renderLoginPage = () => {
+	const renderLoginPage = ({ hasOauth = false }) => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<LoginPage hasOauth={false} oauthExlusiveLogin={false} />
+					<LoginPage hasOauth={hasOauth} oauthExlusiveLogin={false} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -76,7 +76,7 @@ describe("LoginPage", () => {
 			refetch: jest.fn(),
 		});
 		api.public.getWelcomeMessage.useQuery = useQueryMock;
-		renderLoginPage();
+		renderLoginPage({ hasOauth: false });
 
 		expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
 		expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe("LoginPage", () => {
 		const signInResponse = { ok: true, error: null };
 		(signIn as jest.Mock).mockResolvedValueOnce(signInResponse);
 
-		renderLoginPage();
+		renderLoginPage({ hasOauth: false });
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
@@ -123,7 +123,7 @@ describe("LoginPage", () => {
 		(signIn as jest.Mock).mockResolvedValue({
 			error: ErrorCode.IncorrectPassword,
 		});
-		renderLoginPage();
+		renderLoginPage({ hasOauth: false });
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
@@ -157,47 +157,64 @@ describe("LoginPage", () => {
 	// 	});
 	// });
 
-	// it("requires password input", async () => {
-	// 	renderLoginPage();
+	it("requires password input", async () => {
+		(signIn as jest.Mock).mockResolvedValue({
+			error: "email or password is wrong!",
+		});
+		renderLoginPage({ hasOauth: false });
 
-	// 	const emailInput = screen.getByLabelText(/Email/i);
-	// 	const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const emailInput = screen.getByLabelText(/Email/i);
+		const submitButton = screen.getByRole("button", { name: /Sign in/i });
 
-	// 	await userEvent.type(emailInput, "test@example.com");
-	// 	await userEvent.click(submitButton);
+		await userEvent.type(emailInput, "test@example.com");
+		await userEvent.click(submitButton);
 
-	// 	await waitFor(() => {
-	// 		expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
-	// 	});
-	// });
+		await waitFor(() => {
+			expect(reactHotToast.toast.error).toHaveBeenCalledWith(
+				"email or password is wrong!",
+				{
+					duration: 10000,
+				},
+			);
+		});
+	});
 
-	// it("handles OAuth sign-in", async () => {
-	// 	renderLoginPage();
+	it("handles OAuth sign-in", async () => {
+		renderLoginPage({ hasOauth: true });
 
-	// 	const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
-	// 	await userEvent.click(oauthButton);
+		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
+		await userEvent.click(oauthButton);
 
-	// 	expect(signIn).toHaveBeenCalledWith("oauth", { callbackUrl: "/" });
-	// });
+		expect(signIn).toHaveBeenCalledWith("oauth");
+	});
 
-	// it("displays loading state during sign-in process", async () => {
-	// 	(signIn as jest.Mock).mockImplementation(
-	// 		() => new Promise((resolve) => setTimeout(resolve, 1000)),
-	// 	);
-	// 	renderLoginPage();
+	it("Enter 2FA code", async () => {
+		(signIn as jest.Mock).mockResolvedValue({
+			error: ErrorCode.SecondFactorRequired,
+		});
+		renderLoginPage({ hasOauth: false });
 
-	// 	const emailInput = screen.getByLabelText(/Email/i);
-	// 	const passwordInput = screen.getByLabelText(/Password/i);
-	// 	const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const emailInput = screen.getByLabelText(/Email/i);
+		const passwordInput = screen.getByLabelText(/Password/i);
+		const submitButton = screen.getByRole("button", { name: /Sign in/i });
 
-	// 	await userEvent.type(emailInput, "test@example.com");
-	// 	await userEvent.type(passwordInput, "password123");
-	// 	await userEvent.click(submitButton);
+		await userEvent.type(emailInput, "invalid@example.com");
+		await userEvent.type(passwordInput, "password");
+		await userEvent.click(submitButton);
 
-	// 	expect(screen.getByText(/Signing in.../i)).toBeInTheDocument();
+		// check that "TOTP Code" text is displayed
+		expect(screen.getByText(/TOTP Code/i)).toBeInTheDocument();
 
-	// 	await waitFor(() => {
-	// 		expect(screen.queryByText(/Signing in.../i)).not.toBeInTheDocument();
-	// 	});
-	// });
+		// make sure input with test-id="totp-input" is displayed, and there is 6 of them
+		const totpCodeInputs = screen.getAllByTestId("totp-input-digit");
+		expect(totpCodeInputs).toHaveLength(6);
+
+		// check if the wrong code is entered 6 times and the error message is displayed
+		for (let i = 0; i < 5; i++) {
+			await userEvent.type(totpCodeInputs[i], "1");
+		}
+
+		// make sure error text is shown
+		expect(screen.getByText(/Code must be exactly 6 digits/i)).toBeInTheDocument();
+	});
 });

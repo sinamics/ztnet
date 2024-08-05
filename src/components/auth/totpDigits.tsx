@@ -77,6 +77,7 @@ export default function TwoFactAuth({
 						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 						key={index}
 						tabIndex={0}
+						data-testid="totp-input-digit"
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						ref={(el) => (inputRefs.current[index] = el)}
 						className="input input-bordered input-sm w-10 text-center"
