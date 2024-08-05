@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
 import { useModalStore } from "~/utils/store";
@@ -24,40 +24,40 @@ const WithStep = ({
 	return step === current ? children : null;
 };
 
-const ShowSteps = ({
-	step,
-	t,
-}: { step: number; t: ReturnType<typeof useTranslations> }) => [
-	<ul className="steps w-full">
-		<li
-			data-content={`${step > 0 ? "✓" : "?"}`}
-			className={classNames("step step-neutral", {
-				"step-success": step > 0,
-				"step-primary": step === 0,
-			})}
-		>
-			{t("userSettings.account.totp.totpActivation.steps.step1")}
-		</li>
-		<li
-			data-content={`${step > 1 ? "✓" : "?"}`}
-			className={classNames("step step-neutral", {
-				"step-success": step > 1,
-				"step-primary": step === 1,
-			})}
-		>
-			{t("userSettings.account.totp.totpActivation.steps.step2")}
-		</li>
-		<li
-			data-content={`${step > 2 ? "✓" : "?"}`}
-			className={classNames("step step-neutral", {
-				"step-success": step > 2,
-				"step-primary": step === 2,
-			})}
-		>
-			{t("userSettings.account.totp.totpActivation.steps.step3")}
-		</li>
-	</ul>,
-];
+const ShowSteps = ({ step }: { step: number }) => {
+	const t = useTranslations();
+	return [
+		<ul className="steps w-full">
+			<li
+				data-content={`${step > 0 ? "✓" : "?"}`}
+				className={classNames("step step-neutral", {
+					"step-success": step > 0,
+					"step-primary": step === 0,
+				})}
+			>
+				{t("userSettings.account.totp.totpActivation.steps.step1")}
+			</li>
+			<li
+				data-content={`${step > 1 ? "✓" : "?"}`}
+				className={classNames("step step-neutral", {
+					"step-success": step > 1,
+					"step-primary": step === 1,
+				})}
+			>
+				{t("userSettings.account.totp.totpActivation.steps.step2")}
+			</li>
+			<li
+				data-content={`${step > 2 ? "✓" : "?"}`}
+				className={classNames("step step-neutral", {
+					"step-success": step > 2,
+					"step-primary": step === 2,
+				})}
+			>
+				{t("userSettings.account.totp.totpActivation.steps.step3")}
+			</li>
+		</ul>,
+	];
+};
 
 const TOTPSetup: React.FC = () => {
 	const closeModal = useModalStore((state) => state.closeModal);
@@ -137,27 +137,35 @@ const TOTPSetup: React.FC = () => {
 	}
 	return (
 		<div className="space-y-10">
-			<ShowSteps step={step} t={t} />
+			<ShowSteps step={step} />
 			<WithStep step={SetupStep.ConfirmPassword} current={step}>
-				<form className="">
-					<p className="text-sm">
-						{t("userSettings.account.totp.totpActivation.confirmPassword.description")}
-					</p>
-					<input
-						type="password"
-						value={state.password}
-						onChange={(e) => setState({ ...state, password: e.target.value })}
-						className="input input-bordered input-sm mt-2 rounded border p-2"
-						placeholder="Password"
-					/>
-					<button
-						onClick={handleSetup}
-						disabled={isSubmitting}
-						type="submit"
-						className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
-					>
-						{isSubmitting ? t("commonSpinners.Checking") : t("commonButtons.confirm")}
-					</button>
+				<form className="space-y-10">
+					<section className="flex justify-center">
+						<div className="space-y-1">
+							<p className="text-sm">
+								{t(
+									"userSettings.account.totp.totpActivation.confirmPassword.description",
+								)}
+							</p>
+							<input
+								type="password"
+								value={state.password}
+								onChange={(e) => setState({ ...state, password: e.target.value })}
+								className="input input-bordered input-sm rounded border"
+								placeholder="Password"
+							/>
+						</div>
+					</section>
+					<footer className="flex justify-end">
+						<button
+							onClick={handleSetup}
+							disabled={isSubmitting}
+							type="submit"
+							className="btn btn-sm rounded px-4 py-2 btn-primary"
+						>
+							{isSubmitting ? t("commonSpinners.Checking") : t("commonButtons.next")}
+						</button>
+					</footer>
 				</form>
 			</WithStep>
 			<WithStep step={SetupStep.DisplayQrCode} current={step}>
@@ -239,17 +247,16 @@ const TOTPSetup: React.FC = () => {
 			<WithStep step={SetupStep.EnterTotpCode} current={step}>
 				<form className="mt-4">
 					<div className="mt-4 space-y-10">
-						<div className="grid grid-cols-1 gap-3">
-							<h3 className="mb-2">
+						<div className="grid grid-cols-1 text-center">
+							<h3 className="text-sm">
 								{t("userSettings.account.totp.totpActivation.enterTotpCode.description")}
 							</h3>
-							<p>
-								{" "}
+							<p className="text-sm">
 								{t("userSettings.account.totp.totpActivation.enterTotpCode.enterCode")}
 							</p>
 							<TwoFactAuthDigits value={totpCode} onChange={setTotpCode} />
 						</div>
-						<footer className="flex justify-end">
+						<footer className="flex justify-end ">
 							<button
 								type="button"
 								className="btn btn-sm ml-2 rounded px-4 py-2 btn-outline"
@@ -263,7 +270,9 @@ const TOTPSetup: React.FC = () => {
 								type="submit"
 								className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
 							>
-								{isSubmitting ? "Verifying..." : "Verify and Enable"}
+								{isSubmitting
+									? t("commonSpinners.loading")
+									: t("commonButtons.enable2fa")}
 							</button>
 						</footer>
 					</div>
