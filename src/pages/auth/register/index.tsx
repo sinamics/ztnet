@@ -7,7 +7,6 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import RegisterForm from "~/components/auth/registerForm";
 import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
-import { WelcomeMessage } from "~/components/auth/welcomeMessage";
 import { useRouter } from "next/router";
 import RegisterOrganizationInviteForm from "~/components/auth/registerOrganizationInvite";
 
@@ -24,19 +23,11 @@ const Register = () => {
 				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<main className="flex min-h-[calc(100vh-7vh)] flex-col m-5 sm:m-0">
-				{/* Main section */}
-				<div className="flex flex-grow items-center">
-					<div className="mx-auto flex">
-						<WelcomeMessage />
-						{organizationInvite ? (
-							<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
-						) : (
-							<RegisterForm />
-						)}
-					</div>
-				</div>
-			</main>
+			{organizationInvite ? (
+				<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
+			) : (
+				<RegisterForm />
+			)}
 		</div>
 	);
 };

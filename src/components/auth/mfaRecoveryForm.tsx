@@ -45,7 +45,7 @@ const MfaRecoveryForm: React.FC = () => {
 	};
 	return (
 		<div className="z-10 flex justify-center self-center">
-			<div className="w-100 mx-auto rounded-2xl border p-12">
+			<div className="w-100 mx-auto rounded-2xl border border-primary p-12">
 				<div className="mb-4">
 					<h3 className="text-2xl font-semibold">2FA Recovery</h3>
 					<p className="text-gray-500">

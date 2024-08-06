@@ -14,6 +14,7 @@ import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
 import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
+import { WelcomeMessage } from "../auth/welcomeMessage";
 
 type TUser = {
 	user: User;
@@ -33,7 +34,9 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 		<div className="outer-content">
 			<div className="mx-auto flex w-5/6">
 				<div>
-					<h1 className="mb-3 text-5xl font-bold">{globalSiteTitle}</h1>
+					<h1 className="mb-3 text-5xl font-bold p-2">
+						<Link href="/">{globalSiteTitle}</Link>
+					</h1>
 				</div>
 
 				<div className="m-3 mx-0 flex w-10/12 justify-end">
@@ -49,7 +52,15 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 					) : null}
 				</div>
 			</div>
-			{children}
+			<main className="flex min-h-[calc(100vh-8vh)] flex-col">
+				{/* Main section */}
+				<div className="flex flex-grow items-center m-5 sm:m-0">
+					<div className="mx-auto flex">
+						<WelcomeMessage />
+						{children}
+					</div>
+				</div>
+			</main>
 		</div>
 	);
 };
