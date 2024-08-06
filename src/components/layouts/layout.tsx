@@ -14,6 +14,7 @@ import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
 import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
+import { WelcomeMessage } from "../auth/welcomeMessage";
 
 type TUser = {
 	user: User;
@@ -30,10 +31,12 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 
 	const currentPath = router.pathname;
 	return (
-		<div className="outer-content">
+		<div className="outer-container">
 			<div className="mx-auto flex w-5/6">
 				<div>
-					<h1 className="mb-3 text-5xl font-bold">{globalSiteTitle}</h1>
+					<h1 className="mb-3 text-5xl font-bold p-2">
+						<Link href="/">{globalSiteTitle}</Link>
+					</h1>
 				</div>
 
 				<div className="m-3 mx-0 flex w-10/12 justify-end">
@@ -49,7 +52,15 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 					) : null}
 				</div>
 			</div>
-			{children}
+			<main className="flex min-h-[calc(100vh-8vh)] flex-col">
+				{/* Main section */}
+				<div className="flex flex-grow items-center m-5 sm:m-0">
+					<div className="mx-auto flex">
+						<WelcomeMessage />
+						{children}
+					</div>
+				</div>
+			</main>
 		</div>
 	);
 };
@@ -60,25 +71,49 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const headerRef = useDynamicViewportHeight([fontSize]);
 
 	return (
-		<div className="outer-content">
+		<div className="outer-container">
 			<Modal />
 			<Header ref={headerRef} />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
 				</aside>
-				<div
-					className={`flex-grow custom-overflow custom-scrollbar ${
-						!open ? "flex-grow" : ""
-					}`}
-				>
-					{children}
+				<div className="grid grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
+					<div className={`flex-grow custom-scrollbar ${!open ? "flex-grow" : ""}`}>
+						{children}
+					</div>
 					<Footer />
 				</div>
 			</div>
 		</div>
 	);
 };
+
+export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
+	const { open } = useSidebarStore();
+	const isAdmin = props?.user?.role === "ADMIN";
+	if (!isAdmin) {
+		return <FourOhFour />;
+	}
+	return (
+		<div className="outer-container">
+			<Modal />
+			<Header />
+			<div className="flex">
+				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
+					<Sidebar />
+				</aside>
+				<div className="grid grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
+					<div className={`flex-grow  custom-scrollbar ${!open ? "flex-grow" : ""}`}>
+						{children}
+					</div>
+					<Footer />
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Element => {
 	// if not session.user redirect to login
 	const sidebarOpen = useSidebarStore((state) => state.open);
@@ -91,7 +126,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 	const orgId = router.query.orgid as string;
 
 	return (
-		<div className="outer-content">
+		<div className="outer-container">
 			{/* Header */}
 			<Modal />
 			<Header ref={headerRef} />
@@ -104,7 +139,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 
 				{/* Main Content */}
 				<div
-					className={`flex-grow custom-scrollbar custom-overflow transition-all duration-150 ${
+					className={`flex-grow custom-scrollbar inner-container transition-all duration-150 ${
 						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>
@@ -118,33 +153,6 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 
 				{/* Chat Aside */}
 				<ChatAside />
-			</div>
-		</div>
-	);
-};
-
-export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
-	const { open } = useSidebarStore();
-	const isAdmin = props?.user?.role === "ADMIN";
-	if (!isAdmin) {
-		return <FourOhFour />;
-	}
-	return (
-		<div className="outer-content">
-			<Modal />
-			<Header />
-			<div className="flex">
-				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
-					<Sidebar />
-				</aside>
-				<div
-					className={`flex-grow custom-overflow custom-scrollbar ${
-						!open ? "flex-grow" : ""
-					}`}
-				>
-					{children}
-					<Footer />
-				</div>
 			</div>
 		</div>
 	);

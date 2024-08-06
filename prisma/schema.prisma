@@ -214,37 +214,61 @@ model APIToken {
   isActive             Boolean   @default(true)
 }
 
+// model UserDevice {
+//   id         String   @id @default(cuid())
+//   userId     String
+//   user       User     @relation(fields: [id], references: [id], onDelete: Cascade)
+//   deviceType String
+//   deviceId   String   @unique
+//   browser    String
+//   os         String
+//   ip         String?
+//   location   String?
+//   lastActive DateTime
+//   isActive   Boolean  @default(true)
+//   createdAt  DateTime @default(now())
+
+//   @@index([userId])
+//   @@index([deviceId])
+// }
+
 model User {
-  id                 String                 @id @default(cuid())
-  name               String
-  email              String                 @unique
-  emailVerified      DateTime?
-  lastLogin          DateTime
-  lastseen           DateTime?
-  online             Boolean?               @default(false)
-  role               Role                   @default(USER)
-  image              String?
-  hash               String?
-  tempPassword       String?
-  firstTime          Boolean                @default(true)
-  userGroupId        Int?
-  memberOfOrgs       Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
-  organizationRoles  UserOrganizationRole[]
-  membershipRequests MembershipRequest[]    @relation("MembershipRequestsForUser")
-  messages           Messages[]
-  lastReadByUsers    LastReadMessage[]
-  ActivityLog        ActivityLog[]
-  expiresAt          DateTime? // null means it never expires
-  isActive           Boolean                @default(true)
-  createdAt          DateTime               @default(now())
-  userGroup          UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
-  options            UserOptions?
-  accounts           Account[]
-  sessions           Session[]
-  network            network[]
-  apiTokens          APIToken[]
-  webhooks           Webhook[]
-  invitations        Invitation[]           @relation("InvitationsSent")
+  id                     String                 @id @default(cuid())
+  name                   String
+  email                  String                 @unique
+  emailVerified          DateTime?
+  lastLogin              DateTime
+  lastseen               DateTime?
+  online                 Boolean?               @default(false)
+  role                   Role                   @default(USER)
+  image                  String?
+  hash                   String?
+  tempPassword           String?
+  firstTime              Boolean                @default(true)
+  twoFactorEnabled       Boolean                @default(false)
+  twoFactorSecret        String?
+  twoFactorRecoveryCodes String[]               @default([])
+  failedLoginAttempts    Int                    @default(0)
+  lastFailedLoginAttempt DateTime?
+  requestChangePassword  Boolean                @default(false)
+  userGroupId            Int?
+  memberOfOrgs           Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
+  organizationRoles      UserOrganizationRole[]
+  membershipRequests     MembershipRequest[]    @relation("MembershipRequestsForUser")
+  messages               Messages[]
+  lastReadByUsers        LastReadMessage[]
+  ActivityLog            ActivityLog[]
+  expiresAt              DateTime? // null means it never expires
+  isActive               Boolean                @default(true)
+  createdAt              DateTime               @default(now())
+  userGroup              UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+  options                UserOptions?
+  accounts               Account[]
+  sessions               Session[]
+  network                network[]
+  apiTokens              APIToken[]
+  webhooks               Webhook[]
+  invitations            Invitation[]           @relation("InvitationsSent")
 }
 
 model VerificationToken {
@@ -271,6 +295,7 @@ model Invitation {
   invitedById   String
   createdAt     DateTime                 @default(now())
   role          Role                     @default(READ_ONLY)
+  require2FA    Boolean                  @default(false)
   createdBy     User                     @relation(fields: [invitedById], references: [id], onDelete: Cascade, name: "InvitationsSent")
   userGroup     UserGroup?               @relation(fields: [userGroupId], references: [id], onDelete: Cascade)
   organizations OrganizationInvitation[]
@@ -298,6 +323,7 @@ model Organization {
   settings           OrganizationSettings?
   membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
   isActive           Boolean                  @default(true)
+  require2FA         Boolean                  @default(false)
   userRoles          UserOrganizationRole[]
   messages           Messages[]
   lastReadByUsers    LastReadMessage[]

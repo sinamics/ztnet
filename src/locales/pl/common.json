@@ -21,7 +21,12 @@
 		"webhooks": "Webhooki",
 		"activeWebhooks": "Aktywne Webhooki"
 	},
+	"commonSpinners": {
+		"loading": "Ładowanie...",
+		"Checking": "Sprawdzanie..."
+	},
 	"commonButtons": {
+		"confirm": "Potwierdź",
 		"add": "Dodaj",
 		"change": "Zmień",
 		"create": "Utwórz",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Dodaj Webhooki",
 		"options": "Opcje",
 		"settings": "Ustawienia",
-		"resend": "Wyślij ponownie"
+		"resend": "Wyślij ponownie",
+		"enable2fa": "Włącz 2FA",
+		"disable2fa": "Wyłącz 2FA",
+		"next": "Dalej",
+		"back": "Wstecz"
 	},
 	"commonTable": {
 		"header": {
@@ -615,6 +624,39 @@
 				"newPasswordPlaceholder": "Nowe hasło",
 				"repeatNewPasswordPlaceholder": "Powtórz nowe hasło",
 				"role": "Rola"
+			},
+			"totp": {
+				"title": "Uwierzytelnianie dwuskładnikowe",
+				"description": "To zwiększy bezpieczeństwo kont użytkowników, wymagając dodatkowego kroku weryfikacji.",
+				"mfaNote": "Uwaga: 2FA będzie działać tylko wtedy, gdy zalogujesz się przy użyciu poświadczeń. OAuth nie będzie korzystać z tego 2FA, nawet jeśli jest skonfigurowane, ponieważ jest zarządzane przez dostawcę OAuth.",
+				"notification": {
+					"title": "Uwierzytelnianie dwuskładnikowe (2FA) nie jest włączone",
+					"description": "Zdecydowanie zalecamy włączenie 2FA, aby zwiększyć bezpieczeństwo konta."
+				},
+				"totpActivation": {
+					"title": "Uwierzytelnianie dwuskładnikowe",
+					"steps": {
+						"step1": "Hasło",
+						"step2": "Skanuj kod QR",
+						"step3": "Zatwierdź"
+					},
+					"confirmPassword": {
+						"description": "Wpisz swoje hasło"
+					},
+					"displayQrCode": {
+						"description": "Potrzebujesz aplikacji do uwierzytelniania dwuskładnikowego? Pobierz jedną z następujących",
+						"IOS": "Urządzenia iOS",
+						"Android": "Urządzenia Android",
+						"Windows": "Urządzenia Windows",
+						"appDescription": "Te aplikacje są zalecane, ale inne aplikacje uwierzytelniające również będą działać.",
+						"scanQrDescription": "Zeskanuj ten kod QR za pomocą aplikacji uwierzytelniającej.",
+						"manualEntry": "Jeśli nie możesz zeskanować kodu QR, możesz ręcznie wprowadzić następujący kod:"
+					},
+					"enterTotpCode": {
+						"description": "Zweryfikuj konfigurację TOTP",
+						"enterCode": "Wprowadź kod z aplikacji uwierzytelniającej, aby zweryfikować i włączyć TOTP."
+					}
+				}
 			},
 			"restapi": {
 				"sectionTitle": "Tokeny dostępowe API",

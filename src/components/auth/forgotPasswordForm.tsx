@@ -56,7 +56,7 @@ const ForgotPasswordForm: React.FC = () => {
 					<div className="space-y-2">
 						<label className="text-sm font-medium tracking-wide">Email</label>
 						<input
-							className=" w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
+							className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
 							value={formData.email}
 							onChange={handleChange}
 							type="email"

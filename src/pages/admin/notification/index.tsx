@@ -6,6 +6,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const Notification = () => {
 	const t = useTranslations("admin");
@@ -35,10 +36,11 @@ const Notification = () => {
 	}
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
-			<div className="pb-10">
-				<p className="text-sm text-gray-400">{t("notification.authentication")}</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
+		<main className="flex w-full flex-col bg-base-100 p-5 sm:p-3 space-y-10">
+			<MenuSectionDividerWrapper
+				title={t("notification.authentication")}
+				className="xl:w-6/12 space-y-5"
+			>
 				<div className="flex items-center justify-between">
 					<div>
 						<p>{t("notification.whenUserRegister")}</p>
@@ -56,7 +58,7 @@ const Notification = () => {
 						}}
 					/>
 				</div>
-			</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };

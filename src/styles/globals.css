@@ -2,25 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * DaisyUI fix for window shift using modal.
+   https://github.com/saadeghi/daisyui/issues/3040
+ */
+:root:has(
+    :is(
+        .modal-open,
+        .modal:target,
+        .modal-toggle:checked + .modal,
+        .modal[open]
+      )
+  ) {
+  scrollbar-gutter: unset;
+}
+
 @layer components {
   .btn{
     text-transform: uppercase;
   }
 }
-.outer-content{
+.outer-container{
   min-height: 100dvh;
 }
-/* .main-content {
 
-} */
-.membersTable-wrapper {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  overflow: auto;
-  white-space: nowrap;
-}
-
-.custom-overflow {
+.inner-container {
   overflow-y: auto;
   overflow-x: hidden;
 
@@ -28,29 +34,48 @@
   height: calc(var(--vh, 1vh) * 100 - var(--header-height, 48px));
 }
 
-.custom-scrollbar::-webkit-scrollbar, .cm-scroller::-webkit-scrollbar {
-  width: 8px; /* width of the entire scrollbar */
+.membersTable-wrapper {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  overflow: auto;
+  white-space: nowrap;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track, .cm-scroller::-webkit-scrollbar-track {
-  background: #bbbbbb; /* color of the tracking area */
+/* Webkit browsers (Chrome, Safari, newer versions of Edge) */
+.custom-scrollbar::-webkit-scrollbar,
+.cm-scroller::-webkit-scrollbar {
+  width: 4px; 
+  background-color: transparent;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb, .cm-scroller::-webkit-scrollbar-thumb {
-  background: #2e2e2e; /* color of the scroll thumb */
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.cm-scroller::-webkit-scrollbar-thumb {
+  background-color: rgba(46, 46, 46, 0.3); 
+  border-radius: 2px; 
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover, .cm-scroller::-webkit-scrollbar-thumb:hover {
-  background: #555; /* color of the scroll thumb on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.cm-scroller::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(85, 85, 85, 0.5); 
 }
 
-.glow {
-  box-shadow: 0 0 2px 2px rgb(189, 93, 93);
+/* Hide scrollbar arrows */
+.custom-scrollbar::-webkit-scrollbar-button,
+.cm-scroller::-webkit-scrollbar-button {
+  display: none;
 }
 
-/* Prevent text from being transformed to lowercase */
-.theme-black {
-  text-transform: none; 
+/* Firefox */
+.custom-scrollbar,
+.cm-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(219, 219, 219, 0.3) transparent;
+}
+
+/* For Internet Explorer and Edge (older versions) */
+.custom-scrollbar,
+.cm-scroller {
+  -ms-overflow-style: none;
 }
 
 /* There is a bug issue over at Mozilla that is still open, given that it was created 5 years ago.

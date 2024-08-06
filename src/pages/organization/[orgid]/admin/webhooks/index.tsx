@@ -16,6 +16,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const ListWebHooks = ({ organizationId }) => {
 	const t = useTranslations();
@@ -37,56 +38,52 @@ const ListWebHooks = ({ organizationId }) => {
 
 	return (
 		<div>
-			<div>
-				<p className="text-[0.7rem] text-gray-400 uppercase">
-					{t("commonMenuTiles.activeWebhooks")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-			</div>
-			{orgData?.webhooks?.map((hook: Webhook) => (
-				<div
-					key={hook.id}
-					className="mb-4 p-6 last:mb-0 border border-gray-300 rounded-lg shadow-lg transition-shadow duration-200 ease-in-out dark:border-gray-700 bg-white dark:bg-gray-800 "
-				>
-					<div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-						{hook.name}
-					</div>
-					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("organization.webhook.listWebhooks.description")}:</span>
-						<span className="font-medium">{hook.description}</span>
-					</div>
-					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("organization.webhook.listWebhooks.url")}:</span>
-						<span className="font-medium">{hook.url}</span>
-					</div>
-					<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
-						<span>{t("organization.webhook.listWebhooks.lastDelivery")}:</span>
-						<span className="font-medium">
-							<TimeAgo date={hook.lastDelivery} />
-						</span>
-					</div>
-					<div className="text-sm text-gray-600 dark:text-gray-400">
-						<div>{t("organization.webhook.listWebhooks.events")}:</div>
-						<div className="font-medium">
-							{(hook.eventTypes as string[])?.join(" - ")}
+			<MenuSectionDividerWrapper title={t("commonMenuTiles.activeWebhooks")}>
+				{orgData?.webhooks?.map((hook: Webhook) => (
+					<div
+						key={hook.id}
+						className="mb-4 p-6 last:mb-0 border border-gray-300 rounded-lg shadow-lg transition-shadow duration-200 ease-in-out dark:border-gray-700 bg-white dark:bg-gray-800 "
+					>
+						<div className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+							{hook.name}
+						</div>
+						<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
+							<span>{t("organization.webhook.listWebhooks.description")}:</span>
+							<span className="font-medium">{hook.description}</span>
+						</div>
+						<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
+							<span>{t("organization.webhook.listWebhooks.url")}:</span>
+							<span className="font-medium">{hook.url}</span>
+						</div>
+						<div className="text-sm text-gray-600 dark:text-gray-400 flex justify-between">
+							<span>{t("organization.webhook.listWebhooks.lastDelivery")}:</span>
+							<span className="font-medium">
+								<TimeAgo date={hook.lastDelivery} />
+							</span>
+						</div>
+						<div className="text-sm text-gray-600 dark:text-gray-400">
+							<div>{t("organization.webhook.listWebhooks.events")}:</div>
+							<div className="font-medium">
+								{(hook.eventTypes as string[])?.join(" - ")}
+							</div>
+						</div>
+						<div className="flex justify-end">
+							<button
+								onClick={() =>
+									deleteWebhook({
+										organizationId: hook.organizationId,
+										webhookId: hook.id,
+									})
+								}
+								type="submit"
+								className="btn btn-sm btn-error btn-outline"
+							>
+								{t("commonButtons.delete")}
+							</button>
 						</div>
 					</div>
-					<div className="flex justify-end">
-						<button
-							onClick={() =>
-								deleteWebhook({
-									organizationId: hook.organizationId,
-									webhookId: hook.id,
-								})
-							}
-							type="submit"
-							className="btn btn-sm btn-error btn-outline"
-						>
-							{t("commonButtons.delete")}
-						</button>
-					</div>
-				</div>
-			))}
+				))}
+			</MenuSectionDividerWrapper>
 		</div>
 	);
 };
@@ -160,82 +157,81 @@ const OrganizationWebhook = () => {
 	const pageTitle = `${globalSiteTitle} - Webhooks`;
 
 	return (
-		<main className="flex w-full flex-col justify-center bg-base-100 p-3">
+		<main className="flex w-full flex-col justify-center bg-base-100 p-5 sm:p-3">
 			<HeadSection title={pageTitle} />
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				<form className="space-y-5 w-full">
-					<div className="">
-						<p className="text-[0.7rem] text-gray-400 uppercase">
-							{t("commonMenuTiles.webhooks")}
-						</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
-					</div>
-					<h1 className="text-sm text-gray-500">
-						{t.rich("organization.webhook.description", {
-							br: () => <br />,
-						})}
-					</h1>
-					<div className="form-control">
-						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.webhook.createWebhook.webhookName")}
+					<MenuSectionDividerWrapper
+						title={t("commonMenuTiles.webhooks")}
+						className="space-y-10"
+					>
+						<h1 className="text-sm text-gray-500">
+							{t.rich("organization.webhook.description", {
+								br: () => <br />,
+							})}
 						</h1>
-						<label className="text-sm text-gray-500">
-							{t("organization.webhook.createWebhook.webhookNameDescription")}
-						</label>
-						<Input
-							type="text"
-							placeholder="Name"
-							value={input?.webhookName}
-							onChange={inputHandler}
-							name="webhookName"
-							className="input-bordered input-sm w-full"
-						/>
-					</div>
-					<div className="dropdown dropdown-end z-50">
-						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.webhook.createWebhook.selectWebhookActions")}
-						</h1>
-						<label className="text-sm text-gray-500">
-							{t("organization.webhook.createWebhook.selectWebhookActionsDescription")}
-						</label>
-						<div>
-							<MultiSelectDropdown
-								formFieldName={"hookType"}
-								options={Object.keys(HookType)}
-								value={input?.hookType}
-								// name="hookType"
-								onChange={selectHandler}
-								prompt="Select Webhook Actions"
+						<div className="form-control">
+							<h1 className="text-md font-medium tracking-wide">
+								{t("organization.webhook.createWebhook.webhookName")}
+							</h1>
+							<label className="text-sm text-gray-500">
+								{t("organization.webhook.createWebhook.webhookNameDescription")}
+							</label>
+							<Input
+								type="text"
+								placeholder="Name"
+								value={input?.webhookName}
+								onChange={inputHandler}
+								name="webhookName"
+								className="input-bordered input-sm w-full"
 							/>
 						</div>
-					</div>
-					<div className="form-control">
-						<h1 className="text-md font-medium tracking-wide">
-							{t("organization.webhook.createWebhook.webhookUrl")}
-						</h1>
-						<label className="text-sm text-gray-500">
-							{t("organization.webhook.createWebhook.webhookUrlDescription")}
-						</label>
-						<Input
-							type="text"
-							placeholder="https://...."
-							value={input?.webhookUrl}
-							onChange={inputHandler}
-							name="webhookUrl"
-							className="input-bordered input-sm w-full"
-						/>
-					</div>
+						<div className="dropdown dropdown-end z-50">
+							<h1 className="text-md font-medium tracking-wide">
+								{t("organization.webhook.createWebhook.selectWebhookActions")}
+							</h1>
+							<label className="text-sm text-gray-500">
+								{t("organization.webhook.createWebhook.selectWebhookActionsDescription")}
+							</label>
+							<div>
+								<MultiSelectDropdown
+									formFieldName={"hookType"}
+									options={Object.keys(HookType)}
+									value={input?.hookType}
+									// name="hookType"
+									onChange={selectHandler}
+									prompt="Select Webhook Actions"
+								/>
+							</div>
+						</div>
+						<div className="form-control">
+							<h1 className="text-md font-medium tracking-wide">
+								{t("organization.webhook.createWebhook.webhookUrl")}
+							</h1>
+							<label className="text-sm text-gray-500">
+								{t("organization.webhook.createWebhook.webhookUrlDescription")}
+							</label>
+							<Input
+								type="text"
+								placeholder="https://...."
+								value={input?.webhookUrl}
+								onChange={inputHandler}
+								name="webhookUrl"
+								className="input-bordered input-sm w-full"
+							/>
+						</div>
 
-					<div className="pt-10 space-x-5 ">
-						<button
-							onClick={submitHandler}
-							type="submit"
-							className="btn btn-sm btn-primary"
-						>
-							{t("commonButtons.submit")}
-						</button>
-					</div>
+						<div className="pt-10 space-x-5 ">
+							<button
+								onClick={submitHandler}
+								type="submit"
+								className="btn btn-sm btn-primary"
+							>
+								{t("commonButtons.submit")}
+							</button>
+						</div>
+					</MenuSectionDividerWrapper>
 				</form>
 				<div className="space-y-2">
 					<ListWebHooks organizationId={organizationId} />

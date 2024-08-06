@@ -21,7 +21,12 @@
 		"webhooks": "Webhooks",
 		"activeWebhooks": "Active Webhooks"
 	},
+	"commonSpinners": {
+		"loading": "Loading...",
+		"Checking": "Checking..."
+	},
 	"commonButtons": {
+		"confirm": "Confirm",
 		"add": "Add",
 		"change": "Change",
 		"create": "Create",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Add Webhooks",
 		"options": "Options",
 		"settings": "Settings",
-		"resend": "Resend"
+		"resend": "Resend",
+		"enable2fa": "Enable 2FA",
+		"disable2fa": "Disable 2FA",
+		"next": "Next",
+		"back": "Back"
 	},
 	"commonTable": {
 		"header": {
@@ -615,6 +624,39 @@
 				"newPasswordPlaceholder": "New Password",
 				"repeatNewPasswordPlaceholder": "Repeat New Password",
 				"role": "Role"
+			},
+			"totp": {
+				"title": "Two Factor Authentication",
+				"description": "This will enhance the security of user accounts by requiring an additional verification step.",
+				"mfaNote": "Note: 2FA will only work if you sign in with credentials. OAuth will not use this 2FA, even if configured, as it is managed by the OAuth provider.",
+				"notification": {
+					"title": "Two-Factor Authentication (2FA) Not Enabled",
+					"description": "We strongly recommend enabling 2FA to enhance your account security."
+				},
+				"totpActivation": {
+					"title": "Two Factor Authentication",
+					"steps": {
+						"step1": "Password",
+						"step2": "Scan QR code",
+						"step3": "Submit"
+					},
+					"confirmPassword": {
+						"description": "Type in your password"
+					},
+					"displayQrCode": {
+						"description": "Do you need a two-factor authentication app? Download one of the following",
+						"IOS": "IOS-devices",
+						"Android": "Android-devices",
+						"Windows": "Windows-devices",
+						"appDescription": "These apps are recommended, but other authentication apps will also work.",
+						"scanQrDescription": "Scan this QR code with your authenticator app.",
+						"manualEntry": "If you can't scan the QR code, you can manually enter the following:"
+					},
+					"enterTotpCode": {
+						"description": "Verify your TOTP setup",
+						"enterCode": "Enter the code from your authenticator app to verify and enable TOTP."
+					}
+				}
 			},
 			"restapi": {
 				"sectionTitle": "API Access Tokens",

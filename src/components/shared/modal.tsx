@@ -45,7 +45,7 @@ const Modal = () => {
 				ref={ref}
 			>
 				<h3 className="text-lg font-bold">{title}</h3>
-				<p className="py-4">{description}</p>
+				{description ? <p className="py-4">{description}</p> : null}
 				<div>{content}</div>
 				{showButtons ? (
 					<div className="modal-action">

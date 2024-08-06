@@ -6,6 +6,13 @@ import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
 import { isRunningInDocker } from "~/utils/docker";
+import { ErrorCode } from "~/utils/errorCode";
+import {
+	decrypt,
+	generateInstanceSecret,
+	TOTP_MFA_TOKEN_SECRET,
+} from "~/utils/encryption";
+import { authenticator } from "otplib";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -13,6 +20,11 @@ import { isRunningInDocker } from "~/utils/docker";
  *
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
+
+// Constants
+const MAX_FAILED_ATTEMPTS = 5;
+const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute in milliseconds
+
 declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: IUser;
@@ -121,6 +133,11 @@ export const authOptions: NextAuthOptions = {
 					placeholder: "mail@example.com",
 				},
 				password: { label: "Password", type: "password" },
+				totpCode: {
+					label: "Two-factor Code",
+					type: "input",
+					placeholder: "Code from authenticator app",
+				},
 			},
 			async authorize(_credentials, _req) {
 				// if (!_credentials?.email) return;
@@ -136,9 +153,33 @@ export const authOptions: NextAuthOptions = {
 					//  return a nextauth error message
 					throw new Error("User does not exist!");
 
+				// Check if the user is in a cooldown period
+				if (
+					user.lastFailedLoginAttempt &&
+					user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS
+				) {
+					const timeSinceLastFailedAttempt =
+						Date.now() - user.lastFailedLoginAttempt.getTime();
+					if (timeSinceLastFailedAttempt < COOLDOWN_PERIOD) {
+						// const remainingCooldown = Math.ceil(
+						// 	(COOLDOWN_PERIOD - timeSinceLastFailedAttempt) / 60000,
+						// );
+						throw new Error("Too many failed attempts. Please try again later.");
+					}
+				}
 				const isValid = await compare(_credentials?.password ?? "", user.hash);
 
 				if (!isValid) {
+					// Increment failed login attempts
+					await prisma.user.update({
+						where: { id: user.id },
+						data: {
+							failedLoginAttempts: {
+								increment: 1,
+							},
+							lastFailedLoginAttempt: new Date(),
+						},
+					});
 					throw new Error("email or password is wrong!");
 				}
 
@@ -148,6 +189,59 @@ export const authOptions: NextAuthOptions = {
 					);
 				}
 
+				if (user.twoFactorEnabled) {
+					if (!_credentials.totpCode) {
+						throw new Error(ErrorCode.SecondFactorRequired);
+					}
+
+					if (!user.twoFactorSecret) {
+						console.error(
+							`Two factor is enabled for user ${user.email} but they have no secret`,
+						);
+						throw new Error(ErrorCode.InternalServerError);
+					}
+
+					if (!process.env.NEXTAUTH_SECRET) {
+						console.error(
+							`"Missing encryption key; cannot proceed with two factor login."`,
+						);
+						throw new Error(ErrorCode.InternalServerError);
+					}
+
+					const secret = decrypt<string>(
+						user.twoFactorSecret,
+						generateInstanceSecret(TOTP_MFA_TOKEN_SECRET),
+					);
+					if (secret.length !== 32) {
+						console.error(
+							`Two factor secret decryption failed. Expected key with length 32 but got ${secret.length}`,
+						);
+						throw new Error(ErrorCode.InternalServerError);
+					}
+
+					const isValidToken = authenticator.check(_credentials.totpCode, secret);
+					if (!isValidToken) {
+						await prisma.user.update({
+							where: { id: user.id },
+							data: {
+								failedLoginAttempts: {
+									increment: 1,
+								},
+								lastFailedLoginAttempt: new Date(),
+							},
+						});
+						throw new Error(ErrorCode.IncorrectTwoFactorCode);
+					}
+				}
+
+				// Reset failed login attempts on successful login
+				await prisma.user.update({
+					where: { id: user.id },
+					data: {
+						failedLoginAttempts: 0,
+						lastFailedLoginAttempt: null,
+					},
+				});
 				return {
 					...user,
 					hash: null,
