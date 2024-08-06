@@ -11,6 +11,7 @@ import TimeAgo from "react-timeago";
 import cn from "classnames";
 import { globalSiteTitle } from "~/utils/global";
 import HeadSection from "~/components/shared/metaTags";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const ExpiryCountdown = ({ date, onExpire }) => {
 	const b = useTranslations("commonButtons");
@@ -135,28 +136,19 @@ const OrganizationInvites = () => {
 
 	const pageTitle = `${globalSiteTitle} - Invitations`;
 	return (
-		<main className="flex w-full flex-col space-y-5 justify-center bg-base-100 p-3">
+		<main className="flex w-full flex-col space-y-5 justify-center bg-base-100 p-5 sm:p-3">
 			<HeadSection title={pageTitle} />
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-				<div className="rounded-lg space-y-10">
-					<div>
-						<p className="text-[0.7rem] text-gray-400 uppercase">
-							{t("commonMenuTiles.invites")}
-						</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
-
+				<div className="space-y-10">
+					<MenuSectionDividerWrapper title={t("commonMenuTiles.invites")}>
 						<InviteByMail organizationId={organizationId} />
-					</div>
-					<div>
+					</MenuSectionDividerWrapper>
+					<MenuSectionDividerWrapper title={t("commonMenuTiles.invites")}>
 						<InviteByUser />
-					</div>
+					</MenuSectionDividerWrapper>
 				</div>
 				<div>
-					<p className="text-[0.7rem] text-gray-400 uppercase">
-						{t("commonMenuTiles.pendingInvites")}
-					</p>
-					<div className="divider mt-0 p-0 text-gray-500"></div>
-					<div className="">
+					<MenuSectionDividerWrapper title={t("commonMenuTiles.pendingInvites")}>
 						{orgInvites?.map((invite) => (
 							<InviteCard
 								key={invite.id}
@@ -164,7 +156,7 @@ const OrganizationInvites = () => {
 								organizationId={organizationId}
 							/>
 						))}
-					</div>
+					</MenuSectionDividerWrapper>
 				</div>
 			</div>
 		</main>
