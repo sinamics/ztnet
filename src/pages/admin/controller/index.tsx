@@ -45,10 +45,7 @@ const Controller = () => {
 				</div>
 			) : (
 				<>
-					<MenuSectionDividerWrapper
-						title={t("controller.networkMembers.title")}
-						className="space-y-1"
-					>
+					<MenuSectionDividerWrapper title={t("controller.networkMembers.title")}>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.networkMembers.totalNetworks")}</p>
 							<p>{networkCount}</p>
@@ -87,10 +84,7 @@ const Controller = () => {
 							</div>
 						) : null}
 					</MenuSectionDividerWrapper>
-					<MenuSectionDividerWrapper
-						title={t("controller.management.title")}
-						className="space-y-1"
-					>
+					<MenuSectionDividerWrapper title={t("controller.management.title")}>
 						<div className="grid grid-cols-3">
 							<p>{t("controller.management.allowManagementFrom")}</p>
 							<div className="col-span-2 gap-1 flex flex-col items-end">
@@ -116,10 +110,7 @@ const Controller = () => {
 							</div>
 						</div>
 					</MenuSectionDividerWrapper>
-					<MenuSectionDividerWrapper
-						title={t("controller.controllerStatus.title")}
-						className="space-y-1"
-					>
+					<MenuSectionDividerWrapper title={t("controller.controllerStatus.title")}>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.controllerStatus.online")}</p>
 							<p>{online ? "Yes" : "No"}</p>
