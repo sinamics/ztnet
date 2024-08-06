@@ -6,7 +6,7 @@ interface MenuSectionWrapperProps {
 	className?: string;
 }
 
-const MenuSectionWrapper: React.FC<MenuSectionWrapperProps> = ({
+const MenuSectionDividerWrapper: React.FC<MenuSectionWrapperProps> = ({
 	title,
 	children,
 	className = "",
@@ -24,4 +24,4 @@ const MenuSectionWrapper: React.FC<MenuSectionWrapperProps> = ({
 	);
 };
 
-export default MenuSectionWrapper;
+export default MenuSectionDividerWrapper;

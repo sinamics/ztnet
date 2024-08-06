@@ -15,7 +15,7 @@ import TOTPSetup from "~/components/auth/totpSetup";
 import { useModalStore } from "~/utils/store";
 import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
 import MultifactorNotEnabled from "~/components/auth/multifactorNotEnabledAlert";
-import MenuSectionWrapper from "~/components/shared/menuSectionWrapper";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const defaultLocale = "en";
 
@@ -63,7 +63,7 @@ const Account = () => {
 
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 p-3 sm:w-6/12">
-			<MenuSectionWrapper
+			<MenuSectionDividerWrapper
 				title={t("userSettings.account.accountSettings.title").toUpperCase()}
 			>
 				<InputField
@@ -115,9 +115,9 @@ const Account = () => {
 						<p className="text-gray-500">{session?.user?.role}</p>
 					</div>
 				</div>
-			</MenuSectionWrapper>
+			</MenuSectionDividerWrapper>
 
-			<MenuSectionWrapper title="SECURITY">
+			<MenuSectionDividerWrapper title="SECURITY">
 				<InputField
 					isLoading={!session?.user}
 					label={t("userSettings.account.accountSettings.passwordLabel")}
@@ -202,8 +202,8 @@ const Account = () => {
 							: t("commonButtons.enable2fa")}
 					</button>
 				</div>
-			</MenuSectionWrapper>
-			<MenuSectionWrapper title={t("userSettings.account.restapi.sectionTitle")}>
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper title={t("userSettings.account.restapi.sectionTitle")}>
 				<p className="text-sm text-gray-500">
 					{t("userSettings.account.restapi.description")}
 					<br />
@@ -218,8 +218,8 @@ const Account = () => {
 				<div className="space-y-5">
 					<GenerateApiToken />
 				</div>
-			</MenuSectionWrapper>
-			<MenuSectionWrapper
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper
 				title={t("userSettings.account.zerotierCentral.title").toUpperCase()}
 			>
 				<p className="text-sm text-gray-500">
@@ -291,8 +291,10 @@ const Account = () => {
 						});
 					}}
 				/>
-			</MenuSectionWrapper>
-			<MenuSectionWrapper title={t("userSettings.account.accountPreferences.title")}>
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper
+				title={t("userSettings.account.accountPreferences.title")}
+			>
 				<div className="form-control w-full max-w-xs">
 					<label className="label">
 						<span className="label-text font-medium">
@@ -312,8 +314,8 @@ const Account = () => {
 					</select>
 				</div>
 				<ApplicationFontSize />
-			</MenuSectionWrapper>
-			<MenuSectionWrapper title={t("userSettings.account.application.title")}>
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper title={t("userSettings.account.application.title")}>
 				<div className="flex items-center justify-between">
 					<p>{t("userSettings.account.application.version")}</p>
 					<a
@@ -323,7 +325,7 @@ const Account = () => {
 						{globalSiteVersion ?? t("userSettings.account.application.developerMode")}
 					</a>
 				</div>
-			</MenuSectionWrapper>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };
