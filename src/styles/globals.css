@@ -22,25 +22,23 @@
     text-transform: uppercase;
   }
 }
-.outer-content{
+.outer-container{
   min-height: 100dvh;
 }
-/* .main-content {
 
-} */
-.membersTable-wrapper {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  overflow: auto;
-  white-space: nowrap;
-}
-
-.custom-overflow {
+.inner-container {
   overflow-y: auto;
   overflow-x: hidden;
 
   /* NOTE: header is 48px */
   height: calc(var(--vh, 1vh) * 100 - var(--header-height, 48px));
+}
+
+.membersTable-wrapper {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  overflow: auto;
+  white-space: nowrap;
 }
 
 /* Webkit browsers (Chrome, Safari, newer versions of Edge) */
