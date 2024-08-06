@@ -11,7 +11,7 @@ const TOTPInput: React.FC<TOTPInputProps> = ({ totpCode, setTotpCode }) => (
 	<div className="space-y-2">
 		<label className="text-sm font-medium tracking-wide">Enter 2FA Code</label>
 		<TwoFactAuth value={totpCode} onChange={(val) => setTotpCode(val)} />
-		<Link href="/auth/mfaRecovery" className="text-sm text-blue-600">
+		<Link href="/auth/mfaRecovery" className="text-sm text-blue-500 hover:text-blue-700">
 			Having problems?
 		</Link>
 	</div>
