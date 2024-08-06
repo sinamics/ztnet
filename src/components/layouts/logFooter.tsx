@@ -109,7 +109,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 					value={formatLogsData(organizationLogs)}
 					maxHeight="210px"
 					width="100%"
-					className="custom-scrollbar custom-overflow"
+					className="custom-scrollbar inner-container"
 					theme={okaidia}
 					basicSetup={{
 						lineNumbers: false,

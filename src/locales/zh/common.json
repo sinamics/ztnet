@@ -21,7 +21,12 @@
 		"webhooks": "网络钩子",
 		"activeWebhooks": "活跃的网络钩子"
 	},
+	"commonSpinners": {
+		"loading": "正在加载...",
+		"Checking": "正在检查..."
+	},
 	"commonButtons": {
+		"confirm": "确认",
 		"add": "添加",
 		"change": "更改",
 		"create": "创建",
@@ -49,7 +54,11 @@
 		"addWebhooks": "添加 Webhooks",
 		"options": "选项",
 		"settings": "设置",
-		"resend": "重新发送"
+		"resend": "重新发送",
+		"enable2fa": "启用双重认证",
+		"disable2fa": "禁用双重认证",
+		"next": "下一步",
+		"back": "返回"
 	},
 	"commonTable": {
 		"header": {
@@ -615,6 +624,39 @@
 				"newPasswordPlaceholder": "新密码",
 				"repeatNewPasswordPlaceholder": "重复新密码",
 				"role": "角色"
+			},
+			"totp": {
+				"title": "双因素认证",
+				"description": "这将通过要求额外的验证步骤来增强用户帐户的安全性。",
+				"mfaNote": "注意：2FA 只有在您使用凭据登录时才会生效。即使配置了 2FA，OAuth 也不会使用它，因为它由 OAuth 提供商管理。",
+				"notification": {
+					"title": "未启用双因素认证（2FA）",
+					"description": "我们强烈建议启用2FA以增强您的帐户安全性。"
+				},
+				"totpActivation": {
+					"title": "双因素认证",
+					"steps": {
+						"step1": "密码",
+						"step2": "扫描二维码",
+						"step3": "提交"
+					},
+					"confirmPassword": {
+						"description": "输入您的密码"
+					},
+					"displayQrCode": {
+						"description": "需要双因素认证应用程序吗？下载以下之一",
+						"IOS": "iOS设备",
+						"Android": "安卓设备",
+						"Windows": "Windows设备",
+						"appDescription": "推荐使用这些应用程序，但其他认证应用程序也可以使用。",
+						"scanQrDescription": "使用您的认证应用程序扫描此二维码。",
+						"manualEntry": "如果您无法扫描二维码，可以手动输入以下代码："
+					},
+					"enterTotpCode": {
+						"description": "验证您的TOTP设置",
+						"enterCode": "输入您的认证应用程序中的代码以验证并启用TOTP。"
+					}
+				}
 			},
 			"restapi": {
 				"sectionTitle": "API访问令牌",

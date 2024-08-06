@@ -21,7 +21,12 @@
 		"webhooks": "Webhooks",
 		"activeWebhooks": "Aktive Webhooks"
 	},
+	"commonSpinners": {
+		"loading": "Laster...",
+		"Checking": "Sjekker..."
+	},
 	"commonButtons": {
+		"confirm": "Bekreft",
 		"add": "Legg til",
 		"change": "Endre",
 		"create": "Opprett",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
 		"settings": "Innstillinger",
-		"resend": "Send på nytt"
+		"resend": "Send på nytt",
+		"enable2fa": "Aktiver 2FA",
+		"disable2fa": "Deaktiver 2FA",
+		"next": "Neste",
+		"back": "Tilbake"
 	},
 	"commonTable": {
 		"header": {
@@ -615,6 +624,39 @@
 				"newPasswordPlaceholder": "Nytt Passord",
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
 				"role": "Rolle"
+			},
+			"totp": {
+				"title": "Tofaktorautentisering",
+				"description": "Dette vil forbedre sikkerheten til brukerkontoer ved å kreve et ekstra verifiseringstrinn.",
+				"mfaNote": "Merk: 2FA vil bare fungere hvis du logger inn med epost/passord. OAuth vil ikke bruke denne 2FA, selv om den er konfigurert, da den administreres av OAuth-leverandøren.",
+				"notification": {
+					"title": "Tofaktorautentisering (2FA) ikke aktivert",
+					"description": "Vi anbefaler sterkt å aktivere 2FA for å forbedre kontosikkerheten din."
+				},
+				"totpActivation": {
+					"title": "Tofaktorautentisering",
+					"steps": {
+						"step1": "Passord",
+						"step2": "Skann QR-kode",
+						"step3": "Send inn"
+					},
+					"confirmPassword": {
+						"description": "Skriv inn passordet ditt"
+					},
+					"displayQrCode": {
+						"description": "Trenger du en tofaktorautentiserings-app? Last ned en av følgende",
+						"IOS": "iOS-enheter",
+						"Android": "Android-enheter",
+						"Windows": "Windows-enheter",
+						"appDescription": "Disse appene er anbefalt, men andre autentiseringsapper vil også fungere.",
+						"scanQrDescription": "Skann denne QR-koden med autentiseringsappen din.",
+						"manualEntry": "Hvis du ikke kan skanne QR-koden, kan du manuelt taste inn følgende kode:"
+					},
+					"enterTotpCode": {
+						"description": "Bekreft TOTP-oppsettet ditt",
+						"enterCode": "Skriv inn koden fra autentiseringsappen din for å bekrefte og aktivere TOTP."
+					}
+				}
 			},
 			"restapi": {
 				"sectionTitle": "API-tilgangstokens",

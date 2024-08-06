@@ -1,9 +1,10 @@
-// LoginForm.test.tsx
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import LoginForm from "~/components/auth/loginForm";
+import { toast } from "react-hot-toast";
+import CredentialsForm from "~/components/auth/credentialsForm";
+import { ErrorCode } from "~/utils/errorCode";
 
 jest.mock("next-auth/react", () => ({
 	signIn: jest.fn(),
@@ -11,30 +12,23 @@ jest.mock("next-auth/react", () => ({
 
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
-	push: jest.fn(),
 }));
 
-describe("LoginForm", () => {
+jest.mock("react-hot-toast", () => ({
+	toast: {
+		error: jest.fn(),
+	},
+}));
+
+describe("CredentialsForm", () => {
 	beforeEach(() => {
 		(signIn as jest.Mock).mockReset();
 		(useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
-	});
-
-	it("renders the LoginForm component", () => {
-		// Mock the router to simulate an OAuth
-		(useRouter as jest.Mock).mockReturnValue({
-			query: { error: "OAuthError" },
-		});
-		render(<LoginForm hasOauth />);
-		expect(screen.getByRole("heading", { name: /Sign In/i })).toBeInTheDocument();
+		(toast.error as jest.Mock).mockReset();
 	});
 
 	it("updates email and password inputs on change", () => {
-		// Mock the router to simulate an OAuth
-		(useRouter as jest.Mock).mockReturnValue({
-			query: { error: "OAuthError" },
-		});
-		render(<LoginForm hasOauth />);
+		render(<CredentialsForm />);
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -47,17 +41,13 @@ describe("LoginForm", () => {
 	});
 
 	it("submits the form with correct email and password", async () => {
-		// Mock the router to simulate an OAuth
-		(useRouter as jest.Mock).mockReturnValue({
-			query: { error: "OAuthError" },
-		});
-		render(<LoginForm hasOauth />);
+		render(<CredentialsForm />);
 
-		(signIn as jest.Mock).mockResolvedValue({});
+		(signIn as jest.Mock).mockResolvedValue({ ok: true });
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
-		const submitButton = screen.getByText("Sign in");
+		const submitButton = screen.getByRole("button", { name: /sign in/i });
 
 		await userEvent.type(emailInput, "test@example.com");
 		await userEvent.type(passwordInput, "testpassword");
@@ -67,6 +57,84 @@ describe("LoginForm", () => {
 			redirect: false,
 			email: "test@example.com",
 			password: "testpassword",
+			totpCode: "",
+		});
+	});
+
+	it("shows TOTP input when second factor is required", async () => {
+		render(<CredentialsForm />);
+
+		(signIn as jest.Mock).mockResolvedValue({ error: ErrorCode.SecondFactorRequired });
+
+		const emailInput = screen.getByPlaceholderText("mail@example.com");
+		const passwordInput = screen.getByPlaceholderText("Enter your password");
+		const submitButton = screen.getByRole("button", { name: /sign in/i });
+
+		await userEvent.type(emailInput, "test@example.com");
+		await userEvent.type(passwordInput, "testpassword");
+		await userEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(screen.getByText("Enter 2FA Code")).toBeInTheDocument();
+		});
+	});
+
+	it("handles error response from signIn", async () => {
+		render(<CredentialsForm />);
+
+		const errorMessage = "Invalid credentials";
+		(signIn as jest.Mock).mockResolvedValue({ ok: false, error: errorMessage });
+
+		const emailInput = screen.getByPlaceholderText("mail@example.com");
+		const passwordInput = screen.getByPlaceholderText("Enter your password");
+		const submitButton = screen.getByRole("button", { name: /sign in/i });
+
+		await userEvent.type(emailInput, "test@example.com");
+		await userEvent.type(passwordInput, "wrongpassword");
+		await userEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(toast.error).toHaveBeenCalledWith(errorMessage, { duration: 10000 });
+		});
+	});
+
+	it("redirects to /network on successful login", async () => {
+		const mockPush = jest.fn();
+		(useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+
+		render(<CredentialsForm />);
+
+		(signIn as jest.Mock).mockResolvedValue({ ok: true });
+
+		const emailInput = screen.getByPlaceholderText("mail@example.com");
+		const passwordInput = screen.getByPlaceholderText("Enter your password");
+		const submitButton = screen.getByRole("button", { name: /sign in/i });
+
+		await userEvent.type(emailInput, "test@example.com");
+		await userEvent.type(passwordInput, "testpassword");
+		await userEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(mockPush).toHaveBeenCalledWith("/network");
+		});
+	});
+
+	it("handles network errors", async () => {
+		render(<CredentialsForm />);
+
+		const errorMessage = "Network error";
+		(signIn as jest.Mock).mockRejectedValue(new Error(errorMessage));
+
+		const emailInput = screen.getByPlaceholderText("mail@example.com");
+		const passwordInput = screen.getByPlaceholderText("Enter your password");
+		const submitButton = screen.getByRole("button", { name: /sign in/i });
+
+		await userEvent.type(emailInput, "test@example.com");
+		await userEvent.type(passwordInput, "testpassword");
+		await userEvent.click(submitButton);
+
+		await waitFor(() => {
+			expect(toast.error).toHaveBeenCalledWith(errorMessage);
 		});
 	});
 });

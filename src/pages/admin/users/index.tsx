@@ -9,6 +9,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const Users = () => {
 	const t = useTranslations("admin");
@@ -37,46 +38,53 @@ const Users = () => {
 	}
 
 	return (
-		<main className="flex-col w-full bg-base-100 p-3">
-			<div className="pb-10 sm:w-6/12">
-				<p className="text-sm text-gray-400 ">{t("users.authentication.header")}</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex items-center justify-between">
-					<label>
-						<p className="font-medium">
-							{t("users.authentication.enableUserRegistration")}
-						</p>
-						<p className="text-sm text-gray-500">
-							{t("users.authentication.enableUserRegistrationDescription")}
-						</p>
-					</label>
-					<input
-						type="checkbox"
-						checked={options?.enableRegistration}
-						className="checkbox-primary checkbox checkbox-sm"
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							setRegistration({ enableRegistration: e.target.checked });
-						}}
-					/>
+		<main className="grid grid-cols-1 lg:grid-cols-2 w-full bg-base-100 p-5 sm:p-3 space-y-10">
+			<MenuSectionDividerWrapper
+				title={t("users.authentication.header")}
+				className="col-span-2 xl:w-6/12"
+			>
+				<div className="">
+					<div className="flex items-center justify-between">
+						<label>
+							<p className="font-medium">
+								{t("users.authentication.enableUserRegistration")}
+							</p>
+							<p className="text-sm text-gray-500">
+								{t("users.authentication.enableUserRegistrationDescription")}
+							</p>
+						</label>
+						<input
+							type="checkbox"
+							checked={options?.enableRegistration}
+							className="checkbox-primary checkbox checkbox-sm"
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setRegistration({ enableRegistration: e.target.checked });
+							}}
+						/>
+					</div>
+					<UserInvitation />
 				</div>
-				<UserInvitation />
-			</div>
-			<div className="sm:w-6/12">
-				<p className="text-sm text-gray-400">{t("users.groups.sectionTitle")}</p>
-				<div className="divider m-0 text-gray-500"></div>
-			</div>
-			<div className="space-y-5 sm:w-6/12">
-				<div className="w-full">
-					<UserGroups />
+			</MenuSectionDividerWrapper>
+
+			<MenuSectionDividerWrapper
+				title={t("users.groups.sectionTitle")}
+				className="col-span-2 xl:w-6/12"
+			>
+				<div className="space-y-5 ">
+					<div className="w-full">
+						<UserGroups />
+					</div>
 				</div>
-			</div>
-			<div className="pt-10 sm:w-12/12">
-				<p className="text-sm text-gray-400">{t("users.users.sectionTitle")}</p>
-				<div className="divider m-0 text-gray-500"></div>
-			</div>
-			<div className="w-12/12">
-				<Accounts />
-			</div>
+			</MenuSectionDividerWrapper>
+
+			<MenuSectionDividerWrapper
+				title={t("users.users.sectionTitle")}
+				className="col-span-2"
+			>
+				<div className="w-12/12">
+					<Accounts />
+				</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };

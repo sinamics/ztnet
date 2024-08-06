@@ -6,6 +6,7 @@ import { adminRouter } from "./routers/adminRoute";
 import { settingsRouter } from "./routers/settingsRouter";
 import { organizationRouter } from "./routers/organizationRouter";
 import { publicRouter } from "./routers/publicRouter";
+import { mfaAuthRouter } from "./routers/mfaAuthRouter";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
 	network: networkRouter,
 	networkMember: networkMemberRouter,
 	auth: authRouter,
+	mfaAuth: mfaAuthRouter,
 	admin: adminRouter,
 	settings: settingsRouter,
 	org: organizationRouter,

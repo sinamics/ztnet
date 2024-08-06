@@ -21,7 +21,12 @@
 		"webhooks": "Webhooks",
 		"activeWebhooks": "Webhooks Actifs"
 	},
+	"commonSpinners": {
+		"loading": "Chargement...",
+		"Checking": "Vérification..."
+	},
 	"commonButtons": {
+		"confirm": "Confirmer",
 		"add": "Ajouter",
 		"change": "Changer",
 		"create": "Créer",
@@ -49,7 +54,11 @@
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
 		"settings": "Paramètres",
-		"resend": "Renvoyer"
+		"resend": "Renvoyer",
+		"enable2fa": "Activer 2FA",
+		"disable2fa": "Désactiver 2FA",
+		"next": "Suivant",
+		"back": "Retour"
 	},
 	"commonTable": {
 		"header": {
@@ -615,6 +624,39 @@
 				"newPasswordPlaceholder": "Nouveau mot de passe",
 				"repeatNewPasswordPlaceholder": "Répété le nouveau mot de passe",
 				"role": "Rôle"
+			},
+			"totp": {
+				"title": "Authentification à deux facteurs",
+				"description": "Cela renforcera la sécurité des comptes utilisateurs en exigeant une étape de vérification supplémentaire.",
+				"mfaNote": "Remarque : La 2FA ne fonctionnera que si vous vous connectez avec des identifiants. OAuth n'utilisera pas cette 2FA, même si elle est configurée, car elle est gérée par le fournisseur OAuth.",
+				"notification": {
+					"title": "Authentification à deux facteurs (2FA) non activée",
+					"description": "Nous vous recommandons vivement d'activer la 2FA pour renforcer la sécurité de votre compte."
+				},
+				"totpActivation": {
+					"title": "Authentification à deux facteurs",
+					"steps": {
+						"step1": "Mot de passe",
+						"step2": "Scanner le code QR",
+						"step3": "Soumettre"
+					},
+					"confirmPassword": {
+						"description": "Saisissez votre mot de passe"
+					},
+					"displayQrCode": {
+						"description": "Avez-vous besoin d'une application d'authentification à deux facteurs ? Téléchargez l'une des suivantes",
+						"IOS": "Appareils iOS",
+						"Android": "Appareils Android",
+						"Windows": "Appareils Windows",
+						"appDescription": "Ces applications sont recommandées, mais d'autres applications d'authentification fonctionneront également.",
+						"scanQrDescription": "Scannez ce code QR avec votre application d'authentification.",
+						"manualEntry": "Si vous ne pouvez pas scanner le code QR, vous pouvez saisir manuellement le code suivant :"
+					},
+					"enterTotpCode": {
+						"description": "Vérifiez votre configuration TOTP",
+						"enterCode": "Entrez le code de votre application d'authentification pour vérifier et activer TOTP."
+					}
+				}
 			},
 			"restapi": {
 				"sectionTitle": "Token d'accès à l'API",

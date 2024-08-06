@@ -5,8 +5,8 @@ import { getSession } from "next-auth/react";
 import { ReactElement } from "react";
 import { globalSiteTitle } from "~/utils/global";
 import { LayoutPublic } from "~/components/layouts/layout";
-import LoginForm from "~/components/auth/loginForm";
-import { WelcomeMessage } from "~/components/auth/welcomeMessage";
+import OauthLogin from "~/components/auth/oauthLogin";
+import CredentialsForm from "~/components/auth/credentialsForm";
 
 const Login = ({ hasOauth, oauthExlusiveLogin }) => {
 	const title = `${globalSiteTitle} - Sign In`;
@@ -19,15 +19,26 @@ const Login = ({ hasOauth, oauthExlusiveLogin }) => {
 				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<main className="flex min-h-[calc(100vh-7vh)] flex-col">
-				{/* Main section */}
-				<div className="flex flex-grow items-center m-5 sm:m-0">
-					<div className="mx-auto flex">
-						<WelcomeMessage />
-						<LoginForm hasOauth={hasOauth} oauthExlusiveLogin={oauthExlusiveLogin} />
+
+			<div className="z-10 flex justify-center self-center">
+				<div className="w-100 mx-auto rounded-2xl border border-primary p-12">
+					<div className="mb-4">
+						<h3 className="text-xl font-semibold">Sign in to your account</h3>
+					</div>
+					<div className="space-y-5">
+						{!oauthExlusiveLogin ? <CredentialsForm /> : null}
+						{hasOauth ? (
+							<div>
+								<div className="divider divider-error">OR</div>
+								<OauthLogin />
+							</div>
+						) : null}
+						<div className="pt-5 text-center text-xs text-gray-400">
+							<span>Copyright © {new Date().getFullYear()} Kodea Solutions</span>
+						</div>
 					</div>
 				</div>
-			</main>
+			</div>
 		</>
 	);
 };

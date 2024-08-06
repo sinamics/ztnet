@@ -151,7 +151,7 @@ const ApiToken = () => {
 	});
 
 	return (
-		<div className="space-y-5">
+		<div>
 			<InputFields
 				label={t("account.restapi.generateToken.title")}
 				rootFormClassName="flex flex-col space-y-2 w-3/6"
