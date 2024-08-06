@@ -3,6 +3,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "use-intl";
 import { User, UserOptions } from "@prisma/client";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 interface UserExtended extends User {
 	options: UserOptions & {
@@ -17,13 +18,9 @@ const UserNetworkSetting = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery<UserExtended>();
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
-			<div className="pb-10">
-				<p className="text-gray-400 uppercase text-[0.7rem]">
-					{t("network.annotations.memberAnotations")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex justify-between py-2">
+		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
+			<MenuSectionDividerWrapper title={t("network.annotations.memberAnotations")}>
+				<div className="flex justify-between">
 					<div>
 						<p className="font-medium">{t("network.annotations.showMarkerInTable")}</p>
 						<p className="text-sm text-gray-500">
@@ -71,13 +68,9 @@ const UserNetworkSetting = () => {
 						}}
 					/>
 				</div>
-			</div>
-			<div className="pb-10">
-				<p className="text-gray-400 uppercase text-[0.7rem]">
-					{t("network.memberTable.memberTableTitle")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
-				<div className="flex justify-between py-2">
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper title={t("network.memberTable.memberTableTitle")}>
+				<div className="flex justify-between">
 					<div>
 						<p className="font-medium">Enable global node naming</p>
 						<p className="text-sm text-gray-500">
@@ -162,7 +155,7 @@ const UserNetworkSetting = () => {
 						}}
 					/>
 				</div>
-			</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };
