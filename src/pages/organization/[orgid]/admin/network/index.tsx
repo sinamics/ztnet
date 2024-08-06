@@ -3,6 +3,7 @@ import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
 import { useTranslations } from "use-intl";
 import { useRouter } from "next/router";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const OrganizationNetworkSetting = () => {
 	const router = useRouter();
@@ -18,12 +19,8 @@ const OrganizationNetworkSetting = () => {
 		});
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
-			<div className="pb-10">
-				<p className="text-[0.7rem] text-gray-400 uppercase">
-					{t("commonMenuTiles.members")}
-				</p>
-				<div className="divider mt-0 p-0 text-gray-500"></div>
+		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-5 sm:p-3 xl:w-6/12">
+			<MenuSectionDividerWrapper title={t("commonMenuTiles.members")}>
 				<div className="flex justify-between py-2">
 					<div>
 						<p className="font-medium">
@@ -60,7 +57,7 @@ const OrganizationNetworkSetting = () => {
 						}}
 					/>
 				</div>
-			</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };
