@@ -214,6 +214,24 @@ model APIToken {
   isActive             Boolean   @default(true)
 }
 
+// model UserDevice {
+//   id         String   @id @default(cuid())
+//   userId     String
+//   user       User     @relation(fields: [id], references: [id], onDelete: Cascade)
+//   deviceType String
+//   deviceId   String   @unique
+//   browser    String
+//   os         String
+//   ip         String?
+//   location   String?
+//   lastActive DateTime
+//   isActive   Boolean  @default(true)
+//   createdAt  DateTime @default(now())
+
+//   @@index([userId])
+//   @@index([deviceId])
+// }
+
 model User {
   id                     String                 @id @default(cuid())
   name                   String
