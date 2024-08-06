@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
+import FormInput from "~/components/auth/formInput";
 
 const MfaRecoveryReset = () => {
 	const router = useRouter();
@@ -88,39 +89,69 @@ const MfaRecoveryReset = () => {
 						</p>
 					</div>
 					<form className="space-y-5">
-						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">Email</label>
-							<input
-								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={state.email}
-								onChange={handleChange}
-								type="email"
-								name="email"
-								placeholder="Enter your email"
-							/>
-						</div>
-						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">Password</label>
-							<input
-								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={state.password}
-								onChange={handleChange}
-								type="password"
-								name="password"
-								placeholder="Password"
-							/>
-						</div>
-						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">Recovery Code</label>
-							<input
-								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={state.recoveryCode}
-								onChange={handleChange}
-								type="text"
-								name="recoveryCode"
-								placeholder="Code"
-							/>
-						</div>
+						<FormInput
+							label="Email"
+							name="email"
+							type="email"
+							value={state.email}
+							onChange={handleChange}
+							placeholder="mail@example.com"
+							icon={
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 16 16"
+									fill="currentColor"
+									className="h-4 w-4 opacity-70"
+								>
+									<path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+									<path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+								</svg>
+							}
+						/>
+						<FormInput
+							label="Password"
+							name="password"
+							type="password"
+							value={state.password}
+							onChange={handleChange}
+							placeholder="Enter your password"
+							icon={
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 16 16"
+									fill="currentColor"
+									className="h-4 w-4 opacity-70"
+								>
+									<path
+										fillRule="evenodd"
+										d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							}
+						/>
+						<FormInput
+							label="Recovery Code"
+							name="recoveryCode"
+							type="text"
+							value={state.recoveryCode}
+							onChange={handleChange}
+							placeholder="Enter Code"
+							icon={
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 16 16"
+									fill="currentColor"
+									className="h-4 w-4 opacity-70"
+								>
+									<path
+										fillRule="evenodd"
+										d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							}
+						/>
 						<div className="pt-5">
 							<button
 								type="submit"
