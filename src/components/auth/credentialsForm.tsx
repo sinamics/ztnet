@@ -1,45 +1,69 @@
-import React from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
+import { ErrorCode } from "~/utils/errorCode";
 import Link from "next/link";
-import OAuthLoginButton from "./oauthLoginButtons";
-import SubmitButtons from "./submitButtons";
 import TOTPInput from "./totpInput";
+import SubmitButtons from "./submitButtons";
 import FormInput from "./formInput";
 
-export interface FormData {
+interface FormData {
 	email: string;
 	password: string;
 	totpCode?: string;
 }
 
-export interface LoadingState {
-	credentials: boolean;
-	oauth: boolean;
-}
+const CredentialsForm: React.FC = () => {
+	const router = useRouter();
 
-interface CredentialsFormProps {
-	formData: FormData;
-	handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	submitHandler: (event: React.FormEvent<HTMLFormElement>) => void;
-	loading: LoadingState;
-	showOTP: boolean;
-	totpCode: string;
-	setTotpCode: (code: string) => void;
-	hasOauth: boolean;
-	oAuthHandler: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-}
+	const [totpCode, setTotpCode] = useState("");
+	const [showOTP, setShowOTP] = useState<boolean>(false);
+	const [loading, setLoading] = useState({ credentials: false, oauth: false });
+	const [formData, setFormData] = useState<FormData>({
+		email: "",
+		password: "",
+	});
 
-const CredentialsForm: React.FC<CredentialsFormProps> = ({
-	formData,
-	handleChange,
-	submitHandler,
-	loading,
-	showOTP,
-	totpCode,
-	setTotpCode,
-	hasOauth,
-	oAuthHandler,
-}) => (
-	<>
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = event.target;
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			[name]: value,
+		}));
+	};
+
+	const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		setLoading((prev) => ({ ...prev, credentials: true }));
+
+		try {
+			const response = await signIn("credentials", {
+				redirect: false,
+				totpCode,
+				...formData,
+			});
+
+			if (response.ok) {
+				await router.push("/network");
+				return;
+			}
+
+			switch (response?.error) {
+				case ErrorCode.SecondFactorRequired:
+					setShowOTP(true);
+					break;
+				default:
+					toast.error(response.error, { duration: 10000 });
+			}
+		} catch (error) {
+			toast.error(error.message);
+		} finally {
+			setLoading((prev) => ({ ...prev, credentials: false }));
+		}
+	};
+
+	return (
 		<form className="space-y-4" onSubmit={submitHandler}>
 			{!showOTP && (
 				<>
@@ -101,17 +125,7 @@ const CredentialsForm: React.FC<CredentialsFormProps> = ({
 				<SubmitButtons loading={loading.credentials} isTotp={showOTP} />
 			</div>
 		</form>
-		{hasOauth && !showOTP && (
-			<>
-				<div className="flex flex-col w-full">
-					<div className="divider divider-error">OR</div>
-				</div>
-				<div className="pt-5">
-					<OAuthLoginButton oAuthHandler={oAuthHandler} loading={loading.oauth} />
-				</div>
-			</>
-		)}
-	</>
-);
+	);
+};
 
 export default CredentialsForm;

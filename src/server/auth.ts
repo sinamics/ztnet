@@ -161,12 +161,10 @@ export const authOptions: NextAuthOptions = {
 					const timeSinceLastFailedAttempt =
 						Date.now() - user.lastFailedLoginAttempt.getTime();
 					if (timeSinceLastFailedAttempt < COOLDOWN_PERIOD) {
-						const remainingCooldown = Math.ceil(
-							(COOLDOWN_PERIOD - timeSinceLastFailedAttempt) / 60000,
-						);
-						throw new Error(
-							`Too many failed attempts. Please try again in ${remainingCooldown} minutes.`,
-						);
+						// const remainingCooldown = Math.ceil(
+						// 	(COOLDOWN_PERIOD - timeSinceLastFailedAttempt) / 60000,
+						// );
+						throw new Error("Too many failed attempts. Please try again later.");
 					}
 				}
 				const isValid = await compare(_credentials?.password ?? "", user.hash);
