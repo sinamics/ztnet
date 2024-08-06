@@ -12,6 +12,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const Mail = () => {
 	const t = useTranslations("admin");
@@ -54,7 +55,7 @@ const Mail = () => {
 	}
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{options?.error ? (
 				<div className="alert alert-warning alert-sm">
 					<div className="flex-1">
@@ -63,11 +64,7 @@ const Mail = () => {
 					</div>
 				</div>
 			) : null}
-			<div>
-				<p className="text-sm text-gray-400">{t("mail.mailSMTP")}</p>
-				<div className="divider mt-0 text-gray-500"></div>
-			</div>
-			<div className="space-y-5">
+			<MenuSectionDividerWrapper title={t("mail.mailSMTP")} className="space-y-5">
 				<EditableField
 					isLoading={false}
 					label={t("mail.smtpHost")}
@@ -188,7 +185,7 @@ const Mail = () => {
 						<OrganizationInviteTemplate />
 					</div>
 				</div>
-			</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };

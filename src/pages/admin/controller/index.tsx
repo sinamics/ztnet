@@ -5,6 +5,7 @@ import DebugMirror from "~/components/adminPage/controller/debugController";
 import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
 import ZerotierUrl from "~/components/adminPage/controller/zerotierUrl";
 import { ReactElement } from "react";
+import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const Controller = () => {
 	// const [error, setError] = useState(false);
@@ -24,7 +25,7 @@ const Controller = () => {
 
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
 	return (
-		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-3 sm:w-6/12 pb-80">
+		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{controllerError ? (
 				<div className="alert alert-error">
 					<svg
@@ -44,11 +45,10 @@ const Controller = () => {
 				</div>
 			) : (
 				<>
-					<div className="pb-10">
-						<p className="text-sm text-gray-400">
-							{t("controller.networkMembers.title")}
-						</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
+					<MenuSectionDividerWrapper
+						title={t("controller.networkMembers.title")}
+						className="space-y-1"
+					>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.networkMembers.totalNetworks")}</p>
 							<p>{networkCount}</p>
@@ -69,7 +69,7 @@ const Controller = () => {
 								<div className="grid grid-cols-2 gap-1">
 									{assignedIPs?.map((ip, index) => (
 										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-										<p key={index} className="badge badge-primary">
+										<p key={index} className="badge badge-primary w-full">
 											{ip}
 										</p>
 									))}
@@ -86,10 +86,11 @@ const Controller = () => {
 								<UnlinkedNetwork />
 							</div>
 						) : null}
-					</div>
-					<div className="pb-10">
-						<p className="text-sm text-gray-400">{t("controller.management.title")}</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
+					</MenuSectionDividerWrapper>
+					<MenuSectionDividerWrapper
+						title={t("controller.management.title")}
+						className="space-y-1"
+					>
 						<div className="grid grid-cols-3">
 							<p>{t("controller.management.allowManagementFrom")}</p>
 							<div className="col-span-2 gap-1 flex flex-col items-end">
@@ -114,13 +115,11 @@ const Controller = () => {
 								</div>
 							</div>
 						</div>
-					</div>
-					<div className="pb-10">
-						<p className="text-sm text-gray-400">
-							{t("controller.controllerStatus.title")}
-						</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
-
+					</MenuSectionDividerWrapper>
+					<MenuSectionDividerWrapper
+						title={t("controller.controllerStatus.title")}
+						className="space-y-1"
+					>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.controllerStatus.online")}</p>
 							<p>{online ? "Yes" : "No"}</p>
@@ -133,13 +132,10 @@ const Controller = () => {
 							<p>{t("controller.controllerStatus.version")}</p>
 							<p>{version}</p>
 						</div>
-					</div>
-					<div className="pb-10">
-						<p className="text-sm text-gray-400">Debug</p>
-						<div className="divider mt-0 p-0 text-gray-500"></div>
-
+					</MenuSectionDividerWrapper>
+					<MenuSectionDividerWrapper title="Debug" className="space-y-5">
 						<DebugMirror data={controllerData} title="Controller Status" />
-					</div>
+					</MenuSectionDividerWrapper>
 				</>
 			)}
 			<ZerotierUrl />

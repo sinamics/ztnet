@@ -62,8 +62,9 @@ const Account = () => {
 	}
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-10 p-3 sm:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-10 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
+				className="space-y-5"
 				title={t("userSettings.account.accountSettings.title").toUpperCase()}
 			>
 				<InputField
@@ -117,7 +118,7 @@ const Account = () => {
 				</div>
 			</MenuSectionDividerWrapper>
 
-			<MenuSectionDividerWrapper title="SECURITY">
+			<MenuSectionDividerWrapper title="SECURITY" className="space-y-5">
 				<InputField
 					isLoading={!session?.user}
 					label={t("userSettings.account.accountSettings.passwordLabel")}
@@ -203,7 +204,10 @@ const Account = () => {
 					</button>
 				</div>
 			</MenuSectionDividerWrapper>
-			<MenuSectionDividerWrapper title={t("userSettings.account.restapi.sectionTitle")}>
+			<MenuSectionDividerWrapper
+				title={t("userSettings.account.restapi.sectionTitle")}
+				className="space-y-5"
+			>
 				<p className="text-sm text-gray-500">
 					{t("userSettings.account.restapi.description")}
 					<br />
@@ -221,6 +225,7 @@ const Account = () => {
 			</MenuSectionDividerWrapper>
 			<MenuSectionDividerWrapper
 				title={t("userSettings.account.zerotierCentral.title").toUpperCase()}
+				className="space-y-5"
 			>
 				<p className="text-sm text-gray-500">
 					{t.rich("userSettings.account.zerotierCentral.description", {
@@ -294,6 +299,7 @@ const Account = () => {
 			</MenuSectionDividerWrapper>
 			<MenuSectionDividerWrapper
 				title={t("userSettings.account.accountPreferences.title")}
+				className="space-y-5"
 			>
 				<div className="form-control w-full max-w-xs">
 					<label className="label">
@@ -315,7 +321,10 @@ const Account = () => {
 				</div>
 				<ApplicationFontSize />
 			</MenuSectionDividerWrapper>
-			<MenuSectionDividerWrapper title={t("userSettings.account.application.title")}>
+			<MenuSectionDividerWrapper
+				title={t("userSettings.account.application.title")}
+				className="space-y-5"
+			>
 				<div className="flex items-center justify-between">
 					<p>{t("userSettings.account.application.version")}</p>
 					<a
