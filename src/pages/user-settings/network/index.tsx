@@ -18,8 +18,11 @@ const UserNetworkSetting = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery<UserExtended>();
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-3 sm:w-6/12">
-			<MenuSectionDividerWrapper title={t("network.annotations.memberAnotations")}>
+		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
+			<MenuSectionDividerWrapper
+				title={t("network.annotations.memberAnotations")}
+				className="space-y-5"
+			>
 				<div className="flex justify-between">
 					<div>
 						<p className="font-medium">{t("network.annotations.showMarkerInTable")}</p>
@@ -69,7 +72,10 @@ const UserNetworkSetting = () => {
 					/>
 				</div>
 			</MenuSectionDividerWrapper>
-			<MenuSectionDividerWrapper title={t("network.memberTable.memberTableTitle")}>
+			<MenuSectionDividerWrapper
+				title={t("network.memberTable.memberTableTitle")}
+				className="space-y-5"
+			>
 				<div className="flex justify-between">
 					<div>
 						<p className="font-medium">Enable global node naming</p>

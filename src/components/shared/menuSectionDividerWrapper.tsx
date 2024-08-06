@@ -12,7 +12,7 @@ const MenuSectionDividerWrapper: React.FC<MenuSectionWrapperProps> = ({
 	className = "",
 }) => {
 	return (
-		<div className={`space-y-5 ${className}`}>
+		<div className={className}>
 			<div className="">
 				<p className="text-[0.7rem] leading-3 tracking-wider text-gray-400 uppercase">
 					{title}
