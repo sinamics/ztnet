@@ -31,7 +31,7 @@ const LandingPage = (): JSX.Element => {
 							<h2>ZTNET Documentation</h2>
 
 							<h1 className="title-text">
-								<span className="text-primary ">Zerotier </span>Controller Web UI
+								<span className="text-primary">Zerotier </span>Controller Web UI
 							</h1>
 							<div className="nav-buttons">
 								<a

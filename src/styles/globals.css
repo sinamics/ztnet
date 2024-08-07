@@ -78,6 +78,10 @@
   -ms-overflow-style: none;
 }
 
+.zt-color {
+  color: rgb(255, 180, 65);
+}
+
 /* There is a bug issue over at Mozilla that is still open, given that it was created 5 years ago.
 https://bugzilla.mozilla.org/show_bug.cgi?id=1576820
 
