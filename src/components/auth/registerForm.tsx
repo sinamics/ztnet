@@ -2,9 +2,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import cn from "classnames";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import FormInput from "./formInput";
+import FormSubmitButtons from "./formSubmitButton";
 interface FormData {
 	email: string;
 	password: string;
@@ -131,15 +131,7 @@ const RegisterForm: React.FC = () => {
 				}
 			/>
 			<div className="pt-5">
-				<button
-					type="submit"
-					className={cn(
-						"btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
-					)}
-				>
-					{loading ? <span className="loading loading-spinner"></span> : null}
-					Sign Up
-				</button>
+				<FormSubmitButtons loading={loading} title="Sign Up" />
 			</div>
 		</form>
 	);

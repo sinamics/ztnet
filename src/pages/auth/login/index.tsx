@@ -3,21 +3,17 @@ import Head from "next/head";
 import { type Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import { ReactElement } from "react";
-import { globalSiteTitle } from "~/utils/global";
 import { LayoutPublic } from "~/components/layouts/layout";
 import OauthLogin from "~/components/auth/oauthLogin";
 import CredentialsForm from "~/components/auth/credentialsForm";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 
 const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
 	const currentYear = new Date().getFullYear();
-	const router = useRouter();
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
 
-	const currentPath = router.pathname;
 	return (
 		<>
 			<Head>

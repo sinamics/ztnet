@@ -47,10 +47,10 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 					) : null}
 				</div>
 			</div> */}
-			<main className="min-h-[calc(100vh-8vh)] container mx-auto flex items-center justify-center">
+			<main className="min-h-[100dvh] container mx-auto flex items-center justify-center">
 				{/* Main section */}
-				<div className="grid grid-cols-1 lg:grid-cols-[1fr,1fr,1fr] m-5 sm:m-0">
-					<div className="col-span-2 ">
+				<div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4 w-full max-w-7xl m-5 sm:m-0">
+					<div className="h-full flex items-start">
 						<WelcomeMessage />
 					</div>
 					<div>{children}</div>

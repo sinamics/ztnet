@@ -2,10 +2,10 @@ import cn from "classnames";
 
 interface SubmitButtonProps {
 	loading: boolean;
-	isTotp: boolean;
+	title: string;
 }
 
-const SubmitButtons: React.FC<SubmitButtonProps> = ({ loading, isTotp }) => (
+const FormSubmitButtons: React.FC<SubmitButtonProps> = ({ loading, title }) => (
 	<button
 		type="submit"
 		className={cn(
@@ -13,8 +13,8 @@ const SubmitButtons: React.FC<SubmitButtonProps> = ({ loading, isTotp }) => (
 		)}
 	>
 		{loading ? <span className="loading loading-spinner"></span> : null}
-		{isTotp ? "Verify TOTP" : "Sign in"}
+		{title}
 	</button>
 );
 
-export default SubmitButtons;
+export default FormSubmitButtons;
