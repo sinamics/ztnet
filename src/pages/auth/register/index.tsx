@@ -9,6 +9,7 @@ import { prisma } from "~/server/db";
 import { globalSiteTitle } from "~/utils/global";
 import { useRouter } from "next/router";
 import RegisterOrganizationInviteForm from "~/components/auth/registerOrganizationInvite";
+import Link from "next/link";
 
 const Register = () => {
 	const title = `${globalSiteTitle} - Sign Up`;
@@ -23,11 +24,23 @@ const Register = () => {
 				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			{organizationInvite ? (
-				<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
-			) : (
-				<RegisterForm />
-			)}
+			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
+				<h3 className="text-xl font-semibold">Sign up with credentials</h3>
+				{organizationInvite ? (
+					<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
+				) : (
+					<RegisterForm />
+				)}
+				<div className="pt-5">
+					<p className="mb-4">Have an account?</p>
+					<Link href="/auth/login" className="underline">
+						Login!
+					</Link>
+				</div>
+				<div className="pt-5 text-center text-xs text-gray-400">
+					<span>Copyright © {new Date().getFullYear()} Kodea Solutions</span>
+				</div>
+			</div>
 		</div>
 	);
 };

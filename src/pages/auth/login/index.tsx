@@ -8,10 +8,16 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import OauthLogin from "~/components/auth/oauthLogin";
 import CredentialsForm from "~/components/auth/credentialsForm";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { api } from "~/utils/api";
 
 const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
 	const currentYear = new Date().getFullYear();
+	const router = useRouter();
+	const { data: options, isLoading: loadingRegistration } =
+		api.public.registrationAllowed.useQuery();
 
+	const currentPath = router.pathname;
 	return (
 		<>
 			<Head>
@@ -33,13 +39,14 @@ const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
 							<OauthLogin />
 						</div>
 					)}
-
-					<div className="pt-5">
-						<p className="mb-4">Don't have an account?</p>
-						<Link href="/auth/register" className="underline">
-							Get Started!
-						</Link>
-					</div>
+					{options?.enableRegistration && !loadingRegistration ? (
+						<div className="pt-5">
+							<p className="mb-4">Don't have an account?</p>
+							<Link href="/auth/register" className="underline">
+								Get Started!
+							</Link>
+						</div>
+					) : null}
 
 					<div className="pt-5 text-center text-xs text-gray-400">
 						<span>Copyright © {currentYear} Kodea Solutions</span>

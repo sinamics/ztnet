@@ -25,11 +25,6 @@ interface Props {
 }
 
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
-	const router = useRouter();
-	const { data: options, isLoading: loadingRegistration } =
-		api.public.registrationAllowed.useQuery();
-
-	const currentPath = router.pathname;
 	return (
 		<div className="outer-container">
 			{/* <div className="mx-auto flex w-5/6">
