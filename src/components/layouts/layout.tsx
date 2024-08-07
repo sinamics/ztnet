@@ -27,26 +27,6 @@ interface Props {
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	return (
 		<div className="outer-container">
-			{/* <div className="mx-auto flex w-5/6">
-				<div>
-					<h1 className="mb-3 text-5xl font-bold p-2">
-						<Link href="/">{globalSiteTitle}</Link>
-					</h1>
-				</div>
-
-				<div className="m-3 mx-0 flex w-10/12 justify-end">
-					{options?.enableRegistration && !loadingRegistration ? (
-						<Link
-							href={
-								currentPath.includes("/auth/register") ? "/auth/login" : "/auth/register"
-							}
-							className="btn btn-primary"
-						>
-							{currentPath === "/auth/register" ? "Login" : "Sign Up"}
-						</Link>
-					) : null}
-				</div>
-			</div> */}
 			<main className="min-h-[100dvh] container mx-auto flex items-center justify-center">
 				{/* Main section */}
 				<div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4 w-full max-w-7xl m-5 sm:m-0">
