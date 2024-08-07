@@ -22,7 +22,12 @@ export const WelcomeMessage = () => {
 									<span className="zt-color">ZTNET</span>
 								</div>
 							</h1>
-							<Link href="https://ztnet.network/" className="text-sm text-primary/50">
+							<Link
+								href="https://ztnet.network/"
+								rel="noopener noreferrer"
+								className="text-sm text-primary/50"
+								target="_blank"
+							>
 								https://ztnet.network
 							</Link>
 						</div>
