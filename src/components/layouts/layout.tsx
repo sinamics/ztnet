@@ -32,7 +32,7 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	const currentPath = router.pathname;
 	return (
 		<div className="outer-container">
-			<div className="mx-auto flex w-5/6">
+			{/* <div className="mx-auto flex w-5/6">
 				<div>
 					<h1 className="mb-3 text-5xl font-bold p-2">
 						<Link href="/">{globalSiteTitle}</Link>
@@ -51,14 +51,14 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 						</Link>
 					) : null}
 				</div>
-			</div>
-			<main className="flex min-h-[calc(100vh-8vh)] flex-col">
+			</div> */}
+			<main className="min-h-[calc(100vh-8vh)] container mx-auto flex items-center justify-center">
 				{/* Main section */}
-				<div className="flex flex-grow items-center m-5 sm:m-0">
-					<div className="mx-auto flex">
+				<div className="grid grid-cols-1 lg:grid-cols-[1fr,1fr,1fr] m-5 sm:m-0">
+					<div className="col-span-2 ">
 						<WelcomeMessage />
-						{children}
 					</div>
+					<div>{children}</div>
 				</div>
 			</main>
 		</div>

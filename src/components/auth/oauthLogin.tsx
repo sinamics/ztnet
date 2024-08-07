@@ -32,7 +32,7 @@ const OauthLogin: React.FC = () => {
 			type="button"
 			onClick={oAuthHandler}
 			className={cn(
-				"btn btn-block btn-primary cursor-pointer rounded-full font-semibold tracking-wide shadow-lg",
+				"btn btn-block btn-primary cursor-pointer font-semibold tracking-wide shadow-lg",
 			)}
 		>
 			{loading ? <span className="loading loading-spinner"></span> : null}
