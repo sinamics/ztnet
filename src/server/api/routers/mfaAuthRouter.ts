@@ -20,7 +20,7 @@ const limiter = rateLimit({
 	uniqueTokenPerInterval: 1000,
 });
 
-const GENERAL_REQUEST_LIMIT = 5;
+const GENERAL_REQUEST_LIMIT = 10;
 
 async function verifyRecoveryCode(
 	providedCode: string,
