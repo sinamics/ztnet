@@ -7,6 +7,7 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
+import { ErrorCode } from "~/utils/errorCode";
 
 const MfaRecoveryReset = () => {
 	const router = useRouter();
@@ -20,13 +21,23 @@ const MfaRecoveryReset = () => {
 				token: token as string,
 			},
 			{
+				enabled: !!token,
 				onSuccess: (response) => {
 					if (response?.error) {
-						router.push("/auth/login");
+						switch (response.error) {
+							case ErrorCode.InvalidToken:
+								void router.push("/auth/login");
+								break;
+							case ErrorCode.TooManyRequests:
+								toast.error("Too many requests, please try again later");
+								break;
+							default:
+								toast.error(response.error);
+						}
 					}
 				},
-				onError: () => {
-					router.push("/auth/login");
+				onError: (error) => {
+					toast.error(error.message);
 				},
 			},
 		);
@@ -71,7 +82,7 @@ const MfaRecoveryReset = () => {
 	};
 
 	const title = `${globalSiteTitle} - Reset MFA`;
-	if (validateTokenLoading || !tokenData || tokenData.error) {
+	if (validateTokenLoading || !tokenData) {
 		return null;
 	}
 	return (
