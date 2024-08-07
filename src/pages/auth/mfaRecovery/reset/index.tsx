@@ -6,12 +6,13 @@ import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling"
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
+import FormSubmitButtons from "~/components/auth/formSubmitButton";
 
 const MfaRecoveryReset = () => {
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ email: "", password: "", recoveryCode: "" });
-	const { mutate: resetMfa } = api.mfaAuth.mfaResetValidation.useMutation();
+	const { mutate: resetMfa, isLoading } = api.mfaAuth.mfaResetValidation.useMutation();
 
 	const { data: tokenData, isLoading: validateTokenLoading } =
 		api.mfaAuth.mfaValidateToken.useQuery(
@@ -30,7 +31,7 @@ const MfaRecoveryReset = () => {
 			},
 		);
 
-	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		resetMfa(
 			{
@@ -88,7 +89,7 @@ const MfaRecoveryReset = () => {
 							Please enter your credentials and Recovery Code
 						</p>
 					</div>
-					<form className="space-y-5">
+					<form className="space-y-5" onSubmit={handleSubmit}>
 						<FormInput
 							label="Email"
 							name="email"
@@ -153,13 +154,7 @@ const MfaRecoveryReset = () => {
 							}
 						/>
 						<div className="pt-5">
-							<button
-								type="submit"
-								onClick={handleSubmit}
-								className="btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg"
-							>
-								Submit
-							</button>
+							<FormSubmitButtons loading={isLoading} title="Submit" />
 						</div>
 					</form>
 					<div className="pt-5 text-center text-xs text-gray-400">

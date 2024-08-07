@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
 import Link from "next/link";
 import TOTPInput from "./totpInput";
-import SubmitButtons from "./submitButtons";
+import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
 
 interface FormData {
@@ -122,7 +122,10 @@ const CredentialsForm: React.FC = () => {
 			)}
 			{showOTP && <TOTPInput totpCode={totpCode} setTotpCode={setTotpCode} />}
 			<div className="pt-5">
-				<SubmitButtons loading={loading.credentials} isTotp={showOTP} />
+				<FormSubmitButtons
+					loading={loading.credentials}
+					title={showOTP ? "Verify TOTP" : "Sign in"}
+				/>
 			</div>
 		</form>
 	);

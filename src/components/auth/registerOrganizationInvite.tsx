@@ -1,11 +1,10 @@
-// import { signIn } from "next-auth/react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
-import cn from "classnames";
 import { toast } from "react-hot-toast";
 import { Organization, Role, User } from "@prisma/client";
+import FormSubmitButtons from "./formSubmitButton";
 
 interface FormData {
 	email: string;
@@ -189,15 +188,7 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 						/>
 					</div>
 					<div className="pt-5">
-						<button
-							type="submit"
-							className={cn(
-								"btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg",
-							)}
-						>
-							{loading ? <span className="loading loading-spinner"></span> : null}
-							Sign Up
-						</button>
+						<FormSubmitButtons loading={loading} title="Sign Up" />
 					</div>
 				</form>
 				<div className="pt-5 text-center text-xs text-gray-400">
