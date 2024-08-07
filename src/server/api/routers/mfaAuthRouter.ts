@@ -45,19 +45,23 @@ export const mfaAuthRouter = createTRPCRouter({
 			const { token } = input;
 
 			if (!token) return { error: ErrorCode.InvalidToken };
+			let decoded: { id: string; email: string };
+
 			try {
 				const secret = generateInstanceSecret(TOTP_MFA_TOKEN_SECRET);
-				const decoded = jwt.verify(token, secret) as { id: string; email: string };
+				decoded = jwt.verify(token, secret) as { id: string; email: string };
+			} catch {
+				return { error: ErrorCode.InvalidToken };
+			}
 
-				// add rate limit
-				try {
-					await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
-				} catch {
-					throw new TRPCError({
-						code: "TOO_MANY_REQUESTS",
-						message: "Rate limit exceeded",
-					});
-				}
+			// add rate limit
+			try {
+				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
+			} catch {
+				return { error: ErrorCode.TooManyRequests };
+			}
+
+			try {
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
@@ -72,7 +76,7 @@ export const mfaAuthRouter = createTRPCRouter({
 
 				return { email: user.email };
 			} catch (_error) {
-				return { error: ErrorCode.InvalidToken };
+				return { error: _error.message };
 			}
 		}),
 	mfaResetLink: publicProcedure
