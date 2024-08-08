@@ -50,7 +50,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
 				</aside>
-				<div className="grid grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
+				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
 					<div className={`flex-grow custom-scrollbar ${!open ? "flex-grow" : ""}`}>
 						{children}
 					</div>
@@ -75,7 +75,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
 				</aside>
-				<div className="grid grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
+				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
 					<div className={`flex-grow  custom-scrollbar ${!open ? "flex-grow" : ""}`}>
 						{children}
 					</div>
