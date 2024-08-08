@@ -5,13 +5,16 @@ import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
+import FormInput from "~/components/auth/formInput";
+import FormSubmitButtons from "~/components/auth/formSubmitButton";
 
 const ForgotPassword = () => {
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ password: "", newPassword: "" });
 
-	const { mutate: resetPassword } = api.auth.changePasswordFromJwt.useMutation();
+	const { mutate: resetPassword, isLoading } =
+		api.auth.changePasswordFromJwt.useMutation();
 	const { data: tokenData, isLoading: validateTokenLoading } =
 		api.auth.validateResetPasswordToken.useQuery(
 			{
@@ -29,7 +32,7 @@ const ForgotPassword = () => {
 			},
 		);
 
-	const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		resetPassword(
 			{
@@ -85,39 +88,53 @@ const ForgotPassword = () => {
 						<h3 className="text-2xl font-semibold">Reset Password</h3>
 						<p className="text-gray-500">Please enter your new password</p>
 					</div>
-					<form className="space-y-5">
-						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">Password</label>
-							<input
-								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={state.password}
-								onChange={handleChange}
-								type="password"
-								name="password"
-								placeholder="Enter your new password"
-							/>
-						</div>
-						<div className="space-y-2">
-							<label className="text-sm font-medium tracking-wide">
-								Confirm New Password
-							</label>
-							<input
-								className="input w-full rounded-lg border border-gray-300 px-4  py-2 text-base focus:border-primary/25 focus:outline-none"
-								value={state.newPassword}
-								onChange={handleChange}
-								type="password"
-								name="newPassword"
-								placeholder="Confirm your new password"
-							/>
-						</div>
+					<form className="space-y-5" onSubmit={submitHandler}>
+						<FormInput
+							label="Password"
+							name="password"
+							type="password"
+							value={state.password}
+							onChange={handleChange}
+							placeholder="Enter your password"
+							icon={
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 16 16"
+									fill="currentColor"
+									className="h-4 w-4 opacity-70"
+								>
+									<path
+										fillRule="evenodd"
+										d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							}
+						/>
+						<FormInput
+							label="Password"
+							name="newPassword"
+							type="password"
+							value={state.newPassword}
+							onChange={handleChange}
+							placeholder="Confirm your new password"
+							icon={
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 16 16"
+									fill="currentColor"
+									className="h-4 w-4 opacity-70"
+								>
+									<path
+										fillRule="evenodd"
+										d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							}
+						/>
 						<div className="pt-5">
-							<button
-								type="submit"
-								onClick={handleSubmit}
-								className="btn btn-block btn-primary cursor-pointer rounded-full p-3 font-semibold tracking-wide shadow-lg"
-							>
-								Reset Password
-							</button>
+							<FormSubmitButtons loading={isLoading} title="Reset Password" />
 						</div>
 					</form>
 					<div className="pt-5 text-center text-xs text-gray-400">

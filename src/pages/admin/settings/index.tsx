@@ -49,7 +49,7 @@ const Settings = () => {
 						isLoading={false}
 						label="Title"
 						size="sm"
-						placeholder={options?.welcomeMessageTitle || "Hi, Welcome"}
+						placeholder={options?.welcomeMessageTitle || "ZTNET"}
 						fields={[
 							{
 								name: "welcomeMessageTitle",
