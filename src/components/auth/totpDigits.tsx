@@ -35,6 +35,28 @@ export default function TwoFactAuth({
 		if (inputRefs.current[0]) {
 			inputRefs.current[0].focus();
 		}
+		const handleAutofill = (e: Event) => {
+			const input = e.target as HTMLInputElement;
+			if (input.value.length === 6) {
+				const newDigits = input.value.split("");
+				updateDigits(newDigits);
+				input.blur(); // Remove focus to prevent additional autofill attempts
+			}
+		};
+
+		for (const input of inputRefs.current) {
+			if (input) {
+				input.addEventListener("input", handleAutofill);
+			}
+		}
+
+		return () => {
+			for (const input of inputRefs.current) {
+				if (input) {
+					input.removeEventListener("input", handleAutofill);
+				}
+			}
+		};
 	}, []);
 
 	const updateDigits = (newDigits: string[]) => {
@@ -45,6 +67,7 @@ export default function TwoFactAuth({
 	};
 
 	const handleChange = (index: number, newDigit: string) => {
+		console.log(newDigit);
 		if (/^[0-9]$/.test(newDigit) || newDigit === "") {
 			const newDigits = [...digits];
 			newDigits[index] = newDigit;
@@ -78,6 +101,8 @@ export default function TwoFactAuth({
 						key={index}
 						tabIndex={0}
 						data-testid="totp-input-digit"
+						name="totp"
+						pattern="\d*"
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						ref={(el) => (inputRefs.current[index] = el)}
 						className="input input-bordered input-sm w-10 text-center"
