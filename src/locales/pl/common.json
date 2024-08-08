@@ -206,7 +206,7 @@
 				"mtu": "MTU"
 			},
 			"ipv6": {
-				"rfc4193Label": "ZeroTier RFC4193 (/128 dla kkażdego urządzenia)",
+				"rfc4193Label": "ZeroTier RFC4193 (/128 dla każdego urządzenia)",
 				"plane6Label": "ZeroTier 6PLANE (/80 routowalne dla każdego urządzenia)",
 				"rfc4193Updated": "zaktualizowane rfc4193",
 				"plane6Updated": "zaktualizowane 6plane"
