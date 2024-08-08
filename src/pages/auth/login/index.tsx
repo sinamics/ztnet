@@ -3,13 +3,16 @@ import Head from "next/head";
 import { type Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import { ReactElement } from "react";
-import { globalSiteTitle } from "~/utils/global";
 import { LayoutPublic } from "~/components/layouts/layout";
 import OauthLogin from "~/components/auth/oauthLogin";
 import CredentialsForm from "~/components/auth/credentialsForm";
+import Link from "next/link";
+import { api } from "~/utils/api";
 
-const Login = ({ hasOauth, oauthExlusiveLogin }) => {
-	const title = `${globalSiteTitle} - Sign In`;
+const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
+	const currentYear = new Date().getFullYear();
+	const { data: options, isLoading: loadingRegistration } =
+		api.public.registrationAllowed.useQuery();
 
 	return (
 		<>
@@ -20,22 +23,29 @@ const Login = ({ hasOauth, oauthExlusiveLogin }) => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div className="z-10 flex justify-center self-center">
-				<div className="w-100 mx-auto rounded-2xl border border-primary p-12">
-					<div className="mb-4">
-						<h3 className="text-xl font-semibold">Sign in to your account</h3>
-					</div>
-					<div className="space-y-5">
-						{!oauthExlusiveLogin ? <CredentialsForm /> : null}
-						{hasOauth ? (
-							<div>
-								<div className="divider divider-error">OR</div>
-								<OauthLogin />
-							</div>
-						) : null}
-						<div className="pt-5 text-center text-xs text-gray-400">
-							<span>Copyright © {new Date().getFullYear()} Kodea Solutions</span>
+			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
+				<h3 className="text-xl font-semibold">Sign in to your account</h3>
+
+				<div className="space-y-5">
+					{!oauthExclusiveLogin && <CredentialsForm />}
+
+					{hasOauth && (
+						<div>
+							{!oauthExclusiveLogin && <div className="divider">OR</div>}
+							<OauthLogin />
 						</div>
+					)}
+					{options?.enableRegistration && !loadingRegistration ? (
+						<div className="pt-5">
+							<p className="mb-4">Don't have an account?</p>
+							<Link href="/auth/register" className="underline">
+								Get Started!
+							</Link>
+						</div>
+					) : null}
+
+					<div className="pt-5 text-center text-xs text-gray-400">
+						<span>Copyright © {currentYear} Kodea Solutions</span>
 					</div>
 				</div>
 			</div>

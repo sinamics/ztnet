@@ -30,6 +30,12 @@ jest.mock("../../../utils/api", () => ({
 			getWelcomeMessage: {
 				useQuery: jest.fn(),
 			},
+			registrationAllowed: {
+				useQuery: jest.fn().mockReturnValue({
+					data: { allowed: true },
+					isLoading: false,
+				}),
+			},
 		},
 		network: {
 			getUserNetworks: {
@@ -63,7 +69,7 @@ describe("LoginPage", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<LoginPage hasOauth={hasOauth} oauthExlusiveLogin={false} />
+					<LoginPage title="test" hasOauth={hasOauth} oauthExclusiveLogin={false} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);

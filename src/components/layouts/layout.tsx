@@ -3,11 +3,8 @@ import FourOhFour from "~/pages/404";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import Footer from "./footer";
-import { globalSiteTitle } from "~/utils/global";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
-import { api } from "~/utils/api";
 import { useSidebarStore, useAsideChatStore, useFontSizeStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
@@ -25,40 +22,15 @@ interface Props {
 }
 
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
-	const router = useRouter();
-	const { data: options, isLoading: loadingRegistration } =
-		api.public.registrationAllowed.useQuery();
-
-	const currentPath = router.pathname;
 	return (
 		<div className="outer-container">
-			<div className="mx-auto flex w-5/6">
-				<div>
-					<h1 className="mb-3 text-5xl font-bold p-2">
-						<Link href="/">{globalSiteTitle}</Link>
-					</h1>
-				</div>
-
-				<div className="m-3 mx-0 flex w-10/12 justify-end">
-					{options?.enableRegistration && !loadingRegistration ? (
-						<Link
-							href={
-								currentPath.includes("/auth/register") ? "/auth/login" : "/auth/register"
-							}
-							className="btn btn-primary"
-						>
-							{currentPath === "/auth/register" ? "Login" : "Sign Up"}
-						</Link>
-					) : null}
-				</div>
-			</div>
-			<main className="flex min-h-[calc(100vh-8vh)] flex-col">
+			<main className="min-h-[100dvh] container mx-auto flex items-center justify-center">
 				{/* Main section */}
-				<div className="flex flex-grow items-center m-5 sm:m-0">
-					<div className="mx-auto flex">
+				<div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4 w-full max-w-7xl m-5 sm:m-0">
+					<div className="h-full flex items-start">
 						<WelcomeMessage />
-						{children}
 					</div>
+					<div>{children}</div>
 				</div>
 			</main>
 		</div>
