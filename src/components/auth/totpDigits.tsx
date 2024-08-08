@@ -67,7 +67,6 @@ export default function TwoFactAuth({
 	};
 
 	const handleChange = (index: number, newDigit: string) => {
-		console.log(newDigit);
 		if (/^[0-9]$/.test(newDigit) || newDigit === "") {
 			const newDigits = [...digits];
 			newDigits[index] = newDigit;
