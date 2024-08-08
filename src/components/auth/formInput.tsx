@@ -7,6 +7,7 @@ interface FormInputProps {
 	value: string;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	placeholder: string;
+	disabled?: boolean;
 	icon?: ReactElement;
 }
 
@@ -17,6 +18,7 @@ const FormInput: React.FC<FormInputProps> = ({
 	value,
 	onChange,
 	placeholder,
+	disabled = false,
 	icon,
 }) => {
 	return (
@@ -28,6 +30,7 @@ const FormInput: React.FC<FormInputProps> = ({
 				{icon && React.cloneElement(icon, { className: "h-4 w-4 opacity-70" })}
 				<input
 					id={name}
+					disabled={disabled}
 					className="grow"
 					value={value}
 					onChange={onChange}
