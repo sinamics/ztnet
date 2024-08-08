@@ -65,7 +65,7 @@ const ZerotierUrl = () => {
 					label={t("controller.controllerConfig.local_zerotier_url")}
 					description={t("controller.controllerConfig.submit_empty_field_default")}
 					size="sm"
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					disabled={me?.options.urlFromEnv}
 					fields={[
 						{
@@ -89,7 +89,7 @@ const ZerotierUrl = () => {
 					isLoading={meLoading}
 					label={t("controller.controllerConfig.zerotier_secret")}
 					description={t("controller.controllerConfig.submit_empty_field_default")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
 					disabled={me?.options.secretFromEnv}
 					fields={[

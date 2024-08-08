@@ -68,7 +68,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.smtpHost")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					// buttonClassName="hidden"
 					size="sm"
 					fields={[
@@ -85,7 +85,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.smtpPort")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -101,7 +101,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.senderEmail")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -117,7 +117,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.username")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -133,7 +133,7 @@ const Mail = () => {
 				<EditableField
 					isLoading={false}
 					label={t("mail.password")}
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{

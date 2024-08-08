@@ -70,7 +70,7 @@ const Account = () => {
 				<InputField
 					label={t("userSettings.account.accountSettings.nameLabel")}
 					isLoading={!session?.user}
-					rootFormClassName="space-y-3 w-3/6"
+					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{
@@ -85,7 +85,7 @@ const Account = () => {
 				<InputField
 					label={t("userSettings.account.accountSettings.emailLabel")}
 					isLoading={!session?.user}
-					rootFormClassName="space-y-3 w-3/6"
+					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					// badge={
 					// 	session?.user?.emailVerified
@@ -124,7 +124,7 @@ const Account = () => {
 					label={t("userSettings.account.accountSettings.passwordLabel")}
 					placeholder="******"
 					size="sm"
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					description="Ensure your account is using a long, random password to stay secure."
 					fields={[
 						{
@@ -236,7 +236,7 @@ const Account = () => {
 					label="Zerotier Central API Key"
 					placeholder="******"
 					size="sm"
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					fields={[
 						{
 							name: "ztCentralApiKey",
@@ -267,7 +267,7 @@ const Account = () => {
 					label={t("userSettings.account.zerotierCentral.apiUrlLabel")}
 					description={t("userSettings.account.zerotierCentral.apiUrlLabelDescription")}
 					size="sm"
-					rootFormClassName="space-y-3 pt-2 w-3/6"
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					rootClassName="py-2"
 					fields={[
 						{
