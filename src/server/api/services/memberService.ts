@@ -172,10 +172,19 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		}
 	}
 
-	// check if global naming is enabled, and if so find the first available name
-	if (user.options?.renameNodeGlobally && !memberOfOrganization.organizationId) {
-		const namedPrivateMember = await findNamedMember({ orgId: null });
-		name = namedPrivateMember?.name;
+	// Member is not joining an organization network
+	if (!memberOfOrganization.organizationId) {
+		// check if addMemberIdAsName is enabled, and if so use the member id as the name
+		if (user.options?.addMemberIdAsName) {
+			name = member.id;
+		}
+
+		// check if global naming is enabled, and if so find the first available name
+		// NOTE! this will take precedence over addMemberIdAsName above
+		if (user.options?.renameNodeGlobally) {
+			const namedPrivateMember = await findNamedMember({ orgId: null });
+			name = namedPrivateMember?.name;
+		}
 	}
 
 	return await prisma.network_members.create({
