@@ -93,8 +93,10 @@ sudo systemctl disable ztnet
 ```
 
 ## Testing other branches
+:::note
+Do not test in production; use a designated testing environment. Database schemas can vary between branches, and deploying a branch instead of a release may cause issues.
+:::
 If you want to test out a specific branch of ztnet, you can specify the branch like this, change `main` to the branch you want to test:
-
 ```bash
 curl http://install.ztnet.network | sudo bash -s -- -b main
 ```
