@@ -130,8 +130,8 @@ ztnet:
   ...
   environment:
     OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
-    OAUTH_ID: "<copy Application (client) ID here>"  # Application (client) ID
-    OAUTH_SECRET: "<copy generated client secret value here>" # Client Secret
+    OAUTH_ID: "<copy Application (client) ID here>"
+    OAUTH_SECRET: "<copy generated client secret value here>"
     OAUTH_WELLKNOWN: "https://login.microsoftonline.com/<tentant_id>/v2.0/.well-known/openid-configuration"
 ```
 
