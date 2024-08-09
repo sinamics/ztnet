@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -80,24 +80,27 @@ describe("LoginPage", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<LoginPage title="test" oauthExlusiveLogin={false} />
+					<LoginPage title="test" oauthExclusiveLogin={false} oauthEnabled={true} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
 	};
 
-	it("renders login form correctly", () => {
+	it("renders login form correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: null,
 			isLoading: true,
 			refetch: jest.fn(),
 		});
 		api.public.getWelcomeMessage.useQuery = useQueryMock;
-		renderLoginPage();
+
+		await act(async () => {
+			renderLoginPage();
+		});
 
 		expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
 		expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: /Sign in/i })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /^Sign in$/i })).toBeInTheDocument();
 	});
 
 	it("handles form submission with valid credentials", async () => {
@@ -144,7 +147,7 @@ describe("LoginPage", () => {
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "invalid@example.com");
 		await userEvent.type(passwordInput, "wrongpassword");
@@ -159,20 +162,6 @@ describe("LoginPage", () => {
 			);
 		});
 	});
-
-	// it("validates email format", async () => {
-	// 	renderLoginPage();
-
-	// 	const emailInput = screen.getByLabelText(/Email/i);
-	// 	const submitButton = screen.getByRole("button", { name: /Sign in/i });
-
-	// 	await userEvent.type(emailInput, "invalidemail");
-	// 	await userEvent.click(submitButton);
-
-	// 	await waitFor(() => {
-	// 		expect(screen.getByText(/Please enter a valid email address/i)).toBeInTheDocument();
-	// 	});
-	// });
 
 	it("requires password input", async () => {
 		(signIn as jest.Mock).mockResolvedValue({
