@@ -11,6 +11,17 @@ import * as reactHotToast from "react-hot-toast"; // Importing the module for la
 
 jest.mock("next-auth/react", () => ({
 	signIn: jest.fn(() => Promise.resolve({ ok: true, error: null })),
+	getProviders: jest.fn(() =>
+		Promise.resolve({
+			oauth: {
+				id: "oauth",
+				name: "OAuth",
+				type: "oauth",
+				signinUrl: "https://provider.com/oauth",
+				callbackUrl: "https://yourapp.com/api/auth/callback/oauth",
+			},
+		}),
+	),
 }));
 jest.mock("next/router", () => ({
 	useRouter: jest.fn().mockReturnValue({
@@ -65,11 +76,11 @@ describe("LoginPage", () => {
 		jest.clearAllMocks();
 	});
 
-	const renderLoginPage = ({ hasOauth = false }) => {
+	const renderLoginPage = () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<LoginPage title="test" hasOauth={hasOauth} oauthExclusiveLogin={false} />
+					<LoginPage title="test" oauthExlusiveLogin={false} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -82,7 +93,7 @@ describe("LoginPage", () => {
 			refetch: jest.fn(),
 		});
 		api.public.getWelcomeMessage.useQuery = useQueryMock;
-		renderLoginPage({ hasOauth: false });
+		renderLoginPage();
 
 		expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
 		expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
@@ -93,7 +104,7 @@ describe("LoginPage", () => {
 		const signInResponse = { ok: true, error: null };
 		(signIn as jest.Mock).mockResolvedValueOnce(signInResponse);
 
-		renderLoginPage({ hasOauth: false });
+		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
@@ -129,7 +140,7 @@ describe("LoginPage", () => {
 		(signIn as jest.Mock).mockResolvedValue({
 			error: ErrorCode.IncorrectPassword,
 		});
-		renderLoginPage({ hasOauth: false });
+		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
@@ -167,7 +178,7 @@ describe("LoginPage", () => {
 		(signIn as jest.Mock).mockResolvedValue({
 			error: "email or password is wrong!",
 		});
-		renderLoginPage({ hasOauth: false });
+		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const submitButton = screen.getByRole("button", { name: /Sign in/i });
@@ -186,19 +197,21 @@ describe("LoginPage", () => {
 	});
 
 	it("handles OAuth sign-in", async () => {
-		renderLoginPage({ hasOauth: true });
+		renderLoginPage();
+		// Wait for the providers to be fetched and the button to be displayed
+		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
 
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(signIn).toHaveBeenCalledWith("oauth");
+		expect(signIn).toHaveBeenCalledWith("oauth", { redirect: false });
 	});
 
 	it("Enter 2FA code", async () => {
 		(signIn as jest.Mock).mockResolvedValue({
 			error: ErrorCode.SecondFactorRequired,
 		});
-		renderLoginPage({ hasOauth: false });
+		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);

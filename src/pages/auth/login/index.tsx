@@ -9,7 +9,7 @@ import CredentialsForm from "~/components/auth/credentialsForm";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
-const Login = ({ title, oauthExlusiveLogin, hasOauth }) => {
+const Login = ({ title, oauthExlusiveLogin }) => {
 	const currentYear = new Date().getFullYear();
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
@@ -29,12 +29,10 @@ const Login = ({ title, oauthExlusiveLogin, hasOauth }) => {
 				<div className="space-y-5">
 					{!oauthExlusiveLogin && <CredentialsForm />}
 
-					{hasOauth && (
-						<div>
-							{!oauthExlusiveLogin && <div className="divider">OR</div>}
-							<OauthLogin />
-						</div>
-					)}
+					<div>
+						{!oauthExlusiveLogin && <div className="divider">OR</div>}
+						<OauthLogin />
+					</div>
 					{options?.enableRegistration && !loadingRegistration ? (
 						<div className="pt-5">
 							<p className="mb-4">Don't have an account?</p>
@@ -60,12 +58,11 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
-	const hasOauth = !!(process.env.OAUTH_ID && process.env.OAUTH_SECRET);
 	const oauthExlusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 
 	const session = await getSession(context);
 	if (!session || !session.user) {
-		return { props: { hasOauth, oauthExlusiveLogin } };
+		return { props: { oauthExlusiveLogin } };
 	}
 
 	if (session.user) {
