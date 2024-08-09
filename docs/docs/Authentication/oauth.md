@@ -49,6 +49,19 @@ Standard OAuth 2.0 is used by various providers, including GitHub and Facebook. 
 
 ## Examples
 
+### Authentik Configuration
+
+docker-compose.yml
+```yml
+ztnet:
+  image: sinamics/ztnet:latest
+  ...
+  environment:
+    OAUTH_ID: "your-client-id"
+    OAUTH_SECRET: "your-client-secret"
+    OAUTH_WELLKNOWN: "http://{PROVIDER_URL}/application/o/oauth-provider/.well-known/openid-configuration"
+```
+
 ### Keycloak Configuration
 
 docker-compose.yml
@@ -59,7 +72,6 @@ ztnet:
   environment:
     OAUTH_ID: "your-client-id"
     OAUTH_SECRET: "your-client-secret"
-    OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
     OAUTH_WELLKNOWN: "http://{PROVIDER_URL}/auth/realms/{REALM}/.well-known/openid-configuration"
 ```
 
@@ -108,7 +120,6 @@ ztnet:
   image: sinamics/ztnet:latest
   ...
   environment:
-    OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
     OAUTH_ID: "your-discord-client-id"
     OAUTH_SECRET: "your-discord-client-secret"
     OAUTH_ACCESS_TOKEN_URL: "https://discord.com/api/oauth2/token"
@@ -144,7 +155,6 @@ ztnet:
   image: sinamics/ztnet:latest
   ...
   environment:
-    OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
     OAUTH_ID: "<copy Application (client) ID here>"
     OAUTH_SECRET: "<copy generated client secret value here>"
     OAUTH_WELLKNOWN: "https://login.microsoftonline.com/<tentant_id>/v2.0/.well-known/openid-configuration"
@@ -153,6 +163,7 @@ ztnet:
 
 
 ## Troubleshooting
+
 If you are having trouble with OAuth, please check the docker server logs:
 ```bash
 docker logs ztnet
