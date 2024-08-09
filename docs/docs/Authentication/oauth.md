@@ -44,7 +44,7 @@ Standard OAuth 2.0 is used by various providers, including GitHub and Facebook. 
 
 
 ### Callback URL
-- `https://awesome.ztnet.com/api/auth/callback/oauth`
+- `https://<your_domain>/api/auth/callback/oauth`
 
 
 ## Examples
@@ -122,6 +122,21 @@ When configuring Azure Active Directory (AAD) for your application, it is crucia
 
 **Documentation:** [Azure Active Directory Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview)
 
+
+To allow specific Active Directory user access:
+- In https://portal.azure.com/ search for "Azure Active Directory", and select your organization.
+- Next, go to "App Registration" in the left menu, and create a new one.
+- Pay close attention to "Who can use this application or access this API?"
+  - This allows you to scope access to specific types of user accounts
+  - Only your tenant, all azure tenants, or all azure tenants and public Microsoft accounts (Skype, Xbox, Outlook.com, etc.)
+- When asked for a redirection URL, select the platform type "Web" and use https://yourapplication.com/api/auth/callback/oauth as the URL.
+
+After your App Registration is created, under "Client Credential" create your Client secret.
+Now copy your:
+- Application (client) ID
+- Directory (tenant) ID
+- Client secret (value)
+
 Note! replace `<tentant_id>` with your Azure AD tenant ID in the `OAUTH_WELLKNOWN` URL.
 
 ```yaml
@@ -134,6 +149,8 @@ ztnet:
     OAUTH_SECRET: "<copy generated client secret value here>"
     OAUTH_WELLKNOWN: "https://login.microsoftonline.com/<tentant_id>/v2.0/.well-known/openid-configuration"
 ```
+
+
 
 ## Troubleshooting
 If you are having trouble with OAuth, please check the docker server logs:
