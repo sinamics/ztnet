@@ -44,7 +44,7 @@ Standard OAuth 2.0 is used by various providers, including GitHub and Facebook. 
 
 
 ### Callback URL
-- `https://awesome.ztnet.com/api/auth/callback/oauth`
+- `https://<your_domain>/api/auth/callback/oauth`
 
 
 ## Examples
@@ -115,6 +115,42 @@ ztnet:
     OAUTH_AUTHORIZATION_URL: "https://discord.com/api/oauth2/authorize?client_id=xxxx&response_type=code&redirect_uri=https%3A%2F%2Fawesome.ztnet.com%2Fapi%2Fauth%2Fcallback%2Foauth&scope=email+identify"
     OAUTH_USER_INFO: "https://discord.com/api/users/@me"
 ```
+
+### Azure Active Directory Configuration
+
+When configuring Azure Active Directory (AAD) for your application, it is crucial to properly set the `OAUTH_WELLKNOWN` URL and other environment variables, as these dictate how the OAuth2 flow will interact with AAD. The `AZURE_AD_TENANT_ID` must be correctly embedded within the `OAUTH_WELLKNOWN` URL to ensure proper communication between your application and Azure AD.
+
+**Documentation:** [Azure Active Directory Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview)
+
+
+To allow specific Active Directory user access:
+- In https://portal.azure.com/ search for "Azure Active Directory", and select your organization.
+- Next, go to "App Registration" in the left menu, and create a new one.
+- Pay close attention to "Who can use this application or access this API?"
+  - This allows you to scope access to specific types of user accounts
+  - Only your tenant, all azure tenants, or all azure tenants and public Microsoft accounts (Skype, Xbox, Outlook.com, etc.)
+- When asked for a redirection URL, select the platform type "Web" and use https://yourapplication.com/api/auth/callback/oauth as the URL.
+
+After your App Registration is created, under "Client Credential" create your Client secret.
+Now copy your:
+- Application (client) ID
+- Directory (tenant) ID
+- Client secret (value)
+
+Note! replace `<tentant_id>` with your Azure AD tenant ID in the `OAUTH_WELLKNOWN` URL.
+
+```yaml
+ztnet:
+  image: sinamics/ztnet:latest
+  ...
+  environment:
+    OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
+    OAUTH_ID: "<copy Application (client) ID here>"
+    OAUTH_SECRET: "<copy generated client secret value here>"
+    OAUTH_WELLKNOWN: "https://login.microsoftonline.com/<tentant_id>/v2.0/.well-known/openid-configuration"
+```
+
+
 
 ## Troubleshooting
 If you are having trouble with OAuth, please check the docker server logs:

@@ -95,30 +95,36 @@ const genericOAuthAuthorization = buildAuthorizationConfig(
 export const authOptions: NextAuthOptions = {
 	adapter: MyAdapter,
 	providers: [
-		{
-			id: "oauth",
-			name: "Oauth",
-			type: "oauth",
-			allowDangerousEmailAccountLinking:
-				Boolean(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING) || true,
-			clientId: process.env.OAUTH_ID,
-			clientSecret: process.env.OAUTH_SECRET,
-			wellKnown: process.env.OAUTH_WELLKNOWN,
-			checks: ["state", "pkce"], // Include 'pkce' if required for your custom OAuth
-			authorization: genericOAuthAuthorization,
-			token: process.env.OAUTH_ACCESS_TOKEN_URL,
-			userinfo: process.env.OAUTH_USER_INFO,
-			profile(profile) {
-				return Promise.resolve({
-					id: profile.sub || profile.id.toString(), // Handle ID based on provider
-					name: profile.name || profile.login || profile.username,
-					email: profile.email,
-					image: profile.picture || profile.avatar_url || profile.image_url,
-					lastLogin: new Date().toISOString(),
-					role: "USER",
-				});
-			},
-		},
+		// Conditionally add Generic OAuth provider
+		...(process.env.OAUTH_ID && process.env.OAUTH_SECRET
+			? [
+					{
+						id: "oauth",
+						name: "Oauth",
+						type: "oauth",
+						allowDangerousEmailAccountLinking:
+							Boolean(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING) || true,
+						clientId: process.env.OAUTH_ID,
+						clientSecret: process.env.OAUTH_SECRET,
+						checks: ["state", "pkce"] as ("state" | "pkce")[],
+						wellKnown: process.env.OAUTH_WELLKNOWN,
+						authorization: genericOAuthAuthorization,
+						token: process.env.OAUTH_ACCESS_TOKEN_URL,
+						userinfo: process.env.OAUTH_USER_INFO,
+						idToken: true,
+						profile(profile) {
+							return Promise.resolve({
+								id: profile.sub || profile.id.toString(),
+								name: profile.name || profile.login || profile.username,
+								email: profile.email,
+								image: profile.picture || profile.avatar_url || profile.image_url,
+								lastLogin: new Date().toISOString(),
+								role: "USER",
+							});
+						},
+					} as const, // Add 'as const' to make the provider type narrow to the exact expected values
+			  ]
+			: []),
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. "Sign in with...")
 			name: "Credentials",
