@@ -9,7 +9,7 @@ import CredentialsForm from "~/components/auth/credentialsForm";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
-const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
+const Login = ({ title, oauthExlusiveLogin, hasOauth }) => {
 	const currentYear = new Date().getFullYear();
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
@@ -27,11 +27,11 @@ const Login = ({ title, oauthExclusiveLogin, hasOauth }) => {
 				<h3 className="text-xl font-semibold">Sign in to your account</h3>
 
 				<div className="space-y-5">
-					{!oauthExclusiveLogin && <CredentialsForm />}
+					{!oauthExlusiveLogin && <CredentialsForm />}
 
 					{hasOauth && (
 						<div>
-							{!oauthExclusiveLogin && <div className="divider">OR</div>}
+							{!oauthExlusiveLogin && <div className="divider">OR</div>}
 							<OauthLogin />
 						</div>
 					)}
