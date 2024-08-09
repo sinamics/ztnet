@@ -116,6 +116,26 @@ ztnet:
     OAUTH_USER_INFO: "https://discord.com/api/users/@me"
 ```
 
+### Azure Active Directory Configuration
+
+When configuring Azure Active Directory (AAD) for your application, it is crucial to properly set the `OAUTH_WELLKNOWN` URL and other environment variables, as these dictate how the OAuth2 flow will interact with AAD. The `AZURE_AD_TENANT_ID` must be correctly embedded within the `OAUTH_WELLKNOWN` URL to ensure proper communication between your application and Azure AD.
+
+**Documentation:** [Azure Active Directory Documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-overview)
+
+Note! replace `<tentant_id>` with your Azure AD tenant ID in the `OAUTH_WELLKNOWN` URL.
+
+```yaml
+ztnet:
+  image: sinamics/ztnet:latest
+  ...
+  environment:
+    OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING: "true"
+    OAUTH_ID: "<copy Application (client) ID here>"  # Application (client) ID
+    OAUTH_SECRET: "<copy generated client secret value here>" # Client Secret
+    OAUTH_WELLKNOWN: "https://login.microsoftonline.com/<tentant_id>/v2.0/.well-known/openid-configuration"
+
+```
+
 ## Troubleshooting
 If you are having trouble with OAuth, please check the docker server logs:
 ```bash
