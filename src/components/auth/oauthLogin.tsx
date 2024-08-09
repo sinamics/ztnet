@@ -21,7 +21,6 @@ const OAuthLogin: React.FC = () => {
 		const fetchProviders = async () => {
 			try {
 				const fetchedProviders = await getProviders();
-				console.log(fetchedProviders);
 
 				if (fetchedProviders) {
 					setProviders(fetchedProviders);
