@@ -29,12 +29,10 @@ const Login = ({ title, oauthExlusiveLogin, hasOauth }) => {
 				<div className="space-y-5">
 					{!oauthExlusiveLogin && <CredentialsForm />}
 
-					{hasOauth && (
-						<div>
-							{!oauthExlusiveLogin && <div className="divider">OR</div>}
-							<OauthLogin />
-						</div>
-					)}
+					<div>
+						{!oauthExlusiveLogin && <div className="divider">OR</div>}
+						<OauthLogin />
+					</div>
 					{options?.enableRegistration && !loadingRegistration ? (
 						<div className="pt-5">
 							<p className="mb-4">Don't have an account?</p>

@@ -149,6 +149,8 @@ model Account {
   expires_at         Int?
   refresh_expires_in Int?
   token_type         String?
+  ext_expires_in     Int?
+  expires_in         Int?
   scope              String?
   id_token           String? @db.Text
   session_state      String?
