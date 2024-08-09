@@ -94,11 +94,11 @@ const UserNetworkSetting = () => {
 									other networks and use the first name found.
 								</li>
 							</ul>
-							<p className="mt-2">
-								Note: This feature has priority over "Add Member ID as Name". It applies
-								only to networks where you are the author and doesn't affect networks
-								managed by others or organizations.
-							</p>
+						</p>
+						<p className="mt-2 text-sm text-gray-500">
+							Note: This feature has priority over "Add Member ID as Name". It applies
+							only to networks where you are the author and doesn't affect networks
+							managed by others or organizations.
 						</p>
 					</div>
 					<input
