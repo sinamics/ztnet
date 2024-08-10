@@ -8,12 +8,19 @@ import OauthLogin from "~/components/auth/oauthLogin";
 import CredentialsForm from "~/components/auth/credentialsForm";
 import Link from "next/link";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
+import classNames from "classnames";
+import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
 
 const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
 	const currentYear = new Date().getFullYear();
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
+	const router = useRouter();
+	const { query } = router;
 
+	const errorCode = query.error as ErrorCode;
+	const errorMessage = errorCode ? getErrorMessage(errorCode) : null;
 	return (
 		<>
 			<Head>
@@ -23,9 +30,21 @@ const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
-			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
+			<div
+				className={classNames(
+					"rounded-xl sm:border sm:p-12 space-y-5 w-full max-w-md mx-auto",
+					{
+						"border-red-500": !!errorMessage,
+						"border-primary/50": !errorMessage,
+					},
+				)}
+			>
+				{errorMessage && (
+					<div className="rounded">
+						<span className="text-sm text-red-500">{errorMessage}</span>
+					</div>
+				)}
 				<h3 className="text-xl font-semibold">Sign in to your account</h3>
-
 				<div className="space-y-5">
 					{!oauthExclusiveLogin && <CredentialsForm />}
 
