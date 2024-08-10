@@ -248,6 +248,7 @@ export const authOptions: NextAuthOptions = {
 						lastFailedLoginAttempt: null,
 					},
 				});
+
 				return {
 					...user,
 					hash: null,
@@ -274,14 +275,24 @@ export const authOptions: NextAuthOptions = {
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
 		async signIn({ user, account }) {
-			if (account.provider === "credentials") {
-				// Check if the user already exists
-				const existingUser = await prisma.user.findUnique({
-					where: {
-						email: user.email,
-					},
-				});
+			// Check if the user already exists
+			const existingUser = await prisma.user.findUnique({
+				where: {
+					email: user.email,
+				},
+			});
 
+			// check if the user is allowed to sign up.
+			if (!existingUser) {
+				const siteSettings = await prisma.globalOptions.findFirst();
+
+				if (!siteSettings?.enableRegistration) {
+					// route to error page
+					return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
+				}
+			}
+
+			if (account.provider === "credentials") {
 				if (existingUser) {
 					// User exists, update last login or other fields as necessary
 					await prisma.user.update({
