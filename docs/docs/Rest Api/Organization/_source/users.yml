@@ -23,7 +23,7 @@ security:
   - x-ztnet-auth: []
 
 paths:
-  /org/:orgid/users:
+  /org/:orgid/user:
     get:
       tags:
         - organization_users
