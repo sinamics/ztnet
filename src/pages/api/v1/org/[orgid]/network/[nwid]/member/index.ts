@@ -91,23 +91,13 @@ export const GET_orgNetworkMembers = async (
 
 		// @ts-expect-error
 		const caller = appRouter.createCaller(ctx);
-		const network = await caller.network
-			.getNetworkById({ nwid: networkId })
-			.then(async (res) => {
-				return res.network || null;
-			});
+		const response = await caller.network.getNetworkById({ nwid: networkId });
 
-		if (!network) {
+		if (!response?.network) {
 			return res.status(401).json({ error: "Network not found or access denied." });
 		}
 
-		const ztControllerResponse = await ztController.local_network_detail(
-			//@ts-expect-error
-			ctx,
-			networkId,
-			false,
-		);
-		return res.status(200).json(ztControllerResponse?.members);
+		return res.status(200).json(response?.members);
 	} catch (cause) {
 		return handleApiErrors(cause, res);
 	}
