@@ -7,7 +7,6 @@ import { decryptAndVerifyToken } from "~/utils/encryption";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
-import * as ztController from "~/utils/ztApi";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
