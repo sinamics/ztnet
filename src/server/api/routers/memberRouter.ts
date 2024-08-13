@@ -105,7 +105,7 @@ export const networkMemberRouter = createTRPCRouter({
 				where: {
 					id_nwid: {
 						id: input.id,
-						nwid: input.nwid, // this should be the value of `nwid` you are looking for
+						nwid: input.nwid,
 					},
 				},
 			});
@@ -114,7 +114,7 @@ export const networkMemberRouter = createTRPCRouter({
 					where: {
 						id_nwid: {
 							id: input.id,
-							nwid: input.nwid, // this should be the value of `nwid` you are looking for
+							nwid: input.nwid,
 						},
 					},
 					data: {

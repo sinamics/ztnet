@@ -100,3 +100,57 @@ NetworkMemberResponse:
     vRev:
       type: integer
       description: Revision version number
+    physicalAddress:
+      type: string
+      description: External ip address of the user
+    peers:
+      type: array
+      items:
+        type: object
+        properties:
+          address:
+            type: string
+            description: Address of the peer
+          isBonded:
+            type: boolean
+            description: Bonded status
+          latency:
+            type: integer
+            description: Latency
+          paths:
+            type: array
+            items:
+              type: string
+            description: List of paths
+          role:
+            type: string
+            description: Role of the peer
+          tunneled:
+            type: boolean
+            description: Tunneled status
+          version:
+            type: string
+            description: Version of the peer
+          versionMajor:
+            type: integer
+            description: Major version of the peer
+          versionMinor:
+            type: integer
+            description: Minor version of the peer
+          versionRev:
+            type: integer
+            description: Revision version of the peer
+      description: List of peers
+    conStatus:
+      type: integer
+      description: |
+        Connection status
+        Possible values:
+        * 0 - Offline: The connection is not established
+        * 1 - Relayed or DirectLAN: The connection is either relayed or direct within a LAN
+        * 2 - DirectWAN: The connection is direct over WAN
+      enum:
+        - 0
+        - 1
+        - 2
+      
