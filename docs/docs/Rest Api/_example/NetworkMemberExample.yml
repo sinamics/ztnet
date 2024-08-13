@@ -30,6 +30,19 @@ NetworkMemberExample:
   vMinor: 12
   vProto: 12
   vRev: 2
+  physicalAddress: null
+  peers:
+    address: "abcdef01234"
+    isBonded: false
+    latency: -1
+    paths: []
+    role: "LEAF"
+    tunneled: false
+    version: "1.12.2"
+    versionMajor: 1
+    versionMinor: 12
+    versionRev: 2
+  conStatus: 1
 
 NetworkArrayMemberExample:
   - nodeid: 1
@@ -63,6 +76,19 @@ NetworkArrayMemberExample:
     vMinor: 12
     vProto: 12
     vRev: 2
+    physicalAddress: null
+    peers:
+      address: "abcdef01234"
+      isBonded: false
+      latency: -1
+      paths: []
+      role: "LEAF"
+      tunneled: false
+      version: "1.12.2"
+      versionMajor: 1
+      versionMinor: 12
+      versionRev: 2
+    conStatus: 1
   - nodeid: 2
     id: "abcdef01235"
     nwid: "8056c2e21c000001"
@@ -94,3 +120,16 @@ NetworkArrayMemberExample:
     vMinor: 12
     vProto: 12
     vRev: 2
+    physicalAddress: null
+    peers:
+      address: "abcdef01234"
+      isBonded: false
+      latency: -1
+      paths: []
+      role: "LEAF"
+      tunneled: false
+      version: "1.12.2"
+      versionMajor: 1
+      versionMinor: 12
+      versionRev: 2
+    conStatus: 1
