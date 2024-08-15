@@ -40,10 +40,11 @@ const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
-	const t = useTranslations("commonTable"); // use the 'footer' namespace
+	const t = useTranslations("commonTable");
 	const [pageSize, setPageSize] = useState<string | number>(
 		table.getState().pagination.pageSize,
 	);
+
 	const totalMembersCount = table?.options?.data?.length || 0;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -52,10 +53,10 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 		setPageSize(savedPageSize || 10);
 		if (savedPageSize !== null) {
 			table.setPageSize(
-				savedPageSize === "all" ? table?.options?.data?.length : Number(savedPageSize),
+				savedPageSize === "all" ? totalMembersCount : Number(savedPageSize),
 			);
 		}
-	}, []);
+	}, [totalMembersCount]);
 
 	const storeLocalState = (pageSize) => {
 		table.setPageSize(pageSize === "all" ? totalMembersCount : Number(pageSize));
