@@ -234,7 +234,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				},
 			}),
 			columnHelper.accessor("name", {
-				header: () => <span className="text-left w-full block">{c("header.name")}</span>,
+				header: () => <span className="text-left block">{c("header.name")}</span>,
 				id: "name",
 			}),
 			columnHelper.accessor("id", {
@@ -244,7 +244,9 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("ipAssignments", {
-				header: () => <span>{c("header.ipAssignments.header")}</span>,
+				header: () => (
+					<span className="text-left block">{c("header.ipAssignments.header")}</span>
+				),
 				id: "ipAssignments",
 				sortingFn: sortingIpAddress,
 			}),

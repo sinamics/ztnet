@@ -132,7 +132,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 										onBlur={onBlur}
 										value={(value as string) || ""}
 										type="text"
-										className="input-primary input-sm m-0 border-0 bg-transparent p-0 w-full"
+										className="input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full"
 									/>
 								</div>
 							</div>
