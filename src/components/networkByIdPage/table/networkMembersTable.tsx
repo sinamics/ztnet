@@ -64,6 +64,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		() => networkById?.members ?? [],
 		[networkById?.members],
 	);
+	// const memoizedFakeMembers = useMemo(() => makeNetworkMemberData(100) ?? [], []);
 
 	// Save to localStorage whenever sorting changes
 	useEffect(() => {
@@ -74,7 +75,6 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		setData(memoizedMembers);
 	}, [memoizedMembers]);
 
-	// const [data, setData] = useState(() => makeNetworkMemberData(11));
 	const [data, setData] = useState(networkById?.members ?? []);
 	const columnsHeader = MemberHeaderColumns({ nwid, central, organizationId });
 	const defaultColumn = MemberEditCell({ nwid, central, organizationId });
