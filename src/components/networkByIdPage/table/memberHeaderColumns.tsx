@@ -186,7 +186,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 					// 		null,
 					// 	);
 					return (
-						<span className="flex items-center gap-2">
+						<span className="flex items-center justify-center gap-2">
 							<label className="label cursor-pointer justify-center">
 								{/* add a letter B if bridge has been enabled */}
 
@@ -234,7 +234,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				},
 			}),
 			columnHelper.accessor("name", {
-				header: () => <span>{c("header.name")}</span>,
+				header: () => <span className="text-left w-full block">{c("header.name")}</span>,
 				id: "name",
 			}),
 			columnHelper.accessor("id", {
@@ -248,31 +248,31 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				id: "ipAssignments",
 				sortingFn: sortingIpAddress,
 			}),
-			columnHelper.accessor("creationTime", {
-				header: () => <span>{c("header.created")}</span>,
-				id: "creationTime",
-				cell: (info) => {
-					const createdDate = new Date(info.getValue());
-					const formatTime = (value: string, unit: string) => {
-						// Map full unit names to their abbreviations
-						const unitAbbreviations: { [key: string]: string } = {
-							second: "sec ago",
-							minute: "min ago",
-							hour: "hours ago",
-							day: "days ago",
-							week: "weeks ago",
-							month: "months ago",
-							year: "years ago",
-						};
-						const abbreviation = unitAbbreviations[unit] || unit;
+			// columnHelper.accessor("creationTime", {
+			// 	header: () => <span>{c("header.created")}</span>,
+			// 	id: "creationTime",
+			// 	cell: (info) => {
+			// 		const createdDate = new Date(info.getValue());
+			// 		const formatTime = (value: string, unit: string) => {
+			// 			// Map full unit names to their abbreviations
+			// 			const unitAbbreviations: { [key: string]: string } = {
+			// 				second: "sec ago",
+			// 				minute: "min ago",
+			// 				hour: "hours ago",
+			// 				day: "days ago",
+			// 				week: "weeks ago",
+			// 				month: "months ago",
+			// 				year: "years ago",
+			// 			};
+			// 			const abbreviation = unitAbbreviations[unit] || unit;
 
-						return `${value} ${abbreviation}`;
-					};
-					return (
-						<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
-					);
-				},
-			}),
+			// 			return `${value} ${abbreviation}`;
+			// 		};
+			// 		return (
+			// 			<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
+			// 		);
+			// 	},
+			// }),
 			columnHelper.accessor(
 				(row) => {
 					return row?.physicalAddress;
