@@ -11,7 +11,7 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import classNames from "classnames";
 import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 
 const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
 	const t = useTranslations();

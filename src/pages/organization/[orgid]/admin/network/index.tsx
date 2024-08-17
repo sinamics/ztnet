@@ -1,7 +1,7 @@
 import { type ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 

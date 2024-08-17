@@ -17,6 +17,8 @@ export const config = {
 const PUBLIC_FILE = /\.(.*)$/;
 
 export async function middleware(req: NextRequest) {
+	const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
 	if (
 		req.nextUrl.pathname.startsWith("/_next") ||
 		req.nextUrl.pathname.includes("/api/") ||
@@ -53,7 +55,7 @@ export async function middleware(req: NextRequest) {
 			return NextResponse.redirect(
 				new URL(
 					`/${preferredLocale}${req.nextUrl.pathname}${req.nextUrl.search}`,
-					req.url,
+					baseUrl,
 				),
 			);
 		}
