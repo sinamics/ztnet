@@ -11,7 +11,7 @@ const formatLogsData = (logs) => {
 			const date = new Date(log.createdAt).toLocaleString();
 			const action = log.action;
 			const performedBy = log.performedBy.name;
-			return `${log.id} ${date} - ${performedBy}- ${action}`;
+			return `${log.id} ${date} - ${performedBy} - ${action}`;
 		})
 		.join("\n");
 };

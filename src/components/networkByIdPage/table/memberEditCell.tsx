@@ -107,34 +107,38 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			if (id === "name") {
 				const notations = original.notations || [];
 				return (
-					<form>
-						<span className="flex items-center space-x-2">
-							{!central &&
-								me?.options?.showNotationMarkerInTableRow &&
-								notations?.map((notation) => (
-									<div
-										key={notation.label?.name}
-										className="inline-block h-5 w-5 rounded-full"
-										title={notation.label?.name}
-										style={{
-											backgroundColor: convertRGBtoRGBA(notation.label?.color, 1),
-										}}
-									></div>
-								))}
-							<Input
-								useTooltip
-								ref={inputRef}
-								placeholder={t("networkById.networkMembersTable.tableRow.updateName")}
-								name="networkName"
-								onChange={(e) => setValue(e.target.value)}
-								onBlur={onBlur}
-								value={(value as string) || ""}
-								type="text"
-								className="input-primary input-sm m-0 border-0 bg-transparent p-0"
-							/>
-						</span>
-						<button type="submit" onClick={submitName} className="hidden" />
-					</form>
+					<div className="w-full">
+						<form className="w-full">
+							<div className="flex items-center w-full">
+								{!central &&
+									me?.options?.showNotationMarkerInTableRow &&
+									notations?.map((notation) => (
+										<div
+											key={notation.label?.name}
+											className="flex-shrink-0 inline-block h-5 w-5 rounded-full mr-2"
+											title={notation.label?.name}
+											style={{
+												backgroundColor: convertRGBtoRGBA(notation.label?.color, 1),
+											}}
+										></div>
+									))}
+								<div className="flex-grow w-full">
+									<Input
+										useTooltip
+										ref={inputRef}
+										placeholder={t("networkById.networkMembersTable.tableRow.updateName")}
+										name="memberName"
+										onChange={(e) => setValue(e.target.value)}
+										onBlur={onBlur}
+										value={(value as string) || ""}
+										type="text"
+										className="input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full"
+									/>
+								</div>
+							</div>
+							<button type="submit" onClick={submitName} className="hidden" />
+						</form>
+					</div>
 				);
 			}
 			if (id === "ipAssignments") {
