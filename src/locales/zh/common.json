@@ -135,6 +135,33 @@
 		"user-settings": "用户设置",
 		"logout": "登出"
 	},
+	"authPages": {
+		"form": {
+			"name": "姓名",
+			"namePlaceholder": "输入您的姓名",
+			"email": "电子邮件",
+			"emailPlaceholder": "mail@example.com",
+			"password": "密码",
+			"passwordPlaceholder": "输入您的密码",
+			"forgotPassword": "忘记密码？",
+			"verifyTOTP": "验证 TOTP",
+			"signIn": "登录",
+			"signUp": "注册",
+			"invitationCode": "邀请码",
+			"invitationCodePlaceholder": "输入您的邀请码"
+		},
+		"signin": {
+			"signInToAccount": "登录您的账户",
+			"or": "或",
+			"dontHaveAccount": "没有账户？",
+			"getStarted": "立即开始！"
+		},
+		"signup": {
+			"signUpWithCredentials": "创建账户",
+			"haveAnAccount": "有账户？",
+			"login": "登录！"
+		}
+	},
 	"networks": {
 		"loading": "加载中",
 		"title": "网络",

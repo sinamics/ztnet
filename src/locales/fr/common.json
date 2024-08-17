@@ -135,6 +135,33 @@
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
 	},
+	"authPages": {
+		"form": {
+			"name": "Nom",
+			"namePlaceholder": "Entrez votre nom",
+			"email": "E-mail",
+			"emailPlaceholder": "mail@exemple.com",
+			"password": "Mot de passe",
+			"passwordPlaceholder": "Entrez votre mot de passe",
+			"forgotPassword": "Mot de passe oublié ?",
+			"verifyTOTP": "Vérifier TOTP",
+			"signIn": "Se connecter",
+			"signUp": "S'inscrire",
+			"invitationCode": "Code d'invitation",
+			"invitationCodePlaceholder": "Entrez votre code d'invitation"
+		},
+		"signin": {
+			"signInToAccount": "Connectez-vous à votre compte",
+			"or": "OU",
+			"dontHaveAccount": "Vous n'avez pas de compte?",
+			"getStarted": "Commencez!"
+		},
+		"signup": {
+			"signUpWithCredentials": "Créer un compte",
+			"haveAnAccount": "Vous avez un compte?",
+			"login": "Connectez-vous!"
+		}
+	},
 	"networks": {
 		"loading": "Chargement",
 		"title": "Réseaux",

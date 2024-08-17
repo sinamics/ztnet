@@ -10,10 +10,11 @@ import { globalSiteTitle } from "~/utils/global";
 import { useRouter } from "next/router";
 import RegisterOrganizationInviteForm from "~/components/auth/registerOrganizationInvite";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const Register = () => {
 	const title = `${globalSiteTitle} - Sign Up`;
-
+	const t = useTranslations();
 	const router = useRouter();
 	const { organizationInvite } = router.query as { organizationInvite?: string };
 	return (
@@ -25,16 +26,18 @@ const Register = () => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
-				<h3 className="text-xl font-semibold">Sign up with credentials</h3>
+				<h3 className="text-xl font-semibold">
+					{t("authPages.signup.signUpWithCredentials")}
+				</h3>
 				{organizationInvite ? (
 					<RegisterOrganizationInviteForm organizationInvite={organizationInvite} />
 				) : (
 					<RegisterForm />
 				)}
 				<div className="pt-5">
-					<p className="mb-4">Have an account?</p>
+					<p className="mb-4">{t("authPages.signup.haveAnAccount")}</p>
 					<Link href="/auth/login" className="underline">
-						Login!
+						{t("authPages.signup.login")}
 					</Link>
 				</div>
 				<div className="pt-5 text-center text-xs text-gray-400">
@@ -76,9 +79,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 			},
 		};
 	}
-	if (!session || !("user" in session)) {
-		return { props: {} };
-	}
 
 	if (session.user && !ztnetOrganizationInvite) {
 		return {
@@ -90,7 +90,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user },
+		props: {
+			auth: session.user,
+			messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+		},
 	};
 };
 

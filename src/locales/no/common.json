@@ -135,6 +135,33 @@
 		"user-settings": "Brukerinnstillinger",
 		"logout": "Logg ut"
 	},
+	"authPages": {
+		"form": {
+			"name": "Navn",
+			"namePlaceholder": "Skriv inn navnet ditt",
+			"email": "E-post",
+			"emailPlaceholder": "mail@eksempel.com",
+			"password": "Passord",
+			"passwordPlaceholder": "Skriv inn passordet ditt",
+			"forgotPassword": "Glemt passordet ditt?",
+			"verifyTOTP": "Bekreft TOTP",
+			"signIn": "Logg inn",
+			"signUp": "Opprett konto",
+			"invitationCode": "Invitasjonskode",
+			"invitationCodePlaceholder": "Skriv inn invitasjonskoden din"
+		},
+		"signin": {
+			"signInToAccount": "Logg inn på kontoen din",
+			"or": "ELLER",
+			"dontHaveAccount": "Har du ikke en konto?",
+			"getStarted": "Kom i gang!"
+		},
+		"signup": {
+			"signUpWithCredentials": "Opprett en brukerkonto",
+			"haveAnAccount": "Har du en konto?",
+			"login": "Logg inn!"
+		}
+	},
 	"networks": {
 		"loading": "Laster",
 		"title": "Nettverk",

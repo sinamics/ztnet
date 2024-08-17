@@ -11,8 +11,10 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import classNames from "classnames";
 import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
+import { useTranslations } from "use-intl";
 
 const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
+	const t = useTranslations();
 	const currentYear = new Date().getFullYear();
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
@@ -44,22 +46,24 @@ const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
 						<span className="text-sm text-red-500">{errorMessage}</span>
 					</div>
 				)}
-				<h3 className="text-xl font-semibold">Sign in to your account</h3>
+				<h3 className="text-xl font-semibold">{t("authPages.signin.signInToAccount")}</h3>
 				<div className="space-y-5">
 					{!oauthExclusiveLogin && <CredentialsForm />}
 
 					{oauthEnabled && (
 						<div>
-							{!oauthExclusiveLogin && <div className="divider">OR</div>}
+							{!oauthExclusiveLogin && (
+								<div className="divider">{t("authPages.signin.or")}</div>
+							)}
 							<OauthLogin />
 						</div>
 					)}
 
 					{options?.enableRegistration && !loadingRegistration ? (
 						<div className="pt-5">
-							<p className="mb-4">Don't have an account?</p>
+							<p className="mb-4">{t("authPages.signin.dontHaveAccount")}</p>
 							<Link href="/auth/register" className="underline">
-								Get Started!
+								{t("authPages.signin.getStarted")}
 							</Link>
 						</div>
 					) : null}
@@ -82,10 +86,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
 	const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 	const oauthEnabled = !!process.env.OAUTH_ID && !!process.env.OAUTH_SECRET;
-
 	const session = await getSession(context);
 	if (!session || !session.user) {
-		return { props: { oauthExclusiveLogin, oauthEnabled } };
+		return {
+			props: {
+				oauthExclusiveLogin,
+				oauthEnabled,
+				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			},
+		};
 	}
 
 	if (session.user) {
