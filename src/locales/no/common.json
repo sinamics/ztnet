@@ -144,22 +144,42 @@
 			"password": "Passord",
 			"passwordPlaceholder": "Skriv inn passordet ditt",
 			"forgotPassword": "Glemt passordet ditt?",
-			"verifyTOTP": "Bekreft TOTP",
+			"verify2FA": "Bekreft 2FA",
+			"enter2FAcode": "Skriv inn 2FA-koden",
 			"signIn": "Logg inn",
 			"signUp": "Opprett konto",
 			"invitationCode": "Invitasjonskode",
-			"invitationCodePlaceholder": "Skriv inn invitasjonskoden din"
+			"invitationCodePlaceholder": "Skriv inn invitasjonskoden din",
+			"sendMail": "Send e-post",
+			"mfaRecoveryCode": "Gjenopprettingskode",
+			"mfaRecoveryCodePlaceholder": "Skriv inn gjenopprettingskoden din"
 		},
 		"signin": {
 			"signInToAccount": "Logg inn på kontoen din",
 			"or": "ELLER",
 			"dontHaveAccount": "Har du ikke en konto?",
-			"getStarted": "Kom i gang!"
+			"getStarted": "Kom i gang!",
+			"havingIssues": "Har du problemer?"
 		},
 		"signup": {
 			"signUpWithCredentials": "Opprett en brukerkonto",
 			"haveAnAccount": "Har du en konto?",
 			"login": "Logg inn!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Glemt passord",
+			"forgotPasswordMessage": "Vi sender deg en tilbakestillingslenke hvis kontoen eksisterer",
+			"backToLogin": "Tilbake til innlogging"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Gjenoppretting av 2FA",
+			"mfaRecoveryMessage": "Vi vil sende deg instruksjoner om hvordan du gjenoppretter kontoen din",
+			"backToLogin": "Tilbake til innlogging"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Gjenoppretting av 2FA",
+			"mfaRecoveryResetMessage": "Vennligst skriv inn dine legitimasjonsbeskrivelser og gjenopprettingskode",
+			"backToLogin": "Tilbake til innlogging"
 		}
 	},
 	"networks": {

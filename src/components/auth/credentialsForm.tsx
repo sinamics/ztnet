@@ -125,7 +125,7 @@ const CredentialsForm: React.FC = () => {
 			<div className="pt-5">
 				<FormSubmitButtons
 					loading={loading.credentials}
-					title={showOTP ? t("authPages.form.verifyTOTP") : t("authPages.form.signIn")}
+					title={showOTP ? t("authPages.form.verify2FA") : t("authPages.form.signIn")}
 				/>
 			</div>
 		</form>

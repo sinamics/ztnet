@@ -87,7 +87,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 	const oauthEnabled = !!process.env.OAUTH_ID && !!process.env.OAUTH_SECRET;
 	const session = await getSession(context);
-	if (!session || !session.user) {
+
+	if (!session || !("user" in session) || !session.user) {
 		return {
 			props: {
 				oauthExclusiveLogin,
@@ -107,7 +108,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user },
+		props: { auth: null },
 	};
 };
 

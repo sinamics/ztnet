@@ -144,22 +144,42 @@
 			"password": "密码",
 			"passwordPlaceholder": "输入您的密码",
 			"forgotPassword": "忘记密码？",
-			"verifyTOTP": "验证 TOTP",
+			"verify2FA": "验证 2FA",
+			"enter2FAcode": "输入2FA代码",
 			"signIn": "登录",
 			"signUp": "注册",
 			"invitationCode": "邀请码",
-			"invitationCodePlaceholder": "输入您的邀请码"
+			"invitationCodePlaceholder": "输入您的邀请码",
+			"sendMail": "发送邮件",
+			"mfaRecoveryCode": "恢复代码",
+			"mfaRecoveryCodePlaceholder": "输入您的恢复代码"
 		},
 		"signin": {
 			"signInToAccount": "登录您的账户",
 			"or": "或",
 			"dontHaveAccount": "没有账户？",
-			"getStarted": "立即开始！"
+			"getStarted": "立即开始！",
+			"havingIssues": "遇到问题？"
 		},
 		"signup": {
 			"signUpWithCredentials": "创建账户",
 			"haveAnAccount": "有账户？",
 			"login": "登录！"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "忘记密码",
+			"forgotPasswordMessage": "如果账户存在，我们将向您发送重置链接",
+			"backToLogin": "返回登录"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "2FA恢复",
+			"mfaRecoveryMessage": "我们将向您发送恢复帐户的说明",
+			"backToLogin": "返回登录"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "2FA恢复",
+			"mfaRecoveryResetMessage": "请输入您的凭据和恢复代码",
+			"backToLogin": "返回登录"
 		}
 	},
 	"networks": {

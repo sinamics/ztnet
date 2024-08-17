@@ -1,6 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import Head from "next/head";
 import Link from "next/link";
 import React, { ReactElement } from "react";
@@ -9,6 +10,7 @@ import { LayoutPublic } from "~/components/layouts/layout";
 import { globalSiteTitle } from "~/utils/global";
 
 const ForgotPassword = () => {
+	const t = useTranslations();
 	const title = `${globalSiteTitle} - Forgot Password`;
 	return (
 		<div>
@@ -19,16 +21,16 @@ const ForgotPassword = () => {
 			</Head>
 
 			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
-				<h3 className="text-xl font-semibold">Forgot Password </h3>
+				<h3 className="text-xl font-semibold">
+					{t("authPages.forgot.forgotPasswordTitle")}
+				</h3>
 				<div className="mb-4">
-					<p className="text-gray-500">
-						We will send you a reset link if the account exist
-					</p>
+					<p className="text-gray-500">{t("authPages.forgot.forgotPasswordMessage")}</p>
 					<div className="space-y-5"></div>
 					<ForgotPasswordForm />
 					<div className="pt-5">
 						<Link href="/auth/login" className="underline">
-							Back to Login
+							{t("authPages.forgot.backToLogin")}
 						</Link>
 					</div>
 					<div className="pt-5 text-center text-xs text-gray-400">
@@ -48,8 +50,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
 	const session = await getSession(context);
-	if (!session || !("user" in session)) {
-		return { props: {} };
+	if (!session || !("user" in session) || !session.user) {
+		return {
+			props: {
+				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			},
+		};
 	}
 
 	if (session.user) {
@@ -62,7 +68,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user },
+		props: {
+			auth: null,
+		},
 	};
 };
 

@@ -8,8 +8,10 @@ import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { ErrorCode } from "~/utils/errorCode";
+import { useTranslations } from "next-intl";
 
 const MfaRecoveryReset = () => {
+	const t = useTranslations();
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ email: "", password: "", recoveryCode: "" });
@@ -95,19 +97,21 @@ const MfaRecoveryReset = () => {
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
 				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
 					<div className="mb-4">
-						<h3 className="text-2xl font-semibold">2FA Recovery</h3>
+						<h3 className="text-2xl font-semibold">
+							{t("authPages.mfaRecoveryReset.mfaRecoveryResetTitle")}
+						</h3>
 						<p className="text-gray-500">
-							Please enter your credentials and Recovery Code
+							{t("authPages.mfaRecoveryReset.mfaRecoveryResetMessage")}
 						</p>
 					</div>
 					<form className="space-y-5" onSubmit={handleSubmit}>
 						<FormInput
-							label="Email"
+							label={t("authPages.form.email")}
 							name="email"
 							type="email"
 							value={state.email}
 							onChange={handleChange}
-							placeholder="mail@example.com"
+							placeholder={t("authPages.form.emailPlaceholder")}
 							icon={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -121,12 +125,12 @@ const MfaRecoveryReset = () => {
 							}
 						/>
 						<FormInput
-							label="Password"
+							label={t("authPages.form.password")}
 							name="password"
 							type="password"
 							value={state.password}
 							onChange={handleChange}
-							placeholder="Enter your password"
+							placeholder={t("authPages.form.passwordPlaceholder")}
 							icon={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -143,12 +147,12 @@ const MfaRecoveryReset = () => {
 							}
 						/>
 						<FormInput
-							label="Recovery Code"
+							label={t("authPages.form.mfaRecoveryCode")}
 							name="recoveryCode"
 							type="text"
 							value={state.recoveryCode}
 							onChange={handleChange}
-							placeholder="Enter Code"
+							placeholder={t("authPages.form.mfaRecoveryCodePlaceholder")}
 							icon={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -165,7 +169,7 @@ const MfaRecoveryReset = () => {
 							}
 						/>
 						<div className="pt-5">
-							<FormSubmitButtons loading={isLoading} title="Submit" />
+							<FormSubmitButtons loading={isLoading} title={t("commonButtons.submit")} />
 						</div>
 					</form>
 					<div className="pt-5 text-center text-xs text-gray-400">
