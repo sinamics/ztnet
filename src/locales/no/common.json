@@ -147,6 +147,7 @@
 			"verify2FA": "Bekreft 2FA",
 			"enter2FAcode": "Skriv inn 2FA-koden",
 			"signIn": "Logg inn",
+			"signInWith": "Logg inn med {provider}",
 			"signUp": "Opprett konto",
 			"invitationCode": "Invitasjonskode",
 			"invitationCodePlaceholder": "Skriv inn invitasjonskoden din",
