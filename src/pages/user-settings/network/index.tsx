@@ -1,7 +1,7 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import { User, UserOptions } from "@prisma/client";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 

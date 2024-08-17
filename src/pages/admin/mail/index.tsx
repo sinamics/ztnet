@@ -6,7 +6,7 @@ import { type GlobalOptions } from "@prisma/client";
 import MailUserInviteTemplate from "~/components/adminPage/mail/mailUserInviteTemplate";
 import ForgotPasswordMailTemplate from "~/components/adminPage/mail/mailForgotPasswordTemplate";
 import NotificationTemplate from "~/components/adminPage/mail/mailNotificationTemplate";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import OrganizationInviteTemplate from "~/components/adminPage/mail/mailOrganizationInviteTemplate";
 import {
 	useTrpcApiErrorHandler,
