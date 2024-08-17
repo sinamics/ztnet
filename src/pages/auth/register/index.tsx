@@ -98,7 +98,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: { auth: session.user },
+		props: {
+			auth: session.user,
+			messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+		},
 	};
 };
 
