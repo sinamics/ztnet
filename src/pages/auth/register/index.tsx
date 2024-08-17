@@ -80,6 +80,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 		};
 	}
 
+	if (!session || !("user" in session) || !session.user) {
+		return {
+			props: {
+				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			},
+		};
+	}
+
 	if (session.user && !ztnetOrganizationInvite) {
 		return {
 			redirect: {
@@ -91,8 +99,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
 	return {
 		props: {
-			auth: session.user,
-			messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			auth: null,
 		},
 	};
 };
