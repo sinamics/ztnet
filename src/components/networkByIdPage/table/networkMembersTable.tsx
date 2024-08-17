@@ -206,7 +206,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 												.getVisibleCells()
 												.map((cell) => (
 													// Apply the cell props
-													<td key={cell.id} className="py-1 pl-4">
+													<td key={cell.id} className="py-1 pl-2">
 														{
 															// Render the cell contents
 															flexRender(cell.column.columnDef.cell, cell.getContext())
