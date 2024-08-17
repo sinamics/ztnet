@@ -135,6 +135,57 @@
 		"user-settings": "User Settings",
 		"logout": "Logout"
 	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN lets you connect your devices securely and privately across the internet, no matter where you are. Enjoy fast and reliable connections without the usual barriers, keeping your data safe and accessible."
+		},
+		"form": {
+			"name": "Name",
+			"namePlaceholder": "Enter your name",
+			"email": "Email",
+			"emailPlaceholder": "mail@example.com",
+			"password": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"forgotPassword": "Forgot your password?",
+			"verify2FA": "Verify 2FA",
+			"enter2FAcode": "Enter 2FA Code",
+			"signIn": "Sign in",
+			"signInWith": "Sign in with {provider}",
+			"signUp": "Sign up",
+			"invitationCode": "Invitation code",
+			"invitationCodePlaceholder": "Enter your invitation code",
+			"sendMail": "Send Mail",
+			"mfaRecoveryCode": "Recovery Code",
+			"mfaRecoveryCodePlaceholder": "Enter your recovery code"
+		},
+		"signin": {
+			"signInToAccount": "Sign in to your account",
+			"or": "OR",
+			"dontHaveAccount": "Don't have an account?",
+			"getStarted": "Get Started!",
+			"havingIssues": "Having issues?"
+		},
+		"signup": {
+			"signUpWithCredentials": "Create an account",
+			"haveAnAccount": "Have an account?",
+			"login": "Login!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Forgot Password",
+			"forgotPasswordMessage": "We will send you a reset link if the account exists",
+			"backToLogin": "Back to Login"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "2FA Recovery",
+			"mfaRecoveryMessage": "We will send you instructions on how to recover your account",
+			"backToLogin": "Back to Login"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "2FA Recovery",
+			"mfaRecoveryResetMessage": "Please enter your credentials and Recovery Code",
+			"backToLogin": "Back to Login"
+		}
+	},
 	"networks": {
 		"loading": "Loading",
 		"title": "Networks",

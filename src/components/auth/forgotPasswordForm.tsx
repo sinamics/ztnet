@@ -4,12 +4,14 @@ import { toast } from "react-hot-toast";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import FormInput from "./formInput";
 import FormSubmitButtons from "./formSubmitButton";
+import { useTranslations } from "next-intl";
 
 interface FormData {
 	email: string;
 }
 
 const ForgotPasswordForm: React.FC = () => {
+	const t = useTranslations();
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<FormData>({
 		email: "",
@@ -47,12 +49,12 @@ const ForgotPasswordForm: React.FC = () => {
 	return (
 		<form className="space-y-5" onSubmit={submitHandler}>
 			<FormInput
-				label="Email"
+				label={t("authPages.form.email")}
 				name="email"
 				type="text"
 				value={formData.email}
 				onChange={handleChange}
-				placeholder="mail@example.com"
+				placeholder={t("authPages.form.emailPlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +68,7 @@ const ForgotPasswordForm: React.FC = () => {
 				}
 			/>
 			<div className="pt-5">
-				<FormSubmitButtons loading={loading} title="Send Email" />
+				<FormSubmitButtons loading={loading} title={t("authPages.form.sendMail")} />
 			</div>
 		</form>
 	);

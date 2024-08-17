@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import FormInput from "./formInput";
 import FormSubmitButtons from "./formSubmitButton";
+import { useTranslations } from "next-intl";
 interface FormData {
 	email: string;
 	password: string;
@@ -14,6 +15,7 @@ interface FormData {
 }
 
 const RegisterForm: React.FC = () => {
+	const t = useTranslations();
 	const router = useRouter();
 	const { invite } = router.query as { invite?: string };
 
@@ -63,21 +65,21 @@ const RegisterForm: React.FC = () => {
 		<form className="space-y-5" onSubmit={submitHandler}>
 			{invite && (
 				<FormInput
-					label="Code"
+					label={t("authPages.form.invitationCode")}
 					name="ztnetInvitationCode"
 					type="text"
 					value={formData.ztnetInvitationCode}
 					onChange={handleChange}
-					placeholder="Invitation code"
+					placeholder={t("authPages.form.invitationCodePlaceholder")}
 				/>
 			)}
 			<FormInput
-				label="Name"
+				label={t("authPages.form.name")}
 				name="name"
 				type="text"
 				value={formData.name}
 				onChange={handleChange}
-				placeholder="First & Last Name"
+				placeholder={t("authPages.form.namePlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -90,12 +92,12 @@ const RegisterForm: React.FC = () => {
 				}
 			/>
 			<FormInput
-				label="Email"
+				label={t("authPages.form.email")}
 				name="email"
 				type="email"
 				value={formData.email}
 				onChange={handleChange}
-				placeholder="mail@example.com"
+				placeholder={t("authPages.form.emailPlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -109,12 +111,12 @@ const RegisterForm: React.FC = () => {
 				}
 			/>
 			<FormInput
-				label="Password"
+				label={t("authPages.form.password")}
 				name="password"
 				type="password"
 				value={formData.password}
 				onChange={handleChange}
-				placeholder="Enter your password"
+				placeholder={t("authPages.form.passwordPlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -131,7 +133,7 @@ const RegisterForm: React.FC = () => {
 				}
 			/>
 			<div className="pt-5">
-				<FormSubmitButtons loading={loading} title="Sign Up" />
+				<FormSubmitButtons loading={loading} title={t("authPages.form.signUp")} />
 			</div>
 		</form>
 	);
