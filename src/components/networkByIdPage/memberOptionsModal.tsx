@@ -14,6 +14,7 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import { RoutesEntity } from "~/types/local/network";
+import TimeAgo from "react-timeago";
 
 interface ModalContentProps {
 	nwid: string;
@@ -235,6 +236,22 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			</div>
 		);
 	};
+	const createdDate = new Date(memberById?.creationTime);
+	const formatTime = (value: string, unit: string) => {
+		// Map full unit names to their abbreviations
+		const unitAbbreviations: { [key: string]: string } = {
+			second: "sec ago",
+			minute: "min ago",
+			hour: "hours ago",
+			day: "days ago",
+			week: "weeks ago",
+			month: "months ago",
+			year: "years ago",
+		};
+		const abbreviation = unitAbbreviations[unit] || unit;
+
+		return `${value} ${abbreviation}`;
+	};
 
 	return (
 		<div>
@@ -244,6 +261,10 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 			) : null}
 			<div className={cn({ "opacity-30": updateMemberLoading })}>
+				<div className="text-xs flex items-center space-x-1 mb-2 text-gray-500">
+					<p>{t("networkById.memberOptionModal.header.created")}</p>
+					<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
+				</div>
 				<div className="grid grid-cols-4 items-start gap-4">
 					<div className="col-span-3">
 						<header>{t("networkById.memberOptionModal.ipAssignment.header")}</header>

@@ -307,6 +307,9 @@
 			}
 		},
 		"memberOptionModal": {
+			"header": {
+				"created": "Créé"
+			},
 			"loading": {
 				"text": "Chargement..."
 			},
