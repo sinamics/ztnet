@@ -144,22 +144,42 @@
 			"password": "Hasło",
 			"passwordPlaceholder": "Wpisz swoje hasło",
 			"forgotPassword": "Zapomniałeś hasła?",
-			"verifyTOTP": "Zweryfikuj TOTP",
+			"verify2FA": "Zweryfikuj 2FA",
+			"enter2FAcode": "Wpisz kod 2FA",
 			"signIn": "Zaloguj się",
 			"signUp": "Zarejestruj się",
 			"invitationCode": "Kod zaproszenia",
-			"invitationCodePlaceholder": "Wpisz swój kod zaproszenia"
+			"invitationCodePlaceholder": "Wpisz swój kod zaproszenia",
+			"sendMail": "Wyślij maila",
+			"mfaRecoveryCode": "Kod odzyskiwania",
+			"mfaRecoveryCodePlaceholder": "Wpisz swój kod odzyskiwania"
 		},
 		"signin": {
 			"signInToAccount": "Zaloguj się do swojego konta",
 			"or": "LUB",
 			"dontHaveAccount": "Nie masz konta?",
-			"getStarted": "Zacznij teraz!"
+			"getStarted": "Zacznij teraz!",
+			"havingIssues": "Masz problemy?"
 		},
 		"signup": {
 			"signUpWithCredentials": "Utwórz konto",
 			"haveAnAccount": "Masz konto?",
 			"login": "Zaloguj się!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Zapomniałeś hasła",
+			"forgotPasswordMessage": "Wyślemy Ci link do resetowania, jeśli konto istnieje",
+			"backToLogin": "Powrót do logowania"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Odzyskiwanie 2FA",
+			"mfaRecoveryMessage": "Wyślemy Ci instrukcje, jak odzyskać swoje konto",
+			"backToLogin": "Powrót do logowania"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Odzyskiwanie 2FA",
+			"mfaRecoveryResetMessage": "Wprowadź swoje dane uwierzytelniające i kod odzyskiwania",
+			"backToLogin": "Powrót do logowania"
 		}
 	},
 	"networks": {

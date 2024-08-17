@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { Organization, Role, User } from "@prisma/client";
 import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
+import { useTranslations } from "next-intl";
 
 interface FormData {
 	email: string;
@@ -33,6 +34,7 @@ interface Iprops {
 const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 	organizationInvite,
 }: Iprops) => {
+	const t = useTranslations();
 	const router = useRouter();
 
 	const [loading, setLoading] = useState(false);
@@ -135,13 +137,13 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 		<form className="space-y-5" onSubmit={submitHandler}>
 			{organizationInvite ? (
 				<FormInput
-					label="Inviation Token"
+					label={t("authPages.form.invitationCode")}
 					name="ztnetToken"
 					type="text"
 					disabled
 					value={formData.ztnetOrganizationToken}
 					onChange={handleChange}
-					placeholder="token"
+					placeholder={t("authPages.form.invitationCodePlaceholder")}
 					icon={
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -161,12 +163,12 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				/>
 			) : null}
 			<FormInput
-				label="Name"
+				label={t("authPages.form.name")}
 				name="name"
 				type="text"
 				value={formData.name}
 				onChange={handleChange}
-				placeholder="First & Last Name"
+				placeholder={t("authPages.form.namePlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -179,12 +181,12 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				}
 			/>
 			<FormInput
-				label="Email"
+				label={t("authPages.form.email")}
 				name="email"
 				type="email"
 				value={formData.email}
 				onChange={handleChange}
-				placeholder="mail@example.com"
+				placeholder={t("authPages.form.emailPlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -198,12 +200,12 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				}
 			/>
 			<FormInput
-				label="Password"
+				label={t("authPages.form.password")}
 				name="password"
 				type="password"
 				value={formData.password}
 				onChange={handleChange}
-				placeholder="Enter your password"
+				placeholder={t("authPages.form.passwordPlaceholder")}
 				icon={
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -220,7 +222,7 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				}
 			/>
 			<div className="pt-5">
-				<FormSubmitButtons loading={loading} title="Sign Up" />
+				<FormSubmitButtons loading={loading} title={t("authPages.form.signUp")} />
 			</div>
 		</form>
 	);

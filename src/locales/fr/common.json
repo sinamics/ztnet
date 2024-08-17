@@ -144,22 +144,42 @@
 			"password": "Mot de passe",
 			"passwordPlaceholder": "Entrez votre mot de passe",
 			"forgotPassword": "Mot de passe oublié ?",
-			"verifyTOTP": "Vérifier TOTP",
+			"verify2FA": "Vérifier 2FA",
+			"enter2FAcode": "Entrez le code 2FA",
 			"signIn": "Se connecter",
 			"signUp": "S'inscrire",
 			"invitationCode": "Code d'invitation",
-			"invitationCodePlaceholder": "Entrez votre code d'invitation"
+			"invitationCodePlaceholder": "Entrez votre code d'invitation",
+			"sendMail": "Envoyer le mail",
+			"mfaRecoveryCode": "Code de récupération",
+			"mfaRecoveryCodePlaceholder": "Entrez votre code de récupération"
 		},
 		"signin": {
 			"signInToAccount": "Connectez-vous à votre compte",
 			"or": "OU",
 			"dontHaveAccount": "Vous n'avez pas de compte?",
-			"getStarted": "Commencez!"
+			"getStarted": "Commencez!",
+			"havingIssues": "Vous avez des problèmes?"
 		},
 		"signup": {
 			"signUpWithCredentials": "Créer un compte",
 			"haveAnAccount": "Vous avez un compte?",
 			"login": "Connectez-vous!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Mot de passe oublié",
+			"forgotPasswordMessage": "Nous vous enverrons un lien de réinitialisation si le compte existe",
+			"backToLogin": "Retour à la connexion"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Récupération 2FA",
+			"mfaRecoveryMessage": "Nous vous enverrons des instructions pour récupérer votre compte",
+			"backToLogin": "Retour à la connexion"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Récupération 2FA",
+			"mfaRecoveryResetMessage": "Veuillez entrer vos identifiants et le code de récupération",
+			"backToLogin": "Retour à la connexion"
 		}
 	},
 	"networks": {

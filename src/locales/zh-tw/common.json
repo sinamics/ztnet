@@ -144,22 +144,42 @@
 			"password": "密碼",
 			"passwordPlaceholder": "輸入您的密碼",
 			"forgotPassword": "忘記密碼？",
-			"verifyTOTP": "驗證 TOTP",
+			"verify2FA": "驗證 2FA",
+			"enter2FAcode": "輸入2FA代碼",
 			"signIn": "登入",
 			"signUp": "註冊",
 			"invitationCode": "邀請碼",
-			"invitationCodePlaceholder": "輸入您的邀請碼"
+			"invitationCodePlaceholder": "輸入您的邀請碼",
+			"sendMail": "發送郵件",
+			"mfaRecoveryCode": "恢復代碼",
+			"mfaRecoveryCodePlaceholder": "輸入您的恢復代碼"
 		},
 		"signin": {
 			"signInToAccount": "登入您的帳戶",
 			"or": "或",
 			"dontHaveAccount": "沒有帳戶？",
-			"getStarted": "立即開始！"
+			"getStarted": "立即開始！",
+			"havingIssues": "有問題嗎？"
 		},
 		"signup": {
 			"signUpWithCredentials": "創建帳戶",
 			"haveAnAccount": "有帳戶？",
 			"login": "登入！"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "忘記密碼",
+			"forgotPasswordMessage": "如果帳戶存在，我們會向您發送重置鏈接",
+			"backToLogin": "返回登錄"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "2FA恢復",
+			"mfaRecoveryMessage": "我們將向您發送有關如何恢復您的帳戶的說明",
+			"backToLogin": "返回登錄"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "2FA恢復",
+			"mfaRecoveryResetMessage": "請輸入您的憑證和恢復代碼",
+			"backToLogin": "返回登錄"
 		}
 	},
 	"networks": {
