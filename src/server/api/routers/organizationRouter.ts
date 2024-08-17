@@ -948,7 +948,11 @@ export const organizationRouter = createTRPCRouter({
 					await ctx.prisma.invitation.deleteMany({
 						where: {
 							email: tokenPayload.email,
-							organizations: tokenPayload.organizationId,
+							organizations: {
+								some: {
+									organizationId: tokenPayload.organizationId,
+								},
+							},
 						},
 					});
 
@@ -966,8 +970,8 @@ export const organizationRouter = createTRPCRouter({
 						organizationId: tokenPayload.organizationId,
 					};
 				}
-			} catch (_e) {
-				throw new Error("An error occurred while processing the invitation link.");
+			} catch (error) {
+				throw new Error(error.message);
 			}
 			// if the user does not exist, return empty object
 			return {};
