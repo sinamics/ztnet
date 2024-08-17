@@ -307,6 +307,9 @@
 			}
 		},
 		"memberOptionModal": {
+			"header": {
+				"created": "Utworzono"
+			},
 			"loading": {
 				"text": "Ładowanie..."
 			},
