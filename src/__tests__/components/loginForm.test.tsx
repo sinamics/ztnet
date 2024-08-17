@@ -1,10 +1,12 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { signIn } from "next-auth/react";
+import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import CredentialsForm from "~/components/auth/credentialsForm";
 import { ErrorCode } from "~/utils/errorCode";
+import enTranslation from "~/locales/en/common.json";
 
 jest.mock("next-auth/react", () => ({
 	signIn: jest.fn(),
@@ -20,6 +22,14 @@ jest.mock("react-hot-toast", () => ({
 	},
 }));
 
+const renderWithIntl = (ui, { locale = "en", messages = enTranslation } = {}) => {
+	return render(
+		<NextIntlClientProvider locale={locale} messages={messages}>
+			{ui}
+		</NextIntlClientProvider>,
+	);
+};
+
 describe("CredentialsForm", () => {
 	beforeEach(() => {
 		(signIn as jest.Mock).mockReset();
@@ -28,7 +38,7 @@ describe("CredentialsForm", () => {
 	});
 
 	it("updates email and password inputs on change", () => {
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -41,7 +51,7 @@ describe("CredentialsForm", () => {
 	});
 
 	it("submits the form with correct email and password", async () => {
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		(signIn as jest.Mock).mockResolvedValue({ ok: true });
 
@@ -62,7 +72,7 @@ describe("CredentialsForm", () => {
 	});
 
 	it("shows TOTP input when second factor is required", async () => {
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		(signIn as jest.Mock).mockResolvedValue({ error: ErrorCode.SecondFactorRequired });
 
@@ -80,7 +90,7 @@ describe("CredentialsForm", () => {
 	});
 
 	it("handles error response from signIn", async () => {
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		const errorMessage = "Invalid credentials";
 		(signIn as jest.Mock).mockResolvedValue({ ok: false, error: errorMessage });
@@ -102,7 +112,7 @@ describe("CredentialsForm", () => {
 		const mockPush = jest.fn();
 		(useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		(signIn as jest.Mock).mockResolvedValue({ ok: true });
 
@@ -120,7 +130,7 @@ describe("CredentialsForm", () => {
 	});
 
 	it("handles network errors", async () => {
-		render(<CredentialsForm />);
+		renderWithIntl(<CredentialsForm />);
 
 		const errorMessage = "Network error";
 		(signIn as jest.Mock).mockRejectedValue(new Error(errorMessage));
