@@ -17,7 +17,25 @@ export const config = {
 const PUBLIC_FILE = /\.(.*)$/;
 
 export async function middleware(req: NextRequest) {
-	const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+	// Dynamically determine the base URL from the X-Forwarded-Host and X-Forwarded-Proto headers
+	const forwardedHost = req.headers.get("x-forwarded-host");
+	const forwardedProto = req.headers.get("x-forwarded-proto");
+
+	let protocol: string;
+	let host: string;
+
+	if (forwardedHost && forwardedProto) {
+		// Use the forwarded headers if they exist
+		host = forwardedHost;
+		protocol = forwardedProto;
+	} else {
+		// Fallback to parsing the req.url
+		const url = new URL(req.url);
+		host = url.host;
+		protocol = url.protocol.slice(0, -1); // Remove the trailing colon from protocol
+	}
+
+	const baseUrl = `${protocol}://${host}`;
 
 	if (
 		req.nextUrl.pathname.startsWith("/_next") ||
