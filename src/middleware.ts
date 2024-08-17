@@ -8,7 +8,8 @@ export const config = {
 		"/organization/:path*",
 		"/network/:path*",
 		"/central/:path*",
-		"/user-settings/:path*", // user are redirected to dashboard
+		"/user-settings/:path*",
+		"/auth/:path*",
 		"/admin/:path*",
 	],
 };

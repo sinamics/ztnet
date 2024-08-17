@@ -135,6 +135,33 @@
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
 	},
+	"authPages": {
+		"form": {
+			"name": "Nombre",
+			"namePlaceholder": "Introduce tu nombre",
+			"email": "Correo electrónico",
+			"emailPlaceholder": "correo@ejemplo.com",
+			"password": "Contraseña",
+			"passwordPlaceholder": "Introduce tu contraseña",
+			"forgotPassword": "¿Olvidaste tu contraseña?",
+			"verifyTOTP": "Verificar TOTP",
+			"signIn": "Iniciar sesión",
+			"signUp": "Regístrate",
+			"invitationCode": "Código de invitación",
+			"invitationCodePlaceholder": "Introduce tu código de invitación"
+		},
+		"signin": {
+			"signInToAccount": "Inicia sesión en tu cuenta",
+			"or": "O",
+			"dontHaveAccount": "¿No tienes una cuenta?",
+			"getStarted": "¡Comienza ahora!"
+		},
+		"signup": {
+			"signUpWithCredentials": "Crea una cuenta",
+			"haveAnAccount": "¿Tienes una cuenta?",
+			"login": "¡Inicia sesión!"
+		}
+	},
 	"networks": {
 		"loading": "Cargando",
 		"title": "Redes",

@@ -135,6 +135,33 @@
 		"user-settings": "Ustawienia konta",
 		"logout": "Wyloguj"
 	},
+	"authPages": {
+		"form": {
+			"name": "Imię",
+			"namePlaceholder": "Wpisz swoje imię",
+			"email": "Email",
+			"emailPlaceholder": "mail@przyklad.com",
+			"password": "Hasło",
+			"passwordPlaceholder": "Wpisz swoje hasło",
+			"forgotPassword": "Zapomniałeś hasła?",
+			"verifyTOTP": "Zweryfikuj TOTP",
+			"signIn": "Zaloguj się",
+			"signUp": "Zarejestruj się",
+			"invitationCode": "Kod zaproszenia",
+			"invitationCodePlaceholder": "Wpisz swój kod zaproszenia"
+		},
+		"signin": {
+			"signInToAccount": "Zaloguj się do swojego konta",
+			"or": "LUB",
+			"dontHaveAccount": "Nie masz konta?",
+			"getStarted": "Zacznij teraz!"
+		},
+		"signup": {
+			"signUpWithCredentials": "Utwórz konto",
+			"haveAnAccount": "Masz konto?",
+			"login": "Zaloguj się!"
+		}
+	},
 	"networks": {
 		"loading": "Ładowanie",
 		"title": "Sieci",

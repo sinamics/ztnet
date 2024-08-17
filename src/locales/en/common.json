@@ -135,6 +135,33 @@
 		"user-settings": "User Settings",
 		"logout": "Logout"
 	},
+	"authPages": {
+		"form": {
+			"name": "Name",
+			"namePlaceholder": "Enter your name",
+			"email": "Email",
+			"emailPlaceholder": "mail@example.com",
+			"password": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"forgotPassword": "Forgot your password?",
+			"verifyTOTP": "Verify TOTP",
+			"signIn": "Sign in",
+			"signUp": "Sign up",
+			"invitationCode": "Invitation code",
+			"invitationCodePlaceholder": "Enter your invitation code"
+		},
+		"signin": {
+			"signInToAccount": "Sign in to your account",
+			"or": "OR",
+			"dontHaveAccount": "Don't have an account?",
+			"getStarted": "Get Started!"
+		},
+		"signup": {
+			"signUpWithCredentials": "Create an account",
+			"haveAnAccount": "Have an account?",
+			"login": "Login!"
+		}
+	},
 	"networks": {
 		"loading": "Loading",
 		"title": "Networks",
