@@ -135,6 +135,57 @@
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
 	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN vous permet de connecter vos appareils de manière sécurisée et privée sur Internet, où que vous soyez. Profitez de connexions rapides et fiables sans les barrières habituelles, tout en gardant vos données en sécurité et accessibles."
+		},
+		"form": {
+			"name": "Nom",
+			"namePlaceholder": "Entrez votre nom",
+			"email": "E-mail",
+			"emailPlaceholder": "mail@exemple.com",
+			"password": "Mot de passe",
+			"passwordPlaceholder": "Entrez votre mot de passe",
+			"forgotPassword": "Mot de passe oublié ?",
+			"verify2FA": "Vérifier 2FA",
+			"enter2FAcode": "Entrez le code 2FA",
+			"signIn": "Se connecter",
+			"signInWith": "Se connecter avec {provider}",
+			"signUp": "S'inscrire",
+			"invitationCode": "Code d'invitation",
+			"invitationCodePlaceholder": "Entrez votre code d'invitation",
+			"sendMail": "Envoyer le mail",
+			"mfaRecoveryCode": "Code de récupération",
+			"mfaRecoveryCodePlaceholder": "Entrez votre code de récupération"
+		},
+		"signin": {
+			"signInToAccount": "Connectez-vous à votre compte",
+			"or": "OU",
+			"dontHaveAccount": "Vous n'avez pas de compte?",
+			"getStarted": "Commencez!",
+			"havingIssues": "Vous avez des problèmes?"
+		},
+		"signup": {
+			"signUpWithCredentials": "Créer un compte",
+			"haveAnAccount": "Vous avez un compte?",
+			"login": "Connectez-vous!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Mot de passe oublié",
+			"forgotPasswordMessage": "Nous vous enverrons un lien de réinitialisation si le compte existe",
+			"backToLogin": "Retour à la connexion"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Récupération 2FA",
+			"mfaRecoveryMessage": "Nous vous enverrons des instructions pour récupérer votre compte",
+			"backToLogin": "Retour à la connexion"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Récupération 2FA",
+			"mfaRecoveryResetMessage": "Veuillez entrer vos identifiants et le code de récupération",
+			"backToLogin": "Retour à la connexion"
+		}
+	},
 	"networks": {
 		"loading": "Chargement",
 		"title": "Réseaux",

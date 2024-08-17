@@ -135,6 +135,57 @@
 		"user-settings": "Brukerinnstillinger",
 		"logout": "Logg ut"
 	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN lar deg koble til enhetene dine sikkert og privat over internett, uansett hvor du er. Nyt raske og pålitelige tilkoblinger uten de vanlige barrierene, samtidig som dine data forblir trygge og tilgjengelige."
+		},
+		"form": {
+			"name": "Navn",
+			"namePlaceholder": "Skriv inn navnet ditt",
+			"email": "E-post",
+			"emailPlaceholder": "mail@eksempel.com",
+			"password": "Passord",
+			"passwordPlaceholder": "Skriv inn passordet ditt",
+			"forgotPassword": "Glemt passordet ditt?",
+			"verify2FA": "Bekreft 2FA",
+			"enter2FAcode": "Skriv inn 2FA-koden",
+			"signIn": "Logg inn",
+			"signInWith": "Logg inn med {provider}",
+			"signUp": "Opprett konto",
+			"invitationCode": "Invitasjonskode",
+			"invitationCodePlaceholder": "Skriv inn invitasjonskoden din",
+			"sendMail": "Send e-post",
+			"mfaRecoveryCode": "Gjenopprettingskode",
+			"mfaRecoveryCodePlaceholder": "Skriv inn gjenopprettingskoden din"
+		},
+		"signin": {
+			"signInToAccount": "Logg inn på kontoen din",
+			"or": "ELLER",
+			"dontHaveAccount": "Har du ikke en konto?",
+			"getStarted": "Kom i gang!",
+			"havingIssues": "Har du problemer?"
+		},
+		"signup": {
+			"signUpWithCredentials": "Opprett en brukerkonto",
+			"haveAnAccount": "Har du en konto?",
+			"login": "Logg inn!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Glemt passord",
+			"forgotPasswordMessage": "Vi sender deg en tilbakestillingslenke hvis kontoen eksisterer",
+			"backToLogin": "Tilbake til innlogging"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Gjenoppretting av 2FA",
+			"mfaRecoveryMessage": "Vi vil sende deg instruksjoner om hvordan du gjenoppretter kontoen din",
+			"backToLogin": "Tilbake til innlogging"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Gjenoppretting av 2FA",
+			"mfaRecoveryResetMessage": "Vennligst skriv inn dine legitimasjonsbeskrivelser og gjenopprettingskode",
+			"backToLogin": "Tilbake til innlogging"
+		}
+	},
 	"networks": {
 		"loading": "Laster",
 		"title": "Nettverk",

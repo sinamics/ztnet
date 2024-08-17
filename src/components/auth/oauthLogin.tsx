@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import cn from "classnames";
+import { useTranslations } from "next-intl";
 
 interface OAuthProvider {
 	id: string;
@@ -13,6 +14,7 @@ interface OAuthProvider {
 }
 
 const OAuthLogin: React.FC = () => {
+	const t = useTranslations();
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [providers, setProviders] = useState<Record<string, OAuthProvider>>({});
@@ -70,7 +72,9 @@ const OAuthLogin: React.FC = () => {
 					disabled={loading}
 				>
 					{loading ? <span className="loading loading-spinner"></span> : null}
-					Sign in with {provider.name}
+					{t("authPages.form.signInWith", {
+						provider: provider.name,
+					})}
 				</button>
 			))}
 		</div>

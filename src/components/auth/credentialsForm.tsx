@@ -7,6 +7,7 @@ import Link from "next/link";
 import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
+import { useTranslations } from "next-intl";
 
 interface FormData {
 	email: string;
@@ -16,7 +17,7 @@ interface FormData {
 
 const CredentialsForm: React.FC = () => {
 	const router = useRouter();
-
+	const t = useTranslations();
 	const [totpCode, setTotpCode] = useState("");
 	const [showOTP, setShowOTP] = useState<boolean>(false);
 	const [loading, setLoading] = useState({ credentials: false, oauth: false });
@@ -68,12 +69,12 @@ const CredentialsForm: React.FC = () => {
 			{!showOTP && (
 				<>
 					<FormInput
-						label="Email"
+						label={t("authPages.form.email")}
 						name="email"
 						type="email"
 						value={formData.email}
 						onChange={handleChange}
-						placeholder="mail@example.com"
+						placeholder={t("authPages.form.emailPlaceholder")}
 						icon={
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -87,12 +88,12 @@ const CredentialsForm: React.FC = () => {
 						}
 					/>
 					<FormInput
-						label="Password"
+						label={t("authPages.form.password")}
 						name="password"
 						type="password"
 						value={formData.password}
 						onChange={handleChange}
-						placeholder="Enter your password"
+						placeholder={t("authPages.form.passwordPlaceholder")}
 						icon={
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -114,7 +115,7 @@ const CredentialsForm: React.FC = () => {
 								href="/auth/forgotPassword"
 								className="cursor-pointer text-blue-500  hover:text-blue-700"
 							>
-								Forgot your password?
+								{t("authPages.form.forgotPassword")}
 							</Link>
 						</div>
 					</div>
@@ -124,7 +125,7 @@ const CredentialsForm: React.FC = () => {
 			<div className="pt-5">
 				<FormSubmitButtons
 					loading={loading.credentials}
-					title={showOTP ? "Verify TOTP" : "Sign in"}
+					title={showOTP ? t("authPages.form.verify2FA") : t("authPages.form.signIn")}
 				/>
 			</div>
 		</form>

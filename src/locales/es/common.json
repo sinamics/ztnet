@@ -135,6 +135,57 @@
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
 	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN te permite conectar tus dispositivos de manera segura y privada a través de internet, sin importar dónde estés. Disfruta de conexiones rápidas y fiables sin las barreras habituales, manteniendo tus datos seguros y accesibles."
+		},
+		"form": {
+			"name": "Nombre",
+			"namePlaceholder": "Introduce tu nombre",
+			"email": "Correo electrónico",
+			"emailPlaceholder": "correo@ejemplo.com",
+			"password": "Contraseña",
+			"passwordPlaceholder": "Introduce tu contraseña",
+			"forgotPassword": "¿Olvidaste tu contraseña?",
+			"verify2FA": "Verificar 2FA",
+			"enter2FAcode": "Introduce el código 2FA",
+			"signIn": "Iniciar sesión",
+			"signInWith": "Inicia sesión con {provider}",
+			"signUp": "Regístrate",
+			"invitationCode": "Código de invitación",
+			"invitationCodePlaceholder": "Introduce tu código de invitación",
+			"sendMail": "Enviar correo",
+			"mfaRecoveryCode": "Código de recuperación",
+			"mfaRecoveryCodePlaceholder": "Introduce tu código de recuperación"
+		},
+		"signin": {
+			"signInToAccount": "Inicia sesión en tu cuenta",
+			"or": "O",
+			"dontHaveAccount": "¿No tienes una cuenta?",
+			"getStarted": "¡Comienza ahora!",
+			"havingIssues": "¿Tienes problemas?"
+		},
+		"signup": {
+			"signUpWithCredentials": "Crea una cuenta",
+			"haveAnAccount": "¿Tienes una cuenta?",
+			"login": "¡Inicia sesión!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "¿Olvidaste tu contraseña?",
+			"forgotPasswordMessage": "Te enviaremos un enlace de restablecimiento si la cuenta existe",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Recuperación de 2FA",
+			"mfaRecoveryMessage": "Te enviaremos instrucciones sobre cómo recuperar tu cuenta",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Recuperación de 2FA",
+			"mfaRecoveryResetMessage": "Por favor, introduce tus credenciales y el código de recuperación",
+			"backToLogin": "Volver al inicio de sesión"
+		}
+	},
 	"networks": {
 		"loading": "Cargando",
 		"title": "Redes",
