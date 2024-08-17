@@ -136,6 +136,9 @@
 		"logout": "Wyloguj"
 	},
 	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN umożliwia bezpieczne i prywatne połączenie urządzeń przez internet, bez względu na to, gdzie się znajdujesz. Ciesz się szybkimi i niezawodnymi połączeniami bez zwykłych barier, zachowując bezpieczeństwo i dostępność danych."
+		},
 		"form": {
 			"name": "Imię",
 			"namePlaceholder": "Wpisz swoje imię",

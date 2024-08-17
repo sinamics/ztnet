@@ -1,8 +1,10 @@
 import { api } from "~/utils/api";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export const WelcomeMessage = () => {
+	const t = useTranslations();
 	const { data: options, isLoading } = api.public.getWelcomeMessage.useQuery();
 
 	return (
@@ -39,12 +41,7 @@ export const WelcomeMessage = () => {
 						</div>
 						<p className="pr-3">
 							{options?.welcomeMessageBody || (
-								<span>
-									ZeroTier VPN is your key to boundless connectivity and ultimate privacy.
-									Experience a secure and borderless digital world, free from limitations.
-									Empower yourself with unmatched performance, while safeguarding your
-									data.
-								</span>
+								<span>{t("authPages.welcomeMessage.slogan")}</span>
 							)}
 						</p>
 					</div>
