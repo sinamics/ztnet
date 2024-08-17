@@ -136,6 +136,9 @@
 		"logout": "登出"
 	},
 	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN 让您无论身在何处，都能安全私密地连接设备。享受快速可靠的连接，无需面对常见障碍，同时确保您的数据安全和可访问。"
+		},
 		"form": {
 			"name": "姓名",
 			"namePlaceholder": "输入您的姓名",
