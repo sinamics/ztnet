@@ -147,6 +147,7 @@
 			"verify2FA": "Verify 2FA",
 			"enter2FAcode": "Enter 2FA Code",
 			"signIn": "Sign in",
+			"signInWith": "Sign in with {provider}",
 			"signUp": "Sign up",
 			"invitationCode": "Invitation code",
 			"invitationCodePlaceholder": "Enter your invitation code",

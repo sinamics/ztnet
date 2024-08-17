@@ -147,6 +147,7 @@
 			"verify2FA": "Zweryfikuj 2FA",
 			"enter2FAcode": "Wpisz kod 2FA",
 			"signIn": "Zaloguj się",
+			"signInWith": "Zaloguj się za pomocą {provider}",
 			"signUp": "Zarejestruj się",
 			"invitationCode": "Kod zaproszenia",
 			"invitationCodePlaceholder": "Wpisz swój kod zaproszenia",

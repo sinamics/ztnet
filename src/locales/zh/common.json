@@ -147,6 +147,7 @@
 			"verify2FA": "验证 2FA",
 			"enter2FAcode": "输入2FA代码",
 			"signIn": "登录",
+			"signInWith": "使用 {provider} 登录",
 			"signUp": "注册",
 			"invitationCode": "邀请码",
 			"invitationCodePlaceholder": "输入您的邀请码",
