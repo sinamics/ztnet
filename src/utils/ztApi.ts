@@ -659,3 +659,22 @@ export const peer = async (ctx: UserContext, userZtAddress: string) => {
 		return [];
 	}
 };
+
+// Get controller metrics
+export const get_controller_metrics = async ({ ctx }: Ictx) => {
+	// get headers based on local api
+	const { headers, localControllerUrl } = await getOptions(ctx, false);
+
+	const addr = `${localControllerUrl}/metrics`;
+
+	try {
+		const response = await axios.get(addr, {
+			headers,
+			responseType: "text",
+		});
+		return response.data;
+	} catch (error) {
+		const message = "An error occurred while getting controller metrics";
+		throw new APIError(message, error as AxiosError);
+	}
+};
