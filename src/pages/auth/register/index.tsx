@@ -98,9 +98,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	}
 
 	return {
-		props: {
-			auth: null,
-		},
+		props: { auth: session.user },
 	};
 };
 
