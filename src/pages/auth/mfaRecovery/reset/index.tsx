@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
+import { Session } from "next-auth";
 import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
@@ -9,6 +10,8 @@ import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { ErrorCode } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 
 const MfaRecoveryReset = () => {
 	const t = useTranslations();
@@ -179,6 +182,35 @@ const MfaRecoveryReset = () => {
 			</div>
 		</div>
 	);
+};
+
+interface Props {
+	auth?: Session["user"];
+}
+export const getServerSideProps: GetServerSideProps<Props> = async (
+	context: GetServerSidePropsContext,
+) => {
+	const session = await getSession(context);
+	if (!session || !("user" in session) || !session.user) {
+		return {
+			props: {
+				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			},
+		};
+	}
+
+	if (session.user) {
+		return {
+			redirect: {
+				destination: "/network",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: { auth: session.user },
+	};
 };
 
 export default MfaRecoveryReset;
