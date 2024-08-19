@@ -27,12 +27,22 @@ const config = {
 	 * @see https://github.com/vercel/next.js/issues/41980
 	 */
 	i18n: {
-		defaultLocale: "default",
-		locales: ["default", "en", "fr", "no", "pl", "zh-tw", "zh", "es"],
+		defaultLocale: "en",
+		// localeDetection: false,
+		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es"],
 	},
 	trailingSlash: true,
 	eslint: {
 		ignoreDuringBuilds: true,
+	},
+	async redirects() {
+		return [
+			{
+				source: "/",
+				destination: "/auth/login",
+				permanent: true,
+			},
+		];
 	},
 };
 export default config;
