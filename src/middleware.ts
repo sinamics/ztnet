@@ -25,6 +25,9 @@ export async function middleware(req: NextRequest) {
 		return;
 	}
 
+	const baseUrl =
+		process.env.HOSTNAME === "127.0.0.1" ? process.env.NEXTAUTH_URL : req.url;
+
 	// Handle automatic locale detection
 	if (req.nextUrl.locale === "default") {
 		const fallbackLocale = "en";
@@ -32,6 +35,7 @@ export async function middleware(req: NextRequest) {
 		let preferredLocale = fallbackLocale;
 
 		if (acceptLanguageHeader) {
+			// Parse the Accept-Language header and sort by quality score
 			const locales = acceptLanguageHeader
 				.split(",")
 				.map((lang) => {
@@ -41,22 +45,22 @@ export async function middleware(req: NextRequest) {
 						quality: qValue ? parseFloat(qValue) : 1,
 					};
 				})
-				.sort((a, b) => b.quality - a.quality);
+				.sort((a, b) => b.quality - a.quality); // Sort based on quality values
+			// Select the first supported locale with the highest quality score
 			const matchedLocale = locales.find((l) => supportedLocales.includes(l.locale));
 			if (matchedLocale) {
 				preferredLocale = matchedLocale.locale;
 			}
 		}
 
-		// Use the host from the request headers
-		const hostname = req.headers.get("host") || "";
-
+		// Redirect to the preferred locale if it's different from the current one
 		if (preferredLocale !== req.nextUrl.locale) {
-			const newUrl = new URL(
-				`/${preferredLocale}${req.nextUrl.pathname}${req.nextUrl.search}`,
-				`${req.nextUrl.protocol}//${hostname}`,
+			return NextResponse.redirect(
+				new URL(
+					`/${preferredLocale}${req.nextUrl.pathname}${req.nextUrl.search}`,
+					baseUrl,
+				),
 			);
-			return NextResponse.redirect(newUrl);
 		}
 	}
 }
