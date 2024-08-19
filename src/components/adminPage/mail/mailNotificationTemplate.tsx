@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import cn from "classnames";
-import { useTranslations } from "use-intl";
+import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
