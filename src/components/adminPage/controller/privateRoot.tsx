@@ -167,16 +167,26 @@ const PrivateRoot = () => {
 										<p>
 											<strong>Identity:</strong> {node.identity.substring(0, 50)}
 										</p>
+										<p>
+											<strong>WorldType:</strong> {node.isMoon ? "Moon" : "Planet"}
+										</p>
 									</div>
 								))}
 							</div>
 							<div>
-								<p className=" text-sm">
-									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
+								<span className="text-sm flex gap-1">
+									{/* {t("controller.generatePlanet.downloadPlanetInfo")} */}
+									<p>Planet file is available for download at the following URL:</p>
 									<Link href="/api/planet" className="link text-blue-500">
 										{t("controller.generatePlanet.downloadPlanetUrl")}
 									</Link>
-								</p>
+								</span>
+								<span className="text-sm flex gap-1">
+									<p>Moon file is available for download at the following URL:</p>
+									<Link href="/api/moon" className="link text-blue-500">
+										api/moon
+									</Link>
+								</span>
 							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">
