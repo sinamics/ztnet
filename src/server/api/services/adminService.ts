@@ -16,9 +16,7 @@ export async function createMoon(nodes: RootNode[], moonPath: string) {
 	const publicIdentityPath = `${ZT_FOLDER}/identity.public`;
 
 	//binary path
-	const ZT_IDTOOL = isRunningInDocker()
-		? "/usr/local/bin/zerotier-idtool"
-		: "zerotier-idtool";
+	const ZT_IDTOOL = "zerotier-idtool";
 
 	// Generate moon identity if it doesn't exist
 	if (!fs.existsSync(identityPath) || !fs.existsSync(publicIdentityPath)) {
