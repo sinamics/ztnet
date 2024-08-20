@@ -147,6 +147,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 												key={header.id}
 												colSpan={header.colSpan}
 												className="bg-base-300/50 p-2"
+												align={header.column.columnDef.meta?.style?.textAlign}
 											>
 												{header.isPlaceholder ? null : (
 													<div

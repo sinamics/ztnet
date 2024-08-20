@@ -4,13 +4,18 @@ import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
-import { type ColumnDef, createColumnHelper, Row } from "@tanstack/react-table";
+import { type ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import cn from "classnames";
+import {
+	sortingIpAddress,
+	sortingMemberHex,
+	sortingPhysicalIpAddress,
+} from "~/utils/sorting";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -25,93 +30,6 @@ interface IProp {
 	central: boolean;
 	organizationId?: string;
 }
-
-const sortingMemberHex = (
-	rowA: Row<MemberEntity>,
-	rowB: Row<MemberEntity>,
-	columnId: string,
-): number => {
-	const a = rowA.original[columnId] as string;
-	const b = rowB.original[columnId] as string;
-
-	const numA = a ? BigInt(`0x${a}`) : a;
-	const numB = b ? BigInt(`0x${b}`) : b;
-
-	if (numA > numB) return 1;
-	if (numA < numB) return -1;
-	return 0;
-};
-const hexToBigInt = (hex: string) => BigInt(`0x${hex}`);
-const sortIP = (ip: string) => {
-	if (!ip) return BigInt(0);
-
-	if (ip.includes(":")) {
-		const fullAddress = ip
-			.split(":")
-			.map((hex) => hex.padStart(4, "0"))
-			.join("");
-		return hexToBigInt(fullAddress);
-	}
-	return BigInt(
-		ip
-			.split(".")
-			.map(Number)
-			.reduce((acc, val) => acc * 256 + val),
-	);
-};
-const sortingPhysicalIpAddress = (
-	rowA: Row<MemberEntity>,
-	rowB: Row<MemberEntity>,
-): number => {
-	const stripPort = (ip: string) => ip.split("/")[0];
-	const a = rowA.original.peers?.physicalAddress;
-	const b = rowB.original?.peers?.physicalAddress;
-
-	const convertToBigInt = (value: string | string[] | undefined): bigint => {
-		if (Array.isArray(value)) {
-			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
-		}
-		return value?.length ? sortIP(stripPort(value)) : BigInt(0);
-	};
-
-	const numA = convertToBigInt(a);
-	const numB = convertToBigInt(b);
-
-	if (numA > numB) return 1;
-	if (numA < numB) return -1;
-	return 0;
-};
-const sortingIpAddress = (
-	rowA: Row<MemberEntity>,
-	rowB: Row<MemberEntity>,
-	columnId?: string,
-): number => {
-	const stripPort = (ip: string) => ip.split("/")[0];
-	let a: string | string[] | undefined;
-	let b: string | string[] | undefined;
-
-	if (columnId) {
-		a = rowA.original[columnId] as string | string[];
-		b = rowB.original[columnId] as string | string[];
-	} else {
-		a = rowA.original.peers?.physicalAddress;
-		b = rowB.original?.peers?.physicalAddress;
-	}
-
-	const convertToBigInt = (value: string | string[] | undefined): bigint => {
-		if (Array.isArray(value)) {
-			return value.length ? sortIP(stripPort(value[0])) : BigInt(0);
-		}
-		return value?.length ? sortIP(stripPort(value)) : BigInt(0);
-	};
-
-	const numA = convertToBigInt(a);
-	const numB = convertToBigInt(b);
-
-	if (numA > numB) return 1;
-	if (numA < numB) return -1;
-	return 0;
-};
 
 export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: IProp) => {
 	const b = useTranslations("commonButtons");
@@ -234,7 +152,12 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				},
 			}),
 			columnHelper.accessor("name", {
-				header: () => <span className="text-left block">{c("header.name")}</span>,
+				header: () => <span>{c("header.name")}</span>,
+				meta: {
+					style: {
+						textAlign: "left",
+					},
+				},
 				id: "name",
 			}),
 			columnHelper.accessor("id", {
@@ -244,9 +167,12 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				cell: (info) => info.getValue(),
 			}),
 			columnHelper.accessor("ipAssignments", {
-				header: () => (
-					<span className="text-left block">{c("header.ipAssignments.header")}</span>
-				),
+				header: () => <span>{c("header.ipAssignments.header")}</span>,
+				meta: {
+					style: {
+						textAlign: "left",
+					},
+				},
 				id: "ipAssignments",
 				sortingFn: sortingIpAddress,
 			}),
@@ -431,6 +357,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 			columnHelper.accessor("action", {
 				header: () => <span>{c("header.actions")}</span>,
 				id: "action",
+				enableSorting: false,
 				cell: ({ row: { original } }) => {
 					return (
 						<div className="space-x-2">
