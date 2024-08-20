@@ -73,7 +73,11 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt update && apt install -y curl wget sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_amd64.deb
+RUN sudo dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb
+
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2
 RUN npm install -g prisma ts-node
