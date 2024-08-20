@@ -75,9 +75,20 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl wget sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_amd64.deb && \
-    dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb && \
-    rm libssl1.1_1.1.1n-0+deb10u6_amd64.deb
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then \
+    wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    rm libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    elif [ "$ARCH" = "arm64" ]; then \
+    wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    rm libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    else \
+    echo "Unsupported architecture: $ARCH"; \
+    exit 1; \
+    fi
+
 
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2
