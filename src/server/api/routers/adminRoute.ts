@@ -968,6 +968,8 @@ export const adminRouter = createTRPCRouter({
 				const planetPath = `${ZT_FOLDER}/planet`;
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
 				const moonPath = `${ZT_FOLDER}/moon`;
+				// binary path
+				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
 
 				// Ensure the moon identity is created if it doesn't exist
 				const identityPath = `${ZT_FOLDER}/identity.secret`;
@@ -992,8 +994,6 @@ export const adminRouter = createTRPCRouter({
 					throwError("identity.public file does NOT exist, cannot generate planet file.");
 				}
 
-				// Check if ztmkworld executable exists
-				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
 				if (!fs.existsSync(ztmkworldBinPath)) {
 					throwError("ztmkworld executable does not exist at the specified location.");
 				}

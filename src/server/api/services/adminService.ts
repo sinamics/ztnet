@@ -1,6 +1,7 @@
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
+import { isRunningInDocker } from "~/utils/docker";
 import { ZT_FOLDER } from "~/utils/ztApi";
 
 export interface RootNode {
@@ -13,7 +14,11 @@ export interface RootNode {
 export async function createMoon(nodes: RootNode[], moonPath: string) {
 	const identityPath = `${ZT_FOLDER}/identity.secret`;
 	const publicIdentityPath = `${ZT_FOLDER}/identity.public`;
-	const ZT_IDTOOL = "/usr/local/bin/zerotier-idtool";
+
+	//binary path
+	const ZT_IDTOOL = isRunningInDocker()
+		? "/usr/local/bin/zerotier-idtool"
+		: "zerotier-idtool";
 
 	// Generate moon identity if it doesn't exist
 	if (!fs.existsSync(identityPath) || !fs.existsSync(publicIdentityPath)) {
