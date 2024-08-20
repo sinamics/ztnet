@@ -90,8 +90,8 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 
 				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
 					{unlinkedNetworks?.length > 0 && (
-						<div className="col-span-3  flex justify-center pb-5">
-							<div role="alert" className="alert w-3/6">
+						<div className="col-span-3 flex justify-center pb-5">
+							<div role="alert" className="alert w-full md:w-3/6">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
@@ -118,7 +118,7 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 							</div>
 						</div>
 					)}
-					<div className="flex justify-center">
+					<div className="flex justify-center col-span-3 md:col-span-1">
 						<button className={"btn btn-primary btn-outline"} onClick={addNewNetwork}>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
