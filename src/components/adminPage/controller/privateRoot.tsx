@@ -124,7 +124,10 @@ const PrivateRoot = () => {
 							</div>
 							<div className="space-y-5">
 								{getPlanet?.rootNodes?.map((node, i) => (
-									<div key={node.id} className="border border-primary rounded p-4 my-4">
+									<div
+										key={node.id}
+										className="border border-primary rounded p-4 my-4 space-y-5"
+									>
 										{!node.endpoints.toString().includes("9993") ? (
 											<div role="alert" className="alert shadow-lg mb-5">
 												<svg
@@ -157,36 +160,43 @@ const PrivateRoot = () => {
 												</div>
 											</div>
 										) : null}
-										<p className="tracking-wide font-medium">Root #{i + 1}</p>
-										<p>
-											<strong>Comments:</strong> {node.comments}
-										</p>
-										<p>
-											<strong>Endpoints:</strong> {node.endpoints.toString()}
-										</p>
-										<p>
-											<strong>Identity:</strong> {node.identity.substring(0, 50)}
-										</p>
-										<p>
-											<strong>WorldType:</strong> {node.isMoon ? "Moon" : "Planet"}
-										</p>
+										<section>
+											<p className="tracking-wide font-medium">Root #{i + 1}</p>
+											<p>
+												<strong>Comments:</strong> {node.comments}
+											</p>
+											<p>
+												<strong>Endpoints:</strong> {node.endpoints.toString()}
+											</p>
+											<p>
+												<strong>Identity:</strong> {node.identity.substring(0, 50)}
+											</p>
+											<p>
+												<strong>WorldType:</strong> {node.isMoon ? "Moon" : "Planet"}
+											</p>
+										</section>
+										<section>
+											{node.isMoon ? (
+												<span className="text-sm flex gap-1">
+													<p>Moon file is available for download at the following URL:</p>
+													<Link href="/api/moon" className="link text-blue-500">
+														api/moon
+													</Link>
+												</span>
+											) : (
+												<span className="text-sm flex gap-1">
+													{/* {t("controller.generatePlanet.downloadPlanetInfo")} */}
+													<p>
+														Planet file is available for download at the following URL:
+													</p>
+													<Link href="/api/planet" className="link text-blue-500">
+														{t("controller.generatePlanet.downloadPlanetUrl")}
+													</Link>
+												</span>
+											)}
+										</section>
 									</div>
 								))}
-							</div>
-							<div>
-								<span className="text-sm flex gap-1">
-									{/* {t("controller.generatePlanet.downloadPlanetInfo")} */}
-									<p>Planet file is available for download at the following URL:</p>
-									<Link href="/api/planet" className="link text-blue-500">
-										{t("controller.generatePlanet.downloadPlanetUrl")}
-									</Link>
-								</span>
-								<span className="text-sm flex gap-1">
-									<p>Moon file is available for download at the following URL:</p>
-									<Link href="/api/moon" className="link text-blue-500">
-										api/moon
-									</Link>
-								</span>
 							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">
