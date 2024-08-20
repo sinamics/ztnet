@@ -35,16 +35,24 @@ RUN SKIP_ENV_VALIDATION=1 npm run build
 # Copy the ztmkworld binary based on the target platform architecture
 FROM base AS ztmkworld_builder
 ARG TARGETPLATFORM
+
 WORKDIR /app
+
 COPY ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
 COPY ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
-RUN \
-    case "${TARGETPLATFORM}" in \
-    "linux/amd64") cp ztmkworld_amd64 /usr/local/bin/ztmkworld ;; \
-    "linux/arm64") cp ztmkworld_arm64 /usr/local/bin/ztmkworld ;; \
+COPY bin/idtool/build/linux_amd64/zerotier-idtool zerotier-idtool_amd64
+COPY bin/idtool/build/linux_arm64/zerotier-idtool zerotier-idtool_arm64
+
+RUN case "${TARGETPLATFORM}" in \
+    "linux/amd64") \
+    cp ztmkworld_amd64 /usr/local/bin/ztmkworld && \
+    cp zerotier-idtool_amd64 /usr/local/bin/zerotier-idtool ;; \
+    "linux/arm64") \
+    cp ztmkworld_arm64 /usr/local/bin/ztmkworld && \
+    cp zerotier-idtool_arm64 /usr/local/bin/zerotier-idtool ;; \
     *) echo "Unsupported architecture" && exit 1 ;; \
     esac && \
-    chmod +x /usr/local/bin/ztmkworld
+    chmod +x /usr/local/bin/ztmkworld /usr/local/bin/zerotier-idtool
 
 # Production image, copy all the files and run next
 FROM $NODEJS_IMAGE AS runner

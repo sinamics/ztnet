@@ -22,10 +22,12 @@ sudo dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ] && [ -f "/workspaces/ztnodeid/build/linux_amd64/ztmkworld" ]; then
     cp /workspaces/ztnodeid/build/linux_amd64/ztmkworld /usr/local/bin/ztmkworld
-    cp /workspaces/bin/zerotier-idtool_amd64 /usr/local/bin/zerotier-idtool
+    cp /workspaces/bin/idtool/build/linux_amd64/zerotier-idtool /usr/local/bin/zerotier-idtool
 elif [ "$ARCH" = "aarch64" ] && [ -f "/workspaces/ztnodeid/build/linux_arm64/ztmkworld" ]; then
     cp /workspaces/ztnodeid/build/linux_arm64/ztmkworld /usr/local/bin/ztmkworld
+    cp /workspaces/bin/idtool/build/linux_arm64/zerotier-idtool /usr/local/bin/zerotier-idtool
 fi
+
 chmod +x /usr/local/bin/ztmkworld
 
 # apply migrations to the database
