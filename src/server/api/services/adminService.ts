@@ -26,12 +26,12 @@ export async function createMoon(nodes: RootNode[], moonPath: string) {
 		.readFileSync(publicIdentityPath, "utf-8")
 		.trim()
 		.split(":")[0];
-
 	// Filter nodes that are marked as moons
 	const moonNodes = nodes.filter((node) => node.isMoon);
+	const moonId = moonNodes[0].identity.trim().split(":")[0];
 
 	const moonConfig = {
-		id: currentControllerId,
+		id: moonId,
 		roots: moonNodes.map((node) => ({
 			identity: node.identity,
 			endpoints: node.endpoints,
@@ -39,7 +39,7 @@ export async function createMoon(nodes: RootNode[], moonPath: string) {
 	};
 
 	// Generate the initial moon file
-	const initMoonFilePath = `${moonPath}/initmoon_${currentControllerId}.json`;
+	const initMoonFilePath = `${moonPath}/initmoon_${moonId}.json`;
 	execSync(`${ZT_IDTOOL} initmoon ${identityPath} > ${initMoonFilePath}`);
 
 	// Read the initmoon.json file
@@ -61,6 +61,7 @@ export async function createMoon(nodes: RootNode[], moonPath: string) {
 	const isCurrentControllerMoon = moonNodes.some((node) =>
 		node.identity.includes(currentControllerId),
 	);
+
 	if (isCurrentControllerMoon) {
 		// Find the generated moon file
 		const moonFiles = fs.readdirSync(moonPath);

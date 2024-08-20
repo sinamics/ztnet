@@ -97,6 +97,11 @@ const PrivateRoot = () => {
 				toast.error(error.message);
 			});
 	};
+
+	// generate the moon id from the first node that has ismoon set to true
+	const isMoonIdentity = getPlanet?.rootNodes?.filter((node) => node.isMoon);
+	const moonId = isMoonIdentity?.[0]?.identity.trim().split(":")[0];
+
 	return (
 		<div className="space-y-4">
 			<div>
@@ -165,7 +170,9 @@ const PrivateRoot = () => {
 												<p className="tracking-wide font-medium">Root #{i + 1}</p>
 												{node.isMoon ? (
 													<kbd className="kbd px-2 py-1 rounded text-sm font-mono">
-														{`zerotier-cli orbit ztnet ${node.identity.split(":")[0]}`}
+														{`zerotier-cli orbit ${moonId} ${
+															node.identity.split(":")[0]
+														}`}
 													</kbd>
 												) : null}
 											</div>
