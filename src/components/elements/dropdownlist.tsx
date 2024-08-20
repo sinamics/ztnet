@@ -1,19 +1,19 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import cn from "classnames";
 
-interface Iprops {
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	items: Record<any, any>[];
+interface IProps<T> {
+	items: T[];
 	placeholder: string;
-	displayField: string;
-	idField: string;
+	displayField: keyof T;
+	idField: keyof T;
 	className?: string;
 	inputClassName?: string;
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	onOptionSelect?: (value: any) => void;
+	onOptionSelect?: (value: T) => void;
+	renderItem?: (item: T) => React.ReactNode;
+	filterFunction?: (item: T, inputValue: string) => boolean;
 }
 
-const ScrollableDropdown = ({
+function ScrollableDropdown<T>({
 	items,
 	placeholder,
 	displayField,
@@ -21,18 +21,29 @@ const ScrollableDropdown = ({
 	className,
 	inputClassName,
 	onOptionSelect,
-}: Iprops) => {
+	renderItem,
+	filterFunction,
+}: IProps<T>) {
 	const [inputValue, setInputValue] = useState("");
 	const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-	const dropdownRef = useRef(null);
-	const inputRef = useRef(null);
-	const containerRef = useRef(null);
+	const [filteredItems, setFilteredItems] = useState<T[]>(items);
+	const dropdownRef = useRef<HTMLUListElement>(null);
+	const inputRef = useRef<HTMLInputElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	// Memoize the items array
+	const memoizedItems = useMemo(() => items, [items]);
+	useEffect(() => {
+		if (memoizedItems && memoizedItems.length > 0) {
+			setFilteredItems(memoizedItems);
+		}
+	}, [memoizedItems]);
 
 	useEffect(() => {
-		const handleClickOutside = (event) => {
+		const handleClickOutside = (event: MouseEvent) => {
 			if (
-				!dropdownRef.current?.contains(event.target) &&
-				!inputRef.current?.contains(event.target)
+				!dropdownRef.current?.contains(event.target as Node) &&
+				!inputRef.current?.contains(event.target as Node)
 			) {
 				setIsDropdownVisible(false);
 			}
@@ -42,61 +53,82 @@ const ScrollableDropdown = ({
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, []);
 
-	const handleInputChange = (event) => {
-		setInputValue(event.target.value);
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const value = event.target.value;
+		setInputValue(value);
+		filterItems(value);
 		setIsDropdownVisible(true);
 	};
 
-	const handleOptionClick = (item) => {
-		setInputValue(item[displayField]);
+	const handleOptionClick = (item: T) => {
+		setInputValue(item[displayField] as string);
 		setIsDropdownVisible(false);
 		if (onOptionSelect) {
 			onOptionSelect(item);
 		}
 	};
 
-	// Filter items based on inputValue
-	const filteredItems = items?.filter((item) =>
-		item[displayField].toLowerCase().includes(inputValue.toLowerCase()),
-	);
+	const toggleDropdown = () => {
+		setIsDropdownVisible(!isDropdownVisible);
+		if (!isDropdownVisible) {
+			setInputValue("");
+			setFilteredItems(items);
+		}
+	};
+
+	const defaultFilterFunction = (item: T, value: string) =>
+		String(item[displayField])
+			.toLowerCase()
+			.includes(value.toLowerCase());
+
+	const filterItems = (value: string) => {
+		const filtered = items.filter(
+			filterFunction
+				? (item) => filterFunction(item, value)
+				: (item) => defaultFilterFunction(item, value),
+		);
+		setFilteredItems(filtered);
+	};
 	return (
-		<form
-			className={cn("flex justify-between", className)}
-			onSubmit={(e) => e.preventDefault()}
-		>
-			<div ref={containerRef} className="relative w-full">
-				<input
-					ref={inputRef}
-					type="text"
-					className={cn("input-bordered input input-sm", inputClassName)}
-					placeholder={placeholder}
-					value={inputValue}
-					onChange={handleInputChange}
-					onFocus={() => setIsDropdownVisible(true)}
-				/>
-				{isDropdownVisible && (
-					<ul
-						ref={dropdownRef}
-						className="absolute mt-1 max-h-60 overflow-auto bg-base-300 border border-gray-800 rounded-md shadow custom-scrollbar text-sm"
-						style={{
-							width: containerRef.current ? containerRef.current.offsetWidth : "auto",
-						}}
-					>
-						{filteredItems?.map((item) => (
-							<li
-								key={item[idField]}
-								tabIndex={0}
-								className="p-2 cursor-pointer hover:bg-base-100"
-								onClick={() => handleOptionClick(item)}
-							>
-								{item[displayField]}
-							</li>
-						))}
-					</ul>
+		<div className={cn("flex justify-between relative", className)} ref={containerRef}>
+			<input
+				ref={inputRef}
+				type="text"
+				className={cn(
+					"input-bordered input input-sm pr-10 w-full cursor-pointer",
+					inputClassName,
 				)}
-			</div>
-		</form>
+				placeholder={placeholder}
+				value={inputValue}
+				onChange={handleInputChange}
+				onFocus={() => setIsDropdownVisible(true)}
+			/>
+			<button
+				type="button"
+				className="absolute right-2 top-1/2 transform -translate-y-1/2"
+				onClick={toggleDropdown}
+			>
+				▼
+			</button>
+			{isDropdownVisible && (
+				<ul
+					ref={dropdownRef}
+					className="absolute z-10 w-full bg-base-300 top-full left-0 max-h-60 overflow-auto border border-gray-800 rounded-md shadow custom-scrollbar text-sm"
+				>
+					{filteredItems?.map((item) => (
+						<li
+							key={String(item[idField])}
+							tabIndex={0}
+							className="p-2 cursor-pointer hover:bg-base-200"
+							onClick={() => handleOptionClick(item)}
+						>
+							{renderItem ? renderItem(item) : String(item[displayField])}
+						</li>
+					))}
+				</ul>
+			)}
+		</div>
 	);
-};
+}
 
 export default ScrollableDropdown;
