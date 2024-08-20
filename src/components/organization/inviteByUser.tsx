@@ -46,6 +46,7 @@ const InviteByUsers = () => {
 		});
 	};
 
+	const renderUsers = (user) => <span>{user.name}</span>;
 	return (
 		<div className="space-y-5">
 			<div className="form-control w-full space-y-5">
@@ -67,6 +68,7 @@ const InviteByUsers = () => {
 						placeholder={t(
 							"settings.invitation.inviteSiteUser.inputFields.searchUser.placeholder",
 						)}
+						renderItem={renderUsers}
 						onOptionSelect={(selectedItem) => {
 							setState({
 								...state,
