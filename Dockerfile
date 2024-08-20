@@ -45,14 +45,14 @@ COPY bin/idtool/build/linux_arm64/zerotier-idtool zerotier-idtool_arm64
 
 RUN case "${TARGETPLATFORM}" in \
     "linux/amd64") \
-    cp ztmkworld_amd64 /usr/local/bin/ztmkworld && \
-    cp zerotier-idtool_amd64 /usr/local/bin/zerotier-idtool ;; \
+    cp ztmkworld_amd64 ztmkworld && \
+    cp zerotier-idtool_amd64 zerotier-idtool ;; \
     "linux/arm64") \
-    cp ztmkworld_arm64 /usr/local/bin/ztmkworld && \
-    cp zerotier-idtool_arm64 /usr/local/bin/zerotier-idtool ;; \
+    cp ztmkworld_arm64 ztmkworld && \
+    cp zerotier-idtool_arm64 zerotier-idtool ;; \
     *) echo "Unsupported architecture" && exit 1 ;; \
     esac && \
-    chmod +x /usr/local/bin/ztmkworld /usr/local/bin/zerotier-idtool
+    chmod +x ztmkworld zerotier-idtool
 
 # Production image, copy all the files and run next
 FROM $NODEJS_IMAGE AS runner
@@ -89,7 +89,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
-COPY --from=ztmkworld_builder /usr/local/bin/ztmkworld /usr/local/bin/ztmkworld
+COPY --from=ztmkworld_builder ztmkworld /usr/local/bin/ztmkworld
+COPY --from=ztmkworld_builder zerotier-idtool /usr/local/bin/zerotier-idtool
 
 # prepeare .env file for the init-db.sh script
 RUN touch .env && chown nextjs:nodejs .env
