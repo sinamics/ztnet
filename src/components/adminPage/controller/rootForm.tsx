@@ -12,6 +12,7 @@ interface RootNode {
 	endpoints: JsonValue;
 	comments: string;
 	identity: string;
+	isMoon: boolean;
 }
 
 interface RootNodesArrayProps {
@@ -25,6 +26,7 @@ interface RootNodesArrayProps {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 		index: number,
 	) => void;
+	handleMoonToggle: (index: number) => void;
 }
 
 const RootNodesArray: React.FC<RootNodesArrayProps> = ({
@@ -32,6 +34,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 	handleEndpointArrayChange,
 	handleAddClick,
 	handleRemoveClick,
+	handleMoonToggle,
 }) => {
 	const t = useTranslations("admin");
 	const b = useTranslations("commonButtons");
@@ -39,9 +42,10 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 		<div className="space-y-10">
 			{rootNodes.map((node, i) => (
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-				<div key={i} className="p-5 border rounded-md border-primary">
+				<div key={i} className="p-5 border rounded-md border-primary space-y-5">
 					<p>Root #{i + 1}</p>
-					<label className="block text-gray-500 mb-2">
+
+					<label className="block text-sm text-gray-500 mb-2">
 						{t("controller.generatePlanet.endpointsDescription")}
 					</label>
 					<div className="space-y-3">
@@ -70,6 +74,25 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 							</button>
 						</div>
 					) : null}
+					<div className="flex flex-col space-y-1">
+						<div className="flex gap-2">
+							<span className="label-text">Is Moon?</span>
+							<input
+								name="isMoon"
+								type="checkbox"
+								checked={node.isMoon}
+								className="checkbox checkbox-primary checkbox-sm"
+								onChange={() => handleMoonToggle(i)}
+							/>
+						</div>
+						<p className="text-sm text-gray-600">
+							Check this box if this root should be a moon. Moons are user-defined root
+							servers that operate alongside ZeroTier's default root servers (planets).
+							They don't make your network private, but can improve performance,
+							especially in regions with poor connectivity to the default roots. Moons can
+							also provide continuity if the default roots are unreachable.
+						</p>
+					</div>
 				</div>
 			))}
 			<div>
@@ -99,12 +122,12 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		rootNodes: [
 			{
 				endpoints: [],
+				isMoon: false,
 				comments: "",
 				identity: "",
 			},
 		] as Partial<RootNodes>[],
 	});
-
 	useEffect(() => {
 		setWorld((prev) => {
 			// Use existing data from getOptions.rootNodes if available
@@ -121,6 +144,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 			return {
 				...prev, // Spread the previous state
+				isMoon: getPlanet?.isMoon,
 				plRecommend:
 					getPlanet?.plRecommend !== undefined
 						? getPlanet?.plRecommend
@@ -209,7 +233,18 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		e.preventDefault();
 		setWorld((prev) => ({
 			...prev,
-			rootNodes: [...prev.rootNodes, { endpoints: "", identity: "", comments: "" }],
+			rootNodes: [
+				...prev.rootNodes,
+				{ endpoints: "", identity: "", comments: "", isMoon: false },
+			],
+		}));
+	};
+	const handleMoonToggle = (index) => {
+		setWorld((prev) => ({
+			...prev,
+			rootNodes: prev.rootNodes.map((node, i) =>
+				i === index ? { ...node, isMoon: !node.isMoon } : node,
+			),
 		}));
 	};
 	const handleRemoveClick = (e, index) => {
@@ -222,6 +257,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 			rootNodes: [...roots],
 		}));
 	};
+
 	return (
 		<>
 			{/* Display list of root nodes */}
@@ -277,6 +313,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					handleEndpointArrayChange={handleEndpointArrayChange}
 					handleAddClick={handleAddClick}
 					handleRemoveClick={handleRemoveClick}
+					handleMoonToggle={handleMoonToggle}
 				/>
 
 				<div className="pt-10">
