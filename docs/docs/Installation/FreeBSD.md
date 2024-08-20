@@ -100,7 +100,7 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 
 8. Copy mkworld binary:
     ```bash
-    cp ztnodeid/build/freebsd_amd64/ztmkworld /usr/local/bin/ztmkworld
+    cp bin/mkworld/build/freebsd_amd64/ztmkworld /usr/local/bin/ztmkworld
     ```
 9. Run server:
     ```bash

@@ -38,8 +38,8 @@ ARG TARGETPLATFORM
 
 WORKDIR /app
 
-COPY ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
-COPY ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
+COPY bin/mkworld/build/linux_amd64/ztmkworld ztmkworld_amd64
+COPY bin/mkworld/build/linux_arm64/ztmkworld ztmkworld_arm64
 COPY bin/idtool/build/linux_amd64/zerotier-idtool zerotier-idtool_amd64
 COPY bin/idtool/build/linux_arm64/zerotier-idtool zerotier-idtool_arm64
 

@@ -20,11 +20,11 @@ sudo dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb
 
 # Check architecture and copy the corresponding file if it exists
 ARCH=$(uname -m)
-if [ "$ARCH" = "x86_64" ] && [ -f "/workspaces/ztnodeid/build/linux_amd64/ztmkworld" ]; then
-    cp /workspaces/ztnodeid/build/linux_amd64/ztmkworld /usr/local/bin/ztmkworld
+if [ "$ARCH" = "x86_64" ] && [ -f "/workspaces/bin/mkworld/build/linux_amd64/ztmkworld" ]; then
+    cp /workspaces/bin/mkworld/build/linux_amd64/ztmkworld /usr/local/bin/ztmkworld
     cp /workspaces/bin/idtool/build/linux_amd64/zerotier-idtool /usr/local/bin/zerotier-idtool
-elif [ "$ARCH" = "aarch64" ] && [ -f "/workspaces/ztnodeid/build/linux_arm64/ztmkworld" ]; then
-    cp /workspaces/ztnodeid/build/linux_arm64/ztmkworld /usr/local/bin/ztmkworld
+elif [ "$ARCH" = "aarch64" ] && [ -f "/workspaces/bin/mkworld/build/linux_arm64/ztmkworld" ]; then
+    cp /workspaces/bin/mkworld/build/linux_arm64/ztmkworld /usr/local/bin/ztmkworld
     cp /workspaces/bin/idtool/build/linux_arm64/zerotier-idtool /usr/local/bin/zerotier-idtool
 fi
 
