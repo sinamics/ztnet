@@ -161,7 +161,14 @@ const PrivateRoot = () => {
 											</div>
 										) : null}
 										<section>
-											<p className="tracking-wide font-medium">Root #{i + 1}</p>
+											<div className="flex justify-between">
+												<p className="tracking-wide font-medium">Root #{i + 1}</p>
+												{node.isMoon ? (
+													<kbd className="kbd px-2 py-1 rounded text-sm font-mono">
+														{`zerotier-cli orbit ztnet ${node.identity.split(":")[0]}`}
+													</kbd>
+												) : null}
+											</div>
 											<p>
 												<strong>Comments:</strong> {node.comments}
 											</p>
@@ -177,12 +184,19 @@ const PrivateRoot = () => {
 										</section>
 										<section>
 											{node.isMoon ? (
-												<span className="text-sm flex gap-1">
-													<p>Moon file is available for download at the following URL:</p>
-													<Link href="/api/moon" className="link text-blue-500">
-														api/moon
-													</Link>
-												</span>
+												<div className="space-y-4">
+													<div className="flex items-center gap-2">
+														<p className="text-sm">
+															Moon file is available for download at the following URL:
+														</p>
+														<Link
+															href="/api/moon"
+															className="text-blue-500 hover:underline"
+														>
+															api/moon
+														</Link>
+													</div>
+												</div>
 											) : (
 												<span className="text-sm flex gap-1">
 													{/* {t("controller.generatePlanet.downloadPlanetInfo")} */}
