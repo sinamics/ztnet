@@ -171,6 +171,7 @@ export const organizationRouter = createTRPCRouter({
 			},
 			select: {
 				id: true,
+				orgName: true,
 			},
 		});
 	}),
