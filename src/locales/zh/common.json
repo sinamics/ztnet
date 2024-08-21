@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@example.com",
 			"password": "密码",
 			"passwordPlaceholder": "输入您的密码",
+			"confirmPassword": "确认密码",
+			"confirmPasswordPlaceholder": "确认您的密码",
 			"forgotPassword": "忘记密码？",
 			"verify2FA": "验证 2FA",
 			"enter2FAcode": "输入2FA代码",
@@ -173,6 +175,11 @@
 		"forgot": {
 			"forgotPasswordTitle": "忘记密码",
 			"forgotPasswordMessage": "如果账户存在，我们将向您发送重置链接",
+			"backToLogin": "返回登录"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "重置密码",
+			"forgotPasswordMessage": "请输入您的新密码",
 			"backToLogin": "返回登录"
 		},
 		"mfaRecovery": {

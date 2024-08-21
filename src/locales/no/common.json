@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@eksempel.com",
 			"password": "Passord",
 			"passwordPlaceholder": "Skriv inn passordet ditt",
+			"confirmPassword": "Bekreft Passord",
+			"confirmPasswordPlaceholder": "Bekreft passordet ditt",
 			"forgotPassword": "Glemt passordet ditt?",
 			"verify2FA": "Bekreft 2FA",
 			"enter2FAcode": "Skriv inn 2FA-koden",
@@ -174,6 +176,11 @@
 			"forgotPasswordTitle": "Glemt passord",
 			"forgotPasswordMessage": "Vi sender deg en tilbakestillingslenke hvis kontoen eksisterer",
 			"backToLogin": "Tilbake til innlogging"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Tilbakestill Passord",
+			"forgotPasswordMessage": "Vennligst skriv inn ditt nye passord",
+			"backToLogin": "Tilbake til Innlogging"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "Gjenoppretting av 2FA",

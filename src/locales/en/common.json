@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@example.com",
 			"password": "Password",
 			"passwordPlaceholder": "Enter your password",
+			"confirmPassword": "Confirm Password",
+			"confirmPasswordPlaceholder": "Confirm your password",
 			"forgotPassword": "Forgot your password?",
 			"verify2FA": "Verify 2FA",
 			"enter2FAcode": "Enter 2FA Code",
@@ -173,6 +175,11 @@
 		"forgot": {
 			"forgotPasswordTitle": "Forgot Password",
 			"forgotPasswordMessage": "We will send you a reset link if the account exists",
+			"backToLogin": "Back to Login"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Reset Password",
+			"forgotPasswordMessage": "Please enter your new password",
 			"backToLogin": "Back to Login"
 		},
 		"mfaRecovery": {

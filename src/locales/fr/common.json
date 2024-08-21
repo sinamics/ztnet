@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@exemple.com",
 			"password": "Mot de passe",
 			"passwordPlaceholder": "Entrez votre mot de passe",
+			"confirmPassword": "Confirmer le Mot de Passe",
+			"confirmPasswordPlaceholder": "Confirmez votre mot de passe",
 			"forgotPassword": "Mot de passe oublié ?",
 			"verify2FA": "Vérifier 2FA",
 			"enter2FAcode": "Entrez le code 2FA",
@@ -174,6 +176,11 @@
 			"forgotPasswordTitle": "Mot de passe oublié",
 			"forgotPasswordMessage": "Nous vous enverrons un lien de réinitialisation si le compte existe",
 			"backToLogin": "Retour à la connexion"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Réinitialiser le Mot de Passe",
+			"forgotPasswordMessage": "Veuillez entrer votre nouveau mot de passe",
+			"backToLogin": "Retour à la Connexion"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "Récupération 2FA",
