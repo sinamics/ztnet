@@ -7,8 +7,13 @@ import Head from "next/head";
 import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
+import { useTranslations } from "next-intl";
+import { Session } from "next-auth";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 
 const ForgotPassword = () => {
+	const t = useTranslations();
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ password: "", newPassword: "" });
@@ -85,17 +90,21 @@ const ForgotPassword = () => {
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
 				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
 					<div className="mb-4">
-						<h3 className="text-2xl font-semibold">Reset Password</h3>
-						<p className="text-gray-500">Please enter your new password</p>
+						<h3 className="text-2xl font-semibold">
+							{t("authPages.forgotReset.forgotPasswordTitle")}
+						</h3>
+						<p className="text-gray-500">
+							{t("authPages.forgotReset.forgotPasswordMessage")}
+						</p>
 					</div>
 					<form className="space-y-5" onSubmit={submitHandler}>
 						<FormInput
-							label="Password"
+							label={t("authPages.form.password")}
 							name="password"
 							type="password"
 							value={state.password}
 							onChange={handleChange}
-							placeholder="Enter your password"
+							placeholder={t("authPages.form.passwordPlaceholder")}
 							icon={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -112,12 +121,12 @@ const ForgotPassword = () => {
 							}
 						/>
 						<FormInput
-							label="Password"
+							label={t("authPages.form.confirmPassword")}
 							name="newPassword"
 							type="password"
 							value={state.newPassword}
 							onChange={handleChange}
-							placeholder="Confirm your new password"
+							placeholder={t("authPages.form.confirmPasswordPlaceholder")}
 							icon={
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -134,7 +143,7 @@ const ForgotPassword = () => {
 							}
 						/>
 						<div className="pt-5">
-							<FormSubmitButtons loading={isLoading} title="Reset Password" />
+							<FormSubmitButtons loading={isLoading} title={t("commonButtons.submit")} />
 						</div>
 					</form>
 					<div className="pt-5 text-center text-xs text-gray-400">
@@ -144,6 +153,35 @@ const ForgotPassword = () => {
 			</div>
 		</div>
 	);
+};
+
+interface Props {
+	auth?: Session["user"];
+}
+export const getServerSideProps: GetServerSideProps<Props> = async (
+	context: GetServerSidePropsContext,
+) => {
+	const session = await getSession(context);
+	if (!session || !("user" in session) || !session.user) {
+		return {
+			props: {
+				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+			},
+		};
+	}
+
+	if (session.user) {
+		return {
+			redirect: {
+				destination: "/network",
+				permanent: false,
+			},
+		};
+	}
+
+	return {
+		props: { auth: session.user },
+	};
 };
 
 export default ForgotPassword;

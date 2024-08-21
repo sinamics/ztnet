@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@example.com",
 			"password": "密碼",
 			"passwordPlaceholder": "輸入您的密碼",
+			"confirmPassword": "確認密碼",
+			"confirmPasswordPlaceholder": "確認您的密碼",
 			"forgotPassword": "忘記密碼？",
 			"verify2FA": "驗證 2FA",
 			"enter2FAcode": "輸入2FA代碼",
@@ -174,6 +176,11 @@
 			"forgotPasswordTitle": "忘記密碼",
 			"forgotPasswordMessage": "如果帳戶存在，我們會向您發送重置鏈接",
 			"backToLogin": "返回登錄"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "重設密碼",
+			"forgotPasswordMessage": "請輸入您的新密碼",
+			"backToLogin": "返回登入"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "2FA恢復",

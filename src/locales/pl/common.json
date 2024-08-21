@@ -146,6 +146,8 @@
 			"emailPlaceholder": "mail@przyklad.com",
 			"password": "Hasło",
 			"passwordPlaceholder": "Wpisz swoje hasło",
+			"confirmPassword": "Potwierdź Hasło",
+			"confirmPasswordPlaceholder": "Potwierdź swoje hasło",
 			"forgotPassword": "Zapomniałeś hasła?",
 			"verify2FA": "Zweryfikuj 2FA",
 			"enter2FAcode": "Wpisz kod 2FA",
@@ -174,6 +176,11 @@
 			"forgotPasswordTitle": "Zapomniałeś hasła",
 			"forgotPasswordMessage": "Wyślemy Ci link do resetowania, jeśli konto istnieje",
 			"backToLogin": "Powrót do logowania"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Zresetuj Hasło",
+			"forgotPasswordMessage": "Proszę wprowadzić nowe hasło",
+			"backToLogin": "Powrót do Logowania"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "Odzyskiwanie 2FA",

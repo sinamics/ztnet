@@ -146,6 +146,8 @@
 			"emailPlaceholder": "correo@ejemplo.com",
 			"password": "Contraseña",
 			"passwordPlaceholder": "Introduce tu contraseña",
+			"confirmPassword": "Confirmar Contraseña",
+			"confirmPasswordPlaceholder": "Confirme su contraseña",
 			"forgotPassword": "¿Olvidaste tu contraseña?",
 			"verify2FA": "Verificar 2FA",
 			"enter2FAcode": "Introduce el código 2FA",
@@ -174,6 +176,11 @@
 			"forgotPasswordTitle": "¿Olvidaste tu contraseña?",
 			"forgotPasswordMessage": "Te enviaremos un enlace de restablecimiento si la cuenta existe",
 			"backToLogin": "Volver al inicio de sesión"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Restablecer Contraseña",
+			"forgotPasswordMessage": "Por favor, ingrese su nueva contraseña",
+			"backToLogin": "Volver al Inicio de Sesión"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "Recuperación de 2FA",
