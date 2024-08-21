@@ -26,6 +26,7 @@ body:
       options:
         - Chrome
         - Firefox
+        - Brave
         - Safari
         - Edge
         - Opera
