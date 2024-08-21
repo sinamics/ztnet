@@ -18,6 +18,21 @@ body:
       description: "Please provide the ztnet version tag"
     validations:
       required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: "🌐 Browser"
+      description: "Which browser are you using?"
+      options:
+        - Chrome
+        - Firefox
+        - Brave
+        - Safari
+        - Edge
+        - Opera
+        - Other
+    validations:
+      required: true
   - type: checkboxes
     id: deployment-type
     attributes:
