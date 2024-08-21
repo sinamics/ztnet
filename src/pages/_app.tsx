@@ -77,6 +77,17 @@ const App: AppType<{ session: Session | null }> = ({
 			const vh = window.innerHeight * 0.01;
 			document.documentElement.style.setProperty("--vh", `${vh}px`);
 		});
+
+		if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+			navigator.serviceWorker
+				.register("/service-worker.js")
+				// .then((registration) => {
+				// 	console.log("Service Worker registered with scope:", registration.scope);
+				// })
+				.catch((error) => {
+					console.error("Service Worker registration failed:", error);
+				});
+		}
 	}, []);
 
 	// Update viewport height on font size change
