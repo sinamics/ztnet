@@ -1,0 +1,16 @@
+{
+  "name": "ZTNET",
+  "short_name": "ZTNET",
+  "description": "ZeroTier Web UI for Private Controllers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/ztnet_300x300.png",
+      "sizes": "300x300",
+      "type": "image/png"
+    }
+  ]
+}
