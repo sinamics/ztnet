@@ -59,7 +59,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 
 	return (
 		<div className="mx-auto">
-			<h1 className="text-xl font-medium mb-4">Enheter du er logget inn på</h1>
+			<h1 className="font-medium mb-4">Connected Devices</h1>
 			<div className="space-y-2">
 				{devices && devices.length > 0 ? (
 					devices.map((device) => (
@@ -82,7 +82,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 										{new Date(device.lastActive).toLocaleString("no-NO")}
 									</p>
 									{isCurrentDevice(device) && (
-										<p className="text-xs text-green-600 font-semibold">Aktiv nå</p>
+										<p className="text-xs text-green-600 font-semibold">Active Now</p>
 									)}
 								</div>
 							</div>
