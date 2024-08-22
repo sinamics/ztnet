@@ -5,7 +5,7 @@
 	"commonMenuTabs": {
 		"settings": "Ustawienia",
 		"network": "Sieć",
-		"mail": "Poczta",
+		"mail": "E-mail",
 		"users": "Użytkownicy",
 		"notification": "Powiadomienie",
 		"controller": "Kontroler",
@@ -14,12 +14,12 @@
 		"invites": "Zaproszenia"
 	},
 	"commonMenuTiles": {
-		"organizationSettings": "Ustawienia Organizacji",
+		"organizationSettings": "Ustawienia organizacji",
 		"invites": "Zaproszenia",
-		"pendingInvites": "Oczekujące Zaproszenia",
+		"pendingInvites": "Oczekujące zaproszenia",
 		"members": "Członkowie",
 		"webhooks": "Webhooki",
-		"activeWebhooks": "Aktywne Webhooki"
+		"activeWebhooks": "Aktywne webhooki"
 	},
 	"commonSpinners": {
 		"loading": "Ładowanie...",
@@ -51,7 +51,7 @@
 		"kickUser": "Usuń użytkownika",
 		"deleteOrganization": "Usuń organizację",
 		"userActions": "Akcje",
-		"addWebhooks": "Dodaj Webhooki",
+		"addWebhooks": "Dodaj webhooki",
 		"options": "Opcje",
 		"settings": "Ustawienia",
 		"resend": "Wyślij ponownie",
@@ -115,7 +115,7 @@
 		"organizationDeleted": "Organizacja została pomyślnie usunięta",
 		"sentSuccessfully": "Wysłano pomyślnie",
 		"copyToClipboard": {
-			"title": "skopiuj do schowka",
+			"title": "Skopiuj do schowka",
 			"success": "{element} skopiowano do schowka"
 		}
 	},
@@ -126,7 +126,7 @@
 		"ztCentral": "ZT Central",
 		"admin": "Administracja",
 		"settings": "Ustawienia",
-		"mail": "Mail",
+		"mail": "E-mail",
 		"users": "Użytkownicy",
 		"notification": "Powiadomienia",
 		"controller": "Kontroler ZT",
@@ -137,16 +137,16 @@
 	},
 	"authPages": {
 		"welcomeMessage": {
-			"slogan": "ZeroTier VPN umożliwia bezpieczne i prywatne połączenie urządzeń przez internet, bez względu na to, gdzie się znajdujesz. Ciesz się szybkimi i niezawodnymi połączeniami bez zwykłych barier, zachowując bezpieczeństwo i dostępność danych."
+			"slogan": "ZeroTier VPN umożliwia bezpieczne i prywatne połączenie urządzeń przez sieć Internet, bez względu na to, gdzie się znajdujesz. Ciesz się szybkimi i niezawodnymi połączeniami bez barier, zachowując bezpieczeństwo i dostępność danych."
 		},
 		"form": {
 			"name": "Imię",
 			"namePlaceholder": "Wpisz swoje imię",
-			"email": "Email",
-			"emailPlaceholder": "mail@przyklad.com",
+			"email": "E-mail",
+			"emailPlaceholder": "imie@twojadomena.pl",
 			"password": "Hasło",
 			"passwordPlaceholder": "Wpisz swoje hasło",
-			"confirmPassword": "Potwierdź Hasło",
+			"confirmPassword": "Potwierdź hasło",
 			"confirmPasswordPlaceholder": "Potwierdź swoje hasło",
 			"forgotPassword": "Zapomniałeś hasła?",
 			"verify2FA": "Zweryfikuj 2FA",
@@ -156,13 +156,13 @@
 			"signUp": "Zarejestruj się",
 			"invitationCode": "Kod zaproszenia",
 			"invitationCodePlaceholder": "Wpisz swój kod zaproszenia",
-			"sendMail": "Wyślij maila",
+			"sendMail": "Wyślij e-mail",
 			"mfaRecoveryCode": "Kod odzyskiwania",
 			"mfaRecoveryCodePlaceholder": "Wpisz swój kod odzyskiwania"
 		},
 		"signin": {
 			"signInToAccount": "Zaloguj się do swojego konta",
-			"or": "LUB",
+			"or": "lub",
 			"dontHaveAccount": "Nie masz konta?",
 			"getStarted": "Zacznij teraz!",
 			"havingIssues": "Masz problemy?"
@@ -174,23 +174,23 @@
 		},
 		"forgot": {
 			"forgotPasswordTitle": "Zapomniałeś hasła",
-			"forgotPasswordMessage": "Wyślemy Ci link do resetowania, jeśli konto istnieje",
-			"backToLogin": "Powrót do logowania"
+			"forgotPasswordMessage": "Wyślemy Ci link do zresetowania hasła, jeśli konto istnieje w naszym systemie",
+			"backToLogin": "Powrót do strony logowania"
 		},
 		"forgotReset": {
-			"forgotPasswordTitle": "Zresetuj Hasło",
-			"forgotPasswordMessage": "Proszę wprowadzić nowe hasło",
-			"backToLogin": "Powrót do Logowania"
+			"forgotPasswordTitle": "Zresetuj hasło",
+			"forgotPasswordMessage": "Proszę wprowadź nowe hasło",
+			"backToLogin": "Powrót do strony logowania"
 		},
 		"mfaRecovery": {
 			"mfaRecoveryTitle": "Odzyskiwanie 2FA",
-			"mfaRecoveryMessage": "Wyślemy Ci instrukcje, jak odzyskać swoje konto",
-			"backToLogin": "Powrót do logowania"
+			"mfaRecoveryMessage": "Wyślemy Ci instrukcję, jak odzyskać dostęp do Twojego konta",
+			"backToLogin": "Powrót do strony logowania"
 		},
 		"mfaRecoveryReset": {
 			"mfaRecoveryResetTitle": "Odzyskiwanie 2FA",
 			"mfaRecoveryResetMessage": "Wprowadź swoje dane uwierzytelniające i kod odzyskiwania",
-			"backToLogin": "Powrót do logowania"
+			"backToLogin": "Powrót do strony logowania"
 		}
 	},
 	"networks": {
@@ -198,8 +198,8 @@
 		"title": "Sieci",
 		"description": "Sieci VPN",
 		"unlinkedNetworks": {
-			"title": "Jest {amount} nieprzypisana sieć zarejestrowana z kontrolerem.",
-			"navigate": "Przejdź do Kontrolera"
+			"title": "Jest(-Są) {amount} nieprzypisana(-e) sieć(-ci) zarejestrowana(-e) na kontrolerze.",
+			"navigate": "Przejdź do ustawień kontrolera"
 		},
 		"noNetworksMessage": "Nie utworzono jeszcze żadnych sieci. Utwórz nową sieć, a pojawi się ona właśnie tutaj...",
 		"networkActionModal": {
@@ -220,7 +220,7 @@
 		"loading": "Ładowanie...",
 		"errorSteps": {
 			"step1": "Sprawdź czy działa kontener ZeroTier",
-			"step2": "Jeśli aktywne są inne instancje ZeroTier, wpierw je deaktywuj, aby nie powodowały konfliktów."
+			"step2": "Jeśli aktywne są inne instancje ZeroTier, zdeaktywuj je wpierw, aby nie powodowały konfliktów."
 		},
 		"networkId": "ID sieci:",
 		"networkName": "Nazwa sieci:",
@@ -240,11 +240,11 @@
 		"networkMembersAlert": {
 			"message": "Dołącz do tego ID sieci - urządzenie zostanie automatycznie wyświetlone"
 		},
-		"viewStashedMembers": "Pokaż ukrytych 'na póżniej'",
+		"viewStashedMembers": "Pokaż ukrytych członków sieci",
 		"networkActions": "Akcje sieci",
 		"deleteNetwork": {
 			"title": "Usuwanie sieci {networkName}",
-			"description": "Czy na pewno chcesz usunąć tę sieć? Tej czynności nie będzie można cofnąć. Wszyscy członkowie sieci zostaną z niej usunięci.",
+			"description": "Czy na pewno chcesz usunąć tę sieć? Tej czynności nie będzie można cofnąć. Wszyscy członkowie sieci zostaną z niej bezpowrotnie usunięci.",
 			"yesAction": "Tak, usuń ją",
 			"noAction": "Nie, zostaw ją"
 		},
@@ -274,7 +274,7 @@
 					"title": "{count} inne sieci zostały znalezione z tą samą podsiecią.",
 					"modal": {
 						"title": "Wykryto zduplikowaną podsieć",
-						"description": "Następujące sieci mają tę samą podsieć co bieżąca sieć ({name}). Może to nie być problem, ale jeśli podłączysz obie sieci do tego samego komputera, może to spowodować konflikty adresów IP i problemy z łącznością."
+						"description": "Następujące sieci mają tę samą podsieć co bieżąca sieć ({name}). Może to nie być problemem, ale jeśli podłączysz obie sieci do tego samego komputera, może to spowodować konflikty adresów IP i problemy z łącznością."
 					}
 				},
 				"please_enter_valid_ip_range": "Podaj prawidłowy zakres adresów IP",
@@ -328,7 +328,7 @@
 				"updateName": "Kliknij aby zmienić nazwę"
 			},
 			"toastMessages": {
-				"memberNameUpdated": "Nazwa członka sieci pomyślnie zaktualizowana"
+				"memberNameUpdated": "Nazwa członka sieci została pomyślnie zaktualizowana"
 			},
 			"unauthorizedRowMessage": "Nieautoryzowany dostęp",
 			"tableFooter": {
@@ -336,7 +336,7 @@
 				"Of": "z"
 			},
 			"search": {
-				"placeholder": "Szukaj cokolwiek..."
+				"placeholder": "Szukaj czegokolwiek..."
 			}
 		},
 		"deletedNetworkMembersTable": {
@@ -345,12 +345,12 @@
 			}
 		},
 		"inviteMemberByMail": {
-			"title": "Mail",
-			"labelText": "Wyślij E-Mail z instrukcjami dołączenia",
+			"title": "E-mail",
+			"labelText": "Wyślij E-mail z instrukcjami dołączenia do sieci ZT",
 			"placeholder": "ztnet@example.com",
 			"buttonText": "Zaproś",
 			"loadingText": "Ładowanie...",
-			"successMessage": "Sukces! e-mail z zaproszeniem został wysłany na adres {email}",
+			"successMessage": "Sukces! E-mail z zaproszeniem został wysłany na adres {email}",
 			"errorMessage": {
 				"unknownError": "Wystąpił nieznany błąd"
 			}
@@ -443,7 +443,7 @@
 			"smtpHost": "Serwer SMTP",
 			"smtpPort": "Port SMTP",
 			"senderEmail": "E-mail nadawcy",
-			"mailPlaceholder": "mail@example.com",
+			"mailPlaceholder": "imie@twojadomena.pl",
 			"username": "Nazwa użytkownika",
 			"password": "Hasło",
 			"useSSL": "Użyj SSL",
@@ -470,10 +470,10 @@
 			"authentication": {
 				"header": "Uwierzytelnianie",
 				"enableUserRegistration": "Włączyć rejestrację użytkowników?",
-				"enableUserRegistrationDescription": "To pozwoli użytkownikom kliknąć przycisk Zarejestruj się na stronie startowej.",
+				"enableUserRegistrationDescription": "Pozwoli to użytkownikom kliknąć przycisk 'Zarejestruj się' na stronie startowej.",
 				"generateInvitation": {
 					"header": "Generuj link zaproszenia",
-					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej wiadomości podczas rejestracji (wielkość liter ma znaczenie)",
+					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej informacji podczas rejestracji (wielkość liter ma znaczenie)",
 					"secretMessagePlaceholder": "Dodaj sekretną wiadomość",
 					"expireTimeLabel": "Link z zaproszeniem wygaśnie po tym czasie",
 					"expireTimePlaceholder": "Czas wygaśnięcia w minutach",
@@ -488,8 +488,8 @@
 						"groupIdLabel": "Grupa użytkownika:",
 						"timesUsedLabel": "Użyte okresy:",
 						"invitationLinkLabel": "Link zaproszenia:",
-						"clickToCopyLabel": "kliknij aby skopiować",
-						"linkCopiedToast": "link skopiowany do schowka",
+						"clickToCopyLabel": "Kliknij aby skopiować",
+						"linkCopiedToast": "Link został skopiowany do schowka",
 						"deleteButton": "Usuń"
 					}
 				}
@@ -513,18 +513,18 @@
 					},
 					"toast": {
 						"deleteUserSuccess": "Użytkownik został pomyślnie usunięty",
-						"nameNotEqual": "Podana nazwa użytkownika nie jest taka sama jak użytkownik."
+						"nameNotEqual": "Podana nazwa użytkownika nie zgadza się."
 					}
 				},
 				"roleDescriptions": {
 					"admin": "Jako administrator użytkownik ten będzie miał pełne uprawnienia, w tym dostęp do panelu administracyjnego.",
-					"user": "Jeśli ustawisz opcję Użytkownik, ten użytkownik będzie miał ograniczone uprawnienia i nie będzie mógł uzyskać dostępu do panelu administracyjnego."
+					"user": "Jeśli ustawisz opcję Użytkownik, ten użytkownik będzie miał ograniczone uprawnienia i nie będzie miał dostępu do panelu administracyjnego."
 				},
 				"changeRoleModal": {
 					"title": "Zmień rolę dla {name}"
 				},
 				"toastMessages": {
-					"roleChangeSuccess": "Rola pomyślnie zmieniona",
+					"roleChangeSuccess": "Rola została pomyślnie zmieniona",
 					"errorOccurred": "Wystąpił nieznany błąd"
 				}
 			},
@@ -534,7 +534,7 @@
 				"addGroup": {
 					"editGroupTitle": "Edycja grupy",
 					"deleteGroupTitle": "Usuwanie grupy",
-					"deleteGroupDescription": "Czy na pewno chcesz usunąć tę grupę? Jeśli jest przypisana jakiemuś użytkownikowi zostanie z niego usunięta.",
+					"deleteGroupDescription": "Czy na pewno chcesz usunąć tę grupę? Jeśli jest przypisana jakiemuś użytkownikowi, zostanie z niego usunięta.",
 					"addGroupLabel": "Dodaj nową grupę",
 					"addGroupButton": "Dodaj grupę",
 					"groupNamePlaceholder": "Nazwa grupy",
@@ -553,7 +553,7 @@
 		},
 		"controller": {
 			"networkMembers": {
-				"title": "Sieci & Członkowie",
+				"title": "Sieci i Członkowie",
 				"totalNetworks": "Liczba wszystkich sieci:",
 				"totalMembers": "Liczba wszystkich członków sieci:",
 				"totalUnlinkedNetworks": "Liczba wszystkich niepodpiętych sieci:",
@@ -607,7 +607,7 @@
 				"commentPlaceholder": "Wprowadź komentarz",
 				"identityDescription": "Tożsamość (opcjonalnie). Wartość domyślna to zawartość bieżącego pliku identity.public",
 				"endpointsDescription": "Wprowadź zewnętrzny adres IP swojego kontrolera. W przypadku wielu adresów użyj formatu rozdzielanego przecinkami (IP/PORT). Na przykład: '84.17.53.155/9993,2a02:6ea0:d405::/9993'. Jeśli chcesz, aby węzły spoza sieci lokalnej mogły się łączyć, upewnij się, że te adresy są osiągalne globalnie.",
-				"endpointsPlaceholder": "zewnętrzne ip/9993",
+				"endpointsPlaceholder": "Zewnętrzne IP/9993",
 				"plRecommend": "Auto-Generowanie ID",
 				"birthLabel": "Narodziny (plBirth)",
 				"birthPlaceholder": "Wprowadź narodziny",
@@ -635,7 +635,7 @@
 		"organization": {
 			"addOrganization": {
 				"title": "Zarządzanie zespołem",
-				"description": "Poznaj Organizacje aby rozpocząć współpracę Twojego zespołu. Przypisuj role, zapraszaj nowych członków i nadzoruj podstawowe uprawnienia w swojej organizacji. Ta beta funkcja zaprojektowana została z myślą o prostocie i łatwości obsługi, stanowi podstawę współpracy Twojego zespołu. Ponieważ stale rozwijamy i ulepszamy te ustawienia, zapraszamy do przesyłania opinii, które pomogą nam udoskonalać wrażenia w obsługiwaniu aplikacji.",
+				"description": "Poznaj Organizacje aby rozpocząć współpracę i łączność dla Twojego zespołu urządzeń. Przypisuj role, zapraszaj nowych członków i nadzoruj podstawowe uprawnienia w swojej organizacji. Ta funkcja zaprojektowana została z myślą o prostocie i łatwości obsługi, stanowi podstawę współpracy Twojej organizacji. Ponieważ stale rozwijamy i ulepszamy te ustawienia, zapraszamy do przesyłania opinii, które pomogą nam udoskonalać wrażenia w obsługiwaniu aplikacji.",
 				"inputFields": {
 					"label": "Dodaj organizację",
 					"description": "Utwórz nową organizację",
@@ -663,7 +663,7 @@
 				"description": "Opis organizacji:",
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
-				"activeWebhooks": "Aktywne Webhooki:"
+				"activeWebhooks": "Aktywne webhooki:"
 			}
 		}
 	},
@@ -677,7 +677,7 @@
 			"accountSettings": {
 				"title": "Ustawienia konta",
 				"nameLabel": "Nazwa",
-				"emailLabel": "Email",
+				"emailLabel": "E-mail",
 				"verifiedBadge": "Zweryfikowany",
 				"notVerifiedBadge": "Niezweryfikowany",
 				"passwordLabel": "Hasło",
@@ -687,9 +687,9 @@
 				"role": "Rola"
 			},
 			"totp": {
-				"title": "Uwierzytelnianie dwuskładnikowe",
-				"description": "To zwiększy bezpieczeństwo kont użytkowników, wymagając dodatkowego kroku weryfikacji.",
-				"mfaNote": "Uwaga: 2FA będzie działać tylko wtedy, gdy zalogujesz się przy użyciu poświadczeń. OAuth nie będzie korzystać z tego 2FA, nawet jeśli jest skonfigurowane, ponieważ jest zarządzane przez dostawcę OAuth.",
+				"title": "Uwierzytelnianie dwuskładnikowe (2FA)",
+				"description": "Funkcjonalność ta zwiększa bezpieczeństwo kont użytkowników, wymagając dodatkowego kroku weryfikacji przy logowaniu do konta.",
+				"mfaNote": "Uwaga: 2FA będzie działać tylko wtedy, kiedy zalogujesz się przy użyciu swoich poświadczeń. OAuth nie będzie korzystać z tego zabezpieczenia 2FA nawet wówczas kiedy jest już skonfigurowane, ponieważ jest zarządzane przez zewnętrznego dostawcę poświadczeń OAuth.",
 				"notification": {
 					"title": "Uwierzytelnianie dwuskładnikowe (2FA) nie jest włączone",
 					"description": "Zdecydowanie zalecamy włączenie 2FA, aby zwiększyć bezpieczeństwo konta."
@@ -721,7 +721,7 @@
 			},
 			"restapi": {
 				"sectionTitle": "Tokeny dostępowe API",
-				"description": "Dzięki temu możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",
+				"description": "Dzięki tej funkcjonalności możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",
 				"viewToken": {
 					"title": "Informacje o tokenie",
 					"name": "Nazwa",
@@ -757,7 +757,7 @@
 				},
 				"response": {
 					"title": "Kliknij token aby skopiować do schowka",
-					"info": "Uwaga! Ten token wyświetlony będzie tylko raz. Skopiuj go proszę teraz!"
+					"info": "Uwaga! Ten token wyświetlony będzie tylko raz. Skopiuj go proszę teraz i zachowaj!"
 				},
 				"modals": {
 					"deleteToken": {
@@ -768,10 +768,10 @@
 			},
 			"zerotierCentral": {
 				"title": "Zerotier Central",
-				"description": "Włączenie Twojego ZeroTier Central API umożliwi Ci zarządzanie sieciami centralnymi bezpośrednio z ZTNET. Po zintegrowaniu klucza na pasku bocznym pojawi się nowe menu zapewniające lepszą dostępność i kontrolę.<br></br>Klucz możesz uzyskać z portalu ZeroTier Central. https://my.zerotier.com/account",
+				"description": "Włączenie Twojego konta ZeroTier Central API umożliwi Ci zarządzanie sieciami centralnymi bezpośrednio z ZTNET. Po zintegrowaniu klucza na pasku bocznym pojawi się nowe menu zapewniające lepszą dostępność i kontrolę.<br></br>Klucz możesz uzyskać z portalu ZeroTier Central. https://my.zerotier.com/account",
 				"apiKeyLabel": "Klucz API Zerotier Central",
 				"apiUrlLabel": "Zerotier API Url",
-				"apiUrlLabelDescription": "Adres URL do API ZeroTier Central, Domyślny to https://api.zerotier.com/api/v1"
+				"apiUrlLabelDescription": "Adres URL do API ZeroTier Central - Domyślnie to: https://api.zerotier.com/api/v1"
 			},
 			"accountPreferences": {
 				"title": "Preferencje konta",
@@ -781,7 +781,7 @@
 			"application": {
 				"title": "Aplikacja",
 				"version": "Wersja",
-				"developerMode": "tryb developera"
+				"developerMode": "Tryb developera"
 			}
 		},
 		"network": {
@@ -803,7 +803,7 @@
 	},
 	"organization": {
 		"errors": {
-			"getOrgError": "Skontaktuj się z adminem organizacji aby upewnić się, że masz właściwe uprawnienia"
+			"getOrgError": "Skontaktuj się z administratorem organizacji aby upewnić się, że masz właściwie przypisane uprawnienia."
 		},
 		"loading": "Ładowanie...",
 		"organizationDashboard": {
@@ -845,7 +845,7 @@
 		"settings": {
 			"invitation": {
 				"title": "Rozszerzenie zespołu: Zaproszenie nowych członków",
-				"description": "Zaproś więcej osób do swojego zespołu! Możesz wysyłać zaproszenia drogą mailową lub znaleźć i dodać osoby, które już korzystają z platformy. <br></br> To ułatwia rozwój Twojego zespołu i włączenie do niego większej liczby członków.",
+				"description": "Zaproś więcej osób do swojego zespołu! Możesz wysyłać zaproszenia drogą mailową lub znaleźć i dodać osoby, które już korzystają z platformy. <br></br> Ułatwi to rozwój Twojego zespołu i włączenie do niego większej liczby członków.",
 				"pendingInvitations": {
 					"title": "Oczekujące zaproszenia"
 				},
@@ -857,8 +857,8 @@
 					"selectRoleDescription": "Wybierz rolę użytkownika"
 				},
 				"inviteSiteUser": {
-					"title": "Zaproś użytkowników witryny",
-					"description": "Zanim będziesz mógł dodać użytkowników do swojej organizacji, ważne jest, aby wiedzieć, że muszą oni już być zarejestrowani w aplikacji",
+					"title": "Zaproś już zarejestrowanych użytkowników",
+					"description": "Zanim będziesz mógł dodać użytkowników do swojej organizacji ważne jest, czy są już zarejestrowani w naszej aplikacji",
 					"inputFields": {
 						"searchUser": {
 							"title": "Wyszukaj użytkownika, którego chcesz dodać",
@@ -873,30 +873,30 @@
 			"network": {
 				"globalNodeNaming": {
 					"title": "Włącz globalne nazewnictwo węzłów",
-					"description": "Po włączeniu, ta funkcja będzie:",
+					"description": "Po włączeniu ta funkcja będzie:",
 					"bulletPoints": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach tej organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka sprawdzać, czy członek istnieje w Twojej organizacji i będzie używać pierwszej znalezionej nazwy.",
 					"note": "Uwaga: Dotyczy to wyłącznie sieci w ramach tej konkretnej organizacji."
 				}
 			}
 		},
 		"webhook": {
-			"title": "Webhooki Organizacji",
-			"description": "Wzmocnij swoją organizację naszą integracją webhook, oferując powiadomienia w czasie rzeczywistym o krytycznych wydarzeniach.<br></br>Bądź na bieżąco z natychmiastowymi aktualizacjami, bezpośrednio przekazywanymi do twojego systemu, zapewniając płynny przepływ pracy i natychmiastową zdolność reagowania.",
+			"title": "Webhooki organizacji",
+			"description": "Wzmocnij swoją organizację naszą integracją webhook, oferując powiadomienia w czasie rzeczywistym o krytycznych wydarzeniach.<br></br>Bądź na bieżąco z natychmiastowymi aktualizacjami, bezpośrednio przekazywanymi do Twojego systemu, zapewniając płynny przepływ pracy i natychmiastową zdolność reagowania.",
 			"createWebhook": {
-				"editWebhookTitle": "Edytuj Webhook",
-				"createWebhookTitle": "Utwórz Webhook dla Organizacji <span>{organization}</span>",
-				"webhookName": "Nazwa Webhooka",
+				"editWebhookTitle": "Edytuj webhook",
+				"createWebhookTitle": "Utwórz webhook dla organizacji <span>{organization}</span>",
+				"webhookName": "Nazwa webhooka",
 				"webhookNameDescription": "To pole służy do wprowadzenia nazwy webhooka. Nazwa służy do identyfikacji webhooka i powinna być wystarczająco opisowa, aby odróżnić go od innych webhooków.",
 				"selectWebhookActions": "Wybierz działania webhooka",
-				"selectWebhookActionsDescription": "To rozwijane menu pozwala wybrać konkretne akcje, które ma wykonywać twój webhook. Każda opcja reprezentuje inny typ akcji.",
-				"webhookUrl": "URL Webhooka ( HTTPS )",
+				"selectWebhookActionsDescription": "Rozwijane menu pozwala wybrać konkretne akcje, które ma wykonywać Twój webhook. Każda opcja reprezentuje inny typ akcji.",
+				"webhookUrl": "URL webhooka (HTTPS)",
 				"webhookUrlDescription": "To pole jest przeznaczone do wprowadzania URL, gdzie webhook będzie wysyłał dane. Musi to być ważny i dostępny punkt końcowy URL, który może odbierać i przetwarzać dane przychodzące z webhooka."
 			},
 			"listWebhooks": {
-				"activeWebhooks": "Aktywne Webhooki",
+				"activeWebhooks": "Aktywne webhooki",
 				"description": "Opis",
 				"url": "URL",
-				"lastDelivery": "Ostatnia Dostawa",
+				"lastDelivery": "Ostatnie dostarczenie danych",
 				"events": "Wydarzenia"
 			}
 		}
