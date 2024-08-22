@@ -13,6 +13,8 @@ import {
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
 import { authenticator } from "otplib";
+import { generateDeviceId } from "~/utils/devices";
+import UAParser from "ua-parser-js";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -25,10 +27,21 @@ import { authenticator } from "otplib";
 const MAX_FAILED_ATTEMPTS = 5;
 const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute in milliseconds
 
+interface IUserAgent {
+	userId: string;
+	deviceType: string;
+	browser: string;
+	os: string;
+	lastActive: Date;
+	deviceId: string;
+}
+
 declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: IUser;
 		error: string;
+		// userAgent?: IUserAgent | unknown;
+		// deviceId?: string;
 		update: {
 			name?: string;
 			email?: string;
@@ -39,10 +52,8 @@ declare module "next-auth" {
 		id?: string;
 		name: string;
 		role: string;
-		// ...other properties
-		// role: UserRole;
-		//   email: string;
-		//   password: string;
+		userAgent?: IUserAgent | unknown;
+		deviceId?: string;
 	}
 }
 
@@ -139,6 +150,7 @@ export const authOptions: NextAuthOptions = {
 					placeholder: "mail@example.com",
 				},
 				password: { label: "Password", type: "password" },
+				userAgent: { type: "hidden" },
 				totpCode: {
 					label: "Two-factor Code",
 					type: "input",
@@ -251,20 +263,11 @@ export const authOptions: NextAuthOptions = {
 
 				return {
 					...user,
+					userAgent: _credentials?.userAgent,
 					hash: null,
 				};
 			},
 		}),
-
-		/**
-		 * ...add more providers here.
-		 *
-		 * Most other providers require a bit more work than the Discord provider. For example, the
-		 * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-		 * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-		 *
-		 * @see https://next-auth.js.org/providers/github
-		 */
 	],
 	session: {
 		strategy: "jwt",
@@ -301,9 +304,37 @@ export const authOptions: NextAuthOptions = {
 						},
 						data: {
 							lastLogin: new Date().toISOString(),
+							deviceIsValid: true,
 						},
 					});
+					// Update device information
+					if (user?.userAgent) {
+						const deviceId = generateDeviceId(user.userAgent as string, existingUser.id);
+						const ua = new UAParser(user.userAgent as string);
+
+						const deviceInfo = {
+							deviceId,
+							userId: existingUser.id as string,
+							deviceType: ua.getDevice().type || "desktop",
+							browser: ua.getBrowser().name || "Unknown",
+							os: ua.getOS().name || "Unknown",
+							lastActive: new Date(),
+						};
+
+						await prisma.userDevice.upsert({
+							where: { deviceId },
+							update: {
+								lastActive: deviceInfo.lastActive,
+								isActive: true,
+							},
+							create: deviceInfo,
+						});
+
+						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+						(user as any).deviceId = deviceId;
+					}
 				}
+
 				return true;
 			}
 			if (account.provider === "oauth") {
@@ -426,11 +457,47 @@ export const authOptions: NextAuthOptions = {
 				token.email = user.email;
 				token.role = user.role; // Add other relevant properties as needed
 			}
-			if (user) {
-				// token.id = user.id;
-				// token.name = user.name;
-				// token.role = user.role;
-				token = { ...user };
+
+			if (user?.id) {
+				token.id = user.id;
+				token.email = user.email;
+				token.name = user.name;
+				token.deviceId = user.deviceId;
+			}
+
+			// Check if the device still exists and is valid
+			if (token.id && token.deviceId && typeof token.deviceId === "string") {
+				try {
+					const userDevice = await prisma.userDevice.findUnique({
+						where: {
+							userId: token?.id,
+							deviceId: token.deviceId,
+						},
+					});
+
+					if (!userDevice) {
+						// Device doesn't exist, invalidate the token
+						await prisma.user.update({
+							where: { id: token?.id as string },
+							data: { deviceIsValid: false },
+						});
+						token.deviceIsValid = false;
+						return token;
+					}
+
+					// Update lastActive field
+					await prisma.userDevice.update({
+						where: {
+							userId: token?.id,
+							deviceId: token.deviceId,
+						},
+						data: {
+							lastActive: new Date(),
+						},
+					});
+				} catch (error) {
+					console.error("Error checking or updating user device:", error);
+				}
 			}
 			return token;
 		},
@@ -443,13 +510,18 @@ export const authOptions: NextAuthOptions = {
 			});
 
 			// Number(user.id.trim()) checks if the user session has the old int as the User id
-			if (!user || !user.isActive || Number.isInteger(Number(token.id))) {
+			if (
+				!user ||
+				!user.isActive ||
+				!user.deviceIsValid ||
+				Number.isInteger(Number(token.id))
+			) {
 				// If the user does not exist, set user to null
 				return { ...session, user: null };
 			}
 
 			// update users lastseen in the database
-			await prisma.user.update({
+			const updatedUser = await prisma.user.update({
 				where: {
 					id: user.id,
 				},
@@ -457,8 +529,14 @@ export const authOptions: NextAuthOptions = {
 					lastseen: new Date(),
 				},
 			});
-			session.user = { ...token } as IUser;
-			return session;
+
+			return {
+				...session,
+				user: {
+					...updatedUser,
+					userAgent: token.userAgent,
+				},
+			};
 		},
 		redirect({ url, baseUrl }) {
 			// Allows relative callback URLs
