@@ -51,15 +51,16 @@ export const syncMemberPeersAndStatus = async (
 			// Update the connection status
 			updatedMember.conStatus = determineConnectionStatus(updatedMember);
 
+			// Check if the member is connected and has peers
+			const memberIsOnline =
+				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
+
 			// Create the object with the data to be updated
 			const updateData: Partial<network_members> = {
 				id: updatedMember.id,
 				address: updatedMember.address,
+				online: memberIsOnline,
 			};
-
-			// Check if the member is connected and has peers, if so, update the lastSeen
-			const memberIsOnline =
-				Object.keys(updatedMember.peers).length > 0 && updatedMember.conStatus !== 0;
 
 			// add lastSeen to updateData if the member is connected
 			if (memberIsOnline) {
