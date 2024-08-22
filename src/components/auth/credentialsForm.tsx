@@ -42,6 +42,7 @@ const CredentialsForm: React.FC = () => {
 			const response = await signIn("credentials", {
 				redirect: false,
 				totpCode,
+				userAgent: navigator.userAgent,
 				...formData,
 			});
 
