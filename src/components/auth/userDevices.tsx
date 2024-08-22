@@ -23,12 +23,13 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 	const { data: session, status } = useSession();
 	const { refetch } = api.auth.me.useQuery();
 
-	const { mutate: deleteUserDevice } = api.auth.deleteUserDevice.useMutation({
-		onSuccess: () => {
-			// Refresh the devices list
-			refetch();
-		},
-	});
+	const { mutate: deleteUserDevice, isLoading: deleteLoading } =
+		api.auth.deleteUserDevice.useMutation({
+			onSuccess: () => {
+				// Refresh the devices list
+				refetch();
+			},
+		});
 
 	const [currentDeviceInfo, setCurrentDeviceInfo] = useState<{
 		browser: string;
@@ -59,7 +60,10 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 
 	return (
 		<div className="mx-auto">
-			<h1 className="font-medium mb-4">Connected Devices</h1>
+			<div className="flex justify-between">
+				<h1 className="font-medium mb-4">Connected Devices</h1>
+				{/* <button className="btn btn-sm btn-error btn-outline">Logout All</button> */}
+			</div>
 			<div className="space-y-2">
 				{devices && devices.length > 0 ? (
 					devices.map((device) => (
@@ -87,6 +91,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 								</div>
 							</div>
 							<button
+								disabled={deleteLoading}
 								className="btn btn-sm btn-primary"
 								onClick={() => deleteUserDevice({ deviceId: device.deviceId })}
 							>
