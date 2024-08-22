@@ -12,8 +12,11 @@ import { useRouter } from "next/router";
 import classNames from "classnames";
 import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
+import { globalSiteTitle } from "~/utils/global";
 
-const Login = ({ title, oauthExclusiveLogin, oauthEnabled }) => {
+const title = `${globalSiteTitle} - Sign In`;
+
+const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 	const t = useTranslations();
 	const currentYear = new Date().getFullYear();
 	const { data: options, isLoading: loadingRegistration } =
