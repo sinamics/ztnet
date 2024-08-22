@@ -127,3 +127,25 @@ export function isValidDomain(domain: string): boolean {
 	const domainRegex = /^(?!-)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 	return domainRegex.test(domain);
 }
+
+/**
+ * Checks if a given dns is valid according to ZeroTier's DNS system requirements.
+ * https://github.com/zerotier/ZeroTierOne/blob/f176e2539e10e8c0f61eb1d2e1f0e690a267a646/include/ZeroTierOne.h#L976C1-L981C1
+ *
+ * @param domain - The domain to be validated.
+ * @returns `true` if the domain is valid, `false` otherwise.
+ */
+export function isValidDns(domain: string): boolean {
+	// Check if the domain is empty or exceeds 128 characters
+	if (domain.length === 0 || domain.length > 128) {
+		return false;
+	}
+
+	// Check if the domain contains any invalid characters
+	const invalidChars = /[^a-zA-Z0-9.-]/;
+	if (invalidChars.test(domain)) {
+		return false;
+	}
+
+	return true;
+}
