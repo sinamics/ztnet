@@ -262,6 +262,7 @@ model User {
   ActivityLog            ActivityLog[]
   expiresAt              DateTime? // null means it never expires
   isActive               Boolean                @default(true)
+  deviceIsValid          Boolean                @default(true)
   createdAt              DateTime               @default(now())
   userGroup              UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
   options                UserOptions?
@@ -271,6 +272,23 @@ model User {
   apiTokens              APIToken[]
   webhooks               Webhook[]
   invitations            Invitation[]           @relation("InvitationsSent")
+  UserDevice             UserDevice[]
+}
+
+model UserDevice {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceType String
+  deviceId   String   @unique
+  browser    String
+  os         String
+  lastActive DateTime
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([deviceId])
 }
 
 model VerificationToken {
