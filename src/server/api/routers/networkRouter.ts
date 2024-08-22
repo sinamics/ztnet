@@ -14,7 +14,7 @@ import { Prisma, Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
-import { isValidCIDR, isValidDomain, isValidIP } from "../utils/ipUtils";
+import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 
@@ -913,7 +913,7 @@ export const networkRouter = createTRPCRouter({
 					clearDns: z.boolean().optional(),
 					dns: z
 						.object({
-							domain: z.string().refine(isValidDomain, {
+							domain: z.string().refine(isValidDns, {
 								message: "Invalid DNS domain provided",
 							}),
 							servers: z.array(
