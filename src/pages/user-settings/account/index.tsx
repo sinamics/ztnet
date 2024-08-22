@@ -16,6 +16,7 @@ import { useModalStore } from "~/utils/store";
 import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
 import MultifactorNotEnabled from "~/components/auth/multifactorNotEnabledAlert";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
+import ListUserDevices from "~/components/auth/userDevices";
 
 const defaultLocale = "en";
 
@@ -60,7 +61,6 @@ const Account = () => {
 	if (userError) {
 		toast.error(userError.message);
 	}
-
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
@@ -170,20 +170,18 @@ const Account = () => {
 				<div>{!me?.twoFactorEnabled ? <MultifactorNotEnabled /> : null}</div>
 
 				<div className="flex justify-between">
-					<div className="space-y-5">
-						<span>
-							<p className="text-md font-semibold">
-								{t("userSettings.account.totp.title")}
-							</p>
+					<span>
+						<p className="text-md font-semibold">
+							{t("userSettings.account.totp.title")}
+						</p>
 
-							<p className="text-sm text-gray-500">
-								{t("userSettings.account.totp.description")}
-							</p>
-						</span>
-						<p className="text-sm text-primary">
+						<p className="text-sm text-gray-500">
+							{t("userSettings.account.totp.description")}
+						</p>
+						<p className="text-sm text-gray-500">
 							{t("userSettings.account.totp.mfaNote")}
 						</p>
-					</div>
+					</span>
 					<button
 						className="btn btn-sm"
 						onClick={() =>
@@ -203,6 +201,9 @@ const Account = () => {
 							: t("commonButtons.enable2fa")}
 					</button>
 				</div>
+
+				{/* user devices  */}
+				<ListUserDevices devices={me?.UserDevice} />
 			</MenuSectionDividerWrapper>
 			<MenuSectionDividerWrapper
 				title={t("userSettings.account.restapi.sectionTitle")}
