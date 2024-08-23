@@ -1,6 +1,3 @@
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "deviceIsValid" BOOLEAN NOT NULL DEFAULT true;
-
 -- CreateTable
 CREATE TABLE "UserDevice" (
     "id" TEXT NOT NULL,
