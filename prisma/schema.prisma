@@ -262,7 +262,6 @@ model User {
   ActivityLog            ActivityLog[]
   expiresAt              DateTime? // null means it never expires
   isActive               Boolean                @default(true)
-  deviceIsValid          Boolean                @default(true)
   createdAt              DateTime               @default(now())
   userGroup              UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
   options                UserOptions?
