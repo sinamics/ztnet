@@ -8,6 +8,7 @@ import { User } from "@prisma/client";
 
 interface DeviceInfo {
 	deviceId: string;
+	ipAddress: string;
 	userId: string;
 	deviceType: string;
 	browser: string;
@@ -57,23 +58,32 @@ async function updateUserLogin(userId: string): Promise<void> {
 	});
 }
 
-async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
+async function upsertDeviceInfo(
+	deviceInfo: DeviceInfo,
+	ipAddress: string,
+): Promise<void> {
 	await prisma.userDevice.upsert({
 		where: { deviceId: deviceInfo.deviceId },
 		update: {
 			lastActive: deviceInfo.lastActive,
+			ipAddress,
 			isActive: true,
 		},
 		create: deviceInfo,
 	});
 }
 
-function createDeviceInfo(userAgent: string, userId: string): DeviceInfo {
+function createDeviceInfo(
+	userAgent: string,
+	userId: string,
+	ipAddress: string,
+): DeviceInfo {
 	const deviceId = generateDeviceId(userAgent, userId);
 	const ua = new UAParser(userAgent);
 
 	return {
 		deviceId,
+		ipAddress,
 		userId,
 		deviceType: ua.getDevice().type || "desktop",
 		browser: ua.getBrowser().name || "Unknown",
@@ -116,9 +126,7 @@ export function signInCallback(
 	return async function signIn({ user, account }) {
 		try {
 			const ipAddress = getIpAddress(req);
-			console.log("IP Address:", ipAddress);
 			let existingUser = await findUser(user.email);
-
 			if (account.provider === "credentials") {
 				if (!existingUser) {
 					// For credentials, we don't create a new user if they don't exist
@@ -145,10 +153,13 @@ export function signInCallback(
 
 			const userAgent =
 				account.provider === "credentials" ? user?.userAgent : req.headers["user-agent"];
-
 			if (userAgent) {
-				const deviceInfo = createDeviceInfo(userAgent as string, existingUser.id);
-				await upsertDeviceInfo(deviceInfo);
+				const deviceInfo = createDeviceInfo(
+					userAgent as string,
+					existingUser.id,
+					ipAddress,
+				);
+				await upsertDeviceInfo(deviceInfo, ipAddress);
 				user.deviceId = deviceInfo.deviceId;
 			}
 

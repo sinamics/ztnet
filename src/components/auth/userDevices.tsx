@@ -8,6 +8,29 @@ import Monitor from "~/icons/monitor";
 import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 
+const formatLastActive = (date) => {
+	return new Date(date).toLocaleString("no-NO");
+};
+
+const DeviceInfo = ({ device, isCurrentDevice }) => (
+	<div>
+		<p
+			className={cn("font-semibold", {
+				"text-green-700": isCurrentDevice,
+			})}
+		>
+			{`${device.os} ${device.browser}`}
+		</p>
+		<p className="text-sm text-gray-500">
+			{formatLastActive(device.lastActive)}
+			{device.ipAddress && ` - ${device.ipAddress}`}
+		</p>
+		{isCurrentDevice && (
+			<p className="text-xs text-green-600 font-semibold">Active Now</p>
+		)}
+	</div>
+);
+
 const DeviceIcon = ({ deviceType }: { deviceType: string }) => {
 	switch (deviceType.toLowerCase()) {
 		case "mobile":
@@ -57,7 +80,6 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 			device.browser === currentDeviceInfo?.browser && device.os === currentDeviceInfo?.os
 		);
 	};
-
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between">
@@ -76,19 +98,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 						>
 							<div className="flex items-center">
 								<DeviceIcon deviceType={device.deviceType} />
-								<div>
-									<p
-										className={cn("font-semibold", {
-											"text-green-700": isCurrentDevice(device),
-										})}
-									>{`${device.os} ${device.browser}`}</p>
-									<p className="text-sm text-gray-500">
-										{new Date(device.lastActive).toLocaleString("no-NO")}
-									</p>
-									{isCurrentDevice(device) && (
-										<p className="text-xs text-green-600 font-semibold">Active Now</p>
-									)}
-								</div>
+								<DeviceInfo device={device} isCurrentDevice={isCurrentDevice(device)} />
 							</div>
 							<button
 								disabled={deleteLoading}
