@@ -5,7 +5,7 @@ import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { ErrorCode } from "~/utils/errorCode";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "~/server/auth";
+import { getAuthOptions } from "~/server/auth";
 import {
 	encrypt,
 	generateInstanceSecret,
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		return res.status(405).json({ message: "Method not allowed" });
 	}
 
-	const session = await getServerSession(req, res, authOptions);
+	const session = await getServerSession(req, res, getAuthOptions(req));
 	if (!session) {
 		return res.status(401).json({ error: ErrorCode.InternalServerError });
 	}
