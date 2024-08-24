@@ -3,6 +3,8 @@ CREATE TABLE "UserDevice" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "deviceType" TEXT NOT NULL,
+    "ipAddress" TEXT,
+    "location" TEXT,
     "deviceId" TEXT NOT NULL,
     "browser" TEXT NOT NULL,
     "os" TEXT NOT NULL,
