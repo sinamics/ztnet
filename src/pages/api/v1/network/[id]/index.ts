@@ -66,13 +66,12 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 	// make sure user has access to the network
 	const network = await prisma.network.findUnique({
 		where: { nwid: networkId, authorId: decryptedData.userId },
-		select: { nwid: true, name: true, authorId: true },
+		select: { authorId: true, description: true },
 	});
 
 	if (!network) {
 		return res.status(401).json({ error: "Network not found or access denied." });
 	}
-
 	try {
 		const ztControllerResponse = await ztController.local_network_detail(
 			//@ts-expect-error
@@ -80,7 +79,10 @@ const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
 			networkId,
 			false,
 		);
-		return res.status(200).json(ztControllerResponse?.network);
+		return res.status(200).json({
+			...network,
+			...ztControllerResponse?.network,
+		});
 	} catch (cause) {
 		return handleApiErrors(cause, res);
 	}
