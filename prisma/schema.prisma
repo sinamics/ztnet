@@ -279,6 +279,8 @@ model UserDevice {
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   deviceType String
+  ipaddress  String?
+  location   String?
   deviceId   String   @unique
   browser    String
   os         String
