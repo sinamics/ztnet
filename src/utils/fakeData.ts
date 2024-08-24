@@ -90,3 +90,32 @@ export function makeNetworkMemberData(...lens: number[]) {
 
 	return makeDataLevel();
 }
+
+const generateFakeDevice = () => {
+	const deviceTypes = ["desktop", "mobile", "tablet"];
+	const browsers = ["Chrome", "Firefox", "Safari", "Edge"];
+	const operatingSystems = ["Windows", "MacOS", "Linux", "iOS", "Android"];
+
+	const createdAt = faker.date.past();
+	const lastActive = faker.date.between({ from: createdAt, to: new Date() });
+
+	return {
+		id: faker.string.uuid(),
+		userId: faker.string.uuid(),
+		deviceType: faker.helpers.arrayElement(deviceTypes),
+		ipAddress: faker.internet.ip(),
+		location: faker.datatype.boolean() ? faker.location.city() : null,
+		deviceId: faker.string.alphanumeric(8),
+		browser: faker.helpers.arrayElement(browsers),
+		os: faker.helpers.arrayElement(operatingSystems),
+		lastActive: lastActive.toISOString(),
+		isActive: faker.datatype.boolean(),
+		createdAt: createdAt.toISOString(),
+	};
+};
+
+export const generateFakeUserDevices = (count = 5) => {
+	return Array(count)
+		.fill(null)
+		.map(() => generateFakeDevice());
+};
