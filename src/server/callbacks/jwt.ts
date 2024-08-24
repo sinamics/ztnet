@@ -1,0 +1,115 @@
+import { IncomingMessage } from "http";
+import { prisma } from "../db";
+import { generateDeviceId } from "~/utils/devices";
+
+export function jwtCallback(
+	req: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
+) {
+	return async function jwt({ token, user, trigger, account, session }) {
+		if (trigger === "update") {
+			if (session.update) {
+				const user = await prisma.user.findFirst({
+					where: {
+						id: token.id,
+					},
+					select: {
+						id: true,
+						name: true,
+						email: true,
+						role: true,
+						emailVerified: true,
+						lastLogin: true,
+						lastseen: true,
+					},
+				});
+
+				// Number(user.id.trim()) checks if the user session has the old int as the User id
+				if (Number.isInteger(Number(token.id))) {
+					return undefined;
+				}
+
+				// session update => https://github.com/nextauthjs/next-auth/discussions/3941
+				// verify that name has at least one character
+				if (typeof session.update.name === "string") {
+					// TODO throwing error will logout user.
+					// if (session.update.name.length < 1) {
+					//   throw new Error("Name must be at least one character long.");
+					// }
+					token.name = session.update.name;
+				}
+
+				// verify that email is valid
+				if (typeof session.update.email === "string") {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
+					token.email = session.update.email;
+				}
+
+				// update user with new values
+				await prisma.user.update({
+					where: {
+						id: token.id as string,
+					},
+					data: {
+						email: session.update.email || user.email,
+						name: session.update.name || user.name,
+					},
+				});
+			}
+			return token;
+		}
+
+		if (account?.provider === "oauth") {
+			const userAgent = req.headers["user-agent"];
+			const deviceId = generateDeviceId(userAgent as string, user.id);
+			token.accessToken = account.accessToken;
+
+			// Update token with user information
+			token.id = user.id;
+			token.name = user.name;
+			token.email = user.email;
+			token.role = user.role;
+			token.deviceId = deviceId;
+		}
+
+		if (account?.provider === "credentials" && user?.id) {
+			token.id = user.id;
+			token.name = user.name;
+			token.email = user.email;
+			token.role = user.role;
+			token.deviceId = user.deviceId;
+		}
+
+		// Check if the device still exists and is valid
+		if (token.id && token.deviceId && typeof token.deviceId === "string") {
+			try {
+				const userDevice = await prisma.userDevice.findUnique({
+					where: {
+						userId: token?.id,
+						deviceId: token.deviceId,
+					},
+				});
+
+				if (!userDevice) {
+					// Device doesn't exist, invalidate the token
+					token.deviceId = undefined;
+					return token;
+				}
+
+				// Update lastActive field
+				await prisma.userDevice.update({
+					where: {
+						userId: token?.id,
+						deviceId: token.deviceId,
+					},
+					data: {
+						lastActive: new Date(),
+					},
+				});
+			} catch (error) {
+				console.error("Error checking or updating user device:", error);
+			}
+		}
+		return token;
+	};
+}
