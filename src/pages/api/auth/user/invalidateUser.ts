@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
-import { authOptions } from "~/server/auth";
+import { getAuthOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 export default async function handler(
@@ -13,7 +13,7 @@ export default async function handler(
 	}
 
 	try {
-		const session = await getServerSession(request, response, authOptions);
+		const session = await getServerSession(request, response, getAuthOptions(request));
 		if (!session) {
 			return response.status(401).json({ message: "Not authenticated" });
 		}
