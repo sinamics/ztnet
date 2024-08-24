@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "Tilkoblede Enheter",
+				"logoutAll": "Logg ut Alle",
+				"accessDenied": "Tilgang Nektet",
+				"noDevicesFound": "Ingen enheter funnet.",
+				"activeNow": "Aktiv Nå",
+				"logout": "Logg ut"
+			},
 			"restapi": {
 				"sectionTitle": "API-tilgangstokens",
 				"description": "API-tilgangstokens brukes for å få tilgang til ZTNETs offentlige API.",

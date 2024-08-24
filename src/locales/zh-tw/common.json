@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "已連接裝置",
+				"logoutAll": "全部登出",
+				"accessDenied": "拒絕存取",
+				"noDevicesFound": "未找到裝置。",
+				"activeNow": "目前使用中",
+				"logout": "登出"
+			},
 			"restapi": {
 				"sectionTitle": "API存取Token",
 				"description": "API存取Token用於訪問ZTNET公共API。",
