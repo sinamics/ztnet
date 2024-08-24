@@ -193,7 +193,13 @@ describe("LoginPage", () => {
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(signIn).toHaveBeenCalledWith("oauth", { redirect: false });
+		expect(signIn).toHaveBeenCalledWith(
+			"oauth",
+			{ redirect: false },
+			expect.objectContaining({
+				userAgent: expect.any(String),
+			}),
+		);
 	});
 
 	it("Enter 2FA code", async () => {
