@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "已连接设备",
+				"logoutAll": "全部登出",
+				"accessDenied": "访问被拒绝",
+				"noDevicesFound": "未找到设备。",
+				"activeNow": "当前活跃",
+				"logout": "登出"
+			},
 			"restapi": {
 				"sectionTitle": "API访问令牌",
 				"description": "API访问令牌用于访问ZTNET公共API。",

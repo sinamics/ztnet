@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "Dispositivos Conectados",
+				"logoutAll": "Cerrar Sesión en Todos",
+				"accessDenied": "Acceso Denegado",
+				"noDevicesFound": "No se encontraron dispositivos.",
+				"activeNow": "Activo Ahora",
+				"logout": "Cerrar Sesión"
+			},
 			"restapi": {
 				"sectionTitle": "Tokens de Acceso a la API",
 				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
