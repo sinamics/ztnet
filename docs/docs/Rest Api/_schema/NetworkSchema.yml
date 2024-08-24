@@ -1,6 +1,10 @@
 NetworkResponse:
   type: object
   properties:
+    authorId:
+      type: string
+    description:
+      type: string
     authTokens:
       type: array
       items:
