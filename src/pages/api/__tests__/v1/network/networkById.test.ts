@@ -66,7 +66,13 @@ it("should respond 200 when network is found", async () => {
 	await apiNetworkByIdHandler(req, res);
 
 	expect(res.status).toHaveBeenCalledWith(200);
-	expect(res.json).toHaveBeenCalledWith({ id: "networkId", name: "networkName" });
+	expect(res.json).toHaveBeenCalledWith({
+		id: "networkId",
+		name: "networkName",
+		authorId: 1,
+		nwid: "test_nw_id",
+		nwname: "credent_second",
+	});
 });
 
 it("should respond 401 when network is not found", async () => {
