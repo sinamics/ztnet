@@ -107,7 +107,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 								<DeviceInfo device={device} isCurrentDevice={isCurrentDevice(device)} />
 							</div>
 							<button
-								disabled={deleteLoading}
+								disabled={deleteLoading || isCurrentDevice(device)}
 								className="btn btn-sm btn-primary"
 								onClick={() => deleteUserDevice({ deviceId: device.deviceId })}
 							>
