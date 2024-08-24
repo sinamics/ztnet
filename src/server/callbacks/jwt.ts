@@ -59,25 +59,17 @@ export function jwtCallback(
 			return token;
 		}
 
-		if (account?.provider === "oauth") {
-			const userAgent = req.headers["user-agent"];
-			const deviceId = generateDeviceId(userAgent as string, user.id);
-			token.accessToken = account.accessToken;
+		if (user) {
+			const { id, name, email, role } = user;
+			Object.assign(token, { id, name, email, role });
 
-			// Update token with user information
-			token.id = user.id;
-			token.name = user.name;
-			token.email = user.email;
-			token.role = user.role;
-			token.deviceId = deviceId;
-		}
-
-		if (account?.provider === "credentials" && user?.id) {
-			token.id = user.id;
-			token.name = user.name;
-			token.email = user.email;
-			token.role = user.role;
-			token.deviceId = user.deviceId;
+			if (account?.provider === "oauth") {
+				const userAgent = req.headers["user-agent"];
+				token.deviceId = generateDeviceId(userAgent as string, id);
+				token.accessToken = account.accessToken;
+			} else if (account?.provider === "credentials") {
+				token.deviceId = user.deviceId;
+			}
 		}
 
 		// Check if the device still exists and is valid
