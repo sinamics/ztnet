@@ -61,6 +61,7 @@ const Account = () => {
 	if (userError) {
 		toast.error(userError.message);
 	}
+
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
