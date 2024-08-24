@@ -898,10 +898,12 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			return await ctx.prisma.userDevice.delete({
+			await ctx.prisma.userDevice.delete({
 				where: {
 					deviceId: input.deviceId,
 				},
 			});
+
+			return input.deviceId;
 		}),
 });
