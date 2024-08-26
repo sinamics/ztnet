@@ -7,6 +7,7 @@ import Monitor from "~/icons/monitor";
 import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
+import { signOut } from "next-auth/react";
 
 const formatLastActive = (date) => {
 	return new Date(date).toLocaleString("no-NO");
@@ -107,9 +108,12 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 								<DeviceInfo device={device} isCurrentDevice={isCurrentDevice(device)} />
 							</div>
 							<button
-								disabled={deleteLoading || isCurrentDevice(device)}
+								disabled={deleteLoading}
 								className="btn btn-sm btn-primary"
-								onClick={() => deleteUserDevice({ deviceId: device.deviceId })}
+								onClick={() => {
+									deleteUserDevice({ deviceId: device.deviceId });
+									isCurrentDevice(device) && signOut();
+								}}
 							>
 								{t("userSettings.account.userDevices.logout")}
 							</button>

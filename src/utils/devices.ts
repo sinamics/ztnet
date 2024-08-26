@@ -4,10 +4,12 @@ export function generateDeviceId(userAgent: string, userId: string): string {
 	const ua = new UAParser(userAgent);
 	const deviceType = ua.getDevice().type || "desktop";
 	const browser = ua.getBrowser().name || "Unknown";
+	const browserVersion = ua.getBrowser().version || "Unknown";
 	const os = ua.getOS().name || "Unknown";
+	const osVersion = ua.getOS().version || "Unknown";
 	const version = ua.getOS().version || "Unknown";
 
-	const deviceInfo = `${userId}-${deviceType}-${browser}-${os}-${version}`;
+	const deviceInfo = `${userId}-${deviceType}-${browser}-${browserVersion}-${os}-${osVersion}-${version}`;
 
 	let hash = 0;
 	for (let i = 0; i < deviceInfo.length; i++) {
