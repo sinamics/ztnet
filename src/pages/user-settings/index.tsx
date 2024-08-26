@@ -7,22 +7,14 @@ import { useTranslations } from "next-intl";
 import UserNetworkSetting from "./network";
 import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
-import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import UserSettingsNotification from "./notification";
 
-type OrganizationId = {
-	id: string;
-};
-interface IProps {
-	orgIds: OrganizationId[];
-}
-
-const UserSettings = ({ orgIds }: IProps) => {
+const UserSettings = () => {
 	const title = `${globalSiteTitle} - User Settings`;
 	const router = useRouter();
 	const t = useTranslations("userSettings");
 	const { tab = "members" } = router.query;
 
-	useOrganizationWebsocket(orgIds);
 	interface ITab {
 		name: string;
 		value: string;
@@ -39,6 +31,11 @@ const UserSettings = ({ orgIds }: IProps) => {
 			name: t("tabs.network"),
 			value: "network",
 			component: <UserNetworkSetting />,
+		},
+		{
+			name: "Notification",
+			value: "notification",
+			component: <UserSettingsNotification />,
 		},
 	];
 

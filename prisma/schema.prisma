@@ -185,6 +185,9 @@ model UserOptions {
   deAuthorizeWarning           Boolean? @default(false)
   addMemberIdAsName            Boolean? @default(false)
   renameNodeGlobally           Boolean? @default(false)
+  // notifications
+  newDeviceNotification        Boolean? @default(true)
+  deviceIpChangeNotification   Boolean? @default(true)
 }
 
 enum AccessLevel {
@@ -215,24 +218,6 @@ model APIToken {
   expiresAt            DateTime? // null means it never expires
   isActive             Boolean   @default(true)
 }
-
-// model UserDevice {
-//   id         String   @id @default(cuid())
-//   userId     String
-//   user       User     @relation(fields: [id], references: [id], onDelete: Cascade)
-//   deviceType String
-//   deviceId   String   @unique
-//   browser    String
-//   os         String
-//   ip         String?
-//   location   String?
-//   lastActive DateTime
-//   isActive   Boolean  @default(true)
-//   createdAt  DateTime @default(now())
-
-//   @@index([userId])
-//   @@index([deviceId])
-// }
 
 model User {
   id                     String                 @id @default(cuid())
