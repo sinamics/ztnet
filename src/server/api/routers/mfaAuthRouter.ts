@@ -143,7 +143,7 @@ export const mfaAuthRouter = createTRPCRouter({
 			);
 
 			// create transporter
-			const transporter = createTransporter(globalOptions);
+			const transporter = await createTransporter();
 			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
 			// define mail options
