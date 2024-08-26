@@ -1,7 +1,6 @@
 import { ErrorCode } from "~/utils/errorCode";
 import { prisma } from "../db";
-import { generateDeviceId } from "~/utils/devices";
-import UAParser from "ua-parser-js";
+import { generateDeviceId, parseUA } from "~/utils/devices";
 import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
@@ -12,7 +11,9 @@ interface DeviceInfo {
 	userId: string;
 	deviceType: string;
 	browser: string;
+	browserVersion: string;
 	os: string;
+	osVersion: string;
 	lastActive: Date;
 }
 
@@ -78,16 +79,13 @@ function createDeviceInfo(
 	userId: string,
 	ipAddress: string,
 ): DeviceInfo {
-	const deviceId = generateDeviceId(userAgent, userId);
-	const ua = new UAParser(userAgent);
+	const { deviceId, parsedUA } = generateDeviceId(parseUA(userAgent), userId);
 
 	return {
+		...parsedUA,
 		deviceId,
 		ipAddress,
 		userId,
-		deviceType: ua.getDevice().type || "desktop",
-		browser: ua.getBrowser().name || "Unknown",
-		os: ua.getOS().name || "Unknown",
 		lastActive: new Date(),
 	};
 }
