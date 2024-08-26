@@ -480,7 +480,7 @@
 					"timeUsedLabel": "Ile razy można użyć tego linku? (Opcjonalne, domyślnie 1)",
 					"timeUsedPlaceholder": "Można użyć okresów",
 					"assignGroupLabel": "Przypisz użytkownika do grupy",
-					"activeInvitationsLabel": "e zaproszenia (kliknij po więcej informacji)",
+					"activeInvitationsLabel": "Aktywne zaproszenia (kliknij po więcej informacji)",
 					"invitationModal": {
 						"header": "Szczegóły zaproszenia",
 						"secretLabel": "Sekret:",
@@ -582,7 +582,7 @@
 			"controllerStatus": {
 				"title": "Status kontrolera",
 				"online": "Online:",
-				"tcpFallbackActive": "e rezerwowe przekazywanie TCP:",
+				"tcpFallbackActive": "Aktywne rezerwowe przekazywanie TCP:",
 				"version": "Wersja:"
 			},
 			"controllerConfig": {
@@ -663,7 +663,7 @@
 				"description": "Opis organizacji:",
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
-				"activeWebhooks": "e webhooki:"
+				"activeWebhooks": "Aktywne webhooki:"
 			}
 		}
 	},
