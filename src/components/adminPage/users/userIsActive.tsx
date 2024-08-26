@@ -1,10 +1,8 @@
 import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import React, { ForwardedRef, forwardRef, MouseEvent } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
@@ -13,31 +11,13 @@ import {
 interface Iuser {
 	user: Partial<User>;
 }
-const DateContainer = ({ children }) => {
-	return (
-		<div className="react-datepicker">
-			<div>{children}</div>
-		</div>
-	);
-};
-
-interface DateButtonProps {
-	value?: string | null;
-	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-}
-
-const DateButton = forwardRef<HTMLButtonElement, DateButtonProps>(
-	({ value, onClick }, ref: ForwardedRef<HTMLButtonElement>) => (
-		<>
-			<button className="btn btn-primary btn-sm" onClick={onClick} ref={ref}>
-				{value ? value : "Never"}
-			</button>
-		</>
-	),
-);
 
 const UserIsActive = ({ user }: Iuser) => {
 	const t = useTranslations("admin");
+	const [manualDate, setManualDate] = useState<string | null>(
+		user.expiresAt ? new Date(user.expiresAt).toISOString().substring(0, 10) : null,
+	);
+	const [isEdited, setIsEdited] = useState<boolean>(false);
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -55,7 +35,46 @@ const UserIsActive = ({ user }: Iuser) => {
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [refetchUser, refetchUsers] }),
 	});
-
+	const handleManualDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setManualDate(e.target.value);
+		setIsEdited(true);
+	};
+	const handleSaveDate = () => {
+		if (manualDate) {
+			const parsedDate = new Date(manualDate);
+			if (!Number.isNaN(parsedDate.getTime())) {
+				updateUser(
+					{
+						id: user?.id,
+						params: { expiresAt: parsedDate },
+					},
+					{
+						onSuccess: () => {
+							toast.success("User updated successfully");
+							setIsEdited(false);
+						},
+					},
+				);
+			} else {
+				toast.error("Invalid date format");
+			}
+		}
+	};
+	const handleResetDate = () => {
+		updateUser(
+			{
+				id: user?.id,
+				params: { expiresAt: null },
+			},
+			{
+				onSuccess: () => {
+					toast.success("User updated successfully");
+					setManualDate(null);
+					setIsEdited(false);
+				},
+			},
+		);
+	};
 	return (
 		<div>
 			<p className="text-sm text-gray-500">
@@ -91,48 +110,32 @@ const UserIsActive = ({ user }: Iuser) => {
 					<p className="text-sm">
 						{t("users.users.userOptionModal.account.userExpireLabel")}
 					</p>
-					<div className="flex gap-5">
-						<DatePicker
-							className="bg-gray-500"
-							selected={user.expiresAt}
-							popperPlacement="bottom-start"
-							// popperClassName="absolute"
-							onChange={(date) =>
-								updateUser(
-									{
-										id: user?.id,
-										params: { expiresAt: date },
-									},
-									{
-										onSuccess: () => {
-											toast.success("User updated successfully");
-										},
-									},
-								)
-							}
-							calendarContainer={DateContainer}
-							customInput={<DateButton />}
+					<div className="flex gap-5 relative">
+						<input
+							type={manualDate ? "date" : "text"}
+							onFocus={(e) => {
+								e.target.type = "date";
+							}}
+							aria-label="Date"
+							className="input input-bordered btn-sm"
+							placeholder="Never"
+							value={manualDate || ""}
+							onChange={handleManualDateChange}
+							style={{
+								zIndex: 2,
+								backgroundColor: manualDate ? "inherit" : "transparent",
+							}}
 						/>
-						{user.expiresAt ? (
-							<button
-								className="btn btn-sm"
-								onClick={() =>
-									updateUser(
-										{
-											id: user?.id,
-											params: { expiresAt: null },
-										},
-										{
-											onSuccess: () => {
-												toast.success("User updated successfully");
-											},
-										},
-									)
-								}
-							>
+						{manualDate && isEdited && (
+							<button className="btn btn-sm btn-primary" onClick={handleSaveDate}>
+								Save
+							</button>
+						)}
+						{user.expiresAt && !isEdited && (
+							<button className="btn btn-sm" onClick={handleResetDate}>
 								Reset
 							</button>
-						) : null}
+						)}
 					</div>
 				</div>
 			</div>
