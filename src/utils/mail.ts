@@ -63,45 +63,46 @@ export const notificationTemplate = () => {
 export const deviceIpChangeNotificationTemplate = () => {
 	return {
 		subject: "ZTNET: Your account has been accessed from a new IP Address",
-		body: `
-      Hello,<br />
-
-      Your security is very important to us. Your ZTNET account was accessed from a new IP address:
-			<br /><br />
-
-      ------------------------------------------<br />
-      email: <%= toEmail %><br />
-      time: <%= accessTime %> UTC<br />
-      IP address: <%= ipAddress %><br />
-      browser: <%= browserInfo %><br />
-      ------------------------------------------<br />
-			<br /><br />	
-      If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br />
-
-      Sincerely,<br />--<br />ZTNET
-    `,
+		body:
+			"Hello,<br /><br />" +
+			"Your security is very important to us. Your ZTNET account was accessed from a new IP address:" +
+			"<br /><br />" +
+			"------------------------------------------<br />" +
+			"email: <%= toEmail %><br />" +
+			"time: <%= accessTime %> UTC<br />" +
+			"IP address: <%= ipAddress %><br />" +
+			"browser: <%= browserInfo %><br />" +
+			"------------------------------------------<br />" +
+			"<br /><br />" +
+			"If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br /><br />" +
+			"Sincerely,<br />--<br />ZTNET",
 	};
 };
 
 export const newDeviceNotificationTemplate = () => {
 	return {
 		subject: "ZTNET: New Device Detected",
-		body: `
-			Hello,<br />
-
-			A new device has been associated with your ZTNET account. <br /><br />
-			
-			------------------------------------------<br />
-      time: <%= accessTime %> UTC<br />
-      IP address: <%= ipAddress %><br />
-      browser: <%= browserInfo %><br />
-      ------------------------------------------<br />
-			<br /><br />
-			If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br />
-
-			Sincerely,<br />--<br />ZTNET
-		`,
+		body:
+			"Hello,<br /><br />" +
+			"A new device has been associated with your ZTNET account. <br /><br />" +
+			"------------------------------------------<br />" +
+			"time: <%= accessTime %> UTC<br />" +
+			"IP address: <%= ipAddress %><br />" +
+			"browser: <%= browserInfo %><br />" +
+			"------------------------------------------<br />" +
+			"<br /><br />" +
+			"If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br /><br />" +
+			"Sincerely,<br />--<br />ZTNET",
 	};
+};
+
+export const mailTemplateMap = {
+	inviteUserTemplate,
+	forgotPasswordTemplate,
+	notificationTemplate,
+	inviteOrganizationTemplate,
+	newDeviceNotificationTemplate,
+	deviceIpChangeNotificationTemplate,
 };
 
 export async function createTransporter() {
