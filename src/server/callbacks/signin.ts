@@ -5,11 +5,10 @@ import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
 import {
-	createTransporter,
-	newIpAccessNotificationTemplate,
-	sendEmail,
+	newDeviceNotificationTemplate,
+	deviceIpChangeNotificationTemplate,
+	sendMailWithTemplate,
 } from "~/utils/mail";
-import ejs from "ejs";
 
 interface DeviceInfo {
 	deviceId: string;
@@ -66,15 +65,13 @@ async function updateUserLogin(userId: string): Promise<void> {
 }
 
 async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
-	const storedDevices = await prisma.userDevice.findMany({
-		where: { userId: deviceInfo.userId },
-		select: { deviceId: true, ipAddress: true },
+	const storedDevices = await prisma.userDevice.findUnique({
+		where: { deviceId: deviceInfo.deviceId },
+		select: { ipAddress: true },
 	});
 
 	// Check if the IP address has changed
-	const hasIpAddressChanged = storedDevices.some(
-		(device) => device.ipAddress !== deviceInfo.ipAddress,
-	);
+	const hasIpAddressChanged = storedDevices?.ipAddress !== deviceInfo.ipAddress;
 
 	await prisma.userDevice.upsert({
 		where: { deviceId: deviceInfo.deviceId },
@@ -88,52 +85,38 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 
 	const user = await prisma.user.findUnique({
 		where: { id: deviceInfo.userId },
-		select: { email: true, name: true },
+		select: { email: true, name: true, id: true },
 	});
 
 	if (user) {
-		if (hasIpAddressChanged) {
-			const globalOptions = await prisma.globalOptions.findFirst({
-				where: {
-					id: 1,
-				},
-			});
+		if (hasIpAddressChanged && storedDevices) {
 			try {
-				const newIpTemplate = newIpAccessNotificationTemplate();
-				const transporter = await createTransporter();
-				const renderedTemplate = await ejs.render(
-					JSON.stringify(newIpTemplate),
-					{
-						toName: user.name,
+				sendMailWithTemplate(deviceIpChangeNotificationTemplate, {
+					to: user.email,
+					userId: user.id,
+					templateData: {
 						toEmail: user.email,
 						accessTime: deviceInfo.lastActive.toISOString(),
 						ipAddress: deviceInfo.ipAddress,
 						browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
-					{ async: true },
-				);
-				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-				// define mail options
-				const mailOptions = {
-					from: globalOptions.smtpEmail,
-					to: user.email,
-					subject: parsedTemplate.subject,
-					html: parsedTemplate.body,
-				};
-
-				await sendEmail(transporter, mailOptions);
+				});
 			} catch (error) {
 				console.error(`New ip notification:${error}`);
 			}
 		} else if (!storedDevices) {
 			// Send email about new device
-			// await sendEmail(
-			// 	user.email,
-			// 	"New Device Detected",
-			// 	"A new device has been associated with your account.",
-			// );
+			sendMailWithTemplate(newDeviceNotificationTemplate, {
+				to: user.email,
+				userId: user.id,
+				templateData: {
+					accessTime: deviceInfo.lastActive.toISOString(),
+					ipAddress: deviceInfo.ipAddress,
+					browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
+					accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
+				},
+			});
 		}
 	}
 }

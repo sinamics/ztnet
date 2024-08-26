@@ -678,6 +678,8 @@ export const authRouter = createTRPCRouter({
 				deAuthorizeWarning: z.boolean().optional(),
 				addMemberIdAsName: z.boolean().optional(),
 				renameNodeGlobally: z.boolean().optional(),
+				newDeviceNotification: z.boolean().optional(),
+				deviceIpChangeNotification: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
