@@ -1,6 +1,6 @@
 import { IncomingMessage } from "http";
 import { prisma } from "../db";
-import { generateDeviceId } from "~/utils/devices";
+import { generateDeviceId, parseUA } from "~/utils/devices";
 
 export function jwtCallback(
 	req: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
@@ -65,7 +65,9 @@ export function jwtCallback(
 
 			if (account?.provider === "oauth") {
 				const userAgent = req.headers["user-agent"];
-				token.deviceId = generateDeviceId(userAgent as string, id);
+				const { deviceId } = generateDeviceId(parseUA(userAgent), id);
+				token.deviceId = deviceId;
+
 				token.accessToken = account.accessToken;
 			} else if (account?.provider === "credentials") {
 				token.deviceId = user.deviceId;

@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import UAParser from "ua-parser-js";
 import type { UserDevice } from "@prisma/client";
 import cn from "classnames";
 import Smartphone from "~/icons/smartphone";
@@ -8,6 +6,7 @@ import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
 import { signOut } from "next-auth/react";
+import { generateDeviceId, parseUA } from "~/utils/devices";
 
 const formatLastActive = (date) => {
 	return new Date(date).toLocaleString("no-NO");
@@ -50,7 +49,7 @@ const DeviceIcon = ({ deviceType }: { deviceType: string }) => {
 
 const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 	const t = useTranslations();
-	const { refetch } = api.auth.me.useQuery();
+	const { data: me, refetch } = api.auth.me.useQuery();
 
 	const { mutate: deleteUserDevice, isLoading: deleteLoading } =
 		api.auth.deleteUserDevice.useMutation({
@@ -60,22 +59,9 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 			},
 		});
 
-	const [currentDeviceInfo, setCurrentDeviceInfo] = useState<{
-		browser: string;
-		os: string;
-	} | null>(null);
-
-	useEffect(() => {
-		const ua = new UAParser(navigator.userAgent);
-		setCurrentDeviceInfo({
-			browser: ua.getBrowser().name || "Unknown",
-			os: ua.getOS().name || "Unknown",
-		});
-	}, []);
-
 	const isCurrentDevice = (device: UserDevice) => {
 		return (
-			device.browser === currentDeviceInfo?.browser && device.os === currentDeviceInfo?.os
+			device?.deviceId === generateDeviceId(parseUA(navigator.userAgent), me.id)?.deviceId
 		);
 	};
 
