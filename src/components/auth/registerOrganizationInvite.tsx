@@ -88,6 +88,7 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				void (async () => {
 					const result = await signIn("credentials", {
 						redirect: false,
+						userAgent: navigator.userAgent,
 						...formData,
 					});
 					setLoading(false);

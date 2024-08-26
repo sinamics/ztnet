@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "Podłączone Urządzenia",
+				"logoutAll": "Wyloguj Wszystkie",
+				"accessDenied": "Odmowa Dostępu",
+				"noDevicesFound": "Nie znaleziono urządzeń.",
+				"activeNow": "Aktywny Teraz",
+				"logout": "Wyloguj"
+			},
 			"restapi": {
 				"sectionTitle": "Tokeny dostępowe API",
 				"description": "Dzięki tej funkcjonalności możesz wygenerować token API, którego możesz użyć do uwierzytelnienia i uzyskania dostępu do usług API naszej aplikacji. Mając ważny token, możesz wysyłać żądania do API i programowo wchodzić w interakcję z funkcjami aplikacji.",

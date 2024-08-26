@@ -271,6 +271,27 @@ model User {
   apiTokens              APIToken[]
   webhooks               Webhook[]
   invitations            Invitation[]           @relation("InvitationsSent")
+  UserDevice             UserDevice[]
+}
+
+model UserDevice {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceType     String
+  ipAddress      String?
+  location       String?
+  deviceId       String   @unique
+  browser        String
+  browserVersion String
+  os             String
+  osVersion      String
+  lastActive     DateTime
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([deviceId])
 }
 
 model VerificationToken {

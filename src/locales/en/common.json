@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "Connected Devices",
+				"logoutAll": "Logout All",
+				"accessDenied": "Access Denied",
+				"noDevicesFound": "No devices found.",
+				"activeNow": "Active Now",
+				"logout": "Logout"
+			},
 			"restapi": {
 				"sectionTitle": "API Access Tokens",
 				"description": "This allows you to generate an API token that you can use to authenticate and gain access to our application's API services. With a valid token, you can make requests to the API and interact with the application's features programmatically.",

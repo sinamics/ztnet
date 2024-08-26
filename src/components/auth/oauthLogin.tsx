@@ -38,9 +38,10 @@ const OAuthLogin: React.FC = () => {
 
 	const oAuthHandler = async (providerId: string) => {
 		setLoading(true);
-
 		try {
-			const result = await signIn(providerId, { redirect: false });
+			const result = await signIn(providerId, {
+				redirect: false,
+			});
 
 			if (result?.error) {
 				toast.error(`Error occurred: ${result.error}`, { duration: 10000 });

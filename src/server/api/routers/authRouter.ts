@@ -24,7 +24,7 @@ import {
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { isRunningInDocker } from "~/utils/docker";
-import { Invitation, User, UserOptions } from "@prisma/client";
+import { Invitation, User, UserDevice, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 import { ErrorCode } from "~/utils/errorCode";
@@ -367,6 +367,7 @@ export const authRouter = createTRPCRouter({
 			include: {
 				options: true,
 				memberOfOrgs: true,
+				UserDevice: true,
 			},
 		})) as User & {
 			options?: UserOptions & {
@@ -381,6 +382,7 @@ export const authRouter = createTRPCRouter({
 				description: string | null;
 				isActive: boolean;
 			}[];
+			UserDevice?: UserDevice[];
 		};
 		user.options.localControllerUrlPlaceholder = isRunningInDocker()
 			? "http://zerotier:9993"
@@ -888,5 +890,20 @@ export const authRouter = createTRPCRouter({
 					userId: ctx.session.user.id,
 				},
 			});
+		}),
+	deleteUserDevice: protectedProcedure
+		.input(
+			z.object({
+				deviceId: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			await ctx.prisma.userDevice.delete({
+				where: {
+					deviceId: input.deviceId,
+				},
+			});
+
+			return input.deviceId;
 		}),
 });

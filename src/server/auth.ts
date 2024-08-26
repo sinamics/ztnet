@@ -5,7 +5,6 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { type User as IUser } from "@prisma/client";
-import { isRunningInDocker } from "~/utils/docker";
 import { ErrorCode } from "~/utils/errorCode";
 import {
 	decrypt,
@@ -13,6 +12,9 @@ import {
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
 import { authenticator } from "otplib";
+import { signInCallback } from "./callbacks/signin";
+import { jwtCallback } from "./callbacks/jwt";
+import { sessionCallback } from "./callbacks/session";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -25,10 +27,21 @@ import { authenticator } from "otplib";
 const MAX_FAILED_ATTEMPTS = 5;
 const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute in milliseconds
 
+interface IUserAgent {
+	userId: string;
+	deviceType: string;
+	browser: string;
+	os: string;
+	lastActive: Date;
+	deviceId: string;
+}
+
 declare module "next-auth" {
 	interface Session extends DefaultSession {
 		user: IUser;
 		error: string;
+		// userAgent?: IUserAgent | unknown;
+		// deviceId?: string;
 		update: {
 			name?: string;
 			email?: string;
@@ -39,10 +52,8 @@ declare module "next-auth" {
 		id?: string;
 		name: string;
 		role: string;
-		// ...other properties
-		// role: UserRole;
-		//   email: string;
-		//   password: string;
+		userAgent?: IUserAgent | unknown;
+		deviceId?: string;
 	}
 }
 
@@ -92,7 +103,9 @@ const genericOAuthAuthorization = buildAuthorizationConfig(
  *
  * @see https://next-auth.js.org/configuration/options
  */
-export const authOptions: NextAuthOptions = {
+export const getAuthOptions = (
+	req: GetServerSidePropsContext["req"],
+): NextAuthOptions => ({
 	adapter: MyAdapter,
 	providers: [
 		// Conditionally add Generic OAuth provider
@@ -117,12 +130,12 @@ export const authOptions: NextAuthOptions = {
 								id: profile.sub || profile.id.toString(),
 								name: profile.name || profile.login || profile.username,
 								email: profile.email,
-								image: profile.picture || profile.avatar_url || profile.image_url,
+								// image: profile.picture || profile.avatar_url || profile.image_url,
 								lastLogin: new Date().toISOString(),
 								role: "USER",
 							});
 						},
-					} as const, // Add 'as const' to make the provider type narrow to the exact expected values
+					} as const,
 			  ]
 			: []),
 		CredentialsProvider({
@@ -139,6 +152,7 @@ export const authOptions: NextAuthOptions = {
 					placeholder: "mail@example.com",
 				},
 				password: { label: "Password", type: "password" },
+				userAgent: { type: "hidden" },
 				totpCode: {
 					label: "Two-factor Code",
 					type: "input",
@@ -248,23 +262,13 @@ export const authOptions: NextAuthOptions = {
 						lastFailedLoginAttempt: null,
 					},
 				});
-
 				return {
 					...user,
+					userAgent: _credentials?.userAgent,
 					hash: null,
 				};
 			},
 		}),
-
-		/**
-		 * ...add more providers here.
-		 *
-		 * Most other providers require a bit more work than the Discord provider. For example, the
-		 * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-		 * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-		 *
-		 * @see https://next-auth.js.org/providers/github
-		 */
 	],
 	session: {
 		strategy: "jwt",
@@ -274,192 +278,9 @@ export const authOptions: NextAuthOptions = {
 		/**
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
-		async signIn({ user, account }) {
-			// Check if the user already exists
-			const existingUser = await prisma.user.findUnique({
-				where: {
-					email: user.email,
-				},
-			});
-
-			// check if the user is allowed to sign up.
-			if (!existingUser) {
-				const siteSettings = await prisma.globalOptions.findFirst();
-
-				if (!siteSettings?.enableRegistration) {
-					// route to error page
-					return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
-				}
-			}
-
-			if (account.provider === "credentials") {
-				if (existingUser) {
-					// User exists, update last login or other fields as necessary
-					await prisma.user.update({
-						where: {
-							id: existingUser.id,
-						},
-						data: {
-							lastLogin: new Date().toISOString(),
-						},
-					});
-				}
-				return true;
-			}
-			if (account.provider === "oauth") {
-				// Check if the user already exists
-				const existingUser = await prisma.user.findUnique({
-					where: {
-						email: user.email,
-					},
-				});
-
-				if (existingUser) {
-					// User exists, update last login or other fields as necessary
-					await prisma.user.update({
-						where: {
-							id: existingUser.id,
-						},
-						data: {
-							lastLogin: new Date().toISOString(),
-						},
-					});
-				} else {
-					// User does not exist, create new user
-					const userCount = await prisma.user.count();
-					const defaultUserGroup = await prisma.userGroup.findFirst({
-						where: {
-							isDefault: true,
-						},
-					});
-
-					await prisma.user.create({
-						data: {
-							name: user.name,
-							email: user.email,
-							lastLogin: new Date().toISOString(),
-							role: userCount === 0 ? "ADMIN" : "USER",
-							image: user.image,
-							userGroupId: defaultUserGroup?.id,
-							options: {
-								create: {
-									localControllerUrl: isRunningInDocker()
-										? "http://zerotier:9993"
-										: "http://127.0.0.1:9993",
-								},
-							},
-						},
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							role: true,
-						},
-					});
-				}
-				return true;
-			}
-		},
-		async jwt({ token, user, trigger, account, session }) {
-			if (trigger === "update") {
-				if (session.update) {
-					const user = await prisma.user.findFirst({
-						where: {
-							id: token.id,
-						},
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							role: true,
-							emailVerified: true,
-							lastLogin: true,
-							lastseen: true,
-						},
-					});
-
-					// Number(user.id.trim()) checks if the user session has the old int as the User id
-					if (Number.isInteger(Number(token.id))) {
-						return undefined;
-					}
-
-					// session update => https://github.com/nextauthjs/next-auth/discussions/3941
-					// verify that name has at least one character
-					if (typeof session.update.name === "string") {
-						// TODO throwing error will logout user.
-						// if (session.update.name.length < 1) {
-						//   throw new Error("Name must be at least one character long.");
-						// }
-						token.name = session.update.name;
-					}
-
-					// verify that email is valid
-					if (typeof session.update.email === "string") {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-
-						token.email = session.update.email;
-					}
-
-					// update user with new values
-					await prisma.user.update({
-						where: {
-							id: token.id as string,
-						},
-						data: {
-							email: session.update.email || user.email,
-							name: session.update.name || user.name,
-						},
-					});
-				}
-				return token;
-			}
-
-			// Persist the OAuth access_token to the token right after signin
-			// Handle OAuth login
-			if (account && user) {
-				// Persist OAuth token to the JWT
-				token.accessToken = account.accessToken;
-
-				// Update token with user information
-				token.id = user.id;
-				token.name = user.name;
-				token.email = user.email;
-				token.role = user.role; // Add other relevant properties as needed
-			}
-			if (user) {
-				// token.id = user.id;
-				// token.name = user.name;
-				// token.role = user.role;
-				token = { ...user };
-			}
-			return token;
-		},
-		session: async ({ session, token }) => {
-			if (!token.id) return null;
-
-			// Check the user exists in the database
-			const user = await prisma.user.findFirst({
-				where: { id: token.id },
-			});
-
-			// Number(user.id.trim()) checks if the user session has the old int as the User id
-			if (!user || !user.isActive || Number.isInteger(Number(token.id))) {
-				// If the user does not exist, set user to null
-				return { ...session, user: null };
-			}
-
-			// update users lastseen in the database
-			await prisma.user.update({
-				where: {
-					id: user.id,
-				},
-				data: {
-					lastseen: new Date(),
-				},
-			});
-			session.user = { ...token } as IUser;
-			return session;
-		},
+		signIn: signInCallback(req),
+		jwt: jwtCallback(req),
+		session: sessionCallback(req),
 		redirect({ url, baseUrl }) {
 			// Allows relative callback URLs
 			if (url.startsWith("/")) return `${baseUrl}${url}`;
@@ -472,7 +293,7 @@ export const authOptions: NextAuthOptions = {
 		error: "/auth/error",
 	},
 	debug: false,
-};
+});
 
 /**
  * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
@@ -483,5 +304,5 @@ export const getServerAuthSession = (ctx: {
 	req: GetServerSidePropsContext["req"];
 	res: GetServerSidePropsContext["res"];
 }) => {
-	return getServerSession(ctx.req, ctx.res, authOptions);
+	return getServerSession(ctx.req, ctx.res, getAuthOptions(ctx.req));
 };
