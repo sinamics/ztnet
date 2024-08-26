@@ -149,7 +149,7 @@ export const Accounts = () => {
 												}`}</span>
 											</p>
 										),
-										rootStyle: "text-left",
+										rootStyle: "text-left max-w-2xl ",
 										content: <UserOptionsModal userId={original?.id} />,
 									})
 								}
