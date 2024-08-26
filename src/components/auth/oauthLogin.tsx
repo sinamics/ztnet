@@ -38,18 +38,10 @@ const OAuthLogin: React.FC = () => {
 
 	const oAuthHandler = async (providerId: string) => {
 		setLoading(true);
-		const userAgent = encodeURIComponent(navigator.userAgent);
-
 		try {
-			const result = await signIn(
-				providerId,
-				{
-					redirect: false,
-				},
-				{
-					userAgent: userAgent,
-				},
-			);
+			const result = await signIn(providerId, {
+				redirect: false,
+			});
 
 			if (result?.error) {
 				toast.error(`Error occurred: ${result.error}`, { duration: 10000 });

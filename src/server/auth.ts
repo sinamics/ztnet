@@ -125,18 +125,17 @@ export const getAuthOptions = (
 						token: process.env.OAUTH_ACCESS_TOKEN_URL,
 						userinfo: process.env.OAUTH_USER_INFO,
 						idToken: true,
-						profile(profile, tokens) {
+						profile(profile) {
 							return Promise.resolve({
 								id: profile.sub || profile.id.toString(),
 								name: profile.name || profile.login || profile.username,
 								email: profile.email,
 								// image: profile.picture || profile.avatar_url || profile.image_url,
 								lastLogin: new Date().toISOString(),
-								userAgent: tokens.userAgent,
 								role: "USER",
 							});
 						},
-					} as const, // Add 'as const' to make the provider type narrow to the exact expected values
+					} as const,
 			  ]
 			: []),
 		CredentialsProvider({
