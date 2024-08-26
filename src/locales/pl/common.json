@@ -220,7 +220,7 @@
 		"loading": "Ładowanie...",
 		"errorSteps": {
 			"step1": "Sprawdź czy działa kontener ZeroTier",
-			"step2": "Jeśli e są inne instancje ZeroTier, zdeaktywuj je wpierw, aby nie powodowały konfliktów."
+			"step2": "Jeśli aktywne są inne instancje ZeroTier, zdeaktywuj je wpierw, aby nie powodowały konfliktów."
 		},
 		"networkId": "ID sieci:",
 		"networkName": "Nazwa sieci:",
