@@ -2,6 +2,7 @@ import { type GlobalOptions } from "@prisma/client";
 import nodemailer, { type TransportOptions } from "nodemailer";
 import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
+import { prisma } from "~/server/db";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -59,7 +60,35 @@ export const notificationTemplate = () => {
 	};
 };
 
-export function createTransporter(globalOptions: GlobalOptions) {
+export const newIpAccessNotificationTemplate = () => {
+	return {
+		subject: "ZTNET: Your account has been accessed from a new IP Address",
+		body: `
+      Hello,<br />
+
+      Your security is very important to us. Your ZTNET account was accessed from a new IP address:
+			<br /><br />
+
+      ------------------------------------------<br />
+      email: <%= toEmail %><br />
+      time: <%= accessTime %> UTC<br />
+      IP address: <%= ipAddress %><br />
+      browser: <%= browserInfo %><br />
+      ------------------------------------------<br />
+			<br /><br />	
+      If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br />
+
+      Sincerely,<br />--<br />ZTNET
+    `,
+	};
+};
+
+export async function createTransporter() {
+	const globalOptions = await prisma.globalOptions.findFirst({
+		where: {
+			id: 1,
+		},
+	});
 	if (!globalOptions.smtpHost || !globalOptions.smtpPort || !globalOptions.smtpEmail) {
 		return throwError(
 			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",

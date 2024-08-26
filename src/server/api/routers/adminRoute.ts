@@ -526,7 +526,7 @@ export const adminRouter = createTRPCRouter({
 
 				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
-				const transporter: nodemailer.Transporter = createTransporter(globalOptions);
+				const transporter: nodemailer.Transporter = await createTransporter();
 
 				// Define mail options
 				const mailOptions = {

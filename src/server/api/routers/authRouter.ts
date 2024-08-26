@@ -307,7 +307,7 @@ export const authRouter = createTRPCRouter({
 				});
 
 				// create transporter
-				const transporter = createTransporter(globalOptions);
+				const transporter = await createTransporter();
 
 				for (const adminEmail of adminUsers) {
 					const renderedTemplate = await ejs.render(
@@ -585,7 +585,7 @@ export const authRouter = createTRPCRouter({
 			);
 
 			// create transporter
-			const transporter = createTransporter(globalOptions);
+			const transporter = await createTransporter();
 			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
 
 			// define mail options
