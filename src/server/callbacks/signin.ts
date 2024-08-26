@@ -59,15 +59,12 @@ async function updateUserLogin(userId: string): Promise<void> {
 	});
 }
 
-async function upsertDeviceInfo(
-	deviceInfo: DeviceInfo,
-	ipAddress: string,
-): Promise<void> {
+async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 	await prisma.userDevice.upsert({
 		where: { deviceId: deviceInfo.deviceId },
 		update: {
 			lastActive: deviceInfo.lastActive,
-			ipAddress,
+			ipAddress: deviceInfo.ipAddress,
 			isActive: true,
 		},
 		create: deviceInfo,
@@ -158,7 +155,7 @@ export function signInCallback(
 					existingUser.id,
 					ipAddress,
 				);
-				await upsertDeviceInfo(deviceInfo, ipAddress);
+				await upsertDeviceInfo(deviceInfo);
 				user.deviceId = deviceInfo.deviceId;
 			}
 
