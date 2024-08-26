@@ -720,11 +720,11 @@
 				}
 			},
 			"userDevices": {
-				"connectedDevices": "Podłączone Urządzenia",
-				"logoutAll": "Wyloguj Wszystkie",
-				"accessDenied": "Odmowa Dostępu",
-				"noDevicesFound": "Nie znaleziono urządzeń.",
-				"activeNow": "Aktywny Teraz",
+				"connectedDevices": "Podłączone urządzenia",
+				"logoutAll": "Wyloguj wszystkich",
+				"accessDenied": "Odmowa dostępu",
+				"noDevicesFound": "Nie znaleziono podłączonych urządzeń.",
+				"activeNow": "Aktywni teraz",
 				"logout": "Wyloguj"
 			},
 			"restapi": {
