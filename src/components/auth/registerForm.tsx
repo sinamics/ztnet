@@ -47,6 +47,7 @@ const RegisterForm: React.FC = () => {
 				void (async () => {
 					const result = await signIn("credentials", {
 						redirect: false,
+						userAgent: navigator.userAgent,
 						...formData,
 					});
 					setLoading(false);

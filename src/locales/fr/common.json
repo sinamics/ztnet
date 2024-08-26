@@ -719,6 +719,14 @@
 					}
 				}
 			},
+			"userDevices": {
+				"connectedDevices": "Appareils Connectés",
+				"logoutAll": "Déconnecter Tout",
+				"accessDenied": "Accès Refusé",
+				"noDevicesFound": "Aucun appareil trouvé.",
+				"activeNow": "Actif Maintenant",
+				"logout": "Déconnexion"
+			},
 			"restapi": {
 				"sectionTitle": "Token d'accès à l'API",
 				"description": "Cela vous permet de générer un token API que vous pouvez utiliser pour vous authentifier et accéder aux services API de notre application. Avec un token valide, vous pouvez adresser des requêtes à l'API et interagir avec les fonctionnalités de l'application par programmation.",

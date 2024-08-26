@@ -11,8 +11,8 @@ import { execSync } from "child_process";
 import { updateLocalConf } from "~/utils/planet";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "~/server/auth";
 import { WorldConfig } from "~/types/worldConfig";
+import { getAuthOptions } from "~/server/auth";
 
 export const config = {
 	api: {
@@ -21,7 +21,7 @@ export const config = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const session = await getServerSession(req, res, authOptions);
+	const session = await getServerSession(req, res, getAuthOptions(req));
 	if (!session) {
 		res.status(401).json({ message: "Authorization Error" });
 		return;

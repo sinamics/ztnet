@@ -67,6 +67,8 @@ describe("CredentialsForm", () => {
 			redirect: false,
 			email: "test@example.com",
 			password: "testpassword",
+			userAgent:
+				"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/20.0.3",
 			totpCode: "",
 		});
 	});
