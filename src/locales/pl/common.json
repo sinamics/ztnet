@@ -220,7 +220,7 @@
 		"loading": "Ładowanie...",
 		"errorSteps": {
 			"step1": "Sprawdź czy działa kontener ZeroTier",
-			"step2": "Jeśli aktywne są inne instancje ZeroTier, zdeaktywuj je wpierw, aby nie powodowały konfliktów."
+			"step2": "Jeśli e są inne instancje ZeroTier, zdeaktywuj je wpierw, aby nie powodowały konfliktów."
 		},
 		"networkId": "ID sieci:",
 		"networkName": "Nazwa sieci:",
@@ -480,7 +480,7 @@
 					"timeUsedLabel": "Ile razy można użyć tego linku? (Opcjonalne, domyślnie 1)",
 					"timeUsedPlaceholder": "Można użyć okresów",
 					"assignGroupLabel": "Przypisz użytkownika do grupy",
-					"activeInvitationsLabel": "Aktywne zaproszenia (kliknij po więcej informacji)",
+					"activeInvitationsLabel": "e zaproszenia (kliknij po więcej informacji)",
 					"invitationModal": {
 						"header": "Szczegóły zaproszenia",
 						"secretLabel": "Sekret:",
@@ -582,7 +582,7 @@
 			"controllerStatus": {
 				"title": "Status kontrolera",
 				"online": "Online:",
-				"tcpFallbackActive": "Aktywne rezerwowe przekazywanie TCP:",
+				"tcpFallbackActive": "e rezerwowe przekazywanie TCP:",
 				"version": "Wersja:"
 			},
 			"controllerConfig": {
@@ -663,7 +663,7 @@
 				"description": "Opis organizacji:",
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
-				"activeWebhooks": "Aktywne webhooki:"
+				"activeWebhooks": "e webhooki:"
 			}
 		}
 	},
@@ -724,7 +724,7 @@
 				"logoutAll": "Wyloguj wszystkich",
 				"accessDenied": "Odmowa dostępu",
 				"noDevicesFound": "Nie znaleziono podłączonych urządzeń.",
-				"activeNow": "Aktywni teraz",
+				"activeNow": "Aktywny/Zalogowany",
 				"logout": "Wyloguj"
 			},
 			"restapi": {
