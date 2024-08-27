@@ -17,6 +17,10 @@ import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
 import MultifactorNotEnabled from "~/components/auth/multifactorNotEnabledAlert";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 import ListUserDevices from "~/components/auth/userDevices";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const defaultLocale = "en";
 
@@ -25,33 +29,26 @@ const Account = () => {
 	const { asPath, locale, locales, push } = useRouter();
 	const t = useTranslations();
 
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
 	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
 
 	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation({
-		onError: (error) => {
-			toast.error(error.message);
-		},
-		onSuccess: () => {
-			toast.success(t("commonToast.sentSuccessfully"));
-		},
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [] }),
 	});
 
 	const { mutate: updateZtApi } = api.auth.setZtApi.useMutation({
-		onError: (error) => {
-			toast.error(error.message);
-		},
+		onError: handleApiError,
 	});
 
 	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
 		api.auth.sendVerificationEmail.useMutation({
-			onError: (error) => {
-				toast.error(error.message);
-			},
-			onSuccess: () => {
-				toast.success(t("Check your email for a verification link"));
-			},
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({ actions: [] }),
 		});
 
 	const ChangeLanguage = async (locale: string) => {
