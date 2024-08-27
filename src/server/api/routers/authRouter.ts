@@ -623,6 +623,15 @@ export const authRouter = createTRPCRouter({
 			}
 		}),
 	sendVerificationEmail: protectedProcedure.mutation(async ({ ctx }) => {
+		// add cooldown to prevent spam
+		try {
+			await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "SEND_EMAIL_VERIFICATION");
+		} catch {
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: "Rate limit exceeded",
+			});
+		}
 		const user = await ctx.prisma.user.findFirst({
 			where: {
 				id: ctx.session.user.id,
@@ -661,6 +670,52 @@ export const authRouter = createTRPCRouter({
 
 		return { message: "Verification link has been sent." };
 	}),
+	validateEmailVerificationToken: publicProcedure
+		.input(
+			z.object({
+				token: z.string({ required_error: "Token is required!" }),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// add rate limit
+			try {
+				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "EMAIL_VERIFICATION_LINK");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded",
+				});
+			}
+
+			const { token } = input;
+			if (!token) return { error: ErrorCode.InvalidToken };
+			try {
+				const secret = generateInstanceSecret(VERIFY_EMAIL_SECRET);
+				const decoded = jwt.verify(token, secret) as { id: string; email: string };
+
+				const user = await ctx.prisma.user.findFirst({
+					where: {
+						id: decoded.id,
+						email: decoded.email,
+					},
+				});
+
+				if (!user) return { error: ErrorCode.InvalidToken };
+
+				// set emailVerified to true
+				await ctx.prisma.user.update({
+					where: {
+						id: user.id,
+					},
+					data: {
+						emailVerified: new Date().toISOString(),
+					},
+				});
+				return { email: user.email };
+			} catch (_error) {
+				return { error: ErrorCode.InvalidToken };
+			}
+		}),
 	/**
 	 * Update the specified NetworkMemberNotation instance.
 	 *
