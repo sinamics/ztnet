@@ -821,7 +821,7 @@
 		"notification": {
 			"devices": "Urządzenia",
 			"newDeviceLogin": {
-				"title": "Alert logowania na nowym urządzeniu",
+				"title": "Powiadomienie o logowaniu nowego urządzenia",
 				"description": "Otrzymuj e-mail, gdy nowe urządzenie loguje się na Twoje konto po raz pierwszy."
 			},
 			"ipAddressChange": {
