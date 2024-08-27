@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
 			"organizationInviteTemplate": "Plantilla de invitación de organización",
+			"newDeviceNotificationTemplate": "Plantilla de notificación de nuevo dispositivo",
+			"deviceIpChangeNotificationTemplate": "Plantilla de notificación de cambio de IP del dispositivo",
 			"templates": {
 				"availableTags": "Etiquetas disponibles:",
 				"subject": "Asunto",
@@ -671,6 +673,7 @@
 		"tabs": {
 			"account": "Cuenta",
 			"network": "Red",
+			"notification": "Notificación",
 			"user": "Usuario"
 		},
 		"account": {
@@ -806,6 +809,17 @@
 				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales.",
 				"addMemberIdAsNameTitle": "Agregar el ID del miembro como nombre al registrarse",
 				"addMemberIdAsNameLabel": "Cuando un miembro de la red se registra, el ID del miembro (nodeid) se agregará como nombre."
+			}
+		},
+		"notification": {
+			"devices": "Dispositivos",
+			"newDeviceLogin": {
+				"title": "Alerta de inicio de sesión en nuevo dispositivo",
+				"description": "Recibe un correo electrónico cuando un nuevo dispositivo inicia sesión en tu cuenta por primera vez."
+			},
+			"ipAddressChange": {
+				"title": "Alerta de cambio de dirección IP",
+				"description": "Recibe un correo electrónico cuando un dispositivo conocido accede a tu cuenta desde una nueva dirección IP."
 			}
 		}
 	},

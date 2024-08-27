@@ -10,12 +10,10 @@ import { TRPCError } from "@trpc/server";
 import { throwError } from "~/server/helpers/errorHandler";
 import jwt from "jsonwebtoken";
 import {
-	createTransporter,
-	sendEmail,
 	forgotPasswordTemplate,
 	notificationTemplate,
+	sendMailWithTemplate,
 } from "~/utils/mail";
-import ejs from "ejs";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
@@ -297,43 +295,21 @@ export const authRouter = createTRPCRouter({
 			});
 
 			if (globalOptions?.userRegistrationNotification) {
-				const defaultTemplate = notificationTemplate();
-				const template = globalOptions?.notificationTemplate ?? defaultTemplate;
-
 				const adminUsers = await ctx.prisma.user.findMany({
 					where: {
 						role: "ADMIN",
 					},
 				});
 
-				// create transporter
-				const transporter = createTransporter(globalOptions);
-
-				for (const adminEmail of adminUsers) {
-					const renderedTemplate = await ejs.render(
-						JSON.stringify(template),
-						{
-							toName: adminEmail.name,
+				for (const adminUser of adminUsers) {
+					await sendMailWithTemplate(notificationTemplate, {
+						to: adminUser.email,
+						userId: adminUser.id,
+						templateData: {
+							toName: adminUser.name,
 							notificationMessage: `A new user with the name ${name} and email ${email} has just registered!`,
 						},
-						{ async: true },
-					);
-
-					const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-					// define mail options
-					const mailOptions = {
-						from: globalOptions.smtpEmail,
-						to: adminEmail.email,
-						subject: parsedTemplate.subject,
-						html: parsedTemplate.body,
-					};
-					// we dont want to show any error related to sending emails when user signs up
-					try {
-						await sendEmail(transporter, mailOptions);
-					} catch (error) {
-						console.error(error);
-					}
+					});
 				}
 			}
 			// add log if hasValidOrganizationToken is true
@@ -565,39 +541,27 @@ export const authRouter = createTRPCRouter({
 				},
 			);
 
-			const forgotLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
-			const globalOptions = await ctx.prisma.globalOptions.findFirst({
-				where: {
-					id: 1,
-				},
-			});
+			const resetLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
+			// Send email
+			try {
+				await sendMailWithTemplate(forgotPasswordTemplate, {
+					to: email,
+					userId: user.id,
+					templateData: {
+						toEmail: email,
+						forgotLink: resetLink,
+						// Add any other fields that might be used in the template
+					},
+				});
+			} catch (error) {
+				console.error("Failed to send password reset email:", error);
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send reset email. Please try again later.",
+				});
+			}
 
-			const defaultTemplate = forgotPasswordTemplate();
-			const template = globalOptions?.forgotPasswordTemplate ?? defaultTemplate;
-
-			const renderedTemplate = await ejs.render(
-				JSON.stringify(template),
-				{
-					toEmail: email,
-					forgotLink,
-				},
-				{ async: true },
-			);
-
-			// create transporter
-			const transporter = createTransporter(globalOptions);
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-			// define mail options
-			const mailOptions = {
-				from: globalOptions.smtpEmail,
-				to: email,
-				subject: parsedTemplate.subject,
-				html: parsedTemplate.body,
-			};
-
-			// send test mail to user
-			await sendEmail(transporter, mailOptions);
+			return { message: "If the email exists, a reset link has been sent." };
 		}),
 
 	changePasswordFromJwt: publicProcedure
@@ -678,6 +642,8 @@ export const authRouter = createTRPCRouter({
 				deAuthorizeWarning: z.boolean().optional(),
 				addMemberIdAsName: z.boolean().optional(),
 				renameNodeGlobally: z.boolean().optional(),
+				newDeviceNotification: z.boolean().optional(),
+				deviceIpChangeNotification: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

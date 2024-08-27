@@ -27,31 +27,33 @@ model GlobalOptions {
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
   // Email configuration
-  smtpHost                     String?
-  smtpPort                     String  @default("587")
-  smtpEmail                    String?
-  smtpUsername                 String?
-  smtpPassword                 String?
-  smtpUseSSL                   Boolean @default(false)
-  smtpSecure                   Boolean @default(false)
-  smtpRequireTLS               Boolean @default(false)
-  smtpIgnoreTLS                Boolean @default(false)
-  inviteUserTemplate           Json?
-  inviteAdminTemplate          Json?
-  inviteOrganizationTemplate   Json?
-  forgotPasswordTemplate       Json?
-  verifyEmailTemplate          Json?
-  notificationTemplate         Json?
+  smtpHost                           String?
+  smtpPort                           String  @default("587")
+  smtpEmail                          String?
+  smtpUsername                       String?
+  smtpPassword                       String?
+  smtpUseSSL                         Boolean @default(false)
+  smtpSecure                         Boolean @default(false)
+  smtpRequireTLS                     Boolean @default(false)
+  smtpIgnoreTLS                      Boolean @default(false)
+  inviteUserTemplate                 Json?
+  inviteAdminTemplate                Json?
+  inviteOrganizationTemplate         Json?
+  forgotPasswordTemplate             Json?
+  verifyEmailTemplate                Json?
+  notificationTemplate               Json?
+  newDeviceNotificationTemplate      Json?
+  deviceIpChangeNotificationTemplate Json?
   // Notifications
-  userRegistrationNotification Boolean @default(false)
+  userRegistrationNotification       Boolean @default(false)
   // Welcome message
-  welcomeMessageEnabled        Boolean @default(false)
-  welcomeMessageTitle          String?
-  welcomeMessageBody           String?
+  welcomeMessageEnabled              Boolean @default(false)
+  welcomeMessageTitle                String?
+  welcomeMessageBody                 String?
   // mkworld
-  customPlanetUsed             Boolean @default(false)
-  planetId                     Int?    @unique
-  planet                       Planet? @relation(fields: [planetId], references: [id])
+  customPlanetUsed                   Boolean @default(false)
+  planetId                           Int?    @unique
+  planet                             Planet? @relation(fields: [planetId], references: [id])
 }
 
 // ROOT SERVERS
@@ -185,6 +187,11 @@ model UserOptions {
   deAuthorizeWarning           Boolean? @default(false)
   addMemberIdAsName            Boolean? @default(false)
   renameNodeGlobally           Boolean? @default(false)
+  // notifications
+  newDeviceNotification        Boolean? @default(true)
+  deviceIpChangeNotification   Boolean? @default(true)
+  apiRateLimitNotification     Boolean? @default(true)
+  failedLoginNotification      Boolean? @default(true)
 }
 
 enum AccessLevel {
@@ -215,24 +222,6 @@ model APIToken {
   expiresAt            DateTime? // null means it never expires
   isActive             Boolean   @default(true)
 }
-
-// model UserDevice {
-//   id         String   @id @default(cuid())
-//   userId     String
-//   user       User     @relation(fields: [id], references: [id], onDelete: Cascade)
-//   deviceType String
-//   deviceId   String   @unique
-//   browser    String
-//   os         String
-//   ip         String?
-//   location   String?
-//   lastActive DateTime
-//   isActive   Boolean  @default(true)
-//   createdAt  DateTime @default(now())
-
-//   @@index([userId])
-//   @@index([deviceId])
-// }
 
 model User {
   id                     String                 @id @default(cuid())
@@ -278,6 +267,7 @@ model UserDevice {
   id             String   @id @default(cuid())
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent      String
   deviceType     String
   ipAddress      String?
   location       String?

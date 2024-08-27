@@ -13,7 +13,7 @@ type IMailTemplate = {
 	body: string;
 };
 
-const NotificationTemplate = () => {
+const DeviceIpChangeNotificationTemplate = () => {
 	const t = useTranslations("admin");
 
 	const handleApiError = useTrpcApiErrorHandler();
@@ -35,7 +35,7 @@ const NotificationTemplate = () => {
 		refetch: refetchMailTemplates,
 		isLoading: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
-		template: "notificationTemplate",
+		template: "deviceIpChangeNotificationTemplate",
 	});
 
 	const changeTemplateHandler = (
@@ -68,8 +68,8 @@ const NotificationTemplate = () => {
 	}, [defaultTemplates]);
 
 	useEffect(() => {
-		const notificationTemplate = mailTemplates as IMailTemplate;
-		setEmailTemplate(notificationTemplate);
+		const deviceIpChangeNotificationTemplate = mailTemplates as IMailTemplate;
+		setEmailTemplate(deviceIpChangeNotificationTemplate);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [mailTemplates]);
 
@@ -103,7 +103,7 @@ const NotificationTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(stateTemplate),
-				type: "notificationTemplate",
+				type: "deviceIpChangeNotificationTemplate",
 			},
 			{
 				onSuccess: handleApiSuccess({
@@ -128,8 +128,11 @@ const NotificationTemplate = () => {
 				<p className="font-medium">
 					{t("mail.templates.availableTags")}
 					<span className="text-primary flex gap-1">
-						<kbd className="kbd kbd-sm">toName</kbd>
-						<kbd className="kbd kbd-sm">notificationMessage</kbd>
+						<kbd className="kbd kbd-sm">mail</kbd>
+						<kbd className="kbd kbd-sm">accessTime</kbd>
+						<kbd className="kbd kbd-sm">ipAddress</kbd>
+						<kbd className="kbd kbd-sm">browserInfo </kbd>
+						<kbd className="kbd kbd-sm">accountPageUrl </kbd>
 					</span>
 				</p>
 				<div className="form-control w-full">
@@ -176,7 +179,7 @@ const NotificationTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "notificationTemplate",
+								template: "deviceIpChangeNotificationTemplate",
 							})
 						}
 					>
@@ -187,7 +190,7 @@ const NotificationTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "notificationTemplate" })}
+						onClick={() => sendTestMail({ type: "deviceIpChangeNotificationTemplate" })}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")
@@ -199,4 +202,4 @@ const NotificationTemplate = () => {
 	);
 };
 
-export default NotificationTemplate;
+export default DeviceIpChangeNotificationTemplate;
