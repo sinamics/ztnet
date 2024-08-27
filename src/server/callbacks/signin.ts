@@ -11,6 +11,7 @@ import {
 } from "~/utils/mail";
 
 interface DeviceInfo {
+	userAgent: string;
 	deviceId: string;
 	ipAddress: string;
 	userId: string;
@@ -98,7 +99,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 						toEmail: user.email,
 						accessTime: deviceInfo.lastActive.toISOString(),
 						ipAddress: deviceInfo.ipAddress,
-						browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
+						browserInfo: deviceInfo.userAgent,
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
 				});
@@ -110,7 +111,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 					templateData: {
 						accessTime: deviceInfo.lastActive.toISOString(),
 						ipAddress: deviceInfo.ipAddress,
-						browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
+						browserInfo: deviceInfo.userAgent,
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
 				});
@@ -130,6 +131,7 @@ function createDeviceInfo(
 
 	return {
 		...parsedUA,
+		userAgent,
 		deviceId,
 		ipAddress,
 		userId,

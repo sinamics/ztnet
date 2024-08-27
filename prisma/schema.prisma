@@ -267,6 +267,7 @@ model UserDevice {
   id             String   @id @default(cuid())
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent      String
   deviceType     String
   ipAddress      String?
   location       String?
