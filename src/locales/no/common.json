@@ -673,6 +673,7 @@
 		"tabs": {
 			"account": "Konto",
 			"network": "Nettverk",
+			"notification": "Varsel",
 			"user": "Bruker"
 		},
 		"account": {
