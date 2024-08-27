@@ -110,12 +110,23 @@ interface EmailTemplate {
 	body: string;
 }
 
+/**
+ * Represents the options for sending an email.
+ */
 interface EmailOptions {
 	to: string;
 	templateData: Record<string, unknown>;
 	userId?: string;
 }
 
+/**
+ * Sends an email with a template.
+ *
+ * @param templateFunc - The function that returns the email template.
+ * @param options - The options for sending the email.
+ * @returns A promise that resolves when the email is sent successfully.
+ * @throws An error if global options or user options are not found.
+ */
 export async function sendMailWithTemplate(
 	templateFunc: () => EmailTemplate,
 	options: EmailOptions,
@@ -128,28 +139,36 @@ export async function sendMailWithTemplate(
 		throw new Error("Global options not found");
 	}
 
-	// Check user preferences
-	const userOptions = await prisma.userOptions.findUnique({
-		where: { userId: options.userId },
-	});
+	// Check if user-specific options are set and enabled
+	if (options.userId) {
+		// Check user preferences
+		const userOptions = await prisma.userOptions.findUnique({
+			where: { userId: options.userId },
+		});
 
-	if (!userOptions) {
-		throw new Error("User options not found");
-	}
+		if (!userOptions) {
+			throw new Error("User options not found");
+		}
 
-	// Map template functions to UserOptions fields
-	const templateToOptionMap = {
-		newDeviceNotificationTemplate: "newDeviceNotification",
-		deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
-	};
+		/**
+		 * Maps template names to option names.
+		 */
+		const templateToOptionMap = {
+			newDeviceNotificationTemplate: "newDeviceNotification",
+			deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+		};
 
-	const optionField = templateToOptionMap[templateFunc.name];
-	if (optionField && !userOptions[optionField]) {
-		return;
+		/**
+		 * Check if tuser has enabled the option for the template.
+		 */
+		const optionField = templateToOptionMap[templateFunc.name];
+		if (optionField && !userOptions[optionField]) {
+			return;
+		}
 	}
 
 	const defaultTemplate = templateFunc();
-	const template = globalOptions[`${templateFunc.name}Template`] ?? defaultTemplate;
+	const template = JSON.parse(globalOptions[templateFunc.name]) ?? defaultTemplate;
 
 	const renderedTemplate = await ejs.render(
 		JSON.stringify(template),
