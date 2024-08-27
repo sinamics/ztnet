@@ -60,18 +60,18 @@ async function createUser(userData: User): Promise<Partial<User>> {
 async function updateUserLogin(userId: string): Promise<void> {
 	await prisma.user.update({
 		where: { id: userId },
-		data: { lastLogin: new Date().toISOString() },
+		data: { lastLogin: new Date().toISOString(), firstTime: false },
 	});
 }
 
 async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
-	const storedDevices = await prisma.userDevice.findUnique({
+	const hasDevice = await prisma.userDevice.findUnique({
 		where: { deviceId: deviceInfo.deviceId },
 		select: { ipAddress: true },
 	});
 
 	// Check if the IP address has changed
-	const hasIpAddressChanged = storedDevices?.ipAddress !== deviceInfo.ipAddress;
+	const hasIpAddressChanged = hasDevice?.ipAddress !== deviceInfo.ipAddress;
 
 	await prisma.userDevice.upsert({
 		where: { deviceId: deviceInfo.deviceId },
@@ -85,12 +85,12 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 
 	const user = await prisma.user.findUnique({
 		where: { id: deviceInfo.userId },
-		select: { email: true, name: true, id: true },
+		select: { email: true, name: true, id: true, firstTime: true },
 	});
 
-	if (user) {
-		if (hasIpAddressChanged && storedDevices) {
-			try {
+	if (user && !user.firstTime) {
+		try {
+			if (hasIpAddressChanged && hasDevice) {
 				sendMailWithTemplate(deviceIpChangeNotificationTemplate, {
 					to: user.email,
 					userId: user.id,
@@ -102,21 +102,21 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
 				});
-			} catch (error) {
-				console.error(`New ip notification:${error}`);
+			} else if (!hasDevice) {
+				// Send email about new device
+				sendMailWithTemplate(newDeviceNotificationTemplate, {
+					to: user.email,
+					userId: user.id,
+					templateData: {
+						accessTime: deviceInfo.lastActive.toISOString(),
+						ipAddress: deviceInfo.ipAddress,
+						browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
+						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
+					},
+				});
 			}
-		} else if (!storedDevices) {
-			// Send email about new device
-			sendMailWithTemplate(newDeviceNotificationTemplate, {
-				to: user.email,
-				userId: user.id,
-				templateData: {
-					accessTime: deviceInfo.lastActive.toISOString(),
-					ipAddress: deviceInfo.ipAddress,
-					browserInfo: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
-					accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
-				},
-			});
+		} catch (error) {
+			console.error(`Device Error: ${error}`);
 		}
 	}
 }
@@ -194,8 +194,6 @@ export function signInCallback(
 				return false;
 			}
 
-			await updateUserLogin(existingUser.id);
-
 			const userAgent =
 				account.provider === "credentials" ? user?.userAgent : req.headers["user-agent"];
 
@@ -209,6 +207,7 @@ export function signInCallback(
 				user.deviceId = deviceInfo.deviceId;
 			}
 
+			await updateUserLogin(existingUser.id);
 			return true;
 		} catch (error) {
 			console.error("Error in signIn callback:", error);
