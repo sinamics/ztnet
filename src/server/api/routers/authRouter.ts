@@ -715,7 +715,7 @@ export const authRouter = createTRPCRouter({
 						emailVerified: new Date().toISOString(),
 					},
 				});
-				return { email: user.email };
+				return { message: "Email verified successfully!" };
 			} catch (_error) {
 				return { error: ErrorCode.InvalidToken };
 			}
