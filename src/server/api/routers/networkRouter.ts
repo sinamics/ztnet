@@ -4,8 +4,7 @@ import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
-import { createTransporter, inviteUserTemplate, sendEmail } from "~/utils/mail";
-import ejs from "ejs";
+import { inviteUserTemplate, sendMailWithTemplate } from "~/utils/mail";
 import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
@@ -1348,38 +1347,19 @@ accept;`;
 				});
 			}
 			const { nwid, email } = input;
-			const globalOptions = await ctx.prisma.globalOptions.findFirst({
-				where: {
-					id: 1,
-				},
-			});
-
-			const defaultTemplate = inviteUserTemplate();
-			const template = globalOptions?.inviteUserTemplate ?? defaultTemplate;
-
-			const renderedTemplate = await ejs.render(
-				JSON.stringify(template),
-				{
-					toEmail: email,
-					fromName: ctx.session.user.name, // assuming locals contains a 'username'
-					nwid, // assuming locals contains a 'username'
-				},
-				{ async: true },
-			);
-			// create transporter
-			const transporter = await createTransporter();
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-			// define mail options
-			const mailOptions = {
-				from: globalOptions.smtpEmail,
-				to: email,
-				subject: parsedTemplate.subject,
-				html: parsedTemplate.body,
-			};
-
-			// send test mail to user
-			await sendEmail(transporter, mailOptions);
+			try {
+				await sendMailWithTemplate(inviteUserTemplate, {
+					to: email,
+					templateData: {
+						toEmail: email,
+						fromName: ctx.session.user.name,
+						nwid,
+					},
+				});
+			} catch (error) {
+				console.error("Failed to send invitation email:", error);
+				throw new Error("Failed to send invitation email. Please try again later.");
+			}
 		}),
 	addAnotation: protectedProcedure
 		.input(

@@ -129,7 +129,10 @@ const ForgotPasswordMailTemplate = () => {
 			<div className="space-y-3">
 				<p className="font-medium">
 					{t("mail.templates.availableTags")}
-					<span className="text-primary"> toEmail forgotLink</span>
+					<span className="text-primary flex gap-1">
+						<kbd className="kbd kbd-sm">toEmail</kbd>
+						<kbd className="kbd kbd-sm">forgotLink</kbd>
+					</span>
 				</p>
 				<div className="form-control w-full">
 					<label className="label">
