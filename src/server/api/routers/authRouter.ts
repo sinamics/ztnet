@@ -679,7 +679,7 @@ export const authRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "EMAIL_VERIFICATION_LINK");
+				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "EMAIL_VERIFICATION_LINK");
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -700,7 +700,7 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 
-				if (!user) return { error: ErrorCode.InvalidToken };
+				if (!user || user.emailVerified) return { error: ErrorCode.InvalidToken };
 
 				// set emailVerified to true
 				await ctx.prisma.user.update({
