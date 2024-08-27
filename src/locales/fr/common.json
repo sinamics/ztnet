@@ -809,6 +809,17 @@
 				"addMemberIdAsNameTitle": "Ajoutez l'identifiant de membre comme nom lors de l'inscription",
 				"addMemberIdAsNameLabel": "Lorsqu'un membre du réseau s'inscrit, l'identifiant du membre (nodeid) sera ajouté comme nom."
 			}
+		},
+		"notification": {
+			"devices": "Appareils",
+			"newDeviceLogin": {
+				"title": "Alerte de connexion sur un nouvel appareil",
+				"description": "Recevez un e-mail lorsqu'un nouvel appareil se connecte à votre compte pour la première fois."
+			},
+			"ipAddressChange": {
+				"title": "Alerte de changement d'adresse IP",
+				"description": "Recevez un e-mail lorsqu'un appareil connu accède à votre compte depuis une nouvelle adresse IP."
+			}
 		}
 	},
 	"organization": {

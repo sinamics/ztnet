@@ -673,6 +673,7 @@
 		"tabs": {
 			"account": "Account",
 			"network": "Network",
+			"notification": "Notification",
 			"user": "User"
 		},
 		"account": {
@@ -808,6 +809,17 @@
 				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations.",
 				"addMemberIdAsNameTitle": "Add the member ID as name uppon registration",
 				"addMemberIdAsNameLabel": "When a network member registers, the member ID (nodeid) will be added as name."
+			}
+		},
+		"notification": {
+			"devices": "Devices",
+			"newDeviceLogin": {
+				"title": "New device login alert",
+				"description": "Receive an email when a new device signs in to your account for the first time."
+			},
+			"ipAddressChange": {
+				"title": "IP address change alert",
+				"description": "Receive an email when a known device accesses your account from a new IP address."
 			}
 		}
 	},

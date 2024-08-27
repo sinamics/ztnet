@@ -809,6 +809,17 @@
 				"addMemberIdAsNameTitle": "Dodaj ID członka sieci jako nazwę po jego dołączeniu",
 				"addMemberIdAsNameLabel": "Po dołączeniu członka do sieci, jego ID (nodeid) będzie dodane jako jego nazwa."
 			}
+		},
+		"notification": {
+			"devices": "Urządzenia",
+			"newDeviceLogin": {
+				"title": "Alert logowania na nowym urządzeniu",
+				"description": "Otrzymuj e-mail, gdy nowe urządzenie loguje się na Twoje konto po raz pierwszy."
+			},
+			"ipAddressChange": {
+				"title": "Alert zmiany adresu IP",
+				"description": "Otrzymuj e-mail, gdy znane urządzenie uzyskuje dostęp do Twojego konta z nowego adresu IP."
+			}
 		}
 	},
 	"organization": {
