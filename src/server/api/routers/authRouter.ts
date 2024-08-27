@@ -666,6 +666,10 @@ export const authRouter = createTRPCRouter({
 			});
 		} catch (error) {
 			console.error("Failed to send verification email:", error);
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: error.message,
+			});
 		}
 
 		return { message: "Verification link has been sent." };
