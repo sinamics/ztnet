@@ -37,6 +37,7 @@ export const inviteUserTemplate = () => {
 
 export const forgotPasswordTemplate = () => {
 	return {
+		subject: "Password Reset Request",
 		body:
 			"Hi <b><%= toEmail %></b>,<br /><br />" +
 			"We received a request to reset your password. <br />" +
@@ -44,12 +45,12 @@ export const forgotPasswordTemplate = () => {
 			"Please note, this link is valid for 15 minutes. If it expires, you will need to request a new one. <br />" +
 			"If you did not request a password reset, please ignore this message. <br /><br />" +
 			"Sincerely,<br />--<br />ZTNET",
-		subject: "Password Reset Request",
 	};
 };
 
 export const verifyEmailTemplate = () => {
 	return {
+		subject: "Verify Your Email Address",
 		body:
 			"Hi <b><%= toName %></b>,<br /><br />" +
 			"Welcome to ZTNET! <br /><br />" +
@@ -57,19 +58,18 @@ export const verifyEmailTemplate = () => {
 			"Please note, this link is valid for 15 minutes. If it expires, you will need to request a new one. <br />" +
 			"If you did not create an account, please ignore this message. <br /><br />" +
 			"Sincerely,<br />--<br />ZTNET",
-		subject: "Verify Your Email Address",
 	};
 };
 
 export const notificationTemplate = () => {
 	return {
+		subject: "New Notification from ZTNET",
 		body:
 			"Hi <b><%= toName %></b>,<br /><br />" +
 			"You have a new notification from ZTNET. <br /><br />" +
 			"<%= notificationMessage %><br /><br />" +
 			"If this notification does not concern you, please ignore this message. <br /><br />" +
 			"Sincerely,<br />--<br />ZTNET",
-		subject: "New Notification from ZTNET",
 	};
 };
 
@@ -165,7 +165,7 @@ export async function sendMailWithTemplate(
 		}
 
 		/**
-		 * Maps template names to option names.
+		 * Maps template names to database names.
 		 */
 		const templateToOptionMap = {
 			newDeviceNotificationTemplate: "newDeviceNotification",
@@ -181,8 +181,18 @@ export async function sendMailWithTemplate(
 		}
 	}
 
+	let template: EmailTemplate;
 	const defaultTemplate = templateFunc();
-	const template = JSON.parse(globalOptions[templateFunc.name]) ?? defaultTemplate;
+
+	try {
+		template = JSON.parse(globalOptions[templateFunc.name]);
+	} catch (_e) {
+		template = defaultTemplate;
+	}
+
+	if (!template) {
+		template = defaultTemplate;
+	}
 
 	const renderedTemplate = await ejs.render(
 		JSON.stringify(template),
