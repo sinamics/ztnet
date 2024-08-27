@@ -48,6 +48,19 @@ export const forgotPasswordTemplate = () => {
 	};
 };
 
+export const verifyEmailTemplate = () => {
+	return {
+		body:
+			"Hi <b><%= toName %></b>,<br /><br />" +
+			"Welcome to ZTNET! <br /><br />" +
+			"Please verify your email address by clicking the link below: <br /><%= verifyLink %><br /><br />" +
+			"Please note, this link is valid for 15 minutes. If it expires, you will need to request a new one. <br />" +
+			"If you did not create an account, please ignore this message. <br /><br />" +
+			"Sincerely,<br />--<br />ZTNET",
+		subject: "Verify Your Email Address",
+	};
+};
+
 export const notificationTemplate = () => {
 	return {
 		body:
@@ -99,6 +112,7 @@ export const newDeviceNotificationTemplate = () => {
 export const mailTemplateMap = {
 	inviteUserTemplate,
 	forgotPasswordTemplate,
+	verifyEmailTemplate,
 	notificationTemplate,
 	inviteOrganizationTemplate,
 	newDeviceNotificationTemplate,

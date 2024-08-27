@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "Odzyskiwanie 2FA",
 			"mfaRecoveryResetMessage": "Wprowadź swoje dane uwierzytelniające i kod odzyskiwania",
 			"backToLogin": "Powrót do strony logowania"
+		},
+		"emailVerification": {
+			"emailVerified": "E-mail zweryfikowany",
+			"errorMessage": "Wystąpił błąd podczas weryfikacji twojego e-maila.",
+			"successMessage": "Twój e-mail został pomyślnie zweryfikowany.",
+			"redirectMessage": "Zostaniesz automatycznie przekierowany za {seconds} sekund.",
+			"goNowButton": "Przejdź teraz"
 		}
 	},
 	"networks": {
@@ -448,6 +455,7 @@
 			"password": "Hasło",
 			"useSSL": "Użyj SSL",
 			"inviteUserTemplate": "Szablon - Zaproszenie użytkownika",
+			"emailVerificationTemplate": "Szablon - Weryfikacja e-mail",
 			"forgotPasswordTemplate": "Szablon - Zapomniane hasło",
 			"notificationTemplate": "Szablon - Powiadomienie",
 			"organizationInviteTemplate": "Szablon - Zaproszenie do organizacji",

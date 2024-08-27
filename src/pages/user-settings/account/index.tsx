@@ -17,6 +17,10 @@ import DisableTwoFactSetupModal from "~/components/auth/totpDisable";
 import MultifactorNotEnabled from "~/components/auth/multifactorNotEnabledAlert";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 import ListUserDevices from "~/components/auth/userDevices";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 
 const defaultLocale = "en";
 
@@ -25,16 +29,27 @@ const Account = () => {
 	const { asPath, locale, locales, push } = useRouter();
 	const t = useTranslations();
 
-	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+
+	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
-	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation();
+
+	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation({
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [] }),
+	});
 
 	const { mutate: updateZtApi } = api.auth.setZtApi.useMutation({
-		onError: (error) => {
-			toast.error(error.message);
-		},
+		onError: handleApiError,
 	});
+
+	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
+		api.auth.sendVerificationEmail.useMutation({
+			onError: handleApiError,
+			onSuccess: handleApiSuccess({ actions: [] }),
+		});
 
 	const ChangeLanguage = async (locale: string) => {
 		if (locale === "default") {
@@ -61,7 +76,6 @@ const Account = () => {
 	if (userError) {
 		toast.error(userError.message);
 	}
-
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
@@ -88,17 +102,23 @@ const Account = () => {
 					isLoading={!session?.user}
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
-					// badge={
-					// 	session?.user?.emailVerified
-					// 		? {
-					// 				text: t("userSettings.account.accountSettings.verifiedBadge"),
-					// 				color: "success",
-					// 		  }
-					// 		: {
-					// 				text: t("userSettings.account.accountSettings.notVerifiedBadge"),
-					// 				color: "warning",
-					// 		  }
-					// }
+					badge={
+						meLoading || sendMailLoading
+							? {
+									text: "loading",
+									color: "ghost",
+							  }
+							: me?.emailVerified
+							  ? {
+										text: t("userSettings.account.accountSettings.verifiedBadge"),
+										color: "success",
+								  }
+							  : {
+										text: "Not verified, click to resend",
+										color: "warning",
+										onClick: sendVerificationEmail,
+								  }
+					}
 					fields={[
 						{
 							name: "email",
@@ -107,7 +127,10 @@ const Account = () => {
 							value: session?.user?.email,
 						},
 					]}
-					submitHandler={async (params) => await sessionUpdate({ update: { ...params } })}
+					submitHandler={async (params) => {
+						await sessionUpdate({ update: { ...params } });
+						return refetchMe();
+					}}
 				/>
 				<div className="flex justify-between">
 					<div>

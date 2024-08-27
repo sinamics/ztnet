@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "2FA Recovery",
 			"mfaRecoveryResetMessage": "Please enter your credentials and Recovery Code",
 			"backToLogin": "Back to Login"
+		},
+		"emailVerification": {
+			"emailVerified": "Email Verified",
+			"errorMessage": "An error occurred while verifying your email.",
+			"successMessage": "Your email has been successfully verified.",
+			"redirectMessage": "You will be redirected automatically in {seconds} seconds.",
+			"goNowButton": "Go Now"
 		}
 	},
 	"networks": {
@@ -448,6 +455,7 @@
 			"password": "Password",
 			"useSSL": "Use SSL",
 			"inviteUserTemplate": "Invite user template",
+			"emailVerificationTemplate": "Email verification template",
 			"forgotPasswordTemplate": "Forgot Password template",
 			"notificationTemplate": "Notification template",
 			"organizationInviteTemplate": "Organization Invite template",

@@ -8,18 +8,15 @@ export function jwtCallback(
 	return async function jwt({ token, user, trigger, account, session }) {
 		if (trigger === "update") {
 			if (session.update) {
+				const updateObject: Record<string, string | Date> = {};
+
 				const user = await prisma.user.findFirst({
 					where: {
 						id: token.id,
 					},
 					select: {
-						id: true,
-						name: true,
 						email: true,
-						role: true,
 						emailVerified: true,
-						lastLogin: true,
-						lastseen: true,
 					},
 				});
 
@@ -36,6 +33,7 @@ export function jwtCallback(
 					//   throw new Error("Name must be at least one character long.");
 					// }
 					token.name = session.update.name;
+					updateObject.name = session.update.name;
 				}
 
 				// verify that email is valid
@@ -43,6 +41,9 @@ export function jwtCallback(
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 
 					token.email = session.update.email;
+					updateObject.email = session.update.email;
+					updateObject.emailVerified =
+						user?.email === session.update.email ? user.emailVerified : null;
 				}
 
 				// update user with new values
@@ -50,10 +51,7 @@ export function jwtCallback(
 					where: {
 						id: token.id as string,
 					},
-					data: {
-						email: session.update.email || user.email,
-						name: session.update.name || user.name,
-					},
+					data: updateObject,
 				});
 			}
 			return token;

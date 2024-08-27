@@ -13,11 +13,13 @@ import {
 	forgotPasswordTemplate,
 	notificationTemplate,
 	sendMailWithTemplate,
+	verifyEmailTemplate,
 } from "~/utils/mail";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
 	PASSWORD_RESET_SECRET,
+	VERIFY_EMAIL_SECRET,
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
@@ -618,6 +620,104 @@ export const authRouter = createTRPCRouter({
 			} catch (error) {
 				console.error(error);
 				throwError("token is not valid, please try again!");
+			}
+		}),
+	sendVerificationEmail: protectedProcedure.mutation(async ({ ctx }) => {
+		// add cooldown to prevent spam
+		try {
+			await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "SEND_EMAIL_VERIFICATION");
+		} catch {
+			throw new TRPCError({
+				code: "TOO_MANY_REQUESTS",
+				message: "Rate limit exceeded",
+			});
+		}
+		const user = await ctx.prisma.user.findFirst({
+			where: {
+				id: ctx.session.user.id,
+			},
+		});
+
+		if (!user) return { message: "Internal Error" };
+		if (user.emailVerified) return { message: "Email is already verified!" };
+
+		const secret = generateInstanceSecret(VERIFY_EMAIL_SECRET);
+		const validationToken = jwt.sign(
+			{
+				id: user.id,
+				email: user.email,
+			},
+			secret,
+			{
+				expiresIn: "15m",
+			},
+		);
+
+		const verifyLink = `${process.env.NEXTAUTH_URL}/auth/verifyEmail?token=${validationToken}`;
+		// Send email
+		try {
+			await sendMailWithTemplate(verifyEmailTemplate, {
+				to: user.email,
+				userId: user.id,
+				templateData: {
+					toName: user.name,
+					verifyLink: verifyLink,
+				},
+			});
+		} catch (error) {
+			console.error("Failed to send verification email:", error);
+			throw new TRPCError({
+				code: "INTERNAL_SERVER_ERROR",
+				message: error.message,
+			});
+		}
+
+		return { message: "Verification link has been sent." };
+	}),
+	validateEmailVerificationToken: publicProcedure
+		.input(
+			z.object({
+				token: z.string({ required_error: "Token is required!" }),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// add rate limit
+			try {
+				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "EMAIL_VERIFICATION_LINK");
+			} catch {
+				throw new TRPCError({
+					code: "TOO_MANY_REQUESTS",
+					message: "Rate limit exceeded",
+				});
+			}
+
+			const { token } = input;
+			if (!token) return { error: ErrorCode.InvalidToken };
+			try {
+				const secret = generateInstanceSecret(VERIFY_EMAIL_SECRET);
+				const decoded = jwt.verify(token, secret) as { id: string; email: string };
+
+				const user = await ctx.prisma.user.findFirst({
+					where: {
+						id: decoded.id,
+						email: decoded.email,
+					},
+				});
+
+				if (!user || user.emailVerified) return { error: ErrorCode.InvalidToken };
+
+				// set emailVerified to true
+				await ctx.prisma.user.update({
+					where: {
+						id: user.id,
+					},
+					data: {
+						emailVerified: new Date().toISOString(),
+					},
+				});
+				return { message: "Email verified successfully!" };
+			} catch (_error) {
+				return { error: ErrorCode.InvalidToken };
 			}
 		}),
 	/**

@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "Recuperación de 2FA",
 			"mfaRecoveryResetMessage": "Por favor, introduce tus credenciales y el código de recuperación",
 			"backToLogin": "Volver al inicio de sesión"
+		},
+		"emailVerification": {
+			"emailVerified": "Correo electrónico verificado",
+			"errorMessage": "Ocurrió un error al verificar tu correo electrónico.",
+			"successMessage": "Tu correo electrónico ha sido verificado exitosamente.",
+			"redirectMessage": "Serás redirigido automáticamente en {seconds} segundos.",
+			"goNowButton": "Ir ahora"
 		}
 	},
 	"networks": {
@@ -448,6 +455,7 @@
 			"password": "Contraseña",
 			"useSSL": "Usar SSL",
 			"inviteUserTemplate": "Plantilla de invitación de usuario",
+			"emailVerificationTemplate": "Plantilla de verificación de correo electrónico",
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
 			"organizationInviteTemplate": "Plantilla de invitación de organización",
