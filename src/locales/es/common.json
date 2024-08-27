@@ -673,6 +673,7 @@
 		"tabs": {
 			"account": "Cuenta",
 			"network": "Red",
+			"notification": "Notificación",
 			"user": "Usuario"
 		},
 		"account": {

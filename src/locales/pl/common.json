@@ -673,6 +673,7 @@
 		"tabs": {
 			"account": "Konto",
 			"network": "Sieć",
+			"notification": "Powiadomienia",
 			"user": "Użytkownik"
 		},
 		"account": {

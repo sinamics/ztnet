@@ -673,6 +673,7 @@
 		"tabs": {
 			"account": "帳戶",
 			"network": "網路",
+			"notification": "通知",
 			"user": "使用者"
 		},
 		"account": {

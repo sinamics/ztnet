@@ -43,10 +43,9 @@ const UserSettingsNotification = () => {
 			>
 				<div className="flex items-center justify-between">
 					<div>
-						<p>New device login alert</p>
+						<p>{t("userSettings.notification.newDeviceLogin.title")}</p>
 						<p className="text-xs text-gray-500">
-							Receive an email when a new device signs in to your account for the first
-							time.
+							{t("userSettings.notification.newDeviceLogin.description")}
 						</p>
 					</div>
 					<input
@@ -61,10 +60,9 @@ const UserSettingsNotification = () => {
 				</div>
 				<div className="flex items-center justify-between">
 					<div>
-						<p>IP address change alert</p>
+						<p>{t("userSettings.notification.ipAddressChange.title")}</p>
 						<p className="text-xs text-gray-500">
-							Receive an email when a known device accesses your account from a new IP
-							address.
+							{t("userSettings.notification.ipAddressChange.description")}
 						</p>
 					</div>
 					<input

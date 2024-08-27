@@ -33,7 +33,7 @@ const UserSettings = () => {
 			component: <UserNetworkSetting />,
 		},
 		{
-			name: "Notification",
+			name: t("tabs.notification"),
 			value: "notification",
 			component: <UserSettingsNotification />,
 		},
