@@ -13,11 +13,13 @@ import {
 	forgotPasswordTemplate,
 	notificationTemplate,
 	sendMailWithTemplate,
+	verifyEmailTemplate,
 } from "~/utils/mail";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
 	PASSWORD_RESET_SECRET,
+	VERIFY_EMAIL_SECRET,
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
@@ -620,6 +622,45 @@ export const authRouter = createTRPCRouter({
 				throwError("token is not valid, please try again!");
 			}
 		}),
+	sendVerificationEmail: protectedProcedure.mutation(async ({ ctx }) => {
+		const user = await ctx.prisma.user.findFirst({
+			where: {
+				id: ctx.session.user.id,
+			},
+		});
+
+		if (!user) return { message: "Internal Error" };
+		if (user.emailVerified) return { message: "Email is already verified!" };
+
+		const secret = generateInstanceSecret(VERIFY_EMAIL_SECRET);
+		const validationToken = jwt.sign(
+			{
+				id: user.id,
+				email: user.email,
+			},
+			secret,
+			{
+				expiresIn: "15m",
+			},
+		);
+
+		const verifyLink = `${process.env.NEXTAUTH_URL}/auth/verifyEmail?token=${validationToken}`;
+		// Send email
+		try {
+			await sendMailWithTemplate(verifyEmailTemplate, {
+				to: user.email,
+				userId: user.id,
+				templateData: {
+					toName: user.name,
+					verifyLink: verifyLink,
+				},
+			});
+		} catch (error) {
+			console.error("Failed to send verification email:", error);
+		}
+
+		return { message: "Verification link has been sent." };
+	}),
 	/**
 	 * Update the specified NetworkMemberNotation instance.
 	 *

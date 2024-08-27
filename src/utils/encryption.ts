@@ -9,6 +9,7 @@ export const API_TOKEN_SECRET = "_ztnet_api_token";
 export const ORG_API_TOKEN_SECRET = "_ztnet_organization_api_token";
 export const ORG_INVITE_TOKEN_SECRET = "_ztnet_org_invite";
 export const PASSWORD_RESET_SECRET = "_ztnet_passwd_reset";
+export const VERIFY_EMAIL_SECRET = "_ztnet_email_verify";
 export const TOTP_MFA_TOKEN_SECRET = "_ztnet_mfa_totp_token";
 
 // Generate instance specific auth secret using salt

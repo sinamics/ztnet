@@ -28,13 +28,22 @@ const Account = () => {
 	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
-	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation();
+	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation({
+		onError: (error) => {
+			toast.error(error.message);
+		},
+		onSuccess: () => {
+			toast.success(t("commonToast.sentSuccessfully"));
+		},
+	});
 
 	const { mutate: updateZtApi } = api.auth.setZtApi.useMutation({
 		onError: (error) => {
 			toast.error(error.message);
 		},
 	});
+
+	const { mutate: sendVerificationEmail } = api.auth.sendVerificationEmail.useMutation();
 
 	const ChangeLanguage = async (locale: string) => {
 		if (locale === "default") {
@@ -88,17 +97,18 @@ const Account = () => {
 					isLoading={!session?.user}
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
-					// badge={
-					// 	session?.user?.emailVerified
-					// 		? {
-					// 				text: t("userSettings.account.accountSettings.verifiedBadge"),
-					// 				color: "success",
-					// 		  }
-					// 		: {
-					// 				text: t("userSettings.account.accountSettings.notVerifiedBadge"),
-					// 				color: "warning",
-					// 		  }
-					// }
+					badge={
+						session?.user?.emailVerified
+							? {
+									text: t("userSettings.account.accountSettings.verifiedBadge"),
+									color: "success",
+							  }
+							: {
+									text: t("userSettings.account.accountSettings.notVerifiedBadge"),
+									color: "warning",
+									onClick: sendVerificationEmail,
+							  }
+					}
 					fields={[
 						{
 							name: "email",
