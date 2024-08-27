@@ -10,6 +10,8 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
+const title = `${globalSiteTitle} - VerifyEmail`;
+
 const VerifyEmail = () => {
 	const t = useTranslations();
 	const router = useRouter();
@@ -58,8 +60,6 @@ const VerifyEmail = () => {
 			return () => clearInterval(timer);
 		}
 	}, [validateTokenLoading, tokenData, router]);
-
-	const title = `${globalSiteTitle} - VerifyEmail`;
 
 	if (validateTokenLoading || !tokenData || tokenData?.error) {
 		return null;
