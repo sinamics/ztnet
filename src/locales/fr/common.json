@@ -455,6 +455,7 @@
 			"password": "Mot de passe",
 			"useSSL": "Utiliser SSL",
 			"inviteUserTemplate": "Modèle d'invitation d'utilisateur",
+			"emailVerificationTemplate": "Modèle de vérification d'e-mail",
 			"forgotPasswordTemplate": "Modèle de mot de passe oublié",
 			"notificationTemplate": "Modèle de notification",
 			"organizationInviteTemplate": "Modèle d'invitation d'organisation",
