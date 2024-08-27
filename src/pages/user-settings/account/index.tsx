@@ -25,9 +25,10 @@ const Account = () => {
 	const { asPath, locale, locales, push } = useRouter();
 	const t = useTranslations();
 
-	const { data: me, refetch: refetchMe } = api.auth.me.useQuery();
+	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 
 	const { data: session, update: sessionUpdate } = useSession();
+
 	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation({
 		onError: (error) => {
 			toast.error(error.message);
@@ -43,7 +44,14 @@ const Account = () => {
 		},
 	});
 
-	const { mutate: sendVerificationEmail } = api.auth.sendVerificationEmail.useMutation();
+	const { mutate: sendVerificationEmail } = api.auth.sendVerificationEmail.useMutation({
+		onError: (error) => {
+			toast.error(error.message);
+		},
+		onSuccess: () => {
+			toast.success(t("Check your email for a verification link"));
+		},
+	});
 
 	const ChangeLanguage = async (locale: string) => {
 		if (locale === "default") {
@@ -70,7 +78,6 @@ const Account = () => {
 	if (userError) {
 		toast.error(userError.message);
 	}
-
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
@@ -98,16 +105,18 @@ const Account = () => {
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					badge={
-						session?.user?.emailVerified
-							? {
-									text: t("userSettings.account.accountSettings.verifiedBadge"),
-									color: "success",
-							  }
-							: {
-									text: t("userSettings.account.accountSettings.notVerifiedBadge"),
-									color: "warning",
-									onClick: sendVerificationEmail,
-							  }
+						meLoading
+							? undefined
+							: me?.emailVerified
+							  ? {
+										text: t("userSettings.account.accountSettings.verifiedBadge"),
+										color: "success",
+								  }
+							  : {
+										text: "Not verified, click to resend",
+										color: "warning",
+										onClick: sendVerificationEmail,
+								  }
 					}
 					fields={[
 						{
@@ -117,7 +126,10 @@ const Account = () => {
 							value: session?.user?.email,
 						},
 					]}
-					submitHandler={async (params) => await sessionUpdate({ update: { ...params } })}
+					submitHandler={async (params) => {
+						await sessionUpdate({ update: { ...params } });
+						return refetchMe();
+					}}
 				/>
 				<div className="flex justify-between">
 					<div>
