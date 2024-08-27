@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "Gjenoppretting av 2FA",
 			"mfaRecoveryResetMessage": "Vennligst skriv inn dine legitimasjonsbeskrivelser og gjenopprettingskode",
 			"backToLogin": "Tilbake til innlogging"
+		},
+		"emailVerification": {
+			"emailVerified": "E-post bekreftet",
+			"errorMessage": "Det oppstod en feil under verifisering av e-posten din.",
+			"successMessage": "E-posten din har blitt bekreftet.",
+			"redirectMessage": "Du vil bli videresendt automatisk om {seconds} sekunder.",
+			"goNowButton": "Gå nå"
 		}
 	},
 	"networks": {
@@ -448,6 +455,7 @@
 			"password": "Passord",
 			"useSSL": "Bruk SSL",
 			"inviteUserTemplate": "Inviter bruker mal",
+			"emailVerificationTemplate": "E-post verifikasjons mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
 			"organizationInviteTemplate": "Organisasjons invitasjons mal",
