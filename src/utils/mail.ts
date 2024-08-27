@@ -105,54 +105,6 @@ export const mailTemplateMap = {
 	deviceIpChangeNotificationTemplate,
 };
 
-export async function createTransporter() {
-	const globalOptions = await prisma.globalOptions.findFirst({
-		where: {
-			id: 1,
-		},
-	});
-	if (!globalOptions.smtpHost || !globalOptions.smtpPort || !globalOptions.smtpEmail) {
-		return throwError(
-			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",
-		);
-	}
-
-	if (globalOptions.smtpPassword) {
-		globalOptions.smtpPassword = decrypt(
-			globalOptions.smtpPassword,
-			generateInstanceSecret(SMTP_SECRET),
-		);
-	}
-	return nodemailer.createTransport({
-		host: globalOptions.smtpHost,
-		port: globalOptions.smtpPort,
-		secure: globalOptions.smtpUseSSL,
-		auth: {
-			user: globalOptions.smtpUsername,
-			pass: globalOptions.smtpPassword,
-		},
-		tls: {
-			rejectUnauthorized: true,
-			minVersion: "TLSv1.2",
-		},
-	} as TransportOptions);
-}
-
-interface SendMailResult {
-	accepted: string[];
-}
-
-export async function sendEmail(
-	transporter: nodemailer.Transporter<unknown>,
-	mailOptions: nodemailer.SendMailOptions,
-) {
-	const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
-
-	if (!info.accepted.includes(mailOptions.to as string)) {
-		return throwError("Email could not be sent, check your credentials");
-	}
-}
-
 interface EmailTemplate {
 	subject: string;
 	body: string;
@@ -161,7 +113,7 @@ interface EmailTemplate {
 interface EmailOptions {
 	to: string;
 	templateData: Record<string, unknown>;
-	userId: string;
+	userId?: string;
 }
 
 export async function sendMailWithTemplate(
@@ -216,4 +168,52 @@ export async function sendMailWithTemplate(
 	};
 
 	await sendEmail(transporter, mailOptions);
+}
+
+interface SendMailResult {
+	accepted: string[];
+}
+
+async function sendEmail(
+	transporter: nodemailer.Transporter<unknown>,
+	mailOptions: nodemailer.SendMailOptions,
+) {
+	const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
+
+	if (!info.accepted.includes(mailOptions.to as string)) {
+		return throwError("Email could not be sent, check your credentials");
+	}
+}
+
+export async function createTransporter() {
+	const globalOptions = await prisma.globalOptions.findFirst({
+		where: {
+			id: 1,
+		},
+	});
+	if (!globalOptions.smtpHost || !globalOptions.smtpPort || !globalOptions.smtpEmail) {
+		return throwError(
+			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",
+		);
+	}
+
+	if (globalOptions.smtpPassword) {
+		globalOptions.smtpPassword = decrypt(
+			globalOptions.smtpPassword,
+			generateInstanceSecret(SMTP_SECRET),
+		);
+	}
+	return nodemailer.createTransport({
+		host: globalOptions.smtpHost,
+		port: globalOptions.smtpPort,
+		secure: globalOptions.smtpUseSSL,
+		auth: {
+			user: globalOptions.smtpUsername,
+			pass: globalOptions.smtpPassword,
+		},
+		tls: {
+			rejectUnauthorized: true,
+			minVersion: "TLSv1.2",
+		},
+	} as TransportOptions);
 }

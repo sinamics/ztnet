@@ -6,8 +6,7 @@ import {
 } from "~/server/api/trpc";
 import { throwError } from "~/server/helpers/errorHandler";
 import jwt from "jsonwebtoken";
-import { createTransporter, sendEmail, forgotPasswordTemplate } from "~/utils/mail";
-import ejs from "ejs";
+import { forgotPasswordTemplate, sendMailWithTemplate } from "~/utils/mail";
 import { TOTP_MFA_TOKEN_SECRET, generateInstanceSecret } from "~/utils/encryption";
 import { ErrorCode } from "~/utils/errorCode";
 import rateLimit from "~/utils/rateLimit";
@@ -123,39 +122,26 @@ export const mfaAuthRouter = createTRPCRouter({
 				},
 			);
 
-			const forgotLink = `${process.env.NEXTAUTH_URL}/auth/mfaRecovery/reset?token=${validationToken}`;
-			const globalOptions = await ctx.prisma.globalOptions.findFirst({
-				where: {
-					id: 1,
-				},
-			});
+			const resetLink = `${process.env.NEXTAUTH_URL}/auth/mfaRecovery/reset?token=${validationToken}`;
 
-			const defaultTemplate = forgotPasswordTemplate();
-			const template = globalOptions?.forgotPasswordTemplate ?? defaultTemplate;
+			// Send email
+			try {
+				await sendMailWithTemplate(forgotPasswordTemplate, {
+					to: email,
+					templateData: {
+						toEmail: email,
+						forgotLink: resetLink,
+					},
+				});
+			} catch (error) {
+				console.error("Failed to send MFA reset email:", error);
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "Failed to send reset email. Please try again later.",
+				});
+			}
 
-			const renderedTemplate = await ejs.render(
-				JSON.stringify(template),
-				{
-					toEmail: email,
-					forgotLink,
-				},
-				{ async: true },
-			);
-
-			// create transporter
-			const transporter = await createTransporter();
-			const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-			// define mail options
-			const mailOptions = {
-				from: globalOptions.smtpEmail,
-				to: email,
-				subject: parsedTemplate.subject,
-				html: parsedTemplate.body,
-			};
-
-			// send test mail to user
-			await sendEmail(transporter, mailOptions);
+			return { message: "If the email exists, a reset link has been sent." };
 		}),
 	mfaResetValidation: publicProcedure
 		.input(

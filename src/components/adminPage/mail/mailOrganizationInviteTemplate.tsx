@@ -127,9 +127,11 @@ const OrganizationInviteTemplate = () => {
 			<div className="space-y-3">
 				<p className="font-medium">
 					{t("mail.templates.availableTags")}
-					<span className="text-primary">
-						{" "}
-						fromAdmin fromOrganization toEmail invitationLink
+					<span className="text-primary flex gap-1">
+						<kbd className="kbd kbd-sm">fromAdmin</kbd>
+						<kbd className="kbd kbd-sm">fromOrganization</kbd>
+						<kbd className="kbd kbd-sm">toEmail</kbd>
+						<kbd className="kbd kbd-sm">invitationLink</kbd>
 					</span>
 				</p>
 				<div className="form-control w-full">

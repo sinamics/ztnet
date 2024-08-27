@@ -15,8 +15,7 @@ import {
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
-import { createTransporter, inviteOrganizationTemplate, sendEmail } from "~/utils/mail";
-import ejs from "ejs";
+import { inviteOrganizationTemplate, sendMailWithTemplate } from "~/utils/mail";
 import { Role } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
@@ -1057,16 +1056,6 @@ export const organizationRouter = createTRPCRouter({
 			});
 
 			try {
-				// get the org mail template
-				const globalOptions = await ctx.prisma.globalOptions.findFirst({
-					where: {
-						id: 1,
-					},
-				});
-
-				const defaultTemplate = inviteOrganizationTemplate();
-				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
-
 				// create invitation link
 				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${orgInvite.invitation.token}`;
 
@@ -1081,40 +1070,25 @@ export const organizationRouter = createTRPCRouter({
 					throw new Error("Organization not found.");
 				}
 
-				const renderedTemplate = await ejs.render(
-					JSON.stringify(template),
-					{
+				// Send email
+				await sendMailWithTemplate(inviteOrganizationTemplate, {
+					to: orgInvite.invitation.email,
+					userId: ctx.session.user.id,
+					templateData: {
 						toEmail: orgInvite.invitation.email,
 						fromAdmin: ctx.session.user.name,
 						fromOrganization: organization.orgName,
 						invitationLink: invitationLink,
 					},
-					{ async: true },
-				);
-
-				// create transporter
-				const transporter = await createTransporter();
-				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
-				// define mail options
-				const mailOptions = {
-					from: globalOptions.smtpEmail,
-					to: orgInvite.invitation.email,
-					subject: parsedTemplate.subject,
-					html: parsedTemplate.body,
-				};
-
-				//update mailSentAt: new Date()
-				await ctx.prisma.invitation.update({
-					where: {
-						id: orgInvite.invitationId,
-					},
-					data: {
-						mailSentAt: new Date(),
-					},
 				});
-				// send test mail to user
-				return await sendEmail(transporter, mailOptions);
+
+				// Update mailSentAt
+				await ctx.prisma.invitation.update({
+					where: { id: orgInvite.invitationId },
+					data: { mailSentAt: new Date() },
+				});
+
+				return { success: true, message: "Invitation resent successfully." };
 			} catch (error) {
 				return throwError(error.message);
 			}
@@ -1199,16 +1173,6 @@ export const organizationRouter = createTRPCRouter({
 				const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET); // Use SMTP_SECRET or any other relevant context
 				const encryptedToken = encrypt(JSON.stringify(tokenPayload), secret);
 
-				const globalOptions = await ctx.prisma.globalOptions.findFirst({
-					where: {
-						id: 1,
-					},
-				});
-
-				// get the org mail template
-				const defaultTemplate = inviteOrganizationTemplate();
-				const template = globalOptions?.inviteOrganizationTemplate ?? defaultTemplate;
-
 				function normalizeBaseUrl(baseUrl: string) {
 					// Ensure there's no trailing slash
 					return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
@@ -1230,21 +1194,6 @@ export const organizationRouter = createTRPCRouter({
 					throw new Error("Organization not found.");
 				}
 
-				const renderedTemplate = await ejs.render(
-					JSON.stringify(template),
-					{
-						toEmail: email,
-						fromAdmin: ctx.session.user.name,
-						fromOrganization: organization.orgName,
-						invitationLink: invitationLink,
-					},
-					{ async: true },
-				);
-
-				// create transporter
-				const transporter = await createTransporter();
-				const parsedTemplate = JSON.parse(renderedTemplate) as Record<string, string>;
-
 				// log the action
 				await ctx.prisma.activityLog.create({
 					data: {
@@ -1254,16 +1203,17 @@ export const organizationRouter = createTRPCRouter({
 					},
 				});
 
-				// define mail options
-				const mailOptions = {
-					from: globalOptions.smtpEmail,
+				// Send invitation email
+				await sendMailWithTemplate(inviteOrganizationTemplate, {
 					to: email,
-					subject: parsedTemplate.subject,
-					html: parsedTemplate.body,
-				};
-
-				// send test mail to user
-				await sendEmail(transporter, mailOptions);
+					userId: ctx.session.user.id,
+					templateData: {
+						toEmail: email,
+						fromAdmin: ctx.session.user.name,
+						fromOrganization: organization.orgName,
+						invitationLink,
+					},
+				});
 
 				// Store the token in the database
 				await ctx.prisma.invitation.create({
