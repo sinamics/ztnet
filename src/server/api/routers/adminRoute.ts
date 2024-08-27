@@ -19,6 +19,7 @@ import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 import { InvitationLinkType } from "~/types/invitation";
+import { createMoon } from "../services/adminService";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -802,6 +803,7 @@ export const adminRouter = createTRPCRouter({
 						plBirth: true,
 						plRecommend: true,
 						rootNodes: true,
+						isMoon: true,
 					},
 				},
 			},
@@ -832,6 +834,7 @@ export const adminRouter = createTRPCRouter({
 					rootNodes: z.array(
 						z.object({
 							identity: z.string().min(1, "Identity must have a value."),
+							isMoon: z.boolean().default(false),
 							endpoints: z
 								.any()
 								.refine(
@@ -870,6 +873,12 @@ export const adminRouter = createTRPCRouter({
 				const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
 				const planetPath = `${ZT_FOLDER}/planet`;
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
+				const moonPath = `${ZT_FOLDER}/moon`;
+				// binary path
+				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
+
+				// Ensure the moon identity is created if it doesn't exist
+				const identityPath = `${ZT_FOLDER}/identity.secret`;
 
 				// Check for write permission on the directory
 				try {
@@ -887,18 +896,21 @@ export const adminRouter = createTRPCRouter({
 				}
 
 				// Check if identity.public exists
-				if (!fs.existsSync(`${ZT_FOLDER}/identity.public`)) {
+				if (!fs.existsSync(identityPath)) {
 					throwError("identity.public file does NOT exist, cannot generate planet file.");
 				}
 
-				// Check if ztmkworld executable exists
-				const ztmkworldBinPath = "/usr/local/bin/ztmkworld";
 				if (!fs.existsSync(ztmkworldBinPath)) {
 					throwError("ztmkworld executable does not exist at the specified location.");
 				}
 				// Ensure /var/lib/zerotier-one/zt-mkworld directory exists
 				if (!fs.existsSync(mkworldDir)) {
 					fs.mkdirSync(mkworldDir);
+				}
+
+				// make sure the moon directory exists
+				if (!fs.existsSync(moonPath)) {
+					fs.mkdirSync(moonPath);
 				}
 
 				// Backup existing planet file if it exists
@@ -924,6 +936,7 @@ export const adminRouter = createTRPCRouter({
 						comments: node.comments || "ztnet.network",
 						identity: node.identity,
 						endpoints: node.endpoints,
+						isMoon: node.isMoon,
 					})),
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
@@ -932,42 +945,59 @@ export const adminRouter = createTRPCRouter({
 					plRecommend: input.plRecommend,
 				};
 
-				fs.writeFileSync(`${mkworldDir}/mkworld.config.json`, JSON.stringify(config));
-
-				/*
-				 *
-				 * Update local.conf file with the new port number
-				 *
-				 */
-				// Extract the port numbers from the first endpoint string
-				const portNumbers = input.rootNodes[0].endpoints[0]
-					.split(",")
-					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
-
-				try {
-					await updateLocalConf(portNumbers);
-				} catch (error) {
-					throwError(error);
+				// Process moons
+				if (input.rootNodes.some((node) => node.isMoon)) {
+					await createMoon(input.rootNodes, moonPath);
 				}
 
-				/*
-				 *
-				 * Generate planet file using mkworld
-				 *
-				 */
-				try {
-					execSync(
-						// "cd /etc/zt-mkworld && /usr/local/bin/ztmkworld -c /etc/zt-mkworld/mkworld.config.json",
-						// use mkworldDir
-						`cd ${mkworldDir} && ${ztmkworldBinPath} -c ${mkworldDir}/mkworld.config.json`,
+				// Check if there are any non-moon roots
+				const planetRoots = input.rootNodes.filter((node) => !node.isMoon);
+
+				if (planetRoots.length > 0) {
+					// Create planet file
+					const config: WorldConfig = {
+						rootNodes: planetRoots.map((node) => ({
+							comments: node.comments || "ztnet.network",
+							identity: node.identity,
+							endpoints: node.endpoints,
+						})),
+						signing: ["previous.c25519", "current.c25519"],
+						output: "planet.custom",
+						plID: input.plID || 0,
+						plBirth: input.plBirth || 0,
+						plRecommend: input.plRecommend,
+					};
+
+					fs.writeFileSync(
+						`${mkworldDir}/mkworld.config.json`,
+						JSON.stringify(config, null, 2),
 					);
-				} catch (_error) {
-					throwError(
-						"Could not create planet file. Please make sure your config is valid.",
-					);
+
+					// Update local.conf with the port number from the first non-moon root
+					const portNumbers = planetRoots[0].endpoints[0]
+						.split(",")
+						.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
+
+					try {
+						await updateLocalConf(portNumbers);
+					} catch (error) {
+						throwError(error);
+					}
+
+					// Generate planet file
+					try {
+						execSync(
+							`cd ${mkworldDir} && ${ztmkworldBinPath} -c ${mkworldDir}/mkworld.config.json`,
+						);
+					} catch (_error) {
+						throwError(
+							"Could not create planet file. Please make sure your config is valid.",
+						);
+					}
+
+					// Copy generated planet file
+					fs.copyFileSync(`${mkworldDir}/planet.custom`, planetPath);
 				}
-				// Copy generated planet file
-				fs.copyFileSync(`${mkworldDir}/planet.custom`, planetPath);
 
 				/*
 				 *
@@ -1022,6 +1052,8 @@ export const adminRouter = createTRPCRouter({
 		const paths = {
 			backupDir: `${ZT_FOLDER}/planet_backup`,
 			planetPath: `${ZT_FOLDER}/planet`,
+			moonPath: `${ZT_FOLDER}/moon`,
+			moonsDPath: `${ZT_FOLDER}/moons.d`,
 			mkworldDir: `${ZT_FOLDER}/zt-mkworld`,
 		};
 
@@ -1051,6 +1083,9 @@ export const adminRouter = createTRPCRouter({
 			// Clean up backup and mkworld directories
 			fs.rmSync(paths.backupDir, { recursive: true, force: true });
 			fs.rmSync(paths.mkworldDir, { recursive: true, force: true });
+			fs.rmSync(paths.moonPath, { recursive: true, force: true });
+			fs.rmSync(paths.moonsDPath, { recursive: true, force: true });
+
 			/*
 			 *
 			 * Reset local.conf with default port number

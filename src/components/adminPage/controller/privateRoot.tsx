@@ -97,6 +97,11 @@ const PrivateRoot = () => {
 				toast.error(error.message);
 			});
 	};
+
+	// generate the moon id from the first node that has ismoon set to true
+	const isMoonIdentity = getPlanet?.rootNodes?.filter((node) => node.isMoon);
+	const moonId = isMoonIdentity?.[0]?.identity.trim().split(":")[0];
+
 	return (
 		<div className="space-y-4">
 			<div>
@@ -124,7 +129,10 @@ const PrivateRoot = () => {
 							</div>
 							<div className="space-y-5">
 								{getPlanet?.rootNodes?.map((node, i) => (
-									<div key={node.id} className="border border-primary rounded p-4 my-4">
+									<div
+										key={node.id}
+										className="border border-primary rounded p-4 my-4 space-y-5"
+									>
 										{!node.endpoints.toString().includes("9993") ? (
 											<div role="alert" className="alert shadow-lg mb-5">
 												<svg
@@ -157,26 +165,59 @@ const PrivateRoot = () => {
 												</div>
 											</div>
 										) : null}
-										<p className="tracking-wide font-medium">Root #{i + 1}</p>
-										<p>
-											<strong>Comments:</strong> {node.comments}
-										</p>
-										<p>
-											<strong>Endpoints:</strong> {node.endpoints.toString()}
-										</p>
-										<p>
-											<strong>Identity:</strong> {node.identity.substring(0, 50)}
-										</p>
+										<section>
+											<div className="flex justify-between">
+												<p className="tracking-wide font-medium">Root #{i + 1}</p>
+												{node.isMoon ? (
+													<kbd className="kbd px-2 py-1 rounded text-sm font-mono">
+														{`zerotier-cli orbit ${moonId} ${
+															node.identity.split(":")[0]
+														}`}
+													</kbd>
+												) : null}
+											</div>
+											<p>
+												<strong>Comments:</strong> {node.comments}
+											</p>
+											<p>
+												<strong>Endpoints:</strong> {node.endpoints.toString()}
+											</p>
+											<p>
+												<strong>Identity:</strong> {node.identity.substring(0, 50)}
+											</p>
+											<p>
+												<strong>WorldType:</strong> {node.isMoon ? "Moon" : "Planet"}
+											</p>
+										</section>
+										<section>
+											{node.isMoon ? (
+												<div className="space-y-4">
+													<div className="flex items-center gap-2">
+														<p className="text-sm">
+															Moon file is available for download at the following URL:
+														</p>
+														<Link
+															href="/api/moon"
+															className="text-blue-500 hover:underline"
+														>
+															api/moon
+														</Link>
+													</div>
+												</div>
+											) : (
+												<span className="text-sm flex gap-1">
+													{/* {t("controller.generatePlanet.downloadPlanetInfo")} */}
+													<p>
+														Planet file is available for download at the following URL:
+													</p>
+													<Link href="/api/planet" className="link text-blue-500">
+														{t("controller.generatePlanet.downloadPlanetUrl")}
+													</Link>
+												</span>
+											)}
+										</section>
 									</div>
 								))}
-							</div>
-							<div>
-								<p className=" text-sm">
-									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
-									<Link href="/api/planet" className="link text-blue-500">
-										{t("controller.generatePlanet.downloadPlanetUrl")}
-									</Link>
-								</p>
 							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">

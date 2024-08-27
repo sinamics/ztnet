@@ -30,6 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
 		try {
 			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
+			const moonsPath = path.resolve(`${ZT_FOLDER}/moon`);
 
 			// Check if the directory exists
 			if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
@@ -64,6 +65,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
 			// Append all files from the directory to the zip
 			archive.directory(folderPath, false);
+
+			// Check if the moons.d directory exists and has files
+			if (fs.existsSync(moonsPath) && fs.statSync(moonsPath).isDirectory()) {
+				const moonFiles = fs.readdirSync(moonsPath);
+
+				// Add each moon file to the archive
+				for (const file of moonFiles) {
+					const filePath = path.join(moonsPath, file);
+					if (fs.statSync(filePath).isFile()) {
+						archive.file(filePath, { name: `moon/${file}` });
+					}
+				}
+			}
 			archive.finalize();
 		} catch (error) {
 			console.error(error);

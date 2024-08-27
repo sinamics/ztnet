@@ -35,16 +35,24 @@ RUN SKIP_ENV_VALIDATION=1 npm run build
 # Copy the ztmkworld binary based on the target platform architecture
 FROM base AS ztmkworld_builder
 ARG TARGETPLATFORM
+
 WORKDIR /app
-COPY ztnodeid/build/linux_amd64/ztmkworld ztmkworld_amd64
-COPY ztnodeid/build/linux_arm64/ztmkworld ztmkworld_arm64
-RUN \
-    case "${TARGETPLATFORM}" in \
-    "linux/amd64") cp ztmkworld_amd64 /usr/local/bin/ztmkworld ;; \
-    "linux/arm64") cp ztmkworld_arm64 /usr/local/bin/ztmkworld ;; \
+
+COPY bin/mkworld/build/linux_amd64/ztmkworld ztmkworld_amd64
+COPY bin/mkworld/build/linux_arm64/ztmkworld ztmkworld_arm64
+COPY bin/idtool/build/linux_amd64/zerotier-idtool zerotier-idtool_amd64
+COPY bin/idtool/build/linux_arm64/zerotier-idtool zerotier-idtool_arm64
+
+RUN case "${TARGETPLATFORM}" in \
+    "linux/amd64") \
+    cp ztmkworld_amd64 /usr/local/bin/ztmkworld && \
+    cp zerotier-idtool_amd64 /usr/local/bin/zerotier-idtool ;; \
+    "linux/arm64") \
+    cp ztmkworld_arm64 /usr/local/bin/ztmkworld && \
+    cp zerotier-idtool_arm64 /usr/local/bin/zerotier-idtool ;; \
     *) echo "Unsupported architecture" && exit 1 ;; \
     esac && \
-    chmod +x /usr/local/bin/ztmkworld
+    chmod +x /usr/local/bin/ztmkworld /usr/local/bin/zerotier-idtool
 
 # Production image, copy all the files and run next
 FROM $NODEJS_IMAGE AS runner
@@ -65,7 +73,24 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt update && apt install -y curl wget sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Openssl 1.1.1n is required for the zerotier-idtool
+RUN ARCH=$(dpkg --print-architecture) && \
+    if [ "$ARCH" = "amd64" ]; then \
+    wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    rm libssl1.1_1.1.1n-0+deb10u6_amd64.deb; \
+    elif [ "$ARCH" = "arm64" ]; then \
+    wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    dpkg -i libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    rm libssl1.1_1.1.1n-0+deb10u6_arm64.deb; \
+    else \
+    echo "Unsupported architecture: $ARCH"; \
+    exit 1; \
+    fi
+
+
 # need to install these package for seeding the database
 RUN npm install @prisma/client @paralleldrive/cuid2
 RUN npm install -g prisma ts-node
@@ -82,6 +107,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/init-db.sh ./init-db.sh
 COPY --from=ztmkworld_builder /usr/local/bin/ztmkworld /usr/local/bin/ztmkworld
+COPY --from=ztmkworld_builder /usr/local/bin/zerotier-idtool /usr/local/bin/zerotier-idtool
 
 # prepeare .env file for the init-db.sh script
 RUN touch .env && chown nextjs:nodejs .env

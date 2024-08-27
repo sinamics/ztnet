@@ -984,7 +984,7 @@ pull_checkout_ztnet
 check_postgres_access_and_prompt_password "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB"
 
 # Copy mkworld binary
-cp "$TEMP_REPO_DIR/ztnodeid/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
+cp "$TEMP_REPO_DIR/bin/mkworld/build/linux_$ARCH/ztmkworld" /usr/local/bin/ztmkworld
 NEXT_PUBLIC_APP_VERSION="${CUSTOM_VERSION:-$latestTag}"
 
 

@@ -17,19 +17,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
 		try {
 			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
-			const filePath = path.join(folderPath, "planet.custom");
+			const planetPath = path.join(folderPath, "planet.custom");
 
-			// Check if the directory and file exist
-			if (
-				!fs.existsSync(folderPath) ||
-				!fs.statSync(folderPath).isDirectory() ||
-				!fs.existsSync(filePath)
-			) {
-				return res.status(404).send("Folder or file not found.");
+			if (!fs.existsSync(planetPath) || !fs.statSync(planetPath).isFile()) {
+				return res.status(404).send("Planet file not found.");
 			}
 
 			// Read the file and stream it to the response
-			const fileStream = fs.createReadStream(filePath);
+			const fileStream = fs.createReadStream(planetPath);
 
 			// Set the headers
 			res.setHeader("Content-Disposition", "attachment; filename=planet.custom");

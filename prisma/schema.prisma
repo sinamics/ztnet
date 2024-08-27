@@ -62,6 +62,7 @@ model Planet {
   plID          BigInt         @default(0)
   plBirth       BigInt         @default(0)
   plRecommend   Boolean        @default(false)
+  isMoon        Boolean        @default(false)
   rootNodes     RootNodes[]
   globalOptions GlobalOptions?
 }
@@ -70,6 +71,7 @@ model RootNodes {
   id        Int     @id @default(autoincrement())
   Planet    Planet  @relation(fields: [PlanetId], references: [id], onDelete: Cascade)
   PlanetId  Int
+  isMoon    Boolean @default(false)
   comments  String?
   identity  String
   endpoints Json
