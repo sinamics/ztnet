@@ -809,6 +809,17 @@
 				"addMemberIdAsNameTitle": "註冊時將成員ID新增為姓名",
 				"addMemberIdAsNameLabel": "網路成員註冊時，成員ID（nodeid）將作為姓名新增。"
 			}
+		},
+		"notification": {
+			"devices": "裝置",
+			"newDeviceLogin": {
+				"title": "新裝置登入提醒",
+				"description": "當新裝置首次登入您的帳戶時，接收電子郵件通知。"
+			},
+			"ipAddressChange": {
+				"title": "IP位址變更提醒",
+				"description": "當已知裝置從新的IP位址存取您的帳戶時，接收電子郵件通知。"
+			}
 		}
 	},
 	"organization": {

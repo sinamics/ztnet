@@ -1,7 +1,7 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-// import { useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
@@ -9,7 +9,7 @@ import {
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const UserSettingsNotification = () => {
-	// const t = useTranslations("admin");
+	const t = useTranslations();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -37,7 +37,10 @@ const UserSettingsNotification = () => {
 
 	return (
 		<main className="flex w-full flex-col bg-base-100 p-5 sm:p-3 space-y-10">
-			<MenuSectionDividerWrapper title="Devices" className="xl:w-6/12 space-y-5">
+			<MenuSectionDividerWrapper
+				title={t("userSettings.notification.devices")}
+				className="xl:w-6/12 space-y-5"
+			>
 				<div className="flex items-center justify-between">
 					<div>
 						<p>New device login alert</p>
