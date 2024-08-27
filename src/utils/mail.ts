@@ -194,14 +194,25 @@ export async function sendMailWithTemplate(
 		template = defaultTemplate;
 	}
 
-	const renderedTemplate = await ejs.render(
-		JSON.stringify(template),
-		options.templateData,
-		{ async: true },
-	);
+	let renderedTemplate: string;
+	try {
+		renderedTemplate = await ejs.render(JSON.stringify(template), options.templateData, {
+			async: true,
+		});
+	} catch (error) {
+		console.error(`Failed to render template: ${error.message}`);
+		throw new Error("Template rendering failed");
+	}
 
 	const transporter = await createTransporter();
-	const parsedTemplate = JSON.parse(renderedTemplate) as EmailTemplate;
+
+	let parsedTemplate: EmailTemplate;
+	try {
+		parsedTemplate = JSON.parse(renderedTemplate);
+	} catch (error) {
+		console.error(`Failed to parse rendered template: ${error.message}`);
+		throw new Error("Failed to parse rendered template");
+	}
 
 	const mailOptions = {
 		from: globalOptions.smtpEmail,
