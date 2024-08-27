@@ -44,10 +44,12 @@ interface FormProps {
 	badge?: {
 		text: string;
 		color: string;
+		onClick?: () => void;
 	};
 	headerBadge?: {
 		text: string;
 		color: string;
+		onClick?: () => void;
 	};
 }
 
@@ -125,7 +127,7 @@ const InputField = ({
 	const handleChange = (
 		e:
 			| ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-			| { target: { name: string; value: string[] } },
+			| { target: { name: string; value: string | string[] } },
 	) => {
 		const { name, value } = "target" in e ? e.target : e;
 		setFormValues((prevValues) => ({
@@ -156,32 +158,42 @@ const InputField = ({
 		</div>
 	);
 
+	const renderBadge = (badgeProps: FormProps["badge"] | FormProps["headerBadge"]) => {
+		if (!badgeProps) return null;
+
+		return (
+			<span
+				className={`badge badge-outline badge-${badgeProps.color} ml-2 ${
+					badgeProps.onClick ? "cursor-pointer" : ""
+				}`}
+				onClick={(e) => {
+					e.stopPropagation(); // Prevent event from bubbling up
+					if (badgeProps.onClick) {
+						badgeProps.onClick();
+					}
+				}}
+			>
+				{badgeProps.text}
+			</span>
+		);
+	};
 	return (
 		<>
 			{!showInputs ? (
 				<div className="flex w-full justify-between">
-					<div onClick={handleEditClick} className={`cursor-pointer  ${labelStyle}`}>
-						<div className="flex font-medium">
+					<div onClick={handleEditClick} className={`cursor-pointer ${labelStyle}`}>
+						<div className="flex font-medium items-center">
 							<span>{label}</span>
-
-							{headerBadge && (
-								<span className={`badge badge-outline badge-${headerBadge.color} ml-2`}>
-									{headerBadge.text}
-								</span>
-							)}
+							{renderBadge(headerBadge)}
 						</div>
 						<div>
 							{description ? (
 								<p className="m-0 p-0 text-xs text-gray-500">{description}</p>
 							) : null}
 						</div>
-						<div className="text-gray-500">
-							{placeholder ?? fields[0].placeholder}
-							{badge && (
-								<span className={`badge badge-outline badge-${badge.color} ml-2`}>
-									{badge.text}
-								</span>
-							)}
+						<div className="flex items-center text-gray-500">
+							<span>{placeholder ?? fields[0].placeholder}</span>
+							{renderBadge(badge)}
 						</div>
 					</div>
 					<div>
@@ -263,9 +275,9 @@ const InputField = ({
 												formFieldName={field.name}
 												options={field.selectOptions as string[]}
 												value={(formValues[field.name] as string[]) || []}
-												onChange={(e) =>
+												onChange={(selectedValues: string[]) =>
 													handleChange({
-														target: { name: field.name, type: "select", value: e },
+														target: { name: field.name, value: selectedValues },
 													})
 												}
 												prompt={field.placeholder}
