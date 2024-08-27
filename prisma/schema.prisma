@@ -190,6 +190,8 @@ model UserOptions {
   // notifications
   newDeviceNotification        Boolean? @default(true)
   deviceIpChangeNotification   Boolean? @default(true)
+  apiRateLimitNotification     Boolean? @default(true)
+  failedLoginNotification      Boolean? @default(true)
 }
 
 enum AccessLevel {
