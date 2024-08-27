@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "Récupération 2FA",
 			"mfaRecoveryResetMessage": "Veuillez entrer vos identifiants et le code de récupération",
 			"backToLogin": "Retour à la connexion"
+		},
+		"emailVerification": {
+			"emailVerified": "E-mail vérifié",
+			"errorMessage": "Une erreur s'est produite lors de la vérification de votre e-mail.",
+			"successMessage": "Votre e-mail a été vérifié avec succès.",
+			"redirectMessage": "Vous serez redirigé automatiquement dans {seconds} secondes.",
+			"goNowButton": "Aller maintenant"
 		}
 	},
 	"networks": {

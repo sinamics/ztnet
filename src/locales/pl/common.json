@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "Odzyskiwanie 2FA",
 			"mfaRecoveryResetMessage": "Wprowadź swoje dane uwierzytelniające i kod odzyskiwania",
 			"backToLogin": "Powrót do strony logowania"
+		},
+		"emailVerification": {
+			"emailVerified": "E-mail zweryfikowany",
+			"errorMessage": "Wystąpił błąd podczas weryfikacji twojego e-maila.",
+			"successMessage": "Twój e-mail został pomyślnie zweryfikowany.",
+			"redirectMessage": "Zostaniesz automatycznie przekierowany za {seconds} sekund.",
+			"goNowButton": "Przejdź teraz"
 		}
 	},
 	"networks": {

@@ -61,7 +61,7 @@ const VerifyEmail = () => {
 
 	const title = `${globalSiteTitle} - VerifyEmail`;
 
-	if (validateTokenLoading || !tokenData) {
+	if (validateTokenLoading || !tokenData || tokenData?.error) {
 		return null;
 	}
 
@@ -76,16 +76,18 @@ const VerifyEmail = () => {
 				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
 					<div className="mb-4">
 						<h3 className="text-2xl font-semibold text-center mb-4">
-							{tokenData.error ? "Error" : "Email Verified"}
+							{tokenData.error ? "Error" : t("authPages.emailVerification.emailVerified")}
 						</h3>
 						<p className="text-gray-500 text-center">
 							{tokenData.error
-								? t("authPages.mfaRecoveryReset.mfaRecoveryResetMessage")
-								: "Your email has been successfully verified."}
+								? t("authPages.emailVerification.errorMessage")
+								: t("authPages.emailVerification.successMessage")}
 						</p>
 						{!tokenData.error && (
 							<p className="text-gray-500 text-center mt-4">
-								You will be redirected automatically in {redirectCountdown} seconds.
+								{t.rich("authPages.emailVerification.redirectMessage", {
+									seconds: redirectCountdown,
+								})}
 							</p>
 						)}
 					</div>
@@ -95,7 +97,7 @@ const VerifyEmail = () => {
 								onClick={() => void router.push("/user-settings/?tab=account")}
 								className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
 							>
-								Go Now
+								{t("authPages.emailVerification.goNowButton")}
 							</button>
 						</div>
 					)}
@@ -116,16 +118,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
 	const session = await getSession(context);
-	if (!session || !("user" in session) || !session.user) {
-		return {
-			props: {
-				messages: (await import(`~/locales/${context.locale}/common.json`)).default,
-			},
-		};
-	}
-
 	return {
-		props: { auth: session.user },
+		props: {
+			auth: session?.user || null,
+			messages: (await import(`~/locales/${context.locale}/common.json`)).default,
+		},
 	};
 };
 

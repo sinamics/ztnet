@@ -44,14 +44,15 @@ const Account = () => {
 		},
 	});
 
-	const { mutate: sendVerificationEmail } = api.auth.sendVerificationEmail.useMutation({
-		onError: (error) => {
-			toast.error(error.message);
-		},
-		onSuccess: () => {
-			toast.success(t("Check your email for a verification link"));
-		},
-	});
+	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
+		api.auth.sendVerificationEmail.useMutation({
+			onError: (error) => {
+				toast.error(error.message);
+			},
+			onSuccess: () => {
+				toast.success(t("Check your email for a verification link"));
+			},
+		});
 
 	const ChangeLanguage = async (locale: string) => {
 		if (locale === "default") {
@@ -105,8 +106,11 @@ const Account = () => {
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					badge={
-						meLoading
-							? undefined
+						meLoading || sendMailLoading
+							? {
+									text: "loading",
+									color: "ghost",
+							  }
 							: me?.emailVerified
 							  ? {
 										text: t("userSettings.account.accountSettings.verifiedBadge"),

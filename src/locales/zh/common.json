@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "2FA恢复",
 			"mfaRecoveryResetMessage": "请输入您的凭据和恢复代码",
 			"backToLogin": "返回登录"
+		},
+		"emailVerification": {
+			"emailVerified": "邮箱已验证",
+			"errorMessage": "验证邮箱时发生错误。",
+			"successMessage": "您的邮箱已成功验证。",
+			"redirectMessage": "您将在 {seconds} 秒后自动重定向。",
+			"goNowButton": "立即前往"
 		}
 	},
 	"networks": {

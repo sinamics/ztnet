@@ -191,6 +191,13 @@
 			"mfaRecoveryResetTitle": "2FA恢復",
 			"mfaRecoveryResetMessage": "請輸入您的憑證和恢復代碼",
 			"backToLogin": "返回登錄"
+		},
+		"emailVerification": {
+			"emailVerified": "電子郵件已驗證",
+			"errorMessage": "驗證電子郵件時發生錯誤。",
+			"successMessage": "您的電子郵件已成功驗證。",
+			"redirectMessage": "您將在 {seconds} 秒後自動重定向。",
+			"goNowButton": "立即前往"
 		}
 	},
 	"networks": {
