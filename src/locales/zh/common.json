@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "忘记密码模板",
 			"notificationTemplate": "通知模板",
 			"organizationInviteTemplate": "组织邀请模板",
+			"newDeviceNotificationTemplate": "新设备通知模板",
+			"deviceIpChangeNotificationTemplate": "设备IP变更通知模板",
 			"templates": {
 				"availableTags": "可用的标签：",
 				"subject": "主题",
@@ -671,6 +673,7 @@
 		"tabs": {
 			"account": "帐户",
 			"network": "网络",
+			"notification": "通知",
 			"user": "用户"
 		},
 		"account": {
@@ -806,6 +809,17 @@
 				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。",
 				"addMemberIdAsNameTitle": "注册时将成员ID添加为姓名",
 				"addMemberIdAsNameLabel": "网络成员注册时，成员ID（nodeid）将作为姓名添加。"
+			}
+		},
+		"notification": {
+			"devices": "设备",
+			"newDeviceLogin": {
+				"title": "新设备登录提醒",
+				"description": "当新设备首次登录您的账户时，接收电子邮件通知。"
+			},
+			"ipAddressChange": {
+				"title": "IP地址变更提醒",
+				"description": "当已知设备从新的IP地址访问您的账户时，接收电子邮件通知。"
 			}
 		}
 	},

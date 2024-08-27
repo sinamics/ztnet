@@ -13,6 +13,8 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
+import NewDeviceNotificationTemplate from "~/components/adminPage/mail/mailNewDeviceNotificationTemplate";
+import DeviceIpChangeNotificationTemplate from "~/components/adminPage/mail/mailDeviceIpChangeNotificationTemplate";
 
 const Mail = () => {
 	const t = useTranslations("admin");
@@ -173,6 +175,13 @@ const Mail = () => {
 				</div>
 				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
+					<div className="collapse-title">{t("mail.organizationInviteTemplate")}</div>
+					<div className="collapse-content" style={{ width: "100%" }}>
+						<OrganizationInviteTemplate />
+					</div>
+				</div>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
+					<input type="checkbox" />
 					<div className="collapse-title">{t("mail.notificationTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<NotificationTemplate />
@@ -180,9 +189,18 @@ const Mail = () => {
 				</div>
 				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
-					<div className="collapse-title">{t("mail.organizationInviteTemplate")}</div>
+					<div className="collapse-title">{t("mail.newDeviceNotificationTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
-						<OrganizationInviteTemplate />
+						<NewDeviceNotificationTemplate />
+					</div>
+				</div>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
+					<input type="checkbox" />
+					<div className="collapse-title">
+						{t("mail.deviceIpChangeNotificationTemplate")}
+					</div>
+					<div className="collapse-content" style={{ width: "100%" }}>
+						<DeviceIpChangeNotificationTemplate />
 					</div>
 				</div>
 			</MenuSectionDividerWrapper>

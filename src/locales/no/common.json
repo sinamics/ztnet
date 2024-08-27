@@ -450,7 +450,9 @@
 			"inviteUserTemplate": "Inviter bruker mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
-			"organizationInviteTemplate": "Organisasjonsinvitasjonsmal",
+			"organizationInviteTemplate": "Organisasjons invitasjons mal",
+			"newDeviceNotificationTemplate": "Mal for varsling om ny enhet",
+			"deviceIpChangeNotificationTemplate": "Mal for varsling om endring av enhetens IP",
 			"templates": {
 				"availableTags": "Tilgjengelige merker:",
 				"subject": "Emne",
@@ -671,6 +673,7 @@
 		"tabs": {
 			"account": "Konto",
 			"network": "Nettverk",
+			"notification": "Varsel",
 			"user": "Bruker"
 		},
 		"account": {
@@ -806,6 +809,17 @@
 				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner.",
 				"addMemberIdAsNameTitle": "Legg til medlems-ID som navn ved registrering",
 				"addMemberIdAsNameLabel": "Når et nettverksmedlem registrerer seg, vil medlems-ID-en (nodeid) bli lagt til som navn."
+			}
+		},
+		"notification": {
+			"devices": "Enheter",
+			"newDeviceLogin": {
+				"title": "Varsel om innlogging på ny enhet",
+				"description": "Motta en e-post når en ny enhet logger inn på kontoen din for første gang."
+			},
+			"ipAddressChange": {
+				"title": "Varsel om endring av IP-adresse",
+				"description": "Motta en e-post når en kjent enhet får tilgang til kontoen din fra en ny IP-adresse."
 			}
 		}
 	},

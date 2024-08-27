@@ -1,7 +1,8 @@
-import { type GlobalOptions } from "@prisma/client";
 import nodemailer, { type TransportOptions } from "nodemailer";
 import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
+import { prisma } from "~/server/db";
+import ejs from "ejs";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -59,7 +60,156 @@ export const notificationTemplate = () => {
 	};
 };
 
-export function createTransporter(globalOptions: GlobalOptions) {
+export const deviceIpChangeNotificationTemplate = () => {
+	return {
+		subject: "ZTNET: Your account has been accessed from a new IP Address",
+		body:
+			"Hello,<br /><br />" +
+			"Your security is very important to us. Your ZTNET account was accessed from a new IP address:" +
+			"<br /><br />" +
+			"------------------------------------------<br />" +
+			"email: <%= toEmail %><br />" +
+			"time: <%= accessTime %> UTC<br />" +
+			"IP address: <%= ipAddress %><br />" +
+			"browser: <%= browserInfo %><br />" +
+			"------------------------------------------<br />" +
+			"<br /><br />" +
+			"If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br /><br />" +
+			"Sincerely,<br />--<br />ZTNET",
+	};
+};
+
+export const newDeviceNotificationTemplate = () => {
+	return {
+		subject: "ZTNET: New Device Detected",
+		body:
+			"Hello,<br /><br />" +
+			"A new device has been associated with your ZTNET account. <br /><br />" +
+			"------------------------------------------<br />" +
+			"time: <%= accessTime %> UTC<br />" +
+			"IP address: <%= ipAddress %><br />" +
+			"browser: <%= browserInfo %><br />" +
+			"------------------------------------------<br />" +
+			"<br /><br />" +
+			"If this was you, you can ignore this alert. If you noticed any suspicious activity on your account, please change your password and enable two-factor authentication on your account page at <%= accountPageUrl %>.<br /><br />" +
+			"Sincerely,<br />--<br />ZTNET",
+	};
+};
+
+export const mailTemplateMap = {
+	inviteUserTemplate,
+	forgotPasswordTemplate,
+	notificationTemplate,
+	inviteOrganizationTemplate,
+	newDeviceNotificationTemplate,
+	deviceIpChangeNotificationTemplate,
+};
+
+interface EmailTemplate {
+	subject: string;
+	body: string;
+}
+
+/**
+ * Represents the options for sending an email.
+ */
+interface EmailOptions {
+	to: string;
+	templateData: Record<string, unknown>;
+	userId?: string;
+}
+
+/**
+ * Sends an email with a template.
+ *
+ * @param templateFunc - The function that returns the email template.
+ * @param options - The options for sending the email.
+ * @returns A promise that resolves when the email is sent successfully.
+ * @throws An error if global options or user options are not found.
+ */
+export async function sendMailWithTemplate(
+	templateFunc: () => EmailTemplate,
+	options: EmailOptions,
+) {
+	const globalOptions = await prisma.globalOptions.findFirst({
+		where: { id: 1 },
+	});
+
+	if (!globalOptions) {
+		throw new Error("Global options not found");
+	}
+
+	// Check if user-specific options are set and enabled
+	if (options.userId) {
+		// Check user preferences
+		const userOptions = await prisma.userOptions.findUnique({
+			where: { userId: options.userId },
+		});
+
+		if (!userOptions) {
+			throw new Error("User options not found");
+		}
+
+		/**
+		 * Maps template names to option names.
+		 */
+		const templateToOptionMap = {
+			newDeviceNotificationTemplate: "newDeviceNotification",
+			deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+		};
+
+		/**
+		 * Check if tuser has enabled the option for the template.
+		 */
+		const optionField = templateToOptionMap[templateFunc.name];
+		if (optionField && !userOptions[optionField]) {
+			return;
+		}
+	}
+
+	const defaultTemplate = templateFunc();
+	const template = JSON.parse(globalOptions[templateFunc.name]) ?? defaultTemplate;
+
+	const renderedTemplate = await ejs.render(
+		JSON.stringify(template),
+		options.templateData,
+		{ async: true },
+	);
+
+	const transporter = await createTransporter();
+	const parsedTemplate = JSON.parse(renderedTemplate) as EmailTemplate;
+
+	const mailOptions = {
+		from: globalOptions.smtpEmail,
+		to: options.to,
+		subject: parsedTemplate.subject,
+		html: parsedTemplate.body,
+	};
+
+	await sendEmail(transporter, mailOptions);
+}
+
+interface SendMailResult {
+	accepted: string[];
+}
+
+async function sendEmail(
+	transporter: nodemailer.Transporter<unknown>,
+	mailOptions: nodemailer.SendMailOptions,
+) {
+	const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
+
+	if (!info.accepted.includes(mailOptions.to as string)) {
+		return throwError("Email could not be sent, check your credentials");
+	}
+}
+
+export async function createTransporter() {
+	const globalOptions = await prisma.globalOptions.findFirst({
+		where: {
+			id: 1,
+		},
+	});
 	if (!globalOptions.smtpHost || !globalOptions.smtpPort || !globalOptions.smtpEmail) {
 		return throwError(
 			"Email is not configured!, you can configure it in the admin panel or ask your administrator to do so.",
@@ -85,19 +235,4 @@ export function createTransporter(globalOptions: GlobalOptions) {
 			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
-}
-
-interface SendMailResult {
-	accepted: string[];
-}
-
-export async function sendEmail(
-	transporter: nodemailer.Transporter<unknown>,
-	mailOptions: nodemailer.SendMailOptions,
-) {
-	const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
-
-	if (!info.accepted.includes(mailOptions.to as string)) {
-		return throwError("Email could not be sent, check your credentials");
-	}
 }
