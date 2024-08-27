@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
 			"organizationInviteTemplate": "Plantilla de invitación de organización",
+			"newDeviceNotificationTemplate": "Plantilla de notificación de nuevo dispositivo",
+			"deviceIpChangeNotificationTemplate": "Plantilla de notificación de cambio de IP del dispositivo",
 			"templates": {
 				"availableTags": "Etiquetas disponibles:",
 				"subject": "Asunto",

@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "忘記密碼模板",
 			"notificationTemplate": "通知模板",
 			"organizationInviteTemplate": "組織邀請模板",
+			"newDeviceNotificationTemplate": "新裝置通知模板",
+			"deviceIpChangeNotificationTemplate": "裝置IP變更通知模板",
 			"templates": {
 				"availableTags": "可用的標籤：",
 				"subject": "主題",
