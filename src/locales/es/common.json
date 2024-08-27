@@ -455,6 +455,7 @@
 			"password": "Contraseña",
 			"useSSL": "Usar SSL",
 			"inviteUserTemplate": "Plantilla de invitación de usuario",
+			"emailVerificationTemplate": "Plantilla de verificación de correo electrónico",
 			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
 			"notificationTemplate": "Plantilla de notificación",
 			"organizationInviteTemplate": "Plantilla de invitación de organización",

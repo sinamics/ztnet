@@ -455,6 +455,7 @@
 			"password": "Hasło",
 			"useSSL": "Użyj SSL",
 			"inviteUserTemplate": "Szablon - Zaproszenie użytkownika",
+			"emailVerificationTemplate": "Szablon - Weryfikacja e-mail",
 			"forgotPasswordTemplate": "Szablon - Zapomniane hasło",
 			"notificationTemplate": "Szablon - Powiadomienie",
 			"organizationInviteTemplate": "Szablon - Zaproszenie do organizacji",

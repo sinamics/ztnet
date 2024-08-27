@@ -15,6 +15,7 @@ import {
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 import NewDeviceNotificationTemplate from "~/components/adminPage/mail/mailNewDeviceNotificationTemplate";
 import DeviceIpChangeNotificationTemplate from "~/components/adminPage/mail/mailDeviceIpChangeNotificationTemplate";
+import VerifyEmailTemplate from "~/components/adminPage/mail/mailVerifyEmail";
 
 const Mail = () => {
 	const t = useTranslations("admin");
@@ -164,6 +165,13 @@ const Mail = () => {
 					<div className="collapse-title">{t("mail.inviteUserTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<MailUserInviteTemplate />
+					</div>
+				</div>
+				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
+					<input type="checkbox" />
+					<div className="collapse-title">{t("mail.emailVerificationTemplate")}</div>
+					<div className="collapse-content" style={{ width: "100%" }}>
+						<VerifyEmailTemplate />
 					</div>
 				</div>
 				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">

@@ -455,6 +455,7 @@
 			"password": "Passord",
 			"useSSL": "Bruk SSL",
 			"inviteUserTemplate": "Inviter bruker mal",
+			"emailVerificationTemplate": "E-post verifikasjons mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
 			"organizationInviteTemplate": "Organisasjons invitasjons mal",

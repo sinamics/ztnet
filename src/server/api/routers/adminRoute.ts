@@ -1,16 +1,7 @@
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
-import {
-	deviceIpChangeNotificationTemplate,
-	forgotPasswordTemplate,
-	inviteOrganizationTemplate,
-	inviteUserTemplate,
-	mailTemplateMap,
-	newDeviceNotificationTemplate,
-	notificationTemplate,
-	sendMailWithTemplate,
-} from "~/utils/mail";
+import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
 import { GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import { type ZTControllerNodeStatus } from "~/types/ztController";
@@ -381,16 +372,8 @@ export const adminRouter = createTRPCRouter({
 					id: 1,
 				},
 			});
-			const templateMap = {
-				inviteUserTemplate,
-				forgotPasswordTemplate,
-				notificationTemplate,
-				inviteOrganizationTemplate,
-				newDeviceNotificationTemplate,
-				deviceIpChangeNotificationTemplate,
-			};
 
-			return JSON.parse(templates?.[input.template]) ?? templateMap[input.template]();
+			return JSON.parse(templates?.[input.template]) ?? mailTemplateMap[input.template]();
 		}),
 
 	setMail: adminRoleProtectedRoute
@@ -446,16 +429,7 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(({ input }) => {
-			const templateMap = {
-				inviteUserTemplate,
-				forgotPasswordTemplate,
-				notificationTemplate,
-				inviteOrganizationTemplate,
-				newDeviceNotificationTemplate,
-				deviceIpChangeNotificationTemplate,
-			};
-
-			return templateMap[input.template]();
+			return mailTemplateMap[input.template]();
 		}),
 	sendTestMail: adminRoleProtectedRoute
 		.input(
@@ -494,6 +468,9 @@ export const adminRouter = createTRPCRouter({
 				expirationTime: "24 hours",
 				actionRequired: "Please verify your email address",
 				customMessage: "This is a custom message for testing purposes",
+
+				// verifyEmailTemplate specific tags
+				verifyLink: "https://ztnet.network/verify-email",
 			};
 
 			await sendMailWithTemplate(mailTemplateMap[type], {

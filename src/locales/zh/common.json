@@ -455,6 +455,7 @@
 			"password": "密码",
 			"useSSL": "使用SSL",
 			"inviteUserTemplate": "邀请用户模板",
+			"emailVerificationTemplate": "电子邮件验证模板",
 			"forgotPasswordTemplate": "忘记密码模板",
 			"notificationTemplate": "通知模板",
 			"organizationInviteTemplate": "组织邀请模板",
