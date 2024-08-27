@@ -189,14 +189,16 @@ const Mail = () => {
 				</div>
 				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
-					<div className="collapse-title">New Device Notification</div>
+					<div className="collapse-title">{t("mail.newDeviceNotificationTemplate")}</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<NewDeviceNotificationTemplate />
 					</div>
 				</div>
 				<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 					<input type="checkbox" />
-					<div className="collapse-title">Device IP Change Notification</div>
+					<div className="collapse-title">
+						{t("mail.deviceIpChangeNotificationTemplate")}
+					</div>
 					<div className="collapse-content" style={{ width: "100%" }}>
 						<DeviceIpChangeNotificationTemplate />
 					</div>

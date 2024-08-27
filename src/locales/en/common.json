@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "Forgot Password template",
 			"notificationTemplate": "Notification template",
 			"organizationInviteTemplate": "Organization Invite template",
+			"newDeviceNotificationTemplate": "New device notification template",
+			"deviceIpChangeNotificationTemplate": "Device IP change notification template",
 			"templates": {
 				"availableTags": "Available tags:",
 				"subject": "Subject",

@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "Szablon - Zapomniane hasło",
 			"notificationTemplate": "Szablon - Powiadomienie",
 			"organizationInviteTemplate": "Szablon - Zaproszenie do organizacji",
+			"newDeviceNotificationTemplate": "Szablon powiadomienia o nowym urządzeniu",
+			"deviceIpChangeNotificationTemplate": "Szablon powiadomienia o zmianie IP urządzenia",
 			"templates": {
 				"availableTags": "Dostępne tagi:",
 				"subject": "Temat",

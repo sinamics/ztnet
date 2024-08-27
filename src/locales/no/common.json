@@ -450,7 +450,9 @@
 			"inviteUserTemplate": "Inviter bruker mal",
 			"forgotPasswordTemplate": "Glemt passord mal",
 			"notificationTemplate": "Varslings mal",
-			"organizationInviteTemplate": "Organisasjonsinvitasjonsmal",
+			"organizationInviteTemplate": "Organisasjons invitasjons mal",
+			"newDeviceNotificationTemplate": "Mal for varsling om ny enhet",
+			"deviceIpChangeNotificationTemplate": "Mal for varsling om endring av enhetens IP",
 			"templates": {
 				"availableTags": "Tilgjengelige merker:",
 				"subject": "Emne",

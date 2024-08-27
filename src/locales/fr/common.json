@@ -451,6 +451,8 @@
 			"forgotPasswordTemplate": "Modèle de mot de passe oublié",
 			"notificationTemplate": "Modèle de notification",
 			"organizationInviteTemplate": "Modèle d'invitation d'organisation",
+			"newDeviceNotificationTemplate": "Modèle de notification de nouvel appareil",
+			"deviceIpChangeNotificationTemplate": "Modèle de notification de changement d'IP de l'appareil",
 			"templates": {
 				"availableTags": "Balises disponibles :",
 				"subject": "Sujet",
