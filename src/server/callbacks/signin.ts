@@ -275,7 +275,7 @@ export function signInCallback(
 				if (!isValidDevice) {
 					return false;
 				}
-				// Treat as a new device login
+				// update or create device info
 				await upsertDeviceInfo(deviceInfo);
 
 				user.deviceId = deviceInfo.deviceId;
