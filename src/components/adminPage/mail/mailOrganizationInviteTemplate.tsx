@@ -7,6 +7,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { MailTemplateKey } from "~/utils/enums";
 
 type IMailTemplate = {
 	subject: string;
@@ -35,7 +36,7 @@ const OrganizationInviteTemplate = () => {
 		refetch: refetchMailTemplates,
 		isLoading: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
-		template: "inviteOrganizationTemplate",
+		template: MailTemplateKey.InviteOrganization,
 	});
 
 	const changeTemplateHandler = (
@@ -103,7 +104,7 @@ const OrganizationInviteTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(stateTemplate),
-				type: "inviteOrganizationTemplate",
+				type: MailTemplateKey.InviteOrganization,
 			},
 			{
 				onSuccess: handleApiSuccess({
@@ -178,7 +179,7 @@ const OrganizationInviteTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "inviteOrganizationTemplate",
+								template: MailTemplateKey.InviteOrganization,
 							})
 						}
 					>
@@ -189,7 +190,7 @@ const OrganizationInviteTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "inviteOrganizationTemplate" })}
+						onClick={() => sendTestMail({ type: MailTemplateKey.InviteOrganization })}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")

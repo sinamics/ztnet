@@ -4,6 +4,7 @@ import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 import { prisma } from "~/server/db";
 import ejs from "ejs";
 import { GlobalOptions, UserOptions } from "@prisma/client";
+import { MailTemplateKey } from "./enums";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -118,7 +119,7 @@ export const mailTemplateMap = {
 	inviteOrganizationTemplate,
 	newDeviceNotificationTemplate,
 	deviceIpChangeNotificationTemplate,
-};
+} as const;
 
 const templateToOptionMap: Record<string, string> = {
 	newDeviceNotificationTemplate: "newDeviceNotification",
@@ -130,25 +131,14 @@ interface EmailTemplate {
 	body: string;
 }
 
-/**
- * Represents the options for sending an email.
- */
 interface EmailOptions {
 	to: string;
 	templateData: Record<string, unknown>;
 	userId?: string;
 }
 
-/**
- * Sends an email with a template.
- *
- * @param templateFunc - The function that returns the email template.
- * @param options - The options for sending the email.
- * @returns A promise that resolves when the email is sent successfully.
- * @throws An error if global options or user options are not found.
- */
 export async function sendMailWithTemplate(
-	templateFunc: () => EmailTemplate,
+	templateKey: MailTemplateKey,
 	options: EmailOptions,
 ) {
 	const globalOptions = await prisma.globalOptions.findFirst({
@@ -160,10 +150,10 @@ export async function sendMailWithTemplate(
 	}
 
 	if (options.userId) {
-		await checkUserPreferences(options.userId, templateFunc.name);
+		await checkUserPreferences(options.userId, templateKey);
 	}
 
-	const template = await getTemplate(globalOptions, templateFunc);
+	const template = await getTemplate(globalOptions, templateKey);
 
 	const renderedTemplate = await renderTemplate(template, options.templateData);
 
@@ -181,13 +171,16 @@ export async function sendMailWithTemplate(
 	await sendEmail(transporter, mailOptions);
 }
 
-async function checkUserPreferences(userId: string, templateName: string): Promise<void> {
+async function checkUserPreferences(
+	userId: string,
+	templateKey: MailTemplateKey,
+): Promise<void> {
 	const userOptions = await prisma.userOptions.findUnique({ where: { userId } });
 	if (!userOptions) {
 		throw new Error("User options not found");
 	}
 
-	const optionField = templateToOptionMap[templateName];
+	const optionField = templateToOptionMap[templateKey];
 	if (optionField && !(userOptions as UserOptions)[optionField]) {
 		throw new Error(`User has disabled ${optionField} notifications`);
 	}
@@ -195,39 +188,31 @@ async function checkUserPreferences(userId: string, templateName: string): Promi
 
 async function getTemplate(
 	globalOptions: GlobalOptions,
-	templateFunc: () => EmailTemplate,
+	templateKey: MailTemplateKey,
 ): Promise<EmailTemplate> {
-	const defaultTemplate = templateFunc();
-	const templateName = templateFunc.name;
+	const defaultTemplate = mailTemplateMap[templateKey]();
 
-	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-	console.log(`Attempting to retrieve template: ${templateName}`);
-	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-	console.log("Global options:", JSON.stringify(globalOptions, null, 2));
-
-	if (!(templateName in globalOptions)) {
+	if (!(templateKey in globalOptions)) {
 		console.warn(
-			`Template '${templateName}' not found in global options. Using default template.`,
+			`Template '${templateKey}' not found in global options. Using default template.`,
 		);
 		return defaultTemplate;
 	}
 
-	const storedTemplate = globalOptions[templateName];
+	const storedTemplate = globalOptions[templateKey];
 
 	if (typeof storedTemplate !== "string") {
 		console.warn(
-			`Template '${templateName}' is not a string. Type: ${typeof storedTemplate}. Using default template.`,
+			`Template '${templateKey}' is not a string. Type: ${typeof storedTemplate}. Using default template.`,
 		);
 		return defaultTemplate;
 	}
 
 	try {
 		const parsedTemplate = JSON.parse(storedTemplate);
-		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-		console.log(`Successfully parsed template: ${templateName}`);
 		return parsedTemplate;
 	} catch (error) {
-		console.error(`Failed to parse template '${templateName}':`, error);
+		console.error(`Failed to parse template '${templateKey}':`, error);
 		console.error("Template content:", storedTemplate);
 		return defaultTemplate;
 	}
@@ -253,6 +238,7 @@ function parseRenderedTemplate(renderedTemplate: string): EmailTemplate {
 		throw new Error("Failed to parse rendered template");
 	}
 }
+
 interface SendMailResult {
 	accepted: string[];
 }

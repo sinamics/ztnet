@@ -9,12 +9,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { throwError } from "~/server/helpers/errorHandler";
 import jwt from "jsonwebtoken";
-import {
-	forgotPasswordTemplate,
-	notificationTemplate,
-	sendMailWithTemplate,
-	verifyEmailTemplate,
-} from "~/utils/mail";
+import { sendMailWithTemplate } from "~/utils/mail";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
@@ -28,6 +23,7 @@ import { Invitation, User, UserDevice, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 import { ErrorCode } from "~/utils/errorCode";
+import { MailTemplateKey } from "~/utils/enums";
 
 // This regular expression (regex) is used to validate a password based on the following criteria:
 // - The password must be at least 6 characters long.
@@ -304,7 +300,7 @@ export const authRouter = createTRPCRouter({
 				});
 
 				for (const adminUser of adminUsers) {
-					await sendMailWithTemplate(notificationTemplate, {
+					await sendMailWithTemplate(MailTemplateKey.Notification, {
 						to: adminUser.email,
 						userId: adminUser.id,
 						templateData: {
@@ -546,7 +542,7 @@ export const authRouter = createTRPCRouter({
 			const resetLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
 			// Send email
 			try {
-				await sendMailWithTemplate(forgotPasswordTemplate, {
+				await sendMailWithTemplate(MailTemplateKey.ForgotPassword, {
 					to: email,
 					userId: user.id,
 					templateData: {
@@ -656,7 +652,7 @@ export const authRouter = createTRPCRouter({
 		const verifyLink = `${process.env.NEXTAUTH_URL}/auth/verifyEmail?token=${validationToken}`;
 		// Send email
 		try {
-			await sendMailWithTemplate(verifyEmailTemplate, {
+			await sendMailWithTemplate(MailTemplateKey.VerifyEmail, {
 				to: user.email,
 				userId: user.id,
 				templateData: {

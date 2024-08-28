@@ -7,6 +7,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { MailTemplateKey } from "~/utils/enums";
 
 type IMailTemplate = {
 	subject: string;
@@ -35,7 +36,7 @@ const NewDeviceNotificationTemplate = () => {
 		refetch: refetchMailTemplates,
 		isLoading: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
-		template: "newDeviceNotificationTemplate",
+		template: MailTemplateKey.NewDeviceNotification,
 	});
 
 	const changeTemplateHandler = (
@@ -103,7 +104,7 @@ const NewDeviceNotificationTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(stateTemplate),
-				type: "newDeviceNotificationTemplate",
+				type: MailTemplateKey.NewDeviceNotification,
 			},
 			{
 				onSuccess: handleApiSuccess({
@@ -179,7 +180,7 @@ const NewDeviceNotificationTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "newDeviceNotificationTemplate",
+								template: MailTemplateKey.NewDeviceNotification,
 							})
 						}
 					>
@@ -190,7 +191,7 @@ const NewDeviceNotificationTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "newDeviceNotificationTemplate" })}
+						onClick={() => sendTestMail({ type: MailTemplateKey.NewDeviceNotification })}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")

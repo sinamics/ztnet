@@ -4,11 +4,8 @@ import { generateDeviceId, parseUA } from "~/utils/devices";
 import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
-import {
-	newDeviceNotificationTemplate,
-	deviceIpChangeNotificationTemplate,
-	sendMailWithTemplate,
-} from "~/utils/mail";
+import { sendMailWithTemplate } from "~/utils/mail";
+import { MailTemplateKey } from "~/utils/enums";
 
 interface DeviceInfo {
 	userAgent: string;
@@ -92,7 +89,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 	if (user && !user.firstTime) {
 		try {
 			if (hasIpAddressChanged && hasDevice) {
-				sendMailWithTemplate(deviceIpChangeNotificationTemplate, {
+				sendMailWithTemplate(MailTemplateKey.DeviceIpChangeNotification, {
 					to: user.email,
 					userId: user.id,
 					templateData: {
@@ -105,7 +102,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 				});
 			} else if (!hasDevice) {
 				// Send email about new device
-				sendMailWithTemplate(newDeviceNotificationTemplate, {
+				sendMailWithTemplate(MailTemplateKey.NewDeviceNotification, {
 					to: user.email,
 					userId: user.id,
 					templateData: {
