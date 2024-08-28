@@ -3,6 +3,8 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 import { prisma } from "~/server/db";
 import ejs from "ejs";
+import { GlobalOptions, UserOptions } from "@prisma/client";
+import { MailTemplateKey } from "./enums";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -117,32 +119,21 @@ export const mailTemplateMap = {
 	inviteOrganizationTemplate,
 	newDeviceNotificationTemplate,
 	deviceIpChangeNotificationTemplate,
-};
+} as const;
 
 interface EmailTemplate {
 	subject: string;
 	body: string;
 }
 
-/**
- * Represents the options for sending an email.
- */
 interface EmailOptions {
 	to: string;
 	templateData: Record<string, unknown>;
 	userId?: string;
 }
 
-/**
- * Sends an email with a template.
- *
- * @param templateFunc - The function that returns the email template.
- * @param options - The options for sending the email.
- * @returns A promise that resolves when the email is sent successfully.
- * @throws An error if global options or user options are not found.
- */
 export async function sendMailWithTemplate(
-	templateFunc: () => EmailTemplate,
+	templateKey: MailTemplateKey,
 	options: EmailOptions,
 ) {
 	const globalOptions = await prisma.globalOptions.findFirst({
@@ -153,66 +144,17 @@ export async function sendMailWithTemplate(
 		throw new Error("Global options not found");
 	}
 
-	// Check if user-specific options are set and enabled
 	if (options.userId) {
-		// Check user preferences
-		const userOptions = await prisma.userOptions.findUnique({
-			where: { userId: options.userId },
-		});
-
-		if (!userOptions) {
-			throw new Error("User options not found");
-		}
-
-		/**
-		 * Maps template names to database names.
-		 */
-		const templateToOptionMap = {
-			newDeviceNotificationTemplate: "newDeviceNotification",
-			deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
-		};
-
-		/**
-		 * Check if tuser has enabled the option for the template.
-		 */
-		const optionField = templateToOptionMap[templateFunc.name];
-		if (optionField && !userOptions[optionField]) {
-			return;
-		}
+		await checkUserPreferences(options.userId, templateKey);
 	}
 
-	let template: EmailTemplate;
-	const defaultTemplate = templateFunc();
+	const template = await getTemplate(globalOptions, templateKey);
 
-	try {
-		template = JSON.parse(globalOptions[templateFunc.name]);
-	} catch (_e) {
-		template = defaultTemplate;
-	}
-
-	if (!template) {
-		template = defaultTemplate;
-	}
-
-	let renderedTemplate: string;
-	try {
-		renderedTemplate = await ejs.render(JSON.stringify(template), options.templateData, {
-			async: true,
-		});
-	} catch (error) {
-		console.error(`Failed to render template: ${error.message}`);
-		throw new Error("Template rendering failed");
-	}
+	const renderedTemplate = await renderTemplate(template, options.templateData);
 
 	const transporter = await createTransporter();
 
-	let parsedTemplate: EmailTemplate;
-	try {
-		parsedTemplate = JSON.parse(renderedTemplate);
-	} catch (error) {
-		console.error(`Failed to parse rendered template: ${error.message}`);
-		throw new Error("Failed to parse rendered template");
-	}
+	const parsedTemplate = parseRenderedTemplate(renderedTemplate);
 
 	const mailOptions = {
 		from: globalOptions.smtpEmail,
@@ -222,6 +164,83 @@ export async function sendMailWithTemplate(
 	};
 
 	await sendEmail(transporter, mailOptions);
+}
+
+/**
+ * Check if the user has disabled notifications for the given template
+ *
+ */
+const templateToOptionMap: Record<string, string> = {
+	newDeviceNotificationTemplate: "newDeviceNotification",
+	deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+};
+
+async function checkUserPreferences(
+	userId: string,
+	templateKey: MailTemplateKey,
+): Promise<void> {
+	const userOptions = await prisma.userOptions.findUnique({ where: { userId } });
+	if (!userOptions) {
+		throw new Error("User options not found");
+	}
+
+	const optionField = templateToOptionMap[templateKey];
+	if (optionField && !(userOptions as UserOptions)[optionField]) {
+		throw new Error(`User has disabled ${optionField} notifications`);
+	}
+}
+
+async function getTemplate(
+	globalOptions: GlobalOptions,
+	templateKey: MailTemplateKey,
+): Promise<EmailTemplate> {
+	const defaultTemplate = mailTemplateMap[templateKey]();
+
+	if (!(templateKey in globalOptions)) {
+		console.warn(
+			`Template '${templateKey}' not found in global options. Using default template.`,
+		);
+		return defaultTemplate;
+	}
+
+	const storedTemplate = globalOptions[templateKey];
+
+	if (typeof storedTemplate !== "string") {
+		console.warn(
+			`Template '${templateKey}' is not a string. Type: ${typeof storedTemplate}. Using default template.`,
+		);
+		return defaultTemplate;
+	}
+
+	try {
+		const parsedTemplate = JSON.parse(storedTemplate);
+		return parsedTemplate;
+	} catch (error) {
+		console.error(`Failed to parse template '${templateKey}':`, error);
+		console.error("Template content:", storedTemplate);
+		return defaultTemplate;
+	}
+}
+
+async function renderTemplate(
+	template: EmailTemplate,
+	templateData: Record<string, unknown>,
+): Promise<string> {
+	try {
+		return await ejs.render(JSON.stringify(template), templateData, { async: true });
+	} catch (error) {
+		console.error(`Failed to render template: ${error.message}`);
+		throw new Error("Template rendering failed");
+	}
+}
+
+function parseRenderedTemplate(renderedTemplate: string): EmailTemplate {
+	try {
+		return JSON.parse(renderedTemplate);
+	} catch (error) {
+		console.error(`Failed to parse rendered template: ${error.message}`);
+		throw new Error("Failed to parse rendered template");
+	}
 }
 
 interface SendMailResult {

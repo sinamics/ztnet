@@ -19,6 +19,7 @@ import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 import { InvitationLinkType } from "~/types/invitation";
+import { MailTemplateKey } from "~/utils/enums";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -434,7 +435,7 @@ export const adminRouter = createTRPCRouter({
 	sendTestMail: adminRoleProtectedRoute
 		.input(
 			z.object({
-				type: z.string(),
+				type: z.nativeEnum(MailTemplateKey),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -473,7 +474,7 @@ export const adminRouter = createTRPCRouter({
 				verifyLink: "https://ztnet.network/verify-email",
 			};
 
-			await sendMailWithTemplate(mailTemplateMap[type], {
+			await sendMailWithTemplate(type, {
 				to: user.email,
 				userId: user.id,
 				templateData,

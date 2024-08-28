@@ -8,6 +8,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { MailTemplateKey } from "~/utils/enums";
 
 type InviteUserTemplate = {
 	subject: string;
@@ -35,7 +36,7 @@ const ForgotPasswordMailTemplate = () => {
 		refetch: refetchMailTemplates,
 		isLoading: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
-		template: "forgotPasswordTemplate",
+		template: MailTemplateKey.ForgotPassword,
 	});
 
 	const changeTemplateHandler = (
@@ -104,7 +105,7 @@ const ForgotPasswordMailTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(emailTemplate),
-				type: "forgotPasswordTemplate",
+				type: MailTemplateKey.ForgotPassword,
 			},
 			{
 				onSuccess: () => {
@@ -178,7 +179,7 @@ const ForgotPasswordMailTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "forgotPasswordTemplate",
+								template: MailTemplateKey.ForgotPassword,
 							})
 						}
 					>
@@ -189,7 +190,7 @@ const ForgotPasswordMailTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "forgotPasswordTemplate" })}
+						onClick={() => sendTestMail({ type: MailTemplateKey.ForgotPassword })}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")

@@ -4,7 +4,7 @@ import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
-import { inviteUserTemplate, sendMailWithTemplate } from "~/utils/mail";
+import { sendMailWithTemplate } from "~/utils/mail";
 import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
@@ -16,6 +16,7 @@ import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/member
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
+import { MailTemplateKey } from "~/utils/enums";
 
 const RouteSchema = z.object({
 	target: z
@@ -1348,7 +1349,7 @@ accept;`;
 			}
 			const { nwid, email } = input;
 			try {
-				await sendMailWithTemplate(inviteUserTemplate, {
+				await sendMailWithTemplate(MailTemplateKey.InviteUser, {
 					to: email,
 					templateData: {
 						toEmail: email,

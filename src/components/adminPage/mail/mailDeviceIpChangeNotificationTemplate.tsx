@@ -7,6 +7,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { MailTemplateKey } from "~/utils/enums";
 
 type IMailTemplate = {
 	subject: string;
@@ -35,7 +36,7 @@ const DeviceIpChangeNotificationTemplate = () => {
 		refetch: refetchMailTemplates,
 		isLoading: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
-		template: "deviceIpChangeNotificationTemplate",
+		template: MailTemplateKey.DeviceIpChangeNotification,
 	});
 
 	const changeTemplateHandler = (
@@ -103,7 +104,7 @@ const DeviceIpChangeNotificationTemplate = () => {
 		setMailTemplates(
 			{
 				template: JSON.stringify(stateTemplate),
-				type: "deviceIpChangeNotificationTemplate",
+				type: MailTemplateKey.DeviceIpChangeNotification,
 			},
 			{
 				onSuccess: handleApiSuccess({
@@ -179,7 +180,7 @@ const DeviceIpChangeNotificationTemplate = () => {
 						className="btn btn-sm"
 						onClick={() =>
 							getDefaultMailTemplate({
-								template: "deviceIpChangeNotificationTemplate",
+								template: MailTemplateKey.DeviceIpChangeNotification,
 							})
 						}
 					>
@@ -190,7 +191,9 @@ const DeviceIpChangeNotificationTemplate = () => {
 					<button
 						className="btn btn-sm"
 						disabled={changes.subject || changes.body || sendingMailLoading}
-						onClick={() => sendTestMail({ type: "deviceIpChangeNotificationTemplate" })}
+						onClick={() =>
+							sendTestMail({ type: MailTemplateKey.DeviceIpChangeNotification })
+						}
 					>
 						{sendingMailLoading
 							? t("mail.templates.sendTestMailButtonLoading")
