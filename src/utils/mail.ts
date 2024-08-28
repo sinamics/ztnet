@@ -121,11 +121,6 @@ export const mailTemplateMap = {
 	deviceIpChangeNotificationTemplate,
 } as const;
 
-const templateToOptionMap: Record<string, string> = {
-	newDeviceNotificationTemplate: "newDeviceNotification",
-	deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
-};
-
 interface EmailTemplate {
 	subject: string;
 	body: string;
@@ -170,6 +165,15 @@ export async function sendMailWithTemplate(
 
 	await sendEmail(transporter, mailOptions);
 }
+
+/**
+ * Check if the user has disabled notifications for the given template
+ *
+ */
+const templateToOptionMap: Record<string, string> = {
+	newDeviceNotificationTemplate: "newDeviceNotification",
+	deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+};
 
 async function checkUserPreferences(
 	userId: string,
