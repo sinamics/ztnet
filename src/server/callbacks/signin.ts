@@ -30,6 +30,8 @@ const DEVICE_SALT_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 5;
 
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
+
+	// Check if admin has created a default user group for new users
 	const defaultUserGroup = await prisma.userGroup.findFirst({
 		where: { isDefault: true },
 	});
