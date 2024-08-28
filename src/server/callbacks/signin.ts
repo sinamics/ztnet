@@ -272,11 +272,11 @@ export function signInCallback(
 				);
 
 				const isValidDevice = await validateDeviceId(deviceInfo, userExist.id);
-
 				if (!isValidDevice) {
-					// Treat as a new device login
-					await upsertDeviceInfo(deviceInfo);
+					return false;
 				}
+				// Treat as a new device login
+				await upsertDeviceInfo(deviceInfo);
 
 				user.deviceId = deviceInfo.deviceId;
 			}
