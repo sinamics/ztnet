@@ -159,26 +159,6 @@ export async function sendMailWithTemplate(
 		throw new Error("Global options not found");
 	}
 
-	// Check if user-specific options are set and enabled
-	if (options.userId) {
-		// Check user preferences
-		const userOptions = await prisma.userOptions.findUnique({
-			where: { userId: options.userId },
-		});
-
-		if (!userOptions) {
-			throw new Error("User options not found");
-		}
-
-		/**
-		 * Check if tuser has enabled the option for the template.
-		 */
-		const optionField = templateToOptionMap[templateFunc.name];
-		if (optionField && !userOptions[optionField]) {
-			return;
-		}
-	}
-
 	if (options.userId) {
 		await checkUserPreferences(options.userId, templateFunc.name);
 	}
