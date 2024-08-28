@@ -3,7 +3,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 import { prisma } from "~/server/db";
 import ejs from "ejs";
-import { GlobalOptions } from "@prisma/client";
+import { GlobalOptions, UserOptions } from "@prisma/client";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -120,6 +120,11 @@ export const mailTemplateMap = {
 	deviceIpChangeNotificationTemplate,
 };
 
+const templateToOptionMap: Record<string, string> = {
+	newDeviceNotificationTemplate: "newDeviceNotification",
+	deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+};
+
 interface EmailTemplate {
 	subject: string;
 	body: string;
@@ -166,20 +171,16 @@ export async function sendMailWithTemplate(
 		}
 
 		/**
-		 * Maps template names to database names.
-		 */
-		const templateToOptionMap = {
-			newDeviceNotificationTemplate: "newDeviceNotification",
-			deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
-		};
-
-		/**
 		 * Check if tuser has enabled the option for the template.
 		 */
 		const optionField = templateToOptionMap[templateFunc.name];
 		if (optionField && !userOptions[optionField]) {
 			return;
 		}
+	}
+
+	if (options.userId) {
+		await checkUserPreferences(options.userId, templateFunc.name);
 	}
 
 	const template = await getTemplate(globalOptions, templateFunc);
@@ -198,6 +199,18 @@ export async function sendMailWithTemplate(
 	};
 
 	await sendEmail(transporter, mailOptions);
+}
+
+async function checkUserPreferences(userId: string, templateName: string): Promise<void> {
+	const userOptions = await prisma.userOptions.findUnique({ where: { userId } });
+	if (!userOptions) {
+		throw new Error("User options not found");
+	}
+
+	const optionField = templateToOptionMap[templateName];
+	if (optionField && !(userOptions as UserOptions)[optionField]) {
+		throw new Error(`User has disabled ${optionField} notifications`);
+	}
 }
 
 async function getTemplate(
