@@ -6,12 +6,13 @@ import {
 } from "~/server/api/trpc";
 import { throwError } from "~/server/helpers/errorHandler";
 import jwt from "jsonwebtoken";
-import { forgotPasswordTemplate, sendMailWithTemplate } from "~/utils/mail";
+import { sendMailWithTemplate } from "~/utils/mail";
 import { TOTP_MFA_TOKEN_SECRET, generateInstanceSecret } from "~/utils/encryption";
 import { ErrorCode } from "~/utils/errorCode";
 import rateLimit from "~/utils/rateLimit";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
+import { MailTemplateKey } from "~/utils/enums";
 
 // allow 15 requests per 10 minutes
 const limiter = rateLimit({
@@ -126,7 +127,7 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// Send email
 			try {
-				await sendMailWithTemplate(forgotPasswordTemplate, {
+				await sendMailWithTemplate(MailTemplateKey.ForgotPassword, {
 					to: email,
 					templateData: {
 						toEmail: email,
