@@ -1,11 +1,14 @@
 import { ErrorCode } from "~/utils/errorCode";
 import { prisma } from "../db";
-import { generateDeviceId, parseUA } from "~/utils/devices";
+import { parseUA } from "~/utils/devices";
 import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
+import { GetServerSidePropsContext } from "next";
+import { parse, serialize } from "cookie";
+import { createHash, randomBytes } from "crypto";
 
 interface DeviceInfo {
 	userAgent: string;
@@ -18,11 +21,12 @@ interface DeviceInfo {
 	os: string;
 	osVersion: string;
 	lastActive: Date;
+	createdAt: Date;
 }
 
-async function findUser(email: string): Promise<User | null> {
-	return prisma.user.findUnique({ where: { email } });
-}
+const DEVICE_SALT_COOKIE_NAME = "next-auth.device_sid";
+const SALT_CREATION_DATE_COOKIE_NAME = "next-auth.scd";
+const DEVICE_SALT_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 5;
 
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
@@ -56,31 +60,30 @@ async function createUser(userData: User, isOauth = false): Promise<Partial<User
 	});
 }
 
-async function updateUserLogin(userId: string): Promise<void> {
-	await prisma.user.update({
-		where: { id: userId },
-		data: { lastLogin: new Date().toISOString(), firstTime: false },
-	});
-}
-
 async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 	const hasDevice = await prisma.userDevice.findUnique({
 		where: { deviceId: deviceInfo.deviceId },
-		select: { ipAddress: true },
+		select: { ipAddress: true, createdAt: true },
 	});
 
-	// Check if the IP address has changed
 	const hasIpAddressChanged = hasDevice?.ipAddress !== deviceInfo.ipAddress;
+	const hasSaltChanged =
+		hasDevice && hasDevice.createdAt.getTime() !== deviceInfo.createdAt.getTime();
 
-	await prisma.userDevice.upsert({
-		where: { deviceId: deviceInfo.deviceId },
-		update: {
-			lastActive: deviceInfo.lastActive,
-			ipAddress: deviceInfo.ipAddress,
-			isActive: true,
-		},
-		create: deviceInfo,
-	});
+	if (hasSaltChanged) {
+		// Treat as a new device if salt has changed
+		await prisma.userDevice.create({ data: deviceInfo });
+	} else {
+		await prisma.userDevice.upsert({
+			where: { deviceId: deviceInfo.deviceId },
+			update: {
+				lastActive: deviceInfo.lastActive,
+				ipAddress: deviceInfo.ipAddress,
+				isActive: true,
+			},
+			create: deviceInfo,
+		});
+	}
 
 	const user = await prisma.user.findUnique({
 		where: { id: deviceInfo.userId },
@@ -101,7 +104,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
 				});
-			} else if (!hasDevice) {
+			} else if (!hasDevice || hasSaltChanged) {
 				// Send email about new device
 				sendMailWithTemplate(MailTemplateKey.NewDeviceNotification, {
 					to: user.email,
@@ -119,21 +122,60 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 		}
 	}
 }
+function getOrCreateDeviceSalt(
+	request: IncomingMessage,
+	response: GetServerSidePropsContext["res"],
+): { salt: string; creationDate: Date } {
+	const cookies = parse(request.headers.cookie || "");
+	let salt = cookies[DEVICE_SALT_COOKIE_NAME];
+	let creationDate = new Date(cookies[SALT_CREATION_DATE_COOKIE_NAME] || "");
 
+	if (!salt || Number.isNaN(creationDate.getTime())) {
+		salt = randomBytes(8).toString("hex");
+		creationDate = new Date();
+
+		response.setHeader("Set-Cookie", [
+			serialize(DEVICE_SALT_COOKIE_NAME, salt, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === "production",
+				maxAge: DEVICE_SALT_COOKIE_MAX_AGE,
+				sameSite: "strict",
+				path: "/",
+			}),
+			serialize(SALT_CREATION_DATE_COOKIE_NAME, creationDate.toISOString(), {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === "production",
+				maxAge: DEVICE_SALT_COOKIE_MAX_AGE,
+				sameSite: "strict",
+				path: "/",
+			}),
+		]);
+	}
+
+	return { salt, creationDate };
+}
 function createDeviceInfo(
 	userAgent: string,
 	userId: string,
-	ipAddress: string,
+	request: IncomingMessage,
+	response: GetServerSidePropsContext["res"],
 ): DeviceInfo {
-	const { deviceId, parsedUA } = generateDeviceId(parseUA(userAgent), userId);
+	const ipAddress = getIpAddress(request);
+	const { salt, creationDate } = getOrCreateDeviceSalt(request, response);
+	const parsedUA = parseUA(userAgent);
+	// const parsedDeviceId = generateDeviceId(parsedUA, userId);
+
+	const uniqueIdentifier = `|${salt}|${creationDate.toISOString()}`;
+	const deviceId = createHash("sha256").update(uniqueIdentifier).digest("hex");
 
 	return {
 		...parsedUA,
 		userAgent,
-		deviceId,
+		deviceId: deviceId,
 		ipAddress,
 		userId,
 		lastActive: new Date(),
+		createdAt: creationDate,
 	};
 }
 
@@ -165,50 +207,84 @@ function extractIpv4(ip: string): string {
 	return ip; // Return the original IP if it's not an IPv4-mapped IPv6 address
 }
 
+async function validateDeviceId(
+	deviceInfo: DeviceInfo,
+	userId: string,
+): Promise<boolean> {
+	const storedDevice = await prisma.userDevice.findUnique({
+		where: { deviceId: deviceInfo.deviceId },
+	});
+
+	if (!storedDevice) {
+		return false;
+	}
+
+	if (storedDevice.userId !== userId) {
+		return false;
+	}
+
+	if (storedDevice.createdAt.getTime() !== deviceInfo.createdAt.getTime()) {
+		return false;
+	}
+
+	return true;
+}
+
 export function signInCallback(
-	req: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
+	request: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
+	response: GetServerSidePropsContext["res"],
 ) {
 	return async function signIn({ user, account }) {
 		try {
-			const ipAddress = getIpAddress(req);
-			let existingUser = await findUser(user.email);
+			let userExist = await prisma.user.findUnique({ where: { email: user.email } });
 			if (account.provider === "credentials") {
-				if (!existingUser) {
-					// For credentials, we don't create a new user if they don't exist
+				if (!userExist) {
 					return false;
 				}
 			}
 
 			if (account.provider === "oauth") {
-				if (!existingUser) {
-					// For OAuth, we create a new user if they don't exist
+				if (!userExist) {
 					const siteSettings = await prisma.globalOptions.findFirst();
 					if (!siteSettings?.enableRegistration) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
 					}
 					const emailIsValid = true;
-					existingUser = (await createUser(user, emailIsValid)) as User;
+					userExist = (await createUser(user, emailIsValid)) as User;
 				}
 			}
 
-			if (!existingUser) {
+			if (!userExist) {
 				return false;
 			}
 
 			const userAgent =
-				account.provider === "credentials" ? user?.userAgent : req.headers["user-agent"];
+				account.provider === "credentials"
+					? user?.userAgent
+					: request.headers["user-agent"];
 
 			if (userAgent) {
 				const deviceInfo = createDeviceInfo(
 					userAgent as string,
-					existingUser.id,
-					ipAddress,
+					userExist.id,
+					request,
+					response,
 				);
-				await upsertDeviceInfo(deviceInfo);
+
+				const isValidDevice = await validateDeviceId(deviceInfo, userExist.id);
+
+				if (!isValidDevice) {
+					// Treat as a new device login
+					await upsertDeviceInfo(deviceInfo);
+				}
+
 				user.deviceId = deviceInfo.deviceId;
 			}
 
-			await updateUserLogin(existingUser.id);
+			await prisma.user.update({
+				where: { id: userExist.id },
+				data: { lastLogin: new Date().toISOString(), firstTime: false },
+			});
 			return true;
 		} catch (error) {
 			console.error("Error in signIn callback:", error);

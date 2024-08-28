@@ -38,7 +38,7 @@ interface IUserAgent {
 
 declare module "next-auth" {
 	interface Session extends DefaultSession {
-		user: IUser;
+		user: IUser & { deviceId: string };
 		error: string;
 		// userAgent?: IUserAgent | unknown;
 		// deviceId?: string;
@@ -105,6 +105,7 @@ const genericOAuthAuthorization = buildAuthorizationConfig(
  */
 export const getAuthOptions = (
 	req: GetServerSidePropsContext["req"],
+	res: GetServerSidePropsContext["res"],
 ): NextAuthOptions => ({
 	adapter: MyAdapter,
 	providers: [
@@ -278,7 +279,7 @@ export const getAuthOptions = (
 		/**
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
-		signIn: signInCallback(req),
+		signIn: signInCallback(req, res),
 		jwt: jwtCallback(req),
 		session: sessionCallback(req),
 		redirect({ url, baseUrl }) {
@@ -304,5 +305,5 @@ export const getServerAuthSession = (ctx: {
 	req: GetServerSidePropsContext["req"];
 	res: GetServerSidePropsContext["res"];
 }) => {
-	return getServerSession(ctx.req, ctx.res, getAuthOptions(ctx.req));
+	return getServerSession(ctx.req, ctx.res, getAuthOptions(ctx.req, ctx.res));
 };
