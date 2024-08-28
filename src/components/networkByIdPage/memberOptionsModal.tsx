@@ -137,22 +137,6 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			return;
 		}
 
-		const regex = new RegExp(
-			"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-				"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-				"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\." +
-				"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
-		);
-
-		if (!regex.test(ipInput)) {
-			void toast.error(
-				t("networkById.memberOptionModal.handleSumbit.errorNotValidIp", {
-					target,
-				}),
-			);
-			return;
-		}
-
 		updateMember(
 			{
 				updateParams: { ipAssignments: [...ipAssignments, ipInput] },
