@@ -83,7 +83,7 @@ export function jwtCallback(
 				});
 
 				if (!userDevice) {
-					// Device doesn't exist, invalidate the token
+					// Device doesn't exist, invalidate the deviceId in the token
 					token.deviceId = undefined;
 					return token;
 				}
