@@ -198,13 +198,37 @@ async function getTemplate(
 	templateFunc: () => EmailTemplate,
 ): Promise<EmailTemplate> {
 	const defaultTemplate = templateFunc();
+	const templateName = templateFunc.name;
+
+	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+	console.log(`Attempting to retrieve template: ${templateName}`);
+	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+	console.log("Global options:", JSON.stringify(globalOptions, null, 2));
+
+	if (!(templateName in globalOptions)) {
+		console.warn(
+			`Template '${templateName}' not found in global options. Using default template.`,
+		);
+		return defaultTemplate;
+	}
+
+	const storedTemplate = globalOptions[templateName];
+
+	if (typeof storedTemplate !== "string") {
+		console.warn(
+			`Template '${templateName}' is not a string. Type: ${typeof storedTemplate}. Using default template.`,
+		);
+		return defaultTemplate;
+	}
 
 	try {
-		const storedTemplate = JSON.parse(globalOptions[templateFunc.name]);
-		return storedTemplate || defaultTemplate;
+		const parsedTemplate = JSON.parse(storedTemplate);
+		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+		console.log(`Successfully parsed template: ${templateName}`);
+		return parsedTemplate;
 	} catch (error) {
-		console.error(`Failed to parse template: ${error.message}`);
-		console.error(`Template content: ${globalOptions[templateFunc.name]}`);
+		console.error(`Failed to parse template '${templateName}':`, error);
+		console.error("Template content:", storedTemplate);
 		return defaultTemplate;
 	}
 }
