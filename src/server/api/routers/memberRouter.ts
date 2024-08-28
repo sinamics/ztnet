@@ -13,6 +13,7 @@ import {
 } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { throwError } from "~/server/helpers/errorHandler";
+import { isValidIP } from "../utils/ipUtils";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -220,6 +221,16 @@ export const networkMemberRouter = createTRPCRouter({
 
 			// update ip specified by user UI
 			if (input.updateParams.ipAssignments) {
+				const ips = input.updateParams.ipAssignments;
+				const invalidIPs = ips.filter((ip) => !isValidIP(ip));
+
+				if (invalidIPs.length > 0) {
+					throw new TRPCError({
+						message: "Invalid IP addresses provided",
+						code: "BAD_REQUEST",
+					});
+				}
+
 				// update member
 				Object.assign(payload, {}, { ipAssignments: input.updateParams.ipAssignments });
 			}
