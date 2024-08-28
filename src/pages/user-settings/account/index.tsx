@@ -48,7 +48,9 @@ const Account = () => {
 	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
 		api.auth.sendVerificationEmail.useMutation({
 			onError: handleApiError,
-			onSuccess: handleApiSuccess({ actions: [] }),
+			onSuccess: () => {
+				toast.success("Check your email for the verification link");
+			},
 		});
 
 	const ChangeLanguage = async (locale: string) => {
