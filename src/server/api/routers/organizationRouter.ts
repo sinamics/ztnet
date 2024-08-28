@@ -15,7 +15,7 @@ import {
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
-import { inviteOrganizationTemplate, sendMailWithTemplate } from "~/utils/mail";
+import { sendMailWithTemplate } from "~/utils/mail";
 import { Role } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
@@ -24,6 +24,7 @@ import { sendWebhook } from "~/utils/webhook";
 import { nameGeneratorConfig } from "../services/networkService";
 import rateLimit from "~/utils/rateLimit";
 import { RoutesEntity } from "~/types/local/network";
+import { MailTemplateKey } from "~/utils/enums";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -1071,7 +1072,7 @@ export const organizationRouter = createTRPCRouter({
 				}
 
 				// Send email
-				await sendMailWithTemplate(inviteOrganizationTemplate, {
+				await sendMailWithTemplate(MailTemplateKey.InviteOrganization, {
 					to: orgInvite.invitation.email,
 					userId: ctx.session.user.id,
 					templateData: {
@@ -1204,7 +1205,7 @@ export const organizationRouter = createTRPCRouter({
 				});
 
 				// Send invitation email
-				await sendMailWithTemplate(inviteOrganizationTemplate, {
+				await sendMailWithTemplate(MailTemplateKey.InviteOrganization, {
 					to: email,
 					userId: ctx.session.user.id,
 					templateData: {
