@@ -24,17 +24,18 @@ async function findUser(email: string): Promise<User | null> {
 	return prisma.user.findUnique({ where: { email } });
 }
 
-async function createUser(userData: User): Promise<Partial<User>> {
+async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
 	const defaultUserGroup = await prisma.userGroup.findFirst({
 		where: { isDefault: true },
 	});
-
+	const currentDate = new Date().toISOString();
 	return await prisma.user.create({
 		data: {
 			name: userData.name,
 			email: userData.email,
-			lastLogin: new Date().toISOString(),
+			lastLogin: currentDate,
+			emailVerified: isOauth ? currentDate : null,
 			role: userCount === 0 ? "ADMIN" : "USER",
 			image: userData.image,
 			userGroupId: defaultUserGroup?.id,
@@ -185,7 +186,8 @@ export function signInCallback(
 					if (!siteSettings?.enableRegistration) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
 					}
-					existingUser = (await createUser(user)) as User;
+					const emailIsValid = true;
+					existingUser = (await createUser(user, emailIsValid)) as User;
 				}
 			}
 
