@@ -3,6 +3,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 import { prisma } from "~/server/db";
 import ejs from "ejs";
+import { GlobalOptions } from "@prisma/client";
 
 export const inviteOrganizationTemplate = () => {
 	return {
@@ -181,38 +182,13 @@ export async function sendMailWithTemplate(
 		}
 	}
 
-	let template: EmailTemplate;
-	const defaultTemplate = templateFunc();
+	const template = await getTemplate(globalOptions, templateFunc);
 
-	try {
-		template = JSON.parse(globalOptions[templateFunc.name]);
-	} catch (_e) {
-		template = defaultTemplate;
-	}
-
-	if (!template) {
-		template = defaultTemplate;
-	}
-
-	let renderedTemplate: string;
-	try {
-		renderedTemplate = await ejs.render(JSON.stringify(template), options.templateData, {
-			async: true,
-		});
-	} catch (error) {
-		console.error(`Failed to render template: ${error.message}`);
-		throw new Error("Template rendering failed");
-	}
+	const renderedTemplate = await renderTemplate(template, options.templateData);
 
 	const transporter = await createTransporter();
 
-	let parsedTemplate: EmailTemplate;
-	try {
-		parsedTemplate = JSON.parse(renderedTemplate);
-	} catch (error) {
-		console.error(`Failed to parse rendered template: ${error.message}`);
-		throw new Error("Failed to parse rendered template");
-	}
+	const parsedTemplate = parseRenderedTemplate(renderedTemplate);
 
 	const mailOptions = {
 		from: globalOptions.smtpEmail,
@@ -224,6 +200,42 @@ export async function sendMailWithTemplate(
 	await sendEmail(transporter, mailOptions);
 }
 
+async function getTemplate(
+	globalOptions: GlobalOptions,
+	templateFunc: () => EmailTemplate,
+): Promise<EmailTemplate> {
+	const defaultTemplate = templateFunc();
+
+	try {
+		const storedTemplate = JSON.parse(globalOptions[templateFunc.name]);
+		return storedTemplate || defaultTemplate;
+	} catch (error) {
+		console.error(`Failed to parse template: ${error.message}`);
+		console.error(`Template content: ${globalOptions[templateFunc.name]}`);
+		return defaultTemplate;
+	}
+}
+
+async function renderTemplate(
+	template: EmailTemplate,
+	templateData: Record<string, unknown>,
+): Promise<string> {
+	try {
+		return await ejs.render(JSON.stringify(template), templateData, { async: true });
+	} catch (error) {
+		console.error(`Failed to render template: ${error.message}`);
+		throw new Error("Template rendering failed");
+	}
+}
+
+function parseRenderedTemplate(renderedTemplate: string): EmailTemplate {
+	try {
+		return JSON.parse(renderedTemplate);
+	} catch (error) {
+		console.error(`Failed to parse rendered template: ${error.message}`);
+		throw new Error("Failed to parse rendered template");
+	}
+}
 interface SendMailResult {
 	accepted: string[];
 }
