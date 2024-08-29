@@ -201,18 +201,12 @@ async function getTemplate(
 	const defaultTemplate = mailTemplateMap[templateKey]();
 
 	if (!(templateKey in globalOptions)) {
-		console.warn(
-			`Template '${templateKey}' not found in global options. Using default template.`,
-		);
 		return defaultTemplate;
 	}
 
 	const storedTemplate = globalOptions[templateKey];
 
 	if (typeof storedTemplate !== "string") {
-		console.warn(
-			`Template '${templateKey}' is not a string. Type: ${typeof storedTemplate}. Using default template.`,
-		);
 		return defaultTemplate;
 	}
 
@@ -221,7 +215,6 @@ async function getTemplate(
 		return parsedTemplate;
 	} catch (error) {
 		console.error(`Failed to parse template '${templateKey}':`, error);
-		console.error("Template content:", storedTemplate);
 		return defaultTemplate;
 	}
 }
