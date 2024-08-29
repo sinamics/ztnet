@@ -266,7 +266,10 @@ export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => 
 			networkId,
 			false,
 		);
-		return res.status(200).json(ztControllerResponse?.network);
+		return res.status(200).json({
+			...network,
+			...ztControllerResponse?.network,
+		});
 	} catch (cause) {
 		return handleApiErrors(cause, res);
 	}
