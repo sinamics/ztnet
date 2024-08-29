@@ -20,7 +20,6 @@ type GroupLabelProps = {
 };
 
 const GroupLabel = ({ groups }: GroupLabelProps) => {
-	if (!Array.isArray(groups) || !groups) return null;
 	const t = useTranslations("admin");
 	const m = useTranslations("commonToast");
 
@@ -45,6 +44,9 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 			toastMessage: m("deletedSuccessfully"),
 		}),
 	});
+
+	if (!Array.isArray(groups) || !groups) return null;
+
 	return (
 		<div className="flex flex-wrap gap-3 text-center">
 			{groups?.map((group) => {

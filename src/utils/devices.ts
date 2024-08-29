@@ -1,4 +1,5 @@
 import UAParser from "ua-parser-js";
+import { prisma } from "~/server/db";
 export interface ParsedUA {
 	deviceType: string;
 	browser: string;
@@ -7,23 +8,17 @@ export interface ParsedUA {
 	osVersion: string;
 }
 
-interface ReturnDeviceId {
+export interface DeviceInfo {
+	userAgent: string;
 	deviceId: string;
-	parsedUA: ParsedUA;
-}
-export function generateDeviceId(parsedUA: ParsedUA, userId: string): ReturnDeviceId {
-	const deviceInfoString = `${userId}-${parsedUA.deviceType}-${parsedUA.browser}-${parsedUA.browserVersion}-${parsedUA.os}-${parsedUA.osVersion}`;
-	let hash = 0;
-	for (let i = 0; i < deviceInfoString.length; i++) {
-		const char = deviceInfoString.charCodeAt(i);
-		hash = (hash << 5) - hash + char;
-		hash = hash & hash;
-	}
-
-	return {
-		deviceId: Math.abs(hash).toString(16),
-		parsedUA,
-	};
+	ipAddress: string;
+	userId: string;
+	deviceType: string;
+	browser: string;
+	browserVersion: string;
+	os: string;
+	osVersion: string;
+	lastActive: Date;
 }
 
 export function parseUA(userAgent: string): ParsedUA {
@@ -36,4 +31,23 @@ export function parseUA(userAgent: string): ParsedUA {
 		os: ua.getOS().name || "Unknown",
 		osVersion: ua.getOS().version || "Unknown",
 	};
+}
+
+export async function validateDeviceId(
+	deviceInfo: DeviceInfo,
+	userId: string,
+): Promise<boolean> {
+	const storedDevice = await prisma.userDevice.findUnique({
+		where: { deviceId: deviceInfo.deviceId },
+	});
+
+	if (!storedDevice) {
+		return false;
+	}
+
+	if (storedDevice.userId !== userId) {
+		return false;
+	}
+
+	return true;
 }

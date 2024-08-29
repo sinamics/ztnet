@@ -5,8 +5,7 @@ import Monitor from "~/icons/monitor";
 import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
-import { signOut } from "next-auth/react";
-import { generateDeviceId, parseUA } from "~/utils/devices";
+import { signOut, useSession } from "next-auth/react";
 
 const formatLastActive = (date) => {
 	return new Date(date).toLocaleString("no-NO");
@@ -49,8 +48,9 @@ const DeviceIcon = ({ deviceType }: { deviceType: string }) => {
 
 const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 	const t = useTranslations();
-	const { data: me, refetch } = api.auth.me.useQuery();
 
+	const { refetch } = api.auth.me.useQuery();
+	const { data: session } = useSession();
 	const { mutate: deleteUserDevice, isLoading: deleteLoading } =
 		api.auth.deleteUserDevice.useMutation({
 			onSuccess: () => {
@@ -59,18 +59,19 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 			},
 		});
 
+	const currentDeviceId = session?.user?.deviceId;
+
 	const isCurrentDevice = (device: UserDevice) => {
-		return (
-			device?.deviceId === generateDeviceId(parseUA(navigator.userAgent), me.id)?.deviceId
-		);
+		return device?.deviceId === currentDeviceId;
 	};
 
 	// sort devices, current device first
-	devices?.sort((a, b) => {
+	const sortedDevices = [...(devices || [])].sort((a, b) => {
 		if (isCurrentDevice(a)) return -1;
 		if (isCurrentDevice(b)) return 1;
 		return 0;
 	});
+
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between">
@@ -80,8 +81,8 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 				{/* <button className="btn btn-sm btn-error btn-outline">Logout All</button> */}
 			</div>
 			<div className="space-y-2 max-h-[500px] overflow-auto custom-scrollbar">
-				{devices && devices.length > 0 ? (
-					devices.map((device) => (
+				{sortedDevices && sortedDevices.length > 0 ? (
+					sortedDevices.map((device) => (
 						<div
 							key={device.id}
 							className={cn(
