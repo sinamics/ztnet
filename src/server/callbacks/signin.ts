@@ -8,7 +8,7 @@ import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { GetServerSidePropsContext } from "next";
 import { parse, serialize } from "cookie";
-import { createHash, randomBytes } from "crypto";
+import { randomBytes } from "crypto";
 
 const DEVICE_SALT_COOKIE_NAME = "next-auth.did-token";
 
@@ -67,27 +67,33 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 		select: { email: true, id: true, firstTime: true },
 	});
 
-	if (user && !user.firstTime) {
-		// Send email notification if the device is new or the IP address has changed
-		const templateKey = !existingDevice
-			? MailTemplateKey.NewDeviceNotification
-			: existingDevice.ipAddress !== deviceInfo.ipAddress
-			  ? MailTemplateKey.DeviceIpChangeNotification
-			  : null;
+	try {
+		if (user && !user.firstTime) {
+			// Send email notification if the device is new or the IP address has changed
+			const templateKey = !existingDevice
+				? MailTemplateKey.NewDeviceNotification
+				: existingDevice.ipAddress !== deviceInfo.ipAddress
+				  ? MailTemplateKey.DeviceIpChangeNotification
+				  : null;
 
-		if (templateKey) {
-			await sendMailWithTemplate(templateKey, {
-				to: user.email,
-				userId: user.id,
-				templateData: {
-					toEmail: user.email,
-					accessTime: deviceInfo.lastActive.toISOString(),
-					ipAddress: deviceInfo.ipAddress,
-					browserInfo: deviceInfo.userAgent,
-					accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
-				},
-			});
+			if (templateKey) {
+				await sendMailWithTemplate(templateKey, {
+					to: user.email,
+					userId: user.id,
+					templateData: {
+						toEmail: user.email,
+						accessTime: deviceInfo.lastActive.toISOString(),
+						ipAddress: deviceInfo.ipAddress,
+						browserInfo: deviceInfo.userAgent,
+						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
+					},
+				});
+			}
 		}
+	} catch (_e) {
+		console.error(
+			"Failed to send email notification for new device, check your mail settings.",
+		);
 	}
 }
 
@@ -99,7 +105,7 @@ function getOrCreateDeviceSalt(
 	let deviceId = cookies[DEVICE_SALT_COOKIE_NAME];
 
 	if (!deviceId) {
-		deviceId = randomBytes(8).toString("hex");
+		deviceId = randomBytes(16).toString("hex");
 		response.setHeader("Set-Cookie", [
 			serialize(DEVICE_SALT_COOKIE_NAME, deviceId, {
 				httpOnly: true,
