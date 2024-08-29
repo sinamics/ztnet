@@ -1,10 +1,6 @@
-import { IncomingMessage } from "http";
 import { prisma } from "../db";
-import { generateDeviceId, parseUA } from "~/utils/devices";
 
-export function jwtCallback(
-	req: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
-) {
+export function jwtCallback() {
 	return async function jwt({ token, user, trigger, account, session }) {
 		if (trigger === "update") {
 			if (session.update) {
@@ -60,18 +56,15 @@ export function jwtCallback(
 		if (user) {
 			const { id, name, email, role } = user;
 			Object.assign(token, { id, name, email, role });
-
 			if (account?.provider === "oauth") {
-				const userAgent = req.headers["user-agent"];
-				const { deviceId } = generateDeviceId(parseUA(userAgent), id);
-				token.deviceId = deviceId;
+				// set the device from sign in callback
+				token.deviceId = account.deviceId;
 
 				token.accessToken = account.accessToken;
 			} else if (account?.provider === "credentials") {
 				token.deviceId = user.deviceId;
 			}
 		}
-
 		// Check if the device still exists and is valid
 		if (token.id && token.deviceId && typeof token.deviceId === "string") {
 			try {
