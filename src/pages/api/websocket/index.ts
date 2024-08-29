@@ -13,7 +13,7 @@ interface SocketIoExtension {
 
 export type NextApiResponseWithSocketIo = NextApiResponse & SocketIoExtension;
 const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocketIo) => {
-	const session = await getServerSession(req, res, getAuthOptions(req));
+	const session = await getServerSession(req, res, getAuthOptions(req, res));
 	if (!session) {
 		res.status(401).json({ message: "Authorization Error" });
 		return;
