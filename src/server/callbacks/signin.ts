@@ -47,12 +47,10 @@ async function createUser(userData: User, isOauth = false): Promise<Partial<User
 }
 
 async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
-	const hasDevice = await prisma.userDevice.findUnique({
+	const existingDevice = await prisma.userDevice.findUnique({
 		where: { deviceId: deviceInfo.deviceId },
-		select: { ipAddress: true, createdAt: true },
+		select: { ipAddress: true },
 	});
-
-	const hasIpAddressChanged = hasDevice?.ipAddress !== deviceInfo.ipAddress;
 
 	await prisma.userDevice.upsert({
 		where: { deviceId: deviceInfo.deviceId },
@@ -66,38 +64,29 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 
 	const user = await prisma.user.findUnique({
 		where: { id: deviceInfo.userId },
-		select: { email: true, name: true, id: true, firstTime: true },
+		select: { email: true, id: true, firstTime: true },
 	});
 
 	if (user && !user.firstTime) {
-		try {
-			if (hasIpAddressChanged && hasDevice) {
-				sendMailWithTemplate(MailTemplateKey.DeviceIpChangeNotification, {
-					to: user.email,
-					userId: user.id,
-					templateData: {
-						toEmail: user.email,
-						accessTime: deviceInfo.lastActive.toISOString(),
-						ipAddress: deviceInfo.ipAddress,
-						browserInfo: deviceInfo.userAgent,
-						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
-					},
-				});
-			} else if (!hasDevice) {
-				// Send email about new device
-				sendMailWithTemplate(MailTemplateKey.NewDeviceNotification, {
-					to: user.email,
-					userId: user.id,
-					templateData: {
-						accessTime: deviceInfo.lastActive.toISOString(),
-						ipAddress: deviceInfo.ipAddress,
-						browserInfo: deviceInfo.userAgent,
-						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
-					},
-				});
-			}
-		} catch (error) {
-			console.error(`Device Error: ${error}`);
+		// Send email notification if the device is new or the IP address has changed
+		const templateKey = !existingDevice
+			? MailTemplateKey.NewDeviceNotification
+			: existingDevice.ipAddress !== deviceInfo.ipAddress
+			  ? MailTemplateKey.DeviceIpChangeNotification
+			  : null;
+
+		if (templateKey) {
+			await sendMailWithTemplate(templateKey, {
+				to: user.email,
+				userId: user.id,
+				templateData: {
+					toEmail: user.email,
+					accessTime: deviceInfo.lastActive.toISOString(),
+					ipAddress: deviceInfo.ipAddress,
+					browserInfo: deviceInfo.userAgent,
+					accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
+				},
+			});
 		}
 	}
 }
@@ -105,13 +94,12 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 function getOrCreateDeviceSalt(
 	request: IncomingMessage,
 	response: GetServerSidePropsContext["res"],
-): { salt: string } {
+): string {
 	const cookies = parse(request.headers.cookie || "");
 	let salt = cookies[DEVICE_SALT_COOKIE_NAME];
 
 	if (!salt) {
 		salt = randomBytes(8).toString("hex");
-
 		response.setHeader("Set-Cookie", [
 			serialize(DEVICE_SALT_COOKIE_NAME, salt, {
 				httpOnly: true,
@@ -122,7 +110,7 @@ function getOrCreateDeviceSalt(
 		]);
 	}
 
-	return { salt };
+	return salt;
 }
 
 function createDeviceInfo(
@@ -131,18 +119,13 @@ function createDeviceInfo(
 	request: IncomingMessage,
 	response: GetServerSidePropsContext["res"],
 ): DeviceInfo {
-	const ipAddress = getIpAddress(request);
-	const { salt } = getOrCreateDeviceSalt(request, response);
-
-	const parsedUA = parseUA(userAgent);
-
-	const deviceId = createHash("sha256").update(salt).digest("hex");
+	const salt = getOrCreateDeviceSalt(request, response);
 
 	return {
-		...parsedUA,
+		...parseUA(userAgent),
 		userAgent,
-		deviceId: deviceId,
-		ipAddress,
+		deviceId: createHash("sha256").update(salt).digest("hex"),
+		ipAddress: getIpAddress(request),
 		userId,
 		lastActive: new Date(),
 	};
@@ -150,30 +133,10 @@ function createDeviceInfo(
 
 function getIpAddress(req: IncomingMessage): string {
 	const forwardedFor = req.headers["x-forwarded-for"];
-
-	if (forwardedFor) {
-		// If there are multiple IP addresses, take the first one
-		const ips = Array.isArray(forwardedFor)
-			? forwardedFor[0]
-			: forwardedFor.split(",")[0];
-		return extractIpv4(ips.trim());
-	}
-
-	// If x-forwarded-for is not available, use the remote address
-	const remoteAddress = req.socket.remoteAddress || "Unknown";
-	return extractIpv4(remoteAddress);
-}
-
-function extractIpv4(ip: string): string {
-	// Check if it's an IPv4-mapped IPv6 address
-	const ipv4Regex = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/;
-	const match = ip.match(ipv4Regex);
-
-	if (match) {
-		return match[1];
-	}
-
-	return ip;
+	const ip = forwardedFor
+		? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(",")[0]).trim()
+		: req.socket.remoteAddress || "Unknown";
+	return ip.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/)?.[1] || ip;
 }
 
 export function signInCallback(
@@ -203,9 +166,7 @@ export function signInCallback(
 				}
 			}
 
-			if (!userExist) {
-				return false;
-			}
+			if (!userExist) return false;
 
 			const userAgent =
 				account.provider === "credentials"
