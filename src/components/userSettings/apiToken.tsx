@@ -10,7 +10,6 @@ import { useTranslations } from "next-intl";
 import { AuthorizationType } from "~/types/apiTypes";
 
 const ApiLables = ({ tokens }) => {
-	if (!Array.isArray(tokens) || !tokens) return null;
 	const t = useTranslations("userSettings");
 
 	const { refetch } = api.auth.getApiToken.useQuery();
@@ -34,6 +33,9 @@ const ApiLables = ({ tokens }) => {
 			refetch();
 		},
 	});
+
+	if (!Array.isArray(tokens) || !tokens) return null;
+
 	return (
 		<div className="flex flex-wrap gap-3 text-center">
 			{tokens?.map((token) => {

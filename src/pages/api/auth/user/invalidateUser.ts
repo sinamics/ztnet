@@ -13,7 +13,11 @@ export default async function handler(
 	}
 
 	try {
-		const session = await getServerSession(request, response, getAuthOptions(request));
+		const session = await getServerSession(
+			request,
+			response,
+			getAuthOptions(request, response),
+		);
 		if (!session) {
 			return response.status(401).json({ message: "Not authenticated" });
 		}
