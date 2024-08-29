@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
+import { SecuredOrganizationApiRoute } from "~/utils/apiAuth";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
@@ -204,70 +205,32 @@ export const POST_network = async (req: NextApiRequest, res: NextApiResponse) =>
 		return handleApiErrors(cause, res);
 	}
 };
-export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
 
-	// network id
-	const networkId = req.query?.nwid as string;
+export const GET_network = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
+	async (_req, res, { networkId, ctx }) => {
+		try {
+			const network = await prisma.network.findUnique({
+				where: { nwid: networkId },
+				select: { authorId: true, description: true },
+			});
 
-	// organization id
-	const orgid = req.query?.orgid as string;
+			if (!network) {
+				return res.status(401).json({ error: "Network not found or access denied." });
+			}
 
-	try {
-		if (!apiKey) {
-			return res.status(400).json({ error: "API Key is required" });
+			const ztControllerResponse = await ztController.local_network_detail(
+				//@ts-expect-error
+				ctx,
+				networkId,
+				false,
+			);
+			return res.status(200).json({
+				...network,
+				...ztControllerResponse?.network,
+			});
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		if (!orgid) {
-			return res.status(400).json({ error: "Organization ID is required" });
-		}
-
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
-		}
-
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-		};
-		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.READ_ONLY,
-		});
-
-		const network = await prisma.network.findUnique({
-			where: { nwid: networkId },
-			select: { authorId: true, description: true },
-		});
-
-		if (!network) {
-			return res.status(401).json({ error: "Network not found or access denied." });
-		}
-
-		const ztControllerResponse = await ztController.local_network_detail(
-			//@ts-expect-error
-			ctx,
-			networkId,
-			false,
-		);
-		return res.status(200).json({
-			...network,
-			...ztControllerResponse?.network,
-		});
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);
