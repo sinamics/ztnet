@@ -21,7 +21,7 @@ export const config = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const session = await getServerSession(req, res, getAuthOptions(req));
+	const session = await getServerSession(req, res, getAuthOptions(req, res));
 	if (!session) {
 		res.status(401).json({ message: "Authorization Error" });
 		return;
