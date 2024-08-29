@@ -1,6 +1,6 @@
 import { ErrorCode } from "~/utils/errorCode";
 import { prisma } from "../db";
-import { parseUA } from "~/utils/devices";
+import { DeviceInfo, parseUA } from "~/utils/devices";
 import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
@@ -10,23 +10,8 @@ import { GetServerSidePropsContext } from "next";
 import { parse, serialize } from "cookie";
 import { createHash, randomBytes } from "crypto";
 
-interface DeviceInfo {
-	userAgent: string;
-	deviceId: string;
-	ipAddress: string;
-	userId: string;
-	deviceType: string;
-	browser: string;
-	browserVersion: string;
-	os: string;
-	osVersion: string;
-	lastActive: Date;
-	createdAt: Date;
-}
-
 const DEVICE_SALT_COOKIE_NAME = "next-auth.device_sid";
 const SALT_CREATION_DATE_COOKIE_NAME = "next-auth.scd";
-const DEVICE_SALT_COOKIE_MAX_AGE = 60 * 60 * 24 * 365 * 5;
 
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
@@ -140,15 +125,13 @@ function getOrCreateDeviceSalt(
 			serialize(DEVICE_SALT_COOKIE_NAME, salt, {
 				httpOnly: true,
 				secure: process.env.NODE_ENV === "production",
-				maxAge: DEVICE_SALT_COOKIE_MAX_AGE,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/",
 			}),
 			serialize(SALT_CREATION_DATE_COOKIE_NAME, creationDate.toISOString(), {
 				httpOnly: true,
 				secure: process.env.NODE_ENV === "production",
-				maxAge: DEVICE_SALT_COOKIE_MAX_AGE,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/",
 			}),
 		]);
@@ -164,8 +147,8 @@ function createDeviceInfo(
 ): DeviceInfo {
 	const ipAddress = getIpAddress(request);
 	const { salt, creationDate } = getOrCreateDeviceSalt(request, response);
+
 	const parsedUA = parseUA(userAgent);
-	// const parsedDeviceId = generateDeviceId(parsedUA, userId);
 
 	const uniqueIdentifier = `|${salt}|${creationDate.toISOString()}`;
 	const deviceId = createHash("sha256").update(uniqueIdentifier).digest("hex");
@@ -203,33 +186,10 @@ function extractIpv4(ip: string): string {
 	const match = ip.match(ipv4Regex);
 
 	if (match) {
-		return match[1]; // Return the extracted IPv4 address
+		return match[1];
 	}
 
-	return ip; // Return the original IP if it's not an IPv4-mapped IPv6 address
-}
-
-async function validateDeviceId(
-	deviceInfo: DeviceInfo,
-	userId: string,
-): Promise<boolean> {
-	const storedDevice = await prisma.userDevice.findUnique({
-		where: { deviceId: deviceInfo.deviceId },
-	});
-
-	if (!storedDevice) {
-		return false;
-	}
-
-	if (storedDevice.userId !== userId) {
-		return false;
-	}
-
-	if (storedDevice.createdAt.getTime() !== deviceInfo.createdAt.getTime()) {
-		return false;
-	}
-
-	return true;
+	return ip;
 }
 
 export function signInCallback(
@@ -239,6 +199,7 @@ export function signInCallback(
 	return async function signIn({ user, account }) {
 		try {
 			let userExist = await prisma.user.findUnique({ where: { email: user.email } });
+
 			if (account.provider === "credentials") {
 				if (!userExist) {
 					return false;
@@ -247,10 +208,12 @@ export function signInCallback(
 
 			if (account.provider === "oauth") {
 				if (!userExist) {
+					// check if the oauth user is allowed to sign up.
 					const siteSettings = await prisma.globalOptions.findFirst();
 					if (!siteSettings?.enableRegistration) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
 					}
+
 					const emailIsValid = true;
 					userExist = (await createUser(user, emailIsValid)) as User;
 				}
@@ -273,20 +236,18 @@ export function signInCallback(
 					response,
 				);
 
-				const isValidDevice = await validateDeviceId(deviceInfo, userExist.id);
-				if (!isValidDevice) {
-					return false;
-				}
 				// update or create device info
 				await upsertDeviceInfo(deviceInfo);
 
 				user.deviceId = deviceInfo.deviceId;
+				account.deviceId = deviceInfo.deviceId;
 			}
 
 			await prisma.user.update({
 				where: { id: userExist.id },
 				data: { lastLogin: new Date().toISOString(), firstTime: false },
 			});
+
 			return true;
 		} catch (error) {
 			console.error("Error in signIn callback:", error);

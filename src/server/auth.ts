@@ -280,7 +280,7 @@ export const getAuthOptions = (
 		 * @see https://next-auth.js.org/configuration/callbacks#sign-in-callback
 		 */
 		signIn: signInCallback(req, res),
-		jwt: jwtCallback(req),
+		jwt: jwtCallback(),
 		session: sessionCallback(req),
 		redirect({ url, baseUrl }) {
 			// Allows relative callback URLs
