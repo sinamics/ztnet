@@ -10,8 +10,7 @@ import { GetServerSidePropsContext } from "next";
 import { parse, serialize } from "cookie";
 import { createHash, randomBytes } from "crypto";
 
-const DEVICE_SALT_COOKIE_NAME = "next-auth.device_sid";
-const SALT_CREATION_DATE_COOKIE_NAME = "next-auth.scd";
+const DEVICE_SALT_COOKIE_NAME = "next-auth.did-token";
 
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
@@ -54,23 +53,16 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 	});
 
 	const hasIpAddressChanged = hasDevice?.ipAddress !== deviceInfo.ipAddress;
-	const hasSaltChanged =
-		hasDevice && hasDevice.createdAt.getTime() !== deviceInfo.createdAt.getTime();
 
-	if (hasSaltChanged) {
-		// Treat as a new device if salt has changed
-		await prisma.userDevice.create({ data: deviceInfo });
-	} else {
-		await prisma.userDevice.upsert({
-			where: { deviceId: deviceInfo.deviceId },
-			update: {
-				lastActive: deviceInfo.lastActive,
-				ipAddress: deviceInfo.ipAddress,
-				isActive: true,
-			},
-			create: deviceInfo,
-		});
-	}
+	await prisma.userDevice.upsert({
+		where: { deviceId: deviceInfo.deviceId },
+		update: {
+			lastActive: deviceInfo.lastActive,
+			ipAddress: deviceInfo.ipAddress,
+			isActive: true,
+		},
+		create: deviceInfo,
+	});
 
 	const user = await prisma.user.findUnique({
 		where: { id: deviceInfo.userId },
@@ -91,7 +83,7 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 						accountPageUrl: `${process.env.NEXTAUTH_URL}/user-settings/?tab=account`,
 					},
 				});
-			} else if (!hasDevice || hasSaltChanged) {
+			} else if (!hasDevice) {
 				// Send email about new device
 				sendMailWithTemplate(MailTemplateKey.NewDeviceNotification, {
 					to: user.email,
@@ -109,17 +101,16 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 		}
 	}
 }
+
 function getOrCreateDeviceSalt(
 	request: IncomingMessage,
 	response: GetServerSidePropsContext["res"],
-): { salt: string; creationDate: Date } {
+): { salt: string } {
 	const cookies = parse(request.headers.cookie || "");
 	let salt = cookies[DEVICE_SALT_COOKIE_NAME];
-	let creationDate = new Date(cookies[SALT_CREATION_DATE_COOKIE_NAME] || "");
 
-	if (!salt || Number.isNaN(creationDate.getTime())) {
+	if (!salt) {
 		salt = randomBytes(8).toString("hex");
-		creationDate = new Date();
 
 		response.setHeader("Set-Cookie", [
 			serialize(DEVICE_SALT_COOKIE_NAME, salt, {
@@ -128,17 +119,12 @@ function getOrCreateDeviceSalt(
 				sameSite: "lax",
 				path: "/",
 			}),
-			serialize(SALT_CREATION_DATE_COOKIE_NAME, creationDate.toISOString(), {
-				httpOnly: true,
-				secure: process.env.NODE_ENV === "production",
-				sameSite: "lax",
-				path: "/",
-			}),
 		]);
 	}
 
-	return { salt, creationDate };
+	return { salt };
 }
+
 function createDeviceInfo(
 	userAgent: string,
 	userId: string,
@@ -146,12 +132,11 @@ function createDeviceInfo(
 	response: GetServerSidePropsContext["res"],
 ): DeviceInfo {
 	const ipAddress = getIpAddress(request);
-	const { salt, creationDate } = getOrCreateDeviceSalt(request, response);
+	const { salt } = getOrCreateDeviceSalt(request, response);
 
 	const parsedUA = parseUA(userAgent);
 
-	const uniqueIdentifier = `|${salt}|${creationDate.toISOString()}`;
-	const deviceId = createHash("sha256").update(uniqueIdentifier).digest("hex");
+	const deviceId = createHash("sha256").update(salt).digest("hex");
 
 	return {
 		...parsedUA,
@@ -160,7 +145,6 @@ function createDeviceInfo(
 		ipAddress,
 		userId,
 		lastActive: new Date(),
-		createdAt: creationDate,
 	};
 }
 

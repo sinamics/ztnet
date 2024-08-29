@@ -19,7 +19,6 @@ export interface DeviceInfo {
 	os: string;
 	osVersion: string;
 	lastActive: Date;
-	createdAt: Date;
 }
 
 export function parseUA(userAgent: string): ParsedUA {
@@ -47,10 +46,6 @@ export async function validateDeviceId(
 	}
 
 	if (storedDevice.userId !== userId) {
-		return false;
-	}
-
-	if (storedDevice.createdAt.getTime() !== deviceInfo.createdAt.getTime()) {
 		return false;
 	}
 
