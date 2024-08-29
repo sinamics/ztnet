@@ -1,7 +1,9 @@
 import { prisma } from "../db";
 
 export function jwtCallback() {
-	return async function jwt({ token, user, trigger, account, session }) {
+	return async function jwt({ token, user, trigger, account, session, profile }) {
+		// console.log(user);
+
 		if (trigger === "update") {
 			if (session.update) {
 				const updateObject: Record<string, string | Date> = {};
@@ -58,8 +60,7 @@ export function jwtCallback() {
 			Object.assign(token, { id, name, email, role });
 			if (account?.provider === "oauth") {
 				// set the device from sign in callback
-				token.deviceId = account.deviceId;
-
+				token.deviceId = profile.deviceId;
 				token.accessToken = account.accessToken;
 			} else if (account?.provider === "credentials") {
 				token.deviceId = user.deviceId;

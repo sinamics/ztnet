@@ -33,7 +33,6 @@ export function sessionCallback(
 			...session,
 			user: {
 				...token,
-				userAgent: token.userAgent,
 			},
 		};
 	};

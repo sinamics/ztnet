@@ -145,7 +145,9 @@ export async function sendMailWithTemplate(
 	}
 
 	if (options.userId) {
-		await checkUserPreferences(options.userId, templateKey);
+		if (!(await checkUserPreferences(options.userId, templateKey))) {
+			return;
+		}
 	}
 
 	const template = await getTemplate(globalOptions, templateKey);
@@ -170,24 +172,26 @@ export async function sendMailWithTemplate(
  * Check if the user has disabled notifications for the given template
  *
  */
-const templateToOptionMap: Record<string, string> = {
-	newDeviceNotificationTemplate: "newDeviceNotification",
-	deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
-};
-
 async function checkUserPreferences(
 	userId: string,
 	templateKey: MailTemplateKey,
-): Promise<void> {
+): Promise<boolean> {
 	const userOptions = await prisma.userOptions.findUnique({ where: { userId } });
 	if (!userOptions) {
-		throw new Error("User options not found");
+		return false;
 	}
+
+	const templateToOptionMap: Record<string, string> = {
+		newDeviceNotificationTemplate: "newDeviceNotification",
+		deviceIpChangeNotificationTemplate: "deviceIpChangeNotification",
+	};
 
 	const optionField = templateToOptionMap[templateKey];
 	if (optionField && !(userOptions as UserOptions)[optionField]) {
-		throw new Error(`User has disabled ${optionField} notifications`);
+		return false;
 	}
+
+	return true;
 }
 
 async function getTemplate(
