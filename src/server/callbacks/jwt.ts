@@ -66,6 +66,7 @@ export function jwtCallback() {
 				token.deviceId = user.deviceId;
 			}
 		}
+
 		// Check if the device still exists and is valid
 		if (token.id && token.deviceId && typeof token.deviceId === "string") {
 			try {

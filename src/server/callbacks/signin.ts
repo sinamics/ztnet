@@ -96,12 +96,12 @@ function getOrCreateDeviceSalt(
 	response: GetServerSidePropsContext["res"],
 ): string {
 	const cookies = parse(request.headers.cookie || "");
-	let salt = cookies[DEVICE_SALT_COOKIE_NAME];
+	let deviceId = cookies[DEVICE_SALT_COOKIE_NAME];
 
-	if (!salt) {
-		salt = randomBytes(8).toString("hex");
+	if (!deviceId) {
+		deviceId = randomBytes(8).toString("hex");
 		response.setHeader("Set-Cookie", [
-			serialize(DEVICE_SALT_COOKIE_NAME, salt, {
+			serialize(DEVICE_SALT_COOKIE_NAME, deviceId, {
 				httpOnly: true,
 				secure: process.env.NODE_ENV === "production",
 				sameSite: "lax",
@@ -110,7 +110,7 @@ function getOrCreateDeviceSalt(
 		]);
 	}
 
-	return salt;
+	return deviceId;
 }
 
 function createDeviceInfo(
@@ -119,12 +119,12 @@ function createDeviceInfo(
 	request: IncomingMessage,
 	response: GetServerSidePropsContext["res"],
 ): DeviceInfo {
-	const salt = getOrCreateDeviceSalt(request, response);
+	const deviceId = getOrCreateDeviceSalt(request, response);
 
 	return {
 		...parseUA(userAgent),
 		userAgent,
-		deviceId: createHash("sha256").update(salt).digest("hex"),
+		deviceId,
 		ipAddress: getIpAddress(request),
 		userId,
 		lastActive: new Date(),
