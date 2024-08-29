@@ -109,7 +109,7 @@ function getOrCreateDeviceSalt(
 		response.setHeader("Set-Cookie", [
 			serialize(DEVICE_SALT_COOKIE_NAME, deviceId, {
 				httpOnly: true,
-				secure: process.env.NODE_ENV === "production",
+				secure: false,
 				sameSite: "lax",
 				path: "/",
 			}),
