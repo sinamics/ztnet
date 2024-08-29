@@ -131,6 +131,7 @@ export const getAuthOptions = (
 								id: profile.sub || profile.id.toString(),
 								name: profile.name || profile.login || profile.username,
 								email: profile.email,
+								deviceId: null,
 								// image: profile.picture || profile.avatar_url || profile.image_url,
 								lastLogin: new Date().toISOString(),
 								role: "USER",

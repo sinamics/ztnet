@@ -196,7 +196,7 @@ export function signInCallback(
 	request: IncomingMessage & { cookies: Partial<{ [key: string]: string }> },
 	response: GetServerSidePropsContext["res"],
 ) {
-	return async function signIn({ user, account }) {
+	return async function signIn({ user, account, profile }) {
 		try {
 			let userExist = await prisma.user.findUnique({ where: { email: user.email } });
 
@@ -239,8 +239,11 @@ export function signInCallback(
 				// update or create device info
 				await upsertDeviceInfo(deviceInfo);
 
+				// set the device id, we will use it in the jwt callback
 				user.deviceId = deviceInfo.deviceId;
-				account.deviceId = deviceInfo.deviceId;
+				if (account.provider === "oauth") {
+					profile.deviceId = deviceInfo.deviceId;
+				}
 			}
 
 			await prisma.user.update({
@@ -248,6 +251,7 @@ export function signInCallback(
 				data: { lastLogin: new Date().toISOString(), firstTime: false },
 			});
 
+			// console.log(user);
 			return true;
 		} catch (error) {
 			console.error("Error in signIn callback:", error);
