@@ -46,15 +46,11 @@ test("getUserNetworks", async () => {
 
 	prismaMock.network.findMany = jest.fn().mockResolvedValue(mockOutput);
 
-	//   const caller = appRouter.createCaller({
-	//     session: mockSession,
-	//     prisma: prisma,
-	//   });
-
 	const caller = appRouter.createCaller({
 		session: mockSession as Session,
 		wss: null,
 		prisma: prismaMock,
+		res: null,
 	});
 
 	const result = await caller.network.getUserNetworks({
