@@ -13,9 +13,12 @@ type ApiHandler = (
 	req: NextApiRequest,
 	res: NextApiResponse,
 	context: {
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		body: any;
 		userId: string;
 		orgId: string;
 		networkId?: string;
+		memberId?: string;
 		ctx: {
 			prisma: typeof prisma;
 			session: {
@@ -29,8 +32,9 @@ type ApiHandler = (
 
 export const SecuredOrganizationApiRoute = (
 	options: {
-		requiredRole?: Role;
+		requiredRole: Role;
 		requireNetworkId?: boolean;
+		requireOrgId?: boolean;
 	},
 	handler: ApiHandler,
 ) => {
@@ -38,17 +42,25 @@ export const SecuredOrganizationApiRoute = (
 		const apiKey = req.headers["x-ztnet-auth"] as string;
 		const orgId = req.query?.orgid as string;
 		const networkId = req.query?.nwid as string;
+		const memberId = req.query?.memberId as string;
+		const body = req.body;
+
+		const mergedOptions = {
+			// Set orgid as required by default
+			requireOrgId: true,
+			...options,
+		};
 
 		try {
 			if (!apiKey) {
 				return res.status(400).json({ error: "API Key is required" });
 			}
 
-			if (!orgId) {
+			if (mergedOptions.requireOrgId && !orgId) {
 				return res.status(400).json({ error: "Organization ID is required" });
 			}
 
-			if (options.requireNetworkId && !networkId) {
+			if (mergedOptions.requireNetworkId && !networkId) {
 				return res.status(400).json({ error: "Network ID is required" });
 			}
 
@@ -66,18 +78,18 @@ export const SecuredOrganizationApiRoute = (
 				prisma,
 			};
 
-			if (options.requiredRole) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: orgId,
-					minimumRequiredRole: options.requiredRole,
-				});
-			}
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: orgId,
+				minimumRequiredRole: mergedOptions.requiredRole,
+			});
 
 			await handler(req, res, {
+				body,
 				userId: decryptedData.userId,
 				orgId,
 				networkId,
+				memberId,
 				ctx,
 			});
 		} catch (cause) {
