@@ -248,13 +248,10 @@ export const GET_network = async (req: NextApiRequest, res: NextApiResponse) => 
 			minimumRequiredRole: Role.READ_ONLY,
 		});
 
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const network = await caller.network
-			.getNetworkById({ nwid: networkId })
-			.then(async (res) => {
-				return res.network || null;
-			});
+		const network = await prisma.network.findUnique({
+			where: { nwid: networkId },
+			select: { authorId: true, description: true },
+		});
 
 		if (!network) {
 			return res.status(401).json({ error: "Network not found or access denied." });
