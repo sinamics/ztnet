@@ -96,6 +96,7 @@ export async function decryptAndVerifyToken({
 	} catch (_error) {
 		throw new Error("Invalid token");
 	}
+
 	// Validate the decrypted data structure (add more validations as necessary)
 	if (
 		!decryptedData.userId ||

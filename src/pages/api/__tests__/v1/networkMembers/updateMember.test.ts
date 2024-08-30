@@ -52,14 +52,6 @@ describe("Update Network Members", () => {
 			authorId: 1,
 		});
 
-		// Mock the database to return a network
-		prisma.network.findUnique = jest.fn().mockResolvedValue({
-			nwid: "test_nw_id",
-			nwname: "credent_second",
-			authorId: 1,
-			networkMembers: [{ id: "memberId" }],
-		});
-
 		const mockRegister = jest.fn().mockResolvedValue({ id: "memberId" });
 		appRouter.createCaller = jest
 			.fn()
@@ -103,7 +95,21 @@ describe("Update Network Members", () => {
 		// Assertions
 		expect(res.status).toHaveBeenCalledWith(401);
 	});
+
 	it("should respond 200 when member is successfully updated", async () => {
+		// Mock the database to return a network
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId" }],
+		});
+
+		// mock the token
+		prisma.aPIToken.findUnique = jest.fn().mockResolvedValue({
+			expiresAt: new Date(),
+		});
+
 		const req = {
 			method: "POST",
 			headers: { "x-ztnet-auth": "validApiKey" },
@@ -119,8 +125,15 @@ describe("Update Network Members", () => {
 		// Assertions
 		expect(res.status).toHaveBeenCalledWith(200);
 	});
-	// Example for a 400 response
-	it("should respond 400 for invalid input", async () => {
+
+	it("should respond 401 for invalid input", async () => {
+		// Mock the database to return a network
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: 1,
+			networkMembers: [{ id: "memberId" }],
+		});
 		const req = {
 			method: "POST",
 			headers: { "x-ztnet-auth": "validApiKey" },
@@ -134,7 +147,7 @@ describe("Update Network Members", () => {
 		await apiNetworkUpdateMembersHandler(req, res);
 
 		// Assertions
-		expect(res.status).toHaveBeenCalledWith(400);
+		expect(res.status).toHaveBeenCalledWith(401);
 	});
 
 	it("should respond 401 when decryptAndVerifyToken fails", async () => {
@@ -146,7 +159,7 @@ describe("Update Network Members", () => {
 		const req = {
 			method: "POST",
 			headers: { "x-ztnet-auth": "invalidApiKey" },
-			query: { id: "networkId" },
+			query: { id: "networkId", memberId: "memberId" },
 			body: { name: "New Name", authorized: "true" },
 		} as unknown as NextApiRequest;
 

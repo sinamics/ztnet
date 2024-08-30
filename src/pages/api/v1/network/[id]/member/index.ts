@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
@@ -35,64 +34,36 @@ export default async function apiNetworkMembersHandler(
 	}
 }
 
-const GET_networkMembers = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.id as string;
-
-	// Check if the networkId exists
-	if (!networkId) {
-		return res.status(400).json({ error: "Network ID is required" });
-	}
-
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
-		});
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
+const GET_networkMembers = SecuredPrivateApiRoute(
+	{
+		requireNetworkId: true,
+	},
+	async (_req, res, { networkId, ctx }) => {
+		try {
+			const arr = [];
+			const networks = await prisma.network.findUnique({
+				where: {
+					nwid: networkId,
 				},
-			},
-			prisma,
-		};
+				include: {
+					networkMembers: true,
+				},
+			});
 
-		// make sure user has access to the network
-		const network = await prisma.network.findUnique({
-			where: { nwid: networkId, authorId: decryptedData.userId },
-			select: { nwid: true, name: true, authorId: true },
-		});
+			for (const member of networks.networkMembers) {
+				const controllerMember = await ztController.member_details(
+					//@ts-expect-error
+					ctx,
+					networkId,
+					member.id,
+					false,
+				);
+				arr.push({ ...member, ...controllerMember });
+			}
 
-		if (!network) {
-			return res.status(401).json({ error: "Network not found or access denied." });
+			return res.status(200).json(arr);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		const arr = [];
-		const networks = await prisma.network.findUnique({
-			where: {
-				nwid: networkId,
-			},
-			include: {
-				networkMembers: true,
-			},
-		});
-
-		for (const member of networks.networkMembers) {
-			const controllerMember = await ztController.member_details(
-				//@ts-expect-error
-				ctx,
-				networkId,
-				member.id,
-				false,
-			);
-			arr.push({ ...member, ...controllerMember });
-		}
-
-		return res.status(200).json(arr);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);

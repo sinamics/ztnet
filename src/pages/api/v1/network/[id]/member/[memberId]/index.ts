@@ -2,8 +2,7 @@ import { network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
@@ -62,147 +61,116 @@ export default async function apiNetworkUpdateMembersHandler(
  * @param res - The NextApiResponse object.
  * @returns A JSON response indicating the success or failure of the update operation.
  */
-const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.id as string;
-	const memberId = req.query?.memberId as string;
-	const requestBody = req.body;
-
-	if (Object.keys(requestBody).length === 0) {
-		return res.status(400).json({ error: "No data provided for update" });
-	}
-
-	let decryptedData: { userId: string; name?: string };
-	try {
-		decryptedData = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
-		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
-
-	// Check if the networkId exists
-	if (!networkId) {
-		return res.status(400).json({ error: "Network ID is required" });
-	}
-
-	// Check if the networkId exists
-	if (!memberId) {
-		return res.status(400).json({ error: "Member ID is required" });
-	}
-
-	// structure of the updateableFields object:
-	const updateableFields = {
-		name: { type: "string", destinations: ["database"] },
-		authorized: { type: "boolean", destinations: ["controller"] },
-	};
-
-	const databasePayload: Partial<network_members> = {};
-	const controllerPayload: Partial<network_members> = {};
-
-	// Iterate over keys in the request body
-	for (const key in requestBody) {
-		// Check if the key is not in updateableFields
-		if (!(key in updateableFields)) {
-			return res.status(400).json({ error: `Invalid field: ${key}` });
+const POST_updateNetworkMember = SecuredPrivateApiRoute(
+	{
+		requireNetworkId: true,
+		requireMemberId: true,
+	},
+	async (_req, res, { body, userId, networkId, memberId, ctx }) => {
+		if (Object.keys(body).length === 0) {
+			return res.status(400).json({ error: "No data provided for update" });
 		}
 
+		// structure of the updateableFields object:
+		const updateableFields = {
+			name: { type: "string", destinations: ["database"] },
+			authorized: { type: "boolean", destinations: ["controller"] },
+		};
+
+		const databasePayload: Partial<network_members> = {};
+		const controllerPayload: Partial<network_members> = {};
+
+		// Iterate over keys in the request body
+		for (const key in body) {
+			// Check if the key is not in updateableFields
+			if (!(key in updateableFields)) {
+				return res.status(400).json({ error: `Invalid field: ${key}` });
+			}
+
+			try {
+				const parsedValue = parseField(key, body[key], updateableFields[key].type);
+				if (updateableFields[key].destinations.includes("database")) {
+					databasePayload[key] = parsedValue;
+				}
+				if (updateableFields[key].destinations.includes("controller")) {
+					controllerPayload[key] = parsedValue;
+				}
+			} catch (error) {
+				return res.status(400).json({ error: error.message });
+			}
+		}
 		try {
-			const parsedValue = parseField(key, requestBody[key], updateableFields[key].type);
-			if (updateableFields[key].destinations.includes("database")) {
-				databasePayload[key] = parsedValue;
-			}
-			if (updateableFields[key].destinations.includes("controller")) {
-				controllerPayload[key] = parsedValue;
-			}
-		} catch (error) {
-			return res.status(400).json({ error: error.message });
-		}
-	}
-
-	// assemble the context object
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
-			},
-		},
-		prisma,
-		wss: null,
-	};
-
-	try {
-		// make sure the member is valid
-		const network = await prisma.network.findUnique({
-			where: { nwid: networkId, authorId: decryptedData.userId },
-			include: {
-				networkMembers: {
-					where: { id: memberId },
-				},
-			},
-		});
-
-		if (!network?.networkMembers || network.networkMembers.length === 0) {
-			return res
-				.status(401)
-				.json({ error: "Member or Network not found or access denied." });
-		}
-
-		if (Object.keys(databasePayload).length > 0) {
-			// if users click the re-generate icon on IP address
-			await ctx.prisma.network.update({
-				where: {
-					nwid: networkId,
-				},
-				data: {
+			// make sure the member is valid
+			const network = await prisma.network.findUnique({
+				where: { nwid: networkId, authorId: userId },
+				include: {
 					networkMembers: {
-						update: {
-							where: {
-								id_nwid: {
-									id: memberId,
-									nwid: networkId, // this should be the value of `nwid` you are looking for
+						where: { id: memberId },
+					},
+				},
+			});
+
+			if (!network?.networkMembers || network.networkMembers.length === 0) {
+				return res
+					.status(401)
+					.json({ error: "Member or Network not found or access denied." });
+			}
+
+			if (Object.keys(databasePayload).length > 0) {
+				// if users click the re-generate icon on IP address
+				await ctx.prisma.network.update({
+					where: {
+						nwid: networkId,
+					},
+					data: {
+						networkMembers: {
+							update: {
+								where: {
+									id_nwid: {
+										id: memberId,
+										nwid: networkId, // this should be the value of `nwid` you are looking for
+									},
+								},
+								data: {
+									...databasePayload,
 								},
 							},
-							data: {
-								...databasePayload,
+						},
+					},
+					select: {
+						networkMembers: {
+							where: {
+								id: memberId,
 							},
 						},
 					},
-				},
-				select: {
-					networkMembers: {
-						where: {
-							id: memberId,
-						},
-					},
-				},
-			});
-		}
+				});
+			}
 
-		if (Object.keys(controllerPayload).length > 0) {
-			await ztController.member_update({
-				// @ts-expect-error
-				ctx,
+			if (Object.keys(controllerPayload).length > 0) {
+				await ztController.member_update({
+					// @ts-expect-error
+					ctx,
+					nwid: networkId,
+					memberId: memberId,
+					// @ts-expect-error
+					updateParams: controllerPayload,
+				});
+			}
+
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const networkAndMembers = await caller.networkMember.getMemberById({
 				nwid: networkId,
-				memberId: memberId,
-				// @ts-expect-error
-				updateParams: controllerPayload,
+				id: memberId,
 			});
+
+			return res.status(200).json(networkAndMembers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const networkAndMembers = await caller.networkMember.getMemberById({
-			nwid: networkId,
-			id: memberId,
-		});
-
-		return res.status(200).json(networkAndMembers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);
 
 /**
  * Handles the HTTP DELETE request to delete a member from a network.
@@ -211,63 +179,39 @@ const POST_updateNetworkMember = async (req: NextApiRequest, res: NextApiRespons
  * @param res - The NextApiResponse object representing the outgoing response.
  * @returns A JSON response indicating the success or failure of the operation.
  */
-const DELETE_deleteNetworkMember = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.id as string;
-	const memberId = req.query?.memberId as string;
-
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
-		});
-
-		// Check if the networkId exists
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
-		}
-
-		// Check if the networkId exists
-		if (!memberId) {
-			return res.status(400).json({ error: "Member ID is required" });
-		}
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
+const DELETE_deleteNetworkMember = SecuredPrivateApiRoute(
+	{
+		requireNetworkId: true,
+		requireMemberId: true,
+	},
+	async (_req, res, { userId, networkId, memberId, ctx }) => {
+		try {
+			// make sure the member is valid
+			const network = await prisma.network.findUnique({
+				where: { nwid: networkId, authorId: userId },
+				include: {
+					networkMembers: {
+						where: { id: memberId },
+					},
 				},
-			},
-			prisma,
-			wss: null,
-		};
+			});
 
-		// make sure the member is valid
-		const network = await prisma.network.findUnique({
-			where: { nwid: networkId, authorId: decryptedData.userId },
-			include: {
-				networkMembers: {
-					where: { id: memberId },
-				},
-			},
-		});
+			if (!network?.networkMembers || network.networkMembers.length === 0) {
+				return res
+					.status(401)
+					.json({ error: "Member or Network not found or access denied." });
+			}
 
-		if (!network?.networkMembers || network.networkMembers.length === 0) {
-			return res
-				.status(401)
-				.json({ error: "Member or Network not found or access denied." });
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const networkAndMembers = await caller.networkMember.stash({
+				nwid: networkId,
+				id: memberId,
+			});
+
+			return res.status(200).json(networkAndMembers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const networkAndMembers = await caller.networkMember.stash({
-			nwid: networkId,
-			id: memberId,
-		});
-
-		return res.status(200).json(networkAndMembers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);

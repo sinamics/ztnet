@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
@@ -35,55 +34,30 @@ export default async function apiNetworkByIdHandler(
 	}
 }
 
-const GET_network = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.id as string;
-
-	// Check if the networkId exists
-	if (!networkId) {
-		return res.status(400).json({ error: "Network ID is required" });
-	}
-
-	let decryptedData: { userId: string; name?: string };
-	try {
-		decryptedData = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
+const GET_network = SecuredPrivateApiRoute(
+	{
+		requireNetworkId: true,
+	},
+	async (_req, res, { networkId, ctx, userId }) => {
+		// get the network details
+		const network = await prisma.network.findUnique({
+			where: { nwid: networkId, authorId: userId },
+			select: { authorId: true, description: true },
 		});
-	} catch (error) {
-		return res.status(401).json({ error: error.message });
-	}
 
-	// assemble the context object
-	const ctx = {
-		session: {
-			user: {
-				id: decryptedData.userId as string,
-			},
-		},
-		prisma,
-	};
-	// make sure user has access to the network
-	const network = await prisma.network.findUnique({
-		where: { nwid: networkId, authorId: decryptedData.userId },
-		select: { authorId: true, description: true },
-	});
-
-	if (!network) {
-		return res.status(401).json({ error: "Network not found or access denied." });
-	}
-	try {
-		const ztControllerResponse = await ztController.local_network_detail(
-			//@ts-expect-error
-			ctx,
-			networkId,
-			false,
-		);
-		return res.status(200).json({
-			...network,
-			...ztControllerResponse?.network,
-		});
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+		try {
+			const ztControllerResponse = await ztController.local_network_detail(
+				//@ts-expect-error
+				ctx,
+				networkId,
+				false,
+			);
+			return res.status(200).json({
+				...network,
+				...ztControllerResponse?.network,
+			});
+		} catch (cause) {
+			return handleApiErrors(cause, res);
+		}
+	},
+);
