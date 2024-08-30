@@ -2,8 +2,7 @@ import { Role, network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
@@ -66,152 +65,128 @@ export default async function apiNetworkUpdateMembersHandler(
  * @param res - The NextApiResponse object.
  * @returns A JSON response indicating the success or failure of the update operation.
  */
-export const POST_orgUpdateNetworkMember = async (
-	req: NextApiRequest,
-	res: NextApiResponse,
-) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.nwid as string;
-	const memberId = req.query?.memberId as string;
-	const requestBody = req.body;
-	// organization id
-	const orgid = req.query?.orgid as string;
+export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.USER, requireNetworkId: true },
+	async (_req, res, { networkId, orgId, body, userId, memberId }) => {
+		try {
+			// structure of the updateableFields object:
+			const updateableFields = {
+				name: { type: "string", destinations: ["database"] },
+				authorized: { type: "boolean", destinations: ["controller"] },
+			};
 
-	if (!apiKey) {
-		return res.status(400).json({ error: "API Key is required" });
-	}
+			const databasePayload: Partial<network_members> = {};
+			const controllerPayload: Partial<network_members> = {};
 
-	if (!networkId) {
-		return res.status(400).json({ error: "Network ID is required" });
-	}
+			// Iterate over keys in the request body
+			for (const key in body) {
+				// Check if the key is not in updateableFields
+				if (!(key in updateableFields)) {
+					return res.status(400).json({ error: `Invalid field: ${key}` });
+				}
 
-	if (!orgid) {
-		return res.status(400).json({ error: "Organization ID is required" });
-	}
-
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		// structure of the updateableFields object:
-		const updateableFields = {
-			name: { type: "string", destinations: ["database"] },
-			authorized: { type: "boolean", destinations: ["controller"] },
-		};
-
-		const databasePayload: Partial<network_members> = {};
-		const controllerPayload: Partial<network_members> = {};
-
-		// Iterate over keys in the request body
-		for (const key in requestBody) {
-			// Check if the key is not in updateableFields
-			if (!(key in updateableFields)) {
-				return res.status(400).json({ error: `Invalid field: ${key}` });
+				try {
+					const parsedValue = parseField(key, body[key], updateableFields[key].type);
+					if (updateableFields[key].destinations.includes("database")) {
+						databasePayload[key] = parsedValue;
+					}
+					if (updateableFields[key].destinations.includes("controller")) {
+						controllerPayload[key] = parsedValue;
+					}
+				} catch (error) {
+					return res.status(400).json({ error: error.message });
+				}
 			}
 
-			try {
-				const parsedValue = parseField(key, requestBody[key], updateableFields[key].type);
-				if (updateableFields[key].destinations.includes("database")) {
-					databasePayload[key] = parsedValue;
-				}
-				if (updateableFields[key].destinations.includes("controller")) {
-					controllerPayload[key] = parsedValue;
-				}
-			} catch (error) {
-				return res.status(400).json({ error: error.message });
-			}
-		}
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
+			// assemble the context object
+			const ctx = {
+				session: {
+					user: {
+						id: userId as string,
+					},
 				},
-			},
-			prisma,
-			wss: null,
-		};
+				prisma,
+				wss: null,
+			};
 
-		// Check if the user is an organization admin
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.USER,
-		});
+			// Check if the user is an organization admin
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: orgId,
+				minimumRequiredRole: Role.USER,
+			});
 
-		// make sure the member is valid
-		const network = await prisma.network.findUnique({
-			where: { nwid: networkId, organizationId: orgid },
-			include: {
-				networkMembers: {
-					where: { id: memberId },
-				},
-			},
-		});
-
-		if (!network?.networkMembers || network.networkMembers.length === 0) {
-			return res
-				.status(401)
-				.json({ error: "Member or Network not found or access denied." });
-		}
-
-		if (Object.keys(databasePayload).length > 0) {
-			// if users click the re-generate icon on IP address
-			await ctx.prisma.network.update({
-				where: {
-					nwid: networkId,
-				},
-				data: {
+			// make sure the member is valid
+			const network = await prisma.network.findUnique({
+				where: { nwid: networkId, organizationId: orgId },
+				include: {
 					networkMembers: {
-						update: {
-							where: {
-								id_nwid: {
-									id: memberId,
-									nwid: networkId, // this should be the value of `nwid` you are looking for
+						where: { id: memberId },
+					},
+				},
+			});
+
+			if (!network?.networkMembers || network.networkMembers.length === 0) {
+				return res
+					.status(401)
+					.json({ error: "Member or Network not found or access denied." });
+			}
+
+			if (Object.keys(databasePayload).length > 0) {
+				// if users click the re-generate icon on IP address
+				await ctx.prisma.network.update({
+					where: {
+						nwid: networkId,
+					},
+					data: {
+						networkMembers: {
+							update: {
+								where: {
+									id_nwid: {
+										id: memberId,
+										nwid: networkId, // this should be the value of `nwid` you are looking for
+									},
+								},
+								data: {
+									...databasePayload,
 								},
 							},
-							data: {
-								...databasePayload,
+						},
+					},
+					select: {
+						networkMembers: {
+							where: {
+								id: memberId,
 							},
 						},
 					},
-				},
-				select: {
-					networkMembers: {
-						where: {
-							id: memberId,
-						},
-					},
-				},
-			});
-		}
+				});
+			}
 
-		if (Object.keys(controllerPayload).length > 0) {
-			await ztController.member_update({
-				// @ts-expect-error
-				ctx,
+			if (Object.keys(controllerPayload).length > 0) {
+				await ztController.member_update({
+					// @ts-expect-error
+					ctx,
+					nwid: networkId,
+					memberId: memberId,
+					// @ts-expect-error
+					updateParams: controllerPayload,
+				});
+			}
+
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const networkAndMembers = await caller.networkMember.getMemberById({
 				nwid: networkId,
-				memberId: memberId,
-				// @ts-expect-error
-				updateParams: controllerPayload,
+				id: memberId,
 			});
+
+			return res.status(200).json(networkAndMembers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const networkAndMembers = await caller.networkMember.getMemberById({
-			nwid: networkId,
-			id: memberId,
-		});
-
-		return res.status(200).json(networkAndMembers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);
 
 /**
  * Handles the HTTP DELETE request to delete a member from a network.
@@ -220,128 +195,49 @@ export const POST_orgUpdateNetworkMember = async (
  * @param res - The NextApiResponse object representing the outgoing response.
  * @returns A JSON response indicating the success or failure of the operation.
  */
-export const DELETE_orgStashNetworkMember = async (
-	req: NextApiRequest,
-	res: NextApiResponse,
-) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.nwid as string;
-	const memberId = req.query?.memberId as string;
+export const DELETE_orgStashNetworkMember = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.USER, requireNetworkId: true },
+	async (_req, res, { networkId, orgId, memberId, ctx }) => {
+		try {
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const networkAndMembers = await caller.networkMember.stash({
+				nwid: networkId,
+				id: memberId,
+				organizationId: orgId,
+			});
 
-	// organization id
-	const orgid = req.query?.orgid as string;
-
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		// Check if the networkId exists
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
+			return res.status(200).json(networkAndMembers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
+	},
+);
 
-		// Check if the networkId exists
-		if (!memberId) {
-			return res.status(400).json({ error: "Member ID is required" });
+/**
+ * Retrieves a network member by their ID.
+ *
+ * @param _req - The request object.
+ * @param res - The response object.
+ * @param networkId - The ID of the network.
+ * @param memberId - The ID of the member.
+ * @param ctx - The context object.
+ * @returns The network member and associated network information.
+ */
+export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.USER, requireNetworkId: true },
+	async (_req, res, { networkId, memberId, ctx }) => {
+		try {
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const networkAndMembers = await caller.networkMember.getMemberById({
+				nwid: networkId,
+				id: memberId,
+			});
+
+			return res.status(200).json(networkAndMembers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		// Check if the organizationId exists
-		if (!orgid) {
-			return res.status(400).json({ error: "Organization ID is required" });
-		}
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-			wss: null,
-		};
-
-		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.stash will check for the same thing. Keeping it for now
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.USER,
-		});
-
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const networkAndMembers = await caller.networkMember.stash({
-			nwid: networkId,
-			id: memberId,
-			organizationId: orgid,
-		});
-
-		return res.status(200).json(networkAndMembers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
-
-export const GET_orgNetworkMemberById = async (
-	req: NextApiRequest,
-	res: NextApiResponse,
-) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const networkId = req.query?.nwid as string;
-	const memberId = req.query?.memberId as string;
-
-	// organization id
-	const orgid = req.query?.orgid as string;
-
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-		// check if orgid is present
-		if (!orgid) {
-			return res.status(400).json({ error: "Organization ID is required" });
-		}
-		// Check if the networkId exists
-		if (!networkId) {
-			return res.status(400).json({ error: "Network ID is required" });
-		}
-
-		// Check if the networkId exists
-		if (!memberId) {
-			return res.status(400).json({ error: "Member ID is required" });
-		}
-
-		// assemble the context object
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-			wss: null,
-		};
-
-		// Check if the user is an organization admin
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.USER,
-		});
-
-		// @ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const networkAndMembers = await caller.networkMember.getMemberById({
-			nwid: networkId,
-			id: memberId,
-		});
-
-		return res.status(200).json(networkAndMembers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);

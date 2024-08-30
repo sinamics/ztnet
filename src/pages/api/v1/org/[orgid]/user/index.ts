@@ -1,12 +1,9 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
-import { checkUserOrganizationRole } from "~/utils/role";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -37,51 +34,29 @@ export default async function apiNetworkHandler(
 	}
 }
 
-const GET_organizationUsers = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-	const orgid = req.query?.orgid as string;
+const GET_organizationUsers = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.USER },
+	async (_req, res, { orgId, ctx }) => {
+		try {
+			// @ts-expect-error ctx is not a valid parameter
+			const caller = appRouter.createCaller(ctx);
+			const orgUsers = await caller.org
+				.getOrgUsers({
+					organizationId: orgId,
+				})
+				.then((users) => {
+					return users.map((user) => ({
+						orgId: orgId,
+						userId: user.id,
+						name: user.name,
+						email: user.email,
+						role: user.role,
+					}));
+				});
 
-	try {
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		// Mock context
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-		};
-		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.getOrgUsers will check for the same thing
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.READ_ONLY,
-		});
-
-		// @ts-expect-error ctx is not a valid parameter
-		const caller = appRouter.createCaller(ctx);
-		const orgUsers = await caller.org
-			.getOrgUsers({
-				organizationId: orgid,
-			})
-			.then((users) => {
-				return users.map((user) => ({
-					orgId: orgid,
-					userId: user.id,
-					name: user.name,
-					email: user.email,
-					role: user.role,
-				}));
-			});
-
-		return res.status(200).json(orgUsers);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+			return res.status(200).json(orgUsers);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
+		}
+	},
+);
