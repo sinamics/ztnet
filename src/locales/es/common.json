@@ -736,6 +736,7 @@
 				"accessDenied": "Acceso Denegado",
 				"noDevicesFound": "No se encontraron dispositivos.",
 				"activeNow": "Activo Ahora",
+				"currentDevice": "Dispositivo Actual",
 				"logout": "Cerrar Sesión"
 			},
 			"restapi": {
