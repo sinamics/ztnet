@@ -736,6 +736,7 @@
 				"accessDenied": "拒絕存取",
 				"noDevicesFound": "未找到裝置。",
 				"activeNow": "目前使用中",
+				"currentDevice": "當前裝置",
 				"logout": "登出"
 			},
 			"restapi": {
