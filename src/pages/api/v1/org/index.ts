@@ -1,8 +1,7 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 
@@ -35,68 +34,50 @@ export default async function apiOrganizationHandler(
 	}
 }
 
-export const GET_userOrganization = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
-
-	try {
-		const decryptedData: { userId: string; name: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		const orgUserRole = await prisma.userOrganizationRole.findFirst({
-			where: {
-				userId: decryptedData.userId,
-			},
-			select: {
-				role: true,
-			},
-		});
-
-		// If the user is not part of the organization or the role is not in the Role enum
-		if (!orgUserRole || orgUserRole.role in Role === false) {
-			return res.status(403).json({ error: "Unauthorized" });
-		}
-
-		// get all organizations the user is part of.
-		const organizations = await prisma.organization
-			.findMany({
-				where: {
-					users: {
-						some: {
-							id: decryptedData.userId,
+export const GET_userOrganization = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.READ_ONLY, requireOrgId: false },
+	async (_req, res, { userId }) => {
+		try {
+			// get all organizations the user is part of.
+			const organizations = await prisma.organization
+				.findMany({
+					where: {
+						users: {
+							some: {
+								id: userId,
+							},
 						},
 					},
-				},
-				select: {
-					id: true,
-					orgName: true,
-					ownerId: true,
-					description: true,
-					createdAt: true,
-					users: {
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							organizationRoles: {
-								select: {
-									role: true,
+					select: {
+						id: true,
+						orgName: true,
+						ownerId: true,
+						description: true,
+						createdAt: true,
+						users: {
+							select: {
+								id: true,
+								name: true,
+								email: true,
+								organizationRoles: {
+									select: {
+										role: true,
+									},
 								},
 							},
 						},
 					},
-				},
-			})
-			.then((orgs) => {
-				return orgs.filter((org) => {
-					org.users = undefined;
-					return org;
+				})
+				.then((orgs) => {
+					return orgs.filter((org) => {
+						org.users = undefined;
+						return org;
+					});
 				});
-			});
 
-		return res.status(200).json(organizations);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+			return res.status(200).json(organizations);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
+		}
+	},
+);
