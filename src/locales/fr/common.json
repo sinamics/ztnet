@@ -736,6 +736,7 @@
 				"accessDenied": "Accès Refusé",
 				"noDevicesFound": "Aucun appareil trouvé.",
 				"activeNow": "Actif Maintenant",
+				"currentDevice": "Appareil Actuel",
 				"logout": "Déconnexion"
 			},
 			"restapi": {
