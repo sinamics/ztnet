@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import { globalSiteVersion } from "~/utils/global";
 import rateLimit from "~/utils/rateLimit";
@@ -35,72 +34,68 @@ export default async function createStatsHandler(
 	}
 }
 
-export const GET_stats = async (req: NextApiRequest, res: NextApiResponse) => {
-	const apiKey = req.headers["x-ztnet-auth"] as string;
+export const GET_stats = SecuredPrivateApiRoute(
+	{
+		requireNetworkId: false,
+		requireAdmin: true,
+	},
+	async (_req, res) => {
+		try {
+			// get number of users
+			const users = await prisma.user.count();
 
-	const requireAdmin = true;
+			// get number of networks
+			const networks = await prisma.network.count();
 
-	try {
-		await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.PERSONAL,
-			requireAdmin,
-		});
+			// get number of members
+			const networkMembers = await prisma.network_members.count();
 
-		// get number of users
-		const users = await prisma.user.count();
+			// get application version
+			const appVersion = globalSiteVersion;
 
-		// get number of networks
-		const networks = await prisma.network.count();
-
-		// get number of members
-		const networkMembers = await prisma.network_members.count();
-
-		// get application version
-		const appVersion = globalSiteVersion;
-
-		// get logins last 24 hours
-		const loginsLast24h = await prisma.user.count({
-			where: {
-				lastLogin: {
-					gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+			// get logins last 24 hours
+			const loginsLast24h = await prisma.user.count({
+				where: {
+					lastLogin: {
+						gte: new Date(new Date().getTime() - 24 * 60 * 60 * 1000),
+					},
 				},
-			},
-		});
+			});
 
-		// get UserInvitation
-		const pendingUserInvitations = await prisma.invitation.count();
+			// get UserInvitation
+			const pendingUserInvitations = await prisma.invitation.count();
 
-		// get pending Webhook
-		const activeWebhooks = await prisma.webhook.count();
+			// get pending Webhook
+			const activeWebhooks = await prisma.webhook.count();
 
-		// get uptime
-		const ztnetUptime = process.uptime();
+			// get uptime
+			const ztnetUptime = process.uptime();
 
-		// get if customPlanetUsed is used
-		const rootServer = await prisma.planet.count();
+			// get if customPlanetUsed is used
+			const rootServer = await prisma.planet.count();
 
-		// get global options
-		const globalOptions = await prisma.globalOptions.findFirst({
-			where: {
-				id: 1,
-			},
-		});
+			// get global options
+			const globalOptions = await prisma.globalOptions.findFirst({
+				where: {
+					id: 1,
+				},
+			});
 
-		// return all json
-		return res.status(200).json({
-			users,
-			networks,
-			networkMembers,
-			appVersion,
-			loginsLast24h,
-			pendingUserInvitations,
-			activeWebhooks,
-			ztnetUptime,
-			registrationEnabled: globalOptions?.enableRegistration || false,
-			hasPrivatRoot: !!rootServer,
-		});
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+			// return all json
+			return res.status(200).json({
+				users,
+				networks,
+				networkMembers,
+				appVersion,
+				loginsLast24h,
+				pendingUserInvitations,
+				activeWebhooks,
+				ztnetUptime,
+				registrationEnabled: globalOptions?.enableRegistration || false,
+				hasPrivatRoot: !!rootServer,
+			});
+		} catch (cause) {
+			return handleApiErrors(cause, res);
+		}
+	},
+);
