@@ -25,7 +25,7 @@ test("updateDatabaseOnly test", async () => {
 	const mockSession: PartialDeep<Session> = {
 		expires: new Date().toISOString(),
 		user: {
-			id: 1,
+			id: "userid",
 		},
 	};
 
@@ -49,6 +49,8 @@ test("updateDatabaseOnly test", async () => {
 	const caller = appRouter.createCaller({
 		session: mockSession as Session,
 		prisma: prisma,
+		wss: null,
+		res: null,
 	});
 	// @ts-expect-error -- awaiting fix:
 	prisma.network.update.mockResolvedValue(mockOutput);
