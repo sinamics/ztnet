@@ -1,12 +1,9 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
+import { SecuredOrganizationApiRoute } from "~/utils/apiAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
-import { checkUserOrganizationRole } from "~/utils/role";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -37,66 +34,35 @@ export default async function apiNetworkHandler(
 	}
 }
 
-export const GET_orgById = async (req: NextApiRequest, res: NextApiResponse) => {
-	try {
-		const apiKey = req.headers["x-ztnet-auth"] as string;
-		const orgid = req.query?.orgid as string;
+export const GET_orgById = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.READ_ONLY },
+	async (_req, res, { orgId, ctx }) => {
+		try {
+			//@ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+			const organization = await caller.org
+				.getOrgById({
+					organizationId: orgId,
+				})
+				// modify the response to only inlude certain fields
+				.then((org) => {
+					return {
+						id: org.id,
+						name: org.orgName,
+						createdAt: org.createdAt,
+						ownerId: org.ownerId,
+						networks: org.networks.map((network) => {
+							return {
+								nwid: network.nwid,
+								name: network.name,
+							};
+						}),
+					};
+				});
 
-		if (!apiKey) {
-			return res.status(400).json({ error: "API Key is required" });
+			return res.status(200).json(organization);
+		} catch (cause) {
+			return handleApiErrors(cause, res);
 		}
-
-		if (!orgid) {
-			return res.status(400).json({ error: "Organization ID is required" });
-		}
-
-		const decryptedData: { userId: string; name?: string } = await decryptAndVerifyToken({
-			apiKey,
-			apiAuthorizationType: AuthorizationType.ORGANIZATION,
-		});
-
-		// Mock context
-		const ctx = {
-			session: {
-				user: {
-					id: decryptedData.userId as string,
-				},
-			},
-			prisma,
-		};
-
-		// Check if the user is an organization admin
-		// TODO This might be redundant as the caller.getOrgById will check for the same thing
-		await checkUserOrganizationRole({
-			ctx,
-			organizationId: orgid,
-			minimumRequiredRole: Role.READ_ONLY,
-		});
-
-		//@ts-expect-error
-		const caller = appRouter.createCaller(ctx);
-		const organization = await caller.org
-			.getOrgById({
-				organizationId: orgid,
-			})
-			// modify the response to only inlude certain fields
-			.then((org) => {
-				return {
-					id: org.id,
-					name: org.orgName,
-					createdAt: org.createdAt,
-					ownerId: org.ownerId,
-					networks: org.networks.map((network) => {
-						return {
-							nwid: network.nwid,
-							name: network.name,
-						};
-					}),
-				};
-			});
-
-		return res.status(200).json(organization);
-	} catch (cause) {
-		return handleApiErrors(cause, res);
-	}
-};
+	},
+);
