@@ -6,6 +6,7 @@ import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
 import { signOut, useSession } from "next-auth/react";
+import TimeAgo from "react-timeago";
 
 const formatLastActive = (date) => {
 	return new Date(date).toLocaleString("no-NO");
@@ -13,6 +14,13 @@ const formatLastActive = (date) => {
 
 const DeviceInfo = ({ device, isCurrentDevice }) => {
 	const t = useTranslations();
+
+	// if lastActive is within 5 minutes, show as active
+	const lastActive = new Date(device.lastActive);
+	const now = new Date();
+	const diff = Math.abs(now.getTime() - lastActive.getTime()) / 1000;
+	const isRecent = diff < 300;
+
 	return (
 		<div>
 			<p
@@ -27,8 +35,16 @@ const DeviceInfo = ({ device, isCurrentDevice }) => {
 				{device.ipAddress && ` - ${device.ipAddress}`}
 			</p>
 			{isCurrentDevice && (
-				<p className="text-xs text-green-600 font-semibold">
-					{t("userSettings.account.userDevices.activeNow")}
+				<p className="text-xs text-green-600 font-semibold capitalize">
+					{t("userSettings.account.userDevices.currentDevice")}
+				</p>
+			)}
+			{!isCurrentDevice && isRecent && (
+				<p className="text-xs text-green-600 font-semibold">Online</p>
+			)}
+			{!isCurrentDevice && !isRecent && (
+				<p className="text-xs text-gray-500">
+					<TimeAgo date={device.lastActive} />
 				</p>
 			)}
 		</div>
@@ -71,6 +87,10 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 		if (isCurrentDevice(b)) return 1;
 		return 0;
 	});
+	// sort devices by lastActive
+	const sortedDevicesByLastActive = [...(sortedDevices || [])].sort((a, b) => {
+		return new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime();
+	});
 
 	return (
 		<div className="mx-auto">
@@ -81,8 +101,8 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 				{/* <button className="btn btn-sm btn-error btn-outline">Logout All</button> */}
 			</div>
 			<div className="space-y-2 max-h-[500px] overflow-auto custom-scrollbar">
-				{sortedDevices && sortedDevices.length > 0 ? (
-					sortedDevices.map((device) => (
+				{sortedDevicesByLastActive && sortedDevicesByLastActive.length > 0 ? (
+					sortedDevicesByLastActive.map((device) => (
 						<div
 							key={device.id}
 							className={cn(

@@ -736,6 +736,7 @@
 				"accessDenied": "Odmowa dostępu",
 				"noDevicesFound": "Nie znaleziono podłączonych urządzeń.",
 				"activeNow": "Aktywny/Zalogowany",
+				"currentDevice": "Aktualne urządzenie",
 				"logout": "Wyloguj"
 			},
 			"restapi": {
