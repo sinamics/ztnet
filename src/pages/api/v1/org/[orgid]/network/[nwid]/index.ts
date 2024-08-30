@@ -2,7 +2,7 @@ import { Role, network } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { SecuredOrganizationApiRoute } from "~/utils/apiAuth";
+import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
