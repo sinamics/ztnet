@@ -27,6 +27,7 @@ it("should throw an error if the user is not the author of the network", async (
 		session: mockSession as Session,
 		wss: null,
 		prisma: prisma,
+		res: null,
 	});
 	try {
 		await caller.network.getNetworkById({ nwid: "test_nw_id" });

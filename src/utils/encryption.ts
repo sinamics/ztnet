@@ -105,7 +105,6 @@ export async function decryptAndVerifyToken({
 	) {
 		throw new Error("Invalid token");
 	}
-
 	// validate the authorization type in token with the required authorization type
 	if (
 		!Array.isArray(decryptedData.apiAuthorizationType) ||

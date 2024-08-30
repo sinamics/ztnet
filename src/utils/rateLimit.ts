@@ -28,5 +28,6 @@ export default function rateLimit(options?: Options) {
 
 				return isRateLimited ? reject() : resolve();
 			}),
+		reset: () => tokenCache.clear(),
 	};
 }
