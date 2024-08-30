@@ -122,6 +122,7 @@ export const SecuredPrivateApiRoute = (
 	options: {
 		requireNetworkId?: boolean;
 		requireMemberId?: boolean;
+		requireAdmin?: boolean;
 	},
 	handler: UserApiHandler,
 ) => {
@@ -153,6 +154,7 @@ export const SecuredPrivateApiRoute = (
 			const decryptedData = await decryptAndVerifyToken({
 				apiKey,
 				apiAuthorizationType: AuthorizationType.PERSONAL,
+				requireAdmin: mergedOptions.requireAdmin,
 			});
 
 			if (mergedOptions.requireNetworkId) {
