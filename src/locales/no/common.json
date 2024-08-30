@@ -736,6 +736,7 @@
 				"accessDenied": "Tilgang Nektet",
 				"noDevicesFound": "Ingen enheter funnet.",
 				"activeNow": "Aktiv Nå",
+				"currentDevice": "Nåværende enhet",
 				"logout": "Logg ut"
 			},
 			"restapi": {
