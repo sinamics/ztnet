@@ -5,6 +5,21 @@ import { Role } from "@prisma/client";
 import { prisma } from "~/server/db";
 import { decryptAndVerifyToken } from "./encryption";
 import { AuthorizationType } from "~/types/apiTypes";
+import { z } from "zod";
+
+// Schema for API request headers and query parameters
+const ApiRequestSchema = z.object({
+	headers: z.object({
+		"x-ztnet-auth": z.string(),
+	}),
+	query: z.object({
+		orgid: z.string().optional(),
+		nwid: z.string().optional(),
+		memberId: z.string().optional(),
+		id: z.string().optional(),
+	}),
+	body: z.any(),
+});
 
 /**
  * Organization API handler wrapper for apir routes that require authentication
@@ -30,6 +45,11 @@ type OrgApiHandler = (
 	},
 ) => Promise<void>;
 
+/**
+ * Wrapper for organization API routes
+ * @param options - Options for the API route
+ * @param handler - The API route handler
+ */
 export const SecuredOrganizationApiRoute = (
 	options: {
 		requiredRole: Role;
@@ -39,19 +59,21 @@ export const SecuredOrganizationApiRoute = (
 	handler: OrgApiHandler,
 ) => {
 	return async (req: NextApiRequest, res: NextApiResponse) => {
-		const apiKey = req.headers["x-ztnet-auth"] as string;
-		const orgId = req.query?.orgid as string;
-		const networkId = req.query?.nwid as string;
-		const memberId = req.query?.memberId as string;
-		const body = req.body;
-
-		const mergedOptions = {
-			// Set orgid as required by default
-			requireOrgId: true,
-			...options,
-		};
-
 		try {
+			const validatedRequest = ApiRequestSchema.parse(req);
+
+			const apiKey = validatedRequest.headers["x-ztnet-auth"] as string;
+			const orgId = validatedRequest.query?.orgid as string;
+			const networkId = validatedRequest.query?.nwid as string;
+			const memberId = validatedRequest.query?.memberId as string;
+			const body = validatedRequest.body;
+
+			const mergedOptions = {
+				// Set orgid as required by default
+				requireOrgId: true,
+				...options,
+			};
+
 			if (!apiKey) {
 				return res.status(400).json({ error: "API Key is required" });
 			}
@@ -127,10 +149,12 @@ export const SecuredPrivateApiRoute = (
 	handler: UserApiHandler,
 ) => {
 	return async (req: NextApiRequest, res: NextApiResponse) => {
-		const apiKey = req.headers["x-ztnet-auth"] as string;
-		const networkId = req.query?.id as string;
-		const memberId = req.query?.memberId as string;
-		const body = req.body;
+		const validatedRequest = ApiRequestSchema.parse(req);
+
+		const apiKey = validatedRequest.headers["x-ztnet-auth"] as string;
+		const networkId = validatedRequest.query?.id as string;
+		const memberId = validatedRequest.query?.memberId as string;
+		const body = validatedRequest.body;
 
 		const mergedOptions = {
 			// Set networkId as required by default

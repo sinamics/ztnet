@@ -5,6 +5,7 @@ import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import { createNetworkContextSchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -42,9 +43,13 @@ const POST_createNewNetwork = SecuredPrivateApiRoute(
 	{
 		requireNetworkId: false,
 	},
-	async (_req, res, { body, ctx }) => {
-		// If there are users, verify the API key
+	async (_req, res, context) => {
 		try {
+			// Validate the context (which includes the body)
+			const validatedContext = createNetworkContextSchema.parse(context);
+			const { body, ctx } = validatedContext;
+
+			// If there are users, verify the API key
 			const { name } = body;
 
 			const newNetworkId = await networkProvisioningFactory({

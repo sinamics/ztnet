@@ -6,6 +6,11 @@ import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import {
+	deleteHandlerContextSchema,
+	handlerContextSchema,
+	updateableFieldsMetaSchema,
+} from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -14,20 +19,6 @@ const limiter = rateLimit({
 });
 
 const REQUEST_PR_MINUTE = 50;
-
-// Function to parse and validate fields based on the expected type
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const parseField = (key: string, value: any, expectedType: string) => {
-	if (expectedType === "string") {
-		return value; // Assume all strings are valid
-	}
-	if (expectedType === "boolean") {
-		if (value === "true" || value === "false") {
-			return value === "true";
-		}
-		throw new Error(`Field '${key}' expected to be boolean, got: ${value}`);
-	}
-};
 
 export default async function apiNetworkUpdateMembersHandler(
 	req: NextApiRequest,
@@ -66,39 +57,39 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 		requireNetworkId: true,
 		requireMemberId: true,
 	},
-	async (_req, res, { body, userId, networkId, memberId, ctx }) => {
+	async (_req, res, context) => {
+		const validatedContext = handlerContextSchema.parse(context);
+		const { body, userId, networkId, memberId, ctx } = validatedContext;
+
+		// Validate the input data
+		const validatedInput = updateableFieldsMetaSchema.parse(body);
+
+		const updateableFields = {
+			name: { type: "string", destinations: ["controller", "database"] },
+			authorized: { type: "boolean", destinations: ["controller"] },
+		};
+
 		if (Object.keys(body).length === 0) {
 			return res.status(400).json({ error: "No data provided for update" });
 		}
-
-		// structure of the updateableFields object:
-		const updateableFields = {
-			name: { type: "string", destinations: ["database"] },
-			authorized: { type: "boolean", destinations: ["controller"] },
-		};
 
 		const databasePayload: Partial<network_members> = {};
 		const controllerPayload: Partial<network_members> = {};
 
 		// Iterate over keys in the request body
-		for (const key in body) {
-			// Check if the key is not in updateableFields
-			if (!(key in updateableFields)) {
-				return res.status(400).json({ error: `Invalid field: ${key}` });
-			}
-
+		for (const [key, value] of Object.entries(validatedInput)) {
 			try {
-				const parsedValue = parseField(key, body[key], updateableFields[key].type);
 				if (updateableFields[key].destinations.includes("database")) {
-					databasePayload[key] = parsedValue;
+					databasePayload[key] = value;
 				}
 				if (updateableFields[key].destinations.includes("controller")) {
-					controllerPayload[key] = parsedValue;
+					controllerPayload[key] = value;
 				}
 			} catch (error) {
 				return res.status(400).json({ error: error.message });
 			}
 		}
+
 		try {
 			// make sure the member is valid
 			const network = await prisma.network.findUnique({
@@ -184,7 +175,10 @@ const DELETE_deleteNetworkMember = SecuredPrivateApiRoute(
 		requireNetworkId: true,
 		requireMemberId: true,
 	},
-	async (_req, res, { userId, networkId, memberId, ctx }) => {
+	async (_req, res, context) => {
+		const validatedContext = deleteHandlerContextSchema.parse(context);
+		const { userId, networkId, memberId, ctx } = validatedContext;
+
 		try {
 			// make sure the member is valid
 			const network = await prisma.network.findUnique({

@@ -156,8 +156,8 @@ describe("organization api validation", () => {
 		const validToken = encrypt(validTokenData, generateInstanceSecret(API_TOKEN_SECRET));
 		mockRequest.headers["x-ztnet-auth"] = validToken;
 
-		// add organizationId to the request
-		mockRequest.query = undefined;
+		// add empty query
+		mockRequest.query = {};
 		await apiNetworkHandler(
 			mockRequest as NextApiRequest,
 			mockResponse as NextApiResponse,

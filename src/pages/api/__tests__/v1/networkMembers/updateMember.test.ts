@@ -77,7 +77,7 @@ describe("Update Network Members", () => {
 			method: "POST",
 			headers: { "x-ztnet-auth": "validApiKey" },
 			query: { id: "networkId", memberId: "memberId" },
-			body: { name: "New Name", authorized: "true" },
+			body: { name: "New Name", authorized: true },
 		} as unknown as NextApiRequest;
 
 		// Mock the database to return a network
@@ -114,7 +114,7 @@ describe("Update Network Members", () => {
 			method: "POST",
 			headers: { "x-ztnet-auth": "validApiKey" },
 			query: { id: "networkId", memberId: "memberId" },
-			body: { name: "New Name", authorized: "true" },
+			body: { name: "New Name", authorized: true },
 		} as unknown as NextApiRequest;
 
 		const res = createMockRes();
@@ -160,7 +160,7 @@ describe("Update Network Members", () => {
 			method: "POST",
 			headers: { "x-ztnet-auth": "invalidApiKey" },
 			query: { id: "networkId", memberId: "memberId" },
-			body: { name: "New Name", authorized: "true" },
+			body: { name: "New Name", authorized: true },
 		} as unknown as NextApiRequest;
 
 		const res = createMockRes();
