@@ -1,12 +1,16 @@
 import { network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import {
+	deleteHandlerContextSchema,
+	handlerContextSchema,
+	updateableFieldsSchema,
+} from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -15,39 +19,6 @@ const limiter = rateLimit({
 });
 
 const REQUEST_PR_MINUTE = 50;
-
-// Schema for updateable fields
-const updateableFieldsSchema = z
-	.object({
-		name: z.object({
-			type: z.literal("string"),
-			destinations: z.array(z.literal("database")),
-		}),
-		authorized: z.object({
-			type: z.literal("boolean"),
-			destinations: z.array(z.literal("controller")),
-		}),
-	})
-	.strict();
-
-// Schema for the request body
-const updateMemberBodySchema = z.record(z.union([z.string(), z.boolean()]));
-
-// Schema for the context passed to the handler
-const handlerContextSchema = z.object({
-	body: updateMemberBodySchema,
-	userId: z.string(),
-	networkId: z.string(),
-	memberId: z.string(),
-	ctx: z.object({
-		prisma: z.any(),
-		session: z.object({
-			user: z.object({
-				id: z.string(),
-			}),
-		}),
-	}),
-});
 
 // Function to parse and validate fields based on the expected type
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -207,21 +178,6 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 		}
 	},
 );
-
-// Schema for the context passed to the DELETE handler
-const deleteHandlerContextSchema = z.object({
-	userId: z.string(),
-	networkId: z.string(),
-	memberId: z.string(),
-	ctx: z.object({
-		prisma: z.any(),
-		session: z.object({
-			user: z.object({
-				id: z.string(),
-			}),
-		}),
-	}),
-});
 
 /**
  * Handles the HTTP DELETE request to delete a member from a network.

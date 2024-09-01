@@ -1,11 +1,11 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
 import { appRouter } from "~/server/api/root";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import { createNetworkContextSchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -14,27 +14,6 @@ const limiter = rateLimit({
 });
 
 export const REQUEST_PR_MINUTE = 50;
-
-// Schema for the request body when creating a new network
-const createNetworkBodySchema = z
-	.object({
-		name: z.string().optional(),
-	})
-	.strict();
-
-// Schema for the context passed to the handler
-const createNetworkContextSchema = z.object({
-	body: createNetworkBodySchema,
-	orgId: z.string(),
-	ctx: z.object({
-		prisma: z.any(),
-		session: z.object({
-			user: z.object({
-				id: z.string(),
-			}),
-		}),
-	}),
-});
 
 export default async function apiNetworkHandler(
 	req: NextApiRequest,
