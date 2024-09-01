@@ -1,6 +1,8 @@
 import { PrismaClient, User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 import { appRouter } from "~/server/api/root";
+import { passwordSchema } from "~/server/api/routers/authRouter";
 import { createTRPCContext } from "~/server/api/trpc";
 import { prisma } from "~/server/db";
 import { AuthorizationType } from "~/types/apiTypes";
@@ -15,6 +17,18 @@ const limiter = rateLimit({
 });
 
 const REQUEST_PR_MINUTE = 50;
+
+// Input validation schema
+const createUserSchema = z.object({
+	email: z
+		.string()
+		.email()
+		.transform((val) => val.trim()),
+	password: passwordSchema("password does not meet the requirements!"),
+	name: z.string().min(3, "Name must contain at least 3 character(s)").max(40),
+	expiresAt: z.string().datetime().optional(),
+	generateApiToken: z.boolean().optional(),
+});
 
 export default async function createUserHandler(
 	req: NextApiRequest,
@@ -61,8 +75,11 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 			});
 		}
 
+		// Input validation
+		const validatedInput = createUserSchema.parse(req.body);
+
 		// get data from the post request
-		const { email, password, name, expiresAt, generateApiToken } = req.body;
+		const { email, password, name, expiresAt, generateApiToken } = validatedInput;
 
 		if (userCount === 0 && expiresAt !== undefined) {
 			return res.status(400).json({ message: "Cannot add expiresAt for Admin user!" });
