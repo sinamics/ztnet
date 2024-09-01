@@ -4,12 +4,20 @@ import { NextApiRequest, NextApiResponse } from "next";
 describe("/api/stats", () => {
 	it("should allow only GET method", async () => {
 		const methods = ["DELETE", "POST", "PUT", "PATCH", "OPTIONS", "HEAD"];
-		const req = {} as NextApiRequest;
+		const req = {
+			method: "GET",
+			headers: {
+				"x-ztnet-auth": "validApiKey",
+			},
+			query: {},
+			body: {},
+		} as unknown as NextApiRequest;
+
 		const res = {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),
 			json: jest.fn().mockReturnThis(),
-			setHeader: jest.fn(), // Mock `setHeader` rate limiter uses it
+			setHeader: jest.fn(),
 		} as unknown as NextApiResponse;
 
 		for (const method of methods) {
@@ -29,7 +37,10 @@ describe("/api/stats", () => {
 		const req = {
 			method: "GET",
 			headers: { "x-ztnet-auth": "invalidApiKey" },
+			query: {},
+			body: {},
 		} as unknown as NextApiRequest;
+
 		const res = {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),

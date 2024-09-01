@@ -7,6 +7,7 @@ import { AuthorizationType } from "~/types/apiTypes";
 import { decryptAndVerifyToken } from "~/utils/encryption";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
+import { createUserSchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -61,8 +62,10 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 			});
 		}
 
+		// Input validation
+		const validatedInput = createUserSchema.parse(req.body);
 		// get data from the post request
-		const { email, password, name, expiresAt, generateApiToken } = req.body;
+		const { email, password, name, expiresAt, generateApiToken } = validatedInput;
 
 		if (userCount === 0 && expiresAt !== undefined) {
 			return res.status(400).json({ message: "Cannot add expiresAt for Admin user!" });
@@ -77,7 +80,6 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 				return res.status(400).json({ message: "Invalid expiresAt date" });
 			}
 		}
-
 		/**
 		 *
 		 * Create a transaction to make sure the user and API token are created together
@@ -119,9 +121,6 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 
 			let apiToken: string;
 			if (generateApiToken !== undefined) {
-				if (typeof generateApiToken !== "boolean") {
-					throw new Error("generateApiToken must be a boolean");
-				}
 				if (generateApiToken) {
 					const tokenResponse = await transactionCallerWithUserCtx.auth.addApiToken({
 						name: "Generated Token via API",

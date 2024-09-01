@@ -7,6 +7,7 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
+import { HandlerContextSchema, PostBodySchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -15,20 +16,6 @@ const limiter = rateLimit({
 });
 
 export const REQUEST_PR_MINUTE = 50;
-
-// Function to parse and validate fields based on the expected type
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const parseField = (key: string, value: any, expectedType: string) => {
-	if (expectedType === "string") {
-		return value; // Assume all strings are valid
-	}
-	if (expectedType === "boolean") {
-		if (value === "true" || value === "false") {
-			return value === "true";
-		}
-		throw new Error(`Field '${key}' expected to be boolean, got: ${value}`);
-	}
-};
 
 export default async function apiNetworkUpdateMembersHandler(
 	req: NextApiRequest,
@@ -67,9 +54,14 @@ export default async function apiNetworkUpdateMembersHandler(
  */
 export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.USER, requireNetworkId: true },
-	async (_req, res, { networkId, orgId, body, userId, memberId }) => {
+	async (_req, res, context) => {
 		try {
+			const validatedContext = HandlerContextSchema.parse(context);
+			const { networkId, orgId, body, userId, memberId } = validatedContext;
+
+			const validatedBody = PostBodySchema.parse(body);
 			// structure of the updateableFields object:
+
 			const updateableFields = {
 				name: { type: "string", destinations: ["database"] },
 				authorized: { type: "boolean", destinations: ["controller"] },
@@ -79,19 +71,18 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			const controllerPayload: Partial<network_members> = {};
 
 			// Iterate over keys in the request body
-			for (const key in body) {
+			for (const [key, value] of Object.entries(validatedBody)) {
 				// Check if the key is not in updateableFields
 				if (!(key in updateableFields)) {
 					return res.status(400).json({ error: `Invalid field: ${key}` });
 				}
 
 				try {
-					const parsedValue = parseField(key, body[key], updateableFields[key].type);
 					if (updateableFields[key].destinations.includes("database")) {
-						databasePayload[key] = parsedValue;
+						databasePayload[key] = value;
 					}
 					if (updateableFields[key].destinations.includes("controller")) {
-						controllerPayload[key] = parsedValue;
+						controllerPayload[key] = value;
 					}
 				} catch (error) {
 					return res.status(400).json({ error: error.message });
@@ -197,8 +188,11 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
  */
 export const DELETE_orgStashNetworkMember = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.USER, requireNetworkId: true },
-	async (_req, res, { networkId, orgId, memberId, ctx }) => {
+	async (_req, res, context) => {
 		try {
+			const validatedContext = HandlerContextSchema.parse(context);
+			const { networkId, orgId, memberId, ctx } = validatedContext;
+
 			// @ts-expect-error
 			const caller = appRouter.createCaller(ctx);
 			const networkAndMembers = await caller.networkMember.stash({
@@ -226,8 +220,11 @@ export const DELETE_orgStashNetworkMember = SecuredOrganizationApiRoute(
  */
 export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.USER, requireNetworkId: true },
-	async (_req, res, { networkId, memberId, ctx }) => {
+	async (_req, res, context) => {
 		try {
+			const validatedContext = HandlerContextSchema.parse(context);
+			const { networkId, memberId, ctx } = validatedContext;
+
 			// @ts-expect-error
 			const caller = appRouter.createCaller(ctx);
 			const networkAndMembers = await caller.networkMember.getMemberById({

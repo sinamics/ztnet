@@ -5,6 +5,7 @@ import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import { createNetworkContextSchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -40,8 +41,12 @@ export default async function apiNetworkHandler(
 
 export const POST_orgCreateNewNetwork = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.USER },
-	async (_req, res, { body, orgId, ctx }) => {
+	async (_req, res, context) => {
 		try {
+			// Validate the context (which includes the body)
+			const validatedContext = createNetworkContextSchema.parse(context);
+			const { body, orgId, ctx } = validatedContext;
+
 			// organization name
 			const { name } = body;
 

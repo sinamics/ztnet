@@ -68,6 +68,7 @@ describe("organization api validation", () => {
 			.mockResolvedValue({ id: "newUserId", name: "Ztnet", email: "post@ztnet.network" });
 
 		mockRequest.headers["x-ztnet-auth"] = "not valid token";
+		mockRequest.query = {};
 
 		await GET_userOrganization(
 			mockRequest as NextApiRequest,
