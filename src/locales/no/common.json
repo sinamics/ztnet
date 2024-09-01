@@ -135,6 +135,9 @@
 		"user-settings": "Brukerinnstillinger",
 		"logout": "Logg ut"
 	},
+	"mobileDrawer": {
+		"navigation": "Navigasjon"
+	},
 	"authPages": {
 		"welcomeMessage": {
 			"slogan": "ZeroTier VPN lar deg koble til enhetene dine sikkert og privat over internett, uansett hvor du er. Nyt raske og pålitelige tilkoblinger uten de vanlige barrierene, samtidig som dine data forblir trygge og tilgjengelige."

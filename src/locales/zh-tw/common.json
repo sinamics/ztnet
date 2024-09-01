@@ -135,6 +135,9 @@
 		"user-settings": "使用者設定",
 		"logout": "登出"
 	},
+	"mobileDrawer": {
+		"navigation": "導航"
+	},
 	"authPages": {
 		"welcomeMessage": {
 			"slogan": "ZeroTier VPN 讓您無論身在何處，都能安全私密地連接設備。享受快速可靠的連接，無需面對常見障礙，同時確保您的數據安全和可訪問。"

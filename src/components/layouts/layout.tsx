@@ -12,6 +12,7 @@ import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
 import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 import { WelcomeMessage } from "../auth/welcomeMessage";
+import MobileDrawer from "./mobileDrawer";
 
 type TUser = {
 	user: User;
@@ -39,15 +40,15 @@ export const LayoutPublic = ({ children }: Props): JSX.Element => {
 
 export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
-	const { fontSize } = useFontSizeStore();
-	const headerRef = useDynamicViewportHeight([fontSize]);
 
 	return (
 		<div className="outer-container">
 			<Modal />
-			<Header ref={headerRef} />
+			<Header />
 			<div className="flex">
-				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
+				<aside
+					className={`hidden lg:block duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}
+				>
 					<Sidebar />
 				</aside>
 				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
@@ -57,6 +58,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 					<Footer />
 				</div>
 			</div>
+			<MobileDrawer />
 		</div>
 	);
 };
@@ -72,7 +74,9 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 			<Modal />
 			<Header />
 			<div className="flex">
-				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
+				<aside
+					className={`hidden lg:block duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}
+				>
 					<Sidebar />
 				</aside>
 				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
@@ -82,6 +86,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 					<Footer />
 				</div>
 			</div>
+			<MobileDrawer />
 		</div>
 	);
 };
@@ -105,7 +110,11 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 
 			{/* Main Content including Sidebar, Content, and Chat Aside */}
 			<div className="flex flex-grow relative ">
-				<aside className={`duration-150 ${sidebarOpen ? "w-64" : "w-0 opacity-0"}`}>
+				<aside
+					className={`hidden lg:block duration-150 ${
+						sidebarOpen ? "w-64" : "w-0 opacity-0"
+					}`}
+				>
 					<Sidebar />
 				</aside>
 
@@ -126,6 +135,7 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 				{/* Chat Aside */}
 				<ChatAside />
 			</div>
+			<MobileDrawer />
 		</div>
 	);
 };

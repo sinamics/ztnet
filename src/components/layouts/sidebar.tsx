@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore, useSocketStore } from "~/utils/store";
 import { api } from "~/utils/api";
+import classNames from "classnames";
 
 // Custom hook to check if the screen width is below the 'md' breakpoint
 const useIsBelowMd = () => {
@@ -25,8 +26,10 @@ const useIsBelowMd = () => {
 
 	return isBelowMd;
 };
-
-const Sidebar = (): JSX.Element => {
+interface ISidebar {
+	className?: string;
+}
+const Sidebar = ({ className }: ISidebar): JSX.Element => {
 	const { open, setOpenState } = useSidebarStore();
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
@@ -69,8 +72,11 @@ const Sidebar = (): JSX.Element => {
 	return (
 		<aside
 			ref={sidebarRef}
-			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-			${open ? "w-64" : "w-0"}`}
+			className={classNames(
+				"overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow",
+				{ "w-64": open, "w-0": !open },
+				className,
+			)}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">

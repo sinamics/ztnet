@@ -23,6 +23,7 @@
 		"@next-auth/prisma-adapter": "^1.0.5",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@prisma/client": "^5.11.0",
+		"@radix-ui/react-dialog": "^1.1.1",
 		"@tanstack/react-query": "^4.20.2",
 		"@tanstack/react-query-devtools": "^4.28.0",
 		"@tanstack/react-table": "^8.9.3",
@@ -66,6 +67,7 @@
 		"unique-names-generator": "^4.7.1",
 		"unzipper": "^0.10.14",
 		"usehooks-ts": "^2.9.1",
+		"vaul": "^0.9.1",
 		"zod": "^3.22.3",
 		"zustand": "^4.3.6"
 	},
