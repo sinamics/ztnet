@@ -1,6 +1,5 @@
 import { Role, network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
@@ -8,6 +7,7 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
+import { HandlerContextSchema, PostBodySchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -16,31 +16,6 @@ const limiter = rateLimit({
 });
 
 export const REQUEST_PR_MINUTE = 50;
-
-// Schema for POST request body
-const PostBodySchema = z
-	.object({
-		name: z.string().optional(),
-		authorized: z.boolean().optional(),
-	})
-	.strict();
-
-// Schema for the context passed to the handler
-const HandlerContextSchema = z.object({
-	networkId: z.string(),
-	orgId: z.string(),
-	memberId: z.string(),
-	userId: z.string(),
-	body: z.record(z.unknown()),
-	ctx: z.object({
-		prisma: z.any(),
-		session: z.object({
-			user: z.object({
-				id: z.string(),
-			}),
-		}),
-	}),
-});
 
 export default async function apiNetworkUpdateMembersHandler(
 	req: NextApiRequest,

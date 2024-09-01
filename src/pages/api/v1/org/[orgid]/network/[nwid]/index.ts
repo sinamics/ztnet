@@ -1,55 +1,17 @@
 import { Role, network } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { z } from "zod";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import { HandlerContextSchema, NetworkUpdateSchema } from "./_schema";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
 	interval: 60 * 1000, // 60 seconds
 	uniqueTokenPerInterval: 500, // Max 500 users per second
-});
-
-// Schema for updateable fields
-const NetworkUpdateSchema = z
-	.object({
-		name: z.string().optional(),
-		description: z.string().optional(),
-		flowRule: z.string().optional(),
-		mtu: z.string().optional(),
-		private: z.boolean().optional(),
-		dns: z
-			.object({
-				domain: z.string(),
-				servers: z.array(z.string()),
-			})
-			.optional(),
-		ipAssignmentPools: z.array(z.unknown()).optional(),
-		routes: z.array(z.unknown()).optional(),
-		v4AssignMode: z.record(z.unknown()).optional(),
-		v6AssignMode: z.record(z.unknown()).optional(),
-	})
-	.strict();
-
-// Schema for POST request body
-const PostBodySchema = z.record(z.unknown());
-
-// Schema for the context passed to the handler
-const HandlerContextSchema = z.object({
-	networkId: z.string(),
-	ctx: z.object({
-		prisma: z.any(),
-		session: z.object({
-			user: z.object({
-				id: z.string(),
-			}),
-		}),
-	}),
-	body: PostBodySchema,
 });
 
 export const REQUEST_PR_MINUTE = 50;
