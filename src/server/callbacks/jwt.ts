@@ -1,9 +1,8 @@
 import { prisma } from "../db";
+import { deleteDeviceCookie } from "~/utils/devices";
 
-export function jwtCallback() {
+export function jwtCallback(res) {
 	return async function jwt({ token, user, trigger, account, session, profile }) {
-		// console.log(user);
-
 		if (trigger === "update") {
 			if (session.update) {
 				const updateObject: Record<string, string | Date> = {};
@@ -78,8 +77,12 @@ export function jwtCallback() {
 				});
 
 				if (!userDevice) {
+					// Delete the device cookie
+					deleteDeviceCookie(res);
+
 					// Device doesn't exist, invalidate the deviceId in the token
 					token.deviceId = undefined;
+
 					return token;
 				}
 
