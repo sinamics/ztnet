@@ -136,9 +136,6 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 
 			let apiToken: string;
 			if (generateApiToken !== undefined) {
-				if (typeof generateApiToken !== "boolean") {
-					throw new Error("generateApiToken must be a boolean");
-				}
 				if (generateApiToken) {
 					const tokenResponse = await transactionCallerWithUserCtx.auth.addApiToken({
 						name: "Generated Token via API",
