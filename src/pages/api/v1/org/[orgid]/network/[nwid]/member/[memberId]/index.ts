@@ -18,10 +18,12 @@ const limiter = rateLimit({
 export const REQUEST_PR_MINUTE = 50;
 
 // Schema for POST request body
-const PostBodySchema = z.object({
-	name: z.string().optional(),
-	authorized: z.boolean().optional(),
-});
+const PostBodySchema = z
+	.object({
+		name: z.string().optional(),
+		authorized: z.boolean().optional(),
+	})
+	.strict();
 
 // Schema for the context passed to the handler
 const HandlerContextSchema = z.object({

@@ -16,9 +16,11 @@ const limiter = rateLimit({
 const REQUEST_PR_MINUTE = 50;
 
 // Schema for the request body when creating a new network
-const createNetworkBodySchema = z.object({
-	name: z.string().optional(),
-});
+const createNetworkBodySchema = z
+	.object({
+		name: z.string().optional(),
+	})
+	.strict();
 
 // Schema for the context passed to the handler
 const createNetworkContextSchema = z.object({
