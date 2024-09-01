@@ -48,12 +48,9 @@ const SHORT_REQUEST_LIMIT = 5;
 export const passwordSchema = (errorMessage: string) =>
 	z
 		.string()
-		.max(40)
-		.refine((val) => {
-			if (!mediumPassword.test(val)) {
-				throw new Error(errorMessage);
-			}
-			return true;
+		.max(40, { message: "Password must not exceed 40 characters" })
+		.refine((val) => mediumPassword.test(val), {
+			message: errorMessage,
 		})
 		.optional();
 
