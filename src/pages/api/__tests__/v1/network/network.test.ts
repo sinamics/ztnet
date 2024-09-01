@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 describe("/api/createNetwork", () => {
 	it("should respond 405 to unsupported methods", async () => {
-		const req = { method: "PUT" } as NextApiRequest;
+		const req = { method: "PUT", query: {} } as NextApiRequest;
 		const res = {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),
@@ -20,12 +20,13 @@ describe("/api/createNetwork", () => {
 		const req = {
 			method: "POST",
 			headers: { "x-ztnet-auth": "invalidApiKey" },
+			query: {},
 		} as unknown as NextApiRequest;
 		const res = {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),
 			json: jest.fn().mockReturnThis(),
-			setHeader: jest.fn(), // Mock `setHeader` rate limiter uses it
+			setHeader: jest.fn(),
 		} as unknown as NextApiResponse;
 
 		await apiNetworkHandler(req, res);
@@ -37,12 +38,13 @@ describe("/api/createNetwork", () => {
 		const req = {
 			method: "GET",
 			headers: { "x-ztnet-auth": "invalidApiKey" },
+			query: {},
 		} as unknown as NextApiRequest;
 		const res = {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),
 			json: jest.fn().mockReturnThis(),
-			setHeader: jest.fn(), // Mock `setHeader` rate limiter uses it
+			setHeader: jest.fn(),
 		} as unknown as NextApiResponse;
 
 		await apiNetworkHandler(req, res);
