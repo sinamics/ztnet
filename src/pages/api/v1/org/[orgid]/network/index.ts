@@ -1,5 +1,6 @@
 import { Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 import { appRouter } from "~/server/api/root";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
@@ -13,6 +14,25 @@ const limiter = rateLimit({
 });
 
 export const REQUEST_PR_MINUTE = 50;
+
+// Schema for the request body when creating a new network
+const createNetworkBodySchema = z.object({
+	name: z.string().optional(),
+});
+
+// Schema for the context passed to the handler
+const createNetworkContextSchema = z.object({
+	body: createNetworkBodySchema,
+	orgId: z.string(),
+	ctx: z.object({
+		prisma: z.any(),
+		session: z.object({
+			user: z.object({
+				id: z.string(),
+			}),
+		}),
+	}),
+});
 
 export default async function apiNetworkHandler(
 	req: NextApiRequest,
@@ -40,8 +60,12 @@ export default async function apiNetworkHandler(
 
 export const POST_orgCreateNewNetwork = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.USER },
-	async (_req, res, { body, orgId, ctx }) => {
+	async (_req, res, context) => {
 		try {
+			// Validate the context (which includes the body)
+			const validatedContext = createNetworkContextSchema.parse(context);
+			const { body, orgId, ctx } = validatedContext;
+
 			// organization name
 			const { name } = body;
 
