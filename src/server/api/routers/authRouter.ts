@@ -45,7 +45,7 @@ const GENERAL_REQUEST_LIMIT = 60;
 const SHORT_REQUEST_LIMIT = 5;
 
 // create a zod password schema
-const passwordSchema = (errorMessage: string) =>
+export const passwordSchema = (errorMessage: string) =>
 	z
 		.string()
 		.max(40)
