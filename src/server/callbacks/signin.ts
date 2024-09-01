@@ -1,16 +1,19 @@
 import { ErrorCode } from "~/utils/errorCode";
 import { prisma } from "../db";
-import { DeviceInfo, parseUA } from "~/utils/devices";
+import {
+	createDeviceCookie,
+	DEVICE_SALT_COOKIE_NAME,
+	DeviceInfo,
+	parseUA,
+} from "~/utils/devices";
 import { isRunningInDocker } from "~/utils/docker";
 import { IncomingMessage } from "http";
 import { User } from "@prisma/client";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { GetServerSidePropsContext } from "next";
-import { parse, serialize } from "cookie";
+import { parse } from "cookie";
 import { randomBytes } from "crypto";
-
-const DEVICE_SALT_COOKIE_NAME = "next-auth.did-token";
 
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
@@ -106,14 +109,7 @@ function getOrCreateDeviceSalt(
 
 	if (!deviceId) {
 		deviceId = randomBytes(16).toString("hex");
-		response.setHeader("Set-Cookie", [
-			serialize(DEVICE_SALT_COOKIE_NAME, deviceId, {
-				httpOnly: true,
-				secure: false,
-				sameSite: "lax",
-				path: "/",
-			}),
-		]);
+		createDeviceCookie(response, deviceId);
 	}
 
 	return deviceId;

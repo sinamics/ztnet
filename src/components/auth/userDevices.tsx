@@ -75,6 +75,16 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 			},
 		});
 
+	const invalidateUserDevice = async () => {
+		try {
+			await fetch("/api/auth/user/invalidateUserDevice", {
+				method: "POST",
+			});
+		} catch (error) {
+			console.error("Error deleting device cookie:", error);
+		}
+	};
+
 	const currentDeviceId = session?.user?.deviceId;
 
 	const isCurrentDevice = (device: UserDevice) => {
@@ -119,7 +129,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 								className="btn btn-sm btn-primary"
 								onClick={() => {
 									deleteUserDevice({ deviceId: device.deviceId });
-									isCurrentDevice(device) && signOut();
+									isCurrentDevice(device) && signOut().then(() => invalidateUserDevice());
 								}}
 							>
 								{t("userSettings.account.userDevices.logout")}
