@@ -17,16 +17,18 @@ const limiter = rateLimit({
 const REQUEST_PR_MINUTE = 50;
 
 // Schema for updateable fields
-const updateableFieldsSchema = z.object({
-	name: z.object({
-		type: z.literal("string"),
-		destinations: z.array(z.literal("database")),
-	}),
-	authorized: z.object({
-		type: z.literal("boolean"),
-		destinations: z.array(z.literal("controller")),
-	}),
-});
+const updateableFieldsSchema = z
+	.object({
+		name: z.object({
+			type: z.literal("string"),
+			destinations: z.array(z.literal("database")),
+		}),
+		authorized: z.object({
+			type: z.literal("boolean"),
+			destinations: z.array(z.literal("controller")),
+		}),
+	})
+	.strict();
 
 // Schema for the request body
 const updateMemberBodySchema = z.record(z.union([z.string(), z.boolean()]));
