@@ -1,25 +1,16 @@
 import { z } from "zod";
 
-// Schema for updateable fields
-export const updateableFieldsSchema = z
+// Schema for updateable fields metadata
+export const updateableFieldsMetaSchema = z
 	.object({
-		name: z.object({
-			type: z.literal("string"),
-			destinations: z.array(z.literal("database")),
-		}),
-		authorized: z.object({
-			type: z.literal("boolean"),
-			destinations: z.array(z.literal("controller")),
-		}),
+		name: z.string().optional(),
+		authorized: z.boolean().optional(),
 	})
 	.strict();
 
-// Schema for the request body
-export const updateMemberBodySchema = z.record(z.union([z.string(), z.boolean()]));
-
 // Schema for the context passed to the handler
 export const handlerContextSchema = z.object({
-	body: updateMemberBodySchema,
+	body: z.record(z.unknown()),
 	userId: z.string(),
 	networkId: z.string(),
 	memberId: z.string(),
