@@ -64,7 +64,6 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 
 		// Input validation
 		const validatedInput = createUserSchema.parse(req.body);
-
 		// get data from the post request
 		const { email, password, name, expiresAt, generateApiToken } = validatedInput;
 
@@ -81,7 +80,6 @@ export const POST_createUser = async (req: NextApiRequest, res: NextApiResponse)
 				return res.status(400).json({ message: "Invalid expiresAt date" });
 			}
 		}
-
 		/**
 		 *
 		 * Create a transaction to make sure the user and API token are created together

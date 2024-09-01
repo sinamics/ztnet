@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import createUserHandler, { POST_createUser } from "~/pages/api/v1/user";
+import createUserHandler from "~/pages/api/v1/user";
 import { prisma } from "~/server/db";
 import { appRouter } from "~/server/api/root";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
@@ -18,7 +18,12 @@ jest.mock("~/server/api/root", () => ({
 		})),
 	},
 }));
-
+jest.mock("~/utils/rateLimit", () => ({
+	__esModule: true,
+	default: () => ({
+		check: jest.fn().mockResolvedValue(true),
+	}),
+}));
 jest.mock("~/server/api/trpc");
 
 jest.mock("~/server/db", () => ({
@@ -126,9 +131,19 @@ describe("createUserHandler", () => {
 			}),
 		}));
 
+		mockRequest.method = "POST";
 		mockRequest.headers["x-ztnet-auth"] = "not defined";
+		mockRequest.body = {
+			email: "ztnet@example.com",
+			password: "password123",
+			name: "Ztnet",
+		};
 
-		await POST_createUser(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
+		await createUserHandler(
+			mockRequest as NextApiRequest,
+			mockResponse as NextApiResponse,
+		);
+
 		expect(mockResponse.status).toHaveBeenCalledWith(200);
 
 		// Check if the response is as expected
@@ -166,6 +181,7 @@ describe("createUserHandler", () => {
 			method: "POST",
 			headers: { "x-ztnet-auth": tokenWithIdHash },
 			body: { email: "test@example.com", password: "password123", name: "Test User" },
+			query: {},
 		} as unknown as NextApiRequest;
 
 		const res = {
@@ -208,7 +224,9 @@ describe("createUserHandler", () => {
 
 	it("should allow only POST method", async () => {
 		const methods = ["GET", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"];
-		const req = {} as NextApiRequest;
+		const req = {
+			query: {},
+		} as NextApiRequest;
 		const res = createMockRes();
 
 		for (const method of methods) {

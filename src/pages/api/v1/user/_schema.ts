@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { passwordSchema } from "~/server/api/routers/authRouter";
+import { passwordSchema } from "~/server/api/routers/_schema";
 
 // Input validation schema
 export const createUserSchema = z.object({
