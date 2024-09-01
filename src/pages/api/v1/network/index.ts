@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 import { networkProvisioningFactory } from "~/server/api/services/networkService";
 import { prisma } from "~/server/db";
 import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
@@ -13,6 +14,24 @@ const limiter = rateLimit({
 });
 
 const REQUEST_PR_MINUTE = 50;
+
+// Schema for the request body when creating a new network
+const createNetworkBodySchema = z.object({
+	name: z.string().optional(),
+});
+
+// Schema for the context passed to the handler
+const createNetworkContextSchema = z.object({
+	body: createNetworkBodySchema,
+	ctx: z.object({
+		prisma: z.any(),
+		session: z.object({
+			user: z.object({
+				id: z.string(),
+			}),
+		}),
+	}),
+});
 
 export default async function apiNetworkHandler(
 	req: NextApiRequest,
@@ -42,9 +61,13 @@ const POST_createNewNetwork = SecuredPrivateApiRoute(
 	{
 		requireNetworkId: false,
 	},
-	async (_req, res, { body, ctx }) => {
-		// If there are users, verify the API key
+	async (_req, res, context) => {
 		try {
+			// Validate the context (which includes the body)
+			const validatedContext = createNetworkContextSchema.parse(context);
+			const { body, ctx } = validatedContext;
+
+			// If there are users, verify the API key
 			const { name } = body;
 
 			const newNetworkId = await networkProvisioningFactory({
