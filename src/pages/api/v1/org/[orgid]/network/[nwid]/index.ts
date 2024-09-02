@@ -151,7 +151,7 @@ export const GET_network = SecuredOrganizationApiRoute(
 		try {
 			const network = await prisma.network.findUnique({
 				where: { nwid: networkId },
-				select: { authorId: true, description: true },
+				select: { description: true },
 			});
 
 			if (!network) {
