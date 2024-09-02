@@ -65,7 +65,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 		const validatedInput = updateableFieldsMetaSchema.parse(body);
 
 		const updateableFields = {
-			name: { type: "string", destinations: ["controller", "database"] },
+			name: { type: "string", destinations: ["database"] },
 			authorized: { type: "boolean", destinations: ["controller"] },
 		};
 

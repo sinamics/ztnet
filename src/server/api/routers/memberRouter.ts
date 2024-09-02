@@ -433,6 +433,7 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				});
 			}
+
 			// Check if the organization wants to update the node name globally
 			if (input.organizationId && input.updateParams.name) {
 				// Upsert OrganizationSettings to ensure it exists
@@ -458,7 +459,7 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 				}
 			}
-			// if users click the re-generate icon on IP address
+
 			const response = await ctx.prisma.network.update({
 				where: {
 					nwid: input.nwid,
@@ -469,7 +470,7 @@ export const networkMemberRouter = createTRPCRouter({
 							where: {
 								id_nwid: {
 									id: input.id,
-									nwid: input.nwid, // this should be the value of `nwid` you are looking for
+									nwid: input.nwid,
 								},
 							},
 							data: {
