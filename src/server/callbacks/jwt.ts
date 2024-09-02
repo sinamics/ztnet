@@ -25,7 +25,7 @@ export function jwtCallback(res) {
 				// session update => https://github.com/nextauthjs/next-auth/discussions/3941
 				// verify that name has at least one character
 				if (typeof session.update.name === "string") {
-					// TODO throwing error will logout user.
+					// !TODO throwing error will logout user.
 					// if (session.update.name.length < 1) {
 					//   throw new Error("Name must be at least one character long.");
 					// }
@@ -35,14 +35,21 @@ export function jwtCallback(res) {
 
 				// verify that email is valid
 				if (typeof session.update.email === "string") {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+					const existingUser = await prisma.user.findUnique({
+						where: { email: session.update.email },
+					});
+
+					// if the email is already in use by another user, return the token.
+					// !TODO need to find a way to show error message to user.
+					if (existingUser && existingUser.id !== token.id) {
+						return token;
+					}
 
 					token.email = session.update.email;
 					updateObject.email = session.update.email;
 					updateObject.emailVerified =
 						user?.email === session.update.email ? user.emailVerified : null;
 				}
-
 				// update user with new values
 				await prisma.user.update({
 					where: {

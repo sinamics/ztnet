@@ -104,27 +104,27 @@ const Account = () => {
 					isLoading={!session?.user}
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
-					badge={
+					toolTip={
 						meLoading || sendMailLoading
 							? {
 									text: "loading",
-									color: "ghost",
 							  }
 							: me?.emailVerified
 							  ? {
 										text: t("userSettings.account.accountSettings.verifiedBadge"),
-										color: "success",
+										className: "tooltip-success",
+										isVerified: true,
 								  }
 							  : {
 										text: "Not verified, click to resend",
-										color: "warning",
+										className: "tooltip-primary",
 										onClick: sendVerificationEmail,
 								  }
 					}
 					fields={[
 						{
 							name: "email",
-							type: "text",
+							type: "email",
 							placeholder: session?.user?.email,
 							value: session?.user?.email,
 						},
