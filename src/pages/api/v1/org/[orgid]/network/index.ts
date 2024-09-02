@@ -6,6 +6,7 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 import { createNetworkContextSchema } from "./_schema";
+import { prisma } from "~/server/db";
 
 // Number of allowed requests per minute
 const limiter = rateLimit({
@@ -74,6 +75,17 @@ export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
 			const organization = await caller.org
 				.getOrgById({ organizationId: orgId })
 				.then(async (org) => {
+					// Fetch all network descriptions in a single query
+					const networkDescriptions = await prisma.network.findMany({
+						where: { nwid: { in: org.networks.map((n) => n.nwid) } },
+						select: { nwid: true, description: true },
+					});
+
+					// Create a map for quick lookup
+					const descriptionMap = new Map(
+						networkDescriptions.map((n) => [n.nwid, { description: n.description }]),
+					);
+
 					// Use Promise.all to wait for all network detail fetches to complete
 					const networksDetails = await Promise.all(
 						org.networks.map(async (network) => {
@@ -82,7 +94,13 @@ export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
 								ctx,
 								network.nwid,
 							);
-							return controller.network;
+							const dbInfo = descriptionMap.get(network.nwid) || {
+								description: null,
+							};
+							return {
+								...dbInfo,
+								...controller.network,
+							};
 						}),
 					);
 					return networksDetails;
