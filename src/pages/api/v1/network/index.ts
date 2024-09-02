@@ -70,27 +70,41 @@ const GET_userNetworks = SecuredPrivateApiRoute(
 	},
 	async (_req, res, { ctx, userId }) => {
 		try {
-			const networks = await prisma.user.findFirst({
+			const userWithNetworks = await prisma.user.findUnique({
 				where: {
 					id: userId,
 				},
 				select: {
-					network: true,
+					network: {
+						select: {
+							nwid: true,
+							description: true,
+							authorId: true,
+						},
+					},
 				},
 			});
-			const arr = [];
-			// biome-ignore lint/correctness/noUnsafeOptionalChaining: <explanation>
-			for (const network of networks?.network) {
-				const ztControllerResponse = await ztController.local_network_detail(
-					//@ts-expect-error
-					ctx,
-					network.nwid,
-					false,
-				);
-				arr.push(ztControllerResponse.network);
+
+			if (!userWithNetworks || !userWithNetworks.network) {
+				return res.status(404).json({ error: "User or networks not found" });
 			}
 
-			return res.status(200).json(arr);
+			const networksWithDetails = await Promise.all(
+				userWithNetworks.network.map(async (network) => {
+					const ztControllerResponse = await ztController.local_network_detail(
+						//@ts-expect-error
+						ctx,
+						network.nwid,
+						false,
+					);
+					return {
+						...network,
+						...ztControllerResponse.network,
+					};
+				}),
+			);
+
+			return res.status(200).json(networksWithDetails);
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}
