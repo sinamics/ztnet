@@ -51,6 +51,12 @@ interface FormProps {
 		color: string;
 		onClick?: () => void;
 	};
+	toolTip?: {
+		text: string;
+		className?: string;
+		isVerified?: boolean;
+		onClick?: () => void;
+	};
 }
 
 const InputField = ({
@@ -63,6 +69,7 @@ const InputField = ({
 	submitHandler,
 	badge,
 	headerBadge,
+	toolTip,
 	isLoading,
 	size = "md",
 	buttonClassName,
@@ -163,11 +170,11 @@ const InputField = ({
 
 		return (
 			<span
-				className={`badge badge-outline badge-${badgeProps.color} ml-2 ${
+				className={`badge badge-outline badge-${badgeProps.color} sm:ml-2 ${
 					badgeProps.onClick ? "cursor-pointer" : ""
 				}`}
 				onClick={(e) => {
-					e.stopPropagation(); // Prevent event from bubbling up
+					e.stopPropagation();
 					if (badgeProps.onClick) {
 						badgeProps.onClick();
 					}
@@ -175,6 +182,56 @@ const InputField = ({
 			>
 				{badgeProps.text}
 			</span>
+		);
+	};
+
+	const renderToolTip = (toolTip: FormProps["toolTip"]) => {
+		if (!toolTip) return null;
+
+		return (
+			<div
+				className={cn("tooltip tooltip-right", toolTip.className)}
+				data-tip={toolTip.text}
+			>
+				<button
+					className="btn btn-circle btn-ghost btn-xs"
+					onClick={(e) => {
+						e.stopPropagation();
+						if (toolTip.onClick) {
+							toolTip.onClick();
+						}
+					}}
+				>
+					{toolTip.isVerified ? (
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 20 20"
+							fill="currentColor"
+							className="text-green-500 h-4 w-4"
+						>
+							<path
+								fillRule="evenodd"
+								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+								clipRule="evenodd"
+							/>
+						</svg>
+					) : (
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							className="w-4 h-4 stroke-current text-primary"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+							></path>
+						</svg>
+					)}
+				</button>
+			</div>
 		);
 	};
 	return (
@@ -191,9 +248,10 @@ const InputField = ({
 								<p className="m-0 p-0 text-xs text-gray-500">{description}</p>
 							) : null}
 						</div>
-						<div className="flex items-center text-gray-500">
+						<div className="sm:flex items-center text-gray-500">
 							<span>{placeholder ?? fields[0].placeholder}</span>
 							{renderBadge(badge)}
+							{renderToolTip(toolTip)}
 						</div>
 					</div>
 					<div>
