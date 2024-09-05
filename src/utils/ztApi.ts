@@ -618,7 +618,7 @@ export const member_details = async (
 
 		return await getData<MemberEntity>(addr, headers);
 	} catch (error) {
-		const message = `${error} (member_details)`;
+		const message = "Member not found!";
 		throw new APIError(message, error as AxiosError);
 	}
 };
