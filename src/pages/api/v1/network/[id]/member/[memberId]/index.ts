@@ -65,7 +65,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 		const validatedInput = updateableFieldsMetaSchema.parse(body);
 
 		const updateableFields = {
-			name: { type: "string", destinations: ["database"] },
+			name: { type: "string", destinations: ["controller"] },
 			authorized: { type: "boolean", destinations: ["controller"] },
 		};
 
@@ -101,14 +101,9 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 				},
 			});
 
-			if (!network?.networkMembers || network.networkMembers.length === 0) {
-				return res
-					.status(401)
-					.json({ error: "Member or Network not found or access denied." });
-			}
+			const dbMember = network?.networkMembers?.[0];
 
-			if (Object.keys(databasePayload).length > 0) {
-				// if users click the re-generate icon on IP address
+			if (dbMember && Object.keys(databasePayload).length > 0) {
 				await ctx.prisma.network.update({
 					where: {
 						nwid: networkId,
@@ -119,7 +114,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 								where: {
 									id_nwid: {
 										id: memberId,
-										nwid: networkId, // this should be the value of `nwid` you are looking for
+										nwid: networkId,
 									},
 								},
 								data: {
@@ -149,14 +144,31 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 				});
 			}
 
-			// @ts-expect-error
-			const caller = appRouter.createCaller(ctx);
-			const networkAndMembers = await caller.networkMember.getMemberById({
-				nwid: networkId,
-				id: memberId,
-			});
+			// Fetch the latest data from both database and controller
+			const [updatedDbMember, controllerMember] = await Promise.all([
+				ctx.prisma.network_members.findUnique({
+					where: {
+						id_nwid: {
+							id: memberId,
+							nwid: networkId,
+						},
+					},
+				}),
+				// @ts-expect-error
+				ztController.member_details(ctx, networkId, memberId, false),
+			]);
 
-			return res.status(200).json(networkAndMembers);
+			if (!controllerMember) {
+				return res.status(404).json({ error: "Member not found in controller" });
+			}
+
+			// Merge the database and controller data
+			const mergedMember = {
+				...updatedDbMember,
+				...controllerMember,
+			};
+
+			return res.status(200).json(mergedMember);
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}
