@@ -51,7 +51,7 @@ export const networkMemberRouter = createTRPCRouter({
 			const dbMember = await ctx.prisma.network_members.findFirst({
 				where: {
 					id: input.id,
-					nwid: input.nwid, // this should be the value of `nwid` you are looking for
+					nwid: input.nwid,
 				},
 			});
 			return {
