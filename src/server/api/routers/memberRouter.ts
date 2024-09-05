@@ -159,6 +159,7 @@ export const networkMemberRouter = createTRPCRouter({
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
+					name: z.string().optional(),
 					activeBridge: z.boolean().optional(),
 					noAutoAssignIps: z.boolean().optional(),
 					ipAssignments: z
@@ -173,84 +174,112 @@ export const networkMemberRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			const { nwid, memberId, central, organizationId, updateParams } = input;
 			// Check if the user has permission to update the network
-			if (input.organizationId) {
+			if (organizationId) {
 				await checkUserOrganizationRole({
 					ctx,
-					organizationId: input.organizationId,
+					organizationId: organizationId,
 					minimumRequiredRole: Role.USER,
 				});
 			}
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
-					action: `Updated member ${input.memberId} in network ${
-						input.nwid
-					}. ${JSON.stringify(input.updateParams)}`,
+					action: `Updated member ${memberId} in network ${nwid}. ${JSON.stringify(
+						updateParams,
+					)}`,
 					performedById: ctx.session.user.id,
-					organizationId: input.organizationId || null, // Use null if organizationId is not provided
+					organizationId: organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-			const payload: Partial<MemberEntity> = {};
 
-			// update capabilities
-			if (typeof input.updateParams.capabilities === "object") {
-				// update member
-				Object.assign(payload, {}, { capabilities: input.updateParams.capabilities });
-			}
+			// get the user options
+			const userOptions = await ctx.prisma.userOptions.findFirst({
+				where: {
+					userId: ctx.session.user.id,
+				},
+			});
 
-			// update tags
-			if (typeof input.updateParams.tags === "object") {
-				// update member
-				Object.assign(payload, {}, { tags: input.updateParams.tags });
-			}
-			// update noAutoAssignIps
-			if (typeof input.updateParams.activeBridge === "boolean") {
-				// update member
-				Object.assign(payload, {}, { activeBridge: input.updateParams.activeBridge });
-			}
-			// update noAutoAssignIps
-			if (typeof input.updateParams.noAutoAssignIps === "boolean") {
-				// update member
-				Object.assign(
-					payload,
-					{},
-					{ noAutoAssignIps: input.updateParams.noAutoAssignIps },
-				);
-			}
+			// Handle global name updates
+			if (updateParams.name) {
+				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
 
-			// update ip specified by user UI
-			if (input.updateParams.ipAssignments) {
-				const ips = input.updateParams.ipAssignments;
-				const invalidIPs = ips.filter((ip) => !isValidIP(ip));
-
-				if (invalidIPs.length > 0) {
-					throw new TRPCError({
-						message: "Invalid IP addresses provided",
-						code: "BAD_REQUEST",
+				if (shouldUpdateNameGlobally && !organizationId) {
+					// Update name across all user's private networks
+					const userNetworks = await ctx.prisma.network.findMany({
+						where: {
+							authorId: ctx.session.user.id,
+							organizationId: null,
+						},
+						select: { nwid: true },
 					});
+
+					for (const network of userNetworks) {
+						await ztController.member_update({
+							ctx,
+							nwid: network.nwid,
+							memberId: memberId,
+							// @ts-expect-error
+							updateParams: updateParams,
+						});
+					}
+				} else if (organizationId) {
+					// Check organization settings. if it does not exist, create it with default settings, hence the upsert
+					const organizationOptions = await ctx.prisma.organizationSettings.upsert({
+						where: { organizationId },
+						update: {},
+						create: { organizationId },
+					});
+
+					if (organizationOptions.renameNodeGlobally) {
+						const orgNetworks = await ctx.prisma.network.findMany({
+							where: {
+								organizationId,
+							},
+						});
+
+						for (const network of orgNetworks) {
+							await ztController.member_update({
+								ctx,
+								nwid: network.nwid,
+								memberId: memberId,
+								// @ts-expect-error
+								updateParams: updateParams,
+							});
+						}
+					}
 				}
-
-				// update member
-				Object.assign(payload, {}, { ipAssignments: input.updateParams.ipAssignments });
 			}
 
-			// update authorized
-			if (typeof input.updateParams.authorized === "boolean") {
-				Object.assign(payload, {}, { authorized: input.updateParams.authorized });
+			// Prepare payload
+			const payload: Partial<MemberEntity> = {};
+			for (const [key, value] of Object.entries(updateParams)) {
+				if (key === "ipAssignments" && Array.isArray(value)) {
+					const invalidIPs = value.filter(
+						(ip) => typeof ip === "string" && !isValidIP(ip),
+					);
+					if (invalidIPs.length > 0) {
+						throw new TRPCError({
+							message: "Invalid IP addresses provided",
+							code: "BAD_REQUEST",
+						});
+					}
+				}
+				payload[key] = value;
 			}
 
-			const updateParams = input.central ? { config: { ...payload } } : { ...payload };
+			const finalUpdateParams = central ? { config: payload } : payload;
 
 			// if central is true, send the request to the central API and return the response
 			const updatedMember = await ztController
 				.member_update({
 					ctx,
-					nwid: input.nwid,
-					memberId: input.memberId,
-					central: input.central,
+					nwid: nwid,
+					memberId: memberId,
+					central: central,
 					// @ts-expect-error
-					updateParams,
+					updateParams: finalUpdateParams,
 				})
 				.catch(() => {
 					throw new TRPCError({
@@ -265,10 +294,10 @@ export const networkMemberRouter = createTRPCRouter({
 				await sendWebhook<MemberConfigChanged>({
 					hookType: HookType.MEMBER_CONFIG_CHANGED,
 					organizationId: input?.organizationId,
-					memberId: input.memberId,
+					memberId: memberId,
 					userId: ctx.session.user.id,
 					userEmail: ctx.session.user.email,
-					networkId: input.nwid,
+					networkId: nwid,
 					changes: payload,
 				});
 			} catch (error) {
@@ -361,7 +390,6 @@ export const networkMemberRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					deleted: z.boolean().optional(),
-					name: z.string().optional(),
 				}),
 			}),
 		)
@@ -384,81 +412,6 @@ export const networkMemberRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-			// if central is true, send the request to the central API and return the response
-			if (input.central && input?.updateParams?.name) {
-				return await ztController
-					.member_update({
-						ctx,
-						nwid: input.nwid,
-						memberId: input.id,
-						central: input.central,
-						updateParams: input.updateParams,
-					})
-					.catch(() => {
-						throw new TRPCError({
-							message:
-								"Member does not exsist in the network, did you add this device manually? \r\n Make sure it has properly joined the network",
-							code: "FORBIDDEN",
-						});
-					});
-			}
-
-			// get the user options
-			const userOptions = await ctx.prisma.userOptions.findFirst({
-				where: {
-					userId: ctx.session.user.id,
-				},
-			});
-
-			// check if the user wants to update the name globally
-			const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
-			if (shouldUpdateNameGlobally && input.updateParams.name && !input.organizationId) {
-				// Find all networks where the user is the author
-				const userNetworks = await ctx.prisma.network.findMany({
-					where: {
-						authorId: ctx.session.user.id,
-						organizationId: null, // Only private networks
-					},
-					select: { nwid: true },
-				});
-
-				// Update the node name across all user's private networks
-				await ctx.prisma.network_members.updateMany({
-					where: {
-						id: input.id,
-						nwid: { in: userNetworks.map((network) => network.nwid) },
-					},
-					data: {
-						name: input.updateParams.name,
-					},
-				});
-			}
-
-			// Check if the organization wants to update the node name globally
-			if (input.organizationId && input.updateParams.name) {
-				// Upsert OrganizationSettings to ensure it exists
-				const organizationOptions = await ctx.prisma.organizationSettings.upsert({
-					where: { organizationId: input.organizationId },
-					update: {},
-					create: { organizationId: input.organizationId },
-				});
-
-				// Check if the organization wants to update the name globally
-				if (organizationOptions.renameNodeGlobally && input.updateParams.name) {
-					// Update node name across all organization networks in a single query
-					await ctx.prisma.network_members.updateMany({
-						where: {
-							id: input.id,
-							nwid_ref: {
-								organizationId: input.organizationId,
-							},
-						},
-						data: {
-							name: input.updateParams.name,
-						},
-					});
-				}
-			}
 
 			const response = await ctx.prisma.network.update({
 				where: {
@@ -490,7 +443,7 @@ export const networkMemberRouter = createTRPCRouter({
 
 			try {
 				// Send webhook
-				await sendWebhook<MemberConfigChanged>({
+				await sendWebhook({
 					hookType: HookType.MEMBER_CONFIG_CHANGED,
 					organizationId: input?.organizationId,
 					memberId: input.id,

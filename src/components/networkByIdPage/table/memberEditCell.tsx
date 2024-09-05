@@ -37,16 +37,6 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 		);
 
 	const { data: me } = api.auth.me.useQuery();
-	const { mutate: updateMemberDatabaseOnly } =
-		api.networkMember.UpdateDatabaseOnly.useMutation({
-			onError: handleApiError,
-			onSuccess: handleApiSuccess({
-				actions: [refetchNetworkById],
-				toastMessage: t(
-					"networkById.networkMembersTable.toastMessages.memberNameUpdated",
-				),
-			}),
-		});
 
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: handleApiError,
@@ -86,14 +76,12 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 			const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
 				e.preventDefault();
-				updateMemberDatabaseOnly({
-					nwid,
-					id: original.id,
-					central,
+				updateMember({
+					updateParams: { name: value as string },
+					memberId: original.id,
 					organizationId,
-					updateParams: {
-						name: value as string,
-					},
+					nwid,
+					central,
 				});
 
 				inputRef.current?.blur();

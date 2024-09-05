@@ -40,10 +40,6 @@ export const syncMemberPeersAndStatus = async (
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
-			// remove name from ztmember.
-			// !TODO: We dont update the member name from the controller, dont know if we should.
-			Reflect.deleteProperty(ztMember, "name");
-
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
 				...restOfDbMembers,
