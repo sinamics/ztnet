@@ -169,6 +169,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 
 			return res.status(200).json(mergedMember);
 		} catch (cause) {
+			console.error(cause);
 			return handleApiErrors(cause, res);
 		}
 	},
