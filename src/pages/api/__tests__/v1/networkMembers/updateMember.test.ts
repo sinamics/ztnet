@@ -106,6 +106,11 @@ describe("Update Network Members", () => {
 			networkMembers: [{ id: "memberId" }],
 		});
 
+		prisma.network_members.findUnique = jest.fn().mockResolvedValue({
+			id: "memberId",
+			authorized: false,
+		});
+
 		// mock the token
 		prisma.aPIToken.findUnique = jest.fn().mockResolvedValue({
 			expiresAt: new Date(),
