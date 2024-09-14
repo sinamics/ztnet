@@ -42,7 +42,6 @@ test("updateDatabaseOnly test", async () => {
 		id: "12234",
 		updateParams: {
 			deleted: false,
-			name: "test name",
 		},
 	};
 
@@ -52,6 +51,7 @@ test("updateDatabaseOnly test", async () => {
 		wss: null,
 		res: null,
 	});
+
 	// @ts-expect-error -- awaiting fix:
 	prisma.network.update.mockResolvedValue(mockOutput);
 

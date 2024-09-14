@@ -157,7 +157,6 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 				// @ts-expect-error
 				ztController.member_details(ctx, networkId, memberId, false),
 			]);
-
 			if (!controllerMember) {
 				return res.status(404).json({ error: "Member not found in controller" });
 			}
