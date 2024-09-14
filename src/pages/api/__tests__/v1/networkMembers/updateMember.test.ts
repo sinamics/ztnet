@@ -111,7 +111,7 @@ describe("Update Network Members", () => {
 			expiresAt: new Date(),
 		});
 
-		(ztController.member_details as jest.Mock).mockResolvedValue({});
+		(ztController.member_details as jest.Mock).mockResolvedValue([]);
 
 		const req = {
 			method: "POST",
