@@ -135,7 +135,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 								where: {
 									id_nwid: {
 										id: memberId,
-										nwid: networkId, // this should be the value of `nwid` you are looking for
+										nwid: networkId,
 									},
 								},
 								data: {
@@ -225,6 +225,16 @@ export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 			const validatedContext = HandlerContextSchema.parse(context);
 			const { networkId, memberId, ctx } = validatedContext;
 
+			const controllerMember = await ztController.local_network_detail(
+				// @ts-expect-error: fake request object
+				ctx,
+				networkId,
+				false,
+			);
+
+			const findControllermemberById = controllerMember.members.find(
+				(member) => member.id === memberId,
+			);
 			// @ts-expect-error
 			const caller = appRouter.createCaller(ctx);
 			const networkAndMembers = await caller.networkMember.getMemberById({
@@ -232,7 +242,7 @@ export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 				id: memberId,
 			});
 
-			return res.status(200).json(networkAndMembers);
+			return res.status(200).json({ ...networkAndMembers, ...findControllermemberById });
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}

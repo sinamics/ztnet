@@ -8,7 +8,7 @@ describe("/api/createNetwork", () => {
 			status: jest.fn().mockReturnThis(),
 			end: jest.fn(),
 			json: jest.fn().mockReturnThis(),
-			setHeader: jest.fn(), // Mock `setHeader` rate limiter uses it
+			setHeader: jest.fn(),
 		} as unknown as NextApiResponse;
 
 		await apiNetworkHandler(req, res);

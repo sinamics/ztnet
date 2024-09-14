@@ -42,7 +42,6 @@ test("updateDatabaseOnly test", async () => {
 		id: "12234",
 		updateParams: {
 			deleted: false,
-			name: "test name",
 		},
 	};
 
@@ -52,6 +51,7 @@ test("updateDatabaseOnly test", async () => {
 		wss: null,
 		res: null,
 	});
+
 	// @ts-expect-error -- awaiting fix:
 	prisma.network.update.mockResolvedValue(mockOutput);
 
@@ -68,7 +68,7 @@ test("updateDatabaseOnly test", async () => {
 					where: {
 						id_nwid: {
 							id: input.id,
-							nwid: input.nwid, // this should be the value of `nwid` you are looking for
+							nwid: input.nwid,
 						},
 					},
 					data: {

@@ -40,28 +40,29 @@ const GET_networkMembers = SecuredPrivateApiRoute(
 	},
 	async (_req, res, { networkId, ctx }) => {
 		try {
-			const arr = [];
-			const networks = await prisma.network.findUnique({
-				where: {
-					nwid: networkId,
-				},
-				include: {
-					networkMembers: true,
-				},
-			});
+			const controllerMember = await ztController.local_network_detail(
+				// @ts-expect-error: fake request object
+				ctx,
+				networkId,
+				false,
+			);
 
-			for (const member of networks.networkMembers) {
-				const controllerMember = await ztController.member_details(
-					//@ts-expect-error
-					ctx,
-					networkId,
-					member.id,
-					false,
-				);
-				arr.push({ ...member, ...controllerMember });
-			}
+			const networkMembers = await Promise.all(
+				controllerMember.members.map(async (member) => {
+					const dbMember = await prisma.network_members.findUnique({
+						where: {
+							id_nwid: {
+								nwid: member.nwid,
+								id: member.id,
+							},
+						},
+					});
 
-			return res.status(200).json(arr);
+					return { ...dbMember, ...member };
+				}),
+			);
+
+			return res.status(200).json(networkMembers);
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}
