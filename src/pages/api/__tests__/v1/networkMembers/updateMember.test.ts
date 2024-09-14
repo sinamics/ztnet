@@ -33,6 +33,7 @@ jest.mock("~/utils/ztApi", () => {
 	return {
 		...originalModule,
 		member_update: jest.fn(),
+		member_details: jest.fn(),
 	};
 });
 describe("Update Network Members", () => {
@@ -109,6 +110,8 @@ describe("Update Network Members", () => {
 		prisma.aPIToken.findUnique = jest.fn().mockResolvedValue({
 			expiresAt: new Date(),
 		});
+
+		(ztController.member_details as jest.Mock).mockResolvedValue({});
 
 		const req = {
 			method: "POST",
