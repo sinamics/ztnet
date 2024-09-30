@@ -24,7 +24,7 @@ services:
     volumes:
       - .:/workspaces:cached
     environment:
-      NEXTAUTH_URL: "http://10.0.0.217:3000" # Update this to the URL of your dev environment
+      NEXTAUTH_URL: "${NEXTAUTH_URL:-http://10.0.0.217:3000}"
     networks:
       - app-network
     depends_on:
