@@ -277,10 +277,13 @@ export async function createTransporter() {
 		host: globalOptions.smtpHost,
 		port: globalOptions.smtpPort,
 		secure: globalOptions.smtpUseSSL,
-		auth: {
-			user: globalOptions.smtpUsername,
-			pass: globalOptions.smtpPassword,
-		},
+		auth:
+			globalOptions.smtpUsername || globalOptions.smtpPassword
+				? {
+						user: globalOptions.smtpUsername,
+						pass: globalOptions.smtpPassword,
+				  }
+				: undefined,
 		tls: {
 			rejectUnauthorized: true,
 			minVersion: "TLSv1.2",
