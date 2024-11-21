@@ -165,7 +165,14 @@ export async function sendMailWithTemplate(
 		html: parsedTemplate.body,
 	};
 
-	await sendEmail(transporter, mailOptions);
+	// Run SMTP operation in background
+	setImmediate(async () => {
+		try {
+			await sendEmail(transporter, mailOptions);
+		} catch (error) {
+			console.error("Email sending failed:", error);
+		}
+	});
 }
 
 /**
