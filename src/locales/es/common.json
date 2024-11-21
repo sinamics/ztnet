@@ -449,6 +449,8 @@
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "Host SMTP",
 			"smtpPort": "Puerto SMTP",
+			"smtpRequireTLS": "Verificar certificado SSL",
+			"smtpRequireTLSDescription": "Exigir certificados SSL/TLS válidos. Desactivar solo si usa certificados autofirmados.",
 			"senderEmail": "Correo electrónico del remitente",
 			"mailPlaceholder": "correo@ejemplo.com",
 			"username": "Nombre de usuario",
