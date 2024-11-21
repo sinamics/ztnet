@@ -449,6 +449,8 @@
 			"mailSMTP": "邮件SMTP",
 			"smtpHost": "SMTP主机",
 			"smtpPort": "SMTP端口",
+			"smtpRequireTLS": "验证SSL证书",
+			"smtpRequireTLSDescription": "强制要求有效的SSL/TLS证书。仅在使用自签名证书时禁用。",
 			"senderEmail": "发件人电子邮件",
 			"mailPlaceholder": "mail@example.com",
 			"username": "用户名",

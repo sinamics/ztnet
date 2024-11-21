@@ -292,7 +292,7 @@ export async function createTransporter() {
 				  }
 				: undefined,
 		tls: {
-			rejectUnauthorized: true,
+			rejectUnauthorized: globalOptions.smtpRequireTLS,
 			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
