@@ -449,6 +449,8 @@
 			"mailSMTP": "Почтовый SMTP",
 			"smtpHost": "SMTP-хост",
 			"smtpPort": "SMTP-порт",
+			"smtpRequireTLS": "Проверять SSL-сертификат",
+			"smtpRequireTLSDescription": "Требовать действительные SSL/TLS сертификаты. Отключите только при использовании самоподписанных сертификатов.",
 			"senderEmail": "Email отправителя",
 			"mailPlaceholder": "mail@example.com",
 			"username": "Имя пользователя",
