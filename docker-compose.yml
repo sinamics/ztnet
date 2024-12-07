@@ -13,7 +13,7 @@ services:
       - app-network
 
   zerotier:
-    image: zyclonite/zerotier:1.14.0
+    image: zyclonite/zerotier:1.14.2
     hostname: zerotier
     container_name: zerotier
     restart: unless-stopped

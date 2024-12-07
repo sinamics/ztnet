@@ -449,6 +449,8 @@
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP-vert",
 			"smtpPort": "SMTP-port",
+			"smtpRequireTLS": "Verifiser SSL-sertifikat",
+			"smtpRequireTLSDescription": "Krev gyldige SSL/TLS-sertifikater. Deaktiver kun ved bruk av selvsignerte sertifikater.",
 			"senderEmail": "Avsenders e-post",
 			"mailPlaceholder": "post@eksempel.com",
 			"username": "Brukernavn",

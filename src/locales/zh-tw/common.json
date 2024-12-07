@@ -449,6 +449,8 @@
 			"mailSMTP": "郵件SMTP",
 			"smtpHost": "SMTP主機",
 			"smtpPort": "SMTP端口",
+			"smtpRequireTLS": "驗證SSL憑證",
+			"smtpRequireTLSDescription": "強制要求有效的SSL/TLS憑證。僅在使用自行簽署憑證時停用。",
 			"senderEmail": "寄件人電子郵件",
 			"mailPlaceholder": "mail@example.com",
 			"username": "使用者名稱",
