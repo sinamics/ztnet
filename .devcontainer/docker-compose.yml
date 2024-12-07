@@ -6,7 +6,7 @@ services:
       
   # zt container
   zerotier:
-    image: zyclonite/zerotier:1.14.0
+    image: zyclonite/zerotier:1.14.2
     ports:
       - "9993:9993"
     environment:
