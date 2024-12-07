@@ -37,7 +37,7 @@ Only the relevant sections are shown below. The full `docker-compose.yml` file s
 ```yaml
 services:
   # zerotier:
-  #   image: zyclonite/zerotier:1.14.0
+  #   image: zyclonite/zerotier:1.14.2
   #   hostname: zerotier
   #   container_name: zerotier
   #   restart: unless-stopped
