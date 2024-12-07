@@ -149,7 +149,7 @@ const Mail = () => {
 					submitHandler={(params) => inputHandler(params)}
 				/>
 
-				<div className="flex items-center justify-between pb-10">
+				<div className="flex items-center justify-between">
 					<p className="font-medium">{t("mail.useSSL")}</p>
 					<input
 						type="checkbox"
@@ -157,6 +157,20 @@ const Mail = () => {
 						className="checkbox-primary checkbox checkbox-sm"
 						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 							void inputHandler({ smtpUseSSL: e.target.checked });
+						}}
+					/>
+				</div>
+				<div className="flex items-center justify-between pb-10">
+					<div>
+						<p className="font-medium">{t("mail.smtpRequireTLS")}</p>
+						<p className="text-gray-500">{t("mail.smtpRequireTLSDescription")}</p>
+					</div>
+					<input
+						type="checkbox"
+						checked={options?.smtpRequireTLS || false}
+						className="checkbox-primary checkbox checkbox-sm"
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+							void inputHandler({ smtpRequireTLS: e.target.checked });
 						}}
 					/>
 				</div>
