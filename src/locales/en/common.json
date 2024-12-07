@@ -258,7 +258,7 @@
 		"privatePublicSwitch": {
 			"accessControllMessage": "Your network is now {authType}",
 			"privateCardTitle": "Private",
-			"privateCardContent": "Each user needs to be Autorization by network administrator.",
+			"privateCardContent": "Each user needs to be authorized by the network administrator.",
 			"publicCardTitle": "Public",
 			"publicCardContent": "All users can connect to this network without Autorization",
 			"loading": "Loading"
@@ -449,6 +449,8 @@
 			"mailSMTP": "Mail SMTP",
 			"smtpHost": "SMTP Host",
 			"smtpPort": "SMTP Port",
+			"smtpRequireTLS": "Verify SSL Certificate",
+			"smtpRequireTLSDescription": "Enforce valid SSL/TLS certificates. Disable only if using self-signed certificates.",
 			"senderEmail": "Sender Email",
 			"mailPlaceholder": "mail@example.com",
 			"username": "Username",
