@@ -323,7 +323,7 @@ const CentralNetworkById = ({ orgIds }) => {
 					<button
 						onClick={() =>
 							callModal({
-								title: `Delete network ${network.name}`,
+								title: `${t("commonButtons.deleteNetwork")} ${network.name}`,
 								description:
 									"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 								yesAction: () => {
@@ -336,7 +336,7 @@ const CentralNetworkById = ({ orgIds }) => {
 						}
 						className="btn btn-error btn-outline btn-wide"
 					>
-						Delete network
+						{t("commonButtons.deleteNetwork")}
 					</button>
 				</div>
 			</div>
