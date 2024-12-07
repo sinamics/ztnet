@@ -449,6 +449,8 @@
 			"mailSMTP": "Ustawienia serwera SMTP",
 			"smtpHost": "Serwer SMTP",
 			"smtpPort": "Port SMTP",
+			"smtpRequireTLS": "Weryfikuj certyfikat SSL",
+			"smtpRequireTLSDescription": "Wymagaj ważnych certyfikatów SSL/TLS. Wyłącz tylko w przypadku certyfikatów samopodpisanych.",
 			"senderEmail": "E-mail nadawcy",
 			"mailPlaceholder": "imie@twojadomena.pl",
 			"username": "Nazwa użytkownika",
