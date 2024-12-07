@@ -101,7 +101,7 @@ To connect your devices to the newly established private root server, they need 
 
 3. **Restart ZeroTier Service**: After updating the file, restart the ZeroTier service on each device to make sure the changes are applied.
 
-   - **Windows**: Restart the service through the Services management console or by using the PowerShell command `Restart-Service ZeroTierOne`.
+   - **Windows**: Restart the service through the Services management console or by using the PowerShell command `Restart-Service ZeroTierOneService`.
    - **Linux**: Use `sudo systemctl restart zerotier-one` or the appropriate command for your init system.
 
 4. **Downloading the `planet` File Conveniently**:

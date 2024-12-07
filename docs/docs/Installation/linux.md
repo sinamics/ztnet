@@ -78,7 +78,7 @@ sudo systemctl stop ztnet
 
 ### Enable at boot (default)
 
-To stop the `ztnet` service, run the following command:
+To let the `ztnet` service start at boot, run the following command:
 
 ```bash
 sudo systemctl enable ztnet
@@ -86,7 +86,7 @@ sudo systemctl enable ztnet
 
 ### Disable at boot
 
-To stop the `ztnet` service, run the following command:
+To stop the `ztnet` service from starting at boot, run the following command:
 
 ```bash
 sudo systemctl disable ztnet
