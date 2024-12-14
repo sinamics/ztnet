@@ -64,7 +64,9 @@ ztnet:
 
 ### Keycloak Configuration
 
-docker-compose.yml
+Keycloak can be configured to provide authentication for ZTNet using OpenID Connect. Below are the configuration details and important notes about URL structures.
+
+#### Docker Configuration
 ```yml
 ztnet:
   image: sinamics/ztnet:latest
@@ -72,8 +74,20 @@ ztnet:
   environment:
     OAUTH_ID: "your-client-id"
     OAUTH_SECRET: "your-client-secret"
-    OAUTH_WELLKNOWN: "http://{PROVIDER_URL}/auth/realms/{REALM}/.well-known/openid-configuration"
+    OAUTH_WELLKNOWN: "http://{PROVIDER_URL}/realms/{REALM}/.well-known/openid-configuration"
 ```
+
+#### Important Notes
+
+1. **URL Structure Changes**
+   - For Keycloak versions 17 and newer:
+     ```
+     http://{PROVIDER_URL}/realms/{REALM}/.well-known/openid-configuration
+     ```
+   - For older Keycloak versions (pre-17):
+     ```
+     http://{PROVIDER_URL}/auth/realms/{REALM}/.well-known/openid-configuration
+     ```
 
 ### GitHub Configuration
 
