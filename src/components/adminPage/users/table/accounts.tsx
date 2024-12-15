@@ -108,6 +108,14 @@ export const Accounts = () => {
 					return getValue();
 				},
 			}),
+			columnHelper.accessor("lastseen", {
+				header: () => <span>{ct("header.lastseen")}</span>,
+				id: "lastseen",
+				cell: ({ getValue }) => {
+					const date = getValue();
+					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "Never";
+				},
+			}),
 			columnHelper.accessor("userGroupId", {
 				header: () => <span>{ct("header.group")}</span>,
 				id: "group",

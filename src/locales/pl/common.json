@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "Utworzono",
 			"networks": "Sieci",
+			"lastseen": "Widz.",
 			"group": "Grupa",
 			"account": "Konto",
 			"ipAssignments": {
