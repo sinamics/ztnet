@@ -74,7 +74,7 @@ export const Accounts = () => {
 					return (
 						<div className="flex items-center space-x-1">
 							<div>{email}</div>
-							{!mailIsVerified && (
+							{mailIsVerified && (
 								<span title="Email verification completed">
 									<Verified />
 								</span>
