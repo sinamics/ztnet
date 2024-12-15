@@ -53,9 +53,8 @@ const Settings = () => {
 						fields={[
 							{
 								name: "siteName",
-								description: "Max 50 Char",
+								description: "Max 30 Char",
 								type: "text",
-								placeholder: "Write a cool title ....",
 								value: options?.siteName,
 							},
 						]}
