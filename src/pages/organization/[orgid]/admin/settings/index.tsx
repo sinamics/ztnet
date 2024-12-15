@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import HeadSection from "~/components/shared/metaTags";
-import { globalSiteTitle } from "~/utils/global";
 import InputField from "~/components/elements/inputField";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
@@ -30,6 +29,7 @@ const OrganizationSettings = ({ user }) => {
 	const { mutate: leaveOrg } = api.org.leave.useMutation({
 		onError: handleApiError,
 	});
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 
 	const { data: orgData, refetch: refecthOrgById } = api.org.getOrgById.useQuery(
 		{
@@ -60,7 +60,7 @@ const OrganizationSettings = ({ user }) => {
 		},
 	});
 
-	const pageTitle = `${globalSiteTitle} - Meta`;
+	const pageTitle = `${globalOptions?.siteName} - Meta`;
 	return (
 		<main className="flex w-full flex-col justify-center space-y-5 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			<HeadSection title={pageTitle} />

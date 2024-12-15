@@ -11,7 +11,6 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import { useRouter } from "next/router";
 import TimeAgo from "react-timeago";
 import HeadSection from "~/components/shared/metaTags";
-import { globalSiteTitle } from "~/utils/global";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
@@ -105,6 +104,8 @@ const OrganizationWebhook = () => {
 
 	const [input, setInput] = useState(initialState);
 
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+
 	// TODO make only one request instead of Orgbyid and AllOrgs
 	const { refetch: refecthOrg } = api.org.getOrgById.useQuery({
 		organizationId,
@@ -154,7 +155,7 @@ const OrganizationWebhook = () => {
 		}
 	};
 
-	const pageTitle = `${globalSiteTitle} - Webhooks`;
+	const pageTitle = `${globalOptions?.siteName} - Webhooks`;
 
 	return (
 		<main className="flex w-full flex-col justify-center bg-base-100 p-5 sm:p-3">

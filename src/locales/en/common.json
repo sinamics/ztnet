@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"siteName": "Site Name",
+				"description": "Customize the name of your site to better align with your brand"
+			},
 			"publicPages": {
 				"sectionTitle": "Public Pages",
 				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
