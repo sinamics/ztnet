@@ -38,6 +38,37 @@ const Settings = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
+				title={t("settings.application.siteName")}
+				className="space-y-5"
+			>
+				<div className="text-sm text-gray-400">
+					<p>{t("settings.application.description")}</p>
+				</div>
+				<div className="space-y-5">
+					<EditableField
+						isLoading={false}
+						label="Sitename"
+						size="sm"
+						placeholder={options?.siteName || "ZTNET"}
+						fields={[
+							{
+								name: "siteName",
+								description: "Max 50 Char",
+								type: "text",
+								placeholder: "Write a cool title ....",
+								value: options?.siteName,
+							},
+						]}
+						submitHandler={(params) =>
+							new Promise((resolve) => {
+								setWelcomeMessage(params);
+								resolve(true);
+							})
+						}
+					/>
+				</div>
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper
 				title={t("settings.publicPages.sectionTitle")}
 				className="space-y-5"
 			>

@@ -12,13 +12,14 @@ import { useRouter } from "next/router";
 import classNames from "classnames";
 import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
-import { globalSiteTitle } from "~/utils/global";
-
-const title = `${globalSiteTitle} - Sign In`;
 
 const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 	const t = useTranslations();
 	const currentYear = new Date().getFullYear();
+
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Sign In`;
+
 	const { data: options, isLoading: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
 	const router = useRouter();

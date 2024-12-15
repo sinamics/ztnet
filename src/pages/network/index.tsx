@@ -3,7 +3,6 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
 import { NetworkTable } from "../../components/networkPage/networkTable";
-import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
@@ -25,12 +24,13 @@ interface IProps {
 	user: User;
 }
 
-const title = `${globalSiteTitle} - Local Controller`;
-
 const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const router = useRouter();
+
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Local Controller`;
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();

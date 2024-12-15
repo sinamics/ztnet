@@ -3,20 +3,20 @@ import { api } from "~/utils/api";
 import { Session } from "next-auth";
 import { toast } from "react-hot-toast";
 import Head from "next/head";
-import { globalSiteTitle } from "~/utils/global";
 import { ErrorCode } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-const title = `${globalSiteTitle} - VerifyEmail`;
-
 const VerifyEmail = () => {
 	const t = useTranslations();
 	const router = useRouter();
 	const { token } = router.query;
 	const [redirectCountdown, setRedirectCountdown] = useState(5);
+
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
+	const title = `${globalOptions?.siteName} - VerifyEmail`;
 
 	const { data: tokenData, isLoading: validateTokenLoading } =
 		api.auth.validateEmailVerificationToken.useQuery(

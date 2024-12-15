@@ -5,12 +5,14 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import Account from "./account";
 import { useTranslations } from "next-intl";
 import UserNetworkSetting from "./network";
-import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import UserSettingsNotification from "./notification";
+import { api } from "~/utils/api";
 
 const UserSettings = () => {
-	const title = `${globalSiteTitle} - User Settings`;
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - User Settings`;
+
 	const router = useRouter();
 	const t = useTranslations("userSettings");
 	const { tab = "members" } = router.query;

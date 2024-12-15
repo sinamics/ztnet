@@ -20,7 +20,6 @@ import { useTranslations } from "next-intl";
 import NetworkDescription from "../../components/networkByIdPage/networkDescription";
 import NetworkName from "~/components/networkByIdPage/networkName";
 import Head from "next/head";
-import { globalSiteTitle } from "~/utils/global";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
@@ -43,6 +42,9 @@ const CentralNetworkById = ({ orgIds }) => {
 	// });
 	const callModal = useModalStore((state) => state.callModal);
 	const { query, push: router } = useRouter();
+
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
@@ -58,10 +60,10 @@ const CentralNetworkById = ({ orgIds }) => {
 
 	useOrganizationWebsocket(orgIds);
 
-	const pageTitle = `${globalSiteTitle} - ${networkById?.network?.name}`;
+	const pageTitle = `${globalOptions?.siteName} - ${networkById?.network?.name}`;
 
 	if (loadingNetwork) {
-		const pageTitleLoading = `${globalSiteTitle}`;
+		const pageTitleLoading = `${globalOptions?.siteName}`;
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>

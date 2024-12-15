@@ -1,10 +1,10 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { globalSiteTitle } from "~/utils/global";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
 import { forwardRef } from "react";
+import { api } from "~/utils/api";
 
 const Themes = [
 	"light",
@@ -26,6 +26,8 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 		const { theme, setTheme } = useTheme();
 		const { toggle, open } = useSidebarStore();
 
+		const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+
 		return (
 			<header
 				ref={ref}
@@ -42,7 +44,7 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 								src={ZtnetLogo.src}
 							/>
 							<span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent zt-color">
-								{globalSiteTitle}
+								{globalOptions?.siteName || "ZTNET"}
 							</span>
 						</Link>
 					</div>

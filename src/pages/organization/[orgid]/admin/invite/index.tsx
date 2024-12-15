@@ -9,7 +9,6 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
 import cn from "classnames";
-import { globalSiteTitle } from "~/utils/global";
 import HeadSection from "~/components/shared/metaTags";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
@@ -129,12 +128,12 @@ const OrganizationInvites = () => {
 	const t = useTranslations();
 	const router = useRouter();
 	const organizationId = router.query.orgid as string;
-
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const { data: orgInvites } = api.org.getInvites.useQuery({
 		organizationId,
 	});
 
-	const pageTitle = `${globalSiteTitle} - Invitations`;
+	const pageTitle = `${globalOptions?.siteName} - Invitations`;
 	return (
 		<main className="flex w-full flex-col space-y-5 justify-center bg-base-100 p-5 sm:p-3">
 			<HeadSection title={pageTitle} />
