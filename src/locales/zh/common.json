@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "创建时间",
 			"networks": "网络",
+			"lastseen": "见到",
 			"group": "组",
 			"account": "账户",
 			"ipAssignments": {

@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "Creado",
 			"networks": "Redes",
+			"lastseen": "Visto",
 			"group": "Grupo",
 			"account": "Cuenta",
 			"ipAssignments": {

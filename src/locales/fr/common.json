@@ -73,6 +73,7 @@
 			"id": "Identifiant",
 			"created": "Créé",
 			"networks": "Réseaux",
+			"lastseen": "Vu",
 			"group": "Groupe",
 			"account": "Compte",
 			"ipAssignments": {
