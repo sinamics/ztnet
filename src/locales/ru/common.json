@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "Создан",
 			"networks": "Сети",
+			"lastseen": "Видели",
 			"group": "Группа",
 			"account": "Аккаунт",
 			"ipAssignments": {

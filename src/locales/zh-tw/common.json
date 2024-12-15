@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "建立時間",
 			"networks": "網路",
+			"lastseen": "看到",
 			"group": "群組",
 			"account": "帳戶",
 			"ipAssignments": {
