@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"title": "Application",
+				"description": "Personnalisez l'apparence et le comportement de l'application pour mieux correspondre à votre marque"
+			},
 			"publicPages": {
 				"sectionTitle": "Pages publiques",
 				"description": "Personnalisez le texte affiché sur vos pages de connexion et d'inscription pour mieux correspondre à votre marque ou fournir des instructions spécifiques à vos utilisateurs."

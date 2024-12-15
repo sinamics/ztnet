@@ -442,8 +442,8 @@
 	"admin": {
 		"settings": {
 			"application": {
-				"siteName": "Site Name",
-				"description": "Customize the name of your site to better align with your brand"
+				"title": "Application",
+				"description": "Customize the application's appearance and behavior to better align with your brand"
 			},
 			"publicPages": {
 				"sectionTitle": "Public Pages",
