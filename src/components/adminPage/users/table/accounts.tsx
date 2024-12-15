@@ -21,6 +21,7 @@ import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
 import TimeAgo from "react-timeago";
 import { timeAgoFormatter } from "~/utils/time";
+import Verified from "~/icons/verified";
 
 type ExtendedUser = {
 	action?: string;
@@ -65,6 +66,22 @@ export const Accounts = () => {
 			columnHelper.accessor("email", {
 				header: () => <span>{ct("header.email")}</span>,
 				id: "email",
+				cell: ({ getValue, row }) => {
+					const email = getValue();
+
+					const mailIsVerified = row.original.emailVerified;
+
+					return (
+						<div className="flex items-center space-x-1">
+							<div>{email}</div>
+							{!mailIsVerified && (
+								<span title="Email verification completed">
+									<Verified />
+								</span>
+							)}
+						</div>
+					);
+				},
 			}),
 			columnHelper.accessor("id", {
 				header: () => <span>{ct("header.id")}</span>,
