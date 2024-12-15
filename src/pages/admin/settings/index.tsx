@@ -19,9 +19,9 @@ const Settings = () => {
 		isLoading: loadingOptions,
 		refetch: refetchOptions,
 	} = api.admin.getAllOptions.useQuery();
-
-	const { mutate: setWelcomeMessage } = api.admin.updateGlobalOptions.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
+	const { refetch: refetcUserhOptions } = api.settings.getAllOptions.useQuery();
+	const { mutate: setGlobalOptions } = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchOptions, refetcUserhOptions] }),
 		onError: handleApiError,
 	});
 
@@ -38,7 +38,7 @@ const Settings = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			<MenuSectionDividerWrapper
-				title={t("settings.application.siteName")}
+				title={t("settings.application.title")}
 				className="space-y-5"
 			>
 				<div className="text-sm text-gray-400">
@@ -61,7 +61,7 @@ const Settings = () => {
 						]}
 						submitHandler={(params) =>
 							new Promise((resolve) => {
-								setWelcomeMessage(params);
+								setGlobalOptions(params);
 								resolve(true);
 							})
 						}
@@ -92,7 +92,7 @@ const Settings = () => {
 						]}
 						submitHandler={(params) =>
 							new Promise((resolve) => {
-								setWelcomeMessage(params);
+								setGlobalOptions(params);
 								resolve(true);
 							})
 						}
@@ -116,7 +116,7 @@ const Settings = () => {
 						]}
 						submitHandler={(params) =>
 							new Promise((resolve) => {
-								setWelcomeMessage(params);
+								setGlobalOptions(params);
 								resolve(true);
 							})
 						}
