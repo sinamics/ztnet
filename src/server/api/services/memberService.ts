@@ -134,7 +134,7 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		}),
 	]);
 
-	const findNamedMember = async ({ orgId }: { orgId: string }) => {
+	const findNamedMemberAcrossNetworks = async ({ orgId }: { orgId: string }) => {
 		return await prisma.network_members.findFirst({
 			where: {
 				id: member.id,
@@ -154,7 +154,7 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 	if (memberOfOrganization) {
 		// check if global organization member naming is enabled, and if so find the first available name
 		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
-			const namedOrgMember = await findNamedMember({
+			const namedOrgMember = await findNamedMemberAcrossNetworks({
 				orgId: memberOfOrganization.organizationId,
 			});
 			name = namedOrgMember?.name;
@@ -183,7 +183,7 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		// check if global naming is enabled, and if so find the first available name
 		// NOTE! this will take precedence over addMemberIdAsName above
 		if (user.options?.renameNodeGlobally) {
-			const namedPrivateMember = await findNamedMember({ orgId: null });
+			const namedPrivateMember = await findNamedMemberAcrossNetworks({ orgId: null });
 			name = namedPrivateMember?.name;
 		}
 	}
