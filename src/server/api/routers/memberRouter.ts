@@ -206,21 +206,26 @@ export const networkMemberRouter = createTRPCRouter({
 				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
 
 				if (shouldUpdateNameGlobally && !organizationId) {
-					// Update name across all user's private networks
-					const userNetworks = await ctx.prisma.network.findMany({
+					// Find all networks where this member actually exists
+					const networksWithMember = await ctx.prisma.network_members.findMany({
 						where: {
-							authorId: ctx.session.user.id,
-							organizationId: null,
+							id: memberId,
+							deleted: false,
+							nwid_ref: {
+								authorId: ctx.session.user.id,
+								organizationId: null,
+							},
 						},
 						select: { nwid: true },
 					});
 
-					for (const network of userNetworks) {
+					// Update name only in networks where the member exists
+					for (const { nwid: networkId } of networksWithMember) {
 						await ztController.member_update({
 							ctx,
-							nwid: network.nwid,
+							nwid: networkId,
 							memberId: memberId,
-							// @ts-expect-error
+							//@ts-expect-error
 							updateParams: updateParams,
 						});
 					}
@@ -233,18 +238,25 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 
 					if (organizationOptions.renameNodeGlobally) {
-						const orgNetworks = await ctx.prisma.network.findMany({
+						// Find all organization networks where this member exists
+						const networksWithMember = await ctx.prisma.network_members.findMany({
 							where: {
-								organizationId,
+								id: memberId,
+								deleted: false,
+								nwid_ref: {
+									organizationId: organizationId,
+								},
 							},
+							select: { nwid: true },
 						});
 
-						for (const network of orgNetworks) {
+						// Update name only in networks where the member exists
+						for (const { nwid: networkId } of networksWithMember) {
 							await ztController.member_update({
 								ctx,
-								nwid: network.nwid,
+								nwid: networkId,
 								memberId: memberId,
-								// @ts-expect-error
+								//@ts-expect-error
 								updateParams: updateParams,
 							});
 						}
