@@ -121,26 +121,42 @@ const findExistingMemberName = async (
 	organizationId?: string,
 ) => {
 	try {
-		if (isOrganization && organizationId) {
-			// For organization networks, search in database
-			const existingMember = await prisma.network_members.findFirst({
-				where: {
-					id: memberId,
-					name: { not: null },
-					deleted: false,
-					nwid: { not: currentNwid },
-					nwid_ref: {
-						organizationId: organizationId,
-					},
-				},
-				select: { name: true },
-				orderBy: {
-					creationTime: "desc",
-				},
-			});
-			return existingMember?.name || null;
+		// First check database for existing name
+		const whereClause =
+			isOrganization && organizationId
+				? {
+						id: memberId,
+						name: { not: null },
+						deleted: false,
+						nwid: { not: currentNwid },
+						nwid_ref: {
+							organizationId: organizationId,
+						},
+				  }
+				: {
+						id: memberId,
+						name: { not: null },
+						deleted: false,
+						nwid: { not: currentNwid },
+						nwid_ref: {
+							authorId: ctx.session.user.id,
+							organizationId: null,
+						},
+				  };
+
+		const existingMember = await prisma.network_members.findFirst({
+			where: whereClause,
+			select: { name: true },
+			orderBy: {
+				creationTime: "desc",
+			},
+		});
+
+		if (existingMember?.name) {
+			return existingMember.name;
 		}
-		// For private networks, use controller API
+
+		// If no name found in database, check controller
 		const networks = await ztController.get_controller_networks(ctx, false);
 
 		const relevantNetworks = await prisma.network.findMany({
@@ -148,10 +164,12 @@ const findExistingMemberName = async (
 				AND: [
 					{ nwid: { in: networks as string[] } },
 					{ nwid: { not: currentNwid } },
-					{
-						authorId: ctx.session.user.id,
-						organizationId: null,
-					},
+					isOrganization && organizationId
+						? { organizationId: organizationId }
+						: {
+								authorId: ctx.session.user.id,
+								organizationId: null,
+						  },
 				],
 			},
 			select: { nwid: true },
