@@ -113,6 +113,93 @@ const findActivePreferredPeerPath = (peers: Peers | null) => {
 	return { ...res };
 };
 
+const findExistingMemberName = async (
+	ctx: UserContext,
+	memberId: string,
+	currentNwid: string,
+	isOrganization: boolean,
+	organizationId?: string,
+) => {
+	try {
+		// First check database for existing name
+		const whereClause =
+			isOrganization && organizationId
+				? {
+						id: memberId,
+						name: { not: null },
+						deleted: false,
+						nwid: { not: currentNwid },
+						nwid_ref: {
+							organizationId: organizationId,
+						},
+				  }
+				: {
+						id: memberId,
+						name: { not: null },
+						deleted: false,
+						nwid: { not: currentNwid },
+						nwid_ref: {
+							authorId: ctx.session.user.id,
+							organizationId: null,
+						},
+				  };
+
+		const existingMember = await prisma.network_members.findFirst({
+			where: whereClause,
+			select: { name: true },
+			orderBy: {
+				creationTime: "desc",
+			},
+		});
+
+		if (existingMember?.name) {
+			return existingMember.name;
+		}
+
+		// If no name found in database, check controller
+		const networks = await ztController.get_controller_networks(ctx, false);
+
+		const relevantNetworks = await prisma.network.findMany({
+			where: {
+				AND: [
+					{ nwid: { in: networks as string[] } },
+					{ nwid: { not: currentNwid } },
+					isOrganization && organizationId
+						? { organizationId: organizationId }
+						: {
+								authorId: ctx.session.user.id,
+								organizationId: null,
+						  },
+				],
+			},
+			select: { nwid: true },
+		});
+
+		// Search for member in each network using controller
+		for (const network of relevantNetworks) {
+			try {
+				const memberDetails = await ztController.member_details(
+					ctx,
+					network.nwid,
+					memberId,
+					false,
+				);
+
+				if (memberDetails?.name) {
+					return memberDetails.name;
+				}
+			} catch (_error) {
+				// Skip if member not found in this network
+			}
+		}
+
+		return null;
+	} catch (error) {
+		console.error("Error finding existing member name:", error);
+		return null;
+	}
+};
+
 /**
  * Adds a member to the database.
  *
@@ -134,30 +221,19 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		}),
 	]);
 
-	const findNamedMember = async ({ orgId }: { orgId: string }) => {
-		return await prisma.network_members.findFirst({
-			where: {
-				id: member.id,
-				name: { not: null },
-				nwid_ref: {
-					organizationId: orgId,
-					authorId: orgId ? null : ctx.session.user.id,
-				},
-			},
-			select: { name: true },
-		});
-	};
-
 	let name = null;
 
 	// send webhook if the new member is joining a organization network
 	if (memberOfOrganization) {
 		// check if global organization member naming is enabled, and if so find the first available name
 		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
-			const namedOrgMember = await findNamedMember({
-				orgId: memberOfOrganization.organizationId,
-			});
-			name = namedOrgMember?.name;
+			name = await findExistingMemberName(
+				ctx,
+				member.id,
+				member.nwid,
+				true,
+				memberOfOrganization.organizationId,
+			);
 		}
 		try {
 			// Send webhook
@@ -183,20 +259,33 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		// check if global naming is enabled, and if so find the first available name
 		// NOTE! this will take precedence over addMemberIdAsName above
 		if (user.options?.renameNodeGlobally) {
-			const namedPrivateMember = await findNamedMember({ orgId: null });
-			name = namedPrivateMember?.name;
+			name = (await findExistingMemberName(ctx, member.id, member.nwid, false)) || name;
 		}
 	}
 
-	return await prisma.network_members.create({
-		data: {
-			id: member.id,
-			lastSeen: new Date(),
-			creationTime: new Date(),
-			name,
-			nwid_ref: { connect: { nwid: member.nwid } },
-		},
-	});
+	try {
+		return await prisma.network_members.upsert({
+			where: {
+				id_nwid: {
+					id: member.id,
+					nwid: member.nwid,
+				},
+			},
+			create: {
+				id: member.id,
+				lastSeen: new Date(),
+				creationTime: new Date(),
+				name,
+				nwid_ref: { connect: { nwid: member.nwid } },
+				deleted: false,
+			},
+			update: {
+				lastSeen: new Date(),
+			},
+		});
+	} catch (error) {
+		console.error("Error upserting network member:", error);
+	}
 };
 
 /**

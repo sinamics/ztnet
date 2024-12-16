@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "Created",
 			"networks": "Networks",
+			"lastseen": "Last Seen",
 			"group": "Group",
 			"account": "Account",
 			"ipAssignments": {

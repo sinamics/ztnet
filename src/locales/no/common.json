@@ -73,6 +73,7 @@
 			"id": "ID",
 			"created": "Opprettet",
 			"networks": "Nettverk",
+			"lastseen": "Sett",
 			"group": "Gruppe",
 			"account": "Konto",
 			"ipAssignments": {

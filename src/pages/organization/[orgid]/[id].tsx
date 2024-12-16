@@ -79,7 +79,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 							<button
 								onClick={() =>
 									callModal({
-										title: `Delete network ${query.id as string}`,
+										title: `${t("commonButtons.deleteNetwork")}: ${query.id as string}`,
 										description:
 											"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 										yesAction: () => {
@@ -92,7 +92,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 								}
 								className="btn btn-error btn-outline btn-wide"
 							>
-								Delete network
+								{t("commonButtons.deleteNetwork")}
 							</button>
 						</div>
 					</div>
@@ -366,7 +366,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					<button
 						onClick={() =>
 							callModal({
-								title: `Delete network ${network.name}`,
+								title: `${t("commonButtons.deleteNetwork")}: ${network.name}`,
 								description:
 									"Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
 								yesAction: () => {
@@ -379,7 +379,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 						}
 						className="btn btn-error btn-outline btn-wide"
 					>
-						Delete network
+						{t("commonButtons.deleteNetwork")}
 					</button>
 				</div>
 			</div>
