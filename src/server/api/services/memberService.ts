@@ -121,27 +121,43 @@ const findExistingMemberName = async (
 	organizationId?: string,
 ) => {
 	try {
-		// Get all networks based on whether it's an organization or private network
+		if (isOrganization && organizationId) {
+			// For organization networks, search in database
+			const existingMember = await prisma.network_members.findFirst({
+				where: {
+					id: memberId,
+					name: { not: null },
+					deleted: false,
+					nwid: { not: currentNwid },
+					nwid_ref: {
+						organizationId: organizationId,
+					},
+				},
+				select: { name: true },
+				orderBy: {
+					creationTime: "desc",
+				},
+			});
+			return existingMember?.name || null;
+		}
+		// For private networks, use controller API
 		const networks = await ztController.get_controller_networks(ctx, false);
 
-		// Filter networks based on organization or private ownership
 		const relevantNetworks = await prisma.network.findMany({
 			where: {
 				AND: [
 					{ nwid: { in: networks as string[] } },
 					{ nwid: { not: currentNwid } },
-					isOrganization
-						? { organizationId: organizationId }
-						: {
-								authorId: ctx.session.user.id,
-								organizationId: null,
-						  },
+					{
+						authorId: ctx.session.user.id,
+						organizationId: null,
+					},
 				],
 			},
 			select: { nwid: true },
 		});
 
-		// Search for member in each network
+		// Search for member in each network using controller
 		for (const network of relevantNetworks) {
 			try {
 				const memberDetails = await ztController.member_details(
@@ -151,13 +167,11 @@ const findExistingMemberName = async (
 					false,
 				);
 
-				// If we found a name, return it
 				if (memberDetails?.name) {
 					return memberDetails.name;
 				}
 			} catch (_error) {
-				// Continue searching if member not found in this network
-				return null;
+				// Skip if member not found in this network
 			}
 		}
 
