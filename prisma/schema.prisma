@@ -20,8 +20,9 @@ enum Role {
 }
 
 model GlobalOptions {
-  id Int @id @default(autoincrement())
-
+  id                    Int     @id @default(autoincrement())
+  // Site
+  siteName              String  @default("ZTNET")
   // Registration
   enableRegistration    Boolean @default(true)
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage

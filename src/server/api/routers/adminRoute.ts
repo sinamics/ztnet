@@ -349,6 +349,7 @@ export const adminRouter = createTRPCRouter({
 				userRegistrationNotification: z.boolean().optional(),
 				welcomeMessageTitle: z.string().max(50).optional(),
 				welcomeMessageBody: z.string().max(350).optional(),
+				siteName: z.string().max(30).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

@@ -2,9 +2,9 @@ import Head from "next/head";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
-import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
+import { api } from "~/utils/api";
 
 type OrganizationId = {
 	id: string;
@@ -14,7 +14,9 @@ interface IProps {
 }
 
 const Dashboard: NextPageWithLayout = ({ orgIds }: IProps) => {
-	const title = `${globalSiteTitle} - Dashboard`;
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Dashboard`;
+
 	useOrganizationWebsocket(orgIds);
 
 	return (
@@ -29,7 +31,7 @@ const Dashboard: NextPageWithLayout = ({ orgIds }: IProps) => {
 				<div className="mx-auto max-w-6xl space-y-10 bg-cover bg-center bg-no-repeat">
 					{/* <div className="absolute inset-0 z-0">test </div> */}
 					<div className="col-start-2 mx-0 flex justify-center text-2xl md:text-5xl">
-						Welcome to {globalSiteTitle}
+						Welcome to {globalOptions?.siteName}
 					</div>
 					{/* grid with cards  */}
 					<div className="mx-10 grid gap-5 md:grid-cols-[repeat(3,1fr)]">

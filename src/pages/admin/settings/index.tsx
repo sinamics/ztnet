@@ -19,9 +19,9 @@ const Settings = () => {
 		isLoading: loadingOptions,
 		refetch: refetchOptions,
 	} = api.admin.getAllOptions.useQuery();
-
-	const { mutate: setWelcomeMessage } = api.admin.updateGlobalOptions.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
+	const { refetch: refetcUserhOptions } = api.settings.getAllOptions.useQuery();
+	const { mutate: setGlobalOptions } = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: handleApiSuccess({ actions: [refetchOptions, refetcUserhOptions] }),
 		onError: handleApiError,
 	});
 
@@ -37,6 +37,36 @@ const Settings = () => {
 
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
+			<MenuSectionDividerWrapper
+				title={t("settings.application.title")}
+				className="space-y-5"
+			>
+				<div className="text-sm text-gray-400">
+					<p>{t("settings.application.description")}</p>
+				</div>
+				<div className="space-y-5">
+					<EditableField
+						isLoading={false}
+						label="Sitename"
+						size="sm"
+						placeholder={options?.siteName || "ZTNET"}
+						fields={[
+							{
+								name: "siteName",
+								description: "Max 30 Char",
+								type: "text",
+								value: options?.siteName,
+							},
+						]}
+						submitHandler={(params) =>
+							new Promise((resolve) => {
+								setGlobalOptions(params);
+								resolve(true);
+							})
+						}
+					/>
+				</div>
+			</MenuSectionDividerWrapper>
 			<MenuSectionDividerWrapper
 				title={t("settings.publicPages.sectionTitle")}
 				className="space-y-5"
@@ -61,7 +91,7 @@ const Settings = () => {
 						]}
 						submitHandler={(params) =>
 							new Promise((resolve) => {
-								setWelcomeMessage(params);
+								setGlobalOptions(params);
 								resolve(true);
 							})
 						}
@@ -85,7 +115,7 @@ const Settings = () => {
 						]}
 						submitHandler={(params) =>
 							new Promise((resolve) => {
-								setWelcomeMessage(params);
+								setGlobalOptions(params);
 								resolve(true);
 							})
 						}

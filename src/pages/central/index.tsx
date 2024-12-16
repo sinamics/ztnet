@@ -4,15 +4,12 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
 import { CentralNetworkTable } from "../../components/networkPage/centralNetworkTable";
-import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import { useRouter } from "next/router";
 
-const title = `${globalSiteTitle} - Zerotier Central`;
-
-const HeadSection = () => (
+const HeadSection = ({ title }: { title: string }) => (
 	<Head>
 		<title>{title}</title>
 		<link rel="icon" href="/favicon.ico" />
@@ -32,6 +29,10 @@ const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const router = useRouter();
+
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Zerotier Central`;
+
 	const {
 		data: centralNetworks,
 		isLoading,
@@ -61,7 +62,7 @@ const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>
-				<HeadSection />
+				<HeadSection title={title} />
 				<div className="flex flex-col items-center justify-center">
 					<h1 className="text-center text-2xl font-semibold">
 						<progress className="progress progress-primary w-56"></progress>
@@ -73,7 +74,7 @@ const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 
 	return (
 		<>
-			<HeadSection />
+			<HeadSection title={title} />
 			<main className="w-full bg-base-100">
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">ZT Central Networks</h5>

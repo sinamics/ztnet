@@ -12,14 +12,11 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
-import { globalSiteTitle } from "~/utils/global";
 import cn from "classnames";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-
-const title = `${globalSiteTitle} - Organization`;
 
 const OrganizationById = ({ user, orgIds }) => {
 	const b = useTranslations("commonButtons");
@@ -31,6 +28,9 @@ const OrganizationById = ({ user, orgIds }) => {
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Organization`;
 
 	useOrganizationWebsocket(orgIds);
 

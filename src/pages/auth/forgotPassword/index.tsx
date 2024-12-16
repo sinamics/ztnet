@@ -7,11 +7,13 @@ import Link from "next/link";
 import React, { ReactElement } from "react";
 import ForgotPasswordForm from "~/components/auth/forgotPasswordForm";
 import { LayoutPublic } from "~/components/layouts/layout";
-import { globalSiteTitle } from "~/utils/global";
+import { api } from "~/utils/api";
 
 const ForgotPassword = () => {
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
+
 	const t = useTranslations();
-	const title = `${globalSiteTitle} - Forgot Password`;
+	const title = `${globalOptions?.siteName} - Forgot Password`;
 	return (
 		<div>
 			<Head>

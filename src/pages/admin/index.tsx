@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
 import Controller from "./controller";
-import { globalSiteTitle } from "~/utils/global";
 import Mail from "./mail";
 import Notification from "./notification";
 import { useTranslations } from "next-intl";
@@ -13,9 +12,11 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import Link from "next/link";
+import { api } from "~/utils/api";
 
 const AdminSettings = ({ orgIds }) => {
-	const title = `${globalSiteTitle} - Admin Settings`;
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Admin Settings`;
 
 	const router = useRouter();
 	const { tab = "members" } = router.query;

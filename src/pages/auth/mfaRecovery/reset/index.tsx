@@ -5,7 +5,6 @@ import { Session } from "next-auth";
 import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
-import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { ErrorCode } from "~/utils/errorCode";
@@ -18,6 +17,8 @@ const MfaRecoveryReset = () => {
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ email: "", password: "", recoveryCode: "" });
+
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
 	const { mutate: resetMfa, isLoading } = api.mfaAuth.mfaResetValidation.useMutation();
 
 	const { data: tokenData, isLoading: validateTokenLoading } =
@@ -86,7 +87,7 @@ const MfaRecoveryReset = () => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
-	const title = `${globalSiteTitle} - Reset MFA`;
+	const title = `${globalOptions?.siteName} - Reset MFA`;
 	if (validateTokenLoading || !tokenData) {
 		return null;
 	}

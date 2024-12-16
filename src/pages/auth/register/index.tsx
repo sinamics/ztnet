@@ -6,14 +6,16 @@ import React, { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
 import RegisterForm from "~/components/auth/registerForm";
 import { prisma } from "~/server/db";
-import { globalSiteTitle } from "~/utils/global";
 import { useRouter } from "next/router";
 import RegisterOrganizationInviteForm from "~/components/auth/registerOrganizationInvite";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { api } from "~/utils/api";
 
 const Register = () => {
-	const title = `${globalSiteTitle} - Sign Up`;
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Sign Up`;
+
 	const t = useTranslations();
 	const router = useRouter();
 	const { organizationInvite } = router.query as { organizationInvite?: string };
