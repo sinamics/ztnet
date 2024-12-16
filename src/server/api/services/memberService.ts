@@ -24,6 +24,7 @@ export const syncMemberPeersAndStatus = async (
 	// get peers
 	const controllerPeers = await ztController.peers(ctx);
 
+	//!TODO Promise.all causing race condition. Need to refactor to use for loop
 	const updatedMembers = await Promise.all(
 		ztMembers.map(async (ztMember) => {
 			// TODO currently there is no way to distinguish peers by network id, so we have to fetch all peers
