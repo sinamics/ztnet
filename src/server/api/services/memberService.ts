@@ -262,15 +262,30 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 			name = (await findExistingMemberName(ctx, member.id, member.nwid, false)) || name;
 		}
 	}
-	return await prisma.network_members.create({
-		data: {
-			id: member.id,
-			lastSeen: new Date(),
-			creationTime: new Date(),
-			name,
-			nwid_ref: { connect: { nwid: member.nwid } },
-		},
-	});
+
+	try {
+		return await prisma.network_members.upsert({
+			where: {
+				id_nwid: {
+					id: member.id,
+					nwid: member.nwid,
+				},
+			},
+			create: {
+				id: member.id,
+				lastSeen: new Date(),
+				creationTime: new Date(),
+				name,
+				nwid_ref: { connect: { nwid: member.nwid } },
+				deleted: false,
+			},
+			update: {
+				lastSeen: new Date(),
+			},
+		});
+	} catch (error) {
+		console.error("Error upserting network member:", error);
+	}
 };
 
 /**
