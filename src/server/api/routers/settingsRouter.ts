@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "~/utils/encryption";
 
 export const settingsRouter = createTRPCRouter({
@@ -22,5 +22,17 @@ export const settingsRouter = createTRPCRouter({
 			}
 		}
 		return options;
+	}),
+	getPublicOptions: publicProcedure.query(async ({ ctx }) => {
+		const publicOptions = await ctx.prisma.globalOptions.findFirst({
+			where: {
+				id: 1,
+			},
+			select: {
+				siteName: true,
+			},
+		});
+
+		return publicOptions;
 	}),
 });

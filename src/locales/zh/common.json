@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"title": "应用",
+				"description": "自定义应用的外观和行为，以更好地匹配您的品牌"
+			},
 			"publicPages": {
 				"sectionTitle": "公共页面",
 				"description": "自定义登录和注册页面上显示的文本，以更好地与您的品牌保持一致或向您的用户提供具体说明。"

@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"title": "Aplicación",
+				"description": "Personaliza la apariencia y el comportamiento de la aplicación para alinearla mejor con tu marca"
+			},
 			"publicPages": {
 				"sectionTitle": "Páginas Públicas",
 				"description": "Personaliza el texto que se muestra en tus páginas de inicio de sesión y registro para alinearlo mejor con tu marca o proporcionar instrucciones específicas a tus usuarios."

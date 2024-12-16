@@ -30,6 +30,22 @@ jest.mock("../../utils/api", () => ({
 				}),
 			},
 		},
+		settings: {
+			getAllOptions: {
+				useQuery: () => ({
+					data: {},
+					isLoading: false,
+					refetch: jest.fn(),
+				}),
+			},
+			getPublicOptions: {
+				useQuery: () => ({
+					data: {},
+					isLoading: false,
+					refetch: jest.fn(),
+				}),
+			},
+		},
 		networkMember: {
 			getNetworkMemberById: {
 				useQuery: () => ({

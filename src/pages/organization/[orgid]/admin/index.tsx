@@ -1,7 +1,6 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
-import { globalSiteTitle } from "~/utils/global";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
@@ -10,9 +9,11 @@ import OrganizationSettings from "./settings";
 import OrganizationWebhook from "./webhooks";
 import OrganizationNetworkSetting from "./network";
 import OrganizationInvites from "./invite";
+import { api } from "~/utils/api";
 
 const OrganizationAdminSettings = ({ orgIds, user }) => {
-	const title = `${globalSiteTitle} - Admin Settings`;
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const title = `${globalOptions?.siteName} - Admin Settings`;
 
 	const router = useRouter();
 	const { tab = "members", orgid: organizationId } = router.query;

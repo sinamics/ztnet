@@ -22,7 +22,6 @@ import { useTranslations } from "next-intl";
 import NetworkName from "~/components/networkByIdPage/networkName";
 import NetworkDescription from "~/components/networkByIdPage/networkDescription";
 import Head from "next/head";
-import { globalSiteTitle } from "~/utils/global";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
@@ -56,6 +55,9 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 	const callModal = useModalStore((state) => state.callModal);
 	const { query, push: router } = useRouter();
+
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
@@ -69,7 +71,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
 	const { network, members = [] } = networkById || {};
-	const pageTitle = `${globalSiteTitle} - ${network?.name}`;
+	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
 	if (errorNetwork) {
 		return (
 			<>
@@ -110,7 +112,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		);
 	}
 	if (loadingNetwork) {
-		const pageTitleLoading = `${globalSiteTitle}`;
+		const pageTitleLoading = `${globalOptions?.siteName}`;
 		// add loading progress bar to center of page, vertially and horizontally
 		return (
 			<>

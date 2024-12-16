@@ -4,7 +4,6 @@ import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
-import { globalSiteTitle } from "~/utils/global";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { useTranslations } from "next-intl";
@@ -17,6 +16,8 @@ const ForgotPassword = () => {
 	const router = useRouter();
 	const { token } = router.query;
 	const [state, setState] = useState({ password: "", newPassword: "" });
+
+	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
 
 	const { mutate: resetPassword, isLoading } =
 		api.auth.changePasswordFromJwt.useMutation();
@@ -79,7 +80,7 @@ const ForgotPassword = () => {
 	if (validateTokenLoading || !tokenData || tokenData.error) {
 		return null;
 	}
-	const title = `${globalSiteTitle} - Reset Password`;
+	const title = `${globalOptions?.siteName} - Reset Password`;
 	return (
 		<div>
 			<Head>

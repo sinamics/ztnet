@@ -28,6 +28,34 @@ jest.mock("~/server/db", () => ({
 	},
 }));
 
+jest.mock("../../../utils/api", () => {
+	return {
+		api: {
+			settings: {
+				getAllOptions: {
+					useQuery: () => ({
+						data: {},
+						isLoading: false,
+						refetch: jest.fn(),
+					}),
+				},
+				getPublicOptions: {
+					useQuery: () => ({
+						data: {},
+						isLoading: false,
+						refetch: jest.fn(),
+					}),
+				},
+			},
+			network: {
+				getNetworkById: {
+					useQuery: jest.fn(),
+				},
+			},
+		},
+	};
+});
+
 jest.mock("~/components/auth/withAuth", () => ({
 	withAuth: jest.fn().mockImplementation((gssp) => gssp),
 }));
@@ -66,6 +94,7 @@ describe("NetworkById component", () => {
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
+
 		const context = {
 			params: { orgIds: [] } as ParsedUrlQuery,
 			locale: "en",
@@ -351,7 +380,6 @@ describe("NetworkById component", () => {
 		});
 
 		api.network.getNetworkById.useQuery = useQueryMock;
-
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>

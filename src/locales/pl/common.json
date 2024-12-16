@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"title": "Aplikacja",
+				"description": "Dostosuj wygląd i zachowanie aplikacji, aby lepiej pasowała do Twojej marki"
+			},
 			"publicPages": {
 				"sectionTitle": "Strony startowe",
 				"description": "Dostosuj tekst wyświetlany na stronach logowania i rejestracji, aby lepiej pasował do Twojej marki lub zapewniał użytkownikom szczegółowe instrukcje."

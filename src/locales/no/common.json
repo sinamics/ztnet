@@ -441,6 +441,10 @@
 	},
 	"admin": {
 		"settings": {
+			"application": {
+				"title": "Applikasjon",
+				"description": "Tilpass applikasjonens utseende og oppførsel for å bedre tilpasse den til merkevaren din"
+			},
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
 				"description": "Tilpass teksten som vises på innloggings- og registreringssidene dine for å bedre samsvare med merkevaren din eller gi spesifikke instruksjoner til brukerne dine."
