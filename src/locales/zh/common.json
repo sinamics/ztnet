@@ -66,6 +66,7 @@
 			"description": "描述",
 			"networkId": "网络ID",
 			"members": "成员",
+			"memberActTot": "节点 活跃/总数",
 			"actions": "操作",
 			"role": "角色",
 			"email": "电子邮件",
