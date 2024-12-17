@@ -21,6 +21,7 @@ import NetworkOptionsModal from "./networkOptionsModal";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import CopyIcon from "~/icons/copy";
+import { NetworkTableMemberCount } from "./networkTableMemberCount";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
@@ -61,6 +62,9 @@ export const NetworkTable = ({ tableData = [] }) => {
 		members: network_members[];
 		networkMembers: network_members[];
 		action: string;
+		memberCounts: {
+			display: string;
+		};
 	};
 	const columnHelper = createColumnHelper<ColumnsType>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -101,10 +105,12 @@ export const NetworkTable = ({ tableData = [] }) => {
 				},
 			}),
 			columnHelper.accessor("members", {
-				header: () => <span>{t("commonTable.header.members")}</span>,
+				header: () => <span>{t("commonTable.header.memberActTot")}</span>,
 				cell: ({ row: { original } }) => {
-					if (!Array.isArray(original.networkMembers)) return <span>0</span>;
-					return <span>{original.networkMembers.length}</span>;
+					if (!Array.isArray(original.networkMembers)) {
+						return <NetworkTableMemberCount count="0" />;
+					}
+					return <NetworkTableMemberCount count={original.memberCounts.display} />;
 				},
 			}),
 			columnHelper.accessor("action", {

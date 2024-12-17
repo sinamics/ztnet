@@ -137,3 +137,9 @@ export interface Notation {
 	orderIndex?: number;
 	visibility?: string;
 }
+
+export interface MemberCounts {
+	authorized: number;
+	total: number;
+	display: string;
+}

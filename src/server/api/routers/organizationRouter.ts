@@ -16,7 +16,16 @@ import {
 	generateInstanceSecret,
 } from "~/utils/encryption";
 import { sendMailWithTemplate } from "~/utils/mail";
-import { Role } from "@prisma/client";
+import {
+	Invitation,
+	network,
+	network_members,
+	Organization,
+	Role,
+	User,
+	UserOrganizationRole,
+	Webhook,
+} from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
@@ -25,6 +34,8 @@ import { nameGeneratorConfig } from "../services/networkService";
 import rateLimit from "~/utils/rateLimit";
 import { RoutesEntity } from "~/types/local/network";
 import { MailTemplateKey } from "~/utils/enums";
+import { TRPCError } from "@trpc/server";
+import { MemberCounts } from "~/types/local/member";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -311,8 +322,22 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: input.organizationId,
 				minimumRequiredRole: Role.READ_ONLY,
 			});
-			// get all organizations related to the user
-			return await ctx.prisma.organization.findUnique({
+
+			// Define the interface for member counts
+
+			interface OrganizationWithCounts extends Organization {
+				userRoles: UserOrganizationRole[];
+				users: User[];
+				webhooks: Webhook[];
+				invitations: Invitation[];
+				memberCounts: MemberCounts;
+				networks: (network & {
+					networkMembers: network_members[];
+					memberCounts: MemberCounts;
+				})[];
+			}
+
+			const rawOrganization = (await ctx.prisma.organization.findUnique({
 				where: {
 					id: input.organizationId,
 				},
@@ -327,7 +352,53 @@ export const organizationRouter = createTRPCRouter({
 						},
 					},
 				},
-			});
+			})) as unknown as Omit<OrganizationWithCounts, "memberCounts">;
+
+			if (!rawOrganization) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Organization not found",
+				});
+			}
+
+			// Initialize organization with member counts
+			const organization: OrganizationWithCounts = {
+				...rawOrganization,
+				memberCounts: {
+					authorized: 0,
+					total: 0,
+					display: "0 (0)",
+				},
+				networks: rawOrganization.networks.map((network) => ({
+					...network,
+					memberCounts: {
+						authorized: 0,
+						total: 0,
+						display: "0 (0)",
+					},
+				})),
+			};
+
+			// Get authorized member and total member counts for each network
+			for (const network of organization.networks) {
+				for (const member of network.networkMembers) {
+					const memberDetails = await ztController.member_details(
+						ctx,
+						network.nwid,
+						member.id,
+					);
+					if (memberDetails.authorized) {
+						network.memberCounts.authorized += 1;
+						organization.memberCounts.authorized += 1;
+					}
+					network.memberCounts.total += 1;
+					organization.memberCounts.total += 1;
+				}
+				network.memberCounts.display = `${network.memberCounts.authorized} (${network.memberCounts.total})`;
+			}
+
+			organization.memberCounts.display = `${organization.memberCounts.authorized} (${organization.memberCounts.total})`;
+			return organization;
 		}),
 	createOrgNetwork: protectedProcedure
 		.input(
