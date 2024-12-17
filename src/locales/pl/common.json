@@ -66,6 +66,7 @@
 			"description": "Opis sieci",
 			"networkId": "ID Sieci",
 			"members": "Ilość członków",
+			"memberActTot": "Węzły Akt/Całk",
 			"actions": "Akcje",
 			"role": "Rola",
 			"email": "Email",
