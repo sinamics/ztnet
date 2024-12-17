@@ -19,6 +19,8 @@ import TableFooter from "~/components/shared/tableFooter";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import CopyIcon from "~/icons/copy";
+import { MemberCounts } from "~/types/local/member";
+import { NetworkTableMemberCount } from "../networkPage/networkTableMemberCount";
 
 // import { makeNetworkData } from "../../utils/fakeData";
 const TruncateText = ({ text }: { text: string }) => {
@@ -41,6 +43,7 @@ const LOCAL_STORAGE_KEY = "centralNetworkTableSorting";
 
 interface OrgMemberEntity extends CentralMemberEntity {
 	networkMembers: string[];
+	memberCounts: MemberCounts;
 }
 
 export const OrganizationNetworkTable = ({ tableData = [] }) => {
@@ -64,14 +67,12 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 				header: () => <span>{t("commonTable.header.name")}</span>,
 			}),
 			columnHelper.accessor("description", {
-				size: 300,
+				size: 280,
 				cell: (info) => <TruncateText text={info.getValue()} />,
 				header: () => <span>{t("commonTable.header.description")}</span>,
 			}),
 			columnHelper.accessor("nwid", {
-				// cell: (info) => info.getValue(),
 				header: () => <span>{t("commonTable.header.networkId")}</span>,
-				// footer: (info) => info.column.id,
 				cell: ({ row: { original } }) => {
 					return (
 						<div onClick={(e) => e.stopPropagation()}>
@@ -93,11 +94,11 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 					);
 				},
 			}),
-			columnHelper.accessor("networkMembers", {
-				header: () => <span>{t("commonTable.header.members")}</span>,
+			columnHelper.accessor("memberCounts", {
+				header: () => <span>{t("commonTable.header.memberActTot")}</span>,
 				cell: (info) => {
 					const data = info.getValue();
-					return data.length;
+					return <NetworkTableMemberCount count={data.display} />;
 				},
 			}),
 		],

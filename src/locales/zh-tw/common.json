@@ -66,6 +66,7 @@
 			"description": "描述",
 			"networkId": "網路ID",
 			"members": "成員",
+			"memberActTot": "節點 活躍/總數",
 			"actions": "操作",
 			"role": "角色",
 			"email": "電子郵件",

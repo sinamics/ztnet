@@ -66,6 +66,7 @@
 			"description": "Description",
 			"networkId": "Network ID",
 			"members": "Members",
+			"memberActTot": "Nodes Act/Tot",
 			"actions": "Actions",
 			"role": "Role",
 			"email": "Email",

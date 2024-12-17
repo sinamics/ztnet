@@ -66,6 +66,7 @@
 			"description": "Beskrivelse",
 			"networkId": "Nettverks-ID",
 			"members": "Medlemmer",
+			"memberActTot": "Noder Akt/Tot",
 			"actions": "Handlinger",
 			"role": "Rolle",
 			"email": "E-post",

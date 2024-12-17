@@ -3,6 +3,7 @@ import { appRouter } from "../../root";
 import { type Session } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import { type PartialDeep } from "type-fest";
+import { MemberCounts } from "~/types/local/member";
 
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
@@ -14,6 +15,19 @@ const mockSession: PartialDeep<Session> = {
 	},
 };
 
+// Mock the ZeroTier controller
+jest.mock("~/utils/ztApi", () => ({
+	member_details: jest.fn().mockImplementation((_ctx, nwid, memberId) => {
+		// Mock both members as authorized for this test
+		return Promise.resolve({
+			authorized: true,
+			// Add other required properties that your implementation might need
+			id: memberId,
+			nwid: nwid,
+		});
+	}),
+}));
+
 test("getUserNetworks", async () => {
 	const prismaMock = new PrismaClient();
 
@@ -22,6 +36,7 @@ test("getUserNetworks", async () => {
 		name: string;
 		authorId: number;
 		networkMembers: NetworkMember[];
+		memberCounts: MemberCounts;
 	}
 
 	interface NetworkMember {
@@ -33,6 +48,11 @@ test("getUserNetworks", async () => {
 			nwid: "1",
 			name: "test",
 			authorId: 10,
+			memberCounts: {
+				display: "2 (2)",
+				authorized: 2,
+				total: 2,
+			},
 			networkMembers: [
 				{
 					id: "4ef7287f63",

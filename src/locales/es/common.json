@@ -66,6 +66,7 @@
 			"description": "Descripción",
 			"networkId": "ID de Red",
 			"members": "Miembros",
+			"memberActTot": "Nodos Act/Tot",
 			"actions": "Acciones",
 			"role": "Rol",
 			"email": "Correo electrónico",
