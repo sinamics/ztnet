@@ -46,7 +46,7 @@
 		"ip-address": "^8.1.0",
 		"jsonwebtoken": "^9.0.1",
 		"lru-cache": "^10.0.1",
-		"next": "^14.1.4",
+		"next": "^14.2.20",
 		"next-auth": "4.24.5",
 		"next-intl": "3.1.4",
 		"next-themes": "^0.2.1",
