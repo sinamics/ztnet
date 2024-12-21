@@ -947,19 +947,11 @@ setup_zerotier
 ########    ##    ##    ## ########    ##    
 
 pull_checkout_ztnet(){
-  # Change directory to the temporary installation directory
-  # Setup Ztnet
   if [[ ! -d "$TEMP_REPO_DIR/.git" ]]; then
     print_status "Initializing repository..."
-    
-    # Initialize empty repo with a shallow clone
-    $STD git clone --depth 1 https://github.com/sinamics/ztnet.git $TEMP_REPO_DIR
+    $STD git clone --depth 1 --no-single-branch https://github.com/sinamics/ztnet.git $TEMP_REPO_DIR
     cd "$TEMP_REPO_DIR"
-    
-    # Set up sparse checkout
     $STD git config core.sparseCheckout true
-    
-    # Configure sparse-checkout to exclude specific directories
     mkdir -p .git/info
     cat > .git/info/sparse-checkout <<-EOF
 /*
@@ -970,8 +962,6 @@ pull_checkout_ztnet(){
 !/docs/*
 docs/images/logo
 EOF
-    
-    # Update working tree
     $STD git read-tree -mu HEAD
     print_status "Cloned Ztnet repository (minimal version)."
   else
@@ -981,19 +971,27 @@ EOF
   fi
 
   if [[ -z "$BRANCH" ]]; then
-    # If BRANCH is empty or not set, checkout the latest tag or a custom version
-    $STD git fetch --depth 1 --tags --force
-    latestTag=$($STD git describe --tags $(git rev-list --tags --max-count=1))
-    print_status "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
-    $STD git checkout "${CUSTOM_VERSION:-$latestTag}"
+    print_status "Fetching tags..."
+    $STD git fetch --unshallow --tags || $STD git fetch --tags
+
+    # Use plain Git to list tags without $STD interfering
+    allTags=$(git tag --sort=-committerdate)
+
+    if [[ -z "$allTags" ]]; then
+      print_status "No tags found in the repository! Defaulting to main branch."
+      $STD git checkout main
+    else
+      latestTag=$(echo "$allTags" | head -n 1)
+      print_status "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
+      $STD git checkout "${CUSTOM_VERSION:-$latestTag}"
+    fi
   else
-    # If BRANCH is not empty, checkout the specified branch
     print_status "Checking out branch: $BRANCH"
     $STD git checkout "$BRANCH"
   fi
 
   print_status "Installing dependencies..."
-  $STD npm install
+  $STD npm ci
 }
 
 pull_checkout_ztnet
