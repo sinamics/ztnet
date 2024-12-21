@@ -700,7 +700,7 @@ fi
 print_status "Updating apt..."
 
 # update apt
-$STD sudo apt update
+$STD sudo apt-get update --no-list-cleanup -oAcquire::AllowInsecureRepositories=true
 
 install_apt_packages() {
   # Install required packages
@@ -949,21 +949,41 @@ setup_zerotier
 pull_checkout_ztnet(){
   # Change directory to the temporary installation directory
   # Setup Ztnet
-  # Clone Ztnet repository into /opt folder
   if [[ ! -d "$TEMP_REPO_DIR/.git" ]]; then
-    $STD git clone https://github.com/sinamics/ztnet.git $TEMP_REPO_DIR
-    print_status "Cloned Ztnet repository."
+    print_status "Initializing repository..."
+    
+    # Initialize empty repo with a shallow clone
+    $STD git clone --depth 1 https://github.com/sinamics/ztnet.git $TEMP_REPO_DIR
+    cd "$TEMP_REPO_DIR"
+    
+    # Set up sparse checkout
+    $STD git config core.sparseCheckout true
+    
+    # Configure sparse-checkout to exclude specific directories
+    mkdir -p .git/info
+    cat > .git/info/sparse-checkout <<-EOF
+/*
+!/.devcontainer/*
+!/.github/*
+!/.vscode/*
+!/install.ztnet/*
+!/docs/*
+docs/images/logo
+EOF
+    
+    # Update working tree
+    $STD git read-tree -mu HEAD
+    print_status "Cloned Ztnet repository (minimal version)."
   else
     print_status "$TEMP_REPO_DIR already exists. Updating the repository."
-    $STD git pull origin main
+    cd "$TEMP_REPO_DIR"
+    $STD git pull --depth 1 origin main
   fi
-
-  cd "$TEMP_REPO_DIR"
 
   if [[ -z "$BRANCH" ]]; then
     # If BRANCH is empty or not set, checkout the latest tag or a custom version
-    git fetch --tags
-    latestTag=$(git describe --tags $(git rev-list --tags --max-count=1))
+    $STD git fetch --depth 1 --tags --force
+    latestTag=$($STD git describe --tags $(git rev-list --tags --max-count=1))
     print_status "Checking out tag: ${CUSTOM_VERSION:-$latestTag}"
     $STD git checkout "${CUSTOM_VERSION:-$latestTag}"
   else
