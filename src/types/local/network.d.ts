@@ -74,6 +74,7 @@ interface TagEnums {
 	[key: string]: number;
 }
 export interface RoutesEntity {
+	id?: string;
 	target?: string | null;
 	via?: string | null;
 }

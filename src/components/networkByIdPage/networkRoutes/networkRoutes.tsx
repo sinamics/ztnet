@@ -7,6 +7,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { NetworkRoutesTable } from "./networkRoutesTable";
 
 const initialRouteInput = {
 	target: "",
@@ -18,7 +19,7 @@ interface IProp {
 	organizationId?: string;
 }
 
-export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
+export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networkById");
 
@@ -40,24 +41,13 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 		},
 		{ enabled: !!query.id },
 	);
+	const { network } = networkById || {};
 
-	const { mutate: updateManageRoutes, isLoading: isUpdating } =
-		api.network.managedRoutes.useMutation({
-			onError: handleApiError,
-			onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
-		});
+	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
+		onError: handleApiError,
+		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+	});
 
-	const deleteRoute = (route: RoutesEntity) => {
-		const _routes = [...(network.routes as RoutesEntity[])];
-		const newRouteArr = _routes.filter((r) => r.target !== route.target);
-
-		updateManageRoutes({
-			updateParams: { routes: [...newRouteArr] },
-			organizationId,
-			nwid: query.id as string,
-			central,
-		});
-	};
 	const routeHandler = (event: ChangeEvent<HTMLInputElement>) => {
 		setRouteInput({
 			...routeInput,
@@ -85,7 +75,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 			},
 		);
 	};
-	const { network } = networkById || {};
+
 	if (isLoading) return <div>Loading</div>;
 
 	return (
@@ -118,6 +108,9 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 					</div>
 				) : null}
 				<div className="grid grid-cols-1 pt-3">
+					<NetworkRoutesTable />
+				</div>
+				{/* <div className="grid grid-cols-1 pt-3">
 					{(network?.routes as RoutesEntity[]).map((route) => {
 						return (
 							<div
@@ -147,7 +140,7 @@ export const NettworkRoutes = ({ central = false, organizationId }: IProp) => {
 							</div>
 						);
 					})}
-				</div>
+				</div> */}
 				{showRouteInput ? (
 					<form className="relative my-5 flex" onSubmit={submitHandler}>
 						<input
