@@ -86,7 +86,12 @@ export const networkProvisioningFactory = async ({ ctx, input }) => {
 					create: {
 						name: newNw.name,
 						nwid: newNw.nwid,
-						routes: ipAssignmentPools.routes,
+						routes: {
+							create: ipAssignmentPools.routes.map((route) => ({
+								target: route.target,
+								via: route.via,
+							})),
+						},
 					},
 				},
 			},

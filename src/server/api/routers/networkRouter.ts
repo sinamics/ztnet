@@ -124,6 +124,7 @@ export const networkRouter = createTRPCRouter({
 				},
 				include: {
 					organization: true,
+					routes: true,
 				},
 			});
 
@@ -205,18 +206,30 @@ export const networkRouter = createTRPCRouter({
 
 			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
 			if (
-				JSON.stringify(networkFromDatabase.routes) !==
-				JSON.stringify(ztControllerResponse.network.routes)
+				networkFromDatabase.routes.length !==
+					ztControllerResponse.network.routes.length ||
+				networkFromDatabase.routes.some(
+					(dbRoute, index) =>
+						dbRoute.target !== ztControllerResponse.network.routes[index]?.target ||
+						dbRoute.via !== ztControllerResponse.network.routes[index]?.via,
+				)
 			) {
 				networkFromDatabase = await ctx.prisma.network.update({
 					where: {
 						nwid: input.nwid,
 					},
 					data: {
-						routes: ztControllerResponse.network.routes as string[],
+						routes: {
+							deleteMany: {},
+							create: ztControllerResponse.network.routes.map((route) => ({
+								target: route.target,
+								via: route.via || null,
+							})),
+						},
 					},
 					include: {
 						organization: true,
+						routes: true,
 					},
 				});
 			}
@@ -232,16 +245,13 @@ export const networkRouter = createTRPCRouter({
 			let duplicateRoutes: DuplicateRoutes[] = [];
 			if (targetIPs.length > 0) {
 				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
-							SELECT "authorId", "routes", "name", "nwid"
-							FROM "network"
-							WHERE "authorId" = ${ctx.session.user.id}
-									AND EXISTS (
-											SELECT 1
-											FROM jsonb_array_elements("routes") as route
-											WHERE route->>'target' IN (${Prisma.join(targetIPs)})
-									)
-									AND "nwid" != ${input.nwid};
-					`;
+					SELECT n."authorId", n."name", n."nwid"
+					FROM "network" n
+					JOIN "Routes" r ON r."networkId" = n."nwid"
+					WHERE n."authorId" = ${ctx.session.user.id}
+						AND r."target" IN (${Prisma.join(targetIPs)})
+						AND n."nwid" != ${input.nwid};
+				`;
 			} else {
 				// Handle the case when targetIPs is empty
 				duplicateRoutes = [];
@@ -502,6 +512,8 @@ export const networkRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
+					note: z.string().optional(),
+					routeId: z.string().optional(),
 				}),
 			}),
 		)
@@ -523,6 +535,20 @@ export const networkRouter = createTRPCRouter({
 					ctx,
 					organizationId: input?.organizationId,
 					minimumRequiredRole: Role.USER,
+				});
+			}
+
+			const { note } = input.updateParams;
+
+			// if note, add it to the database
+			if (note) {
+				await ctx.prisma.routes.update({
+					where: {
+						id: input.updateParams.routeId,
+					},
+					data: {
+						notes: note,
+					},
 				});
 			}
 			const { routes } = input.updateParams;

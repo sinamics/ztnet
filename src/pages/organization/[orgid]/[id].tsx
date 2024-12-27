@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
