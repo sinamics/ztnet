@@ -129,7 +129,7 @@ export const NetworkRoutesTable = React.memo(
 			getCoreRowModel: getCoreRowModel(),
 			state: {
 				sorting,
-				columnVisibility: { id: false },
+				columnVisibility: { id: false, nodeName: !central, notes: !central },
 			},
 		});
 

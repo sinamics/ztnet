@@ -106,7 +106,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 					</div>
 				) : null}
 				<div className="grid grid-cols-1 pt-3">
-					<NetworkRoutesTable />
+					<NetworkRoutesTable central={central} />
 				</div>
 				{showRouteInput ? (
 					<form className="relative my-5 space-y-4 max-w-2xl" onSubmit={submitHandler}>
