@@ -465,7 +465,12 @@ export const organizationRouter = createTRPCRouter({
 							name: input.networkName,
 							nwid: newNw.nwid,
 							description: input.orgName,
-							routes: ipAssignmentPools.routes,
+							routes: {
+								create: ipAssignmentPools.routes.map((route) => ({
+									target: route.target,
+									via: route.via,
+								})),
+							},
 						},
 					},
 				},
