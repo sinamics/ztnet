@@ -17,6 +17,7 @@ import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 import { MailTemplateKey } from "~/utils/enums";
+import { syncNetworkRoutes } from "../services/routesService";
 
 const RouteSchema = z.object({
 	target: z
@@ -118,7 +119,7 @@ export const networkRouter = createTRPCRouter({
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
 			// First, retrieve the network with organization details
-			let networkFromDatabase = await ctx.prisma.network.findUnique({
+			const networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
 					nwid: input.nwid,
 				},
@@ -205,34 +206,12 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
-			if (
-				networkFromDatabase.routes.length !==
-					ztControllerResponse.network.routes.length ||
-				networkFromDatabase.routes.some(
-					(dbRoute, index) =>
-						dbRoute.target !== ztControllerResponse.network.routes[index]?.target ||
-						dbRoute.via !== ztControllerResponse.network.routes[index]?.via,
-				)
-			) {
-				networkFromDatabase = await ctx.prisma.network.update({
-					where: {
-						nwid: input.nwid,
-					},
-					data: {
-						routes: {
-							deleteMany: {},
-							create: ztControllerResponse.network.routes.map((route) => ({
-								target: route.target,
-								via: route.via || null,
-							})),
-						},
-					},
-					include: {
-						organization: true,
-						routes: true,
-					},
-				});
-			}
+			await syncNetworkRoutes({
+				networkId: input.nwid,
+				networkFromDatabase,
+				ztControllerRoutes: ztControllerResponse.network.routes,
+			});
+
 			// check if there is other network using same routes and return a notification
 			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
 			interface DuplicateRoutes {
@@ -270,11 +249,22 @@ export const networkRouter = createTRPCRouter({
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
 
+			// Retrieve the updated values from network with organization details
+			const updatedNetworkFromDatabase = await ctx.prisma.network.findUnique({
+				where: {
+					nwid: input.nwid,
+				},
+				include: {
+					organization: true,
+					routes: true,
+				},
+			});
+
 			// Construct the final response object
 			return {
 				network: {
 					...ztControllerResponse?.network,
-					...networkFromDatabase,
+					...updatedNetworkFromDatabase,
 					cidr: cidrOptions,
 					duplicateRoutes: duplicateRoutes.map((network) => ({
 						...network,
