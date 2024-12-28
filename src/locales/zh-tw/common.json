@@ -304,13 +304,24 @@
 				"acceptedValue": "接受的值在1280到10000之間"
 			}
 		},
-		"nettworkRoutes": {
+		"networkRoutes": {
+			"table": {
+				"destination": "目的地",
+				"via": "經由",
+				"nodeName": "節點名稱",
+				"notes": "備註"
+			},
 			"managedRoutesTitle": "管理路由",
-			"noManagedRoutesTitle": "沒有定義管理路由。",
-			"noManagedRoutesDescription1": "沒有匹配路由的裝置將無法獲得 IP 地址。",
-			"noManagedRoutesDescription2": "如果您沒有特殊要求，嘗試 IPv4 自動分配簡單模式。",
+			"noManagedRoutesTitle": "未定義管理路由。",
+			"noManagedRoutesDescription1": "設備在沒有匹配路由的情況下將無法獲取IP位址。",
+			"noManagedRoutesDescription2": "如果您沒有特殊要求，請嘗試IPv4自動分配簡易模式。",
 			"destinationPlaceholder": "目的地",
-			"viaPlaceholder": "目標"
+			"viaPlaceholder": "經由",
+			"notesPlaceholder": "點擊添加備註",
+			"destinationInputLabel": "目的地",
+			"destinationInputDescription": "請以CIDR表示法輸入目的地網路位址",
+			"viaInputLabel": "經由",
+			"viaInputDescription": "輸入下一跳的經由IP位址。留空以指向本地LAN"
 		},
 		"networkDns": {
 			"DNS": "域名系統",

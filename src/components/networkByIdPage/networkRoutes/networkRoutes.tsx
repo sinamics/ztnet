@@ -79,7 +79,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	return (
 		<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
-			<div className="collapse-title">{t("nettworkRoutes.managedRoutesTitle")}</div>
+			<div className="collapse-title">{t("networkRoutes.managedRoutesTitle")}</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
 				{(network?.routes as RoutesEntity[]).length === 0 ? (
 					<div className="alert alert-warning p-2">
@@ -97,10 +97,10 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 							/>
 						</svg>
 						<div>
-							<h3 className="font-bold">{t("nettworkRoutes.noManagedRoutesTitle")}</h3>
+							<h3 className="font-bold">{t("networkRoutes.noManagedRoutesTitle")}</h3>
 							<div className="text-xs">
-								<p>{t("nettworkRoutes.noManagedRoutesDescription1")}</p>
-								<p>{t("nettworkRoutes.noManagedRoutesDescription2")}</p>
+								<p>{t("networkRoutes.noManagedRoutesDescription1")}</p>
+								<p>{t("networkRoutes.noManagedRoutesDescription2")}</p>
 							</div>
 						</div>
 					</div>
@@ -113,7 +113,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 						<div className="flex flex-col sm:flex-row sm:items-start gap-4">
 							<div className="flex-1">
 								<label htmlFor="target-input" className="block text-sm font-medium mb-1">
-									Destination
+									{t("networkRoutes.destinationPlaceholder")}
 								</label>
 								<Input
 									id="target-input"
@@ -124,13 +124,13 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 									className="w-full border rounded-md shadow-sm text-sm input-sm"
 								/>
 								<p className="mt-1 text-xs text-gray-500">
-									Enter the destination network address in CIDR notation
+									{t("networkRoutes.destinationInputDescription")}
 								</p>
 							</div>
 
 							<div className="flex-1">
 								<label htmlFor="via-input" className="block text-sm font-medium mb-1">
-									Via
+									{t("networkRoutes.viaPlaceholder")}
 								</label>
 								<Input
 									id="via-input"
@@ -141,7 +141,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 									className="w-full border rounded-md shadow-sm text-sm input-sm"
 								/>
 								<p className="mt-1 text-xs text-gray-500">
-									Enter target / via IP address. Leave empty to target local LAN
+									{t("networkRoutes.viaInputDescription")}
 								</p>
 							</div>
 
