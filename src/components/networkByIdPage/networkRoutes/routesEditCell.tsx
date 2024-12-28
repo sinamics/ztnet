@@ -3,7 +3,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { RoutesEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
-import Input from "~/components/elements/input";
+import TextArea from "~/components/elements/textarea";
 
 interface EditableColumnConfig {
 	id: string;
@@ -73,7 +73,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	updateManageRoutes,
 }) => {
 	const initialValue = getValue();
-	const inputRef = useRef<HTMLInputElement>(null);
+	// Change ref type to HTMLTextAreaElement
+	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [value, setValue] = useState<string | number>(initialValue);
 
 	const handleUpdate = () => {
@@ -92,8 +93,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
 		handleUpdate();
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Enter") {
+	// Update KeyboardEvent type to use HTMLTextAreaElement
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			// Add check for !e.shiftKey to allow newlines
 			e.preventDefault();
 			handleUpdate();
 			inputRef.current?.blur();
@@ -101,7 +104,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	};
 
 	return (
-		<Input
+		<TextArea
 			useTooltip
 			ref={inputRef}
 			placeholder="Click to add notes"
@@ -110,7 +113,6 @@ const EditableCell: React.FC<EditableCellProps> = ({
 			onBlur={onBlur}
 			onKeyDown={handleKeyDown}
 			value={(value as string) || ""}
-			type="text"
 			className="input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full cursor-pointer"
 		/>
 	);

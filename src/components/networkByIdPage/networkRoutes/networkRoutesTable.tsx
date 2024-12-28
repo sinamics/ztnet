@@ -1,10 +1,12 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
 	useReactTable,
 	getCoreRowModel,
 	flexRender,
 	type HeaderGroup,
 	type Row,
+	getSortedRowModel,
+	SortingState,
 } from "@tanstack/react-table";
 import { networkRoutesColumns } from "./collumns";
 import { RoutesEntity } from "~/types/local/network";
@@ -36,7 +38,7 @@ const TableBody = React.memo<TableBodyProps>(({ rows }) => {
 			{rows.map((row) => (
 				<tr key={row.id} className="hover:bg-gray-600/10">
 					{row.getVisibleCells().map((cell) => (
-						<td key={cell.id} className="px-4 py-2">
+						<td key={cell.id} className="px-4 text-sm">
 							{flexRender(cell.column.columnDef.cell, cell.getContext())}
 						</td>
 					))}
@@ -71,6 +73,8 @@ TableHeader.displayName = "TableHeader";
 
 export const NetworkRoutesTable = React.memo(
 	({ central = false, organizationId }: IProp) => {
+		const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
+
 		const handleApiError = useTrpcApiErrorHandler();
 		const handleApiSuccess = useTrpcApiSuccessHandler();
 
@@ -120,7 +124,13 @@ export const NetworkRoutesTable = React.memo(
 			data,
 			columns,
 			defaultColumn,
+			onSortingChange: setSorting,
+			getSortedRowModel: getSortedRowModel(),
 			getCoreRowModel: getCoreRowModel(),
+			state: {
+				sorting,
+				columnVisibility: { id: false },
+			},
 		});
 
 		// Memoize the computed parts of the table

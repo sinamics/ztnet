@@ -1,24 +1,11 @@
-import { forwardRef, useEffect, useState } from "react";
+import { ComponentPropsWithRef, forwardRef, useEffect, useState } from "react";
 import cn from "classnames";
 import { useTranslations } from "next-intl";
 
-interface InputProps {
-	placeholder: string;
-	value?: string | number;
+interface InputProps extends ComponentPropsWithRef<"input"> {
 	useTooltip?: boolean;
-	name: string;
-	type: string;
-	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-	ref?: React.RefObject<HTMLInputElement>;
 	focus?: boolean;
-	className?: string;
-	defaultValue?: string | number;
-	list?: string;
-	disabled?: boolean;
 }
-
 const Input = forwardRef<HTMLInputElement, InputProps>(
 	(
 		{
@@ -47,7 +34,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 			setIsFocused(true);
 		};
 
-		const handleBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
 			setIsFocused(false);
 			if (onBlur) {
 				onBlur(event);
