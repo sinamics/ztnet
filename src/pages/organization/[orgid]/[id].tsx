@@ -344,20 +344,11 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
-				<NetworkHelpText />
-			</div>
-
-			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkFlowRules organizationId={organizationId} />
 			</div>
-			{/* <div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
-				DEBUG
+			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
+				<NetworkHelpText />
 			</div>
-			<div className="w-5/5 mx-auto  py-4 text-sm md:text-base space-y-8">
-				<DebugMirror data={networkById?.network} title="Controler Networks" />
-				<DebugMirror data={networkById?.members} title="Controler Members" />
-			</div> */}
-
 			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				Network Actions
 			</div>

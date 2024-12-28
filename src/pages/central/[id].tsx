@@ -310,12 +310,12 @@ const CentralNetworkById = ({ orgIds }) => {
           ) : null}
         </div>
       </div> */}
-			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
-				<NetworkHelpText />
-			</div>
 
 			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<CentralFlowRules />
+			</div>
+			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
+				<NetworkHelpText />
 			</div>
 			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				Network Actions
