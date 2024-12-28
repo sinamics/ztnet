@@ -4,7 +4,7 @@ import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encry
 import apiNetworkHandler, {
 	GET_orgById,
 	REQUEST_PR_MINUTE,
-} from "~/pages/api/v1/org/[orgid]";
+} from "~/__pages/api/v1/org/[orgid]";
 
 jest.mock("~/server/db", () => ({
 	prisma: {

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import createUserHandler from "~/pages/api/v1/user";
+import createUserHandler from "~/__pages/api/v1/user";
 import { prisma } from "~/server/db";
 import { appRouter } from "~/server/api/root";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";

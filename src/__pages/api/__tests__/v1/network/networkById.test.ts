@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { NextApiRequest, NextApiResponse } from "next";
-import apiNetworkByIdHandler from "~/pages/api/v1/network/[id]";
+import apiNetworkByIdHandler from "~/__pages/api/v1/network/[id]";
 import { prisma } from "~/server/db";
 import * as encryptionModule from "~/utils/encryption";
 import * as ztController from "~/utils/ztApi";

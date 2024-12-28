@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import FourOhFour from "~/pages/404";
+import FourOhFour from "~/__pages/404";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import Footer from "./footer";

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "~/server/db";
 import { API_TOKEN_SECRET, encrypt, generateInstanceSecret } from "~/utils/encryption";
-import { GET_userOrganization } from "~/pages/api/v1/org";
+import { GET_userOrganization } from "~/__pages/api/v1/org";
 
 jest.mock("~/server/db", () => ({
 	prisma: {

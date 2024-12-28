@@ -2,7 +2,7 @@ import "../../__mocks__/networkById";
 import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import NetworkById from "~/pages/network/[id]";
+import NetworkById from "~/__pages/network/[id]";
 import userEvent from "@testing-library/user-event";
 import { useRouter } from "next/router";
 import { api } from "../../../utils/api";

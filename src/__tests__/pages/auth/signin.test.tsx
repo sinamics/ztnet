@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { signIn } from "next-auth/react";
-import LoginPage from "~/pages/auth/login";
+import LoginPage from "~/__pages/auth/login";
 import enTranslation from "~/locales/en/common.json";
 import { api } from "../../../utils/api";
 import { ErrorCode } from "~/utils/errorCode";

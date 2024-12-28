@@ -1,4 +1,4 @@
-import apiNetworkHandler from "~/pages/api/v1/network";
+import apiNetworkHandler from "~/__pages/api/v1/network";
 import { NextApiRequest, NextApiResponse } from "next";
 
 describe("/api/createNetwork", () => {

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import apiNetworkUpdateMembersHandler from "~/pages/api/v1/network/[id]/member/[memberId]";
+import apiNetworkUpdateMembersHandler from "~/__pages/api/v1/network/[id]/member/[memberId]";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import * as encryptionModule from "~/utils/encryption";

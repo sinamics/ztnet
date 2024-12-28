@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import apiNetworkMembersHandler, {
 	REQUEST_PR_MINUTE,
-} from "~/pages/api/v1/org/[orgid]/network/[nwid]/member";
+} from "~/__pages/api/v1/org/[orgid]/network/[nwid]/member";
 import { createGenericApiTests } from "../../../apiAuthentication";
 
 jest.mock("~/server/db", () => ({

@@ -1,4 +1,4 @@
-import apiStatsHandler from "~/pages/api/v1/stats/index";
+import apiStatsHandler from "~/__pages/api/v1/stats/index";
 import { NextApiRequest, NextApiResponse } from "next";
 
 describe("/api/stats", () => {
