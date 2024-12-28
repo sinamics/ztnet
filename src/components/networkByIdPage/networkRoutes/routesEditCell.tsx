@@ -4,6 +4,8 @@ import { RoutesEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import TextArea from "~/components/elements/textarea";
+import { useTranslations } from "next-intl";
+import toast from "react-hot-toast";
 
 interface EditableColumnConfig {
 	id: string;
@@ -25,7 +27,10 @@ interface useEditableColumnProps {
 
 export const useEditableColumn = ({ refetchNetworkById }: useEditableColumnProps) => {
 	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
-		onSuccess: refetchNetworkById,
+		onSuccess: () => {
+			toast.success("Route updated successfully");
+			void refetchNetworkById();
+		},
 	});
 
 	const { query } = useRouter();
@@ -72,10 +77,12 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	columnConfig,
 	updateManageRoutes,
 }) => {
+	const t = useTranslations("networkById");
 	const initialValue = getValue();
-	// Change ref type to HTMLTextAreaElement
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 	const [value, setValue] = useState<string | number>(initialValue);
+	// Add a ref to track if update was triggered by Enter key
+	const isEnterUpdateRef = useRef(false);
 
 	const handleUpdate = () => {
 		if (value !== initialValue) {
@@ -90,14 +97,19 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	};
 
 	const onBlur = () => {
-		handleUpdate();
+		// Only update if it wasn't triggered by Enter key
+		if (!isEnterUpdateRef.current) {
+			handleUpdate();
+		}
+		// Reset the flag
+		isEnterUpdateRef.current = false;
 	};
 
-	// Update KeyboardEvent type to use HTMLTextAreaElement
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === "Enter" && !e.shiftKey) {
-			// Add check for !e.shiftKey to allow newlines
 			e.preventDefault();
+			// Set the flag before updating
+			isEnterUpdateRef.current = true;
 			handleUpdate();
 			inputRef.current?.blur();
 		}
@@ -107,7 +119,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 		<TextArea
 			useTooltip
 			ref={inputRef}
-			placeholder="Click to add notes"
+			placeholder={t("networkRoutes.notesPlaceholder")}
 			name="routesNotes"
 			onChange={(e) => setValue(e.target.value)}
 			onBlur={onBlur}

@@ -304,13 +304,24 @@
 				"acceptedValue": "Los valores aceptados están entre 1280 y 10000"
 			}
 		},
-		"nettworkRoutes": {
-			"managedRoutesTitle": "Rutas administradas",
+		"networkRoutes": {
+			"table": {
+				"destination": "Destino",
+				"via": "Vía",
+				"nodeName": "Nombre del Nodo",
+				"notes": "Notas"
+			},
+			"managedRoutesTitle": "Rutas Administradas",
 			"noManagedRoutesTitle": "No hay rutas administradas definidas.",
-			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta correspondiente.",
-			"noManagedRoutesDescription2": "Si no tienes requerimientos específicos, prueba el modo Fácil de Auto-Asignación IPv4.",
+			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta coincidente.",
+			"noManagedRoutesDescription2": "Si no tiene requisitos específicos, pruebe el modo fácil de autoasignación IPv4.",
 			"destinationPlaceholder": "Destino",
-			"viaPlaceholder": "objetivo"
+			"viaPlaceholder": "Vía",
+			"notesPlaceholder": "Haga clic para agregar notas",
+			"destinationInputLabel": "Destino",
+			"destinationInputDescription": "Ingrese la dirección de red de destino en notación CIDR",
+			"viaInputLabel": "Vía",
+			"viaInputDescription": "Ingrese la dirección IP vía del siguiente salto. Dejar vacío para dirigir a la LAN local"
 		},
 		"networkDns": {
 			"DNS": "DNS",

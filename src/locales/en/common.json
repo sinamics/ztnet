@@ -304,13 +304,24 @@
 				"acceptedValue": "Accepted values are between 1280 and 10000"
 			}
 		},
-		"nettworkRoutes": {
+		"networkRoutes": {
+			"table": {
+				"destination": "Destination",
+				"via": "Via",
+				"nodeName": "Node Name",
+				"notes": "Notes"
+			},
 			"managedRoutesTitle": "Managed Routes",
 			"noManagedRoutesTitle": "No managed routes defined.",
 			"noManagedRoutesDescription1": "Devices will not get an IP address without a matching route.",
 			"noManagedRoutesDescription2": "If you do not have specific requirements, try the IPv4 Auto-Assign Easy mode.",
 			"destinationPlaceholder": "Destination",
-			"viaPlaceholder": "target"
+			"viaPlaceholder": "Via",
+			"notesPlaceholder": "Click to add notes",
+			"destinationInputLabel": "Destination",
+			"destinationInputDescription": "Enter the destination network address in CIDR notation",
+			"viaInputLabel": "Via",
+			"viaInputDescription": "Enter the via IP address of the next hop. Leave empty to target local LAN"
 		},
 		"networkDns": {
 			"DNS": "DNS",

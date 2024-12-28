@@ -64,7 +64,6 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       const paddingBottom = 2;
       const border = 0; // Since we're using borderless style
       const singleLineHeight = 24; // Height for single line
-      
   
       const minHeight = (singleLineHeight * minRows) + paddingTop + paddingBottom + border;
       const maxHeight = (singleLineHeight * maxRows) + paddingTop + paddingBottom + border;

@@ -531,7 +531,7 @@ export const networkRouter = createTRPCRouter({
 			const { note } = input.updateParams;
 
 			// if note, add it to the database
-			if (note) {
+			if (typeof note === "string") {
 				await ctx.prisma.routes.update({
 					where: {
 						id: input.updateParams.routeId,
