@@ -8,6 +8,7 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import { NetworkRoutesTable } from "./networkRoutesTable";
+import Input from "~/components/elements/input";
 
 const initialRouteInput = {
 	target: "",
@@ -108,31 +109,55 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 					<NetworkRoutesTable />
 				</div>
 				{showRouteInput ? (
-					<form className="relative my-5 flex" onSubmit={submitHandler}>
-						<input
-							type="text"
-							name="target"
-							onChange={routeHandler}
-							placeholder={t("nettworkRoutes.destinationPlaceholder")}
-							className="input input-xs w-3/6 input-bordered"
-						/>
-						<div className="px-4">via</div>
-						<input
-							type="text"
-							name="via"
-							onChange={routeHandler}
-							placeholder={t("nettworkRoutes.viaPlaceholder")}
-							className="input input-xs w-3/6 input-bordered"
-						/>
-						<button type="submit" className="btn btn-active btn-xs ml-4 rounded-md">
-							{b("add")}
-						</button>
-						<button
-							onClick={() => setShowRouteInput(!showRouteInput)}
-							className="btn btn-ghost btn-xs ml-4"
-						>
-							{b("cancel")}
-						</button>
+					<form className="relative my-5 space-y-4 max-w-2xl" onSubmit={submitHandler}>
+						<div className="flex flex-col sm:flex-row sm:items-start gap-4">
+							<div className="flex-1">
+								<label htmlFor="target-input" className="block text-sm font-medium mb-1">
+									Destination
+								</label>
+								<Input
+									id="target-input"
+									type="text"
+									name="target"
+									onChange={routeHandler}
+									placeholder="10.11.12.0/24"
+									className="w-full border rounded-md shadow-sm text-sm input-sm"
+								/>
+								<p className="mt-1 text-xs text-gray-500">
+									Enter the destination network address in CIDR notation
+								</p>
+							</div>
+
+							<div className="flex-1">
+								<label htmlFor="via-input" className="block text-sm font-medium mb-1">
+									Via
+								</label>
+								<Input
+									id="via-input"
+									type="text"
+									name="via"
+									onChange={routeHandler}
+									placeholder="192.168.168.1"
+									className="w-full border rounded-md shadow-sm text-sm input-sm"
+								/>
+								<p className="mt-1 text-xs text-gray-500">
+									Enter target / via IP address. Leave empty to target local LAN
+								</p>
+							</div>
+
+							<div className="flex gap-2 sm:ml-4 sm:mt-6">
+								<button type="submit" className="btn btn-primary btn-xs">
+									{b("add")}
+								</button>
+								<button
+									type="button"
+									onClick={() => setShowRouteInput(!showRouteInput)}
+									className="btn btn-xs"
+								>
+									{b("cancel")}
+								</button>
+							</div>
+						</div>
 					</form>
 				) : null}
 				<div>

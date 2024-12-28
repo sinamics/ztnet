@@ -9,17 +9,16 @@ export const networkRoutesColumns = (
 	isUpdating: boolean,
 	members: MemberEntity[],
 ) => [
+	columnHelper.accessor("id", {
+		cell: (info) => info.getValue(),
+	}),
 	columnHelper.accessor("target", {
 		header: "Destination",
 		cell: (info) => info.getValue(),
 	}),
 	columnHelper.accessor("via", {
 		header: "Via",
-		cell: (info) => (
-			<div className="text-xs opacity-30 md:text-base">
-				{info.row.original.via || "LAN"}
-			</div>
-		),
+		cell: (info) => <div className="">{info.row.original.via || "LAN"}</div>,
 	}),
 	columnHelper.accessor("nodeName", {
 		header: "Node Name",
@@ -28,7 +27,7 @@ export const networkRoutesColumns = (
 			const node = members?.find((member) =>
 				member.ipAssignments.includes(info.row.original.via),
 			);
-			return node?.name || "N/A";
+			return node?.name || null;
 		},
 	}),
 	columnHelper.accessor("notes", {
@@ -43,7 +42,7 @@ export const networkRoutesColumns = (
 				viewBox="0 0 24 24"
 				strokeWidth="1.5"
 				stroke="currentColor"
-				className="h-5 w-5 cursor-pointer hover:text-primary"
+				className="h-5 w-5 cursor-pointer hover:text-error"
 				onClick={() => !isUpdating && deleteRoute(info.row.original)}
 			>
 				<path
