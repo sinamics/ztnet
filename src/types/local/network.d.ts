@@ -74,8 +74,11 @@ interface TagEnums {
 	[key: string]: number;
 }
 export interface RoutesEntity {
+	id?: string;
 	target?: string | null;
 	via?: string | null;
+	notes?: string | null;
+	networkId?: string;
 }
 
 export interface dns {

@@ -304,13 +304,24 @@
 				"acceptedValue": "Les valeurs acceptées sont comprises entre 1280 et 10000"
 			}
 		},
-		"nettworkRoutes": {
-			"managedRoutesTitle": "Routes gérés",
-			"noManagedRoutesTitle": "Aucune route géré défini.",
-			"noManagedRoutesDescription1": "Les appareils n'obtiendront pas d'adresse IP sans une route correspondant..",
-			"noManagedRoutesDescription2": "Si vous n’avez pas d’exigences spécifiques, essayez le mode IPv4 d'assignation simple.",
+		"networkRoutes": {
+			"table": {
+				"destination": "Destination",
+				"via": "Via",
+				"nodeName": "Nom du Nœud",
+				"notes": "Notes"
+			},
+			"managedRoutesTitle": "Routes Gérées",
+			"noManagedRoutesTitle": "Aucune route gérée définie.",
+			"noManagedRoutesDescription1": "Les appareils n'obtiendront pas d'adresse IP sans une route correspondante.",
+			"noManagedRoutesDescription2": "Si vous n'avez pas d'exigences spécifiques, essayez le mode facile d'auto-attribution IPv4.",
 			"destinationPlaceholder": "Destination",
-			"viaPlaceholder": "cible"
+			"viaPlaceholder": "Via",
+			"notesPlaceholder": "Cliquez pour ajouter des notes",
+			"destinationInputLabel": "Destination",
+			"destinationInputDescription": "Entrez l'adresse réseau de destination en notation CIDR",
+			"viaInputLabel": "Via",
+			"viaInputDescription": "Entrez l'adresse IP via du prochain saut. Laissez vide pour cibler le LAN local"
 		},
 		"networkDns": {
 			"DNS": "DNS",

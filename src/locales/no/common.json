@@ -304,13 +304,24 @@
 				"acceptedValue": "Aksepterte verdier er mellom 1280 og 10000"
 			}
 		},
-		"nettworkRoutes": {
+		"networkRoutes": {
+			"table": {
+				"destination": "Destinasjon",
+				"via": "Via",
+				"nodeName": "Nodenavn",
+				"notes": "Notater"
+			},
 			"managedRoutesTitle": "Administrerte Ruter",
 			"noManagedRoutesTitle": "Ingen administrerte ruter definert.",
 			"noManagedRoutesDescription1": "Enheter vil ikke få en IP-adresse uten en matchende rute.",
-			"noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-Tildel Enkel-modus.",
+			"noManagedRoutesDescription2": "Hvis du ikke har spesifikke krav, prøv IPv4 Auto-tildeling Enkel modus.",
 			"destinationPlaceholder": "Destinasjon",
-			"viaPlaceholder": "mål"
+			"viaPlaceholder": "Via",
+			"notesPlaceholder": "Klikk for å legge til notater",
+			"destinationInputLabel": "Destinasjon",
+			"destinationInputDescription": "Skriv inn destinasjonsnettverksadressen i CIDR-notasjon",
+			"viaInputLabel": "Via",
+			"viaInputDescription": "Skriv inn via-IP-adressen for neste hopp. La stå tom for å målrette lokalt LAN"
 		},
 		"networkDns": {
 			"DNS": "DNS",

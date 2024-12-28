@@ -304,13 +304,24 @@
 				"acceptedValue": "接受的值在1280到10000之间"
 			}
 		},
-		"nettworkRoutes": {
+		"networkRoutes": {
+			"table": {
+				"destination": "目标",
+				"via": "通过",
+				"nodeName": "节点名称",
+				"notes": "备注"
+			},
 			"managedRoutesTitle": "管理路由",
-			"noManagedRoutesTitle": "没有定义管理路由。",
-			"noManagedRoutesDescription1": "没有匹配路由的设备将无法获得 IP 地址。",
-			"noManagedRoutesDescription2": "如果您没有特殊要求，尝试 IPv4 自动分配简单模式。",
-			"destinationPlaceholder": "目的地",
-			"viaPlaceholder": "目标"
+			"noManagedRoutesTitle": "未定义管理路由。",
+			"noManagedRoutesDescription1": "设备在没有匹配路由的情况下将无法获取IP地址。",
+			"noManagedRoutesDescription2": "如果您没有特殊要求，请尝试IPv4自动分配简易模式。",
+			"destinationPlaceholder": "目标",
+			"viaPlaceholder": "通过",
+			"notesPlaceholder": "点击添加备注",
+			"destinationInputLabel": "目标",
+			"destinationInputDescription": "请以CIDR表示法输入目标网络地址",
+			"viaInputLabel": "通过",
+			"viaInputDescription": "输入下一跳的通过IP地址。留空以指向本地LAN"
 		},
 		"networkDns": {
 			"DNS": "域名系统",

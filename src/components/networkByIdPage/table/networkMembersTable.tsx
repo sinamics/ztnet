@@ -131,7 +131,10 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 					placeholder={t("networkMembersTable.search.placeholder")}
 				/>
 			</div>
-			<table className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500 text-center">
+			<table
+				role="membersTable"
+				className="w-full divide-y divide-gray-400 overflow-x-auto border border-gray-500 text-center"
+			>
 				<thead className="bg-base-100 ">
 					{
 						// Loop over the header rows
