@@ -304,13 +304,24 @@
 				"acceptedValue": "Akceptowane wartości zawierają się pomiędzy 1280 a 10000"
 			}
 		},
-		"nettworkRoutes": {
-			"managedRoutesTitle": "Zarządzane trasy",
-			"noManagedRoutesTitle": "Nie zdefiniowano żadnych tras.",
+		"networkRoutes": {
+			"table": {
+				"destination": "Miejsce Docelowe",
+				"via": "Przez",
+				"nodeName": "Nazwa Węzła",
+				"notes": "Notatki"
+			},
+			"managedRoutesTitle": "Zarządzane Trasy",
+			"noManagedRoutesTitle": "Brak zdefiniowanych zarządzanych tras.",
 			"noManagedRoutesDescription1": "Urządzenia nie otrzymają adresu IP bez pasującej trasy.",
-			"noManagedRoutesDescription2": "Jeśli nie masz specyficznych, bardziej zaawansowanych wymagań, wypróbuj automatyczne przypisywanie adresów IPv4 w trybie prostym.",
-			"destinationPlaceholder": "Miejsce docelowe",
-			"viaPlaceholder": "cel"
+			"noManagedRoutesDescription2": "Jeśli nie masz szczególnych wymagań, wypróbuj tryb łatwy automatycznego przypisywania IPv4.",
+			"destinationPlaceholder": "Miejsce Docelowe",
+			"viaPlaceholder": "Przez",
+			"notesPlaceholder": "Kliknij, aby dodać notatki",
+			"destinationInputLabel": "Miejsce Docelowe",
+			"destinationInputDescription": "Wprowadź docelowy adres sieciowy w notacji CIDR",
+			"viaInputLabel": "Przez",
+			"viaInputDescription": "Wprowadź adres IP przez następny skok. Pozostaw puste, aby kierować na lokalną sieć LAN"
 		},
 		"networkDns": {
 			"DNS": "DNS",
