@@ -9,7 +9,7 @@ import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { network, network_members, Prisma, Role } from "@prisma/client";
+import { network, network_members, Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
@@ -222,18 +222,29 @@ export const networkRouter = createTRPCRouter({
 
 			// check if there are any other networks with the same routes.
 			let duplicateRoutes: DuplicateRoutes[] = [];
-			if (targetIPs.length > 0) {
+
+			// Disabled duplicates for organization networks for now. Not sure it's needed.
+			if (targetIPs.length > 0 && !isMemberOfOrganization) {
 				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
-					SELECT n."authorId", n."name", n."nwid"
+					SELECT 
+						n."authorId",
+						n."name",
+						n."nwid",
+						array_agg(
+							json_build_object(
+								'id', r."id",
+								'target', r."target",
+								'via', r."via"
+							)
+						) as routes
 					FROM "network" n
-					JOIN "Routes" r ON r."networkId" = n."nwid"
+					INNER JOIN "Routes" r ON r."networkId" = n."nwid"
 					WHERE n."authorId" = ${ctx.session.user.id}
-						AND r."target" IN (${Prisma.join(targetIPs)})
-						AND n."nwid" != ${input.nwid};
+						AND n."organizationId" IS NULL
+						AND r."target" = ANY(${targetIPs}::text[])
+						AND n."nwid" != ${input.nwid}
+					GROUP BY n."authorId", n."name", n."nwid"
 				`;
-			} else {
-				// Handle the case when targetIPs is empty
-				duplicateRoutes = [];
 			}
 
 			// Extract duplicated IPs
