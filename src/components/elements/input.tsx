@@ -10,6 +10,7 @@ interface InputProps {
 	type: string;
 	onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 	ref?: React.RefObject<HTMLInputElement>;
 	focus?: boolean;
 	className?: string;

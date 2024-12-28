@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
+import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
@@ -180,7 +180,7 @@ const CentralNetworkById = ({ orgIds }) => {
 
 				{/* Manged routes section */}
 				<div className="w-6/6 xl:w-3/6 ">
-					<NettworkRoutes central />
+					<NetworkRoutes central />
 				</div>
 			</div>
 			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
