@@ -128,7 +128,7 @@ export const NetworkRoutesTable = React.memo(
 		const headerGroups = table.getHeaderGroups();
 
 		return (
-			<table className="table-auto w-full border-collapse">
+			<table role="routesTable" className="table-auto w-full border-collapse">
 				<TableHeader headerGroups={headerGroups} />
 				<TableBody rows={rows} />
 			</table>
