@@ -1,11 +1,11 @@
 "use client";
 import { useTheme } from "next-themes";
-import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import { useSidebarStore } from "~/store/sidebarStore";
 
 const Themes = [
 	"light",
@@ -26,8 +26,12 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 		const { data: session } = useSession();
 		const { theme, setTheme } = useTheme();
 		const { toggle, open } = useSidebarStore();
-
+		const [mounted, setMounted] = useState(false);
 		const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+
+		useEffect(() => {
+			setMounted(true);
+		}, []);
 
 		return (
 			<header
@@ -50,7 +54,7 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 						</Link>
 					</div>
 					<div className="md:pl-12 flex items-center pt-1">
-						<label className={`${open ? "swap-active" : ""} swap swap-rotate`}>
+						<label className={`${mounted && open ? "swap-active" : ""} swap swap-rotate`}>
 							<div className="swap-off">
 								<svg
 									className="fill-current"

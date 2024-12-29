@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 	description: "Zerotier web interface",
 };
 
-export default async function LocaleLayout({
+export default async function RootLayout({
 	children,
 	params,
 }: {

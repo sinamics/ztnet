@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useSidebarStore, useSocketStore } from "~/utils/store";
+import { useSocketStore } from "~/utils/store";
 import { api } from "~/utils/api";
+import { useSidebarStore } from "~/store/sidebarStore";
+import useStore from "~/store/useStore";
 
 // Custom hook to check if the screen width is below the 'md' breakpoint
 const useIsBelowMd = () => {
@@ -28,7 +30,9 @@ const useIsBelowMd = () => {
 };
 
 const Sidebar = (): JSX.Element => {
-	const { open, setOpenState } = useSidebarStore();
+	const open = useStore(useSidebarStore, (state) => state.open);
+	const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
+
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
 	const session = useSession();

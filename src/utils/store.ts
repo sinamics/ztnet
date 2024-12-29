@@ -18,24 +18,6 @@ export const useFontSizeStore = create(
 		},
 	),
 );
-interface StoreI {
-	open: boolean;
-	toggle: (orgId?: string) => void;
-	setOpenState: (state: boolean) => void;
-}
-
-export const useSidebarStore = create(
-	persist<StoreI>(
-		(set) => ({
-			open: false,
-			toggle: () => set((state) => ({ open: !state.open })),
-			setOpenState: (state: boolean) => set(() => ({ open: state })),
-		}),
-		{
-			name: "menu-sidebar",
-		},
-	),
-);
 
 interface IChat {
 	openChats: string[];

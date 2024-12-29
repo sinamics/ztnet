@@ -1,3 +1,5 @@
+"use client";
+
 import cn from "classnames";
 import { useCallback, useRef } from "react";
 import { useOnClickOutside } from "usehooks-ts";
