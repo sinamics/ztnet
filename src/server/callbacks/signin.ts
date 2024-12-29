@@ -175,23 +175,23 @@ export function signInCallback(
 					? user?.userAgent
 					: request.headers["user-agent"];
 
-			if (userAgent) {
-				const deviceInfo = createDeviceInfo(
-					userAgent as string,
-					userExist.id,
-					request,
-					response,
-				);
+			// if (userAgent) {
+			// 	const deviceInfo = createDeviceInfo(
+			// 		userAgent as string,
+			// 		userExist.id,
+			// 		request,
+			// 		response,
+			// 	);
 
-				// update or create device info
-				await upsertDeviceInfo(deviceInfo);
+			// 	// update or create device info
+			// 	await upsertDeviceInfo(deviceInfo);
 
-				// set the device id, we will use it in the jwt callback
-				user.deviceId = deviceInfo.deviceId;
-				if (account.provider === "oauth") {
-					profile.deviceId = deviceInfo.deviceId;
-				}
-			}
+			// 	// set the device id, we will use it in the jwt callback
+			// 	user.deviceId = deviceInfo.deviceId;
+			// 	if (account.provider === "oauth") {
+			// 		profile.deviceId = deviceInfo.deviceId;
+			// 	}
+			// }
 
 			await prisma.user.update({
 				where: { id: userExist.id },

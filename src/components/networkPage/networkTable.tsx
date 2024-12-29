@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
 import {

@@ -5,6 +5,8 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "~/i18n/routing";
 import { TRPCReactProvider } from "~/trpc/react";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "~/server/auth";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -30,6 +32,7 @@ export default async function LocaleLayout({
 }) {
 	const param = await params;
 	const locale = param?.locale;
+	const session = await auth();
 
 	// Ensure that the incoming `locale` is valid
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -43,7 +46,11 @@ export default async function LocaleLayout({
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<TRPCReactProvider>
-					<NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+					<SessionProvider session={session}>
+						<NextIntlClientProvider messages={messages}>
+							{children}
+						</NextIntlClientProvider>
+					</SessionProvider>
 				</TRPCReactProvider>
 			</body>
 		</html>

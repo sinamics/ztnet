@@ -1,10 +1,11 @@
-import { useSession } from "next-auth/react";
+"use client";
 import { useTheme } from "next-themes";
 import { useSidebarStore } from "~/utils/store";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
 import { forwardRef } from "react";
 import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
 
 const Themes = [
 	"light",
@@ -22,7 +23,7 @@ const Themes = [
 
 const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 	(props, ref) => {
-		const session = useSession();
+		const { data: session } = useSession();
 		const { theme, setTheme } = useTheme();
 		const { toggle, open } = useSidebarStore();
 
@@ -80,7 +81,7 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 						{/* <a href="#" className="flex flex-row items-center"> */}
 						<div className="dropdown dropdown-end">
 							<label tabIndex={0} className="btn btn-primary btn-sm m-1">
-								{theme.toUpperCase()}
+								{theme?.toUpperCase()}
 							</label>
 							<ul
 								tabIndex={0}
@@ -97,10 +98,10 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 						</div>
 						<span className="ml-2 flex flex-col justify-center">
 							<span className="truncate font-semibold leading-none tracking-wide">
-								{session.data?.user?.name}
+								{/* {session.data?.user?.name} */}
 							</span>
 							<span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-								{session.data?.user?.role}
+								{/* {session.data?.user?.role} */}
 							</span>
 						</span>
 						{/* </a> */}
@@ -110,5 +111,5 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 		);
 	},
 );
-Header.displayName = "Header";
+
 export default Header;

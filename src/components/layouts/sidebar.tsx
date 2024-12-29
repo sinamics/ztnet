@@ -1,6 +1,7 @@
+"use client";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore, useSocketStore } from "~/utils/store";
@@ -30,13 +31,17 @@ const Sidebar = (): JSX.Element => {
 	const { open, setOpenState } = useSidebarStore();
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
-	const { data: session } = useSession();
+	const session = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
-	const router = useRouter();
-	const orgId = router.query.orgid as string;
+
+	const search = useSearchParams();
+	const orgId = search.get("orgid");
+	const tab = search.get("tab");
+
+	const pathname = usePathname();
 
 	const { data: orgNotification } = api.org.getOrgNotifications.useQuery({
 		organizationId: orgId,
@@ -84,7 +89,7 @@ const Sidebar = (): JSX.Element => {
 							href="/dashboard"
 							className={`flex h-10 flex-row items-center rounded-lg px-3  
               ${
-								router.pathname === "/dashboard"
+								pathname === "/dashboard"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -111,7 +116,7 @@ const Sidebar = (): JSX.Element => {
 							href="/network"
 							className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/network")
+								pathname.includes("/network")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -139,7 +144,7 @@ const Sidebar = (): JSX.Element => {
 								href="/central"
 								className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/central")
+								pathname.includes("/central")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -185,7 +190,7 @@ const Sidebar = (): JSX.Element => {
 											href={`/organization/${org.id}`}
 											className={`flex h-10 flex-row items-center rounded-lg px-3 
 								${
-									router.query.orgid?.includes(org.id)
+									orgId?.includes(org.id)
 										? "bg-gray-100 text-gray-700"
 										: "hover:bg-slate-700"
 								}`}
@@ -237,7 +242,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=site-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "site-setting"
+								pathname === "/admin" && tab === "site-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -271,7 +276,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=mail-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "mail-setting"
+								pathname === "/admin" && tab === "mail-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -304,7 +309,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=users"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "users"
+								pathname === "/admin" && tab === "users"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -333,8 +338,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=notification"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "notification"
+													pathname === "/admin" && tab === "notification"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -363,8 +367,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=controller"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "controller"
+													pathname === "/admin" && tab === "controller"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -393,8 +396,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=organization"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "organization"
+													pathname === "/admin" && tab === "organization"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -430,7 +432,7 @@ const Sidebar = (): JSX.Element => {
 							href="/user-settings?tab=account"
 							className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/user-settings")
+								pathname.includes("/user-settings")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
