@@ -1,8 +1,11 @@
+// src/server/auth.ts
 import NextAuth from "next-auth";
 import { cache } from "react";
 import { authConfig } from "./config";
 
-const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth(authConfig);
+const authOptions = authConfig;
+
+const { auth: uncachedAuth, handlers, signIn, signOut } = NextAuth(authOptions);
 
 const auth = cache(uncachedAuth);
 

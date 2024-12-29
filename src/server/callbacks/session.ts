@@ -6,13 +6,14 @@ export function sessionCallback(
 ) {
 	return async function authSession({ session, token }) {
 		if (!token.id) return null;
-		if (!token.deviceId) {
-			return { ...session, user: null };
-		}
+		// if (!token.deviceId) {
+		// 	return { ...session, user: null };
+		// }
 		// Check the user exists in the database
 		const user = await prisma.user.findFirst({
 			where: { id: token.id },
 		});
+
 		// Number(user.id.trim()) checks if the user session has the old int as the User id
 		if (!user || !user.isActive || Number.isInteger(Number(token.id))) {
 			// If the user does not exist, set user to null

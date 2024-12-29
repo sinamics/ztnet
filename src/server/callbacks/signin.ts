@@ -148,7 +148,6 @@ export function signInCallback(
 	return async function signIn({ user, account, profile }) {
 		try {
 			let userExist = await prisma.user.findUnique({ where: { email: user.email } });
-
 			if (account.provider === "credentials") {
 				if (!userExist) {
 					return false;

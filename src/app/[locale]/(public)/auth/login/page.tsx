@@ -20,8 +20,7 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 		api.public.registrationAllowed.useQuery();
 
 	const query = useSearchParams();
-
-	const errorCode = query.error as ErrorCode;
+	const errorCode = query.get("error") as ErrorCode;
 	const errorMessage = errorCode ? getErrorMessage(errorCode) : null;
 	return (
 		<>

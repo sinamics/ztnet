@@ -87,7 +87,7 @@ function buildAuthorizationConfig(url: string, defaultScope: string) {
 }
 
 const genericOAuthAuthorization = buildAuthorizationConfig(
-	process.env.OAUTH_AUTHORIZATION_URL,
+	process.env.OAUTH_AUTHORIZATION_URL || "",
 	"openid profile email",
 );
 
