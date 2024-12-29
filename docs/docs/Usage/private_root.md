@@ -125,7 +125,7 @@ The official ZeroTier Android app does not support direct custom planet configur
    - Currently one of the most straightforward solutions for non-rooted devices
    - Note: This is a third-party modification of the official app
 
-2. **Magisk Module** (github.com/eventlOwOp/zerotier-magisk):
+2. **Zerotier-Magisk** (github.com/eventlOwOp/zerotier-magisk):
    - Allows manual replacement of the planet file at `/data/adb/zerotier/home/planet`
    - Note: This is a third-party modification of the official app
 
