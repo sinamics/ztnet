@@ -116,8 +116,11 @@ By implementing these steps, your network devices will use your private root ser
 
 When setting up devices with a custom planet configuration, it's important to note that mobile platforms have significant limitations compared to desktop systems. While this might be implemented in the official apps in the future, there is currently no ETA set.
 
-:::warning Security Consideration
-The following solutions are third-party modifications of the official ZeroTier apps. Before using any third-party applications, carefully review their source code and trust the developers, as they may pose security risks. Use these solutions at your own discretion and risk.
+:::warning Security and Legal Considerations
+The following solutions are third-party modifications of the official ZeroTier apps. Please note:
+- These modifications may not be legally approved by ZeroTier
+- Before using any third-party applications, carefully review their source code and trust the developers, as they may pose security risks
+- Use these solutions at your own discretion and risk
 :::
 
 ### Android Limitations and Workarounds
