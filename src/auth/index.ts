@@ -1,5 +1,5 @@
 import { type GetServerSidePropsContext } from "next";
-import { getServerSession, type NextAuthOptions, type DefaultSession } from "next-auth";
+import NextAuth, { NextAuthConfig, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "~/server/db";
@@ -12,9 +12,9 @@ import {
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
 import { authenticator } from "otplib";
-import { signInCallback } from "./callbacks/signin";
-import { jwtCallback } from "./callbacks/jwt";
-import { sessionCallback } from "./callbacks/session";
+import { signInCallback } from "~/server/callbacks/signin";
+import { jwtCallback } from "~/server/callbacks/jwt";
+import { sessionCallback } from "~/server/callbacks/session";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -103,10 +103,10 @@ const genericOAuthAuthorization = buildAuthorizationConfig(
  *
  * @see https://next-auth.js.org/configuration/options
  */
-export const getAuthOptions = (
+export const authOptions = (
 	req: GetServerSidePropsContext["req"],
 	res: GetServerSidePropsContext["res"],
-): NextAuthOptions => ({
+): NextAuthConfig => ({
 	adapter: MyAdapter,
 	providers: [
 		// Conditionally add Generic OAuth provider
@@ -297,14 +297,4 @@ export const getAuthOptions = (
 	debug: false,
 });
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
-export const getServerAuthSession = (ctx: {
-	req: GetServerSidePropsContext["req"];
-	res: GetServerSidePropsContext["res"];
-}) => {
-	return getServerSession(ctx.req, ctx.res, getAuthOptions(ctx.req, ctx.res));
-};
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);

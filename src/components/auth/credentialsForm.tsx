@@ -1,5 +1,4 @@
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
@@ -8,6 +7,7 @@ import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 interface FormData {
 	email: string;

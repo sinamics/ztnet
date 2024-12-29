@@ -1,3 +1,4 @@
+"use client";
 import { api } from "~/utils/api";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";

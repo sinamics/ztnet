@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "~/i18n/routing";
-import "./styles/globals.css";
+import { TRPCReactProvider } from "~/trpc/react";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -42,7 +42,9 @@ export default async function LocaleLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+				<TRPCReactProvider>
+					<NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+				</TRPCReactProvider>
 			</body>
 		</html>
 	);
