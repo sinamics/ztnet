@@ -1,146 +1,100 @@
+// https://github.com/burakorkmez/fullstack-chat-app
+// socket-server.ts
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
-
+import * as ztController from "../src/utils/ztApi";
+import { auth } from "../src/server/auth";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: "*", // Allow all origins during development
+		origin: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+		methods: ["GET", "POST"],
 	},
 });
 
-// Types for messages and users
-type Message = {
-	id: number;
-	content: string;
-	sender: string;
-	roomId: string;
-	avatar?: string;
-};
+// Server-side session verification
+export async function verifySocketSession(token: string): Promise<Session | null> {
+	try {
+		const session = await auth();
+		return session;
+	} catch (error) {
+		console.error("Socket auth error:", error);
+		return null;
+	}
+}
 
-type User = {
-	userId: string;
-	socketId: string;
-	username: string;
-	avatar: string;
-};
-
-// Data store for messages and online users
-const messages = new Map<string, Message[]>(); // Room ID -> Messages
-const onlineUsers = new Map<string, User[]>(); // Room ID -> Online Users
-const typingUsers = new Map<string, Set<User>>(); // Room ID -> Set of userIds currently typing
+// Track connected users and their subscribed networks
+const userNetworks = new Map<string, Set<string>>();
 
 io.on("connection", (socket) => {
 	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 	console.log(`🔗 User connected: ${socket.id}`);
+	userNetworks.set(socket.id, new Set());
 
-	// Handle joining a room
-	socket.on("join_room", (roomId: string, userInfo: User) => {
-		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-		console.log(`🚪 User ${userInfo.username} joined room: ${roomId}`);
-		socket.join(roomId);
+	socket.on("join-network", async (networkId: string) => {
+		const userSubs = userNetworks.get(socket.id);
+		if (userSubs) {
+			userSubs.add(networkId);
+			socket.join(networkId);
+			// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+			console.log(`User ${socket.id} joined network ${networkId}`);
 
-		// Add user to the room's online users
-		const usersInRoom = onlineUsers.get(roomId) || [];
-		const newUser = { ...userInfo, socketId: socket.id };
-		onlineUsers.set(roomId, [...usersInRoom, newUser]);
-
-		// Notify the room about the updated user list
-		io.to(roomId).emit("room_data", {
-			roomId,
-			onlineUsers: onlineUsers.get(roomId) || [],
-			messages: messages.get(roomId) || [],
-		});
-	});
-
-	// Listen for 'send_message' events
-	socket.on("send_message", (message: Message) => {
-		const roomMessages = messages.get(message.roomId) || [];
-		const newMessage = { ...message, id: roomMessages.length + 1 };
-		messages.set(message.roomId, [...roomMessages, newMessage]);
-
-		// Broadcast the new message to the room
-		io.to(message.roomId).emit("room_data", {
-			roomId: message.roomId,
-			onlineUsers: onlineUsers.get(message.roomId) || [],
-			messages: messages.get(message.roomId) || [],
-		});
-		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-		console.log(`💬 Message sent in room ${message.roomId}:`, message.content);
-	});
-
-	// Notify room when a user starts typing
-	socket.on("start_typing", (user: User & { roomId: string }) => {
-		const { roomId, userId } = user;
-		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-		console.log(`✍️ ${user.username} is typing in room: ${roomId}`);
-
-		// Initialize the room's typing set if it doesn't exist
-		if (!typingUsers.has(roomId)) {
-			typingUsers.set(roomId, new Set());
+			// Send initial network state
+			try {
+				const networkDetails = await ztController.local_network_detail(networkId);
+				socket.emit("network-update", networkDetails);
+			} catch (error) {
+				console.error(`Failed to fetch network details for ${networkId}:`, error);
+			}
 		}
+	});
 
-		const usersTyping = typingUsers.get(roomId)!;
-
-		// Only add the user if they are not already in the typing list
-		if (![...usersTyping].some((typingUser) => typingUser.userId === userId)) {
-			usersTyping.add(user);
+	socket.on("leave-network", (networkId: string) => {
+		const userSubs = userNetworks.get(socket.id);
+		if (userSubs) {
+			userSubs.delete(networkId);
+			socket.leave(networkId);
+			// biome-ignore lint/suspicious/noConsoleLog: <explanation>
+			console.log(`User ${socket.id} left network ${networkId}`);
 		}
-
-		io.to(roomId).emit("typing", {
-			roomId,
-			user,
-			typingUsers: Array.from(usersTyping),
-		});
 	});
 
-	// Notify room when a user stops typing
-	socket.on("stop_typing", (user: User & { roomId: string }) => {
-		const { roomId, userId } = user;
-		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-		console.log(`🛑 ${user.username} stopped typing in room: ${roomId}`);
-
-		// Remove user from the typing set for the room
-		const usersTyping = typingUsers.get(roomId) || new Set();
-		typingUsers.set(
-			roomId,
-			new Set([...usersTyping].filter((typingUser) => typingUser.userId !== userId)),
-		);
-
-		io.to(roomId).emit("stop_typing", {
-			roomId,
-			user,
-			typingUsers: Array.from(typingUsers.get(roomId) || []),
-		});
-	});
-
-	// Handle disconnection
 	socket.on("disconnect", () => {
+		userNetworks.delete(socket.id);
 		// biome-ignore lint/suspicious/noConsoleLog: <explanation>
 		console.log(`❌ User disconnected: ${socket.id}`);
-
-		// Remove user from all rooms they were part of
-		for (const [roomId, users] of onlineUsers) {
-			const updatedUsers = users.filter((user) => user.socketId !== socket.id);
-			onlineUsers.set(roomId, updatedUsers);
-
-			// Notify the room about the updated user list
-			io.to(roomId).emit("room_data", {
-				roomId,
-				onlineUsers: updatedUsers,
-				messages: messages.get(roomId) || [],
-			});
-		}
 	});
 });
 
-// Start the server
-const PORT = 4000;
-app.get("/", (_req, res) => {
-	res.json({ message: "BOOM! Server is running...🚀" });
-});
+// Set up periodic network updates
+const UPDATE_INTERVAL = 10000; // 10 seconds
+
+async function broadcastNetworkUpdates() {
+	// Get all unique network IDs being watched
+	const activeNetworks = new Set<string>();
+	for (const networks of userNetworks.values()) {
+		for (const networkId of networks) {
+			activeNetworks.add(networkId);
+		}
+	}
+
+	// Update each active network
+	for (const networkId of activeNetworks) {
+		try {
+			const networkDetails = await ztController.local_network_detail(networkId, false);
+			io.to(networkId).emit("network-update", networkDetails);
+		} catch (error) {
+			console.error(`Failed to update network ${networkId}:`, error);
+		}
+	}
+}
+
+setInterval(broadcastNetworkUpdates, UPDATE_INTERVAL);
+
+const PORT = process.env.SOCKET_PORT || 4000;
 server.listen(PORT, () => {
 	// biome-ignore lint/suspicious/noConsoleLog: <explanation>
-	console.log(`🚀 Server running at http://localhost:${PORT}`);
+	console.log(`🚀 Socket.IO server running at http://localhost:${PORT}`);
 });
