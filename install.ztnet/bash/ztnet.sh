@@ -377,9 +377,9 @@ function failure() {
   echo -e "\n${RED}Error report:${NC}\n$jsonError\n"
 
   echo -e "\nDo you want to send the error report to ztnet.network admin for application improvements?"
-  echo -e "Only the above error message will be sent! [Default Yes]"
+  echo -e "Only the above error message will be sent! [Default No]"
   sleep 0.1
-  ask_string "Yes / No ==> " "Yes" SEND_REPORT
+  ask_string "Yes / No ==> " "No" SEND_REPORT
 
   if [ -z "$SEND_REPORT" ]; then
       SEND_REPORT="yes"
