@@ -29,16 +29,16 @@ const UserSettings = () => {
 			value: "account",
 			component: <Account />,
 		},
-		// {
-		// 	name: t("tabs.network"),
-		// 	value: "network",
-		// 	component: <UserNetworkSetting />,
-		// },
-		// {
-		// 	name: t("tabs.notification"),
-		// 	value: "notification",
-		// 	component: <UserSettingsNotification />,
-		// },
+		{
+			name: t("tabs.network"),
+			value: "network",
+			component: <UserNetworkSetting />,
+		},
+		{
+			name: t("tabs.notification"),
+			value: "notification",
+			component: <UserSettingsNotification />,
+		},
 	];
 
 	const changeTab = async (tab: ITab) => {
