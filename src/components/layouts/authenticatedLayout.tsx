@@ -6,23 +6,19 @@
 //    before zustand is hydrated.
 
 import { ReactNode } from "react";
-import dynamic from "next/dynamic";
 import Footer from "./footer";
 import Header from "./header";
 import Modal from "../shared/modal";
 import { useSidebarStore } from "~/store/sidebarStore";
 import useStore from "~/store/useStore";
-
-// Dynamically import Sidebar to avoid SSR mismatch.
-const Sidebar = dynamic(() => import("./sidebar"), { ssr: false });
+import Sidebar from "./sidebar";
 
 export default function MainLayout({ children }: { children: ReactNode }) {
-	const hydrated = useStore(useSidebarStore, (state) => state.hydrated);
-	const open = useStore(useSidebarStore, (state) => state.open);
+	const store = useStore(useSidebarStore, (state) => state);
 
 	// While rehydrating from localStorage, render nothing
 	// so the server DOM matches the client DOM.
-	if (!hydrated) return null;
+	// if (!store?.hydrated) return null;
 
 	return (
 		<div className="outer-container">
@@ -30,7 +26,9 @@ export default function MainLayout({ children }: { children: ReactNode }) {
 			<Header />
 			<div className="flex">
 				<aside
-					className={`duration-150 transition-all ${open ? "w-64" : "w-0 opacity-0"}`}
+					className={`duration-150 transition-all ${
+						store?.open ? "w-64" : "w-0 opacity-0"
+					}`}
 				>
 					<Sidebar />
 				</aside>

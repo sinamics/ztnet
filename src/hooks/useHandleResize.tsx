@@ -1,16 +1,17 @@
 import { useEffect } from "react";
-import { useSidebarStore } from "~/utils/store";
+import { useSidebarStore } from "~/store/sidebarStore";
+import useStore from "~/store/useStore";
 
 // Create a custom hook
 export const useHandleResize = () => {
-	const { setOpenState } = useSidebarStore();
-
+	const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
+	console.log(setOpenState);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleResize = () => {
-			if (window.innerWidth >= 768) return setOpenState(true);
+			if (window.innerWidth >= 768) return setOpenState?.(true);
 
-			setOpenState(false);
+			setOpenState?.(false);
 		};
 
 		// Initial check

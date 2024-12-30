@@ -30,8 +30,8 @@ const useIsBelowMd = () => {
 };
 
 const Sidebar = (): JSX.Element => {
-	const open = useStore(useSidebarStore, (state) => state.open);
-	const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
+	const store = useStore(useSidebarStore, (state) => state);
+	// const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
 
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
@@ -59,11 +59,11 @@ const Sidebar = (): JSX.Element => {
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (isBelowMd && open) {
+			if (isBelowMd && store?.open) {
 				if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
 					// called after the click event on hamburger menu to close sidebar
 					setTimeout(() => {
-						setOpenState(false);
+						store?.setOpenState?.(false);
 					}, 100);
 				}
 			}
@@ -73,13 +73,13 @@ const Sidebar = (): JSX.Element => {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [isBelowMd, open, setOpenState]);
+	}, [isBelowMd, store?.open, store?.setOpenState]);
 
 	return (
 		<aside
 			ref={sidebarRef}
 			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-			${open ? "w-64" : "w-0"}`}
+			${store?.open ? "w-64" : "w-0"}`}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">
