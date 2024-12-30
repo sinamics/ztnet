@@ -5,7 +5,7 @@ import useStore from "~/store/useStore";
 // Create a custom hook
 export const useHandleResize = () => {
 	const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
-	console.log(setOpenState);
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleResize = () => {

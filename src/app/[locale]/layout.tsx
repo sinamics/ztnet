@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -7,21 +5,7 @@ import { routing } from "~/i18n/routing";
 import { TRPCReactProvider } from "~/trpc/react";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "~/server/auth";
-
-const geistSans = Geist({
-	variable: "--font-geist-sans",
-	subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-	variable: "--font-geist-mono",
-	subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-	title: "ZTNET",
-	description: "Zerotier web interface",
-};
+// import ZtnetThemeProvider from "~/components/providers/themeProvider";
 
 export default async function RootLayout({
 	children,
@@ -43,16 +27,10 @@ export default async function RootLayout({
 	// side is the easiest way to get started
 	const messages = await getMessages();
 	return (
-		<html lang="en">
-			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<TRPCReactProvider>
-					<SessionProvider session={session}>
-						<NextIntlClientProvider messages={messages}>
-							{children}
-						</NextIntlClientProvider>
-					</SessionProvider>
-				</TRPCReactProvider>
-			</body>
-		</html>
+		<TRPCReactProvider>
+			<SessionProvider session={session}>
+				<NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+			</SessionProvider>
+		</TRPCReactProvider>
 	);
 }

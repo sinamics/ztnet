@@ -30,12 +30,11 @@ const useIsBelowMd = () => {
 };
 
 const Sidebar = (): JSX.Element => {
+	const session = useSession();
 	const store = useStore(useSidebarStore, (state) => state);
-	// const setOpenState = useStore(useSidebarStore, (state) => state.setOpenState);
 
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
-	const session = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
@@ -77,7 +76,7 @@ const Sidebar = (): JSX.Element => {
 
 	return (
 		<aside
-			ref={sidebarRef}
+			ref={sidebarRef as React.RefObject<HTMLDivElement>}
 			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
 			${store?.open ? "w-64" : "w-0"}`}
 		>
@@ -174,14 +173,14 @@ const Sidebar = (): JSX.Element => {
 							</Link>
 						</li>
 					) : null}
-					{me?.memberOfOrgs?.length > 0 ? (
+					{(me?.memberOfOrgs?.length ?? 0) > 0 ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
 									{t("organization")}
 								</span>
 							</li>
-							{me?.memberOfOrgs.map((org) => {
+							{me?.memberOfOrgs?.map((org) => {
 								const truncatedOrgName =
 									org.orgName.length > 15
 										? `${org.orgName.slice(0, 15)}...`
@@ -234,7 +233,7 @@ const Sidebar = (): JSX.Element => {
 							})}
 						</>
 					) : null}
-					{session?.user?.role === "ADMIN" ? (
+					{session?.data?.user?.role === "ADMIN" ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">

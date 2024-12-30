@@ -1,39 +1,16 @@
 "use client";
-import { useTheme } from "next-themes";
 import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
-import { forwardRef, useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { useSidebarStore } from "~/store/sidebarStore";
 import useStore from "~/store/useStore";
-
-const Themes = [
-	"light",
-	"dark",
-	"system",
-	"black",
-	"business",
-	"forest",
-	"sunset",
-	"luxury",
-	"night",
-	"dim",
-	"cyberpunk",
-];
+import ThemeSwitch from "../themeSwitch";
 
 const Header = (props) => {
 	const { data: session } = useSession();
-	const { theme, setTheme } = useTheme();
-
 	const store = useStore(useSidebarStore, (state) => state);
-
-	const [mounted, setMounted] = useState(false);
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
-
-	useEffect(() => {
-		setMounted(true);
-	}, []);
 
 	return (
 		<header className="header bg-base-200 px-4 py-1 shadow-md shadow-base" {...props}>
@@ -52,9 +29,7 @@ const Header = (props) => {
 					</Link>
 				</div>
 				<div className="md:pl-12 flex items-center pt-1">
-					<label
-						className={`${mounted && store?.open ? "swap-active" : ""} swap swap-rotate`}
-					>
+					<label className={`${store?.open ? "swap-active" : ""} swap swap-rotate`}>
 						<div className="swap-off">
 							<svg
 								className="fill-current"
@@ -82,33 +57,15 @@ const Header = (props) => {
 					</label>
 				</div>
 				<div className="ml-auto flex">
-					{/* <a href="#" className="flex flex-row items-center"> */}
-					<div className="dropdown dropdown-end">
-						<label tabIndex={0} className="btn btn-primary btn-sm m-1">
-							{theme?.toUpperCase()}
-						</label>
-						<ul
-							tabIndex={0}
-							className="menu dropdown-content rounded-box z-30 w-52 bg-base-300 p-2 shadow"
-						>
-							{Themes.map((theme) => {
-								return (
-									<li key={theme} onClick={() => setTheme(theme)}>
-										<a>{theme.toUpperCase()}</a>
-									</li>
-								);
-							})}
-						</ul>
-					</div>
+					<ThemeSwitch />
 					<span className="ml-2 flex flex-col justify-center">
 						<span className="truncate font-semibold leading-none tracking-wide">
-							{/* {session.data?.user?.name} */}
+							{session?.user?.name}
 						</span>
 						<span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-							{/* {session.data?.user?.role} */}
+							{session?.user?.role}
 						</span>
 					</span>
-					{/* </a> */}
 				</div>
 			</div>
 		</header>

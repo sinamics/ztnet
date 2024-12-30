@@ -1,4 +1,4 @@
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
@@ -18,7 +18,6 @@ interface FormData {
 const CredentialsForm: React.FC = () => {
 	const router = useRouter();
 	const t = useTranslations();
-	const session = useSession();
 	const [totpCode, setTotpCode] = useState("");
 	const [showOTP, setShowOTP] = useState<boolean>(false);
 	const [loading, setLoading] = useState({ credentials: false, oauth: false });
@@ -47,7 +46,7 @@ const CredentialsForm: React.FC = () => {
 				...formData,
 			});
 
-			if (response.ok) {
+			if (response?.ok) {
 				await router.push("/network");
 				return;
 			}
@@ -57,7 +56,9 @@ const CredentialsForm: React.FC = () => {
 					setShowOTP(true);
 					break;
 				default:
-					toast.error(response.error, { duration: 10000 });
+					toast.error(response?.error || "An unknown error occurred", {
+						duration: 10000,
+					});
 			}
 		} catch (error) {
 			toast.error(error.message);
@@ -70,12 +71,6 @@ const CredentialsForm: React.FC = () => {
 		<form className="space-y-4" onSubmit={submitHandler}>
 			{!showOTP && (
 				<>
-					<Link
-						href={session?.data ? "/api/auth/signout" : "/api/auth/signin"}
-						className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-					>
-						{session?.data ? "Sign out" : "Sign in"}
-					</Link>
 					<FormInput
 						label={t("authPages.form.email")}
 						name="email"

@@ -23,14 +23,14 @@ const nextConfig = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
-	// async redirects() {
-	// 	return [
-	// 		{
-	// 			source: "/",
-	// 			destination: "/auth/login",
-	// 			permanent: true,
-	// 		},
-	// 	];
-	// },
+	async redirects() {
+		return [
+			{
+				source: "/",
+				destination: "/auth/login",
+				permanent: true,
+			},
+		];
+	},
 };
 export default withNextIntl(nextConfig);
