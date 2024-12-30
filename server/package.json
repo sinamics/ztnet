@@ -1,0 +1,21 @@
+{
+  "name": "chatapp",
+  "module": "index.ts",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "start": "ts-node index.ts",
+    "production": "bun  run index.ts",
+    "build": "tsc -w"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1"
+  }
+}
