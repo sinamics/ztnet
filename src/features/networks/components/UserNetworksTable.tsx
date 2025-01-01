@@ -1,3 +1,4 @@
+"use client";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect } from "react";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
@@ -11,17 +12,17 @@ import {
 	createColumnHelper,
 	type SortingState,
 } from "@tanstack/react-table";
-import { useSkipper } from "../../hooks/useSkipper";
+import { useSkipper } from "../../../hooks/useSkipper";
 import { useTranslations } from "next-intl";
 import { type network_members } from "@prisma/client";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
-import TableFooter from "../shared/tableFooter";
+import TableFooter from "../../../components/shared/tableFooter";
 import { useModalStore } from "~/utils/store";
-import NetworkOptionsModal from "./networkOptionsModal";
+import NetworkOptionsModal from "../../../components/networkPage/networkOptionsModal";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import toast from "react-hot-toast";
 import CopyIcon from "~/icons/copy";
-import { NetworkTableMemberCount } from "./networkTableMemberCount";
+import { NetworkTableMemberCount } from "../../../components/networkPage/networkTableMemberCount";
 
 const LOCAL_STORAGE_KEY = "networkTableSorting";
 
@@ -42,7 +43,7 @@ const TruncateText = ({ text }: { text: string }) => {
 		</div>
 	);
 };
-export const NetworkTable = ({ tableData = [] }) => {
+export const UserNetworksTable = ({ tableData = [] }) => {
 	const router = useRouter();
 	const t = useTranslations();
 

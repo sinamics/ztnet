@@ -1,10 +1,8 @@
-import { type ReactElement } from "react";
-import { LayoutAuthenticated } from "~/components/layouts/layout";
-import type { NextPageWithLayout } from "../_app";
+"use client";
+// import { type ReactElement } from "react";
+// import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { api } from "~/utils/api";
-import { NetworkTable } from "../../features/networks/components/UserNetworksTable";
 import { useTranslations } from "next-intl";
-import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import MetaTags from "~/components/shared/metaTags";
@@ -14,7 +12,9 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import Link from "next/link";
 import { User } from "@prisma/client";
-import { useRouter } from "next/router";
+import { UserNetworksTable } from "~/features/networks/components/UserNetworksTable";
+import { useRouter } from "next/navigation";
+import { getAllOptions } from "~/features/settings/server/actions/settings";
 
 type OrganizationId = {
 	id: string;
@@ -24,12 +24,13 @@ interface IProps {
 	user: User;
 }
 
-const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
+const NetworksList = ({ orgIds, user }: IProps) => {
 	const b = useTranslations("commonButtons");
 	const t = useTranslations("networks");
 	const router = useRouter();
 
-	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const globalOptions = await getAllOptions();
+	// const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const title = `${globalOptions?.siteName} - Local Controller`;
 
 	const handleApiError = useTrpcApiErrorHandler();
@@ -89,7 +90,7 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 				</div>
 
 				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
-					{unlinkedNetworks?.length > 0 && (
+					{(unlinkedNetworks?.length ?? 0) > 0 && (
 						<div className="col-span-3 flex justify-center pb-5">
 							<div role="alert" className="alert w-full md:w-3/6">
 								<svg
@@ -139,7 +140,7 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 					</div>
 					<div className="col-span-2">
 						{userNetworks && userNetworks.length > 0 && (
-							<NetworkTable tableData={userNetworks} />
+							<UserNetworksTable tableData={userNetworks} />
 						)}
 						{!userNetworks ||
 							(userNetworks.length === 0 && (
@@ -167,8 +168,4 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	);
 };
 
-Networks.getLayout = function getLayout(page: ReactElement) {
-	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
-};
-export { getServerSideProps };
-export default Networks;
+export default NetworksList;
