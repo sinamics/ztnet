@@ -361,13 +361,13 @@ export async function network_delete(
 // https://docs.zerotier.com/service/v1/#operation/getControllerNetworkMember
 
 export const network_members = async (
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	isCentral = false,
 ) => {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
+		userId,
 		isCentral,
 	);
 
@@ -392,13 +392,13 @@ export const network_members = async (
 };
 
 export const get_network = async (
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	isCentral = false,
 ): Promise<NetworkEntity> => {
 	// get headers based on local or central api
 	const { headers, localControllerUrl, ztCentralApiUrl } = await getOptions(
-		ctx,
+		userId,
 		isCentral,
 	);
 
@@ -414,16 +414,16 @@ export const get_network = async (
 };
 
 export const local_network_detail = async (
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	isCentral = false,
 ): Promise<NetworkAndMemberResponse> => {
 	// get headers based on local or central api
-	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+	const { headers, localControllerUrl } = await getOptions(userId, isCentral);
 
 	try {
 		// get all members for a specific network
-		const members = await network_members(ctx, nwid);
+		const members = await network_members(userId, nwid);
 		const network = await getData<NetworkEntity>(
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,

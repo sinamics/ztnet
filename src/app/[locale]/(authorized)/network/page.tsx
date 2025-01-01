@@ -14,7 +14,6 @@ const UserNetworksList = async () => {
 	const unlinkedNetworks = await getUnlinkedNetworks({ getDetails: false });
 	const userNetworks = await getUserNetworks({ central: false });
 
-	// const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const title = `${globalOptions?.siteName} - Local Controller`;
 
 	return (

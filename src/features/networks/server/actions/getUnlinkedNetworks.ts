@@ -1,10 +1,10 @@
-// app/server/actions/admin.ts
 "use server";
 
 import { z } from "zod";
 import { auth } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { throwError } from "~/server/helpers/errorHandler";
+import { NetworkAndMemberResponse } from "~/types/network";
 import * as ztController from "~/utils/ztApi";
 
 // Input validation schema
@@ -14,9 +14,6 @@ const unlinkedNetworkSchema = z.object({
 
 // Type for the function input
 type UnlinkedNetworkInput = z.infer<typeof unlinkedNetworkSchema>;
-
-// Type for network and member response (adjust based on your actual types)
-type NetworkAndMemberResponse = {};
 
 export async function getUnlinkedNetworks(input: UnlinkedNetworkInput) {
 	// Validate session and admin role
@@ -59,7 +56,7 @@ export async function getUnlinkedNetworks(input: UnlinkedNetworkInput) {
 		if (validatedInput.getDetails) {
 			const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
 				unlinkedNetworks.map((unlinked) =>
-					ztController.local_network_detail(unlinked, false),
+					ztController.local_network_detail(session.user.id, unlinked, false),
 				),
 			);
 			return unlinkArr;

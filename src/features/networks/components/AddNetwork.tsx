@@ -1,4 +1,3 @@
-// app/networks/components/CreateNetworkButton.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -7,6 +6,7 @@ import { useActionErrorHandler } from "~/hooks/useActionHandler";
 import { createNetwork } from "../server/actions/createNetwork";
 
 export default function CreateNetworkButton() {
+	// const [error, action, isPendind] = useActionState();
 	const router = useRouter();
 	const [isCreating, setIsCreating] = useState(false);
 	const handleError = useActionErrorHandler();

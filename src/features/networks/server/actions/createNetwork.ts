@@ -6,7 +6,6 @@ import {
 	animals,
 	uniqueNamesGenerator,
 } from "unique-names-generator";
-import { z } from "zod";
 import { auth } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { CustomLimitError } from "~/server/helpers/errorHandler";
@@ -14,14 +13,7 @@ import { FlattenCentralNetwork } from "~/types/central/network";
 import { ZTControllerCreateNetwork } from "~/types/ztController";
 import { IPv4gen } from "~/utils/IPv4gen";
 import * as ztController from "~/utils/ztApi";
-
-// Input validation
-const createNetworkSchema = z.object({
-	central: z.boolean().optional().default(false),
-	name: z.string().optional(),
-});
-
-type CreateNetworkInput = z.infer<typeof createNetworkSchema>;
+import { CreateNetworkInputType, createNetworkSchema } from "../../schemas/createNetwork";
 
 // Name generator config
 const nameGeneratorConfig: Config = {
@@ -34,7 +26,7 @@ const nameGeneratorConfig: Config = {
  * Creates a new ZeroTier network
  */
 export async function createNetwork(
-	input: CreateNetworkInput,
+	input: CreateNetworkInputType,
 ): Promise<FlattenCentralNetwork | ZTControllerCreateNetwork | undefined> {
 	// Validate session
 	const session = await auth();
