@@ -1,12 +1,13 @@
 "use client";
 
+import { network, network_members } from "@prisma/client";
 import { createContext, useContext, useState } from "react";
 
 interface NetworkContextType {
-	network: any; // Replace with your network type
-	members: any[]; // Replace with your member type
-	updateNetwork: (data: any) => void;
-	updateMembers: (data: any[]) => void;
+	network: network;
+	members: network_members[];
+	updateNetwork: (data: network) => void;
+	updateMembers: (data: network_members[]) => void;
 }
 
 const NetworkContext = createContext<NetworkContextType | undefined>(undefined);
@@ -16,6 +17,7 @@ export function NetworkProvider({
 	initialData,
 }: {
 	children: React.ReactNode;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	initialData: any;
 }) {
 	const [network, setNetwork] = useState(initialData.network);

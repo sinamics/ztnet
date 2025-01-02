@@ -4,7 +4,7 @@ import * as ztController from "~/utils/ztApi";
 import { auth } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { NetworkAndMemberResponse } from "~/types/network";
-import { NetworkInput, networkInputSchema } from "../schemas/getNetworkById";
+import { NetworkInput, networkInputSchema } from "../../schemas/getNetworkById";
 import {
 	fetchZombieMembers,
 	syncMemberPeersAndStatus,

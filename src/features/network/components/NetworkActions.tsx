@@ -1,23 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useNetwork } from "../providers/NetworkProvider";
 import { useModalStore } from "~/utils/store";
-import { deleteNetwork } from "../server/deleteNetwork";
+import { deleteNetwork } from "../server/actions/deleteNetwork";
+import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 export default function NetworkActions() {
-	const router = useRouter();
 	const { network } = useNetwork();
-	const callModal = useModalStore((state) => state.callModal);
+	const urlParams = useParams();
 
-	const handleDeleteNetwork = async () => {
-		try {
-			await deleteNetwork(network.nwid);
-			router.push("/network");
-		} catch (error) {
-			console.error("Failed to delete network:", error);
-		}
-	};
+	const { mutate: server_deleteNetwork } = useMutation({
+		mutationFn: deleteNetwork,
+		onError: (error) => {
+			toast.error(error.message);
+		},
+	});
+
+	const callModal = useModalStore((state) => state.callModal);
 
 	return (
 		<>
@@ -32,7 +33,11 @@ export default function NetworkActions() {
 								title: `Delete Network: ${network.name}`,
 								description:
 									"Are you sure you want to delete this network? This cannot be undone.",
-								yesAction: handleDeleteNetwork,
+								yesAction: () =>
+									server_deleteNetwork({
+										nwid: urlParams.id as string,
+										central: false,
+									}),
 							})
 						}
 						className="btn btn-error btn-outline btn-wide"

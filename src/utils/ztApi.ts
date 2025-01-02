@@ -333,13 +333,13 @@ export const network_create = async (
 // https://docs.zerotier.com/service/v1/#operation/deleteNetwork
 
 export async function network_delete(
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	isCentral = false,
 ): Promise<HttpResponse> {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
+		userId,
 		isCentral,
 	);
 	const addr = isCentral
@@ -568,7 +568,7 @@ export const member_delete = async ({
 };
 
 type memberUpdate = {
-	ctx: UserContext;
+	userId: string;
 	nwid: string;
 	memberId: string;
 	updateParams: Partial<MemberEntity> | Partial<CentralMemberConfig>;
@@ -578,14 +578,17 @@ type memberUpdate = {
 // Update Network Member by ID
 // https://docs.zerotier.com/service/v1/#operation/updateControllerNetworkMember
 export const member_update = async ({
-	ctx,
+	userId,
 	nwid,
 	memberId,
 	updateParams: payload,
 	central = false,
 }: memberUpdate) => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		userId,
+		central,
+	);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
 		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
