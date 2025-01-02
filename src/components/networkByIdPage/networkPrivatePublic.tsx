@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+"use client";
 import { toast } from "react-hot-toast";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
 import CardComponent from "./privatePublic";
@@ -11,6 +11,7 @@ import {
 import { type NetworkEntity } from "~/types/local/network";
 import { type CentralNetwork } from "~/types/central/network";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -49,14 +50,14 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 
 	const handleApiError = useTrpcApiErrorHandler();
 
-	const { query } = useRouter();
+	const urlParams = useParams();
 	const client = useQueryClient();
 	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
 		{
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			central,
 		},
-		{ enabled: !!query.id },
+		{ enabled: !!urlParams.id },
 	);
 	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
 		onError: handleApiError,
@@ -66,13 +67,13 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 			{
 				updateParams: { private: privateNetwork },
 				organizationId,
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			},
 			{
 				onSuccess: (data) => {
 					const input = {
-						nwid: query.id as string,
+						nwid: urlParams.id as string,
 						central,
 					};
 					// void refecthNetworkById();

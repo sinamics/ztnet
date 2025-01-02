@@ -9,7 +9,7 @@ import UnlinkedNetworksAlert from "~/features/networks/components/UnlinkedNetwor
 import { getUnlinkedNetworks } from "~/features/networks/server/actions/getUnlinkedNetworks";
 import PageTitle from "~/features/networks/components/PageTitle";
 
-const UserNetworksList = async () => {
+export default async function UserNetworksList() {
 	const globalOptions = await getAllOptions();
 	const unlinkedNetworks = await getUnlinkedNetworks({ getDetails: false });
 	const userNetworks = await getUserNetworks({ central: false });
@@ -41,5 +41,4 @@ const UserNetworksList = async () => {
 			</div>
 		</div>
 	);
-};
-export default UserNetworksList;
+}

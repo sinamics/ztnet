@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
@@ -11,6 +10,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { useModalStore } from "~/utils/store";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -24,7 +24,8 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { query } = useRouter();
+	const urlParams = useParams();
+
 	const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
 	const [ipTabs, setIptabs] = useState({ easy: true, advanced: false });
 	const {
@@ -33,10 +34,10 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 		refetch: refecthNetworkById,
 	} = api.network.getNetworkById.useQuery(
 		{
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			central,
 		},
-		{ enabled: !!query.id },
+		{ enabled: !!urlParams.id },
 	);
 
 	const { mutate: enableIpv4AutoAssign } = api.network.enableIpv4AutoAssign.useMutation({
@@ -70,7 +71,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				ipAssignmentPools: newIpAssignmentPools,
 			},
 			organizationId,
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			central,
 		});
 	};
@@ -106,7 +107,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					],
 				},
 				organizationId,
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			},
 			{
@@ -201,7 +202,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					className="checkbox-primary checkbox checkbox-sm"
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 						enableIpv4AutoAssign({
-							nwid: query.id as string,
+							nwid: urlParams.id as string,
 							central,
 							organizationId,
 							updateParams: {
@@ -279,7 +280,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 											routes: [{ target: cidr, via: "" }],
 										},
 										organizationId,
-										nwid: query.id as string,
+										nwid: urlParams.id as string,
 										central,
 									})
 								}

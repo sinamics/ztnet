@@ -9,6 +9,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { NetworkRoutesTable } from "./networkRoutesTable";
 import Input from "~/components/elements/input";
+import { useParams } from "next/navigation";
 
 const initialRouteInput = {
 	target: "",
@@ -30,13 +31,14 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
-	const { query } = useRouter();
+	const urlParams = useParams();
+
 	const {
 		data: networkById,
 		isLoading,
 		refetch: refecthNetworkById,
 	} = api.network.getNetworkById.useQuery({
-		nwid: query.id as string,
+		nwid: urlParams.id as string,
 		central,
 	});
 
@@ -62,7 +64,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 					routes: [...(network.routes as RoutesEntity[]), { ...routeInput }],
 				},
 				organizationId,
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			},
 			{

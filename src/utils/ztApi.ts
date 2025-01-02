@@ -459,13 +459,13 @@ export const local_network_detail = async (
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 
 export const central_network_detail = async (
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	isCentral = false,
 ): Promise<NetworkAndMemberResponse> => {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
-		ctx,
+		userId,
 		isCentral,
 	);
 	try {
@@ -474,7 +474,7 @@ export const central_network_detail = async (
 			: `${localControllerUrl}/controller/network/${nwid}`;
 
 		// get all members for a specific network
-		const members = await network_members(ctx, nwid, isCentral);
+		const members = await network_members(userId, nwid, isCentral);
 		const network = await getData<CentralNetwork>(addr, headers);
 
 		const membersArr = Array.isArray(members)

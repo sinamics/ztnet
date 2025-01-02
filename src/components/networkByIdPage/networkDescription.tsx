@@ -9,6 +9,7 @@ import { type NetworkEntity } from "~/types/local/network";
 import cn from "classnames";
 import toast from "react-hot-toast";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -77,7 +78,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 		setTextareaFocused(false);
 	};
 	const client = useQueryClient();
-	const { query } = useRouter();
+	const urlParams = useParams();
 
 	const {
 		data: networkById,
@@ -85,7 +86,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 		error: errorNetwork,
 		refetch: refetchNetwork,
 	} = api.network.getNetworkById.useQuery({
-		nwid: query.id as string,
+		nwid: urlParams.id as string,
 		central,
 	});
 
@@ -99,7 +100,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const { mutate: networkDescription } = api.network.networkDescription.useMutation({
 		onSuccess: (data) => {
 			const input = {
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			};
 			// void refecthNetworkById();

@@ -15,8 +15,8 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-import { useRouter } from "next/router";
 import { useEditableColumn } from "./routesEditCell";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -78,15 +78,16 @@ export const NetworkRoutesTable = React.memo(
 		const handleApiError = useTrpcApiErrorHandler();
 		const handleApiSuccess = useTrpcApiSuccessHandler();
 
-		const { query } = useRouter();
+		const urlParams = useParams();
+
 		const { data: networkById, refetch: refetchNetworkById } =
 			api.network.getNetworkById.useQuery(
 				{
-					nwid: query.id as string,
+					nwid: urlParams.id as string,
 					central,
 				},
 				{
-					enabled: !!query.id,
+					enabled: !!urlParams.id,
 				},
 			);
 		const { network, members } = networkById || {};
@@ -105,11 +106,11 @@ export const NetworkRoutesTable = React.memo(
 				updateManageRoutes({
 					updateParams: { routes: [...newRouteArr] },
 					organizationId,
-					nwid: query.id as string,
+					nwid: urlParams.id as string,
 					central,
 				});
 			},
-			[network?.routes, updateManageRoutes, organizationId, query.id, central],
+			[network?.routes, updateManageRoutes, organizationId, urlParams.id, central],
 		);
 
 		const defaultColumn = useEditableColumn({ refetchNetworkById });

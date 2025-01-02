@@ -1,6 +1,5 @@
-// app/networks/NetworksList.tsx
-import { UserNetworksTable } from "~/features/networks/components/UserNetworksTable";
 import { useTranslations } from "next-intl";
+import { UserNetworksTable } from "./table/UserNetworksTable";
 
 interface NetworksListProps {
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@tanstack/react-query";
 import { type NetworkEntity } from "~/types/local/network";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -56,14 +56,14 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 		networkName: "",
 	});
 
-	const { query } = useRouter();
+	const urlParams = useParams();
 	const {
 		data: networkById,
 		isLoading: loadingNetwork,
 		error: errorNetwork,
 		refetch: refetchNetworkById,
 	} = api.network.getNetworkById.useQuery({
-		nwid: query.id as string,
+		nwid: urlParams.id as string,
 		central,
 	});
 
@@ -77,7 +77,7 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const { mutate: updateNetworkName } = api.network.networkName.useMutation({
 		onSuccess: (data) => {
 			const input = {
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			};
 			updateCache({ client, data, input });

@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
@@ -6,6 +5,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 interface IProp {
 	central?: boolean;
@@ -23,17 +23,18 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 		enableBroadcast: false,
 	});
 
-	const { query } = useRouter();
+	const urlParams = useParams();
+
 	const {
 		data: networkByIdQuery,
 		isLoading: loadingNetwork,
 		refetch: refetchNetwork,
 	} = api.network.getNetworkById.useQuery(
 		{
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			central,
 		},
-		{ enabled: !!query.id },
+		{ enabled: !!urlParams.id },
 	);
 
 	const { mutate: updateNetwork } = api.network.multiCast.useMutation({

@@ -34,10 +34,10 @@ export async function createNetwork(
 		throw new Error("Unauthorized");
 	}
 
-	// Validate input
-	const validatedInput = createNetworkSchema.parse(input);
-
 	try {
+		// Validate input
+		const validatedInput = createNetworkSchema.parse(input);
+
 		// 1. Fetch the user with its related UserGroup
 		const userWithGroup = await prisma.user.findUnique({
 			where: { id: session.user.id },
