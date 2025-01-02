@@ -82,7 +82,7 @@
 		"@types/jest": "^29.5.0",
 		"@types/jsonwebtoken": "^9.0.2",
 		"@types/lru-cache": "^7.10.10",
-		"@types/node": "^18.17.5",
+		"@types/node": "^20",
 		"@types/nodemailer": "^6.4.8",
 		"@types/qrcode": "^1.5.5",
 		"@types/react": "^19.0.2",
