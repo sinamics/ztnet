@@ -6,10 +6,10 @@ import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivat
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 import { useNetwork } from "../providers/NetworkProvider";
 import { CopyNetworkId } from "./CopyNetworkId";
+import { useNetworkStore } from "~/store/networkStore";
 
 export default function NetworkHeader() {
-	const { network } = useNetwork();
-
+	const network = useNetworkStore((state) => state.network);
 	return (
 		<div className="mx-auto py-10 px-4 text-sm sm:px-10 md:text-base">
 			<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">

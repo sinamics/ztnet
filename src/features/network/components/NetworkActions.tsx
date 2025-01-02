@@ -6,9 +6,10 @@ import { useModalStore } from "~/utils/store";
 import { deleteNetwork } from "../server/actions/deleteNetwork";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { useNetworkStore } from "~/store/networkStore";
 
 export default function NetworkActions() {
-	const { network } = useNetwork();
+	const network = useNetworkStore((state) => state.network);
 	const urlParams = useParams();
 
 	const { mutate: server_deleteNetwork } = useMutation({

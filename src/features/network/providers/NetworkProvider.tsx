@@ -1,12 +1,13 @@
 "use client";
 
-import { network, network_members } from "@prisma/client";
+import { network_members } from "@prisma/client";
 import { createContext, useContext, useState } from "react";
+import { NetworkEntity } from "~/types/local/network";
 
 interface NetworkContextType {
-	network: network;
+	network: NetworkEntity;
 	members: network_members[];
-	updateNetwork: (data: network) => void;
+	updateNetwork: (data: NetworkEntity) => void;
 	updateMembers: (data: network_members[]) => void;
 }
 

@@ -7,6 +7,7 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import { useParams } from "next/navigation";
+import { useNetworkStore } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
@@ -18,6 +19,10 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
+	const nwid = useParams().id as string;
+
+	const network = useNetworkStore((state) => state.config);
+
 	const [state, setState] = useState({
 		address: "",
 		servers: new Set<string>(),
@@ -26,55 +31,39 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 
 	const urlParams = useParams();
 
-	const {
-		data: networkByIdQuery,
-		isLoading: loadingNetwork,
-		refetch: refetchNetwork,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: urlParams.id as string,
-			central,
-		},
-		{ enabled: !!urlParams.id },
-	);
-
 	const { mutate: updateNetwork } = api.network.dns.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
+		// onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
 	});
 
 	useEffect(() => {
-		if (
-			!networkByIdQuery?.network?.dns ||
-			!Array.isArray(networkByIdQuery?.network?.dns.servers)
-		)
-			return;
+		if (!network?.dns || !Array.isArray(network?.dns.servers)) return;
 		setState((prev) => ({
 			...prev,
-			domain: networkByIdQuery?.network?.dns.domain,
-			servers: new Set([...networkByIdQuery.network.dns.servers]) || new Set(),
+			domain: network?.dns.domain,
+			servers: new Set([...network.dns.servers]) || new Set(),
 		}));
-	}, [networkByIdQuery?.network.dns]);
+	}, [network?.dns]);
 
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
+	// if (loadingNetwork) {
+	// 	// add loading progress bar to center of page, vertially and horizontally
+	// 	return (
+	// 		<div className="flex flex-col items-center justify-center">
+	// 			<h1 className="text-center text-2xl font-semibold">
+	// 				<progress className="progress progress-primary w-56"></progress>
+	// 			</h1>
+	// 		</div>
+	// 	);
+	// }
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
-	const { network } = networkByIdQuery || {};
+	// const { network } = networkByIdQuery || {};
 	const updateDns = (servers: string[]) => {
 		updateNetwork(
 			{
-				nwid: network.nwid,
+				nwid: nwid,
 				central,
 				organizationId,
 				updateParams: {
@@ -159,7 +148,7 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 										onClick={() =>
 											updateNetwork(
 												{
-													nwid: network.nwid,
+													nwid: nwid,
 													central,
 													organizationId,
 													updateParams: {
@@ -168,7 +157,7 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 												},
 												{
 													onSuccess: () => {
-														void refetchNetwork();
+														// void refetchNetwork();
 														setState((prev) => ({
 															...prev,
 															servers: new Set<string>(),

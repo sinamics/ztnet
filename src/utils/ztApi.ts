@@ -513,7 +513,7 @@ export const central_network_detail = async (
 };
 
 type networkUpdate = {
-	ctx: UserContext;
+	userId: string;
 	nwid: string;
 	updateParams: Partial<NetworkEntity>;
 	central?: boolean;
@@ -522,13 +522,16 @@ type networkUpdate = {
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 export const network_update = async ({
-	ctx,
+	userId,
 	nwid,
 	updateParams: payload,
 	central = false,
 }: networkUpdate): Promise<Partial<NetworkEntity>> => {
 	// get headers based on local or central api
-	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
+	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(
+		userId,
+		central,
+	);
 	const addr = central
 		? `${ztCentralApiUrl}/network/${nwid}`
 		: `${localControllerUrl}/controller/network/${nwid}`;
