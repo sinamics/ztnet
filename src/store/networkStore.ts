@@ -4,75 +4,103 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { NetworkEntity } from "~/types/local/network";
 
-interface NetworkState {
-	// Basic network info
-	network: Partial<NetworkEntity> | null;
-
-	// Network configuration
+export interface NetworkState {
+	basicInfo: Partial<NetworkEntity> | null;
 	config: Partial<NetworkEntity> | null;
-
-	// Organization related
+	security: Partial<NetworkEntity> | null;
 	organization: {
 		organizationId: string | null;
 		authorId: string | null;
-	} | null;
-
-	// Members
+		organization: string;
+	};
+	cidr: string[];
+	duplicateRoutes: any[];
 	members: network_members[];
 	zombieMembers: network_members[];
 
 	// Actions
-	setNetwork: (network: any) => void;
-	updateNetworkName: (name: string) => void;
-	updateNetworkConfig: (config: Partial<NetworkState["config"]>) => void;
+	setNetwork: (networkData: NetworkEntity) => void;
+	updateBasicInfo: (info: Partial<NetworkEntity>) => void;
+	updateConfig: (config: Partial<NetworkEntity>) => void;
+	updateSecurity: (security: Partial<NetworkEntity>) => void;
 	setMembers: (members: network_members[]) => void;
 }
 
 export const useNetworkStore = create<NetworkState>()(
 	devtools(
 		(set) => ({
-			network: null,
+			basicInfo: null,
 			config: null,
+			security: null,
 			organization: null,
+			cidr: [],
+			duplicateRoutes: [],
 			members: [],
 			zombieMembers: [],
 
 			setNetwork: (networkData) => {
 				const { members, zombieMembers, ...network } = networkData;
+
 				set({
-					network: {
+					basicInfo: {
 						id: network.id,
-						name: network.name,
 						nwid: network.nwid,
+						name: network.name,
 						description: network.description,
 						private: network.private,
+						objtype: network.objtype,
+						creationTime: network.creationTime,
+						revision: network.revision,
 					},
+
 					config: {
+						mtu: network.mtu,
+						multicastLimit: network.multicastLimit,
+						enableBroadcast: network.enableBroadcast,
 						ipAssignmentPools: network.ipAssignmentPools,
 						routes: network.routes,
 						dns: network.dns,
 						rules: network.rules,
-						mtu: network.mtu,
-						multicastLimit: network.multicastLimit,
-						enableBroadcast: network.enableBroadcast,
+						rulesSource: network.rulesSource,
+						flowRule: network.flowRule,
+						autoAssignIp: network.autoAssignIp,
+						v4AssignMode: network.v4AssignMode,
+						v6AssignMode: network.v6AssignMode,
 					},
-					organization: {
-						organizationId: network.organizationId,
-						authorId: network.authorId,
+
+					security: {
+						authTokens: network.authTokens,
+						authorizationEndpoint: network.authorizationEndpoint,
+						capabilities: network.capabilities,
+						clientId: network.clientId,
+						ssoEnabled: network.ssoEnabled,
+						tags: network.tags,
+						tagsByName: network.tagsByName,
+						capabilitiesByName: network.capabilitiesByName,
+						remoteTraceLevel: network.remoteTraceLevel,
+						remoteTraceTarget: network.remoteTraceTarget,
 					},
+
+					cidr: network.cidr,
+					duplicateRoutes: network.duplicateRoutes,
 					members,
 					zombieMembers,
 				});
 			},
 
-			updateNetworkName: (name) =>
+			updateBasicInfo: (info) =>
 				set((state) => ({
-					network: state.network ? { ...state.network, name } : null,
+					basicInfo: state.basicInfo ? { ...state.basicInfo, info } : null,
 				})),
 
-			updateNetworkConfig: (config) =>
+			updateConfig: (config) =>
 				set((state) => ({
 					config: state.config ? { ...state.config, ...config } : null,
+				})),
+
+			updateSecurity: (security) =>
+				set((state) => ({
+					security: state.security ? { ...state.security, ...security } : null,
 				})),
 
 			setMembers: (members) => set({ members }),

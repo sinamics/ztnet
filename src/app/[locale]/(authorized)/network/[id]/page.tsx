@@ -14,6 +14,8 @@ export default async function NetworkPage({ params }: { params: { id: string } }
 		nwid: id,
 		central: false,
 	});
+
+	console.log(networkData);
 	return (
 		<>
 			<NetworkStoreInitializer networkData={networkData} />

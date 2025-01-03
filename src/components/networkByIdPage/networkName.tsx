@@ -16,9 +16,8 @@ interface IProp {
 const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
-	const network = useNetworkStore((state) => state.network);
-	const updateNetworkName = useNetworkStore((state) => state.updateNetworkName);
-
+	const network = useNetworkStore((state) => state.basicInfo);
+	const updateNetworkName = useNetworkStore((state) => state.updateBasicInfo);
 	const handleApiError = useTrpcApiErrorHandler();
 
 	const [state, setState] = useState({
@@ -28,8 +27,8 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateNetworkNameMutation, isPending } = useMutation({
 		mutationFn: server_updateNetworkName,
-		onSuccess: (data) => {
-			if (data) updateNetworkName(data?.name);
+		onSuccess: (response) => {
+			if (response) updateNetworkName({ name: response?.name });
 		},
 		onError: handleApiError,
 	});

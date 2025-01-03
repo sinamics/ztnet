@@ -9,7 +9,8 @@ import { CopyNetworkId } from "./CopyNetworkId";
 import { useNetworkStore } from "~/store/networkStore";
 
 export default function NetworkHeader() {
-	const network = useNetworkStore((state) => state.network);
+	const network = useNetworkStore((state) => state.basicInfo);
+
 	return (
 		<div className="mx-auto py-10 px-4 text-sm sm:px-10 md:text-base">
 			<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
