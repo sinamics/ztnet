@@ -90,7 +90,7 @@ export const useNetworkStore = create<NetworkState>()(
 
 			updateBasicInfo: (info) =>
 				set((state) => ({
-					basicInfo: state.basicInfo ? { ...state.basicInfo, info } : null,
+					basicInfo: state.basicInfo ? { ...state.basicInfo, ...info } : null,
 				})),
 
 			updateConfig: (config) =>

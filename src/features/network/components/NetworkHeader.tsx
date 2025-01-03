@@ -17,13 +17,13 @@ export default function NetworkHeader() {
 				<div className="flex flex-col space-y-3 sm:space-y-0">
 					<div className="flex flex-col justify-between sm:flex-row">
 						<span className="font-semibold">Network ID</span>
-						<CopyNetworkId networkId={network.nwid} />
+						<CopyNetworkId networkId={network?.nwid} />
 					</div>
 					<NetworkName />
 					<NetworkDescription />
 				</div>
 				<div className="cursor-pointer">
-					<NetworkQrCode networkId={network.nwid} />
+					<NetworkQrCode networkId={network?.nwid} />
 				</div>
 				<div>
 					<NetworkPrivatePublic />
