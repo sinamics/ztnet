@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
+import { WebsocketProvider } from "~/components/providers/socketProvider";
 
 type Props = {
 	children: ReactNode;
@@ -41,7 +42,9 @@ export default function RootLayout({ children }: Props) {
 						},
 					}}
 				/>
-				<ThemeProvider>{children}</ThemeProvider>
+				<ThemeProvider>
+					<WebsocketProvider>{children}</WebsocketProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);

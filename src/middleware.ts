@@ -12,6 +12,9 @@ export async function middleware(request: NextRequest) {
 	if (pathname.startsWith("/api/auth")) {
 		return; // Let the auth routes pass through without i18n handling
 	}
+	if (pathname.startsWith("/api/ws")) {
+		return; // Let the auth routes pass through without i18n handling
+	}
 
 	// Handle i18n for all other routes
 	return intlMiddleware(request);
@@ -28,5 +31,6 @@ export const config = {
 		// Enable redirects that add missing locales
 		// (e.g. `/pathnames` -> `/en/pathnames`)
 		"/((?!_next|_vercel|.*\\..*).*)",
+		"/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
 	],
 };
