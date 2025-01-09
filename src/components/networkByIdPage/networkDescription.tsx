@@ -1,52 +1,23 @@
+"use client";
 import { useState, useEffect } from "react";
 import React from "react";
-import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
-import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
-import { type QueryClient, useQueryClient, type Query } from "@tanstack/react-query";
-import { type CentralNetwork } from "~/types/central/network";
-import { type NetworkEntity } from "~/types/local/network";
+import { api } from "~/utils/api";
 import cn from "classnames";
 import toast from "react-hot-toast";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import { useParams } from "next/navigation";
+import { useNetworkStore } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
 	organizationId?: string;
 }
-const updateCache = ({
-	client,
-	data,
-	input,
-}: {
-	client: QueryClient;
-	input: RouterInputs["network"]["getNetworkById"];
-	data: NetworkEntity | Partial<CentralNetwork>;
-}) => {
-	client.setQueryData(
-		[
-			["network", "getNetworkById"],
-			{
-				input,
-				type: "query",
-			},
-		],
-		(oldData) => {
-			const newData = oldData as Query<RouterOutputs["network"]["getNetworkById"]>;
-			if ("network" in newData && newData.network && typeof data === "object") {
-				return {
-					...newData,
-					network: { ...(newData.network as object), ...(data as object) },
-				};
-			}
-			return newData;
-		},
-	);
-};
+
 const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
-
+	const network = useNetworkStore((state) => state.basicInfo);
+	console.log("NetworkDescription network", network);
 	const handleApiError = useTrpcApiErrorHandler();
 
 	const textareaRef = React.useRef<HTMLTextAreaElement>(null); // <-- Create a ref for the textarea
@@ -77,34 +48,17 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const handleTextareaBlur = () => {
 		setTextareaFocused(false);
 	};
-	const client = useQueryClient();
 	const urlParams = useParams();
-
-	const {
-		data: networkById,
-		isLoading: loadingNetwork,
-		error: errorNetwork,
-		refetch: refetchNetwork,
-	} = api.network.getNetworkById.useQuery({
-		nwid: urlParams.id as string,
-		central,
-	});
 
 	useEffect(() => {
 		setState((prev) => ({
 			...prev,
-			description: networkById?.network?.description,
+			description: network?.description,
 		}));
-	}, [networkById?.network?.description]);
+	}, [network?.description]);
 
 	const { mutate: networkDescription } = api.network.networkDescription.useMutation({
-		onSuccess: (data) => {
-			const input = {
-				nwid: urlParams.id as string,
-				central,
-			};
-			// void refecthNetworkById();
-			updateCache({ client, data, input });
+		onSuccess: () => {
 			toast.success("Description updated successfully");
 		},
 		onError: handleApiError,
@@ -119,30 +73,29 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const eventHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
 	};
-	if (errorNetwork) {
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
-				<ul className="list-disc">
-					<li>{t("networkById.errorSteps.step1")}</li>
-					<li>{t("networkById.errorSteps.step2")}</li>
-				</ul>
-			</div>
-		);
-	}
+	// if (errorNetwork) {
+	// 	return (
+	// 		<div className="flex flex-col items-center justify-center">
+	// 			<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
+	// 			<ul className="list-disc">
+	// 				<li>{t("networkById.errorSteps.step1")}</li>
+	// 				<li>{t("networkById.errorSteps.step2")}</li>
+	// 			</ul>
+	// 		</div>
+	// 	);
+	// }
 
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
+	// if (loadingNetwork) {
+	// 	// add loading progress bar to center of page, vertially and horizontally
+	// 	return (
+	// 		<div className="flex flex-col items-center justify-center">
+	// 			<h1 className="text-center text-2xl font-semibold">
+	// 				<progress className="progress progress-primary w-56"></progress>
+	// 			</h1>
+	// 		</div>
+	// 	);
+	// }
 
-	const { network } = networkById || {};
 	return (
 		<div className="py-3 font-light">
 			{!state.toggleDescriptionInput ? (
@@ -188,14 +141,13 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 									const target = e.target as HTMLTextAreaElement;
 									networkDescription(
 										{
-											nwid: network.id,
+											nwid: network?.id || "",
 											central,
 											organizationId,
 											updateParams: { description: target.value },
 										},
 										{
 											onSuccess: () => {
-												void refetchNetwork();
 												setState({
 													...state,
 													toggleDescriptionInput: !state.toggleDescriptionInput,

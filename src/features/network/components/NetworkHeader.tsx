@@ -23,11 +23,9 @@ export default function NetworkHeader() {
 					<NetworkDescription />
 				</div>
 				<div className="cursor-pointer">
-					<NetworkQrCode networkId={network?.nwid} />
+					{/* <NetworkQrCode networkId={network?.nwid} /> */}
 				</div>
-				<div>
-					<NetworkPrivatePublic />
-				</div>
+				<div>{/* <NetworkPrivatePublic /> */}</div>
 			</div>
 		</div>
 	);

@@ -634,13 +634,13 @@ export const member_details = async (
 
 // Get all peers
 // https://docs.zerotier.com/service/v1/#operation/getPeers
-export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer[]> => {
+export const peers = async (userId: string): Promise<ZTControllerGetPeer[]> => {
 	// get headers based on local or central api
-	const { localControllerUrl } = await getOptions(ctx, false);
+	const { localControllerUrl } = await getOptions(userId, false);
 
 	const addr = `${localControllerUrl}/peer`;
 	// get headers based on local or central api
-	const { headers } = await getOptions(ctx, false);
+	const { headers } = await getOptions(userId, false);
 
 	try {
 		const response: AxiosResponse = await axios.get(addr, { headers });

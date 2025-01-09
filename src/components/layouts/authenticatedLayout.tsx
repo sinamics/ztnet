@@ -16,18 +16,21 @@ import { useWebSocket } from "next-ws/client";
 
 export default function MainLayout({ children }: { children: ReactNode }) {
 	const store = useStore(useSidebarStore, (state) => state);
-	const ws = useWebSocket();
 	useEffect(() => {
-		async function onMessage(event: MessageEvent) {
-			const payload =
-				typeof event.data === "string" ? event.data : await event.data.text();
-			// const message = JSON.parse(payload);
-			console.log(await event.data.text());
-		}
+		fetch("/api/ws");
+	}, []);
+	// const ws = useWebSocket();
+	// useEffect(() => {
+	// 	async function onMessage(event: MessageEvent) {
+	// 		const payload =
+	// 			typeof event.data === "string" ? event.data : await event.data.text();
+	// 		// const message = JSON.parse(payload);
+	// 		console.log(await event.data.text());
+	// 	}
 
-		ws?.addEventListener("message", onMessage);
-		return () => ws?.removeEventListener("message", onMessage);
-	}, [ws]);
+	// 	ws?.addEventListener("message", onMessage);
+	// 	return () => ws?.removeEventListener("message", onMessage);
+	// }, [ws]);
 	// While rehydrating from localStorage, render nothing
 	// so the server DOM matches the client DOM.
 	// if (!store?.hydrated) return null;

@@ -12,6 +12,7 @@ import {
 import { IPv4gen } from "~/utils/IPv4gen";
 import { syncNetworkRoutes } from "~/server/api/services/routesService";
 import { MemberEntity } from "~/types/local/member";
+import { AuthContextManager } from "~/lib/authContext";
 
 class NetworkActionError extends Error {
 	constructor(message: string, public statusCode: number) {
@@ -28,15 +29,25 @@ export async function getNetworkById(
 		const parsedInput = networkInputSchema.parse(input);
 
 		// Get session
-		const session = await auth();
-		if (!session?.user) {
-			throw new NetworkActionError("Unauthorized", 401);
-		}
+		// Try to get WebSocket context first
+		const wsContext = AuthContextManager.getInstance().getContext();
+		let userId: string;
 
+		if (wsContext) {
+			// WebSocket context
+			userId = wsContext.userId;
+		} else {
+			// Regular HTTP context
+			const session = await auth();
+			if (!session?.user) {
+				throw new NetworkActionError("Unauthorized", 401);
+			}
+			userId = session.user.id;
+		}
 		// Handle central network case
 		if (parsedInput.central) {
 			return await ztController.central_network_detail(
-				session.user.id,
+				userId,
 				parsedInput.nwid,
 				parsedInput.central,
 			);
@@ -58,13 +69,13 @@ export async function getNetworkById(
 		}
 
 		// Check permissions
-		const isAuthor = networkFromDatabase.authorId === session.user.id;
+		const isAuthor = networkFromDatabase.authorId === userId;
 		const isMemberOfOrganization = networkFromDatabase.organizationId
 			? await prisma.organization.findFirst({
 					where: {
 						id: networkFromDatabase.organizationId,
 						users: {
-							some: { id: session.user.id },
+							some: { id: userId },
 						},
 					},
 			  })
@@ -76,7 +87,7 @@ export async function getNetworkById(
 
 		// Get network details from ZT controller
 		const ztControllerResponse = await ztController
-			.local_network_detail(session.user.id, networkFromDatabase.nwid, false)
+			.local_network_detail(userId, networkFromDatabase.nwid, false)
 			.catch((err) => {
 				throw new NetworkActionError(`Controller error: ${err.message}`, 500);
 			});
@@ -84,10 +95,9 @@ export async function getNetworkById(
 		if (!ztControllerResponse) {
 			throw new NetworkActionError("Failed to get network details!", 500);
 		}
-
 		// Sync members and get statuses
 		const membersWithStatusAndPeers = await syncMemberPeersAndStatus(
-			{ prisma, session },
+			userId,
 			parsedInput.nwid,
 			ztControllerResponse.members,
 		);
@@ -97,7 +107,6 @@ export async function getNetworkById(
 			parsedInput.nwid,
 			ztControllerResponse.members,
 		);
-
 		// Generate CIDR options
 		const { cidrOptions } = IPv4gen(null, []);
 
@@ -129,31 +138,31 @@ export async function getNetworkById(
 		});
 
 		// Check for duplicate routes
-		let duplicateRoutes = [];
+		const duplicateRoutes = [];
 		const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
 
-		if (targetIPs.length > 0 && !isMemberOfOrganization) {
-			duplicateRoutes = await prisma.$queryRaw`
-        SELECT 
-          n."authorId",
-          n."name",
-          n."nwid",
-          array_agg(
-            json_build_object(
-              'id', r."id",
-              'target', r."target",
-              'via', r."via"
-            )
-          ) as routes
-        FROM "network" n
-        INNER JOIN "Routes" r ON r."networkId" = n."nwid"
-        WHERE n."authorId" = ${session.user.id}
-          AND n."organizationId" IS NULL
-          AND r."target" = ANY(${targetIPs}::text[])
-          AND n."nwid" != ${parsedInput.nwid}
-        GROUP BY n."authorId", n."name", n."nwid"
-      `;
-		}
+		// if (targetIPs.length > 0 && !isMemberOfOrganization) {
+		// 	duplicateRoutes = await prisma.$queryRaw`
+		//     SELECT
+		//       n."authorId",
+		//       n."name",
+		//       n."nwid",
+		//       array_agg(
+		//         json_build_object(
+		//           'id', r."id",
+		//           'target', r."target",
+		//           'via', r."via"
+		//         )
+		//       ) as routes
+		//     FROM "network" n
+		//     INNER JOIN "Routes" r ON r."networkId" = n."nwid"
+		//     WHERE n."authorId" = ${userId}
+		//       AND n."organizationId" IS NULL
+		//       AND r."target" = ANY(${targetIPs}::text[])
+		//       AND n."nwid" != ${parsedInput.nwid}
+		//     GROUP BY n."authorId", n."name", n."nwid"
+		//   `;
+		// }
 
 		const duplicatedIPs = duplicateRoutes.flatMap((network) =>
 			network.routes
@@ -162,7 +171,6 @@ export async function getNetworkById(
 		);
 
 		const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
-
 		// Get final network state
 		const updatedNetworkFromDatabase = await prisma.network.findUnique({
 			where: {
