@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
-import { getNetworkById } from "~/features/network/server/actions/getNetworkById";
+import { getNetworkInfo } from "~/features/network/server/actions/getNetworkById";
 import NetworkActions from "~/features/network/components/NetworkActions";
 import NetworkHeader from "~/features/network/components/NetworkHeader";
 import NetworkMembers from "~/features/network/components/NetworkMembers";
@@ -11,7 +11,7 @@ import { NetworkUpdatesListener } from "~/features/network/components/NetworkUpd
 export default async function NetworkPage({ params }: { params: { id: string } }) {
 	const { id } = await params;
 
-	const networkData = await getNetworkById({
+	const networkData = await getNetworkInfo({
 		nwid: id,
 		central: false,
 	});

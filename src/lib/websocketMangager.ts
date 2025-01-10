@@ -3,6 +3,8 @@ import type { WebSocket } from "ws";
 import { NetworkStateCache } from "~/lib/networkCache";
 import { getNetworkById } from "~/features/network/server/actions/getNetworkById";
 import { runWithWebSocketAuth } from "~/lib/authContext";
+import { NetworkSyncService } from "./networkSyncService";
+import type { NetworkAndMemberResponse } from "~/types/network";
 
 interface WebSocketClient {
 	socket: WebSocket;
@@ -16,9 +18,16 @@ declare global {
 	var wsManager: WebSocketManager | undefined;
 }
 
+interface NetworkUpdate {
+	networkId: string;
+	data: NetworkAndMemberResponse;
+	timestamp: number;
+}
+
 export class WebSocketManager {
 	private instanceId: string;
 	private static instance: WebSocketManager;
+	private readonly syncService: NetworkSyncService;
 	private clients: Map<string, Set<WebSocketClient>> = new Map();
 	private networkSubscriptions: Map<string, Set<string>> = new Map();
 	private updateInterval: NodeJS.Timeout | null = null;
@@ -29,6 +38,7 @@ export class WebSocketManager {
 	private constructor() {
 		this.instanceId = Math.random().toString(36).substring(7);
 		this.networkCache = NetworkStateCache.getInstance();
+		this.syncService = NetworkSyncService.getInstance();
 		this.startUpdateLoop();
 	}
 
@@ -55,18 +65,11 @@ export class WebSocketManager {
 			if (processedNetworks.has(networkId) || subscribers.size === 0) continue;
 
 			try {
-				// Get a random userId from subscribers to make the authenticated request
 				const userId = Array.from(subscribers)[0];
-				const networkData = await runWithWebSocketAuth(userId, () =>
-					getNetworkById({
-						nwid: networkId,
-						central: false,
-					}),
-				);
+				const networkUpdate = await this.syncService.syncNetwork(networkId, userId);
 
-				if (this.networkCache.hasChanged(networkId, networkData)) {
-					this.networkCache.updateCache(networkId, networkData);
-					await this.broadcastNetworkUpdate(networkId, networkData);
+				if (this.networkCache.hasChanged(networkId, networkUpdate.data)) {
+					await this.broadcastNetworkUpdate(networkId, networkUpdate);
 				}
 
 				processedNetworks.add(networkId);
@@ -76,17 +79,15 @@ export class WebSocketManager {
 		}
 	}
 
-	private async broadcastNetworkUpdate(networkId: string, networkData: any) {
+	private async broadcastNetworkUpdate(networkId: string, update: NetworkUpdate) {
 		const subscribers = this.networkSubscriptions.get(networkId);
 		if (!subscribers) return;
 
 		const message = JSON.stringify({
 			type: "network_update",
-			data: networkData,
-			timestamp: this.networkCache.getLastUpdateTime(networkId),
+			data: update.data,
+			timestamp: update.timestamp,
 		});
-
-		const broadcastPromises = [];
 
 		for (const userId of subscribers) {
 			const userClients = this.clients.get(userId);
@@ -104,8 +105,6 @@ export class WebSocketManager {
 				}
 			}
 		}
-
-		await Promise.all(broadcastPromises);
 	}
 
 	private cleanupInactiveConnections() {
@@ -120,7 +119,6 @@ export class WebSocketManager {
 	}
 	public async notifyNetworkUpdate(networkId: string) {
 		try {
-			// Get network data using the first available subscriber
 			const subscribers = this.networkSubscriptions.get(networkId);
 
 			if (!subscribers || subscribers.size === 0) {
@@ -128,16 +126,10 @@ export class WebSocketManager {
 			}
 
 			const userId = Array.from(subscribers)[0];
-			const networkData = await runWithWebSocketAuth(userId, () =>
-				getNetworkById({
-					nwid: networkId,
-					central: false,
-				}),
-			);
+			const networkUpdate = await this.syncService.syncNetwork(networkId, userId);
 
-			// Update cache and broadcast
-			this.networkCache.updateCache(networkId, networkData);
-			await this.broadcastNetworkUpdate(networkId, networkData);
+			// Broadcast the update to all subscribers
+			await this.broadcastNetworkUpdate(networkId, networkUpdate);
 		} catch (error) {
 			console.error(`Error notifying network update for ${networkId}:`, error);
 		}
@@ -210,20 +202,14 @@ export class WebSocketManager {
 			}
 			this.networkSubscriptions.get(networkId)!.add(client.userId);
 
-			// Send initial data
-			const networkData = await runWithWebSocketAuth(client.userId, () =>
-				getNetworkById({
-					nwid: networkId,
-					central: false,
-				}),
-			);
+			// Send initial data using sync service
+			const networkUpdate = await this.syncService.syncNetwork(networkId, client.userId);
 
-			this.networkCache.updateCache(networkId, networkData);
 			client.socket.send(
 				JSON.stringify({
 					type: "network_update",
-					data: networkData,
-					timestamp: this.networkCache.getLastUpdateTime(networkId),
+					data: networkUpdate.data,
+					timestamp: networkUpdate.timestamp,
 				}),
 			);
 		} catch (error) {
@@ -247,7 +233,7 @@ export class WebSocketManager {
 				subscribers.delete(client.userId);
 				if (subscribers.size === 0) {
 					this.networkSubscriptions.delete(networkId);
-					this.networkCache.clearCache(networkId);
+					this.syncService.clearNetworkCache(networkId);
 				}
 			}
 		}
