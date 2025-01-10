@@ -11,7 +11,13 @@ interface WebSocketClient {
 	lastActivity: number;
 }
 
+// Extend global namespace to declare a global variable due to nextjs HMR
+declare global {
+	var wsManager: WebSocketManager | undefined;
+}
+
 export class WebSocketManager {
+	private instanceId: string;
 	private static instance: WebSocketManager;
 	private clients: Map<string, Set<WebSocketClient>> = new Map();
 	private networkSubscriptions: Map<string, Set<string>> = new Map();
@@ -21,15 +27,17 @@ export class WebSocketManager {
 	private readonly UPDATE_INTERVAL = 10000; // 10 seconds
 
 	private constructor() {
+		this.instanceId = Math.random().toString(36).substring(7);
+		console.log(`Creating new WebSocketManager instance: ${this.instanceId}`);
 		this.networkCache = NetworkStateCache.getInstance();
 		this.startUpdateLoop();
 	}
 
 	public static getInstance(): WebSocketManager {
-		if (!WebSocketManager.instance) {
-			WebSocketManager.instance = new WebSocketManager();
+		if (!global.wsManager) {
+			global.wsManager = new WebSocketManager();
 		}
-		return WebSocketManager.instance;
+		return global.wsManager;
 	}
 
 	private startUpdateLoop() {
@@ -111,7 +119,30 @@ export class WebSocketManager {
 			}
 		}
 	}
+	public async notifyNetworkUpdate(networkId: string) {
+		try {
+			// Get network data using the first available subscriber
+			const subscribers = this.networkSubscriptions.get(networkId);
 
+			if (!subscribers || subscribers.size === 0) {
+				return;
+			}
+
+			const userId = Array.from(subscribers)[0];
+			const networkData = await runWithWebSocketAuth(userId, () =>
+				getNetworkById({
+					nwid: networkId,
+					central: false,
+				}),
+			);
+
+			// Update cache and broadcast
+			this.networkCache.updateCache(networkId, networkData);
+			await this.broadcastNetworkUpdate(networkId, networkData);
+		} catch (error) {
+			console.error(`Error notifying network update for ${networkId}:`, error);
+		}
+	}
 	public addClient(userId: string, socket: WebSocket): WebSocketClient {
 		const client: WebSocketClient = {
 			socket,
