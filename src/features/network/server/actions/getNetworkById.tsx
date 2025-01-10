@@ -3,19 +3,22 @@
 import * as ztController from "~/utils/ztApi";
 import { auth } from "~/server/auth";
 import { prisma } from "~/server/db";
-import { NetworkAndMemberResponse } from "~/types/network";
-import { NetworkInput, networkInputSchema } from "../../schemas/getNetworkById";
+import type { NetworkAndMemberResponse } from "~/types/network";
+import { type NetworkInput, networkInputSchema } from "../../schemas/getNetworkById";
 import {
 	fetchZombieMembers,
 	syncMemberPeersAndStatus,
 } from "~/server/api/services/memberService";
 import { IPv4gen } from "~/utils/IPv4gen";
 import { syncNetworkRoutes } from "~/server/api/services/routesService";
-import { MemberEntity } from "~/types/local/member";
+import type { MemberEntity } from "~/types/local/member";
 import { AuthContextManager } from "~/lib/authContext";
 
 class NetworkActionError extends Error {
-	constructor(message: string, public statusCode: number) {
+	constructor(
+		message: string,
+		public statusCode: number,
+	) {
 		super(message);
 		this.name = "NetworkActionError";
 	}
@@ -78,7 +81,7 @@ export async function getNetworkById(
 							some: { id: userId },
 						},
 					},
-			  })
+				})
 			: null;
 
 		if (!isAuthor && !isMemberOfOrganization) {
@@ -138,31 +141,31 @@ export async function getNetworkById(
 		});
 
 		// Check for duplicate routes
-		const duplicateRoutes = [];
+		let duplicateRoutes = [];
 		const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
 
-		// if (targetIPs.length > 0 && !isMemberOfOrganization) {
-		// 	duplicateRoutes = await prisma.$queryRaw`
-		//     SELECT
-		//       n."authorId",
-		//       n."name",
-		//       n."nwid",
-		//       array_agg(
-		//         json_build_object(
-		//           'id', r."id",
-		//           'target', r."target",
-		//           'via', r."via"
-		//         )
-		//       ) as routes
-		//     FROM "network" n
-		//     INNER JOIN "Routes" r ON r."networkId" = n."nwid"
-		//     WHERE n."authorId" = ${userId}
-		//       AND n."organizationId" IS NULL
-		//       AND r."target" = ANY(${targetIPs}::text[])
-		//       AND n."nwid" != ${parsedInput.nwid}
-		//     GROUP BY n."authorId", n."name", n."nwid"
-		//   `;
-		// }
+		if (targetIPs.length > 0 && !isMemberOfOrganization) {
+			duplicateRoutes = await prisma.$queryRaw`
+		    SELECT
+		      n."authorId",
+		      n."name",
+		      n."nwid",
+		      array_agg(
+		        json_build_object(
+		          'id', r."id",
+		          'target', r."target",
+		          'via', r."via"
+		        )
+		      ) as routes
+		    FROM "network" n
+		    INNER JOIN "Routes" r ON r."networkId" = n."nwid"
+		    WHERE n."authorId" = ${userId}
+		      AND n."organizationId" IS NULL
+		      AND r."target" = ANY(${targetIPs}::text[])
+		      AND n."nwid" != ${parsedInput.nwid}
+		    GROUP BY n."authorId", n."name", n."nwid"
+		  `;
+		}
 
 		const duplicatedIPs = duplicateRoutes.flatMap((network) =>
 			network.routes

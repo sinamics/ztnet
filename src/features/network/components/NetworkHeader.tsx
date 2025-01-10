@@ -6,10 +6,10 @@ import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivat
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 import { useNetwork } from "../providers/NetworkProvider";
 import { CopyNetworkId } from "./CopyNetworkId";
-import { useNetworkStore } from "~/store/networkStore";
+import { NetworkSection, useNetworkField } from "~/store/networkStore";
 
 export default function NetworkHeader() {
-	const network = useNetworkStore((state) => state.basicInfo);
+	const nwid = useNetworkField(NetworkSection.BASIC_INFO, "id");
 
 	return (
 		<div className="mx-auto py-10 px-4 text-sm sm:px-10 md:text-base">
@@ -17,14 +17,12 @@ export default function NetworkHeader() {
 				<div className="flex flex-col space-y-3 sm:space-y-0">
 					<div className="flex flex-col justify-between sm:flex-row">
 						<span className="font-semibold">Network ID</span>
-						<CopyNetworkId networkId={network?.nwid} />
+						<CopyNetworkId networkId={nwid} />
 					</div>
 					<NetworkName />
 					<NetworkDescription />
 				</div>
-				<div className="cursor-pointer">
-					{/* <NetworkQrCode networkId={network?.nwid} /> */}
-				</div>
+				<div className="cursor-pointer">{/* <NetworkQrCode networkId={nwid} /> */}</div>
 				<div>{/* <NetworkPrivatePublic /> */}</div>
 			</div>
 		</div>

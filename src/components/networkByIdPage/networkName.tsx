@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
@@ -6,89 +7,85 @@ import { useTranslations } from "next-intl";
 import { useMutation } from "@tanstack/react-query";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import { server_updateNetworkName } from "~/features/network/server/actions/updateNetworkName";
-import { useNetworkStore } from "~/store/networkStore";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
-interface IProp {
+interface NetworkNameProps {
 	central?: boolean;
 	organizationId?: string;
 }
 
-const NetworkName = ({ central = false, organizationId }: IProp) => {
+export default function NetworkName({
+	central = false,
+	organizationId,
+}: NetworkNameProps) {
 	const t = useTranslations("networkById");
-
-	const network = useNetworkStore((state) => state.basicInfo);
-	const updateNetworkName = useNetworkStore((state) => state.updateBasicInfo);
 	const handleApiError = useTrpcApiErrorHandler();
 
-	const [state, setState] = useState({
-		editNetworkName: false,
-		networkName: "",
-	});
+	// Use specific field selectors instead of the whole basicInfo object
+	const { name: networkName, id: networkId } = useNetworkField(
+		NetworkSection.BASIC_INFO,
+		["name", "id"] as const,
+	);
+
+	const [isEditing, setIsEditing] = useState(false);
 
 	const { mutate: updateNetworkNameMutation, isPending } = useMutation({
 		mutationFn: server_updateNetworkName,
-		onSuccess: (response) => {
-			if (response) updateNetworkName({ name: response?.name });
-		},
+		// onSuccess: (response) => {
+		// 	if (response) {
+		// 		updateSection(NetworkSection.BASIC_INFO, { name: response.name });
+		// 	}
+		// },
 		onError: handleApiError,
 	});
 
-	const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+		const formData = new FormData(e.currentTarget);
+		const newName = formData.get("networkName") as string;
+
 		updateNetworkNameMutation(
 			{
-				nwid: network?.id as string,
+				nwid: networkId as string,
 				central,
 				organizationId,
-				updateParams: { name: state?.networkName },
+				updateParams: { name: newName },
 			},
 			{
 				onSuccess: () => {
-					// void refetchNetworkById();
-					setState({ ...state, editNetworkName: false });
+					setIsEditing(false);
 					toast.success("Network Name updated successfully");
 				},
 			},
 		);
-	};
-	const eventHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		setState({ ...state, [e.target.name]: e.target.value });
 	};
 
 	return (
 		<div className="flex flex-col justify-between sm:flex-row">
 			<span className="font-medium">{t("networkName")}</span>
 			<span className="flex items-center gap-2">
-				{state.editNetworkName ? (
-					<form onSubmit={changeNameHandler}>
+				{isEditing ? (
+					<form onSubmit={handleSubmit}>
 						<Input
 							focus
 							useTooltip
 							name="networkName"
-							onChange={eventHandler}
-							defaultValue={network?.name}
+							defaultValue={networkName}
 							type="text"
-							placeholder={network?.name}
+							placeholder={networkName}
 							className="input-bordered input-primary input-xs"
 							disabled={isPending}
 						/>
 					</form>
 				) : (
-					network?.name
+					networkName
 				)}
 				<EditIcon
 					data-testid="changeNetworkName"
 					className="hover:text-opacity-50"
-					onClick={() =>
-						setState({
-							...state,
-							editNetworkName: !state.editNetworkName,
-						})
-					}
+					onClick={() => setIsEditing(!isEditing)}
 				/>
 			</span>
 		</div>
 	);
-};
-
-export default NetworkName;
+}

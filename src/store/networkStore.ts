@@ -1,165 +1,128 @@
-// stores/networkStore.ts
 import type { network_members } from "@prisma/client";
 import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, subscribeWithSelector } from "zustand/middleware";
 import type { NetworkEntity } from "~/types/local/network";
 
-interface EditLocks {
-	basicInfo: Set<keyof NetworkEntity>;
-	config: Set<keyof NetworkEntity>;
-	security: Set<keyof NetworkEntity>;
+// Network sections enum
+export enum NetworkSection {
+	BASIC_INFO = "basicInfo",
+	CONFIG = "config",
+	SECURITY = "security",
 }
 
-export interface NetworkState {
-	basicInfo: Partial<NetworkEntity> | null;
-	config: Partial<NetworkEntity> | null;
-	security: Partial<NetworkEntity> | null;
-	organization: {
-		organizationId: string | null;
-		authorId: string | null;
-		organization: string;
-	} | null;
+// Type-safe interfaces for each section
+interface NetworkBasicInfo {
+	id?: string;
+	nwid?: string;
+	name?: string;
+	description?: string;
+	private?: boolean;
+	objtype?: string;
+	creationTime?: number;
+	revision?: number;
+}
+
+interface NetworkConfig {
+	mtu?: number;
+	multicastLimit?: number;
+	enableBroadcast?: boolean;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	ipAssignmentPools?: any[];
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	routes?: any[];
+	dns?: any;
+	rules?: any[];
+	rulesSource?: string;
+	flowRule?: boolean;
+	autoAssignIp?: boolean;
+	v4AssignMode?: any;
+	v6AssignMode?: any;
+}
+
+interface NetworkSecurity {
+	authTokens?: any[];
+	authorizationEndpoint?: string;
+	capabilities?: any[];
+	clientId?: string;
+	ssoEnabled?: boolean;
+	tags?: any[];
+	tagsByName?: Record<string, any>;
+	capabilitiesByName?: Record<string, any>;
+	remoteTraceLevel?: number;
+	remoteTraceTarget?: string;
+}
+
+interface NetworkOrganization {
+	organizationId: string | null;
+	authorId: string | null;
+	organization: string;
+}
+
+// Type mapping for section types
+export interface SectionTypeMap {
+	[NetworkSection.BASIC_INFO]: NetworkBasicInfo;
+	[NetworkSection.CONFIG]: NetworkConfig;
+	[NetworkSection.SECURITY]: NetworkSecurity;
+}
+
+// Utility type to get the fields of a specific section
+export type SectionFields<T extends NetworkSection> = keyof SectionTypeMap[T];
+
+// Store state interface
+interface NetworkState {
+	[NetworkSection.BASIC_INFO]: NetworkBasicInfo;
+	[NetworkSection.CONFIG]: NetworkConfig;
+	[NetworkSection.SECURITY]: NetworkSecurity;
+	organization: NetworkOrganization | null;
 	cidr: string[];
 	duplicateRoutes: any[];
 	members: network_members[];
 	zombieMembers: network_members[];
-	editLocks: EditLocks;
 
-	// Actions for setting/updating network data
+	// Type-safe actions
 	setNetwork: (networkData: NetworkEntity) => void;
-	updateBasicInfo: (info: Partial<NetworkEntity>) => void;
-	updateConfig: (config: Partial<NetworkEntity>) => void;
-	updateSecurity: (security: Partial<NetworkEntity>) => void;
+	updateSection: <T extends NetworkSection>(
+		section: T,
+		data: Partial<SectionTypeMap[T]>,
+	) => void;
+	updateMultipleSections: (
+		updates: Partial<{
+			[K in NetworkSection]?: Partial<SectionTypeMap[K]>;
+		}>,
+	) => void;
 	setMembers: (members: network_members[]) => void;
 	updateNetworkData: (data: {
 		network: Partial<NetworkEntity>;
 		members: network_members[];
 		zombieMembers: network_members[];
 	}) => void;
-
-	// Actions for managing edit locks
-	lockField: (section: keyof EditLocks, field: keyof NetworkEntity) => void;
-	unlockField: (section: keyof EditLocks, field: keyof NetworkEntity) => void;
-	isFieldLocked: (section: keyof EditLocks, field: keyof NetworkEntity) => boolean;
 }
 
 export const useNetworkStore = create<NetworkState>()(
-	devtools(
-		(set, get) => ({
-			// Initial state
-			basicInfo: null,
-			config: null,
-			security: null,
-			organization: null,
-			cidr: [],
-			duplicateRoutes: [],
-			members: [],
-			zombieMembers: [],
-			editLocks: {
-				basicInfo: new Set(),
-				config: new Set(),
-				security: new Set(),
-			},
+	subscribeWithSelector(
+		devtools(
+			(set) => ({
+				// Initial state
+				[NetworkSection.BASIC_INFO]: {},
+				[NetworkSection.CONFIG]: {},
+				[NetworkSection.SECURITY]: {},
+				organization: null,
+				cidr: [],
+				duplicateRoutes: [],
+				members: [],
+				zombieMembers: [],
 
-			// Set initial network data
-			setNetwork: (networkData) => {
-				const { members, zombieMembers, ...network } = networkData;
-
-				set({
-					basicInfo: {
-						id: network.id,
-						nwid: network.nwid,
-						name: network.name,
-						description: network.description,
-						private: network.private,
-						objtype: network.objtype,
-						creationTime: network.creationTime,
-						revision: network.revision,
-					},
-
-					config: {
-						mtu: network.mtu,
-						multicastLimit: network.multicastLimit,
-						enableBroadcast: network.enableBroadcast,
-						ipAssignmentPools: network.ipAssignmentPools,
-						routes: network.routes,
-						dns: network.dns,
-						rules: network.rules,
-						rulesSource: network.rulesSource,
-						flowRule: network.flowRule,
-						autoAssignIp: network.autoAssignIp,
-						v4AssignMode: network.v4AssignMode,
-						v6AssignMode: network.v6AssignMode,
-					},
-
-					security: {
-						authTokens: network.authTokens,
-						authorizationEndpoint: network.authorizationEndpoint,
-						capabilities: network.capabilities,
-						clientId: network.clientId,
-						ssoEnabled: network.ssoEnabled,
-						tags: network.tags,
-						tagsByName: network.tagsByName,
-						capabilitiesByName: network.capabilitiesByName,
-						remoteTraceLevel: network.remoteTraceLevel,
-						remoteTraceTarget: network.remoteTraceTarget,
-					},
-
-					organization: {
-						organizationId: network.organizationId,
-						authorId: network.authorId,
-						organization: network.organization,
-					},
-
-					cidr: network.cidr || [],
-					duplicateRoutes: network.duplicateRoutes || [],
-					members,
-					zombieMembers,
-				});
-			},
-
-			// Update specific sections
-			updateBasicInfo: (info) =>
-				set((state) => ({
-					basicInfo: state.basicInfo ? { ...state.basicInfo, ...info } : info,
-				})),
-
-			updateConfig: (config) =>
-				set((state) => ({
-					config: state.config ? { ...state.config, ...config } : config,
-				})),
-
-			updateSecurity: (security) =>
-				set((state) => ({
-					security: state.security ? { ...state.security, ...security } : security,
-				})),
-
-			setMembers: (members) => set({ members }),
-
-			// Handle WebSocket updates
-			updateNetworkData: (data) => {
-				const { network, members, zombieMembers } = data;
-				const state = get();
-
-				set((state) => {
-					// Create updates for each section, excluding locked fields
-					const basicInfoUpdates = Object.fromEntries(
-						Object.entries({
+				setNetwork: (network) => {
+					set({
+						[NetworkSection.BASIC_INFO]: {
 							id: network.id,
 							nwid: network.nwid,
 							name: network.name,
 							description: network.description,
 							private: network.private,
-							objtype: network.objtype,
 							creationTime: network.creationTime,
-							revision: network.revision,
-						}).filter(
-							([key]) => !state.editLocks.basicInfo.has(key as keyof NetworkEntity),
-						),
-					);
-
-					const configUpdates = Object.fromEntries(
-						Object.entries({
+						},
+						[NetworkSection.CONFIG]: {
 							mtu: network.mtu,
 							multicastLimit: network.multicastLimit,
 							enableBroadcast: network.enableBroadcast,
@@ -172,12 +135,80 @@ export const useNetworkStore = create<NetworkState>()(
 							autoAssignIp: network.autoAssignIp,
 							v4AssignMode: network.v4AssignMode,
 							v6AssignMode: network.v6AssignMode,
-						}).filter(([key]) => !state.editLocks.config.has(key as keyof NetworkEntity)),
-					);
+						},
+						[NetworkSection.SECURITY]: {
+							capabilities: network.capabilities,
+							tags: network.tags,
+							tagsByName: network.tagsByName,
+							capabilitiesByName: network.capabilitiesByName,
+							remoteTraceLevel: network.remoteTraceLevel,
+						},
+						cidr: network.cidr || [],
+						duplicateRoutes: network.duplicateRoutes || [],
+					});
+				},
 
-					const securityUpdates = Object.fromEntries(
-						Object.entries({
-							authTokens: network.authTokens,
+				// Type-safe update for a single section
+				updateSection: (section, data) => {
+					set((state) => ({
+						[section]: {
+							...state[section],
+							...data,
+						},
+					}));
+				},
+
+				// Type-safe update for multiple sections
+				updateMultipleSections: (updates) => {
+					set((state) => {
+						const newState: Partial<NetworkState> = {};
+
+						for (const [section, data] of Object.entries(updates) as [
+							NetworkSection,
+							Partial<SectionTypeMap[NetworkSection]>,
+						][]) {
+							newState[section] = {
+								...state[section],
+								...data,
+							};
+						}
+
+						return newState;
+					});
+				},
+
+				setMembers: (members) => set({ members }),
+
+				updateNetworkData: (data) => {
+					const { network, members, zombieMembers } = data;
+					const updates: Partial<{
+						[K in NetworkSection]?: Partial<SectionTypeMap[K]>;
+					}> = {
+						[NetworkSection.BASIC_INFO]: {
+							id: network.id,
+							nwid: network.nwid,
+							name: network.name,
+							description: network.description,
+							private: network.private,
+							objtype: network.objtype,
+							creationTime: network.creationTime,
+							revision: network.revision,
+						},
+						[NetworkSection.CONFIG]: {
+							mtu: network.mtu,
+							multicastLimit: network.multicastLimit,
+							enableBroadcast: network.enableBroadcast,
+							ipAssignmentPools: network.ipAssignmentPools,
+							routes: network.routes,
+							dns: network.dns,
+							rules: network.rules,
+							rulesSource: network.rulesSource,
+							flowRule: network.flowRule,
+							autoAssignIp: network.autoAssignIp,
+							v4AssignMode: network.v4AssignMode,
+							v6AssignMode: network.v6AssignMode,
+						},
+						[NetworkSection.SECURITY]: {
 							authorizationEndpoint: network.authorizationEndpoint,
 							capabilities: network.capabilities,
 							clientId: network.clientId,
@@ -186,62 +217,58 @@ export const useNetworkStore = create<NetworkState>()(
 							tagsByName: network.tagsByName,
 							capabilitiesByName: network.capabilitiesByName,
 							remoteTraceLevel: network.remoteTraceLevel,
-							remoteTraceTarget: network.remoteTraceTarget,
-						}).filter(
-							([key]) => !state.editLocks.security.has(key as keyof NetworkEntity),
-						),
-					);
-
-					return {
-						...state,
-						basicInfo: state.basicInfo
-							? { ...state.basicInfo, ...basicInfoUpdates }
-							: basicInfoUpdates,
-						config: state.config ? { ...state.config, ...configUpdates } : configUpdates,
-						security: state.security
-							? { ...state.security, ...securityUpdates }
-							: securityUpdates,
-						organization: network.organization
-							? {
-									organizationId: network.organizationId,
-									authorId: network.authorId,
-									organization: network.organization,
-								}
-							: state.organization,
-						cidr: network.cidr || state.cidr,
-						duplicateRoutes: network.duplicateRoutes || state.duplicateRoutes,
-						members: members || state.members,
-						zombieMembers: zombieMembers || state.zombieMembers,
-					};
-				});
-			},
-
-			// Edit lock management
-			lockField: (section, field) =>
-				set((state) => ({
-					editLocks: {
-						...state.editLocks,
-						[section]: new Set([...state.editLocks[section], field]),
-					},
-				})),
-
-			unlockField: (section, field) =>
-				set((state) => {
-					const newSet = new Set(state.editLocks[section]);
-					newSet.delete(field);
-					return {
-						editLocks: {
-							...state.editLocks,
-							[section]: newSet,
 						},
 					};
-				}),
 
-			isFieldLocked: (section, field) => {
-				const state = get();
-				return state.editLocks[section].has(field);
-			},
-		}),
-		{ name: "network-store" },
+					set((state) => ({
+						...state,
+						...updates,
+						members: members || state.members,
+						zombieMembers: zombieMembers || state.zombieMembers,
+					}));
+				},
+			}),
+			{ name: "network-store" },
+		),
 	),
 );
+
+// Type-safe selector hooks
+export function useNetworkSection<T extends NetworkSection>(section: T) {
+	return useNetworkStore((state) => state[section]);
+}
+
+// Implementation
+export function useNetworkField<
+	T extends NetworkSection,
+	K extends keyof SectionTypeMap[T],
+>(section: T, fieldOrFields: K | readonly K[]) {
+	return useNetworkStore((state) => {
+		if (Array.isArray(fieldOrFields)) {
+			return fieldOrFields.reduce(
+				(acc, field) => {
+					acc[field] = state[section][field];
+					return acc;
+				},
+				{} as { [P in K]: SectionTypeMap[T][P] },
+			);
+		}
+		return state[section][fieldOrFields as K];
+	});
+}
+
+export function useNetworkMembers() {
+	return useNetworkStore((state) => state.members);
+}
+
+export function useNetworkName() {
+	return useNetworkField(NetworkSection.BASIC_INFO, "name");
+}
+
+export function useNetworkMTU() {
+	return useNetworkField(NetworkSection.CONFIG, "mtu");
+}
+
+export function useNetworkDescription() {
+	return useNetworkField(NetworkSection.BASIC_INFO, "description");
+}

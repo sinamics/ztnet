@@ -1,10 +1,10 @@
-import { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./styles/globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WebsocketProvider } from "~/components/providers/socketProvider";
+import type { ReactNode } from "react";
 
 type Props = {
 	children: ReactNode;

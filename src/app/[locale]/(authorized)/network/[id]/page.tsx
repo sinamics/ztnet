@@ -15,7 +15,6 @@ export default async function NetworkPage({ params }: { params: { id: string } }
 		nwid: id,
 		central: false,
 	});
-
 	return (
 		<>
 			<NetworkUpdatesListener networkId={id} />

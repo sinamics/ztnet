@@ -28,7 +28,6 @@ export class WebSocketManager {
 
 	private constructor() {
 		this.instanceId = Math.random().toString(36).substring(7);
-		console.log(`Creating new WebSocketManager instance: ${this.instanceId}`);
 		this.networkCache = NetworkStateCache.getInstance();
 		this.startUpdateLoop();
 	}

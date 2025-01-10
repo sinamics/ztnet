@@ -1,18 +1,25 @@
 "use server";
 
 import { auth } from "~/server/auth";
-import { UpdateNetworkInputType, updateNetworkSchema } from "../../schemas/updateNetwork";
+import {
+	type UpdateNetworkInputType,
+	updateNetworkSchema,
+} from "../../schemas/updateNetwork";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { Role } from "@prisma/client";
 import { prisma } from "~/server/db";
 import * as ztController from "~/utils/ztApi";
-import { CentralNetwork } from "~/types/central/network";
 import { sendWebhook } from "~/utils/webhook";
-import { HookType, NetworkConfigChanged } from "~/types/webhooks";
 import { z } from "zod";
+import type { CentralNetwork } from "~/types/central/network";
+import { HookType, type NetworkConfigChanged } from "~/types/webhooks";
+import { WebSocketManager } from "~/lib/websocketMangager";
 
 class NetworkActionError extends Error {
-	constructor(message: string, public statusCode: number) {
+	constructor(
+		message: string,
+		public statusCode: number,
+	) {
 		super(message);
 		this.name = "NetworkActionError";
 	}
@@ -89,6 +96,12 @@ export async function server_updateNetworkName(input: UpdateNetworkInputType) {
 			// Continue even if webhook fails
 		}
 
+		try {
+			const wsManager = WebSocketManager.getInstance();
+			await wsManager.notifyNetworkUpdate(validatedInput.nwid);
+		} catch (error) {
+			console.error("WebSocket notification failed:", error);
+		}
 		return updatedData;
 	} catch (error) {
 		if (error instanceof z.ZodError) {
