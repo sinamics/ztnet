@@ -40,32 +40,17 @@ export const CheckExpiredUsers = async () => {
 			for (const userObj of expUsers) {
 				if (userObj.role === "ADMIN") continue;
 
-				const context: FakeContext = {
-					session: {
-						user: {
-							id: userObj.id,
-						},
-					},
-				};
-
 				for (const network of userObj.network) {
 					const members = await ztController.network_members(
 						// @ts-ignore
-						context,
+						userObj.id,
 						network.nwid,
 						false,
 					);
 					for (const member in members) {
-						const ctx = {
-							session: {
-								user: {
-									id: userObj.id,
-								},
-							},
-						};
 						await ztController.member_update({
 							// @ts-ignore
-							ctx,
+							userId: userObj.id,
 							nwid: network.nwid,
 							central: false,
 							memberId: member,
@@ -165,26 +150,17 @@ export const updatePeers = async () => {
 					for (const network of allNetworks) {
 						if (network && !processedNetworks.has(network.nwid)) {
 							processedNetworks.add(network.nwid);
-							const context: FakeContext = {
-								session: {
-									user: {
-										id: user.id,
-									},
-								},
-							};
 
 							// get members from the zt controller
 							const ztControllerResponse = await ztController.local_network_detail(
-								// @ts-expect-error
-								context,
+								user.id,
 								network.nwid,
 								false,
 							);
 							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
 
 							await syncMemberPeersAndStatus(
-								// @ts-expect-error
-								context,
+								user.id,
 								network?.nwid,
 								ztControllerResponse.members,
 							);

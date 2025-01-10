@@ -17,7 +17,7 @@ interface IProp {
 const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 	const network = useNetworkStore((state) => state.basicInfo);
-	console.log("NetworkDescription network", network);
+	// console.log("NetworkDescription network", network);
 	const handleApiError = useTrpcApiErrorHandler();
 
 	const textareaRef = React.useRef<HTMLTextAreaElement>(null); // <-- Create a ref for the textarea
@@ -26,7 +26,6 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 		description: "",
 	});
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		if (state.toggleDescriptionInput && textareaRef.current) {
 			textareaRef.current.focus(); // <-- Programmatically set focus when toggleDescriptionInput is true
