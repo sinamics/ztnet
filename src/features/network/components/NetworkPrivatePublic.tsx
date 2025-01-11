@@ -1,84 +1,44 @@
 "use client";
+
 import { toast } from "react-hot-toast";
-import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
-import CardComponent from "../../../components/networkByIdPage/privatePublic";
 import { useTranslations } from "next-intl";
-import {
-	type InfiniteData,
-	type QueryClient,
-	useQueryClient,
-} from "@tanstack/react-query";
-import type { NetworkEntity } from "~/types/local/network";
-import type { CentralNetwork } from "~/types/central/network";
+import { useMutation } from "@tanstack/react-query";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
-import { useParams } from "next/navigation";
 import { useNetworkField, NetworkSection } from "~/store/networkStore";
+import { updateNetworkPrivacy } from "../server/actions/updateNetworkPrivacy";
+import CardComponent from "../../../components/networkByIdPage/privatePublic";
 
 interface IProp {
 	central?: boolean;
 	organizationId?: string;
 }
 
-const updateCache = ({
-	client,
-	data,
-	input,
-}: {
-	client: QueryClient;
-	input: RouterInputs["network"]["getNetworkById"];
-	data: NetworkEntity | Partial<CentralNetwork>;
-}) => {
-	client.setQueryData(
-		[
-			["network", "getNetworkById"],
-			{
-				input,
-				type: "query",
-			},
-		],
-		(oldData) => {
-			const newData = oldData as InfiniteData<RouterOutputs["network"]["getNetworkById"]>;
-			return {
-				...newData,
-				network: { ...data },
-			};
-		},
-	);
-};
-
 export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 
 	const handleApiError = useTrpcApiErrorHandler();
 
-	const urlParams = useParams();
-	const client = useQueryClient();
+	const { private: isPrivate, id: networkId } = useNetworkField(
+		NetworkSection.BASIC_INFO,
+		["private", "id"] as const,
+	);
 
-	const { private: isPrivate } = useNetworkField(NetworkSection.BASIC_INFO, [
-		"private",
-	] as const);
-
-	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
+	const { mutate: server_setPrivatePublic } = useMutation({
+		mutationFn: updateNetworkPrivacy,
 		onError: handleApiError,
 	});
+
 	const privateHandler = (privateNetwork: boolean) => {
-		privatePublicNetwork(
+		server_setPrivatePublic(
 			{
 				updateParams: { private: privateNetwork },
 				organizationId,
-				nwid: urlParams.id as string,
+				nwid: networkId,
 				central,
 			},
 			{
-				onSuccess: (data) => {
-					const input = {
-						nwid: urlParams.id as string,
-						central,
-					};
-					// void refecthNetworkById();
-					updateCache({ client, data, input });
+				onSuccess: () => {
 					const secure = privateNetwork ? "private" : "public, please use with caution!";
-
 					toast.success(
 						t("networkById.privatePublicSwitch.accessControllMessage", {
 							authType: secure,
