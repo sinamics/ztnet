@@ -4,7 +4,7 @@ import { z } from "zod";
 import { auth } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { throwError } from "~/server/helpers/errorHandler";
-import { NetworkAndMemberResponse } from "~/types/network";
+import type { NetworkAndMemberResponse } from "~/types/network";
 import * as ztController from "~/utils/ztApi";
 
 // Input validation schema
@@ -56,7 +56,7 @@ export async function getUnlinkedNetworks(input: UnlinkedNetworkInput) {
 		if (validatedInput.getDetails) {
 			const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
 				unlinkedNetworks.map((unlinked) =>
-					ztController.local_network_detail(session.user.id, unlinked, false),
+					ztController.ZTApiGetNetworkInfo(session.user.id, unlinked, false),
 				),
 			);
 			return unlinkArr;

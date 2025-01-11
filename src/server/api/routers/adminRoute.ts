@@ -2,13 +2,13 @@ import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
 import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
-import { GlobalOptions, Role } from "@prisma/client";
+import { type GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
-import { type ZTControllerNodeStatus } from "~/types/ztController";
-import { NetworkAndMemberResponse } from "~/types/network";
+import type { ZTControllerNodeStatus } from "~/types/ztController";
+import type { NetworkAndMemberResponse } from "~/types/network";
 import { execSync } from "child_process";
 import fs from "fs";
-import { WorldConfig } from "~/types/worldConfig";
+import type { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
@@ -18,7 +18,7 @@ import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
-import { InvitationLinkType } from "~/types/invitation";
+import type { InvitationLinkType } from "~/types/invitation";
 import { MailTemplateKey } from "~/utils/enums";
 
 type WithError<T> = T & { error?: boolean; message?: string };
@@ -189,8 +189,8 @@ export const adminRouter = createTRPCRouter({
 					url,
 					secret,
 					groupId,
-					timesCanUse: parseInt(timesCanUse) || 1,
-					expiresAt: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					timesCanUse: Number.parseInt(timesCanUse) || 1,
+					expiresAt: new Date(Date.now() + Number.parseInt(expireTime) * 60 * 1000),
 					invitedById: ctx.session.user.id,
 				},
 			});
@@ -211,7 +211,7 @@ export const adminRouter = createTRPCRouter({
 				if (inv.groupId) {
 					const group = await ctx.prisma.userGroup.findUnique({
 						where: {
-							id: parseInt(inv.groupId, 10),
+							id: Number.parseInt(inv.groupId, 10),
 						},
 					});
 					groupName = group?.name || null;
@@ -246,7 +246,7 @@ export const adminRouter = createTRPCRouter({
 			let totalMembers = 0;
 			const assignedIPs = new Set<string>();
 			for (const network of networks) {
-				const networkDetails = await ztController.local_network_detail(
+				const networkDetails = await ztController.ZTApiGetNetworkInfo(
 					ctx,
 					network as string,
 					isCentral,
@@ -329,10 +329,10 @@ export const adminRouter = createTRPCRouter({
 							userGroupId: null,
 							expiresAt: null,
 							isActive: true,
-					  }
+						}
 					: {
 							role: role as Role,
-					  };
+						};
 
 			return await ctx.prisma.user.update({
 				where: {
@@ -525,7 +525,7 @@ export const adminRouter = createTRPCRouter({
 				if (input.getDetails) {
 					const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
 						unlinkedNetworks.map((unlinked) =>
-							ztController.local_network_detail(ctx, unlinked, false),
+							ztController.ZTApiGetNetworkInfo(ctx, unlinked, false),
 						),
 					);
 					return unlinkArr;
@@ -627,12 +627,12 @@ export const adminRouter = createTRPCRouter({
 					},
 					create: {
 						name: input.groupName,
-						maxNetworks: parseInt(input.maxNetworks),
+						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
 					},
 					update: {
 						name: input.groupName,
-						maxNetworks: parseInt(input.maxNetworks),
+						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
 					},
 				});
@@ -741,7 +741,7 @@ export const adminRouter = createTRPCRouter({
 
 				const userGroup = await ctx.prisma.userGroup.findUnique({
 					where: {
-						id: parseInt(input.userGroupId),
+						id: Number.parseInt(input.userGroupId),
 					},
 				});
 
@@ -755,7 +755,7 @@ export const adminRouter = createTRPCRouter({
 						id: input.userid,
 					},
 					data: {
-						userGroupId: parseInt(input.userGroupId), // Link the user to the userGroup
+						userGroupId: Number.parseInt(input.userGroupId), // Link the user to the userGroup
 					},
 				});
 			} catch (err: unknown) {
@@ -944,7 +944,7 @@ export const adminRouter = createTRPCRouter({
 				// Extract the port numbers from the first endpoint string
 				const portNumbers = input.rootNodes[0].endpoints[0]
 					.split(",")
-					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
+					.map((endpoint) => Number.parseInt(endpoint.split("/").pop() || "", 10));
 
 				try {
 					await updateLocalConf(portNumbers);

@@ -1,8 +1,9 @@
+"use client";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
-import { RoutesEntity, type IpAssignmentPoolsEntity } from "~/types/local/network";
+import type { RoutesEntity, IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
@@ -11,47 +12,47 @@ import {
 import { useModalStore } from "~/utils/store";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { NetworkSection, useNetworkField } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
 	organizationId?: string;
 }
 
-export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
+export const NetworkIpv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const callModal = useModalStore((state) => state.callModal);
 
+	const { name: networkName } = useNetworkField(NetworkSection.BASIC_INFO, ["name"]);
+	const { ipAssignmentPools, v4AssignMode, routes, cidr, duplicateRoutes } =
+		useNetworkField(NetworkSection.CONFIG, [
+			"ipAssignmentPools",
+			"v4AssignMode",
+			"routes",
+			"cidr",
+			"duplicateRoutes",
+		]);
+
 	const handleApiError = useTrpcApiErrorHandler();
-	const handleApiSuccess = useTrpcApiSuccessHandler();
+	// const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const urlParams = useParams();
 
 	const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
 	const [ipTabs, setIptabs] = useState({ easy: true, advanced: false });
-	const {
-		data: networkByIdQuery,
-		isLoading,
-		refetch: refecthNetworkById,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: urlParams.id as string,
-			central,
-		},
-		{ enabled: !!urlParams.id },
-	);
 
 	const { mutate: enableIpv4AutoAssign } = api.network.enableIpv4AutoAssign.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		// onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 	const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		// onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		// onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 
 	const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,8 +60,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	};
 
 	const deleteIpRange = (poolToDelete: IpAssignmentPoolsEntity) => {
-		const { network } = networkByIdQuery;
-		const newIpAssignmentPools = network.ipAssignmentPools.filter(
+		const newIpAssignmentPools = ipAssignmentPools.filter(
 			(pool) =>
 				pool.ipRangeStart !== poolToDelete?.ipRangeStart ||
 				pool.ipRangeEnd !== poolToDelete?.ipRangeEnd,
@@ -83,11 +83,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 			return;
 		}
 
-		const { network } = networkByIdQuery || {};
-
 		// Check if the IP range already exists in the network's ipAssignmentPools
-		if (network?.ipAssignmentPools && network?.ipAssignmentPools.length > 0) {
-			for (const existingRange of network.ipAssignmentPools) {
+		if (ipAssignmentPools && ipAssignmentPools.length > 0) {
+			for (const existingRange of ipAssignmentPools) {
 				if (
 					existingRange?.ipRangeStart === ipRange.rangeStart &&
 					existingRange?.ipRangeEnd === ipRange.rangeEnd
@@ -102,7 +100,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 			{
 				updateParams: {
 					ipAssignmentPools: [
-						...(network?.ipAssignmentPools ? network.ipAssignmentPools : []),
+						...(ipAssignmentPools ? ipAssignmentPools : []),
 						{ ipRangeStart: ipRange.rangeStart, ipRangeEnd: ipRange.rangeEnd },
 					],
 				},
@@ -117,13 +115,13 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 			},
 		);
 	};
-	const { network } = networkByIdQuery || {};
-	if (isLoading) return <div>Loading</div>;
+
+	// if (isLoading) return <div>Loading</div>;
 
 	return (
 		<div>
 			{/* if  network.duplicateRoutes.length > 0 show badge */}
-			{network?.duplicateRoutes?.length > 0 ? (
+			{duplicateRoutes?.length > 0 ? (
 				<div role="alert" className="alert bg-base-100 mb-5">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -140,7 +138,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					</svg>
 					<span>
 						{t.rich("networkIpAssignments.ipv4.duplicateIpNotification.title", {
-							count: network?.duplicateRoutes?.length,
+							count: duplicateRoutes?.length,
 						})}
 					</span>
 					<div>
@@ -163,11 +161,11 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 												{t.rich(
 													"networkIpAssignments.ipv4.duplicateIpNotification.modal.description",
 													{
-														name: network?.name,
+														name: networkName,
 													},
 												)}
 											</p>
-											{network?.duplicateRoutes?.map((duplicateNetwork) => (
+											{duplicateRoutes?.map((duplicateNetwork) => (
 												<div key={duplicateNetwork.nwid}>
 													<p>
 														<span className="uppercase mr-1">
@@ -198,7 +196,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				<input
 					type="checkbox"
 					data-testid="auto-assign-checkbox"
-					checked={network?.v4AssignMode?.zt || false}
+					checked={v4AssignMode?.zt || false}
 					className="checkbox-primary checkbox checkbox-sm"
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 						enableIpv4AutoAssign({
@@ -212,7 +210,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					}}
 				/>
 			</div>
-			{network?.v4AssignMode?.zt ? (
+			{v4AssignMode?.zt ? (
 				<div className="tabs-boxed tabs grid grid-cols-2 gap-5 pb-5">
 					<a
 						className={cn("tab w-full border border-gray-500", {
@@ -244,27 +242,25 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					</a>
 				</div>
 			) : null}
-			{network?.v4AssignMode?.zt && ipTabs.easy ? (
+			{v4AssignMode?.zt && ipTabs.easy ? (
 				<div
 					className={cn("grid cursor-pointer w-full gap-2", {
 						"pointer-events-none cursor-no-drop text-gray-500 opacity-25":
-							!network?.v4AssignMode?.zt,
+							!v4AssignMode?.zt,
 					})}
 					style={{
 						gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
 					}}
 				>
-					{network?.cidr?.map((cidr: string) => {
-						return (network?.routes as RoutesEntity[])?.some(
-							(route) => route.target === cidr,
-						) ? (
+					{cidr?.map((cidr: string) => {
+						return (routes as RoutesEntity[])?.some((route) => route.target === cidr) ? (
 							<div
 								key={cidr}
 								className={cn(
 									"badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
 									{
 										"badge badge-lg rounded-md bg-primary text-xs text-white opacity-70 md:text-base":
-											network?.v4AssignMode?.zt,
+											v4AssignMode?.zt,
 									},
 									"flex items-center justify-center w-full",
 								)}
@@ -286,7 +282,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								}
 								className={cn(
 									"badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
-									{ "hover:bg-primary": network?.v4AssignMode?.zt },
+									{ "hover:bg-primary": v4AssignMode?.zt },
 									"flex items-center justify-center w-full",
 								)}
 							>
@@ -297,9 +293,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				</div>
 			) : null}
 
-			{network?.v4AssignMode?.zt && ipTabs.advanced ? (
+			{v4AssignMode?.zt && ipTabs.advanced ? (
 				<div className="mt-4 space-y-2">
-					{network?.ipAssignmentPools?.map((pool) => {
+					{ipAssignmentPools?.map((pool) => {
 						return (
 							<div
 								key={pool.ipRangeStart}

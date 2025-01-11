@@ -1,4 +1,4 @@
-import { Role, network_members } from "@prisma/client";
+import { Role, type network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -225,7 +225,7 @@ export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 			const validatedContext = HandlerContextSchema.parse(context);
 			const { networkId, memberId, ctx } = validatedContext;
 
-			const controllerMember = await ztController.local_network_detail(
+			const controllerMember = await ztController.ZTApiGetNetworkInfo(
 				// @ts-expect-error: fake request object
 				ctx,
 				networkId,

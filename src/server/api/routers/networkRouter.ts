@@ -5,12 +5,16 @@ import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { sendMailWithTemplate } from "~/utils/mail";
-import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
-import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
-import { type CentralNetwork } from "~/types/central/network";
+import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
+import type { MemberEntity, CapabilitiesByName } from "~/types/local/member";
+import type { CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { network, network_members, Role } from "@prisma/client";
-import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
+import { type network, type network_members, Role } from "@prisma/client";
+import {
+	HookType,
+	type NetworkConfigChanged,
+	type NetworkDeleted,
+} from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
@@ -151,11 +155,11 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			/**
-			 * Response from the ztController.local_network_detail method.
+			 * Response from the ztController.ZTApiGetNetworkInfo method.
 			 * @type {Promise<any>}
 			 */
 			const ztControllerResponse = await ztController
-				.local_network_detail(ctx.session.user.id, networkFromDatabase.nwid, false)
+				.ZTApiGetNetworkInfo(ctx.session.user.id, networkFromDatabase.nwid, false)
 				.catch((err: APIError) => {
 					throwError(`${err.message}`);
 				});
@@ -418,7 +422,7 @@ export const networkRouter = createTRPCRouter({
 								...input.v6AssignMode,
 							},
 						},
-				  }
+					}
 				: { v6AssignMode: { ...network.v6AssignMode, ...input.v6AssignMode } };
 
 			try {
@@ -738,7 +742,7 @@ export const networkRouter = createTRPCRouter({
 							ipAssignmentPools,
 							routes: uniqueRoutes,
 						},
-				  }
+					}
 				: { ipAssignmentPools, routes: uniqueRoutes };
 
 			try {
@@ -1270,13 +1274,13 @@ export const networkRouter = createTRPCRouter({
 						capabilitiesByName,
 						tagsByName: tags,
 						rulesSource: flowRoute,
-				  }
+					}
 				: {
 						...updateObj,
 						capabilitiesByName,
 						tagsByName: tags,
 						rulesSource: "#",
-				  };
+					};
 
 			// update zerotier network with the new flow route
 			const updatedRules = await ztController.network_update({

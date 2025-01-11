@@ -21,8 +21,8 @@ export default function NetworkDescription({
 }: NetworkDescriptionProps) {
 	const t = useTranslations();
 	const description = useNetworkDescription();
-	console.log("NetworkDescription", description);
 	const networkId = useNetworkField(NetworkSection.BASIC_INFO, "id");
+
 	const [isPending, startTransition] = useTransition();
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [isEditing, setIsEditing] = useState(false);

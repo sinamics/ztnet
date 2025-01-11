@@ -7,7 +7,8 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import { useParams } from "next/navigation";
-import { useNetworkStore } from "~/store/networkStore";
+import { NetworkSection, useNetworkField, useNetworkStore } from "~/store/networkStore";
+import network from "~/__pages/network";
 
 interface IProp {
 	central?: boolean;
@@ -17,11 +18,11 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const handleApiError = useTrpcApiErrorHandler();
-	const handleApiSuccess = useTrpcApiSuccessHandler();
+	// const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const nwid = useParams().id as string;
 
-	const network = useNetworkStore((state) => state.config);
+	const { dns } = useNetworkField(NetworkSection.CONFIG, ["dns"]);
 
 	const [state, setState] = useState({
 		address: "",
@@ -29,21 +30,19 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 		domain: "",
 	});
 
-	const urlParams = useParams();
-
 	const { mutate: updateNetwork } = api.network.dns.useMutation({
 		onError: handleApiError,
 		// onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
 	});
 
 	useEffect(() => {
-		if (!network?.dns || !Array.isArray(network?.dns.servers)) return;
+		if (!dns || !Array.isArray(dns.servers)) return;
 		setState((prev) => ({
 			...prev,
-			domain: network?.dns.domain,
-			servers: new Set([...network.dns.servers]) || new Set(),
+			domain: dns.domain,
+			servers: new Set([...dns.servers]) || new Set(),
 		}));
-	}, [network?.dns]);
+	}, [dns]);
 
 	// if (loadingNetwork) {
 	// 	// add loading progress bar to center of page, vertially and horizontally

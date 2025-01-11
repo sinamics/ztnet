@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
 
 			// Send initial network state
 			try {
-				const networkDetails = await ztController.local_network_detail(networkId);
+				const networkDetails = await ztController.ZTApiGetNetworkInfo(networkId);
 				socket.emit("network-update", networkDetails);
 			} catch (error) {
 				console.error(`Failed to fetch network details for ${networkId}:`, error);
@@ -83,7 +83,7 @@ async function broadcastNetworkUpdates() {
 	// Update each active network
 	for (const networkId of activeNetworks) {
 		try {
-			const networkDetails = await ztController.local_network_detail(networkId, false);
+			const networkDetails = await ztController.ZTApiGetNetworkInfo(networkId, false);
 			io.to(networkId).emit("network-update", networkDetails);
 		} catch (error) {
 			console.error(`Failed to update network ${networkId}:`, error);

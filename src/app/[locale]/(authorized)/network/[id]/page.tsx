@@ -15,6 +15,7 @@ export default async function NetworkPage({ params }: { params: { id: string } }
 		nwid: id,
 		central: false,
 	});
+
 	return (
 		<>
 			<NetworkUpdatesListener networkId={id} />
@@ -22,9 +23,9 @@ export default async function NetworkPage({ params }: { params: { id: string } }
 			<div className="animate-fadeIn">
 				<Suspense fallback={<NetworkLoadingSkeleton className="w-5/6" />}>
 					<NetworkHeader />
-					{/* <NetworkSettings /> */}
+					<NetworkSettings />
 					{/* <NetworkMembers /> */}
-					{/* <NetworkActions /> */}
+					<NetworkActions />
 				</Suspense>
 			</div>
 		</>

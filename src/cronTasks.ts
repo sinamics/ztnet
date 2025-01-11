@@ -152,7 +152,7 @@ export const updatePeers = async () => {
 							processedNetworks.add(network.nwid);
 
 							// get members from the zt controller
-							const ztControllerResponse = await ztController.local_network_detail(
+							const ztControllerResponse = await ztController.ZTApiGetNetworkInfo(
 								user.id,
 								network.nwid,
 								false,

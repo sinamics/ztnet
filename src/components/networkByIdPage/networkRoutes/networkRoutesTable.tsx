@@ -6,10 +6,10 @@ import {
 	type HeaderGroup,
 	type Row,
 	getSortedRowModel,
-	SortingState,
+	type SortingState,
 } from "@tanstack/react-table";
 import { networkRoutesColumns } from "./collumns";
-import { RoutesEntity } from "~/types/local/network";
+import type { RoutesEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
 import {
 	useTrpcApiErrorHandler,
@@ -17,6 +17,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { useEditableColumn } from "./routesEditCell";
 import { useParams } from "next/navigation";
+import { useNetworkField, NetworkSection, useNetworkStore } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
@@ -76,31 +77,22 @@ export const NetworkRoutesTable = React.memo(
 		const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: false }]);
 
 		const handleApiError = useTrpcApiErrorHandler();
-		const handleApiSuccess = useTrpcApiSuccessHandler();
+		// const handleApiSuccess = useTrpcApiSuccessHandler();
 
 		const urlParams = useParams();
 
-		const { data: networkById, refetch: refetchNetworkById } =
-			api.network.getNetworkById.useQuery(
-				{
-					nwid: urlParams.id as string,
-					central,
-				},
-				{
-					enabled: !!urlParams.id,
-				},
-			);
-		const { network, members } = networkById || {};
+		const { routes } = useNetworkField(NetworkSection.CONFIG, ["routes"]);
+		const members = useNetworkStore((state) => state.members);
 
 		const { mutate: updateManageRoutes, isLoading: isUpdating } =
 			api.network.managedRoutes.useMutation({
 				onError: handleApiError,
-				onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+				// onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
 			});
 
 		const deleteRoute = useCallback(
 			(route: RoutesEntity) => {
-				const _routes = [...((network?.routes as RoutesEntity[]) || [])];
+				const _routes = [...((routes as RoutesEntity[]) || [])];
 				const newRouteArr = _routes.filter((r) => r.target !== route.target);
 
 				updateManageRoutes({
@@ -110,13 +102,13 @@ export const NetworkRoutesTable = React.memo(
 					central,
 				});
 			},
-			[network?.routes, updateManageRoutes, organizationId, urlParams.id, central],
+			[routes, updateManageRoutes, organizationId, urlParams.id, central],
 		);
 
-		const defaultColumn = useEditableColumn({ refetchNetworkById });
+		const defaultColumn = useEditableColumn();
 
 		// Memoize the routes data
-		const data = useMemo(() => network?.routes ?? [], [network?.routes]);
+		const data = useMemo(() => routes ?? [], [routes]);
 
 		// Memoize columns
 		const columns = networkRoutesColumns(deleteRoute, isUpdating, members);

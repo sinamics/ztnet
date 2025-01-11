@@ -40,7 +40,7 @@ const GET_networkMembers = SecuredPrivateApiRoute(
 	},
 	async (_req, res, { networkId, ctx }) => {
 		try {
-			const controllerMember = await ztController.local_network_detail(
+			const controllerMember = await ztController.ZTApiGetNetworkInfo(
 				// @ts-expect-error: fake request object
 				ctx,
 				networkId,

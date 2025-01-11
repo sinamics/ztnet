@@ -91,7 +91,7 @@ const GET_userNetworks = SecuredPrivateApiRoute(
 
 			const networksWithDetails = await Promise.all(
 				userWithNetworks.network.map(async (network) => {
-					const ztControllerResponse = await ztController.local_network_detail(
+					const ztControllerResponse = await ztController.ZTApiGetNetworkInfo(
 						//@ts-expect-error
 						ctx,
 						network.nwid,

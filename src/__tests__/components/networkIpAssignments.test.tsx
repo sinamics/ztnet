@@ -1,11 +1,11 @@
 import "../__mocks__/networkById";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { NextRouter, useRouter } from "next/router";
+import { type NextRouter, useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
-import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
+import { NetworkIpAssignment } from "~/features/network/components/NetworkIpAssignments";
 
 // Mocking the next/router module
 jest.mock("next/router", () => ({

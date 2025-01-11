@@ -6,6 +6,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
@@ -18,44 +19,46 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 		mtu: "",
 	});
 
-	const handleApiError = useTrpcApiErrorHandler();
-	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const { mtu } = useNetworkField(NetworkSection.CONFIG, ["mtu"]);
 
-	const { query } = useRouter();
-	const {
-		data: networkByIdQuery,
-		isLoading: loadingNetwork,
-		refetch: refetchNetwork,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central,
-		},
-		{ enabled: !!query.id },
-	);
+	const handleApiError = useTrpcApiErrorHandler();
+	// const handleApiSuccess = useTrpcApiSuccessHandler();
+
+	// const { query } = useRouter();
+	// const {
+	// 	data: networkByIdQuery,
+	// 	isLoading: loadingNetwork,
+	// 	refetch: refetchNetwork,
+	// } = api.network.getNetworkById.useQuery(
+	// 	{
+	// 		nwid: query.id as string,
+	// 		central,
+	// 	},
+	// 	{ enabled: !!query.id },
+	// );
 
 	const { mutate: updateNetwork } = api.network.mtu.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
+		// onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
 	});
 
 	useEffect(() => {
 		setState((prev) => ({
 			...prev,
-			mtu: networkByIdQuery?.network?.mtu.toString(),
+			mtu: mtu.toString(),
 		}));
-	}, [networkByIdQuery?.network.mtu]);
+	}, [mtu]);
 
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
+	// if (loadingNetwork) {
+	// 	// add loading progress bar to center of page, vertially and horizontally
+	// 	return (
+	// 		<div className="flex flex-col items-center justify-center">
+	// 			<h1 className="text-center text-2xl font-semibold">
+	// 				<progress className="progress progress-primary w-56"></progress>
+	// 			</h1>
+	// 		</div>
+	// 	);
+	// }
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
@@ -69,12 +72,11 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 			central,
 			organizationId,
 			updateParams: {
-				mtu: parseInt(state.mtu),
+				mtu: Number.parseInt(state.mtu),
 			},
 		});
 	};
 
-	const { network } = networkByIdQuery || {};
 	return (
 		<form className="flex justify-between">
 			<div className="form-control">

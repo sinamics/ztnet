@@ -86,7 +86,7 @@ export async function getNetworkInfo(input: NetworkInput): Promise<NetworkEntity
 
 		// Get network details from ZT controller
 		const ztControllerResponse = await ztController
-			.local_network_detail(userId, networkFromDatabase.nwid, false)
+			.ZTApiGetNetworkInfo(userId, networkFromDatabase.nwid, false)
 			.catch((err) => {
 				throw new NetworkActionError(`Controller error: ${err.message}`, 500);
 			});

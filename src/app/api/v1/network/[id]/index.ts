@@ -46,7 +46,7 @@ const GET_network = SecuredPrivateApiRoute(
 		});
 
 		try {
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.ZTApiGetNetworkInfo(
 				//@ts-expect-error
 				ctx,
 				networkId,

@@ -37,6 +37,8 @@ interface NetworkConfig {
 	autoAssignIp?: boolean;
 	v4AssignMode?: any;
 	v6AssignMode?: any;
+	cidr?: string[];
+	duplicateRoutes?: any[];
 }
 
 interface NetworkSecurity {
@@ -135,6 +137,8 @@ export const useNetworkStore = create<NetworkState>()(
 							autoAssignIp: network.autoAssignIp,
 							v4AssignMode: network.v4AssignMode,
 							v6AssignMode: network.v6AssignMode,
+							cidr: network.cidr || [],
+							duplicateRoutes: network.duplicateRoutes || [],
 						},
 						[NetworkSection.SECURITY]: {
 							capabilities: network.capabilities,

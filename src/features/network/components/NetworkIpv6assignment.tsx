@@ -7,42 +7,36 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-import { IpAssignmentPoolsEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
+import type { IpAssignmentPoolsEntity } from "~/types/local/network";
+import { NetworkSection, useNetworkField } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
 	organizationId?: string;
 }
 
-export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
+export const NetworkIpv6assignment = ({ central = false, organizationId }: IProp) => {
 	const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
 	const t = useTranslations("networkById");
 
-	const handleApiError = useTrpcApiErrorHandler();
-	const handleApiSuccess = useTrpcApiSuccessHandler();
-
-	const { query } = useRouter();
-	const { data: networkByIdQuery, refetch: refecthNetworkById } =
-		api.network.getNetworkById.useQuery(
-			{
-				nwid: query.id as string,
-				central,
-			},
-			{ enabled: !!query.id },
-		);
+	const { id: networkId } = useNetworkField(NetworkSection.BASIC_INFO, ["id"]);
+	const { ipAssignmentPools, v6AssignMode } = useNetworkField(NetworkSection.CONFIG, [
+		"ipAssignmentPools",
+		"v6AssignMode",
+	]);
 
 	const { mutate: setIpv6 } = api.network.ipv6.useMutation({
-		onError: handleApiError,
-		onSuccess: handleApiSuccess({
-			actions: [refecthNetworkById],
-			// toastMessage: t("networkIpAssignments.ipv6.rfc4193Updated"),
-		}),
+		// onError: handleApiError,
+		// onSuccess: handleApiSuccess({
+		// 	actions: [refecthNetworkById],
+		// 	// toastMessage: t("networkIpAssignments.ipv6.rfc4193Updated"),
+		// }),
 	});
 
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
-		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		// onError: handleApiError,
+		// onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 
 	const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,11 +46,9 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 			return;
 		}
 
-		const { network } = networkByIdQuery || {};
-
 		// Check if the IP range already exists in the network's ipAssignmentPools
-		if (network?.ipAssignmentPools && network?.ipAssignmentPools.length > 0) {
-			for (const existingRange of network.ipAssignmentPools) {
+		if (ipAssignmentPools && ipAssignmentPools.length > 0) {
+			for (const existingRange of ipAssignmentPools) {
 				if (
 					existingRange?.ipRangeStart === ipRange.rangeStart &&
 					existingRange?.ipRangeEnd === ipRange.rangeEnd
@@ -71,12 +63,12 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 			{
 				updateParams: {
 					ipAssignmentPools: [
-						...(network?.ipAssignmentPools ? network.ipAssignmentPools : []),
+						...(ipAssignmentPools ? ipAssignmentPools : []),
 						{ ipRangeStart: ipRange.rangeStart, ipRangeEnd: ipRange.rangeEnd },
 					],
 				},
 				organizationId,
-				nwid: query.id as string,
+				nwid: networkId,
 				central,
 			},
 			{
@@ -87,8 +79,7 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 		);
 	};
 	const deleteIpRange = (poolToDelete: IpAssignmentPoolsEntity) => {
-		const { network } = networkByIdQuery;
-		const newIpAssignmentPools = network.ipAssignmentPools.filter(
+		const newIpAssignmentPools = ipAssignmentPools.filter(
 			(pool) =>
 				pool.ipRangeStart !== poolToDelete?.ipRangeStart ||
 				pool.ipRangeEnd !== poolToDelete?.ipRangeEnd,
@@ -99,14 +90,14 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 				ipAssignmentPools: newIpAssignmentPools,
 			},
 			organizationId,
-			nwid: query.id as string,
+			nwid: networkId,
 			central,
 		});
 	};
 	const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setIpRange({ ...ipRange, [e.target.name]: e.target.value });
 	};
-	const { network } = networkByIdQuery || {};
+
 	return (
 		<div className="form-control">
 			<label className="label cursor-pointer">
@@ -115,11 +106,11 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 					type="checkbox"
 					name="rfc4193"
 					// biome-ignore lint/complexity/useLiteralKeys: <explanation>
-					checked={network?.v6AssignMode?.["rfc4193"]}
+					checked={v6AssignMode?.["rfc4193"]}
 					className="checkbox checkbox-primary checkbox-sm"
 					onChange={(e) => {
 						setIpv6({
-							nwid: query.id as string,
+							nwid: networkId,
 							central,
 							organizationId,
 							v6AssignMode: {
@@ -134,11 +125,11 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 				<input
 					type="checkbox"
 					name="6plane"
-					checked={network?.v6AssignMode?.["6plane"]}
+					checked={v6AssignMode?.["6plane"]}
 					className="checkbox checkbox-primary checkbox-sm"
 					onChange={(e) => {
 						setIpv6({
-							nwid: query.id as string,
+							nwid: networkId,
 							central,
 							organizationId,
 							v6AssignMode: {
@@ -153,11 +144,11 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 				<input
 					type="checkbox"
 					name="6plane"
-					checked={network?.v6AssignMode?.zt}
+					checked={v6AssignMode?.zt}
 					className="checkbox checkbox-primary checkbox-sm"
 					onChange={(e) => {
 						setIpv6({
-							nwid: query.id as string,
+							nwid: networkId,
 							central,
 							organizationId,
 							v6AssignMode: {
@@ -167,7 +158,7 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 					}}
 				/>
 			</label>
-			{network?.ipAssignmentPools?.map((pool, index) => {
+			{ipAssignmentPools?.map((pool, index) => {
 				// we dont want to show the ipv4 addresses here
 				if (Address4.isValid(pool.ipRangeStart) && Address4.isValid(pool.ipRangeEnd))
 					return;
@@ -203,7 +194,7 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 					</div>
 				);
 			})}
-			{network?.v6AssignMode?.zt ? (
+			{v6AssignMode?.zt ? (
 				<form className="grid grid-cols-2 gap-5 pt-4">
 					<div className="form-control w-full">
 						<label className="label">

@@ -1,31 +1,30 @@
-import fs from "fs";
-import { IPv4gen } from "./IPv4gen";
-import axios, { type AxiosError, type AxiosResponse } from "axios";
-import { APIError } from "~/server/helpers/errorHandler";
-import {
-	type HttpResponse,
-	type ZTControllerCreateNetwork,
-	type ZTControllerNodeStatus,
-	type ZTControllerStatus,
-	// type ZTControllerMemberDetails,
-	type MemberDeleteInput,
-	type MemberDeleteResponse,
-	type ZTControllerGetPeer,
-} from "~/types/ztController";
-
-import { type CentralControllerStatus } from "~/types/central/controllerStatus";
-import { type CentralMemberConfig } from "~/types/central/members";
-import {
-	type NetworkBase,
-	type CentralNetwork,
-	type FlattenCentralNetwork,
-} from "~/types/central/network";
-import { type MemberEntity } from "~/types/local/member";
-import { type NetworkEntity } from "~/types/local/network";
-import { type NetworkAndMemberResponse } from "~/types/network";
-import { UserContext } from "~/types/ctx";
-import os from "os";
+import fs from "node:fs";
+import os from "node:os";
 import { prisma } from "~/server/db";
+import { IPv4gen } from "./IPv4gen";
+import { APIError } from "~/server/helpers/errorHandler";
+import axios, { type AxiosError, type AxiosResponse } from "axios";
+import type { CentralControllerStatus } from "~/types/central/controllerStatus";
+import type { CentralMemberConfig } from "~/types/central/members";
+import type {
+	NetworkBase,
+	CentralNetwork,
+	FlattenCentralNetwork,
+} from "~/types/central/network";
+import type { MemberEntity } from "~/types/local/member";
+import type { NetworkEntity } from "~/types/local/network";
+import type { NetworkAndMemberResponse } from "~/types/network";
+import type { UserContext } from "~/types/ctx";
+import type {
+	HttpResponse,
+	ZTControllerCreateNetwork,
+	ZTControllerNodeStatus,
+	ZTControllerStatus,
+	// type ZTControllerMemberDetails,
+	MemberDeleteInput,
+	MemberDeleteResponse,
+	ZTControllerGetPeer,
+} from "~/types/ztController";
 
 export let ZT_FOLDER: string;
 
@@ -53,7 +52,7 @@ const ZT_SECRET =
 					console.error(error);
 					return null; // or appropriate fallback value
 				}
-		  })());
+			})());
 
 const getApiCredentials = async (
 	userId: string,
@@ -413,30 +412,21 @@ export const get_network = async (
 	}
 };
 
-export const local_network_detail = async (
+type TMembers = {
+	members: MemberEntity[];
+};
+
+export const ZTApiGetMembersInfo = async (
 	userId: string,
 	nwid: string,
 	isCentral = false,
-): Promise<NetworkAndMemberResponse> => {
+): Promise<TMembers> => {
 	// get headers based on local or central api
 	const { headers, localControllerUrl } = await getOptions(userId, isCentral);
 
 	try {
 		// get all members for a specific network
 		const members = await network_members(userId, nwid);
-		const network = await getData<NetworkEntity>(
-			`${localControllerUrl}/controller/network/${nwid}`,
-			headers,
-		);
-		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
-		let memberIds: string[] = [];
-
-		if (Array.isArray(members)) {
-			memberIds = members.map((obj) => Object.keys(obj)[0]);
-		} else if (typeof members === "object") {
-			memberIds = Object.keys(members);
-		}
-
 		const membersArr: MemberEntity[] = [];
 		for (const [memberId] of Object.entries(members)) {
 			const memberDetails = await getData<MemberEntity>(
@@ -448,13 +438,40 @@ export const local_network_detail = async (
 		}
 
 		return {
-			network: { ...network },
 			members: [...membersArr],
 		};
 	} catch (error) {
 		throw new APIError(error, error as AxiosError);
 	}
 };
+
+type TNetwork = {
+	network: NetworkEntity;
+};
+export const ZTApiGetNetworkInfo = async (
+	userId: string,
+	nwid: string,
+	isCentral = false,
+): Promise<TNetwork> => {
+	// get headers based on local or central api
+	const { headers, localControllerUrl } = await getOptions(userId, isCentral);
+
+	try {
+		// get all members for a specific network
+		// const members = await network_members(userId, nwid);
+		const network = await getData<NetworkEntity>(
+			`${localControllerUrl}/controller/network/${nwid}`,
+			headers,
+		);
+
+		return {
+			network: { ...network },
+		};
+	} catch (error) {
+		throw new APIError(error, error as AxiosError);
+	}
+};
+
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 
@@ -485,7 +502,7 @@ export const central_network_detail = async (
 							headers,
 						);
 					}),
-			  )
+				)
 			: [];
 
 		// Get available cidr options.

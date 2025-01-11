@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { getHTTPStatusCodeFromError } from "@trpc/server/http";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import apiNetworkByIdHandler from "~/__pages/api/v1/network/[id]";
 import { prisma } from "~/server/db";
 import * as encryptionModule from "~/utils/encryption";
@@ -51,7 +51,7 @@ describe("/api/getNetworkById", () => {
 		});
 
 		// Mock the ztController to return a network detail
-		(ztController.local_network_detail as jest.Mock).mockResolvedValue({
+		(ztController.ZTApiGetNetworkInfo as jest.Mock).mockResolvedValue({
 			network: { id: "networkId", name: "networkName" },
 		});
 
@@ -129,7 +129,7 @@ describe("/api/getNetworkById", () => {
 			message: "Internal server error",
 		});
 
-		(ztController.local_network_detail as jest.Mock).mockRejectedValue(error);
+		(ztController.ZTApiGetNetworkInfo as jest.Mock).mockRejectedValue(error);
 
 		const req = {
 			method: "GET",

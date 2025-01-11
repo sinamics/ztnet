@@ -2,7 +2,7 @@
 
 import NetworkDescription from "~/components/networkByIdPage/networkDescription";
 import NetworkName from "~/components/networkByIdPage/networkName";
-import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
+import { NetworkPrivatePublic } from "~/features/network/components/NetworkPrivatePublic";
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
 import { useNetwork } from "../providers/NetworkProvider";
 import { CopyNetworkId } from "./CopyNetworkId";
@@ -23,7 +23,9 @@ export default function NetworkHeader() {
 					<NetworkDescription />
 				</div>
 				<div className="cursor-pointer">{/* <NetworkQrCode networkId={nwid} /> */}</div>
-				<div>{/* <NetworkPrivatePublic /> */}</div>
+				<div>
+					<NetworkPrivatePublic />
+				</div>
 			</div>
 		</div>
 	);

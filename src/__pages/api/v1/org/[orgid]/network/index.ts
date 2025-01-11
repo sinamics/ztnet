@@ -89,7 +89,7 @@ export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
 					// Use Promise.all to wait for all network detail fetches to complete
 					const networksDetails = await Promise.all(
 						org.networks.map(async (network) => {
-							const controller = await ztController.local_network_detail(
+							const controller = await ztController.ZTApiGetNetworkInfo(
 								//@ts-expect-error ctx is mocked
 								ctx,
 								network.nwid,

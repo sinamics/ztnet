@@ -1,17 +1,18 @@
 "use client";
 import { toast } from "react-hot-toast";
 import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
-import CardComponent from "./privatePublic";
+import CardComponent from "../../../components/networkByIdPage/privatePublic";
 import { useTranslations } from "next-intl";
 import {
 	type InfiniteData,
 	type QueryClient,
 	useQueryClient,
 } from "@tanstack/react-query";
-import { type NetworkEntity } from "~/types/local/network";
-import { type CentralNetwork } from "~/types/central/network";
+import type { NetworkEntity } from "~/types/local/network";
+import type { CentralNetwork } from "~/types/central/network";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
 import { useParams } from "next/navigation";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
@@ -52,13 +53,11 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 
 	const urlParams = useParams();
 	const client = useQueryClient();
-	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
-		{
-			nwid: urlParams.id as string,
-			central,
-		},
-		{ enabled: !!urlParams.id },
-	);
+
+	const { private: isPrivate } = useNetworkField(NetworkSection.BASIC_INFO, [
+		"private",
+	] as const);
+
 	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
 		onError: handleApiError,
 	});
@@ -90,14 +89,12 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 			},
 		);
 	};
-	const { network } = networkByIdQuery || {};
-	if (isLoading) return <div>Loading</div>;
 
 	return (
 		<div className="flex gap-3">
 			<CardComponent
 				onClick={() => privateHandler(true)}
-				faded={!network.private}
+				faded={!isPrivate}
 				title={t("networkById.privatePublicSwitch.privateCardTitle")}
 				rootClassName="flex-1 sm:min-w-min transition ease-in-out delay-150 hover:-translate-y-1 border border-success border-2 rounded-md solid cursor-pointer bg-transparent text-inherit  "
 				iconClassName="text-green-500"
@@ -105,7 +102,7 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 			/>
 			<CardComponent
 				onClick={() => privateHandler(false)}
-				faded={network.private}
+				faded={isPrivate}
 				title={t("networkById.privatePublicSwitch.publicCardTitle")}
 				rootClassName="flex-1 transition ease-in-out delay-150 hover:-translate-y-1 border border-red-500 border-2 rounded-md solid cursor-pointer bg-transparent text-inherit"
 				iconClassName="text-warning"

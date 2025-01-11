@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Ipv4Assignment } from "./ipv4Assignment";
-import { Ipv6assignment } from "./ipv6assignment";
-import { NetworkMTU } from "./networkMtu";
+import { NetworkIpv4Assignment } from "./NetworkIpv4Assignment";
+import { NetworkIpv6assignment } from "./NetworkIpv6assignment";
+import { NetworkMTU } from "./NetworkMtu";
 
 interface IProp {
 	central?: boolean;
@@ -45,12 +45,12 @@ export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) 
 				</div>
 				{activeTab === "IPv4" ? (
 					// Show ipv4 assignment content here
-					<Ipv4Assignment central={central} organizationId={organizationId} />
+					<NetworkIpv4Assignment central={central} organizationId={organizationId} />
 				) : null}
 
 				{activeTab === "IPv6" ? (
 					// Show ipv6 assignment content here
-					<Ipv6assignment central={central} organizationId={organizationId} />
+					<NetworkIpv6assignment central={central} organizationId={organizationId} />
 				) : null}
 
 				{activeTab === "mtu" ? (

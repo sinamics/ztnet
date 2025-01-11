@@ -1,4 +1,4 @@
-import { Role, network } from "@prisma/client";
+import { Role, type network } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
@@ -132,7 +132,7 @@ export const POST_network = SecuredOrganizationApiRoute(
 				});
 			}
 
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.ZTApiGetNetworkInfo(
 				//@ts-expect-error
 				ctx,
 				networkId,
@@ -158,7 +158,7 @@ export const GET_network = SecuredOrganizationApiRoute(
 				return res.status(401).json({ error: "Network not found or access denied." });
 			}
 
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.ZTApiGetNetworkInfo(
 				//@ts-expect-error
 				ctx,
 				networkId,
