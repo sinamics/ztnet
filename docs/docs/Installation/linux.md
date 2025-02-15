@@ -58,6 +58,9 @@ To see the most recent logs:
 sudo journalctl -u ztnet -n 100
 ```
 
+## Managing the ztnet Service
+When you install ztnet, a systemd service named `ztnet` is created to manage the application. You can use the following commands to manage the service as needed. 
+
 ### Monitoring Service Status
 
 To check the status of the `ztnet` service, run the following command:
