@@ -35,13 +35,6 @@ To continue install ztnet on Debian or Ubuntu, run the following command:
 curl -s http://install.ztnet.network | sudo bash
 ```
 
-## Install a specific version
-If you want to rollback or install a previous version, you can specify a version like this:
-
-```bash
-curl -s http://install.ztnet.network | sudo bash -s -- -v v0.4.2
-```
-
 ## Application Logs
 
 You can view the ztnet application logs using the following commands:
