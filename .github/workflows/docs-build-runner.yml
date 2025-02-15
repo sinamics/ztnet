@@ -22,8 +22,8 @@ jobs:
         cache: npm
     - name: Install dependencies
       run: npm ci
-    # - name: Install Tailwind CSS
-    #   run: npm install tailwindcss
+    - name: Install Tailwind CSS
+      run: npm install tailwindcss@3
     - name: Build API docs
       run: npx docusaurus gen-api-docs all
     - name: Build website
