@@ -92,6 +92,22 @@ To stop the `ztnet` service from starting at boot, run the following command:
 sudo systemctl disable ztnet
 ```
 
+## Application Logs
+
+You can view the ztnet application logs using the following commands:
+
+### View Live Logs
+To watch the logs in real-time:
+```bash
+sudo journalctl -u ztnet -f
+```
+
+### View Recent Logs
+To see the most recent logs:
+```bash
+sudo journalctl -u ztnet -n 100
+```
+
 ## Testing other branches
 :::note
 Do not test in production; use a designated testing environment. Database schemas can vary between branches, and deploying a branch instead of a release may cause issues.
