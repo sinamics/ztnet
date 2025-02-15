@@ -21,9 +21,9 @@ jobs:
         node-version: 18
         cache: npm
     - name: Install dependencies
-      run: npm install
-    - name: Install Tailwind CSS
-      run: npm install tailwindcss
+      run: npm ci
+    # - name: Install Tailwind CSS
+    #   run: npm install tailwindcss
     - name: Build API docs
       run: npx docusaurus gen-api-docs all
     - name: Build website
