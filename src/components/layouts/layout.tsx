@@ -1,17 +1,18 @@
 import { type ReactNode } from "react";
-import FourOhFour from "~/pages/404";
+import FourOhFour from "~/__pages/404";
 import Header from "./header";
 import Sidebar from "./sidebar";
 import Footer from "./footer";
 import { useRouter } from "next/router";
 import { User } from "@prisma/client";
-import { useSidebarStore, useAsideChatStore, useFontSizeStore } from "~/utils/store";
+import { useAsideChatStore, useFontSizeStore } from "~/utils/store";
 import ChatAside from "./chatAside";
 import { LogsFooter } from "./logFooter";
 import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
 import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 import { WelcomeMessage } from "../auth/welcomeMessage";
+import { useSidebarStore } from "~/store/sidebarStore";
 
 type TUser = {
 	user: User;

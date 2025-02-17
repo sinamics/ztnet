@@ -1,167 +1,91 @@
-import { useEffect, useState } from "react";
+"use client";
+import { useState } from "react";
 import EditIcon from "~/icons/edit";
 import Input from "~/components/elements/input";
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
-import { type RouterInputs, type RouterOutputs, api } from "~/utils/api";
-import {
-	type QueryClient,
-	type InfiniteData,
-	useQueryClient,
-} from "@tanstack/react-query";
-import { type NetworkEntity } from "~/types/local/network";
+import { useMutation } from "@tanstack/react-query";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import { server_updateNetworkName } from "~/features/network/server/actions/updateNetworkName";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
-interface IProp {
+interface NetworkNameProps {
 	central?: boolean;
 	organizationId?: string;
 }
 
-const updateCache = ({
-	client,
-	data,
-	input,
-}: {
-	client: QueryClient;
-	input: RouterInputs["network"]["getNetworkById"];
-	data: Partial<NetworkEntity>;
-}) => {
-	client.setQueryData(
-		[
-			["network", "getNetworkById"],
-			{
-				input,
-				type: "query",
-			},
-		],
-		(oldData) => {
-			const newData = oldData as InfiniteData<RouterOutputs["network"]["getNetworkById"]>;
-			return {
-				...newData,
-				network: { ...data },
-			};
-		},
-	);
-};
-
-const NetworkName = ({ central = false, organizationId }: IProp) => {
+export default function NetworkName({
+	central = false,
+	organizationId,
+}: NetworkNameProps) {
 	const t = useTranslations("networkById");
-
 	const handleApiError = useTrpcApiErrorHandler();
 
-	const client = useQueryClient();
-	const [state, setState] = useState({
-		editNetworkName: false,
-		networkName: "",
-	});
+	// Use specific field selectors instead of the whole basicInfo object
+	const { name: networkName, id: networkId } = useNetworkField(
+		NetworkSection.BASIC_INFO,
+		["name", "id"] as const,
+	);
 
-	const { query } = useRouter();
-	const {
-		data: networkById,
-		isLoading: loadingNetwork,
-		error: errorNetwork,
-		refetch: refetchNetworkById,
-	} = api.network.getNetworkById.useQuery({
-		nwid: query.id as string,
-		central,
-	});
+	const [isEditing, setIsEditing] = useState(false);
 
-	useEffect(() => {
-		setState((prev) => ({
-			...prev,
-			networkName: networkById?.network?.name,
-		}));
-	}, [networkById?.network?.name]);
-
-	const { mutate: updateNetworkName } = api.network.networkName.useMutation({
-		onSuccess: (data) => {
-			const input = {
-				nwid: query.id as string,
-				central,
-			};
-			updateCache({ client, data, input });
-		},
+	const { mutate: updateNetworkNameMutation, isPending } = useMutation({
+		mutationFn: server_updateNetworkName,
+		// onSuccess: (response) => {
+		// 	if (response) {
+		// 		updateSection(NetworkSection.BASIC_INFO, { name: response.name });
+		// 	}
+		// },
 		onError: handleApiError,
 	});
-	const changeNameHandler = (e: React.ChangeEvent<HTMLFormElement>) => {
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		updateNetworkName(
+		const formData = new FormData(e.currentTarget);
+		const newName = formData.get("networkName") as string;
+
+		updateNetworkNameMutation(
 			{
-				nwid: networkById?.network?.id,
+				nwid: networkId as string,
 				central,
 				organizationId,
-				updateParams: { name: state?.networkName },
+				updateParams: { name: newName },
 			},
 			{
 				onSuccess: () => {
-					void refetchNetworkById();
-					setState({ ...state, editNetworkName: false });
+					setIsEditing(false);
 					toast.success("Network Name updated successfully");
 				},
 			},
 		);
 	};
-	const eventHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		setState({ ...state, [e.target.name]: e.target.value });
-	};
 
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
-	if (errorNetwork) {
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">{errorNetwork.message}</h1>
-				<ul className="list-disc">
-					<li>{t("errorSteps.step1")}</li>
-					<li>{t("errorSteps.step2")}</li>
-				</ul>
-			</div>
-		);
-	}
-
-	const { network } = networkById || {};
 	return (
 		<div className="flex flex-col justify-between sm:flex-row">
 			<span className="font-medium">{t("networkName")}</span>
 			<span className="flex items-center gap-2">
-				{state.editNetworkName ? (
-					<form onSubmit={changeNameHandler}>
+				{isEditing ? (
+					<form onSubmit={handleSubmit}>
 						<Input
 							focus
 							useTooltip
 							name="networkName"
-							onChange={eventHandler}
-							defaultValue={network?.name}
+							defaultValue={networkName}
 							type="text"
-							placeholder={network?.name}
+							placeholder={networkName}
 							className="input-bordered input-primary input-xs"
+							disabled={isPending}
 						/>
 					</form>
 				) : (
-					network?.name
+					networkName
 				)}
 				<EditIcon
 					data-testid="changeNetworkName"
 					className="hover:text-opacity-50"
-					onClick={() =>
-						setState({
-							...state,
-							editNetworkName: !state.editNetworkName,
-						})
-					}
+					onClick={() => setIsEditing(!isEditing)}
 				/>
 			</span>
 		</div>
 	);
-};
-
-export default NetworkName;
+}

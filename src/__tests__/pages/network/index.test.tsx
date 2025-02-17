@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { useRouter } from "next/router";
 import userEvent from "@testing-library/user-event";
 import { api } from "../../../utils/api";
-import Networks from "~/pages/network";
+import Networks from "~/__pages/network";
 import { NextIntlClientProvider } from "next-intl";
 import enTranslation from "~/locales/en/common.json";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

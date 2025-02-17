@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { type RoutesEntity } from "~/types/local/network";
+import type { RoutesEntity } from "~/types/local/network";
 import { type ChangeEvent, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
@@ -9,6 +9,8 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { NetworkRoutesTable } from "./networkRoutesTable";
 import Input from "~/components/elements/input";
+import { useParams } from "next/navigation";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
 const initialRouteInput = {
 	target: "",
@@ -25,26 +27,18 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const handleApiError = useTrpcApiErrorHandler();
-	const handleApiSuccess = useTrpcApiSuccessHandler();
+	// const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
-	const { query } = useRouter();
-	const {
-		data: networkById,
-		isLoading,
-		refetch: refecthNetworkById,
-	} = api.network.getNetworkById.useQuery({
-		nwid: query.id as string,
-		central,
-	});
+	const urlParams = useParams();
 
-	const { network } = networkById || {};
+	const { routes } = useNetworkField(NetworkSection.CONFIG, ["routes"]);
 
 	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		// onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
 	});
 
 	const routeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -59,10 +53,10 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 		updateManageRoutes(
 			{
 				updateParams: {
-					routes: [...(network.routes as RoutesEntity[]), { ...routeInput }],
+					routes: [...(routes as RoutesEntity[]), { ...routeInput }],
 				},
 				organizationId,
-				nwid: query.id as string,
+				nwid: urlParams.id as string,
 				central,
 			},
 			{
@@ -74,14 +68,14 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 		);
 	};
 
-	if (isLoading) return <div>Loading</div>;
+	// if (isLoading) return <div>Loading</div>;
 
 	return (
 		<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
 			<div className="collapse-title">{t("networkRoutes.managedRoutesTitle")}</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
-				{(network?.routes as RoutesEntity[]).length === 0 ? (
+				{(routes as RoutesEntity[]).length === 0 ? (
 					<div className="alert alert-warning p-2">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

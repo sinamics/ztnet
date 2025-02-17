@@ -6,6 +6,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 type User = {
 	email: string;
@@ -17,7 +18,7 @@ interface IProps {
 export const InviteMemberByMail = ({ organizationId }: IProps) => {
 	const t = useTranslations("networkById");
 	const [user, setUser] = useState<User>({ email: "" });
-	const { query } = useRouter();
+	const urlParams = useParams();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -64,7 +65,7 @@ export const InviteMemberByMail = ({ organizationId }: IProps) => {
 						invite(
 							{
 								email: user.email,
-								nwid: query.id as string,
+								nwid: urlParams.id as string,
 								organizationId,
 							},
 							{

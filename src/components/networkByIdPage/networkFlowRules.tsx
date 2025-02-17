@@ -7,7 +7,7 @@ import { python } from "@codemirror/lang-python";
 import { useEffect, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import { type CustomBackendError } from "~/types/errorHandling";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 
 const initialErrorState = { error: null, line: null };
 interface IProps {
@@ -15,7 +15,8 @@ interface IProps {
 }
 
 export const NetworkFlowRules = ({ organizationId }: IProps) => {
-	const { query } = useRouter();
+	const urlParams = useParams();
+
 	// Local state to store changes to the flow route
 	const {
 		data: defaultFlowRoute,
@@ -29,7 +30,7 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 
 	const { mutate: updateFlowRoute } = api.network.setFlowRule.useMutation({
 		onSuccess: () => {
-			void fetchFlowRoute({ nwid: query.id as string, reset: false });
+			void fetchFlowRoute({ nwid: urlParams.id as string, reset: false });
 			void toast.success("Flow rules updated successfully");
 		},
 		onError: ({ message }) => {
@@ -55,7 +56,7 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		fetchFlowRoute({
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			reset: false,
 		});
 	}, []);
@@ -69,7 +70,7 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	// Reset the flow route to the default value
 	const handleReset = () => {
 		setFlowRoute(defaultFlowRoute);
-		void fetchFlowRoute({ nwid: query.id as string, reset: true });
+		void fetchFlowRoute({ nwid: urlParams.id as string, reset: true });
 		setRuleError(initialErrorState);
 	};
 	const classnameExt = classname({
@@ -107,7 +108,7 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 					<button
 						onClick={() =>
 							void updateFlowRoute({
-								nwid: query.id as string,
+								nwid: urlParams.id as string,
 								organizationId,
 								updateParams: {
 									flowRoute: flowRoute || "#",

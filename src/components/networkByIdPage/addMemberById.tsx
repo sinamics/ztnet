@@ -6,6 +6,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useParams } from "next/navigation";
 
 type User = {
 	memberid: string;
@@ -17,17 +18,17 @@ interface IProp {
 export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 	const [user, setUser] = useState<User>({ memberid: "" });
-	const { query } = useRouter();
+	const urlParams = useParams();
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
 		{
-			nwid: query.id as string,
+			nwid: urlParams.id as string,
 			central,
 		},
-		{ enabled: !!query.id },
+		{ enabled: !!urlParams.id },
 	);
 
 	const { mutate: createUser } = api.networkMember.create.useMutation({
@@ -66,7 +67,7 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 						createUser(
 							{
 								id: user.memberid,
-								nwid: query.id as string,
+								nwid: urlParams.id as string,
 								organizationId,
 								central,
 							},

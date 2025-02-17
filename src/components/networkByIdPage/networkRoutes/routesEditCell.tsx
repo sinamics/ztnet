@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
-import { type ColumnDef } from "@tanstack/react-table";
-import { RoutesEntity } from "~/types/local/network";
+import type React from "react";
+import { useRef, useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { RoutesEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import TextArea from "~/components/elements/textarea";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
+import { useParams } from "next/navigation";
 
 interface EditableColumnConfig {
 	id: string;
@@ -21,19 +23,20 @@ const EDITABLE_COLUMNS: EditableColumnConfig[] = [
 	},
 ];
 
-interface useEditableColumnProps {
-	refetchNetworkById: () => void;
-}
+// interface useEditableColumnProps {
+// 	refetchNetworkById: () => void;
+// }
 
-export const useEditableColumn = ({ refetchNetworkById }: useEditableColumnProps) => {
+export const useEditableColumn = () => {
 	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
 		onSuccess: () => {
 			toast.success("Route updated successfully");
-			void refetchNetworkById();
+			// void refetchNetworkById();
 		},
 	});
 
-	const { query } = useRouter();
+	const urlParams = useParams();
+
 	const defaultColumn: Partial<ColumnDef<RoutesEntity>> = {
 		cell: ({ getValue, row: { original }, column: { id } }) => {
 			// Check if this column is editable
@@ -44,7 +47,7 @@ export const useEditableColumn = ({ refetchNetworkById }: useEditableColumnProps
 
 			return (
 				<EditableCell
-					nwid={query.id as string}
+					nwid={urlParams.id as string}
 					getValue={getValue}
 					original={original}
 					columnConfig={columnConfig}

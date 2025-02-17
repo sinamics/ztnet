@@ -1,10 +1,13 @@
+"use client";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useSidebarStore, useSocketStore } from "~/utils/store";
+import { useSocketStore } from "~/utils/store";
 import { api } from "~/utils/api";
+import { useSidebarStore } from "~/store/sidebarStore";
+import useStore from "~/store/useStore";
 
 // Custom hook to check if the screen width is below the 'md' breakpoint
 const useIsBelowMd = () => {
@@ -27,16 +30,21 @@ const useIsBelowMd = () => {
 };
 
 const Sidebar = (): JSX.Element => {
-	const { open, setOpenState } = useSidebarStore();
+	const session = useSession();
+	const store = useStore(useSidebarStore, (state) => state);
+
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
-	const { data: session } = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
-	const router = useRouter();
-	const orgId = router.query.orgid as string;
+
+	const search = useSearchParams();
+	const orgId = search.get("orgid");
+	const tab = search.get("tab");
+
+	const pathname = usePathname();
 
 	const { data: orgNotification } = api.org.getOrgNotifications.useQuery({
 		organizationId: orgId,
@@ -50,11 +58,11 @@ const Sidebar = (): JSX.Element => {
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if (isBelowMd && open) {
+			if (isBelowMd && store?.open) {
 				if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
 					// called after the click event on hamburger menu to close sidebar
 					setTimeout(() => {
-						setOpenState(false);
+						store?.setOpenState?.(false);
 					}, 100);
 				}
 			}
@@ -64,13 +72,13 @@ const Sidebar = (): JSX.Element => {
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [isBelowMd, open, setOpenState]);
+	}, [isBelowMd, store?.open, store?.setOpenState]);
 
 	return (
 		<aside
-			ref={sidebarRef}
+			ref={sidebarRef as React.RefObject<HTMLDivElement>}
 			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
-			${open ? "w-64" : "w-0"}`}
+			${store?.open ? "w-64" : "w-0"}`}
 		>
 			<div className="sidebar-content px-4 py-3">
 				<ul className="flex w-full flex-col">
@@ -84,7 +92,7 @@ const Sidebar = (): JSX.Element => {
 							href="/dashboard"
 							className={`flex h-10 flex-row items-center rounded-lg px-3  
               ${
-								router.pathname === "/dashboard"
+								pathname === "/dashboard"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -111,7 +119,7 @@ const Sidebar = (): JSX.Element => {
 							href="/network"
 							className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/network")
+								pathname.includes("/network")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -139,7 +147,7 @@ const Sidebar = (): JSX.Element => {
 								href="/central"
 								className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/central")
+								pathname.includes("/central")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -165,14 +173,14 @@ const Sidebar = (): JSX.Element => {
 							</Link>
 						</li>
 					) : null}
-					{me?.memberOfOrgs?.length > 0 ? (
+					{(me?.memberOfOrgs?.length ?? 0) > 0 ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary">
 									{t("organization")}
 								</span>
 							</li>
-							{me?.memberOfOrgs.map((org) => {
+							{me?.memberOfOrgs?.map((org) => {
 								const truncatedOrgName =
 									org.orgName.length > 15
 										? `${org.orgName.slice(0, 15)}...`
@@ -185,7 +193,7 @@ const Sidebar = (): JSX.Element => {
 											href={`/organization/${org.id}`}
 											className={`flex h-10 flex-row items-center rounded-lg px-3 
 								${
-									router.query.orgid?.includes(org.id)
+									orgId?.includes(org.id)
 										? "bg-gray-100 text-gray-700"
 										: "hover:bg-slate-700"
 								}`}
@@ -225,7 +233,7 @@ const Sidebar = (): JSX.Element => {
 							})}
 						</>
 					) : null}
-					{session?.user?.role === "ADMIN" ? (
+					{session?.data?.user?.role === "ADMIN" ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">
@@ -237,7 +245,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=site-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "site-setting"
+								pathname === "/admin" && tab === "site-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -271,7 +279,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=mail-setting"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "mail-setting"
+								pathname === "/admin" && tab === "mail-setting"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -304,7 +312,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=users"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname === "/admin" && router.query.tab === "users"
+								pathname === "/admin" && tab === "users"
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}
@@ -333,8 +341,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=notification"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "notification"
+													pathname === "/admin" && tab === "notification"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -363,8 +370,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=controller"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "controller"
+													pathname === "/admin" && tab === "controller"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -393,8 +399,7 @@ const Sidebar = (): JSX.Element => {
 									href="/admin?tab=organization"
 									className={`flex h-10 flex-row items-center rounded-lg px-3 
               					${
-													router.pathname === "/admin" &&
-													router.query.tab === "organization"
+													pathname === "/admin" && tab === "organization"
 														? "bg-gray-100 text-gray-700"
 														: "hover:bg-slate-700"
 												}`}
@@ -430,7 +435,7 @@ const Sidebar = (): JSX.Element => {
 							href="/user-settings?tab=account"
 							className={`flex h-10 flex-row items-center rounded-lg px-3 
               ${
-								router.pathname.includes("/user-settings")
+								pathname.includes("/user-settings")
 									? "bg-gray-100 text-gray-700"
 									: "hover:bg-slate-700"
 							}`}

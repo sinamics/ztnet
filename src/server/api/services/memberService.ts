@@ -16,13 +16,14 @@ import { network_members } from "@prisma/client";
  * @param peersByAddress - An array of peers grouped by address.
  */
 export const syncMemberPeersAndStatus = async (
-	ctx: UserContext,
+	userId: string,
 	nwid: string,
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
+
 	// get peers
-	const controllerPeers = await ztController.peers(ctx);
+	const controllerPeers = await ztController.peers(userId);
 
 	//!TODO Promise.all causing race condition. Need to refactor to use for loop
 	const updatedMembers = await Promise.all(
@@ -33,7 +34,6 @@ export const syncMemberPeersAndStatus = async (
 			const peers = controllerPeers.filter(
 				(peer) => peer.address === ztMember.address,
 			)[0];
-
 			// Retrieve the member from the database
 			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
 
@@ -81,7 +81,7 @@ export const syncMemberPeersAndStatus = async (
 
 			// If the member was not found in the database, add it
 			if (updateResult.count === 0) {
-				await addNetworkMember(ctx, updatedMember).catch(console.error);
+				await addNetworkMember(userId, updatedMember).catch(console.error);
 			}
 
 			// Return null if the member is deleted.
@@ -115,7 +115,7 @@ const findActivePreferredPeerPath = (peers: Peers | null) => {
 };
 
 const findExistingMemberName = async (
-	ctx: UserContext,
+	userId: string,
 	memberId: string,
 	currentNwid: string,
 	isOrganization: boolean,
@@ -140,7 +140,7 @@ const findExistingMemberName = async (
 						deleted: false,
 						nwid: { not: currentNwid },
 						nwid_ref: {
-							authorId: ctx.session.user.id,
+							authorId: userId,
 							organizationId: null,
 						},
 				  };
@@ -158,7 +158,7 @@ const findExistingMemberName = async (
 		}
 
 		// If no name found in database, check controller
-		const networks = await ztController.get_controller_networks(ctx, false);
+		const networks = await ztController.get_controller_networks(userId, false);
 
 		const relevantNetworks = await prisma.network.findMany({
 			where: {
@@ -168,7 +168,7 @@ const findExistingMemberName = async (
 					isOrganization && organizationId
 						? { organizationId: organizationId }
 						: {
-								authorId: ctx.session.user.id,
+								authorId: userId,
 								organizationId: null,
 						  },
 				],
@@ -180,7 +180,7 @@ const findExistingMemberName = async (
 		for (const network of relevantNetworks) {
 			try {
 				const memberDetails = await ztController.member_details(
-					ctx,
+					userId,
 					network.nwid,
 					memberId,
 					false,
@@ -208,12 +208,12 @@ const findExistingMemberName = async (
  * @param member - The member entity to be added.
  * @returns A promise that resolves to the created network member.
  */
-const addNetworkMember = async (ctx, member: MemberEntity) => {
+const addNetworkMember = async (userId, member: MemberEntity) => {
 	// 1. get the user options
 	// 2. check if the new member is joining a organization network
 	const [user, memberOfOrganization] = await Promise.all([
 		prisma.user.findUnique({
-			where: { id: ctx.session.user.id },
+			where: { id: userId },
 			select: { options: true, network: { select: { nwid: true } } },
 		}),
 		prisma.network.findFirst({
@@ -229,7 +229,7 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		// check if global organization member naming is enabled, and if so find the first available name
 		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
 			name = await findExistingMemberName(
-				ctx,
+				userId,
 				member.id,
 				member.nwid,
 				true,
@@ -260,7 +260,8 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 		// check if global naming is enabled, and if so find the first available name
 		// NOTE! this will take precedence over addMemberIdAsName above
 		if (user.options?.renameNodeGlobally) {
-			name = (await findExistingMemberName(ctx, member.id, member.nwid, false)) || name;
+			name =
+				(await findExistingMemberName(userId, member.id, member.nwid, false)) || name;
 		}
 	}
 

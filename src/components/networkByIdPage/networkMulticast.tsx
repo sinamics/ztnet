@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
@@ -6,6 +5,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { useNetworkField, NetworkSection } from "~/store/networkStore";
 
 interface IProp {
 	central?: boolean;
@@ -23,23 +23,16 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 		enableBroadcast: false,
 	});
 
-	const { query } = useRouter();
-	const {
-		data: networkByIdQuery,
-		isLoading: loadingNetwork,
-		refetch: refetchNetwork,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central,
-		},
-		{ enabled: !!query.id },
-	);
+	const { id: networkId } = useNetworkField(NetworkSection.BASIC_INFO, ["id"]);
+	const { multicastLimit, enableBroadcast } = useNetworkField(NetworkSection.CONFIG, [
+		"multicastLimit",
+		"enableBroadcast",
+	]);
 
 	const { mutate: updateNetwork } = api.network.multiCast.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
-			actions: [refetchNetwork],
+			// actions: [refetchNetwork],
 			toastMessage: t("networkMulticast.MulticastUpdatedSuccessfully"),
 		}),
 	});
@@ -47,24 +40,21 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 	useEffect(() => {
 		setState((prev) => ({
 			...prev,
-			multicastLimit: networkByIdQuery?.network?.multicastLimit.toString(),
-			enableBroadcast: networkByIdQuery?.network?.enableBroadcast,
+			multicastLimit: multicastLimit.toString(),
+			enableBroadcast: enableBroadcast,
 		}));
-	}, [
-		networkByIdQuery?.network.multicastLimit,
-		networkByIdQuery?.network?.enableBroadcast,
-	]);
+	}, [multicastLimit, enableBroadcast]);
 
-	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
-		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
-			</div>
-		);
-	}
+	// if (loadingNetwork) {
+	// 	// add loading progress bar to center of page, vertially and horizontally
+	// 	return (
+	// 		<div className="flex flex-col items-center justify-center">
+	// 			<h1 className="text-center text-2xl font-semibold">
+	// 				<progress className="progress progress-primary w-56"></progress>
+	// 			</h1>
+	// 		</div>
+	// 	);
+	// }
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setState({ ...state, [e.target.name]: e.target.value });
@@ -74,16 +64,15 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 		e.preventDefault();
 
 		updateNetwork({
-			nwid: network.nwid,
+			nwid: networkId,
 			central,
 			organizationId,
 			updateParams: {
-				multicastLimit: parseInt(state.multicastLimit),
+				multicastLimit: Number.parseInt(state.multicastLimit),
 			},
 		});
 	};
 
-	const { network } = networkByIdQuery || {};
 	return (
 		<div className="collapse-arrow collapse w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
@@ -145,7 +134,7 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 								className="checkbox-primary checkbox checkbox-sm"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 									updateNetwork({
-										nwid: network.nwid,
+										nwid: networkId,
 										central,
 										organizationId,
 										updateParams: {

@@ -1,5 +1,4 @@
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
@@ -8,6 +7,7 @@ import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 
 interface FormData {
 	email: string;
@@ -46,7 +46,7 @@ const CredentialsForm: React.FC = () => {
 				...formData,
 			});
 
-			if (response.ok) {
+			if (response?.ok) {
 				await router.push("/network");
 				return;
 			}
@@ -56,7 +56,9 @@ const CredentialsForm: React.FC = () => {
 					setShowOTP(true);
 					break;
 				default:
-					toast.error(response.error, { duration: 10000 });
+					toast.error(response?.error || "An unknown error occurred", {
+						duration: 10000,
+					});
 			}
 		} catch (error) {
 			toast.error(error.message);

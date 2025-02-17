@@ -1,13 +1,16 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
+const withNextIntl = createNextIntlPlugin();
+
 /** @type {import("next").NextConfig} */
-const config = {
+const nextConfig = {
 	reactStrictMode: true,
-	swcMinify: true,
 	// https://nextjs.org/docs/advanced-features/output-file-tracing
 	output: "standalone",
 	/**
@@ -16,11 +19,6 @@ const config = {
 	 *
 	 * @see https://github.com/vercel/next.js/issues/41980
 	 */
-	i18n: {
-		defaultLocale: "en",
-		// localeDetection: false,
-		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru"],
-	},
 	trailingSlash: true,
 	eslint: {
 		ignoreDuringBuilds: true,
@@ -35,4 +33,4 @@ const config = {
 		];
 	},
 };
-export default config;
+export default withNextIntl(nextConfig);

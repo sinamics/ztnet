@@ -1,4 +1,5 @@
 import { TRPCClientError } from "@trpc/client";
+import { prisma } from "~/server/db";
 
 enum Role {
 	READ_ONLY = 0,
@@ -36,15 +37,19 @@ export const UserRolesList = [
  * It directly allows access for users with the 'ADMIN' role. For other roles, it compares the numerical value
  * of the user's role with the required role's numerical value, based on a predefined 'Role' enum.
  */
+
+interface ICheckUserpermission {
+	userId: string;
+	organizationId: string;
+	minimumRequiredRole: string;
+}
 export const checkUserOrganizationRole = async ({
-	ctx,
+	userId,
 	organizationId,
 	minimumRequiredRole,
-}) => {
-	const userId = ctx.session.user.id;
-
+}: ICheckUserpermission) => {
 	// get the role of the user in the organization
-	const orgUserRole = await ctx.prisma.userOrganizationRole.findFirst({
+	const orgUserRole = await prisma.userOrganizationRole.findFirst({
 		where: {
 			organizationId: organizationId,
 			userId,
