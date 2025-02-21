@@ -261,9 +261,10 @@ describe("NetworkById component", () => {
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
-		// await waitForElementToBeRemoved(() => screen.queryByText(/loading/i));
-		// Ensure table is present
-		screen.getByRole("table"); // This will throw an error if the table is not present
+
+		// Ensure tables is present
+		screen.getByRole("membersTable");
+		screen.getByRole("routesTable");
 
 		await waitFor(
 			() => {
@@ -290,6 +291,7 @@ describe("NetworkById component", () => {
 					{
 						id: "member_id",
 						creationTime: 1691603143446,
+						ipAssignments: ["10.121.15.31"],
 						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
 						conStatus: ConnectionStatus.DirectWAN,
 					},
@@ -330,6 +332,7 @@ describe("NetworkById component", () => {
 					{
 						id: "member_id",
 						creationTime: 1691603143446,
+						ipAssignments: ["10.121.15.31"],
 						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
 						conStatus: ConnectionStatus.Relayed,
 					},
@@ -370,6 +373,7 @@ describe("NetworkById component", () => {
 					{
 						id: "member_id",
 						creationTime: 1691603143446,
+						ipAssignments: ["10.121.15.31"],
 						lastSeen: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
 						conStatus: ConnectionStatus.Offline,
 					},

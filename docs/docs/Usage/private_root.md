@@ -7,6 +7,9 @@ description: Learn how to create and manage private root servers with ZTNet.
 
 # Managing Private Root Servers with ZTNet
 
+> **Important Note Before You Begin**: When using a custom planet setup, please be aware that mobile platforms (Android and iOS) have significant limitations. The official mobile apps do not currently support custom planet configurations, and workarounds require additional technical steps. Please review the [Mobile Platform Limitations](#mobile-platform-limitations) section below before proceeding with your setup.
+
+
 ### What is a Private Root Server?
 
 A private root server in ZeroTier acts as a central coordination point for a ZeroTier network. Unlike [public root servers](https://zerotier.atlassian.net/wiki/spaces/SD/pages/7241732/Root+Server+IP+Addresses) provided by ZeroTier, private root servers are self-hosted and managed by the network administrator. They play a crucial role in network management, node authentication, and route orchestration.
@@ -109,6 +112,45 @@ To connect your devices to the newly established private root server, they need 
 
 By implementing these steps, your network devices will use your private root server, ensuring that they are no longer connected to the public ZeroTier root servers. Confirm the success of your setup by checking that devices can communicate with each other through the private root and that the public root servers no longer appear in the peer list.
 
+## Mobile Platform Limitations
+
+When setting up devices with a custom planet configuration, it's important to note that mobile platforms have significant limitations compared to desktop systems. While this might be implemented in the official apps in the future, there is currently no ETA set.
+
+:::warning Security and Legal Considerations
+The following solutions are third-party modifications of the official ZeroTier apps. Please note:
+- These modifications may not be legally approved by ZeroTier
+- Before using any third-party applications, carefully review their source code and trust the developers, as they may pose security risks
+- Use these solutions at your own discretion and risk
+:::
+
+### Android Limitations and Workarounds
+
+The official ZeroTier Android app does not support direct custom planet configuration. There are several workarounds available:
+
+1. **ZeroTierFix** (github.com/kaaass/ZerotierFix):
+   - An unofficial modified version of the ZeroTier app that supports custom planets
+   - Currently one of the most straightforward solutions for non-rooted devices
+   - Note: This is a third-party modification of the official app
+
+2. **Zerotier-Magisk** (github.com/eventlOwOp/zerotier-magisk):
+   - Allows manual replacement of the planet file at `/data/adb/zerotier/home/planet`
+   - Note: This is a third-party modification of the official app
+
+### iOS Limitations and Workarounds
+
+iOS has similar limitations with the official app. Currently known workarounds:
+
+1. **ZeroTieriOSFix** (github.com/lemon4ex/ZeroTieriOSFix):
+   - Requires compiling and signing a modified version of the app
+   - Need access to Apple Developer tools and signing capabilities
+   - May require renewal of certificates periodically
+
+### Important Considerations
+
+- These limitations should be carefully considered before committing to a private root setup
+- Mobile workarounds may require technical expertise to implement
+- Third-party modifications come with their own security considerations
+- Future updates to official apps may affect the availability or functionality of these workarounds
 ## Adding a Second Private Root Server in ZeroTier
 
 To add a second private root server to your ZeroTier network, follow these steps:

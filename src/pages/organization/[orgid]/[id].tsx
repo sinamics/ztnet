@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
@@ -206,7 +206,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 
 				{/* Manged routes section */}
 				<div className="w-6/6 xl:w-3/6 ">
-					<NettworkRoutes organizationId={organizationId} />
+					<NetworkRoutes organizationId={organizationId} />
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto grid grid-cols-1 space-y-3  py-4 text-sm md:text-base xl:flex xl:space-y-0">
@@ -344,20 +344,11 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
-				<NetworkHelpText />
-			</div>
-
-			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkFlowRules organizationId={organizationId} />
 			</div>
-			{/* <div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
-				DEBUG
+			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
+				<NetworkHelpText />
 			</div>
-			<div className="w-5/5 mx-auto  py-4 text-sm md:text-base space-y-8">
-				<DebugMirror data={networkById?.network} title="Controler Networks" />
-				<DebugMirror data={networkById?.members} title="Controler Members" />
-			</div> */}
-
 			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				Network Actions
 			</div>
