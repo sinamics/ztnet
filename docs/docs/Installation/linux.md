@@ -35,22 +35,24 @@ To continue install ztnet on Debian or Ubuntu, run the following command:
 curl -s http://install.ztnet.network | sudo bash
 ```
 
-## Install a specific version
-If you want to rollback or install a previous version, you can specify a version like this:
+## Application Logs
 
+You can view the ztnet application logs using the following commands:
+
+### View Live Logs
+To watch the logs in real-time:
 ```bash
-curl -s http://install.ztnet.network | sudo bash -s -- -v v0.4.2
+sudo journalctl -u ztnet -f
 ```
 
-## Script Functionality Overview
+### View Recent Logs
+To see the most recent logs:
+```bash
+sudo journalctl -u ztnet -n 100
+```
 
-This script executes the following steps:
-
-1. **Prerequisites**: Installs Node.js version 18 and PostgreSQL.
-2. **Clone Repository**: Clones the `ztnet` repository into a temporary directory (`/tmp/ztnet`).
-3. **Install Dependencies**: Installs the necessary package dependencies.
-4. **Build Artifacts**: Builds the required artifacts and copies them to `/opt/ztnet`.
-5. **Systemd Service**: Sets up a systemd service to auto-start `ztnet` during system boot.
+## Managing the ztnet Service
+When you install ztnet, a systemd service named `ztnet` is created to manage the application. You can use the following commands to manage the service as needed. 
 
 ### Monitoring Service Status
 
@@ -90,22 +92,6 @@ To stop the `ztnet` service from starting at boot, run the following command:
 
 ```bash
 sudo systemctl disable ztnet
-```
-
-## Application Logs
-
-You can view the ztnet application logs using the following commands:
-
-### View Live Logs
-To watch the logs in real-time:
-```bash
-sudo journalctl -u ztnet -f
-```
-
-### View Recent Logs
-To see the most recent logs:
-```bash
-sudo journalctl -u ztnet -n 100
 ```
 
 ## Testing other branches
