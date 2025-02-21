@@ -110,7 +110,16 @@ model network {
   organization       Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   networkMembers     network_members[]
   notations          Notation[]
-  routes             Json?
+  routes             Routes[]
+}
+
+model Routes {
+  id        String  @id @default(cuid())
+  target    String
+  via       String?
+  networkId String
+  notes     String?
+  network   network @relation(fields: [networkId], references: [nwid], onDelete: Cascade)
 }
 
 model Notation {

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { NettworkRoutes } from "~/components/networkByIdPage/networkRoutes";
+import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
@@ -212,7 +212,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 				{/* Manged routes section */}
 				<div className="w-6/6 xl:w-3/6 ">
-					<NettworkRoutes />
+					<NetworkRoutes central={false} />
 				</div>
 			</div>
 			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
@@ -343,11 +343,10 @@ const NetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
-				<NetworkHelpText />
-			</div>
-
-			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkFlowRules />
+			</div>
+			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
+				<NetworkHelpText />
 			</div>
 			{/* <div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				DEBUG

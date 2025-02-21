@@ -304,13 +304,24 @@
 				"acceptedValue": "Допустимые значения от 1280 до 10000"
 			}
 		},
-		"nettworkRoutes": {
-			"managedRoutesTitle": "Управляемые маршруты",
-			"noManagedRoutesTitle": "Управляемые маршруты не определены.",
+		"networkRoutes": {
+			"table": {
+				"destination": "Назначение",
+				"via": "Через",
+				"nodeName": "Имя Узла",
+				"notes": "Заметки"
+			},
+			"managedRoutesTitle": "Управляемые Маршруты",
+			"noManagedRoutesTitle": "Нет определенных управляемых маршрутов.",
 			"noManagedRoutesDescription1": "Устройства не получат IP-адрес без соответствующего маршрута.",
-			"noManagedRoutesDescription2": "Если у вас нет специфических требований, попробуйте режим IPv4 Auto-Assign Easy.",
+			"noManagedRoutesDescription2": "Если у вас нет особых требований, попробуйте простой режим автоназначения IPv4.",
 			"destinationPlaceholder": "Назначение",
-			"viaPlaceholder": "цель"
+			"viaPlaceholder": "Через",
+			"notesPlaceholder": "Нажмите для добавления заметок",
+			"destinationInputLabel": "Назначение",
+			"destinationInputDescription": "Введите адрес сети назначения в нотации CIDR",
+			"viaInputLabel": "Через",
+			"viaInputDescription": "Введите IP-адрес через следующий хоп. Оставьте пустым для направления на локальную сеть"
 		},
 		"networkDns": {
 			"DNS": "DNS",

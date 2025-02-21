@@ -9,7 +9,7 @@ import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local
 import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
 import { type CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { network, network_members, Prisma, Role } from "@prisma/client";
+import { network, network_members, Role } from "@prisma/client";
 import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
@@ -17,6 +17,7 @@ import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 import { MailTemplateKey } from "~/utils/enums";
+import { syncNetworkRoutes } from "../services/routesService";
 
 const RouteSchema = z.object({
 	target: z
@@ -118,12 +119,13 @@ export const networkRouter = createTRPCRouter({
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
 			// First, retrieve the network with organization details
-			let networkFromDatabase = await ctx.prisma.network.findUnique({
+			const networkFromDatabase = await ctx.prisma.network.findUnique({
 				where: {
 					nwid: input.nwid,
 				},
 				include: {
 					organization: true,
+					routes: true,
 				},
 			});
 
@@ -204,22 +206,12 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
-			if (
-				JSON.stringify(networkFromDatabase.routes) !==
-				JSON.stringify(ztControllerResponse.network.routes)
-			) {
-				networkFromDatabase = await ctx.prisma.network.update({
-					where: {
-						nwid: input.nwid,
-					},
-					data: {
-						routes: ztControllerResponse.network.routes as string[],
-					},
-					include: {
-						organization: true,
-					},
-				});
-			}
+			await syncNetworkRoutes({
+				networkId: input.nwid,
+				networkFromDatabase,
+				ztControllerRoutes: ztControllerResponse.network.routes,
+			});
+
 			// check if there is other network using same routes and return a notification
 			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
 			interface DuplicateRoutes {
@@ -230,21 +222,29 @@ export const networkRouter = createTRPCRouter({
 
 			// check if there are any other networks with the same routes.
 			let duplicateRoutes: DuplicateRoutes[] = [];
-			if (targetIPs.length > 0) {
+
+			// Disabled duplicates for organization networks for now. Not sure it's needed.
+			if (targetIPs.length > 0 && !isMemberOfOrganization) {
 				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
-							SELECT "authorId", "routes", "name", "nwid"
-							FROM "network"
-							WHERE "authorId" = ${ctx.session.user.id}
-									AND EXISTS (
-											SELECT 1
-											FROM jsonb_array_elements("routes") as route
-											WHERE route->>'target' IN (${Prisma.join(targetIPs)})
-									)
-									AND "nwid" != ${input.nwid};
-					`;
-			} else {
-				// Handle the case when targetIPs is empty
-				duplicateRoutes = [];
+					SELECT 
+						n."authorId",
+						n."name",
+						n."nwid",
+						array_agg(
+							json_build_object(
+								'id', r."id",
+								'target', r."target",
+								'via', r."via"
+							)
+						) as routes
+					FROM "network" n
+					INNER JOIN "Routes" r ON r."networkId" = n."nwid"
+					WHERE n."authorId" = ${ctx.session.user.id}
+						AND n."organizationId" IS NULL
+						AND r."target" = ANY(${targetIPs}::text[])
+						AND n."nwid" != ${input.nwid}
+					GROUP BY n."authorId", n."name", n."nwid"
+				`;
 			}
 
 			// Extract duplicated IPs
@@ -260,11 +260,22 @@ export const networkRouter = createTRPCRouter({
 			// Convert the map back to an array of merged members
 			const mergedMembers = [...mergedMembersMap.values()];
 
+			// Retrieve the updated values from network with organization details
+			const updatedNetworkFromDatabase = await ctx.prisma.network.findUnique({
+				where: {
+					nwid: input.nwid,
+				},
+				include: {
+					organization: true,
+					routes: true,
+				},
+			});
+
 			// Construct the final response object
 			return {
 				network: {
 					...ztControllerResponse?.network,
-					...networkFromDatabase,
+					...updatedNetworkFromDatabase,
 					cidr: cidrOptions,
 					duplicateRoutes: duplicateRoutes.map((network) => ({
 						...network,
@@ -502,6 +513,8 @@ export const networkRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					routes: RoutesArraySchema.optional(),
+					note: z.string().optional(),
+					routeId: z.string().optional(),
 				}),
 			}),
 		)
@@ -523,6 +536,20 @@ export const networkRouter = createTRPCRouter({
 					ctx,
 					organizationId: input?.organizationId,
 					minimumRequiredRole: Role.USER,
+				});
+			}
+
+			const { note } = input.updateParams;
+
+			// if note, add it to the database
+			if (typeof note === "string") {
+				await ctx.prisma.routes.update({
+					where: {
+						id: input.updateParams.routeId,
+					},
+					data: {
+						notes: note,
+					},
 				});
 			}
 			const { routes } = input.updateParams;
