@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "Range End",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "Submit"
+				"submit": "Submit",
+				"confirmationModal": {
+					"title": "Confirm IP Assignment Change",
+					"description": "Are you sure you want to assign this IP range? This will delete all managed routes for this network."
+				},
+				"deleteConfirmation": {
+					"title": "Delete IP Assignment",
+					"description": "Are you sure you want to delete this IP assignment? This will remove the IP range from your network."
+				},
+				"addConfirmation": {
+					"title": "Add IP Assignment",
+					"description": "Are you sure you want to add this IP range? This will add a new IP range to your network."
+				}
 			},
 			"mtu": {
 				"title": "MTU (Maximum Transmission Unit)",
