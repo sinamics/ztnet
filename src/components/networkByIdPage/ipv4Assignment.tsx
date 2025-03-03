@@ -273,7 +273,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 										title: t("networkIpAssignments.ipv4.confirmationModal.title"),
 										content: (
 											<div>
-												<p>{t("networkIpAssignments.ipv4.confirmationModal.description")}</p>
+												<p>
+													{t("networkIpAssignments.ipv4.confirmationModal.description")}
+												</p>
 												<p className="font-bold mt-2">Change to: {cidr}</p>
 											</div>
 										),
@@ -330,7 +332,11 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 												title: t("networkIpAssignments.ipv4.deleteConfirmation.title"),
 												content: (
 													<div>
-														<p>{t("networkIpAssignments.ipv4.deleteConfirmation.description")}</p>
+														<p>
+															{t(
+																"networkIpAssignments.ipv4.deleteConfirmation.description",
+															)}
+														</p>
 														<p className="font-bold mt-2">{`${pool.ipRangeStart} - ${pool.ipRangeEnd}`}</p>
 													</div>
 												),
@@ -390,7 +396,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								onClick={(e) => {
 									e.preventDefault();
 									if (!ipRange.rangeStart || !ipRange.rangeEnd) {
-										void toast.error(t("networkIpAssignments.ipv4.please_enter_valid_ip_range"));
+										void toast.error(
+											t("networkIpAssignments.ipv4.please_enter_valid_ip_range"),
+										);
 										return;
 									}
 
@@ -398,7 +406,9 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 										title: t("networkIpAssignments.ipv4.addConfirmation.title"),
 										content: (
 											<div>
-												<p>{t("networkIpAssignments.ipv4.addConfirmation.description")}</p>
+												<p>
+													{t("networkIpAssignments.ipv4.addConfirmation.description")}
+												</p>
 												<p className="font-bold mt-2">{`${ipRange.rangeStart} - ${ipRange.rangeEnd}`}</p>
 											</div>
 										),
