@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import cn from "classnames";
 import { useState } from "react";
-import { RoutesEntity, type IpAssignmentPoolsEntity } from "~/types/local/network";
+import type { RoutesEntity, IpAssignmentPoolsEntity } from "~/types/local/network";
 import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
@@ -145,11 +145,6 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					<div>
 						<button
 							onClick={() => {
-								// Extract IP addresses from duplicate routes
-								// const duplicateIPs = network?.duplicateRoutes.map((duplicateRoute) =>
-								// 	duplicateRoute.duplicatedIPs.join(", "),
-								// );
-
 								callModal({
 									title: (
 										<p>
@@ -273,16 +268,30 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 						) : (
 							<div
 								key={cidr}
-								onClick={() =>
-									easyIpAssignment({
-										updateParams: {
-											routes: [{ target: cidr, via: "" }],
+								onClick={() => {
+									callModal({
+										title: t("networkIpAssignments.ipv4.confirmationModal.title"),
+										content: (
+											<div>
+												<p>
+													{t("networkIpAssignments.ipv4.confirmationModal.description")}
+												</p>
+												<p className="font-bold mt-2">Change to: {cidr}</p>
+											</div>
+										),
+										showButtons: true,
+										yesAction: () => {
+											easyIpAssignment({
+												updateParams: {
+													routes: [{ target: cidr, via: "" }],
+												},
+												organizationId,
+												nwid: query.id as string,
+												central,
+											});
 										},
-										organizationId,
-										nwid: query.id as string,
-										central,
-									})
-								}
+									});
+								}}
 								className={cn(
 									"badge badge-ghost badge-outline badge-lg rounded-md text-xs opacity-30 md:text-base",
 									{ "hover:bg-primary": network?.v4AssignMode?.zt },
@@ -318,7 +327,23 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 										strokeWidth="1.5"
 										stroke="currentColor"
 										className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
-										onClick={() => deleteIpRange(pool)}
+										onClick={() => {
+											callModal({
+												title: t("networkIpAssignments.ipv4.deleteConfirmation.title"),
+												content: (
+													<div>
+														<p>
+															{t(
+																"networkIpAssignments.ipv4.deleteConfirmation.description",
+															)}
+														</p>
+														<p className="font-bold mt-2">{`${pool.ipRangeStart} - ${pool.ipRangeEnd}`}</p>
+													</div>
+												),
+												showButtons: true,
+												yesAction: () => deleteIpRange(pool),
+											});
+										}}
 									>
 										<path
 											strokeLinecap="round"
@@ -332,12 +357,13 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 					})}
 					<form className="grid grid-cols-2 gap-5 pt-4">
 						<div className="form-control w-full">
-							<label className="label">
+							<label className="label" htmlFor="rangeStart">
 								<span className="label-text">
 									{t("networkIpAssignments.ipv4.range_start")}
 								</span>
 							</label>
 							<input
+								id="rangeStart"
 								type="text"
 								name="rangeStart"
 								value={ipRange.rangeStart}
@@ -346,14 +372,15 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								className="input input-bordered input-sm w-full"
 							/>
 						</div>
-						<div className="form-control ">
-							<label className="label">
+						<div className="form-control">
+							<label className="label" htmlFor="rangeEnd">
 								<span className="label-text">
 									{t("networkIpAssignments.ipv4.range_end")}
 								</span>
 							</label>
 							<div className="join">
 								<input
+									id="rangeEnd"
 									type="text"
 									name="rangeEnd"
 									value={ipRange.rangeEnd}
@@ -366,7 +393,29 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 						<div className="col-span-2">
 							<button
 								type="submit"
-								onClick={submitIpRange}
+								onClick={(e) => {
+									e.preventDefault();
+									if (!ipRange.rangeStart || !ipRange.rangeEnd) {
+										void toast.error(
+											t("networkIpAssignments.ipv4.please_enter_valid_ip_range"),
+										);
+										return;
+									}
+
+									callModal({
+										title: t("networkIpAssignments.ipv4.addConfirmation.title"),
+										content: (
+											<div>
+												<p>
+													{t("networkIpAssignments.ipv4.addConfirmation.description")}
+												</p>
+												<p className="font-bold mt-2">{`${ipRange.rangeStart} - ${ipRange.rangeEnd}`}</p>
+											</div>
+										),
+										showButtons: true,
+										yesAction: () => submitIpRange(e),
+									});
+								}}
 								className="btn btn-sm btn-active"
 							>
 								{t("networkIpAssignments.ipv4.submit")}
