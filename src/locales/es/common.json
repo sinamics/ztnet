@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "Fin del rango",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "Enviar"
+				"submit": "Enviar",
+				"confirmationModal": {
+					"title": "Confirmar cambio de asignación de IP",
+					"description": "¿Estás seguro de que quieres asignar este rango de IP? Esto eliminará todas las rutas administradas para esta red."
+				},
+				"deleteConfirmation": {
+					"title": "Eliminar asignación de IP",
+					"description": "¿Estás seguro de que quieres eliminar esta asignación de IP? Esto eliminará el rango de IP de tu red."
+				},
+				"addConfirmation": {
+					"title": "Añadir asignación de IP",
+					"description": "¿Estás seguro de que quieres añadir este rango de IP? Esto añadirá un nuevo rango de IP a tu red."
+				}
 			},
 			"mtu": {
 				"title": "MTU (Unidad de Transmisión Máxima)",
