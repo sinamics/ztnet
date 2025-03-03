@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "Range Slutt",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "Send inn"
+				"submit": "Send inn",
+				"confirmationModal": {
+					"title": "Bekreft endring av IP-tilordning",
+					"description": "Er du sikker på at du vil tilordne dette IP-området? Dette vil slette alle administrerte ruter for dette nettverket."
+				},
+				"deleteConfirmation": {
+					"title": "Slett IP-tilordning",
+					"description": "Er du sikker på at du vil slette denne IP-tilordningen? Dette vil fjerne IP-området fra nettverket ditt."
+				},
+				"addConfirmation": {
+					"title": "Legg til IP-tilordning",
+					"description": "Er du sikker på at du vil legge til dette IP-området? Dette vil legge til et nytt IP-område i nettverket ditt."
+				}
 			},
 			"mtu": {
 				"title": "MTU (Maksimal Transmisjonsenhet)",

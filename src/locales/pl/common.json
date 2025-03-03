@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "Końcowy adres z zakresu",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "Zatwierdź"
+				"submit": "Zatwierdź",
+				"confirmationModal": {
+					"title": "Potwierdź zmianę przypisania IP",
+					"description": "Czy na pewno chcesz przypisać ten zakres IP? Spowoduje to usunięcie wszystkich zarządzanych tras dla tej sieci."
+				},
+				"deleteConfirmation": {
+					"title": "Usuń przypisanie IP",
+					"description": "Czy na pewno chcesz usunąć to przypisanie IP? Spowoduje to usunięcie zakresu IP z Twojej sieci."
+				},
+				"addConfirmation": {
+					"title": "Dodaj przypisanie IP",
+					"description": "Czy na pewno chcesz dodać ten zakres IP? Spowoduje to dodanie nowego zakresu IP do Twojej sieci."
+				}
 			},
 			"mtu": {
 				"title": "MTU (Maximum Transmission Unit)",

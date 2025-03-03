@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "Fin de plage",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "Valider"
+				"submit": "Valider",
+				"confirmationModal": {
+					"title": "Confirmer le changement d'attribution IP",
+					"description": "Êtes-vous sûr de vouloir attribuer cette plage IP ? Cela supprimera toutes les routes gérées pour ce réseau."
+				},
+				"deleteConfirmation": {
+					"title": "Supprimer l'attribution IP",
+					"description": "Êtes-vous sûr de vouloir supprimer cette attribution IP ? Cela supprimera la plage IP de votre réseau."
+				},
+				"addConfirmation": {
+					"title": "Ajouter une attribution IP",
+					"description": "Êtes-vous sûr de vouloir ajouter cette plage IP ? Cela ajoutera une nouvelle plage IP à votre réseau."
+				}
 			},
 			"mtu": {
 				"title": "MTU (unité de transmission maximale)",

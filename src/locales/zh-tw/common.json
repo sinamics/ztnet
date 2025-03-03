@@ -296,7 +296,19 @@
 				"range_start_placeholder": "192.168.168.1",
 				"range_end": "範圍結束",
 				"range_end_placeholder": "192.168.168.254",
-				"submit": "送出"
+				"submit": "送出",
+				"confirmationModal": {
+					"title": "確認 IP 分配更改",
+					"description": "您確定要分配此 IP 範圍嗎？這將刪除該網路的所有管理路由。"
+				},
+				"deleteConfirmation": {
+					"title": "刪除 IP 分配",
+					"description": "您確定要刪除此 IP 分配嗎？這將從您的網路中移除此 IP 範圍。"
+				},
+				"addConfirmation": {
+					"title": "添加 IP 範圍",
+					"description": "您確定要添加此 IP 範圍嗎？這將向您的網路中添加一個新的 IP 範圍。"
+				}
 			},
 			"mtu": {
 				"title": "MTU (最大傳輸單元)",
