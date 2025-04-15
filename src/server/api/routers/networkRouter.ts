@@ -43,69 +43,61 @@ const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
 	getUserNetworks: protectedProcedure
-		.input(
-			z.object({
-				central: z.boolean().optional().default(false),
-			}),
-		)
-		.query(async ({ ctx, input }) => {
-			if (input.central) {
-				return await ztController.get_controller_networks(ctx, input.central);
-			}
+  .input(
+    z.object({
+      central: z.boolean().optional().default(false),
+    }),
+  )
+  .query(async ({ ctx, input }) => {
+    if (input.central) {
+      return await ztController.get_controller_networks(ctx, input.central);
+    }
 
-			// Define the interface for member counts
-			interface MemberCounts {
-				authorized: number;
-				total: number;
-				display: string;
-			}
+    // Define the interface for member counts
+    interface MemberCounts {
+      authorized: number;
+      total: number;
+      display: string;
+    }
 
-			interface NetworkWithMemberCount extends network {
-				memberCounts: MemberCounts;
-				networkMembers: network_members[];
-			}
+    interface NetworkWithMemberCount extends network {
+      memberCounts: MemberCounts;
+      networkMembers: network_members[];
+    }
 
-			const rawNetworks = (await ctx.prisma.network.findMany({
-				where: {
-					authorId: ctx.session.user.id,
-				},
-				include: {
-					networkMembers: {
-						select: {
-							id: true,
-							deleted: true,
-						},
-					},
-				},
-			})) as unknown as Omit<NetworkWithMemberCount, "memberCounts">[];
+    const rawNetworks = (await ctx.prisma.network.findMany({
+      where: {
+        authorId: ctx.session.user.id,
+      },
+      include: {
+        networkMembers: {
+          select: {
+            id: true,
+            deleted: true,
+            authorized: true,
+          },
+        },
+      },
+    })) as unknown as Omit<NetworkWithMemberCount, "memberCounts">[];
 
-			// Initialize networks with memberCounts property
-			const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => ({
-				...network,
-				memberCounts: {
-					authorized: 0,
-					total: 0,
-					display: "0 (0)",
-				},
-			}));
+    // Process all networks and calculate member counts
+    const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => {
+      // Count authorized members directly from database
+      const authorizedCount = network.networkMembers.filter(m => m.authorized && !m.deleted).length;
+      const totalCount = network.networkMembers.filter(m => !m.deleted).length;
 
-			// Get authorized member and total member counts for each network.
-			for (const network of networks) {
-				for (const member of network.networkMembers) {
-					const memberDetails = await ztController.member_details(
-						ctx,
-						network.nwid,
-						member.id,
-					);
-					if (memberDetails.authorized) {
-						network.memberCounts.authorized += 1;
-					}
-					network.memberCounts.total += 1;
-					network.memberCounts.display = `${network.memberCounts.authorized} (${network.memberCounts.total})`;
-				}
-			}
-			return networks;
-		}),
+      return {
+        ...network,
+        memberCounts: {
+          authorized: authorizedCount,
+          total: totalCount,
+          display: `${authorizedCount} (${totalCount})`,
+        },
+      };
+    });
+
+    return networks;
+  }),
 
 	getNetworkById: protectedProcedure
 		.input(
