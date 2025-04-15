@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import handler from "~/pages/api/auth/two-factor/totp/setup";
 import { prisma } from "~/server/db";
 import { getServerSession } from "next-auth/next";
