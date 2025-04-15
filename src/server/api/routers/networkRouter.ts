@@ -5,12 +5,16 @@ import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { sendMailWithTemplate } from "~/utils/mail";
-import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
-import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
-import { type CentralNetwork } from "~/types/central/network";
+import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
+import type { MemberEntity, CapabilitiesByName } from "~/types/local/member";
+import type { CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { network, network_members, Role } from "@prisma/client";
-import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
+import { type network, type network_members, Role } from "@prisma/client";
+import {
+	HookType,
+	type NetworkConfigChanged,
+	type NetworkDeleted,
+} from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
@@ -43,61 +47,63 @@ const RoutesArraySchema = z.array(RouteSchema);
 
 export const networkRouter = createTRPCRouter({
 	getUserNetworks: protectedProcedure
-  .input(
-    z.object({
-      central: z.boolean().optional().default(false),
-    }),
-  )
-  .query(async ({ ctx, input }) => {
-    if (input.central) {
-      return await ztController.get_controller_networks(ctx, input.central);
-    }
+		.input(
+			z.object({
+				central: z.boolean().optional().default(false),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			if (input.central) {
+				return await ztController.get_controller_networks(ctx, input.central);
+			}
 
-    // Define the interface for member counts
-    interface MemberCounts {
-      authorized: number;
-      total: number;
-      display: string;
-    }
+			// Define the interface for member counts
+			interface MemberCounts {
+				authorized: number;
+				total: number;
+				display: string;
+			}
 
-    interface NetworkWithMemberCount extends network {
-      memberCounts: MemberCounts;
-      networkMembers: network_members[];
-    }
+			interface NetworkWithMemberCount extends network {
+				memberCounts: MemberCounts;
+				networkMembers: network_members[];
+			}
 
-    const rawNetworks = (await ctx.prisma.network.findMany({
-      where: {
-        authorId: ctx.session.user.id,
-      },
-      include: {
-        networkMembers: {
-          select: {
-            id: true,
-            deleted: true,
-            authorized: true,
-          },
-        },
-      },
-    })) as unknown as Omit<NetworkWithMemberCount, "memberCounts">[];
+			const rawNetworks = (await ctx.prisma.network.findMany({
+				where: {
+					authorId: ctx.session.user.id,
+				},
+				include: {
+					networkMembers: {
+						select: {
+							id: true,
+							deleted: true,
+							authorized: true,
+						},
+					},
+				},
+			})) as unknown as Omit<NetworkWithMemberCount, "memberCounts">[];
 
-    // Process all networks and calculate member counts
-    const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => {
-      // Count authorized members directly from database
-      const authorizedCount = network.networkMembers.filter(m => m.authorized && !m.deleted).length;
-      const totalCount = network.networkMembers.filter(m => !m.deleted).length;
+			// Process all networks and calculate member counts
+			const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => {
+				// Count authorized members directly from database
+				const authorizedCount = network.networkMembers.filter(
+					(m) => m.authorized && !m.deleted,
+				).length;
+				const totalCount = network.networkMembers.filter((m) => !m.deleted).length;
 
-      return {
-        ...network,
-        memberCounts: {
-          authorized: authorizedCount,
-          total: totalCount,
-          display: `${authorizedCount} (${totalCount})`,
-        },
-      };
-    });
+				return {
+					...network,
+					memberCounts: {
+						authorized: authorizedCount,
+						total: totalCount,
+						display: `${authorizedCount} (${totalCount})`,
+					},
+				};
+			});
 
-    return networks;
-  }),
+			return networks;
+		}),
 
 	getNetworkById: protectedProcedure
 		.input(
