@@ -1,5 +1,4 @@
 import { api } from "~/utils/api";
-import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
@@ -23,7 +22,7 @@ export const WelcomeMessage = () => {
 												style={{ width: 50, height: 50 }}
 												alt="ztnet logo"
 												title="ztnet logo"
-												src={ZtnetLogo.src}
+												src="/images/ztnet_200x178.png"
 											/>
 											<span className="zt-color">ZTNET</span>
 										</div>

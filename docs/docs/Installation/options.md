@@ -38,7 +38,10 @@ Configure the application using the following environment variables:
 - `HOSTNAME`
   - Description: Hostname of the server. Only available in standalone mode.
   - Default: `0.0.0.0`.
-
+- `PORT`
+  - Description: Port on which the application will run. Only available in standalone mode.
+  - Default: `3000`.	
+  
 ### ZeroTier Controller Configuration
 - `ZT_ADDR`
   - Description: ZeroTier controller address. Use these settings if you wish to configure a custom ZeroTier controller instead of the default one.
