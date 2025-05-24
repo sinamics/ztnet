@@ -5,12 +5,16 @@ import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { sendMailWithTemplate } from "~/utils/mail";
-import { type TagsByName, type NetworkEntity, RoutesEntity } from "~/types/local/network";
-import { MemberEntity, type CapabilitiesByName } from "~/types/local/member";
-import { type CentralNetwork } from "~/types/central/network";
+import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
+import type { MemberEntity, CapabilitiesByName } from "~/types/local/member";
+import type { CentralNetwork } from "~/types/central/network";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { network, network_members, Role } from "@prisma/client";
-import { HookType, NetworkConfigChanged, NetworkDeleted } from "~/types/webhooks";
+import { type network, type network_members, Role } from "@prisma/client";
+import {
+	HookType,
+	type NetworkConfigChanged,
+	type NetworkDeleted,
+} from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
@@ -74,36 +78,30 @@ export const networkRouter = createTRPCRouter({
 						select: {
 							id: true,
 							deleted: true,
+							authorized: true,
 						},
 					},
 				},
 			})) as unknown as Omit<NetworkWithMemberCount, "memberCounts">[];
 
-			// Initialize networks with memberCounts property
-			const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => ({
-				...network,
-				memberCounts: {
-					authorized: 0,
-					total: 0,
-					display: "0 (0)",
-				},
-			}));
+			// Process all networks and calculate member counts
+			const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => {
+				// Count authorized members directly from database
+				const authorizedCount = network.networkMembers.filter(
+					(m) => m.authorized && !m.deleted,
+				).length;
+				const totalCount = network.networkMembers.filter((m) => !m.deleted).length;
 
-			// Get authorized member and total member counts for each network.
-			for (const network of networks) {
-				for (const member of network.networkMembers) {
-					const memberDetails = await ztController.member_details(
-						ctx,
-						network.nwid,
-						member.id,
-					);
-					if (memberDetails.authorized) {
-						network.memberCounts.authorized += 1;
-					}
-					network.memberCounts.total += 1;
-					network.memberCounts.display = `${network.memberCounts.authorized} (${network.memberCounts.total})`;
-				}
-			}
+				return {
+					...network,
+					memberCounts: {
+						authorized: authorizedCount,
+						total: totalCount,
+						display: `${authorizedCount} (${totalCount})`,
+					},
+				};
+			});
+
 			return networks;
 		}),
 
