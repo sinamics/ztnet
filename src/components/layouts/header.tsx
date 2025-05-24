@@ -1,7 +1,6 @@
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useSidebarStore } from "~/utils/store";
-import ZtnetLogo from "docs/images/logo/ztnet_200x178.png";
 import Link from "next/link";
 import { forwardRef } from "react";
 import { api } from "~/utils/api";
@@ -41,7 +40,7 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 								style={{ width: 25, height: 25 }}
 								alt="ztnet logo"
 								title="ztnet logo"
-								src={ZtnetLogo.src}
+								src="/images/ztnet_200x178.png"
 							/>
 							<span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent zt-color">
 								{globalOptions?.siteName || "ZTNET"}

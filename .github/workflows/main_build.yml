@@ -84,4 +84,3 @@ jobs:
           # platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:dev-${{ env.SHORT_SHA }}
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:latest-dev
