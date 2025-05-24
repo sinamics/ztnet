@@ -60,6 +60,7 @@ export const syncMemberPeersAndStatus = async (
 			const updateData: Partial<network_members> = {
 				id: updatedMember.id,
 				address: updatedMember.address,
+				authorized: updatedMember.authorized,
 				online: memberIsOnline,
 			};
 

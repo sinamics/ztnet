@@ -41,6 +41,7 @@ test("getUserNetworks", async () => {
 
 	interface NetworkMember {
 		id: string;
+		authorized: boolean;
 	}
 
 	const mockOutput: Network[] = [
@@ -56,9 +57,11 @@ test("getUserNetworks", async () => {
 			networkMembers: [
 				{
 					id: "4ef7287f63",
+					authorized: true,
 				},
 				{
 					id: "efcc1b0947",
+					authorized: true,
 				},
 			],
 		},
