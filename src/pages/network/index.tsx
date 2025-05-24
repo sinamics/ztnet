@@ -1,4 +1,4 @@
-import { type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import type { NextPageWithLayout } from "../_app";
 import { api } from "~/utils/api";
@@ -13,7 +13,7 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import Link from "next/link";
-import { User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { useRouter } from "next/router";
 
 type OrganizationId = {
