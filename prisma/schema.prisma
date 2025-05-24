@@ -82,6 +82,7 @@ model network_members {
   nwid_ref        network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
   nwid            String
   lastSeen        DateTime?
+  authorized      Boolean?                @default(false)
   physicalAddress String?
   online          Boolean?                @default(false)
   deleted         Boolean?                @default(false)
