@@ -6,6 +6,8 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
+	basePath: "/__PATH_PREFIX__",
+	assetPrefix: "/__PATH_PREFIX__",
 	reactStrictMode: true,
 	// https://nextjs.org/docs/advanced-features/output-file-tracing
 	output: "standalone",

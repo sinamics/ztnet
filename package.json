@@ -11,6 +11,7 @@
 		"format": "biome format src",
 		"format:fix": "biome format src --write",
 		"start": "node .next/standalone/server.js",
+		"start:subpath": "node scripts/start-with-basepath.js",
 		"test:dev": "jest --detectOpenHandles --verbose --config jest.pages.config.ts && jest --config jest.api.config.ts",
 		"test": "jest --config jest.pages.config.ts && jest --verbose --config jest.api.config.ts --ci --coverage",
 		"studio": "prisma studio"
