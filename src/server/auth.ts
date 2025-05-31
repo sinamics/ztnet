@@ -64,7 +64,6 @@ const prismaAdapter = PrismaAdapter(prisma);
 const MyAdapter = {
 	...prismaAdapter,
 	linkAccount: (account) => {
-		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 		const { refresh_expires_in, "not-before-policy": _, ...rest } = account;
 		return prismaAdapter.linkAccount(rest);
 	},
@@ -138,7 +137,7 @@ export const getAuthOptions = (
 							});
 						},
 					} as const,
-			  ]
+				]
 			: []),
 		CredentialsProvider({
 			// The name to display on the sign in form (e.g. "Sign in with...")

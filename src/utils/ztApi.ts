@@ -53,7 +53,7 @@ const ZT_SECRET =
 					console.error(error);
 					return null; // or appropriate fallback value
 				}
-		  })());
+			})());
 
 const getApiCredentials = async (
 	ctx: UserContext,
@@ -485,7 +485,7 @@ export const central_network_detail = async (
 							headers,
 						);
 					}),
-			  )
+				)
 			: [];
 
 		// Get available cidr options.

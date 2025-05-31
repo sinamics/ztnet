@@ -59,7 +59,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 		}, [defaultValue, onChange, forwardedRef]);
 
 		return (
-			<div className={cn("w-full", { tooltip: useTooltip && isFocused })} data-tip={t("enterToSave")}>
+			<div
+				className={cn("w-full", { tooltip: useTooltip && isFocused })}
+				data-tip={t("enterToSave")}
+			>
 				<input
 					name={name}
 					defaultValue={defaultValue}

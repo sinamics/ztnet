@@ -289,7 +289,7 @@ export async function createTransporter() {
 				? {
 						user: globalOptions.smtpUsername,
 						pass: globalOptions.smtpPassword,
-				  }
+					}
 				: undefined,
 		tls: {
 			rejectUnauthorized: globalOptions.smtpRequireTLS,

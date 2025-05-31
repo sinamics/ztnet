@@ -134,7 +134,7 @@ const findExistingMemberName = async (
 						nwid_ref: {
 							organizationId: organizationId,
 						},
-				  }
+					}
 				: {
 						id: memberId,
 						name: { not: null },
@@ -144,7 +144,7 @@ const findExistingMemberName = async (
 							authorId: ctx.session.user.id,
 							organizationId: null,
 						},
-				  };
+					};
 
 		const existingMember = await prisma.network_members.findFirst({
 			where: whereClause,
@@ -171,7 +171,7 @@ const findExistingMemberName = async (
 						: {
 								authorId: ctx.session.user.id,
 								organizationId: null,
-						  },
+							},
 				],
 			},
 			select: { nwid: true },
