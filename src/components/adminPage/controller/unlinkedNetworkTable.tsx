@@ -12,9 +12,9 @@ import {
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
-import { type User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import TimeAgo from "react-timeago";
-import { NetworkEntity } from "~/types/local/network";
+import type { NetworkEntity } from "~/types/local/network";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import {
 	useTrpcApiErrorHandler,
@@ -125,7 +125,11 @@ export const UnlinkedNetwork = () => {
 	const defaultColumn: Partial<ColumnDef<UnlinkedNetworkTableProps>> = {
 		cell: ({
 			getValue,
-			row: { original: { network: { nwid, name } } },
+			row: {
+				original: {
+					network: { nwid, name },
+				},
+			},
 			column: { id },
 		}) => {
 			const { data: adminUsers } = api.admin.getUsers.useQuery({

@@ -1,6 +1,6 @@
 import "../__mocks__/networkById";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { NextRouter, useRouter } from "next/router";
+import { type NextRouter, useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";

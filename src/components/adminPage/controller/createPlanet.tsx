@@ -1,7 +1,7 @@
-import React from "react";
+import type React from "react";
 import RootForm from "./rootForm";
 import { useTranslations } from "next-intl";
-import { Planet } from "@prisma/client";
+import type { Planet } from "@prisma/client";
 
 interface IProps {
 	getPlanet: Planet & { error?: Error };

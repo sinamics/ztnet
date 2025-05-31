@@ -1,10 +1,11 @@
-import { RootNodes } from "@prisma/client";
+import type { RootNodes } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { JsonValue } from "type-fest";
+import type { JsonValue } from "type-fest";
 import Input from "~/components/elements/input";
-import { ErrorData } from "~/types/errorHandling";
+import type { ErrorData } from "~/types/errorHandling";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
@@ -41,13 +42,15 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={i} className="p-5 border rounded-md border-primary">
 					<p>Root #{i + 1}</p>
-					<label className="block text-gray-500 mb-2">
+					<label className="block text-gray-500 mb-2" htmlFor={`endpoints-${i}`}>
 						{t("controller.generatePlanet.endpointsDescription")}
 					</label>
 					<div className="space-y-3">
 						{["endpoints", "identity", "comments"].map((field) => (
 							<div key={field}>
-								<label className="block text-gray-500 mb-1 capitalize">{field}</label>
+								<label className="block text-gray-500 mb-1 capitalize" htmlFor={field}>
+									{field}
+								</label>
 								<Input
 									name={field}
 									type="text"
@@ -117,7 +120,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 								identity: getIdentity?.identity || "",
 								comments: "",
 							},
-					  ];
+						];
 
 			return {
 				...prev, // Spread the previous state
@@ -169,14 +172,14 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 	const inputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const target = e.target as HTMLInputElement;
-		let value;
+		let value: string | number | boolean | undefined;
 
 		switch (target.type) {
 			case "checkbox":
 				value = target.checked;
 				break;
 			case "number":
-				value = parseInt(target.value, 10);
+				value = Number.parseInt(target.value, 10);
 				break;
 			default:
 				value = target.value;
@@ -243,7 +246,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				) : null}
 				<div className="flex justify-between gap-5">
 					<div className="w-full">
-						<label className="block text-gray-500 mb-2">
+						<label className="block text-gray-500 mb-2" htmlFor="plBirth">
 							{t("controller.generatePlanet.birthLabel")}
 						</label>
 						<Input
@@ -258,7 +261,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					</div>
 
 					<div className="w-full">
-						<label className="block text-gray-500 mb-2">
+						<label className="block text-gray-500 mb-2" htmlFor="plID">
 							{t("controller.generatePlanet.idLabel")}
 						</label>
 						<Input

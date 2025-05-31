@@ -108,18 +108,18 @@ const Account = () => {
 						meLoading || sendMailLoading
 							? {
 									text: "loading",
-							  }
+								}
 							: me?.emailVerified
-							  ? {
+								? {
 										text: t("userSettings.account.accountSettings.verifiedBadge"),
 										className: "tooltip-success",
 										isVerified: true,
-								  }
-							  : {
+									}
+								: {
 										text: "Not verified, click to resend",
 										className: "tooltip-primary",
 										onClick: sendVerificationEmail,
-								  }
+									}
 					}
 					fields={[
 						{

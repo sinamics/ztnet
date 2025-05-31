@@ -26,7 +26,10 @@
 			"recommended": true,
 			"style": {
 				"useSelfClosingElements": "off",
-				"noNonNullAssertion": "off"
+				"noNonNullAssertion": "off",
+				"useImportType": "off",
+				"useNumberNamespace": "off",
+				"useNodejsImportProtocol": "off"
 			},
 			"a11y": {
 				"noNoninteractiveTabindex": "off",
@@ -34,7 +37,10 @@
 				"noSvgWithoutTitle": "off",
 				"useValidAnchor": "off",
 				"useKeyWithMouseEvents": "off",
-				"useKeyWithClickEvents": "off"
+				"useKeyWithClickEvents": "off",
+				"useValidAriaRole": "off",
+				"noLabelWithoutControl": "off",
+				"useSemanticElements": "off"
 			},
 			"suspicious": {
 				"noCommentText": "warn",
