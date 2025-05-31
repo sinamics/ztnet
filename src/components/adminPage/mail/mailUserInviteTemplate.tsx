@@ -133,7 +133,7 @@ const MailUserInviteTemplate = () => {
 					</span>
 				</p>
 				<div className="form-control w-full">
-					<label className="label">
+					<label className="label" htmlFor="subject">
 						<span className="label-text">{t("mail.templates.subject")}</span>
 					</label>
 					<input
@@ -148,7 +148,7 @@ const MailUserInviteTemplate = () => {
 					/>
 				</div>
 				<div className="form-control w-full">
-					<label className="label">
+					<label className="label" htmlFor="body">
 						<span className="label-text">{t("mail.templates.htmlBody")}</span>
 					</label>
 					<textarea
