@@ -706,6 +706,67 @@
 				"pendingInvitations": "Pending Invitations:",
 				"activeWebhooks": "Active Webhooks:"
 			}
+		},
+		"backupRestore": {
+			"title": "Backup & Restore",
+			"description": "Create, manage, and restore backups of your ZTNet installation including database and ZeroTier configuration.",
+			"createBackup": {
+				"sectionTitle": "Create Backup",
+				"includeDatabase": "Include Database",
+				"includeZerotier": "Include ZeroTier Folder",
+				"backupName": "Backup Name (optional)",
+				"backupNamePlaceholder": "Leave empty for auto-generated name",
+				"createButton": "Create & Download Backup",
+				"creatingButton": "Creating Backup...",
+				"successToast": "Backup created: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Existing Backups",
+				"noBackups": "No backups found. Create your first backup above.",
+				"table": {
+					"filename": "Filename",
+					"size": "Size",
+					"created": "Created",
+					"actions": "Actions",
+					"download": "Download",
+					"restore": "Restore",
+					"delete": "Delete"
+				},
+				"deleteModal": {
+					"title": "Delete Backup",
+					"description": "Are you sure you want to delete this backup? This action cannot be undone."
+				},
+				"restoreModal": {
+					"title": "Restore from Backup",
+					"description": "This will overwrite your current data. Make sure to create a backup first!"
+				},
+				"deleteSuccessToast": "Backup deleted successfully"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restore from File",
+				"warning": "Restoring will overwrite your current data. Make sure to create a backup first!",
+				"restoreDatabase": "Restore Database",
+				"restoreZerotier": "Restore ZeroTier Folder",
+				"selectFile": "Select Backup File",
+				"selectedFile": "Selected file: {fileName} ({size})",
+				"restoreButton": "Restore from File",
+				"processingButton": "Processing...",
+				"restoringButton": "Restoring...",
+				"uploadSuccessToast": "Backup uploaded successfully",
+				"restoreSuccessToast": "Restore completed successfully. Please restart the application.",
+				"invalidFileModal": {
+					"title": "Invalid File",
+					"description": "Please select a valid .zip backup file."
+				},
+				"uploadErrorModal": {
+					"title": "Upload Error",
+					"description": "Failed to process file upload. Please try again."
+				},
+				"restoreModal": {
+					"title": "Restore from File",
+					"description": "This will overwrite your current data. Make sure to create a backup first!"
+				}
+			}
 		}
 	},
 	"userSettings": {

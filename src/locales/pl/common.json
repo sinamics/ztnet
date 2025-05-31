@@ -706,6 +706,67 @@
 				"pendingInvitations": "Oczekujące zaproszenia:",
 				"activeWebhooks": "Aktywne webhooki:"
 			}
+		},
+		"backupRestore": {
+			"title": "Kopia Zapasowa i Przywracanie",
+			"description": "Twórz, zarządzaj i przywracaj kopie zapasowe instalacji ZTNet obejmujące bazę danych i konfigurację ZeroTier.",
+			"createBackup": {
+				"sectionTitle": "Utwórz Kopię Zapasową",
+				"includeDatabase": "Uwzględnij Bazę Danych",
+				"includeZerotier": "Uwzględnij Folder ZeroTier",
+				"backupName": "Nazwa Kopii Zapasowej (opcjonalnie)",
+				"backupNamePlaceholder": "Pozostaw puste dla automatycznie wygenerowanej nazwy",
+				"createButton": "Utwórz i Pobierz Kopię Zapasową",
+				"creatingButton": "Tworzenie Kopii Zapasowej...",
+				"successToast": "Kopia zapasowa utworzona: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Istniejące Kopie Zapasowe",
+				"noBackups": "Nie znaleziono kopii zapasowych. Utwórz swoją pierwszą kopię zapasową powyżej.",
+				"table": {
+					"filename": "Nazwa Pliku",
+					"size": "Rozmiar",
+					"created": "Utworzono",
+					"actions": "Akcje",
+					"download": "Pobierz",
+					"restore": "Przywróć",
+					"delete": "Usuń"
+				},
+				"deleteModal": {
+					"title": "Usuń Kopię Zapasową",
+					"description": "Czy na pewno chcesz usunąć tę kopię zapasową? Ta akcja nie może zostać cofnięta."
+				},
+				"restoreModal": {
+					"title": "Przywróć z Kopii Zapasowej",
+					"description": "To nadpisze twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!"
+				},
+				"deleteSuccessToast": "Kopia zapasowa usunięta pomyślnie"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Przywróć z Pliku",
+				"warning": "Przywracanie nadpisze twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!",
+				"restoreDatabase": "Przywróć Bazę Danych",
+				"restoreZerotier": "Przywróć Folder ZeroTier",
+				"selectFile": "Wybierz Plik Kopii Zapasowej",
+				"selectedFile": "Wybrany plik: {fileName} ({size})",
+				"restoreButton": "Przywróć z Pliku",
+				"processingButton": "Przetwarzanie...",
+				"restoringButton": "Przywracanie...",
+				"uploadSuccessToast": "Kopia zapasowa przesłana pomyślnie",
+				"restoreSuccessToast": "Przywracanie zakończone pomyślnie. Proszę uruchomić ponownie aplikację.",
+				"invalidFileModal": {
+					"title": "Nieprawidłowy Plik",
+					"description": "Proszę wybrać prawidłowy plik kopii zapasowej .zip."
+				},
+				"uploadErrorModal": {
+					"title": "Błąd Przesyłania",
+					"description": "Nie udało się przetworzyć przesyłania pliku. Proszę spróbować ponownie."
+				},
+				"restoreModal": {
+					"title": "Przywróć z Pliku",
+					"description": "To nadpisze twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!"
+				}
+			}
 		}
 	},
 	"userSettings": {

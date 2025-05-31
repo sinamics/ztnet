@@ -706,6 +706,67 @@
 				"pendingInvitations": "待处理的邀请：",
 				"activeWebhooks": "活动的 Webhooks:"
 			}
+		},
+		"backupRestore": {
+			"title": "备份与恢复",
+			"description": "创建、管理和恢复您的 ZTNet 安装备份，包括数据库和 ZeroTier 配置。",
+			"createBackup": {
+				"sectionTitle": "创建备份",
+				"includeDatabase": "包含数据库",
+				"includeZerotier": "包含 ZeroTier 文件夹",
+				"backupName": "备份名称（可选）",
+				"backupNamePlaceholder": "留空则自动生成名称",
+				"createButton": "创建并下载备份",
+				"creatingButton": "正在创建备份...",
+				"successToast": "备份已创建：{fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "现有备份",
+				"noBackups": "未找到备份。请在上方创建您的第一个备份。",
+				"table": {
+					"filename": "文件名",
+					"size": "大小",
+					"created": "创建时间",
+					"actions": "操作",
+					"download": "下载",
+					"restore": "恢复",
+					"delete": "删除"
+				},
+				"deleteModal": {
+					"title": "删除备份",
+					"description": "您确定要删除此备份吗？此操作无法撤销。"
+				},
+				"restoreModal": {
+					"title": "从备份恢复",
+					"description": "这将覆盖您当前的数据。请确保先创建备份！"
+				},
+				"deleteSuccessToast": "备份删除成功"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "从文件恢复",
+				"warning": "恢复将覆盖您当前的数据。请确保先创建备份！",
+				"restoreDatabase": "恢复数据库",
+				"restoreZerotier": "恢复 ZeroTier 文件夹",
+				"selectFile": "选择备份文件",
+				"selectedFile": "已选择文件：{fileName} ({size})",
+				"restoreButton": "从文件恢复",
+				"processingButton": "正在处理...",
+				"restoringButton": "正在恢复...",
+				"uploadSuccessToast": "备份上传成功",
+				"restoreSuccessToast": "恢复成功完成。请重启应用程序。",
+				"invalidFileModal": {
+					"title": "无效文件",
+					"description": "请选择有效的 .zip 备份文件。"
+				},
+				"uploadErrorModal": {
+					"title": "上传错误",
+					"description": "文件上传处理失败。请重试。"
+				},
+				"restoreModal": {
+					"title": "从文件恢复",
+					"description": "这将覆盖您当前的数据。请确保先创建备份！"
+				}
+			}
 		}
 	},
 	"userSettings": {
