@@ -416,7 +416,7 @@ export const networkRouter = createTRPCRouter({
 								...input.v6AssignMode,
 							},
 						},
-				  }
+					}
 				: { v6AssignMode: { ...network.v6AssignMode, ...input.v6AssignMode } };
 
 			try {
@@ -736,7 +736,7 @@ export const networkRouter = createTRPCRouter({
 							ipAssignmentPools,
 							routes: uniqueRoutes,
 						},
-				  }
+					}
 				: { ipAssignmentPools, routes: uniqueRoutes };
 
 			try {
@@ -1268,13 +1268,13 @@ export const networkRouter = createTRPCRouter({
 						capabilitiesByName,
 						tagsByName: tags,
 						rulesSource: flowRoute,
-				  }
+					}
 				: {
 						...updateObj,
 						capabilitiesByName,
 						tagsByName: tags,
 						rulesSource: "#",
-				  };
+					};
 
 			// update zerotier network with the new flow route
 			const updatedRules = await ztController.network_update({

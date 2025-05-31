@@ -91,7 +91,7 @@ const UserIsActive = ({ user }: Iuser) => {
 							updateUser(
 								{
 									id: user?.id,
-									params: { isActive: e.target.value === "Active" ? true : false },
+									params: { isActive: e.target.value === "Active" },
 								},
 								{
 									onSuccess: () => {

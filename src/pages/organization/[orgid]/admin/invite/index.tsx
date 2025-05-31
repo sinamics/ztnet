@@ -40,6 +40,7 @@ const ExpiryCountdown = ({ date, onExpire }) => {
 		}, 1000);
 
 		return () => clearInterval(intervalId);
+		// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	}, [timeLeft, onExpire, calculateTimeLeft]);
 
 	return timeLeft <= 0 ? <span>{b("resend")}</span> : <span>{timeLeft} seconds</span>;

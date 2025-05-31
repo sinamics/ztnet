@@ -76,8 +76,8 @@ async function upsertDeviceInfo(deviceInfo: DeviceInfo): Promise<void> {
 			const templateKey = !existingDevice
 				? MailTemplateKey.NewDeviceNotification
 				: existingDevice.ipAddress !== deviceInfo.ipAddress
-				  ? MailTemplateKey.DeviceIpChangeNotification
-				  : null;
+					? MailTemplateKey.DeviceIpChangeNotification
+					: null;
 
 			if (templateKey) {
 				await sendMailWithTemplate(templateKey, {

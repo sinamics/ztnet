@@ -29,7 +29,7 @@ const WithStep = ({
 const ShowSteps = ({ step }: { step: number }) => {
 	const t = useTranslations();
 	return [
-		<ul className="steps w-full">
+		<ul className="steps w-full" key="steps">
 			<li
 				data-content={`${step > 0 ? "✓" : "?"}`}
 				className={classNames("step step-neutral", {

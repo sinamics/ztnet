@@ -213,16 +213,16 @@ export const authRouter = createTRPCRouter({
 										id: parseInt(invitation.groupId, 10),
 									},
 								},
-						  }
+							}
 						: defaultUserGroup
-						  ? {
+							? {
 									userGroup: {
 										connect: {
 											id: defaultUserGroup.id,
 										},
 									},
-							  }
-						  : {}),
+								}
+							: {}),
 					// add user to organizationRoles if the token is valid
 					organizationRoles: decryptedOrgToken
 						? {
@@ -230,7 +230,7 @@ export const authRouter = createTRPCRouter({
 									organizationId: decryptedOrgToken.organizationId,
 									role: decryptedOrgToken.invitation.role,
 								},
-						  }
+							}
 						: undefined,
 					// add the user to the organization if the token is valid
 					memberOfOrgs: decryptedOrgToken
@@ -238,7 +238,7 @@ export const authRouter = createTRPCRouter({
 								connect: {
 									id: decryptedOrgToken.organizationId,
 								},
-						  }
+							}
 						: undefined,
 					options: {
 						create: {
