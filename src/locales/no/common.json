@@ -706,6 +706,67 @@
 				"pendingInvitations": "Ventende Invitasjoner:",
 				"activeWebhooks": "Aktive Webhooks:"
 			}
+		},
+		"backupRestore": {
+			"title": "Sikkerhetskopi og Gjenoppretting",
+			"description": "Opprett, administrer og gjenopprett sikkerhetskopier av din ZTNet-installasjon inkludert database og ZeroTier-konfigurasjon.",
+			"createBackup": {
+				"sectionTitle": "Opprett Sikkerhetskopi",
+				"includeDatabase": "Inkluder Database",
+				"includeZerotier": "Inkluder ZeroTier-mappe",
+				"backupName": "Navn på Sikkerhetskopi (valgfritt)",
+				"backupNamePlaceholder": "La stå tom for auto-generert navn",
+				"createButton": "Opprett og Last ned Sikkerhetskopi",
+				"creatingButton": "Oppretter Sikkerhetskopi...",
+				"successToast": "Sikkerhetskopi opprettet: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Eksisterende Sikkerhetskopier",
+				"noBackups": "Ingen sikkerhetskopier funnet. Opprett din første sikkerhetskopi ovenfor.",
+				"table": {
+					"filename": "Filnavn",
+					"size": "Størrelse",
+					"created": "Opprettet",
+					"actions": "Handlinger",
+					"download": "Last ned",
+					"restore": "Gjenopprett",
+					"delete": "Slett"
+				},
+				"deleteModal": {
+					"title": "Slett Sikkerhetskopi",
+					"description": "Er du sikker på at du vil slette denne sikkerhetskopien? Denne handlingen kan ikke angres."
+				},
+				"restoreModal": {
+					"title": "Gjenopprett fra Sikkerhetskopi",
+					"description": "Dette vil overskrive dine nåværende data. Sørg for å opprette en sikkerhetskopi først!"
+				},
+				"deleteSuccessToast": "Sikkerhetskopi slettet vellykket"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Gjenopprett fra Fil",
+				"warning": "Gjenoppretting vil overskrive dine nåværende data. Sørg for å opprette en sikkerhetskopi først!",
+				"restoreDatabase": "Gjenopprett Database",
+				"restoreZerotier": "Gjenopprett ZeroTier-mappe",
+				"selectFile": "Velg Sikkerhetskopi-fil",
+				"selectedFile": "Valgt fil: {fileName} ({size})",
+				"restoreButton": "Gjenopprett fra Fil",
+				"processingButton": "Behandler...",
+				"restoringButton": "Gjenoppretter...",
+				"uploadSuccessToast": "Sikkerhetskopi lastet opp vellykket",
+				"restoreSuccessToast": "Gjenoppretting fullført vellykket. Vennligst start applikasjonen på nytt.",
+				"invalidFileModal": {
+					"title": "Ugyldig Fil",
+					"description": "Vennligst velg en gyldig .zip sikkerhetskopi-fil."
+				},
+				"uploadErrorModal": {
+					"title": "Opplastingsfeil",
+					"description": "Kunne ikke behandle filopplasting. Vennligst prøv igjen."
+				},
+				"restoreModal": {
+					"title": "Gjenopprett fra Fil",
+					"description": "Dette vil overskrive dine nåværende data. Sørg for å opprette en sikkerhetskopi først!"
+				}
+			}
 		}
 	},
 	"userSettings": {

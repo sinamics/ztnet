@@ -10,8 +10,7 @@ import {
 import { useModalStore } from "~/utils/store";
 
 const BackupRestore = () => {
-	const t = useTranslations("admin");
-	const b = useTranslations("commonButtons");
+	const t = useTranslations("admin.backupRestore");
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const callModal = useModalStore((state) => state.callModal);
 
@@ -44,7 +43,7 @@ const BackupRestore = () => {
 			onSuccess: (data) => {
 				handleApiSuccess({
 					actions: [refetchBackups],
-					toastMessage: `Backup created: ${data.fileName}`,
+					toastMessage: t("createBackup.successToast", { fileName: data.fileName }),
 				})();
 
 				// Trigger download
@@ -57,7 +56,7 @@ const BackupRestore = () => {
 		api.admin.deleteBackup.useMutation({
 			onSuccess: handleApiSuccess({
 				actions: [refetchBackups],
-				toastMessage: "Backup deleted successfully",
+				toastMessage: t("existingBackups.deleteSuccessToast"),
 			}),
 			onError: handleApiError,
 		});
@@ -65,7 +64,7 @@ const BackupRestore = () => {
 	const { mutate: restoreBackup, isLoading: restoringBackup } =
 		api.admin.restoreBackup.useMutation({
 			onSuccess: handleApiSuccess({
-				toastMessage: "Restore completed successfully. Please restart the application.",
+				toastMessage: t("restoreFromFile.restoreSuccessToast"),
 			}),
 			onError: handleApiError,
 		});
@@ -97,7 +96,7 @@ const BackupRestore = () => {
 		api.admin.uploadBackup.useMutation({
 			onSuccess: handleApiSuccess({
 				actions: [refetchBackups],
-				toastMessage: "Backup uploaded successfully",
+				toastMessage: t("restoreFromFile.uploadSuccessToast"),
 			}),
 			onError: handleApiError,
 		});
@@ -114,12 +113,11 @@ const BackupRestore = () => {
 		callModal({
 			title: (
 				<p>
-					<span>Delete Backup </span>
+					<span>{t("existingBackups.deleteModal.title")} </span>
 					<span className="text-primary">{fileName}</span>
 				</p>
 			),
-			description:
-				"Are you sure you want to delete this backup? This action cannot be undone.",
+			description: t("existingBackups.deleteModal.description"),
 			yesAction: () => deleteBackup({ fileName }),
 		});
 	};
@@ -130,8 +128,8 @@ const BackupRestore = () => {
 			setUploadedFile(file);
 		} else {
 			callModal({
-				title: "Invalid File",
-				description: "Please select a valid .zip backup file.",
+				title: t("restoreFromFile.invalidFileModal.title"),
+				description: t("restoreFromFile.invalidFileModal.description"),
 			});
 		}
 	};
@@ -142,12 +140,11 @@ const BackupRestore = () => {
 		callModal({
 			title: (
 				<p>
-					<span>Restore from File </span>
+					<span>{t("restoreFromFile.restoreModal.title")} </span>
 					<span className="text-primary">{uploadedFile.name}</span>
 				</p>
 			),
-			description:
-				"This will overwrite your current data. Make sure to create a backup first!",
+			description: t("restoreFromFile.restoreModal.description"),
 			yesAction: () => {
 				try {
 					// Convert file to base64
@@ -173,8 +170,8 @@ const BackupRestore = () => {
 					reader.readAsDataURL(uploadedFile);
 				} catch (_error) {
 					callModal({
-						title: "Upload Error",
-						description: "Failed to process file upload. Please try again.",
+						title: t("restoreFromFile.uploadErrorModal.title"),
+						description: t("restoreFromFile.uploadErrorModal.description"),
 					});
 				}
 			},
@@ -185,12 +182,11 @@ const BackupRestore = () => {
 		callModal({
 			title: (
 				<p>
-					<span>Restore from Backup </span>
+					<span>{t("existingBackups.restoreModal.title")} </span>
 					<span className="text-primary">{fileName}</span>
 				</p>
 			),
-			description:
-				"This will overwrite your current data. Make sure to create a backup first!",
+			description: t("existingBackups.restoreModal.description"),
 			yesAction: () => {
 				restoreBackup({
 					fileName,
@@ -215,12 +211,12 @@ const BackupRestore = () => {
 	return (
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{/* Create Backup Section */}
-			<MenuSectionDividerWrapper title="Create Backup">
+			<MenuSectionDividerWrapper title={t("createBackup.sectionTitle")}>
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="form-control">
 							<label className="label cursor-pointer">
-								<span className="label-text">Include Database</span>
+								<span className="label-text">{t("createBackup.includeDatabase")}</span>
 								<input
 									type="checkbox"
 									className="checkbox checkbox-primary"
@@ -236,7 +232,7 @@ const BackupRestore = () => {
 						</div>
 						<div className="form-control">
 							<label className="label cursor-pointer">
-								<span className="label-text">Include ZeroTier Folder</span>
+								<span className="label-text">{t("createBackup.includeZerotier")}</span>
 								<input
 									type="checkbox"
 									className="checkbox checkbox-primary"
@@ -254,11 +250,11 @@ const BackupRestore = () => {
 
 					<div className="form-control">
 						<label className="label">
-							<span className="label-text">Backup Name (optional)</span>
+							<span className="label-text">{t("createBackup.backupName")}</span>
 						</label>
 						<input
 							type="text"
-							placeholder="Leave empty for auto-generated name"
+							placeholder={t("createBackup.backupNamePlaceholder")}
 							className="input input-bordered"
 							value={createBackupOptions.backupName}
 							onChange={(e) =>
@@ -279,27 +275,29 @@ const BackupRestore = () => {
 								!createBackupOptions.includeZerotier)
 						}
 					>
-						{creatingBackup ? "Creating Backup..." : "Create & Download Backup"}
+						{creatingBackup
+							? t("createBackup.creatingButton")
+							: t("createBackup.createButton")}
 					</button>
 				</div>
 			</MenuSectionDividerWrapper>
 
 			{/* Existing Backups Section */}
-			<MenuSectionDividerWrapper title="Existing Backups">
+			<MenuSectionDividerWrapper title={t("existingBackups.sectionTitle")}>
 				<div className="space-y-4">
 					{backupsLoading ? (
 						<div className="flex justify-center">
 							<span className="loading loading-spinner loading-md"></span>
 						</div>
 					) : backups && backups.length > 0 ? (
-						<div className="overflow-x-auto">
+						<div className="">
 							<table className="table table-zebra w-full">
 								<thead>
 									<tr>
-										<th>Filename</th>
-										<th>Size</th>
-										<th>Created</th>
-										<th>Actions</th>
+										<th>{t("existingBackups.table.filename")}</th>
+										<th>{t("existingBackups.table.size")}</th>
+										<th>{t("existingBackups.table.created")}</th>
+										<th>{t("existingBackups.table.actions")}</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -314,21 +312,21 @@ const BackupRestore = () => {
 														className="btn btn-sm btn-outline btn-primary"
 														onClick={() => downloadBackupFile(backup.fileName)}
 													>
-														Download
+														{t("existingBackups.table.download")}
 													</button>
 													<button
 														className="btn btn-sm btn-outline btn-success"
 														onClick={() => handleRestoreFromExisting(backup.fileName)}
 														disabled={restoringBackup}
 													>
-														Restore
+														{t("existingBackups.table.restore")}
 													</button>
 													<button
 														className={`btn btn-sm btn-outline btn-error ${deletingBackup ? "loading" : ""}`}
 														onClick={() => handleDeleteBackup(backup.fileName)}
 														disabled={deletingBackup}
 													>
-														Delete
+														{t("existingBackups.table.delete")}
 													</button>
 												</div>
 											</td>
@@ -339,14 +337,14 @@ const BackupRestore = () => {
 						</div>
 					) : (
 						<div className="text-center text-gray-500 py-8">
-							No backups found. Create your first backup above.
+							{t("existingBackups.noBackups")}
 						</div>
 					)}
 				</div>
 			</MenuSectionDividerWrapper>
 
 			{/* Restore from File Section */}
-			<MenuSectionDividerWrapper title="Restore from File" className="">
+			<MenuSectionDividerWrapper title={t("restoreFromFile.sectionTitle")} className="">
 				<div className="space-y-4">
 					<div className="alert alert-warning">
 						<svg
@@ -363,15 +361,14 @@ const BackupRestore = () => {
 							/>
 						</svg>
 						<span>
-							<strong>Warning:</strong> Restoring will overwrite your current data. Make
-							sure to create a backup first!
+							<strong>Warning:</strong> {t("restoreFromFile.warning")}
 						</span>
 					</div>
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="form-control">
 							<label className="label cursor-pointer">
-								<span className="label-text">Restore Database</span>
+								<span className="label-text">{t("restoreFromFile.restoreDatabase")}</span>
 								<input
 									type="checkbox"
 									className="checkbox checkbox-primary"
@@ -387,7 +384,7 @@ const BackupRestore = () => {
 						</div>
 						<div className="form-control">
 							<label className="label cursor-pointer">
-								<span className="label-text">Restore ZeroTier Folder</span>
+								<span className="label-text">{t("restoreFromFile.restoreZerotier")}</span>
 								<input
 									type="checkbox"
 									className="checkbox checkbox-primary"
@@ -405,7 +402,7 @@ const BackupRestore = () => {
 
 					<div className="form-control">
 						<label className="label">
-							<span className="label-text">Select Backup File</span>
+							<span className="label-text">{t("restoreFromFile.selectFile")}</span>
 						</label>
 						<input
 							ref={fileInputRef}
@@ -432,7 +429,10 @@ const BackupRestore = () => {
 								></path>
 							</svg>
 							<span>
-								Selected file: {uploadedFile.name} ({formatFileSize(uploadedFile.size)})
+								{t("restoreFromFile.selectedFile", {
+									fileName: uploadedFile.name,
+									size: formatFileSize(uploadedFile.size),
+								})}
 							</span>
 						</div>
 					)}
@@ -447,38 +447,10 @@ const BackupRestore = () => {
 							(!restoreOptions.restoreDatabase && !restoreOptions.restoreZerotier)
 						}
 					>
-						{restoringBackup || uploadingBackup ? "Processing..." : "Restore from File"}
+						{restoringBackup || uploadingBackup
+							? t("restoreFromFile.processingButton")
+							: t("restoreFromFile.restoreButton")}
 					</button>
-				</div>
-			</MenuSectionDividerWrapper>
-
-			{/* Information Section */}
-			<MenuSectionDividerWrapper title="Information">
-				<div className="prose prose-sm max-w-none">
-					<h4>About Backups</h4>
-					<ul>
-						<li>
-							<strong>Database:</strong> Includes all network configurations, user data,
-							and settings
-						</li>
-						<li>
-							<strong>ZeroTier Folder:</strong> Contains identity files and network
-							configurations
-						</li>
-						<li>
-							<strong>Backup Files:</strong> Created as encrypted ZIP archives for
-							security
-						</li>
-					</ul>
-
-					<h4>Restore Process</h4>
-					<ul>
-						<li>
-							The application will temporarily stop ZeroTier services during restore
-						</li>
-						<li>Current data will be backed up before restoration</li>
-						<li>You may need to restart the application after restoration</li>
-					</ul>
 				</div>
 			</MenuSectionDividerWrapper>
 		</main>
@@ -488,4 +460,5 @@ const BackupRestore = () => {
 BackupRestore.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAdminAuthenticated>{page}</LayoutAdminAuthenticated>;
 };
+
 export default BackupRestore;

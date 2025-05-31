@@ -706,6 +706,67 @@
 				"pendingInvitations": "Invitations en attente :",
 				"activeWebhooks": "Webhooks actifs :"
 			}
+		},
+		"backupRestore": {
+			"title": "Sauvegarde et Restauration",
+			"description": "Créez, gérez et restaurez les sauvegardes de votre installation ZTNet incluant la base de données et la configuration ZeroTier.",
+			"createBackup": {
+				"sectionTitle": "Créer une Sauvegarde",
+				"includeDatabase": "Inclure la Base de Données",
+				"includeZerotier": "Inclure le Dossier ZeroTier",
+				"backupName": "Nom de Sauvegarde (optionnel)",
+				"backupNamePlaceholder": "Laisser vide pour un nom auto-généré",
+				"createButton": "Créer et Télécharger la Sauvegarde",
+				"creatingButton": "Création de la Sauvegarde...",
+				"successToast": "Sauvegarde créée : {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Sauvegardes Existantes",
+				"noBackups": "Aucune sauvegarde trouvée. Créez votre première sauvegarde ci-dessus.",
+				"table": {
+					"filename": "Nom de Fichier",
+					"size": "Taille",
+					"created": "Créé",
+					"actions": "Actions",
+					"download": "Télécharger",
+					"restore": "Restaurer",
+					"delete": "Supprimer"
+				},
+				"deleteModal": {
+					"title": "Supprimer la Sauvegarde",
+					"description": "Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action ne peut pas être annulée."
+				},
+				"restoreModal": {
+					"title": "Restaurer depuis la Sauvegarde",
+					"description": "Cela écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !"
+				},
+				"deleteSuccessToast": "Sauvegarde supprimée avec succès"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restaurer depuis un Fichier",
+				"warning": "La restauration écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !",
+				"restoreDatabase": "Restaurer la Base de Données",
+				"restoreZerotier": "Restaurer le Dossier ZeroTier",
+				"selectFile": "Sélectionner le Fichier de Sauvegarde",
+				"selectedFile": "Fichier sélectionné : {fileName} ({size})",
+				"restoreButton": "Restaurer depuis un Fichier",
+				"processingButton": "Traitement...",
+				"restoringButton": "Restauration...",
+				"uploadSuccessToast": "Sauvegarde téléchargée avec succès",
+				"restoreSuccessToast": "Restauration terminée avec succès. Veuillez redémarrer l'application.",
+				"invalidFileModal": {
+					"title": "Fichier Invalide",
+					"description": "Veuillez sélectionner un fichier .zip de sauvegarde valide."
+				},
+				"uploadErrorModal": {
+					"title": "Erreur de Téléchargement",
+					"description": "Échec du traitement du téléchargement de fichier. Veuillez réessayer."
+				},
+				"restoreModal": {
+					"title": "Restaurer depuis un Fichier",
+					"description": "Cela écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !"
+				}
+			}
 		}
 	},
 	"userSettings": {
