@@ -1,4 +1,4 @@
-import { type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
 import Users from "./users";
@@ -13,6 +13,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import MetaTags from "~/components/shared/metaTags";
 import Link from "next/link";
 import { api } from "~/utils/api";
+import BackupRestore from "./backuprestore";
 
 const AdminSettings = ({ orgIds }) => {
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
@@ -59,6 +60,11 @@ const AdminSettings = ({ orgIds }) => {
 			name: t("organization"),
 			value: "organization",
 			component: <Organization />,
+		},
+		{
+			name: "Backup & Restore",
+			value: "backup-restore",
+			component: <BackupRestore />,
 		},
 	];
 

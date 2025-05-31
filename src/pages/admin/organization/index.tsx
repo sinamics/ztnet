@@ -1,4 +1,4 @@
-import { type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { useTranslations } from "next-intl";
 import AddOrgForm from "~/components/networkByIdPage/organization/addOrgForm";
