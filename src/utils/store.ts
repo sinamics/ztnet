@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Socket, io } from "socket.io-client";
+import { type Socket, io } from "socket.io-client";
 
 interface FontSizeStoreState {
 	fontSize: string;
