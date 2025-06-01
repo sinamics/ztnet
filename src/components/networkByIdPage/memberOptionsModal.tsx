@@ -427,14 +427,14 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 										nwid,
 									})
 								}
-								className="btn btn-error btn-outline btn-sm rounded-sm"
+								className="btn btn-error btn-outline btn-sm rounded-xs"
 							>
 								{b("delete")}
 							</button>
 						) : (
 							<button
 								onClick={() => stashMember(memberId)}
-								className="btn btn-warning btn-outline btn-sm rounded-sm"
+								className="btn btn-warning btn-outline btn-sm rounded-xs"
 							>
 								{b("stash")}
 							</button>

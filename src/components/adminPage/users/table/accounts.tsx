@@ -182,7 +182,7 @@ export const Accounts = () => {
 										content: <UserOptionsModal userId={original?.id} />,
 									})
 								}
-								className="btn btn-outline btn-xs rounded-sm"
+								className="btn btn-outline btn-xs rounded-xs"
 							>
 								Options
 							</button>
@@ -257,7 +257,7 @@ export const Accounts = () => {
 					<DebouncedInput
 						value={globalFilter ?? ""}
 						onChange={(value) => setGlobalFilter(String(value))}
-						className="font-lg border-block border p-2 shadow"
+						className="font-lg border-block border p-2 shadow-sm"
 						placeholder="search users"
 					/>
 				</div>

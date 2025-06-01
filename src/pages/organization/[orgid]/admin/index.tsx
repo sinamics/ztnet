@@ -61,7 +61,7 @@ const OrganizationAdminSettings = ({ orgIds, user }) => {
 		});
 	};
 	return (
-		<div className="animate-fadeIn py-5">
+		<div className="animate-fade-in py-5">
 			<MetaTags title={title} />
 			<div role="tablist" className="tabs tabs-bordered flex flex-wrap p-3 pb-10 ">
 				{tabs.map((t) => {

@@ -101,7 +101,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 										),
 									})
 								}
-								className="btn btn-outline btn-xs rounded-sm"
+								className="btn btn-outline btn-xs rounded-xs"
 							>
 								{cb("userActions")}
 							</button>
@@ -166,7 +166,7 @@ export const OrganizationUserTable = ({ organizationId }: Iprops) => {
 				<DebouncedInput
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
-					className="font-lg border-block border p-2 shadow"
+					className="font-lg border-block border p-2 shadow-sm"
 					placeholder={ct("search.searchUserPlaceholder")}
 				/>
 			</div>

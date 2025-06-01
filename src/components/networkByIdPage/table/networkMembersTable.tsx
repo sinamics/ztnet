@@ -127,7 +127,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 				<DebouncedInput
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
-					className="font-lg border-block border p-2 shadow"
+					className="font-lg border-block border p-2 shadow-sm"
 					placeholder={t("networkMembersTable.search.placeholder")}
 				/>
 			</div>

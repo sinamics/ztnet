@@ -1,18 +1,45 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "daisyui" {
+	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+	themes: light, dark, cupcake, black, business, forest, sunset, luxury, night, dim,
+		cyberpunk;
+}
 
-/**
+@theme {
+	--animate-fade-in: fadeIn 0.2s ease-in-out;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
+
+@utility btn {
+	text-transform: uppercase;
+}
+
+@layer utilities {
+	/**
  * DaisyUI fix for window shift using modal.
    https://github.com/saadeghi/daisyui/issues/3040
  */
-:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
-	scrollbar-gutter: unset;
-}
-
-@layer components {
-	.btn {
-		text-transform: uppercase;
+	:root:has(
+			:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])
+		) {
+		scrollbar-gutter: unset;
 	}
 }
 .outer-container {

@@ -102,7 +102,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	const truncatedOrgName =
 		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
 	return (
-		<main className="w-full bg-base-100 py-2 animate-fadeIn">
+		<main className="w-full bg-base-100 py-2 animate-fade-in">
 			<MetaTags title={title} />
 			<div>
 				<div className="pb-3">

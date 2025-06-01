@@ -59,7 +59,7 @@ const DisableTwoFactSetupModal = () => {
 					onClick={handleDisable}
 					disabled={isSubmitting}
 					type="submit"
-					className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+					className="btn btn-sm ml-2 rounded-sm px-4 py-2 btn-primary"
 				>
 					{isSubmitting ? "Working..." : "Disable"}
 				</button>

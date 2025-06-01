@@ -382,7 +382,7 @@ const InputField = ({
 												value={
 													String(formValues[field.name]).replace(/<br \/>/g, "\n") || ""
 												}
-												className="custom-scrollbar textarea textarea-bordered border-2 font-medium leading-snug focus:outline-none"
+												className="custom-scrollbar textarea textarea-bordered border-2 font-medium leading-snug focus:outline-hidden"
 												placeholder={field.placeholder}
 												rows={5}
 												name={field.name}

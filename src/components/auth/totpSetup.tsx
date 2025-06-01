@@ -159,7 +159,7 @@ const TOTPSetup: React.FC = () => {
 								type="password"
 								value={state.password}
 								onChange={(e) => setState({ ...state, password: e.target.value })}
-								className="input input-bordered input-sm rounded border"
+								className="input input-bordered input-sm rounded-sm border"
 								placeholder="Password"
 							/>
 						</div>
@@ -169,7 +169,7 @@ const TOTPSetup: React.FC = () => {
 							onClick={handleSetup}
 							disabled={isSubmitting}
 							type="submit"
-							className="btn btn-sm rounded px-4 py-2 btn-primary"
+							className="btn btn-sm rounded-sm px-4 py-2 btn-primary"
 						>
 							{isSubmitting ? t("commonSpinners.Checking") : t("commonButtons.next")}
 						</button>
@@ -244,7 +244,7 @@ const TOTPSetup: React.FC = () => {
 					<footer className="flex justify-end">
 						<button
 							onClick={() => setStep(SetupStep.EnterTotpCode)}
-							className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+							className="btn btn-sm ml-2 rounded-sm px-4 py-2 btn-primary"
 							type="submit"
 						>
 							{t("commonButtons.next")}
@@ -267,7 +267,7 @@ const TOTPSetup: React.FC = () => {
 						<footer className="flex justify-end ">
 							<button
 								type="button"
-								className="btn btn-sm ml-2 rounded px-4 py-2 btn-outline"
+								className="btn btn-sm ml-2 rounded-sm px-4 py-2 btn-outline"
 								onClick={() => setStep(SetupStep.DisplayQrCode)}
 							>
 								{t("commonButtons.back")}
@@ -276,7 +276,7 @@ const TOTPSetup: React.FC = () => {
 								onClick={() => handleEnable(totpCode)}
 								disabled={isSubmitting}
 								type="submit"
-								className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+								className="btn btn-sm ml-2 rounded-sm px-4 py-2 btn-primary"
 							>
 								{isSubmitting
 									? t("commonSpinners.loading")
@@ -300,7 +300,7 @@ const TOTPSetup: React.FC = () => {
 									{state.recoveryCodes.map((code) => (
 										<li
 											key={code}
-											className="font-mono text-sm bg-primary/50 p-2 rounded shadow"
+											className="font-mono text-sm bg-primary/50 p-2 rounded-sm shadow-sm"
 										>
 											{code}
 										</li>
@@ -325,7 +325,7 @@ const TOTPSetup: React.FC = () => {
 								onClick={() => completed()}
 								disabled={isSubmitting}
 								type="submit"
-								className="btn btn-sm ml-2 rounded px-4 py-2 btn-primary"
+								className="btn btn-sm ml-2 rounded-sm px-4 py-2 btn-primary"
 							>
 								{isSubmitting ? t("commonSpinners.loading") : t("commonButtons.close")}
 							</button>

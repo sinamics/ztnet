@@ -1,7 +1,7 @@
 import { useTheme } from "next-themes";
 import { QRCodeSVG } from "qrcode.react";
 import React, { useEffect, useState } from "react";
-import daisyuiColors from "daisyui/src/theming/themes";
+import daisyuiColors from "daisyui/theme";
 import Link from "next/link";
 
 interface IProps {

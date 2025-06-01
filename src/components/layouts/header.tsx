@@ -83,7 +83,7 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 							</label>
 							<ul
 								tabIndex={0}
-								className="menu dropdown-content rounded-box z-30 w-52 bg-base-300 p-2 shadow"
+								className="menu dropdown-content rounded-box z-30 w-52 bg-base-300 p-2 shadow-sm"
 							>
 								{Themes.map((theme) => {
 									return (

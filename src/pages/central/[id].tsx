@@ -94,7 +94,7 @@ const CentralNetworkById = ({ orgIds }) => {
 		<div>
 			<HeadSection title={pageTitle} />
 			<div className="mx-auto flex flex-row flex-wrap justify-between space-y-10 p-4 text-sm sm:p-10 md:text-base xl:space-y-0">
-				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
+				<div className="grid grid-cols-1 xl:grid-cols-[1fr_auto_1fr] gap-10">
 					<div className="flex flex-col space-y-3 sm:space-y-0">
 						<div className="flex flex-col justify-between sm:flex-row">
 							<span className="font-semibold">{t("networkById.networkId")}</span>

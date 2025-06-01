@@ -39,7 +39,7 @@ export const TableFilter = ({
 							? `(${column.getFacetedMinMaxValues()?.[0]})`
 							: ""
 					}`}
-					className="w-24 rounded border shadow"
+					className="w-24 rounded-sm border shadow-sm"
 				/>
 				<DebouncedInput
 					type="number"
@@ -54,7 +54,7 @@ export const TableFilter = ({
 							? `(${column.getFacetedMinMaxValues()?.[1]})`
 							: ""
 					}`}
-					className="w-24 rounded border shadow"
+					className="w-24 rounded-sm border shadow-sm"
 				/>
 			</div>
 			<div className="h-1" />
@@ -71,7 +71,7 @@ export const TableFilter = ({
 				value={(columnFilterValue ?? "") as string}
 				onChange={(value) => column.setFilterValue(value)}
 				placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-				className="w-36 rounded border shadow"
+				className="w-36 rounded-sm border shadow-sm"
 				list={`${column.id}list`}
 			/>
 			<div className="h-1" />

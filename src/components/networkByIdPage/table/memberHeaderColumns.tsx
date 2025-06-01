@@ -383,7 +383,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 										),
 									})
 								}
-								className="btn btn-outline btn-xs rounded-sm"
+								className="btn btn-outline btn-xs rounded-xs"
 							>
 								{b("options")}
 							</button>
@@ -396,7 +396,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 											nwid: original.nwid,
 										})
 									}
-									className="btn btn-error btn-outline btn-xs rounded-sm"
+									className="btn btn-error btn-outline btn-xs rounded-xs"
 								>
 									{b("delete")}
 								</button>
@@ -411,7 +411,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 											{ onSuccess: () => void refetchNetworkById() },
 										)
 									}
-									className={cn("btn btn-outline btn-xs rounded-sm", {
+									className={cn("btn btn-outline btn-xs rounded-xs", {
 										"btn-warning": !central,
 										"btn-error": central,
 									})}

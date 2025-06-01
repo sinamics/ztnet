@@ -24,9 +24,9 @@ interface Props {
 export const LayoutPublic = ({ children }: Props): JSX.Element => {
 	return (
 		<div className="outer-container">
-			<main className="min-h-[100dvh] container mx-auto flex items-center justify-center">
+			<main className="min-h-dvh container mx-auto flex items-center justify-center">
 				{/* Main section */}
-				<div className="grid grid-cols-1 lg:grid-cols-[2fr,1fr] gap-4 w-full max-w-7xl m-5 sm:m-0">
+				<div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 w-full max-w-7xl m-5 sm:m-0">
 					<div className="h-full flex items-start">
 						<WelcomeMessage />
 					</div>
@@ -51,7 +51,7 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 					<Sidebar />
 				</aside>
 				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
-					<div className={`flex-grow custom-scrollbar ${!open ? "flex-grow" : ""}`}>
+					<div className={`grow custom-scrollbar ${!open ? "grow" : ""}`}>
 						{children}
 					</div>
 					<Footer />
@@ -76,7 +76,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 					<Sidebar />
 				</aside>
 				<div className="lg:grid lg:grid-rows-[1fr_auto] inner-container w-full custom-scrollbar">
-					<div className={`flex-grow  custom-scrollbar ${!open ? "flex-grow" : ""}`}>
+					<div className={`grow  custom-scrollbar ${!open ? "grow" : ""}`}>
 						{children}
 					</div>
 					<Footer />
@@ -104,14 +104,14 @@ export const LayoutOrganizationAuthenticated = ({ children }: Props): JSX.Elemen
 			<Header ref={headerRef} />
 
 			{/* Main Content including Sidebar, Content, and Chat Aside */}
-			<div className="flex flex-grow relative ">
+			<div className="flex grow relative ">
 				<aside className={`duration-150 ${sidebarOpen ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
 				</aside>
 
 				{/* Main Content */}
 				<div
-					className={`flex-grow custom-scrollbar inner-container transition-all duration-150 ${
+					className={`grow custom-scrollbar inner-container transition-all duration-150 ${
 						openChats.includes(orgId) ? "mr-72" : ""
 					}`}
 				>

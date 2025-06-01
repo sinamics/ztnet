@@ -111,7 +111,7 @@ function ScrollableDropdown<T>({
 			{isDropdownVisible && (
 				<ul
 					ref={dropdownRef}
-					className="absolute z-10 w-full bg-base-300 top-full left-0 max-h-60 overflow-auto border border-gray-800 rounded-md shadow custom-scrollbar text-sm"
+					className="absolute z-10 w-full bg-base-300 top-full left-0 max-h-60 overflow-auto border border-gray-800 rounded-md shadow-sm custom-scrollbar text-sm"
 				>
 					{filteredItems?.map((item) => (
 						<li

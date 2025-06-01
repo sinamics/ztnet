@@ -16,7 +16,7 @@ const ListOrganizations = () => {
 			{userOrgs?.map((org) => (
 				<div
 					key={org.id}
-					className="border border-primary/20 p-4 my-4 rounded bg-base-200 shadow-lg"
+					className="border border-primary/20 p-4 my-4 rounded-sm bg-base-200 shadow-lg"
 				>
 					<div>
 						<p>

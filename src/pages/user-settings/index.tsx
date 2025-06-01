@@ -48,7 +48,7 @@ const UserSettings = () => {
 		});
 	};
 	return (
-		<div className="animate-fadeIn">
+		<div className="animate-fade-in">
 			<Head>
 				<title>{title}</title>
 				<link rel="icon" href="/favicon.ico" />

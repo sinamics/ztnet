@@ -69,7 +69,7 @@ const AdminSettings = ({ orgIds }) => {
 	];
 
 	return (
-		<div className="animate-fadeIn py-5 sm:w-11/12 mx-auto">
+		<div className="animate-fade-in py-5 sm:w-11/12 mx-auto">
 			<MetaTags title={title} />
 			<div role="tablist" className="tabs tabs-bordered flex flex-wrap p-3 pb-10 ">
 				{tabs.map((t) => (

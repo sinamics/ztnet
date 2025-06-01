@@ -69,7 +69,7 @@ const Sidebar = (): JSX.Element => {
 	return (
 		<aside
 			ref={sidebarRef}
-			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow
+			className={`overflow-y-auto fixed z-10 h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow-sm
 			${open ? "w-64" : "w-0"}`}
 		>
 			<div className="sidebar-content px-4 py-3">

@@ -144,7 +144,7 @@ const OrganizationInviteTemplate = () => {
 						placeholder={t("mail.templates.inputPlaceholderSubject")}
 						value={stateTemplate?.subject || ""}
 						name="subject"
-						className={cn("input input-bordered w-full focus:outline-none", {
+						className={cn("input input-bordered w-full focus:outline-hidden", {
 							"border-2 border-red-500": changes?.subject,
 						})}
 						onChange={changeTemplateHandler}
@@ -157,7 +157,7 @@ const OrganizationInviteTemplate = () => {
 					<textarea
 						value={stateTemplate?.body?.replace(/<br \/>/g, "\n") || ""}
 						className={cn(
-							"custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-none",
+							"custom-scrollbar textarea textarea-bordered w-full border-2 font-medium leading-snug focus:outline-hidden",
 							{ "border-2 border-red-500": changes.body },
 						)}
 						placeholder={t("mail.templates.textareaPlaceholderBody")}

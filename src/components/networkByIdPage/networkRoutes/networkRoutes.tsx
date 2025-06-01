@@ -121,7 +121,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 									name="target"
 									onChange={routeHandler}
 									placeholder="10.11.12.0/24"
-									className="w-full border rounded-md shadow-sm text-sm input-sm"
+									className="w-full border rounded-md shadow-xs text-sm input-sm"
 								/>
 								<p className="mt-1 text-xs text-gray-500">
 									{t("networkRoutes.destinationInputDescription")}
@@ -138,7 +138,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 									name="via"
 									onChange={routeHandler}
 									placeholder="192.168.168.1"
-									className="w-full border rounded-md shadow-sm text-sm input-sm"
+									className="w-full border rounded-md shadow-xs text-sm input-sm"
 								/>
 								<p className="mt-1 text-xs text-gray-500">
 									{t("networkRoutes.viaInputDescription")}

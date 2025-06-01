@@ -124,7 +124,7 @@ const PrivateRoot = () => {
 							</div>
 							<div className="space-y-5">
 								{getPlanet?.rootNodes?.map((node, i) => (
-									<div key={node.id} className="border border-primary rounded p-4 my-4">
+									<div key={node.id} className="border border-primary rounded-sm p-4 my-4">
 										{!node.endpoints.toString().includes("9993") ? (
 											<div role="alert" className="alert shadow-lg mb-5">
 												<svg

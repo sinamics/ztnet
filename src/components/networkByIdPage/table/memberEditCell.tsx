@@ -103,14 +103,14 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 									notations?.map((notation) => (
 										<div
 											key={notation.label?.name}
-											className="flex-shrink-0 inline-block h-5 w-5 rounded-full mr-2"
+											className="shrink-0 inline-block h-5 w-5 rounded-full mr-2"
 											title={notation.label?.name}
 											style={{
 												backgroundColor: convertRGBtoRGBA(notation.label?.color, 1),
 											}}
 										></div>
 									))}
-								<div className="flex-grow w-full">
+								<div className="grow w-full">
 									<Input
 										useTooltip
 										ref={inputRef}

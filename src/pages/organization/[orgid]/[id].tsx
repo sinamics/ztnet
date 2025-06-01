@@ -113,10 +113,10 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	}
 
 	return (
-		<div className="animate-fadeIn">
+		<div className="animate-fade-in">
 			<HeadSection title={pageTitle} />
 			<div className="mx-auto text-sm sm:py-10 md:text-base">
-				<div className="grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-10">
+				<div className="grid grid-cols-1 xl:grid-cols-[1fr_auto_1fr] gap-10">
 					{/* Left section with network ID, name, and description */}
 					<div className="space-y-1">
 						{/* Network ID */}

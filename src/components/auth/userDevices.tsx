@@ -116,7 +116,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 						<div
 							key={device.id}
 							className={cn(
-								"flex items-center justify-between px-4 py-1 rounded-lg shadow border",
+								"flex items-center justify-between px-4 py-1 rounded-lg shadow-sm border",
 								{ "border-l-4 border-green-500": isCurrentDevice(device) },
 							)}
 						>

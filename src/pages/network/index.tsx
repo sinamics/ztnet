@@ -81,14 +81,14 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 	}
 
 	return (
-		<div className="animate-fadeIn">
+		<div className="animate-fade-in">
 			<MetaTags title={title} />
 			<main className="w-full bg-base-100">
 				<div className="mb-3 mt-3 flex w-full justify-center ">
 					<h5 className="w-full text-center text-2xl">{t("title")}</h5>
 				</div>
 
-				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr,1fr,1fr] md:space-y-0 md:px-11">
+				<div className="grid grid-cols-1 space-y-3 px-3 pt-5 md:grid-cols-[1fr_1fr_1fr] md:space-y-0 md:px-11">
 					{unlinkedNetworks?.length > 0 && (
 						<div className="col-span-3 flex justify-center pb-5">
 							<div role="alert" className="alert w-full md:w-3/6">

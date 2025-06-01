@@ -19,13 +19,13 @@ const MessagesList = ({ messages }) => {
 		>
 			{/* User icon */}
 			<div
-				className="flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-white uppercase"
+				className="shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-white uppercase"
 				style={{ backgroundColor: userColor }}
 			>
 				{messages.user.name[0]}
 			</div>
 			{/* Message content and timestamp */}
-			<div className="flex-grow min-w-0">
+			<div className="grow min-w-0">
 				<div className="flex justify-between items-center">
 					<p className="text-sm font-medium truncate">{messages.user.name}</p>
 					<p className="text-xs text-gray-400 ml-2 whitespace-nowrap">
@@ -127,7 +127,7 @@ const ChatAside = () => {
 			}`}
 		>
 			<div
-				className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow ${
+				className={`h-full bg-base-200 transition-transform duration-150 ease-in md:relative md:shadow-sm ${
 					openChats.includes(orgId) ? "w-72" : "w-0"
 				}`}
 			>
@@ -160,7 +160,7 @@ const ChatAside = () => {
 							value={inputMsg.chatMessage}
 							onChange={eventHandler}
 							name="chatMessage"
-							className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+							className="w-full p-2 border rounded-md focus:outline-hidden focus:ring-1 focus:ring-blue-500"
 							placeholder={t("chatSidebar.messageInputPlaceholder")}
 						/>
 						<button type="submit" className="hidden" onClick={sendMessage} />

@@ -153,7 +153,7 @@ export const CentralNetworkTable = ({ tableData = [] }) => {
 				<DebouncedInput
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
-					className="font-lg border-block border p-2 shadow"
+					className="font-lg border-block border p-2 shadow-sm"
 					placeholder={t("commonTable.search.networkSearchPlaceholder")}
 				/>
 			</div>

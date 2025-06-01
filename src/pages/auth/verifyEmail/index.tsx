@@ -73,7 +73,7 @@ const VerifyEmail = () => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
-				<div className="w-100 mx-auto rounded-2xl border border-1 border-primary p-12">
+				<div className="w-100 mx-auto rounded-2xl border border border-primary p-12">
 					<div className="mb-4">
 						<h3 className="text-2xl font-semibold text-center mb-4">
 							{tokenData.error ? "Error" : t("authPages.emailVerification.emailVerified")}
@@ -95,7 +95,7 @@ const VerifyEmail = () => {
 						<div className="mt-6 text-center">
 							<button
 								onClick={() => void router.push("/user-settings/?tab=account")}
-								className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
+								className="px-4 py-2 bg-primary text-white rounded-sm hover:bg-primary-dark transition-colors"
 							>
 								{t("authPages.emailVerification.goNowButton")}
 							</button>

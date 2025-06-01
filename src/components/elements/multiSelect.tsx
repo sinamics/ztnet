@@ -108,7 +108,7 @@ export default function MultiSelectDropdown({
 			</div>
 			<div className="relative">
 				{isDropdownOpen && (
-					<div className="custom-scrollbar absolute badge-ghost rounded-sm border peer-checked:pointer-events-auto w-full max-h-96 overflow-y-auto overflow-x-hidden">
+					<div className="custom-scrollbar absolute badge-ghost rounded-xs border peer-checked:pointer-events-auto w-full max-h-96 overflow-y-auto overflow-x-hidden">
 						{isJsEnabled && (
 							<ul>
 								<li>
