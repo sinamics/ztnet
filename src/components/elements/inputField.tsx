@@ -104,13 +104,13 @@ const InputField = ({
 		setFormValues(
 			fields.reduce(
 				(acc, field) => {
-					let value;
+					let value: string | number | boolean | string[];
 					if (field.type === "checkbox") {
 						value = !!field.value || !!field.initialValue;
 					} else {
 						value = field.value || field.initialValue || "";
 					}
-					acc[field.name] = value;
+					acc[field.name] = typeof value === "number" ? String(value) : value;
 					return acc;
 				},
 				{} as Record<string, string | boolean | string[]>,
@@ -358,7 +358,7 @@ const InputField = ({
 															<option value={option?.value} key={option.value}>
 																{option.label}
 															</option>
-													  ))
+														))
 													: null}
 											</select>
 										</div>

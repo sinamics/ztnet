@@ -200,7 +200,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 															notation[0]?.label?.color as string,
 															0.3,
 														),
-												  }
+													}
 												: {}
 										}
 									>

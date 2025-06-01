@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "设置",
 		"network": "网络",
-		"mail": "邮件",
-		"users": "用户",
-		"notification": "通知",
-		"controller": "控制器",
-		"organization": "组织",
 		"webhooks": "网络钩子",
 		"invites": "邀请"
 	},
@@ -133,6 +128,7 @@
 		"notification": "通知",
 		"controller": "控制器",
 		"organization": "组织",
+		"backuprestore": "备份",
 		"account": "账户",
 		"user-settings": "用户设置",
 		"logout": "登出"
@@ -705,6 +701,69 @@
 				"numberOfMembers": "成员数量：",
 				"pendingInvitations": "待处理的邀请：",
 				"activeWebhooks": "活动的 Webhooks:"
+			}
+		},
+		"backupRestore": {
+			"title": "备份与恢复",
+			"description": "此部分允许您创建服务器的备份。您可以选择在备份中包含数据库和/或ZeroTier配置。备份将以指定的名称保存，并可在创建后立即下载。",
+			"createBackup": {
+				"sectionTitle": "创建备份",
+				"includeDatabase": "包含数据库",
+				"includeZerotier": "包含 ZeroTier 文件夹",
+				"backupName": "备份名称（可选）",
+				"backupNamePlaceholder": "留空则自动生成名称",
+				"createButton": "创建并下载备份",
+				"creatingButton": "正在创建备份...",
+				"successToast": "备份已创建：{fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "现有备份",
+				"noBackups": "未找到备份。请在上方创建您的第一个备份。",
+				"table": {
+					"filename": "文件名",
+					"size": "大小",
+					"created": "创建时间",
+					"actions": "操作",
+					"download": "下载",
+					"restore": "恢复",
+					"delete": "删除"
+				},
+				"deleteModal": {
+					"title": "删除备份",
+					"description": "您确定要删除此备份吗？此操作无法撤销。"
+				},
+				"restoreModal": {
+					"title": "从备份恢复",
+					"description": "这将覆盖您当前的数据。请确保先创建备份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>恢复ZeroTier配置将复制备份源的确切ZeroTier身份。这意味着此服务器将具有与原始服务器相同的ZeroTier身份。<br></br>拥有两个具有相同ZeroTier身份的服务器可能会导致网络冲突和不可预测的行为。仅在您从原始服务器迁移或原始服务器已永久停用时才继续。"
+				},
+				"deleteSuccessToast": "备份删除成功"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "从文件恢复",
+				"warning": "恢复将覆盖您当前的数据。请确保先创建备份！",
+				"restoreDatabase": "恢复数据库",
+				"restoreZerotier": "恢复 ZeroTier 文件夹",
+				"selectFile": "选择备份文件",
+				"selectedFile": "已选择文件：{fileName} ({size})",
+				"restoreButton": "从文件恢复",
+				"processingButton": "正在处理...",
+				"restoringButton": "正在恢复...",
+				"uploadSuccessToast": "备份上传成功",
+				"restoreSuccessToast": "恢复成功完成。请重启应用程序。",
+				"invalidFileModal": {
+					"title": "无效文件",
+					"description": "请选择有效的 .zip 备份文件。"
+				},
+				"uploadErrorModal": {
+					"title": "上传错误",
+					"description": "文件上传处理失败。请重试。"
+				},
+				"restoreModal": {
+					"title": "从备份恢复",
+					"description": "这将覆盖您当前的数据。请确保先创建备份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>恢复ZeroTier配置将复制备份源的确切ZeroTier身份。这意味着此服务器将具有与原始服务器相同的ZeroTier身份。<br></br>拥有两个具有相同ZeroTier身份的服务器可能会导致网络冲突和不可预测的行为。仅在您从原始服务器迁移或原始服务器已永久停用时才继续。"
+				}
 			}
 		}
 	},

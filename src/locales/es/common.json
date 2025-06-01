@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Configuración",
 		"network": "Red",
-		"mail": "Correo",
-		"users": "Usuarios",
-		"notification": "Notificación",
-		"controller": "Controlador",
-		"organization": "Organización",
 		"webhooks": "Webhooks",
 		"invites": "Invitaciones"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Notificación",
 		"controller": "Controlador",
 		"organization": "Organización",
+		"backuprestore": "Respaldos",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -705,6 +701,69 @@
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
 				"activeWebhooks": "Webhooks Activos:"
+			}
+		},
+		"backupRestore": {
+			"title": "Copia de Seguridad y Restauración",
+			"description": "Esta sección te permite crear una copia de seguridad de tu servidor. Puedes elegir incluir la base de datos y/o la configuración de ZeroTier en la copia de seguridad. La copia de seguridad se guardará con el nombre especificado y podrá descargarse inmediatamente después de su creación.",
+			"createBackup": {
+				"sectionTitle": "Crear Copia de Seguridad",
+				"includeDatabase": "Incluir Base de Datos",
+				"includeZerotier": "Incluir Carpeta ZeroTier",
+				"backupName": "Nombre de Copia de Seguridad (opcional)",
+				"backupNamePlaceholder": "Dejar vacío para nombre autogenerado",
+				"createButton": "Crear y Descargar Copia de Seguridad",
+				"creatingButton": "Creando Copia de Seguridad...",
+				"successToast": "Copia de seguridad creada: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Copias de Seguridad Existentes",
+				"noBackups": "No se encontraron copias de seguridad. Crea tu primera copia de seguridad arriba.",
+				"table": {
+					"filename": "Nombre de Archivo",
+					"size": "Tamaño",
+					"created": "Creado",
+					"actions": "Acciones",
+					"download": "Descargar",
+					"restore": "Restaurar",
+					"delete": "Eliminar"
+				},
+				"deleteModal": {
+					"title": "Eliminar Copia de Seguridad",
+					"description": "¿Estás seguro de que quieres eliminar esta copia de seguridad? Esta acción no se puede deshacer."
+				},
+				"restoreModal": {
+					"title": "Restaurar desde Copia de Seguridad",
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
+				},
+				"deleteSuccessToast": "Copia de seguridad eliminada exitosamente"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restaurar desde Archivo",
+				"warning": "La restauración sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!",
+				"restoreDatabase": "Restaurar Base de Datos",
+				"restoreZerotier": "Restaurar Carpeta ZeroTier",
+				"selectFile": "Seleccionar Archivo de Copia de Seguridad",
+				"selectedFile": "Archivo seleccionado: {fileName} ({size})",
+				"restoreButton": "Restaurar desde Archivo",
+				"processingButton": "Procesando...",
+				"restoringButton": "Restaurando...",
+				"uploadSuccessToast": "Copia de seguridad subida exitosamente",
+				"restoreSuccessToast": "Restauración completada exitosamente. Por favor reinicia la aplicación.",
+				"invalidFileModal": {
+					"title": "Archivo Inválido",
+					"description": "Por favor selecciona un archivo .zip de copia de seguridad válido."
+				},
+				"uploadErrorModal": {
+					"title": "Error de Subida",
+					"description": "Error al procesar la subida del archivo. Por favor inténtalo de nuevo."
+				},
+				"restoreModal": {
+					"title": "Restaurar desde Copia de Seguridad",
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
+				}
 			}
 		}
 	},

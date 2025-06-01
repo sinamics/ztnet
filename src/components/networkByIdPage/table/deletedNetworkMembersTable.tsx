@@ -83,7 +83,11 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			columnHelper.accessor("action", {
 				header: () => <span>Action</span>,
 				id: "action",
-				cell: ({ row: { original: { nwid, id } } }) => {
+				cell: ({
+					row: {
+						original: { nwid, id },
+					},
+				}) => {
 					return (
 						<span className="space-x-5">
 							<button

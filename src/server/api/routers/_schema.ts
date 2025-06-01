@@ -6,9 +6,8 @@ import { z } from "zod";
 //  - Lowercase letters (a-z)
 //  - Uppercase letters (A-Z)
 //  - Digits (0-9)
-export const mediumPassword = new RegExp(
-	"^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})",
-);
+export const mediumPassword =
+	/^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
 
 // create a zod password schema
 export const passwordSchema = (errorMessage: string) =>

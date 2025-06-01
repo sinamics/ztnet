@@ -498,7 +498,7 @@ export const networkMemberRouter = createTRPCRouter({
 			const caller = networkMemberRouter.createCaller(ctx);
 			//user needs to be de-authorized before deleted.
 			// adding try catch to prevent error if user is not part of the network but still in the database.
-			let response;
+			let response: MemberEntity | undefined;
 			try {
 				response = await caller.Update({
 					memberId: input.id,

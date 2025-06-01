@@ -137,7 +137,11 @@ export const Accounts = () => {
 				header: () => <span>{ct("header.group")}</span>,
 				id: "group",
 				minSize: 80,
-				cell: ({ row: { original: { userGroup } } }) => {
+				cell: ({
+					row: {
+						original: { userGroup },
+					},
+				}) => {
 					return userGroup?.name ?? "None";
 				},
 			}),

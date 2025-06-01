@@ -77,9 +77,7 @@ function ScrollableDropdown<T>({
 	};
 
 	const defaultFilterFunction = (item: T, value: string) =>
-		String(item[displayField])
-			.toLowerCase()
-			.includes(value.toLowerCase());
+		String(item[displayField]).toLowerCase().includes(value.toLowerCase());
 
 	const filterItems = (value: string) => {
 		const filtered = items.filter(

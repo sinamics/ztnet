@@ -6,97 +6,94 @@
  * DaisyUI fix for window shift using modal.
    https://github.com/saadeghi/daisyui/issues/3040
  */
-:root:has(
-    :is(
-        .modal-open,
-        .modal:target,
-        .modal-toggle:checked + .modal,
-        .modal[open]
-      )
-  ) {
-  scrollbar-gutter: unset;
+:root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
+	scrollbar-gutter: unset;
 }
 
 @layer components {
-  .btn{
-    text-transform: uppercase;
-  }
+	.btn {
+		text-transform: uppercase;
+	}
 }
-.outer-container{
-  min-height: 100dvh;
+.outer-container {
+	min-height: 100dvh;
 }
 
 .inner-container {
-  overflow-y: auto;
-  overflow-x: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 
-  /* NOTE: header is 48px */
-  height: calc(var(--vh, 1vh) * 100 - var(--header-height, 48px));
+	/* NOTE: header is 48px */
+	height: calc(var(--vh, 1vh) * 100 - var(--header-height, 48px));
 }
 
 .membersTable-wrapper {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  overflow: auto;
-  white-space: nowrap;
+	display: grid;
+	grid-template-columns: repeat(1, minmax(0, 1fr));
+	overflow: auto;
+	white-space: nowrap;
 }
 
 /* Webkit browsers (Chrome, Safari, newer versions of Edge) */
 .custom-scrollbar::-webkit-scrollbar,
 .cm-scroller::-webkit-scrollbar {
-  width: 4px; 
-  background-color: transparent;
+	width: 4px;
+	background-color: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb,
 .cm-scroller::-webkit-scrollbar-thumb {
-  background-color: rgba(46, 46, 46, 0.3); 
-  border-radius: 2px; 
+	background-color: rgba(46, 46, 46, 0.3);
+	border-radius: 2px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover,
 .cm-scroller::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(85, 85, 85, 0.5); 
+	background-color: rgba(85, 85, 85, 0.5);
 }
 
 /* Hide scrollbar arrows */
 .custom-scrollbar::-webkit-scrollbar-button,
 .cm-scroller::-webkit-scrollbar-button {
-  display: none;
+	display: none;
 }
 
 /* Firefox */
 .custom-scrollbar,
 .cm-scroller {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(219, 219, 219, 0.3) transparent;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(219, 219, 219, 0.3) transparent;
 }
 
 /* For Internet Explorer and Edge (older versions) */
 .custom-scrollbar,
 .cm-scroller {
-  -ms-overflow-style: none;
+	-ms-overflow-style: none;
 }
 
 .zt-color {
-  color: rgb(255, 180, 65);
+	color: rgb(255, 180, 65);
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-in;
+	animation: fadeIn 0.5s ease-in;
 }
 
 /* There is a bug issue over at Mozilla that is still open, given that it was created 5 years ago.
 https://bugzilla.mozilla.org/show_bug.cgi?id=1576820
 
 https://github.com/sinamics/ztnet/issues/416 */
-@-moz-document url-prefix() {
-  option {
-    font-family: 'Inter', sans-serif;
-  }
+@-moz-document url-prefix("") {
+	option {
+		font-family: "Inter", sans-serif;
+	}
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }

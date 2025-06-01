@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Paramètres",
 		"network": "Réseau",
-		"mail": "Courrier",
-		"users": "Utilisateurs",
-		"notification": "Notification",
-		"controller": "Contrôleur",
-		"organization": "Organisation",
 		"webhooks": "Webhooks",
 		"invites": "Invitations"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Notification",
 		"controller": "Contrôleur ZT",
 		"organization": "Organisation",
+		"backuprestore": "Sauvegardes",
 		"account": "Compte",
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
@@ -676,7 +672,7 @@
 		"organization": {
 			"addOrganization": {
 				"title": "Gestion d'équipe",
-				"description": "Explorez l'organisation pour commencer à façonner la manière dont votre équipe travaille ensemble. Attribuez des rôles, invitez de nouveaux membres et supervisez les autorisations de base au sein de votre organisation. Conçue pour la simplicité et la facilité d'utilisation, cette fonctionnalité bêta constitue une base pour la collaboration de votre équipe. Alors que nous continuons à développer et à améliorer ces paramètres, nous vous invitons à nous faire part de vos commentaires pour nous aider à affiner l'expérience.",
+				"description": "Cette section vous permet de créer une sauvegarde de votre serveur. Vous pouvez choisir d'inclure la base de données et/ou la configuration ZeroTier dans la sauvegarde. La sauvegarde sera enregistrée avec le nom spécifié et pourra être téléchargée immédiatement après sa création.",
 				"inputFields": {
 					"label": "Ajouter une organisation",
 					"description": "Créer une nouvelle organisation",
@@ -705,6 +701,69 @@
 				"numberOfMembers": "Nombre de membres :",
 				"pendingInvitations": "Invitations en attente :",
 				"activeWebhooks": "Webhooks actifs :"
+			}
+		},
+		"backupRestore": {
+			"title": "Sauvegarde et Restauration",
+			"description": "Créez, gérez et restaurez les sauvegardes de votre installation ZTNet incluant la base de données et la configuration ZeroTier.",
+			"createBackup": {
+				"sectionTitle": "Créer une Sauvegarde",
+				"includeDatabase": "Inclure la Base de Données",
+				"includeZerotier": "Inclure le Dossier ZeroTier",
+				"backupName": "Nom de Sauvegarde (optionnel)",
+				"backupNamePlaceholder": "Laisser vide pour un nom auto-généré",
+				"createButton": "Créer et Télécharger la Sauvegarde",
+				"creatingButton": "Création de la Sauvegarde...",
+				"successToast": "Sauvegarde créée : {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Sauvegardes Existantes",
+				"noBackups": "Aucune sauvegarde trouvée. Créez votre première sauvegarde ci-dessus.",
+				"table": {
+					"filename": "Nom de Fichier",
+					"size": "Taille",
+					"created": "Créé",
+					"actions": "Actions",
+					"download": "Télécharger",
+					"restore": "Restaurer",
+					"delete": "Supprimer"
+				},
+				"deleteModal": {
+					"title": "Supprimer la Sauvegarde",
+					"description": "Êtes-vous sûr de vouloir supprimer cette sauvegarde ? Cette action ne peut pas être annulée."
+				},
+				"restoreModal": {
+					"title": "Restaurer depuis la Sauvegarde",
+					"description": "Ceci écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT :</span><br></br>Restaurer la configuration ZeroTier répliquera l'identité ZeroTier exacte de la source de sauvegarde. Cela signifie que ce serveur aura la même identité ZeroTier que le serveur d'origine.<br></br>Avoir deux serveurs avec des identités ZeroTier identiques peut causer des conflits réseau et un comportement imprévisible. Ne procédez que si vous migrez depuis le serveur d'origine ou si le serveur d'origine est définitivement hors service."
+				},
+				"deleteSuccessToast": "Sauvegarde supprimée avec succès"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restaurer depuis un Fichier",
+				"warning": "La restauration écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !",
+				"restoreDatabase": "Restaurer la Base de Données",
+				"restoreZerotier": "Restaurer le Dossier ZeroTier",
+				"selectFile": "Sélectionner le Fichier de Sauvegarde",
+				"selectedFile": "Fichier sélectionné : {fileName} ({size})",
+				"restoreButton": "Restaurer depuis un Fichier",
+				"processingButton": "Traitement...",
+				"restoringButton": "Restauration...",
+				"uploadSuccessToast": "Sauvegarde téléchargée avec succès",
+				"restoreSuccessToast": "Restauration terminée avec succès. Veuillez redémarrer l'application.",
+				"invalidFileModal": {
+					"title": "Fichier Invalide",
+					"description": "Veuillez sélectionner un fichier .zip de sauvegarde valide."
+				},
+				"uploadErrorModal": {
+					"title": "Erreur de Téléchargement",
+					"description": "Échec du traitement du téléchargement de fichier. Veuillez réessayer."
+				},
+				"restoreModal": {
+					"title": "Restaurer depuis la Sauvegarde",
+					"description": "Ceci écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT :</span><br></br>Restaurer la configuration ZeroTier répliquera l'identité ZeroTier exacte de la source de sauvegarde. Cela signifie que ce serveur aura la même identité ZeroTier que le serveur d'origine.<br></br>Avoir deux serveurs avec des identités ZeroTier identiques peut causer des conflits réseau et un comportement imprévisible. Ne procédez que si vous migrez depuis le serveur d'origine ou si le serveur d'origine est définitivement hors service."
+				}
 			}
 		}
 	},

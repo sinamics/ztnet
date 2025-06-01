@@ -2,13 +2,13 @@ import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
 import * as ztController from "~/utils/ztApi";
 import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
-import { GlobalOptions, Role } from "@prisma/client";
+import { type GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
-import { type ZTControllerNodeStatus } from "~/types/ztController";
-import { NetworkAndMemberResponse } from "~/types/network";
-import { execSync } from "child_process";
-import fs from "fs";
-import { WorldConfig } from "~/types/worldConfig";
+import type { ZTControllerNodeStatus } from "~/types/ztController";
+import type { NetworkAndMemberResponse } from "~/types/network";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import type { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
 import { updateLocalConf } from "~/utils/planet";
 import jwt from "jsonwebtoken";
@@ -18,8 +18,10 @@ import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
-import { InvitationLinkType } from "~/types/invitation";
+import type { InvitationLinkType } from "~/types/invitation";
 import { MailTemplateKey } from "~/utils/enums";
+import path from "node:path";
+import archiver from "archiver";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -189,8 +191,8 @@ export const adminRouter = createTRPCRouter({
 					url,
 					secret,
 					groupId,
-					timesCanUse: parseInt(timesCanUse) || 1,
-					expiresAt: new Date(Date.now() + parseInt(expireTime) * 60 * 1000),
+					timesCanUse: Number.parseInt(timesCanUse) || 1,
+					expiresAt: new Date(Date.now() + Number.parseInt(expireTime) * 60 * 1000),
 					invitedById: ctx.session.user.id,
 				},
 			});
@@ -211,7 +213,7 @@ export const adminRouter = createTRPCRouter({
 				if (inv.groupId) {
 					const group = await ctx.prisma.userGroup.findUnique({
 						where: {
-							id: parseInt(inv.groupId, 10),
+							id: Number.parseInt(inv.groupId, 10),
 						},
 					});
 					groupName = group?.name || null;
@@ -329,10 +331,10 @@ export const adminRouter = createTRPCRouter({
 							userGroupId: null,
 							expiresAt: null,
 							isActive: true,
-					  }
+						}
 					: {
 							role: role as Role,
-					  };
+						};
 
 			return await ctx.prisma.user.update({
 				where: {
@@ -627,12 +629,12 @@ export const adminRouter = createTRPCRouter({
 					},
 					create: {
 						name: input.groupName,
-						maxNetworks: parseInt(input.maxNetworks),
+						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
 					},
 					update: {
 						name: input.groupName,
-						maxNetworks: parseInt(input.maxNetworks),
+						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
 					},
 				});
@@ -741,7 +743,7 @@ export const adminRouter = createTRPCRouter({
 
 				const userGroup = await ctx.prisma.userGroup.findUnique({
 					where: {
-						id: parseInt(input.userGroupId),
+						id: Number.parseInt(input.userGroupId),
 					},
 				});
 
@@ -755,7 +757,7 @@ export const adminRouter = createTRPCRouter({
 						id: input.userid,
 					},
 					data: {
-						userGroupId: parseInt(input.userGroupId), // Link the user to the userGroup
+						userGroupId: Number.parseInt(input.userGroupId), // Link the user to the userGroup
 					},
 				});
 			} catch (err: unknown) {
@@ -944,7 +946,7 @@ export const adminRouter = createTRPCRouter({
 				// Extract the port numbers from the first endpoint string
 				const portNumbers = input.rootNodes[0].endpoints[0]
 					.split(",")
-					.map((endpoint) => parseInt(endpoint.split("/").pop() || "", 10));
+					.map((endpoint) => Number.parseInt(endpoint.split("/").pop() || "", 10));
 
 				try {
 					await updateLocalConf(portNumbers);
@@ -1074,4 +1076,581 @@ export const adminRouter = createTRPCRouter({
 			}
 		}
 	}),
+
+	createBackup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				includeDatabase: z.boolean().default(true),
+				includeZerotier: z.boolean().default(true),
+				backupName: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+				const backupName = input.backupName || `ztnet-backup-${timestamp}`;
+				const backupDir = path.join(process.cwd(), "tmp", "backups");
+				const tempDir = path.join(backupDir, "temp", Date.now().toString());
+				const backupPath = path.join(backupDir, `${backupName}.tar.gz`);
+
+				// Ensure backup and temp directories exist
+				fs.mkdirSync(backupDir, { recursive: true });
+				fs.mkdirSync(tempDir, { recursive: true });
+
+				try {
+					// Backup database
+					if (input.includeDatabase) {
+						const dbUrl = process.env.DATABASE_URL;
+						if (!dbUrl) {
+							throw new Error("DATABASE_URL not found");
+						}
+
+						if (!dbUrl.includes("postgresql")) {
+							throw new Error("Only PostgreSQL databases are supported");
+						}
+
+						try {
+							const dumpPath = path.join(tempDir, "database_dump.sql");
+
+							// Parse PostgreSQL URL
+							const url = new URL(dbUrl);
+							const host = url.hostname;
+							const port = url.port || "5432";
+							const username = url.username;
+							const password = url.password;
+							const database = url.pathname.slice(1); // Remove leading slash
+
+							// Set environment variables for pg_dump
+							const env = {
+								...process.env,
+								PGPASSWORD: password,
+							};
+
+							const dumpCommand = `pg_dump -h ${host} -p ${port} -U ${username} -d ${database} --verbose --clean --if-exists`;
+
+							execSync(`${dumpCommand} > "${dumpPath}"`, {
+								env,
+								stdio: ["pipe", "pipe", "inherit"],
+							});
+
+							// Check if dump file was created and has content
+							if (fs.existsSync(dumpPath)) {
+								const stats = fs.statSync(dumpPath);
+								if (stats.size === 0) {
+									throw new Error("Database dump file is empty");
+								}
+							} else {
+								throw new Error("Database dump file was not created");
+							}
+						} catch (error) {
+							throw new Error(`Database backup failed: ${error.message}`);
+						}
+					}
+
+					// Backup ZeroTier folder
+					if (input.includeZerotier && ZT_FOLDER && fs.existsSync(ZT_FOLDER)) {
+						const ztBackupPath = path.join(tempDir, "zerotier");
+
+						// Copy ZeroTier folder to temp directory
+						try {
+							execSync(`cp -r "${ZT_FOLDER}" "${ztBackupPath}"`, {
+								stdio: ["pipe", "pipe", "inherit"],
+							});
+						} catch (error) {
+							throw new Error(`ZeroTier backup failed: ${error.message}`);
+						}
+					}
+
+					// Add metadata
+					const metadata = {
+						created: new Date().toISOString(),
+						version: process.env.NEXT_PUBLIC_APP_VERSION || "unknown",
+						includeDatabase: input.includeDatabase,
+						includeZerotier: input.includeZerotier,
+						docker: isRunningInDocker(),
+					};
+
+					const metadataPath = path.join(tempDir, "backup_metadata.json");
+					fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+
+					// Create tar.gz archive using system tar command
+					try {
+						// Change to temp directory and create archive with relative paths
+						execSync(`cd "${tempDir}" && tar -czf "${backupPath}" .`, {
+							stdio: ["pipe", "pipe", "inherit"],
+						});
+					} catch (error) {
+						throw new Error(`Archive creation failed: ${error.message}`);
+					}
+
+					// Verify archive was created successfully
+					if (!fs.existsSync(backupPath)) {
+						throw new Error("Backup archive was not created");
+					}
+
+					// Clean up temp directory
+					fs.rmSync(tempDir, { recursive: true, force: true });
+
+					// Return backup info
+					const stats = fs.statSync(backupPath);
+					return {
+						success: true,
+						backupPath,
+						fileName: `${backupName}.tar.gz`,
+						size: stats.size,
+						created: new Date().toISOString(),
+					};
+				} catch (error) {
+					// Clean up temp directory on error
+					if (fs.existsSync(tempDir)) {
+						fs.rmSync(tempDir, { recursive: true, force: true });
+					}
+					throw error;
+				}
+			} catch (error) {
+				throwError(`Backup creation failed: ${error.message}`);
+			}
+		}),
+
+	// Download backup file
+	downloadBackup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				fileName: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const backupDir = path.join(process.cwd(), "tmp", "backups");
+				const filePath = path.join(backupDir, input.fileName);
+
+				if (!fs.existsSync(filePath)) {
+					throwError("Backup file not found");
+				}
+
+				// Security check - ensure file is within backup directory
+				const resolvedPath = path.resolve(filePath);
+				const resolvedBackupDir = path.resolve(backupDir);
+				if (!resolvedPath.startsWith(resolvedBackupDir)) {
+					throwError("Invalid file path");
+				}
+
+				const fileBuffer = fs.readFileSync(filePath);
+				return {
+					data: fileBuffer.toString("base64"),
+					fileName: input.fileName,
+					size: fileBuffer.length,
+				};
+			} catch (error) {
+				throwError(`Download failed: ${error.message}`);
+			}
+		}),
+
+	// List available backups
+	listBackups: adminRoleProtectedRoute.query(async () => {
+		try {
+			const backupDir = path.join(process.cwd(), "tmp", "backups");
+
+			if (!fs.existsSync(backupDir)) {
+				return [];
+			}
+
+			const files = fs.readdirSync(backupDir);
+			const backups = files
+				.filter((file) => file.endsWith(".tar.gz"))
+				.map((file) => {
+					const filePath = path.join(backupDir, file);
+					const stats = fs.statSync(filePath);
+					return {
+						fileName: file,
+						size: stats.size,
+						created: stats.birthtime.toISOString(),
+						modified: stats.mtime.toISOString(),
+					};
+				})
+				.sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
+
+			return backups;
+		} catch (_error) {
+			return [];
+		}
+	}),
+
+	// Delete backup
+	deleteBackup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				fileName: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const backupDir = path.join(process.cwd(), "tmp", "backups");
+				const filePath = path.join(backupDir, input.fileName);
+
+				// Security check
+				const resolvedPath = path.resolve(filePath);
+				const resolvedBackupDir = path.resolve(backupDir);
+				if (!resolvedPath.startsWith(resolvedBackupDir)) {
+					throwError("Invalid file path");
+				}
+
+				if (fs.existsSync(filePath)) {
+					fs.unlinkSync(filePath);
+					return { success: true };
+				}
+				throwError("Backup file not found");
+			} catch (error) {
+				throwError(`Delete failed: ${error.message}`);
+			}
+		}),
+	restoreBackup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				fileName: z.string(),
+				restoreDatabase: z.boolean().default(true),
+				restoreZerotier: z.boolean().default(true),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const backupDir = path.join(process.cwd(), "tmp", "backups");
+				const backupPath = path.join(backupDir, input.fileName);
+				const extractDir = path.join(backupDir, "extract", Date.now().toString());
+
+				// Security check
+				const resolvedPath = path.resolve(backupPath);
+				const resolvedBackupDir = path.resolve(backupDir);
+				if (!resolvedPath.startsWith(resolvedBackupDir)) {
+					throwError("Invalid file path");
+				}
+
+				if (!fs.existsSync(backupPath)) {
+					throwError("Backup file not found");
+				}
+
+				// Create extraction directory
+				fs.mkdirSync(extractDir, { recursive: true });
+
+				// Extract backup using tar (available by default on Debian and FreeBSD)
+				try {
+					// Determine compression type from file extension
+					let tarOptions = "-xf";
+					if (input.fileName.endsWith(".tar.gz") || input.fileName.endsWith(".tgz")) {
+						tarOptions = "-xzf";
+					} else if (input.fileName.endsWith(".tar.bz2")) {
+						tarOptions = "-xjf";
+					} else if (input.fileName.endsWith(".tar.xz")) {
+						tarOptions = "-xJf";
+					}
+
+					execSync(`tar ${tarOptions} "${backupPath}" -C "${extractDir}"`, {
+						stdio: ["pipe", "pipe", "inherit"],
+					});
+				} catch (extractError) {
+					throw new Error(`Failed to extract backup: ${extractError.message}`);
+				}
+
+				// Read metadata
+				const metadataPath = path.join(extractDir, "backup_metadata.json");
+				let metadata = {};
+				if (fs.existsSync(metadataPath)) {
+					metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+				}
+
+				// Restore database
+				if (input.restoreDatabase) {
+					const sqlDumpPath = path.join(extractDir, "database_dump.sql");
+					const dbUrl = process.env.DATABASE_URL;
+
+					if (!dbUrl) {
+						throw new Error("DATABASE_URL not found");
+					}
+
+					if (!dbUrl.includes("postgresql")) {
+						throw new Error("Only PostgreSQL databases are supported");
+					}
+
+					if (fs.existsSync(sqlDumpPath)) {
+						// Check dump file size
+						const dumpStats = fs.statSync(sqlDumpPath);
+						if (dumpStats.size === 0) {
+							throw new Error("Database dump file is empty");
+						}
+
+						// Parse PostgreSQL URL
+						const url = new URL(dbUrl);
+						const host = url.hostname;
+						const port = url.port || "5432";
+						const username = url.username;
+						const password = url.password;
+						const database = url.pathname.slice(1); // Remove leading slash
+
+						// Set environment variables for psql
+						const env = {
+							...process.env,
+							PGPASSWORD: password,
+						};
+
+						const restoreCommand = `psql -h ${host} -p ${port} -U ${username} -d ${database}`;
+
+						execSync(`${restoreCommand} < "${sqlDumpPath}"`, {
+							env,
+							stdio: ["pipe", "pipe", "inherit"],
+						});
+					}
+				}
+
+				// Restore ZeroTier folder
+				if (input.restoreZerotier && ZT_FOLDER) {
+					const ztBackupPath = path.join(extractDir, "zerotier");
+					if (fs.existsSync(ztBackupPath)) {
+						const dockerMode = isRunningInDocker();
+
+						if (dockerMode) {
+							// Docker Compose setup - ZeroTier runs in separate container
+							// Check if zerotier container is running and stop it
+							try {
+								const containerCheck = execSync(
+									"docker ps --format '{{.Names}}' | grep -w zerotier",
+									{ encoding: "utf8", stdio: ["pipe", "pipe", "ignore"] },
+								);
+
+								if (containerCheck.trim()) {
+									try {
+										execSync("docker stop zerotier", { stdio: "ignore", timeout: 30000 });
+										await new Promise((resolve) => setTimeout(resolve, 3000));
+									} catch {
+										// Continue anyway if we can't stop the container
+									}
+								}
+							} catch {
+								// Docker command not available or container not found - continue anyway
+							}
+
+							// Backup current folder
+							const ztBackupCurrent = `${ZT_FOLDER}.backup.${Date.now()}`;
+							if (fs.existsSync(ZT_FOLDER)) {
+								let backupSuccess = false;
+								let retries = 5;
+
+								while (!backupSuccess && retries > 0) {
+									try {
+										execSync("sync", { stdio: "ignore" });
+										execSync(`cp -r "${ZT_FOLDER}" "${ztBackupCurrent}"`, {
+											stdio: "ignore",
+										});
+										backupSuccess = true;
+									} catch {
+										retries--;
+										if (retries > 0) {
+											await new Promise((resolve) => setTimeout(resolve, 3000));
+										}
+									}
+								}
+							}
+
+							// Clear existing contents
+							try {
+								const items = fs.readdirSync(ZT_FOLDER);
+								for (const item of items) {
+									const itemPath = path.join(ZT_FOLDER, item);
+									const stat = fs.statSync(itemPath);
+									if (stat.isDirectory()) {
+										fs.rmSync(itemPath, { recursive: true, force: true });
+									} else {
+										fs.unlinkSync(itemPath);
+									}
+								}
+							} catch {
+								// Continue if we can't clear contents
+							}
+
+							// Copy restored files
+							try {
+								execSync(`cp -r "${ztBackupPath}"/* "${ZT_FOLDER}"/`, {
+									stdio: "ignore",
+								});
+
+								// Copy hidden files
+								try {
+									execSync(`cp -r "${ztBackupPath}"/.[^.]* "${ZT_FOLDER}"/`, {
+										stdio: "ignore",
+									});
+								} catch {
+									// Ignore if no hidden files exist
+								}
+							} catch (copyError) {
+								throw new Error(`Failed to copy restored files: ${copyError.message}`);
+							}
+
+							// Set proper permissions
+							try {
+								execSync(`chown -R 999:999 "${ZT_FOLDER}"`, { stdio: "ignore" });
+								execSync(`chmod -R 700 "${ZT_FOLDER}"`);
+							} catch {
+								// Continue if we can't set permissions
+							}
+
+							// Start the ZeroTier container
+							try {
+								execSync("docker start zerotier", { stdio: "ignore", timeout: 30000 });
+								await new Promise((resolve) => setTimeout(resolve, 5000));
+							} catch {
+								// Don't throw error, just log warning - the restore was successful
+								console.warn(
+									"Could not start ZeroTier container automatically. Please run: docker restart zerotier",
+								);
+							}
+						} else {
+							// Host installation - ZeroTier runs as system service
+							// Stop ZeroTier service on host
+							const stopMethods = [
+								() => execSync("systemctl stop zerotier-one", { stdio: "ignore" }),
+								() => execSync("service zerotier-one stop", { stdio: "ignore" }),
+								() => execSync("pkill -f zerotier-one", { stdio: "ignore" }),
+							];
+
+							for (const method of stopMethods) {
+								try {
+									method();
+									break;
+								} catch {
+									// Try next method
+								}
+							}
+
+							// Wait for service to stop
+							await new Promise((resolve) => setTimeout(resolve, 2000));
+
+							// Force kill any remaining processes
+							try {
+								execSync("pkill -9 -f zerotier", { stdio: "ignore" });
+								await new Promise((resolve) => setTimeout(resolve, 1000));
+							} catch {
+								// Continue if no processes to kill
+							}
+
+							// Backup current folder
+							const ztBackupCurrent = `${ZT_FOLDER}.backup.${Date.now()}`;
+							if (fs.existsSync(ZT_FOLDER)) {
+								let backupSuccess = false;
+								let retries = 3;
+
+								while (!backupSuccess && retries > 0) {
+									try {
+										fs.renameSync(ZT_FOLDER, ztBackupCurrent);
+										backupSuccess = true;
+									} catch (renameError) {
+										retries--;
+										if (renameError.code === "EBUSY" && retries > 0) {
+											await new Promise((resolve) => setTimeout(resolve, 2000));
+										} else if (retries === 0) {
+											// Fallback to copy
+											try {
+												execSync(`cp -r "${ZT_FOLDER}" "${ztBackupCurrent}"`);
+												execSync(`rm -rf "${ZT_FOLDER}"`);
+												backupSuccess = true;
+											} catch (_copyError) {
+												throw new Error(
+													`Failed to backup current ZeroTier folder: ${renameError.message}`,
+												);
+											}
+										}
+									}
+								}
+							}
+
+							// Copy restored folder
+							fs.mkdirSync(path.dirname(ZT_FOLDER), { recursive: true });
+							execSync(`cp -r "${ztBackupPath}" "${ZT_FOLDER}"`);
+
+							// Set proper permissions for host installation
+							try {
+								execSync(`chown -R root:root "${ZT_FOLDER}"`);
+								execSync(`chmod -R 700 "${ZT_FOLDER}"`);
+							} catch {
+								// Continue if we can't set permissions
+							}
+
+							// Start ZeroTier service on host
+							const startMethods = [
+								() => execSync("systemctl start zerotier-one", { stdio: "ignore" }),
+								() => execSync("service zerotier-one start", { stdio: "ignore" }),
+								() => execSync("zerotier-one -d", { stdio: "ignore" }),
+							];
+
+							let serviceStarted = false;
+							for (const method of startMethods) {
+								try {
+									method();
+									serviceStarted = true;
+									break;
+								} catch {
+									// Try next method
+								}
+							}
+
+							if (!serviceStarted) {
+								console.warn(
+									"Could not start ZeroTier service automatically. Please run: systemctl start zerotier-one",
+								);
+							}
+						}
+					}
+				}
+
+				// Clean up extraction directory
+				fs.rmSync(extractDir, { recursive: true, force: true });
+
+				return {
+					success: true,
+					metadata,
+					restoredDatabase: input.restoreDatabase,
+					restoredZerotier: input.restoreZerotier,
+				};
+			} catch (mainError) {
+				throwError(`Restore failed: ${mainError.message}`);
+			}
+		}),
+
+	// Upload backup file
+	uploadBackup: adminRoleProtectedRoute
+		.input(
+			z.object({
+				fileName: z.string(),
+				fileData: z.string(), // base64 encoded file data
+			}),
+		)
+		.mutation(async ({ input }) => {
+			try {
+				const backupDir = path.join(process.cwd(), "tmp", "backups");
+				fs.mkdirSync(backupDir, { recursive: true });
+
+				const filePath = path.join(backupDir, input.fileName);
+
+				// Security check - ensure filename is safe
+				if (
+					!input.fileName.endsWith(".tar.gz") ||
+					input.fileName.includes("..") ||
+					input.fileName.includes("/")
+				) {
+					throwError("Invalid filename");
+				}
+
+				// Convert base64 to buffer and save - fix the Buffer type issue
+				const fileBuffer = Buffer.from(input.fileData, "base64");
+				fs.writeFileSync(filePath, new Uint8Array(fileBuffer));
+
+				const stats = fs.statSync(filePath);
+				return {
+					success: true,
+					fileName: input.fileName,
+					size: stats.size,
+					uploaded: new Date().toISOString(),
+				};
+			} catch (error) {
+				throwError(`Upload failed: ${error.message}`);
+			}
+		}),
 });

@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "設定",
 		"network": "網路",
-		"mail": "郵件",
-		"users": "使用者",
-		"notification": "通知",
-		"controller": "控制器",
-		"organization": "組織",
 		"webhooks": "網路鉤子",
 		"invites": "邀請"
 	},
@@ -133,6 +128,7 @@
 		"notification": "通知",
 		"controller": "控制器",
 		"organization": "組織",
+		"backuprestore": "備份",
 		"account": "帳戶",
 		"user-settings": "使用者設定",
 		"logout": "登出"
@@ -705,6 +701,69 @@
 				"numberOfMembers": "成員數量：",
 				"pendingInvitations": "待處理的邀請：",
 				"activeWebhooks": "活躍的 Webhooks:"
+			}
+		},
+		"backupRestore": {
+			"title": "備份與還原",
+			"description": "此部分允許您建立伺服器的備份。您可以選擇在備份中包含資料庫和/或ZeroTier設定。備份將以指定的名稱儲存，並可在建立後立即下載。",
+			"createBackup": {
+				"sectionTitle": "建立備份",
+				"includeDatabase": "包含資料庫",
+				"includeZerotier": "包含 ZeroTier 資料夾",
+				"backupName": "備份名稱（選填）",
+				"backupNamePlaceholder": "留空則自動產生名稱",
+				"createButton": "建立並下載備份",
+				"creatingButton": "正在建立備份...",
+				"successToast": "備份已建立：{fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "現有備份",
+				"noBackups": "未找到備份。請在上方建立您的第一個備份。",
+				"table": {
+					"filename": "檔案名稱",
+					"size": "大小",
+					"created": "建立時間",
+					"actions": "操作",
+					"download": "下載",
+					"restore": "還原",
+					"delete": "刪除"
+				},
+				"deleteModal": {
+					"title": "刪除備份",
+					"description": "您確定要刪除此備份嗎？此操作無法復原。"
+				},
+				"restoreModal": {
+					"title": "從備份還原",
+					"description": "這將覆蓋您目前的資料。請確保先建立備份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
+				},
+				"deleteSuccessToast": "備份刪除成功"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "從檔案還原",
+				"warning": "還原將覆蓋您目前的資料。請確保先建立備份！",
+				"restoreDatabase": "還原資料庫",
+				"restoreZerotier": "還原 ZeroTier 資料夾",
+				"selectFile": "選擇備份檔案",
+				"selectedFile": "已選擇檔案：{fileName} ({size})",
+				"restoreButton": "從檔案還原",
+				"processingButton": "正在處理...",
+				"restoringButton": "正在還原...",
+				"uploadSuccessToast": "備份上傳成功",
+				"restoreSuccessToast": "還原成功完成。請重新啟動應用程式。",
+				"invalidFileModal": {
+					"title": "無效檔案",
+					"description": "請選擇有效的 .zip 備份檔案。"
+				},
+				"uploadErrorModal": {
+					"title": "上傳錯誤",
+					"description": "檔案上傳處理失敗。請重試。"
+				},
+				"restoreModal": {
+					"title": "從備份還原",
+					"description": "這將覆蓋您目前的資料。請確保先建立備份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
+				}
 			}
 		}
 	},
