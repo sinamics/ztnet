@@ -42,17 +42,15 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	useEffect(() => {
 		setState((prev) => ({
 			...prev,
-			mtu: networkByIdQuery?.network?.mtu.toString(),
+			mtu: networkByIdQuery?.network?.mtu?.toString() || "",
 		}));
-	}, [networkByIdQuery?.network.mtu]);
+	}, [networkByIdQuery?.network?.mtu]);
 
 	if (loadingNetwork) {
-		// add loading progress bar to center of page, vertially and horizontally
 		return (
-			<div className="flex flex-col items-center justify-center">
-				<h1 className="text-center text-2xl font-semibold">
-					<progress className="progress progress-primary w-56"></progress>
-				</h1>
+			<div className="flex flex-col items-center justify-center py-8">
+				<progress className="progress progress-primary w-56"></progress>
+				<p className="text-sm text-gray-500 mt-2">Loading network settings...</p>
 			</div>
 		);
 	}
@@ -75,35 +73,61 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 	};
 
 	const { network } = networkByIdQuery || {};
+
 	return (
-		<form className="flex justify-between">
-			<div className="form-control">
-				<label className="label-text">{t("networkIpAssignments.mtu.title")}</label>
-				<label className="text-gray-500 text-sm mb-2">
-					{t("networkIpAssignments.mtu.description")}
-				</label>
-				<label className="text-gray-500 label-text">
-					{t("networkIpAssignments.mtu.acceptedValue")}
-				</label>
-				<div className="join w-3/6">
-					<input
-						id="mtu"
-						name="mtu"
-						value={state.mtu}
-						onChange={onChangeHandler}
-						className="input join-item input-sm input-bordered w-full"
-						placeholder="Default 2800"
-						type="number"
-					/>
-					<button
-						type="submit"
-						onClick={submitHandler}
-						className="btn join-item btn-sm btn-active"
-					>
-						{t("networkMulticast.Submit")}
-					</button>
+		<div className="w-full space-y-4">
+			{/* MTU Configuration Section */}
+			<div className="space-y-3">
+				{/* Title */}
+				<div>
+					<h3 className="text-sm font-medium text-base-content">
+						{t("networkIpAssignments.mtu.title")}
+					</h3>
+				</div>
+
+				{/* Description */}
+				<div className="space-y-1">
+					<p className="text-sm text-gray-500">
+						{t("networkIpAssignments.mtu.description")}
+					</p>
+					<p className="text-xs text-gray-400">
+						{t("networkIpAssignments.mtu.acceptedValue")}
+					</p>
+				</div>
+
+				{/* MTU Input Form */}
+				<div className="space-y-3">
+					<div className="form-control w-full max-w-xs">
+						<label className="label">
+							<span className="label-text font-medium">MTU Value</span>
+							<span className="label-text-alt text-gray-400">Default: 2800</span>
+						</label>
+						<div className="flex gap-2">
+							<input
+								id="mtu"
+								name="mtu"
+								value={state.mtu}
+								onChange={onChangeHandler}
+								className="input input-bordered input-sm flex-1 max-w-[200px]"
+								placeholder="2800"
+								type="number"
+								min="68"
+								max="9000"
+							/>
+							<button
+								type="submit"
+								onClick={submitHandler}
+								className="btn btn-primary btn-sm px-6"
+								disabled={
+									!state.mtu || parseInt(state.mtu) < 68 || parseInt(state.mtu) > 9000
+								}
+							>
+								{t("networkMulticast.Submit")}
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
-		</form>
+		</div>
 	);
 };

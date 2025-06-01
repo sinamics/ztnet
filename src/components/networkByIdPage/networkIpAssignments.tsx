@@ -19,7 +19,7 @@ export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) 
 		<div className="collapse collapse-arrow w-full border border-base-300 bg-base-200">
 			<input type="checkbox" />
 			<div className="collapse-title">{t("networkIpAssignments.header")}</div>
-			<div className="w-100 collapse-content">
+			<div className="w-full collapse-content">
 				<div role="tablist" className="tabs tabs-lifted w-full justify-center pb-5">
 					<a
 						role="tab"

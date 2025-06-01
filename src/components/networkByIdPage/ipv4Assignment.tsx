@@ -207,7 +207,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 				/>
 			</div>
 			{network?.v4AssignMode?.zt ? (
-				<div className="tabs-boxed tabs grid grid-cols-2 gap-5 pb-5">
+				<div className="tabs tabs-box grid grid-cols-2 gap-5 pb-5 w-full">
 					<a
 						className={cn("tab w-full border border-gray-500", {
 							"tab-active border-none": ipTabs.easy,
@@ -372,13 +372,17 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 								className="input input-bordered input-sm w-full"
 							/>
 						</div>
-						<div className="form-control">
+						<div className="form-control w-full">
+							{" "}
+							{/* Added w-full here */}
 							<label className="label" htmlFor="rangeEnd">
 								<span className="label-text">
 									{t("networkIpAssignments.ipv4.range_end")}
 								</span>
 							</label>
-							<div className="join">
+							<div className="join w-full">
+								{" "}
+								{/* Added w-full here too */}
 								<input
 									id="rangeEnd"
 									type="text"
