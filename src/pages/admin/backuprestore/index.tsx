@@ -403,7 +403,7 @@ const BackupRestore = () => {
 			{/* Restore from File Section */}
 			<MenuSectionDividerWrapper title={t("restoreFromFile.sectionTitle")} className="">
 				<div className="space-y-4">
-					<div className="alert alert-warning">
+					<div className="alert alert-error alert-soft">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="stroke-current shrink-0 h-6 w-6"
@@ -471,7 +471,7 @@ const BackupRestore = () => {
 					</div>
 
 					{uploadedFile && (
-						<div className="alert alert-info">
+						<div className="alert">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"
