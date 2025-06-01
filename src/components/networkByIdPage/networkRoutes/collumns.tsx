@@ -25,7 +25,7 @@ export const networkRoutesColumns = (
 		cell: (info) => {
 			// check if ipAssignments has the via ip and return the node name
 			const node = members?.find((member) =>
-				member.ipAssignments.includes(info.row.original.via),
+				member.ipAssignments?.includes(info.row.original.via),
 			);
 			return node?.name || null;
 		},
