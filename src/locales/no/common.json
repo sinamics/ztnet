@@ -764,6 +764,21 @@
 					"description": "Dette vil overskrive dine nåværende data. Sørg for å lage en sikkerhetskopi først!<br></br>",
 					"zerotierWarning": "⚠️ <span>VIKTIG:</span><br></br>Gjenoppretting av ZeroTier-konfigurasjon vil replikere den eksakte ZeroTier-identiteten fra sikkerhetskopi-kilden. Dette betyr at denne serveren vil ha samme ZeroTier-identitet som den opprinnelige serveren.<br></br>Å ha to servere med identiske ZeroTier-identiteter kan forårsake nettverkskonflikter og uforutsigbar oppførsel. Fortsett kun hvis du migrerer fra den opprinnelige serveren eller hvis den opprinnelige serveren er permanent stengt ned."
 				}
+			},
+			"restoreCompleteModal": {
+				"title": "Gjenoppretting Fullført",
+				"successMessage": "✅ Sikkerhetskopi-gjenoppretting fullført med suksess!",
+				"docker": {
+					"description": "Siden du kjører i Docker, vennligst start ZeroTier-containeren på nytt for å aktivere endringene:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ ZeroTier-tjenester kan være midlertidig utilgjengelige under omstart."
+				},
+				"host": {
+					"description": "ZeroTier-tjenestene har blitt automatisk startet på nytt.",
+					"info": "ℹ️ Hvis du opplever problemer, kan det hende du må starte applikasjonen på nytt manuelt."
+				},
+				"databaseRestored": "Databasen har blitt gjenopprettet. Du må kanskje oppdatere siden for å se oppdaterte data.",
+				"gotItButton": "Skjønt!"
 			}
 		}
 	},

@@ -22,6 +22,7 @@ import type { InvitationLinkType } from "~/types/invitation";
 import { MailTemplateKey } from "~/utils/enums";
 import path from "node:path";
 import archiver from "archiver";
+import { BackupMetadata } from "~/types/backupRestore";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -1353,7 +1354,7 @@ export const adminRouter = createTRPCRouter({
 
 				// Read metadata
 				const metadataPath = path.join(extractDir, "backup_metadata.json");
-				let metadata = {};
+				let metadata: BackupMetadata = {};
 				if (fs.existsSync(metadataPath)) {
 					metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
 				}

@@ -61,11 +61,102 @@ const BackupRestore = () => {
 			onError: handleApiError,
 		});
 
+	// Updated mutation with translation keys
 	const { mutate: restoreBackup, isLoading: restoringBackup } =
 		api.admin.restoreBackup.useMutation({
-			onSuccess: handleApiSuccess({
-				toastMessage: t("restoreFromFile.restoreSuccessToast"),
-			}),
+			onSuccess: (data) => {
+				handleApiSuccess({
+					toastMessage: t("restoreFromFile.restoreSuccessToast"),
+				})();
+
+				// Show completion modal with restart instructions
+				const isDocker = data.metadata?.docker || false;
+				callModal({
+					title: (
+						<div className="flex items-center gap-2">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								className="h-6 w-6 text-success"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
+									d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+								/>
+							</svg>
+							<span>{t("restoreCompleteModal.title")}</span>
+						</div>
+					),
+					description: (
+						<div className="space-y-4">
+							<p className="text-success font-medium">
+								{t("restoreCompleteModal.successMessage")}
+							</p>
+
+							{isDocker ? (
+								<div className="space-y-3">
+									<p>{t("restoreCompleteModal.docker.description")}</p>
+									<div className="mockup-code">
+										<pre data-prefix="$">
+											<code>{t("restoreCompleteModal.docker.command")}</code>
+										</pre>
+									</div>
+									<p className="text-sm text-warning">
+										{t("restoreCompleteModal.docker.warning")}
+									</p>
+								</div>
+							) : (
+								<div className="space-y-3">
+									<p>{t("restoreCompleteModal.host.description")}</p>
+									<p className="text-sm text-info">
+										{t("restoreCompleteModal.host.info")}
+									</p>
+								</div>
+							)}
+
+							{data.restoredDatabase && (
+								<div className="alert alert-info">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										className="stroke-current shrink-0 h-6 w-6"
+										fill="none"
+										viewBox="0 0 24 24"
+									>
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											strokeWidth="2"
+											d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+										></path>
+									</svg>
+									<span>{t("restoreCompleteModal.databaseRestored")}</span>
+								</div>
+							)}
+						</div>
+					),
+					showButtons: false,
+					content: (
+						<div className="modal-action">
+							<button
+								className="btn btn-primary"
+								onClick={() => {
+									callModal({ isOpen: false });
+									// Optionally refresh the page if database was restored
+									if (data.restoredDatabase) {
+										setTimeout(() => window.location.reload(), 1000);
+									}
+								}}
+							>
+								{t("restoreCompleteModal.gotItButton")}
+							</button>
+						</div>
+					),
+				});
+			},
 			onError: handleApiError,
 		});
 
