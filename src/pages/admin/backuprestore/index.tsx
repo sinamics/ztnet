@@ -266,6 +266,9 @@ const BackupRestore = () => {
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{/* Create Backup Section */}
 			<MenuSectionDividerWrapper title={t("createBackup.sectionTitle")}>
+				<div className="pb-5">
+					<p className="text-sm text-gray-500">{t("description")}</p>
+				</div>
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="form-control">
@@ -273,7 +276,7 @@ const BackupRestore = () => {
 								<span className="label-text">{t("createBackup.includeDatabase")}</span>
 								<input
 									type="checkbox"
-									className="checkbox checkbox-primary"
+									className="checkbox checkbox-sm checkbox-primary"
 									checked={createBackupOptions.includeDatabase}
 									onChange={(e) =>
 										setCreateBackupOptions((prev) => ({
@@ -289,7 +292,7 @@ const BackupRestore = () => {
 								<span className="label-text">{t("createBackup.includeZerotier")}</span>
 								<input
 									type="checkbox"
-									className="checkbox checkbox-primary"
+									className="checkbox checkbox-sm checkbox-primary"
 									checked={createBackupOptions.includeZerotier}
 									onChange={(e) =>
 										setCreateBackupOptions((prev) => ({
@@ -309,7 +312,7 @@ const BackupRestore = () => {
 						<input
 							type="text"
 							placeholder={t("createBackup.backupNamePlaceholder")}
-							className="input input-bordered"
+							className="input input-sm input-bordered"
 							value={createBackupOptions.backupName}
 							onChange={(e) =>
 								setCreateBackupOptions((prev) => ({
@@ -321,7 +324,7 @@ const BackupRestore = () => {
 					</div>
 
 					<button
-						className={`btn btn-primary ${creatingBackup ? "loading" : ""}`}
+						className={`btn btn-sm ${creatingBackup ? "loading" : ""}`}
 						onClick={handleCreateBackup}
 						disabled={
 							creatingBackup ||
@@ -425,7 +428,7 @@ const BackupRestore = () => {
 								<span className="label-text">{t("restoreFromFile.restoreDatabase")}</span>
 								<input
 									type="checkbox"
-									className="checkbox checkbox-primary"
+									className="checkbox checkbox-sm checkbox-primary"
 									checked={restoreOptions.restoreDatabase}
 									onChange={(e) =>
 										setRestoreOptions((prev) => ({
@@ -441,7 +444,7 @@ const BackupRestore = () => {
 								<span className="label-text">{t("restoreFromFile.restoreZerotier")}</span>
 								<input
 									type="checkbox"
-									className="checkbox checkbox-primary"
+									className="checkbox checkbox-sm checkbox-primary"
 									checked={restoreOptions.restoreZerotier}
 									onChange={(e) =>
 										setRestoreOptions((prev) => ({
@@ -462,7 +465,7 @@ const BackupRestore = () => {
 							ref={fileInputRef}
 							type="file"
 							accept=".tar,.tar.gz,.tgz,.tar.bz2,.tar.xz"
-							className="file-input file-input-bordered w-full"
+							className="file-input file-input-bordered w-full file-input-sm"
 							onChange={handleFileUpload}
 						/>
 					</div>
@@ -492,7 +495,7 @@ const BackupRestore = () => {
 					)}
 
 					<button
-						className={`btn btn-warning ${restoringBackup || uploadingBackup ? "loading" : ""}`}
+						className={`btn btn-warning btn-sm ${restoringBackup || uploadingBackup ? "loading" : ""}`}
 						onClick={handleRestoreFromUpload}
 						disabled={
 							!uploadedFile ||
