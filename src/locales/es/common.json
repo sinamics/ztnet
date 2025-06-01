@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "Copia de Seguridad y Restauración",
-			"description": "Crea, gestiona y restaura copias de seguridad de tu instalación ZTNet incluyendo base de datos y configuración ZeroTier.",
+			"description": "Esta sección te permite crear una copia de seguridad de tu servidor. Puedes elegir incluir la base de datos y/o la configuración de ZeroTier en la copia de seguridad. La copia de seguridad se guardará con el nombre especificado y podrá descargarse inmediatamente después de su creación.",
 			"createBackup": {
 				"sectionTitle": "Crear Copia de Seguridad",
 				"includeDatabase": "Incluir Base de Datos",

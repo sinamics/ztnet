@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "Sikkerhetskopi og Gjenoppretting",
-			"description": "Opprett, administrer og gjenopprett sikkerhetskopier av din ZTNet-installasjon inkludert database og ZeroTier-konfigurasjon.",
+			"description": "Denne seksjonen lar deg opprette en sikkerhetskopi av serveren din. Du kan velge å inkludere databasen og/eller ZeroTier-konfigurasjonen i sikkerhetskopien. Sikkerhetskopien vil bli lagret med det spesifiserte navnet og kan lastes ned umiddelbart etter opprettelse.",
 			"createBackup": {
 				"sectionTitle": "Opprett Sikkerhetskopi",
 				"includeDatabase": "Inkluder Database",

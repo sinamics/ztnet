@@ -1090,109 +1090,123 @@ export const adminRouter = createTRPCRouter({
 				const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
 				const backupName = input.backupName || `ztnet-backup-${timestamp}`;
 				const backupDir = path.join(process.cwd(), "tmp", "backups");
-				const backupPath = path.join(backupDir, `${backupName}.zip`);
+				const tempDir = path.join(backupDir, "temp", Date.now().toString());
+				const backupPath = path.join(backupDir, `${backupName}.tar.gz`);
 
-				// Ensure backup directory exists
+				// Ensure backup and temp directories exist
 				fs.mkdirSync(backupDir, { recursive: true });
+				fs.mkdirSync(tempDir, { recursive: true });
 
-				// Create zip archive
-				const output = fs.createWriteStream(backupPath);
-				const archive = archiver("zip", { zlib: { level: 9 } });
+				try {
+					// Backup database
+					if (input.includeDatabase) {
+						const dbUrl = process.env.DATABASE_URL;
+						if (!dbUrl) {
+							throw new Error("DATABASE_URL not found");
+						}
 
-				archive.pipe(output);
+						if (!dbUrl.includes("postgresql")) {
+							throw new Error("Only PostgreSQL databases are supported");
+						}
 
-				// Backup database
-				if (input.includeDatabase) {
-					const dbUrl = process.env.DATABASE_URL;
-					if (!dbUrl) {
-						throw new Error("DATABASE_URL not found");
+						try {
+							const dumpPath = path.join(tempDir, "database_dump.sql");
+
+							// Parse PostgreSQL URL
+							const url = new URL(dbUrl);
+							const host = url.hostname;
+							const port = url.port || "5432";
+							const username = url.username;
+							const password = url.password;
+							const database = url.pathname.slice(1); // Remove leading slash
+
+							// Set environment variables for pg_dump
+							const env = {
+								...process.env,
+								PGPASSWORD: password,
+							};
+
+							const dumpCommand = `pg_dump -h ${host} -p ${port} -U ${username} -d ${database} --verbose --clean --if-exists`;
+
+							execSync(`${dumpCommand} > "${dumpPath}"`, {
+								env,
+								stdio: ["pipe", "pipe", "inherit"],
+							});
+
+							// Check if dump file was created and has content
+							if (fs.existsSync(dumpPath)) {
+								const stats = fs.statSync(dumpPath);
+								if (stats.size === 0) {
+									throw new Error("Database dump file is empty");
+								}
+							} else {
+								throw new Error("Database dump file was not created");
+							}
+						} catch (error) {
+							throw new Error(`Database backup failed: ${error.message}`);
+						}
 					}
 
-					if (!dbUrl.includes("postgresql")) {
-						throw new Error("Only PostgreSQL databases are supported");
+					// Backup ZeroTier folder
+					if (input.includeZerotier && ZT_FOLDER && fs.existsSync(ZT_FOLDER)) {
+						const ztBackupPath = path.join(tempDir, "zerotier");
+
+						// Copy ZeroTier folder to temp directory
+						try {
+							execSync(`cp -r "${ZT_FOLDER}" "${ztBackupPath}"`, {
+								stdio: ["pipe", "pipe", "inherit"],
+							});
+						} catch (error) {
+							throw new Error(`ZeroTier backup failed: ${error.message}`);
+						}
 					}
 
+					// Add metadata
+					const metadata = {
+						created: new Date().toISOString(),
+						version: process.env.NEXT_PUBLIC_APP_VERSION || "unknown",
+						includeDatabase: input.includeDatabase,
+						includeZerotier: input.includeZerotier,
+						docker: isRunningInDocker(),
+					};
+
+					const metadataPath = path.join(tempDir, "backup_metadata.json");
+					fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2));
+
+					// Create tar.gz archive using system tar command
 					try {
-						const dumpPath = path.join(backupDir, "database_dump.sql");
-
-						// Parse PostgreSQL URL
-						const url = new URL(dbUrl);
-						const host = url.hostname;
-						const port = url.port || "5432";
-						const username = url.username;
-						const password = url.password;
-						const database = url.pathname.slice(1); // Remove leading slash
-
-						// Set environment variables for pg_dump
-						const env = {
-							...process.env,
-							PGPASSWORD: password,
-						};
-
-						const dumpCommand = `pg_dump -h ${host} -p ${port} -U ${username} -d ${database} --verbose --clean --if-exists`;
-
-						execSync(`${dumpCommand} > "${dumpPath}"`, {
-							env,
+						// Change to temp directory and create archive with relative paths
+						execSync(`cd "${tempDir}" && tar -czf "${backupPath}" .`, {
 							stdio: ["pipe", "pipe", "inherit"],
 						});
-
-						// Check if dump file was created and has content
-						if (fs.existsSync(dumpPath)) {
-							const stats = fs.statSync(dumpPath);
-							if (stats.size > 0) {
-								archive.file(dumpPath, { name: "database_dump.sql" });
-							} else {
-								throw new Error("Database dump file is empty");
-							}
-						} else {
-							throw new Error("Database dump file was not created");
-						}
 					} catch (error) {
-						throw new Error(`Database backup failed: ${error.message}`);
+						throw new Error(`Archive creation failed: ${error.message}`);
 					}
-				}
 
-				// Backup ZeroTier folder
-				if (input.includeZerotier && ZT_FOLDER && fs.existsSync(ZT_FOLDER)) {
-					archive.directory(ZT_FOLDER, "zerotier");
-				}
-
-				// Add metadata
-				const metadata = {
-					created: new Date().toISOString(),
-					version: process.env.NEXT_PUBLIC_APP_VERSION || "unknown",
-					includeDatabase: input.includeDatabase,
-					includeZerotier: input.includeZerotier,
-					docker: isRunningInDocker(),
-				};
-				archive.append(JSON.stringify(metadata, null, 2), {
-					name: "backup_metadata.json",
-				});
-
-				await new Promise((resolve, reject) => {
-					output.on("close", resolve);
-					output.on("error", reject);
-					archive.on("error", reject);
-					archive.finalize();
-				});
-
-				// Clean up dump file after archive is complete
-				if (input.includeDatabase) {
-					const dumpPath = path.join(backupDir, "database_dump.sql");
-					if (fs.existsSync(dumpPath)) {
-						fs.unlinkSync(dumpPath);
+					// Verify archive was created successfully
+					if (!fs.existsSync(backupPath)) {
+						throw new Error("Backup archive was not created");
 					}
-				}
 
-				// Return backup info
-				const stats = fs.statSync(backupPath);
-				return {
-					success: true,
-					backupPath,
-					fileName: `${backupName}.zip`,
-					size: stats.size,
-					created: new Date().toISOString(),
-				};
+					// Clean up temp directory
+					fs.rmSync(tempDir, { recursive: true, force: true });
+
+					// Return backup info
+					const stats = fs.statSync(backupPath);
+					return {
+						success: true,
+						backupPath,
+						fileName: `${backupName}.tar.gz`,
+						size: stats.size,
+						created: new Date().toISOString(),
+					};
+				} catch (error) {
+					// Clean up temp directory on error
+					if (fs.existsSync(tempDir)) {
+						fs.rmSync(tempDir, { recursive: true, force: true });
+					}
+					throw error;
+				}
 			} catch (error) {
 				throwError(`Backup creation failed: ${error.message}`);
 			}
@@ -1243,7 +1257,7 @@ export const adminRouter = createTRPCRouter({
 
 			const files = fs.readdirSync(backupDir);
 			const backups = files
-				.filter((file) => file.endsWith(".zip"))
+				.filter((file) => file.endsWith(".tar.gz"))
 				.map((file) => {
 					const filePath = path.join(backupDir, file);
 					const stats = fs.statSync(filePath);
@@ -1318,9 +1332,19 @@ export const adminRouter = createTRPCRouter({
 				// Create extraction directory
 				fs.mkdirSync(extractDir, { recursive: true });
 
-				// Extract backup using host unzip command
+				// Extract backup using tar (available by default on Debian and FreeBSD)
 				try {
-					execSync(`unzip -q "${backupPath}" -d "${extractDir}"`, {
+					// Determine compression type from file extension
+					let tarOptions = "-xf";
+					if (input.fileName.endsWith(".tar.gz") || input.fileName.endsWith(".tgz")) {
+						tarOptions = "-xzf";
+					} else if (input.fileName.endsWith(".tar.bz2")) {
+						tarOptions = "-xjf";
+					} else if (input.fileName.endsWith(".tar.xz")) {
+						tarOptions = "-xJf";
+					}
+
+					execSync(`tar ${tarOptions} "${backupPath}" -C "${extractDir}"`, {
 						stdio: ["pipe", "pipe", "inherit"],
 					});
 				} catch (extractError) {
@@ -1607,7 +1631,7 @@ export const adminRouter = createTRPCRouter({
 
 				// Security check - ensure filename is safe
 				if (
-					!input.fileName.endsWith(".zip") ||
+					!input.fileName.endsWith(".tar.gz") ||
 					input.fileName.includes("..") ||
 					input.fileName.includes("/")
 				) {

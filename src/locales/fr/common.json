@@ -676,7 +676,7 @@
 		"organization": {
 			"addOrganization": {
 				"title": "Gestion d'équipe",
-				"description": "Explorez l'organisation pour commencer à façonner la manière dont votre équipe travaille ensemble. Attribuez des rôles, invitez de nouveaux membres et supervisez les autorisations de base au sein de votre organisation. Conçue pour la simplicité et la facilité d'utilisation, cette fonctionnalité bêta constitue une base pour la collaboration de votre équipe. Alors que nous continuons à développer et à améliorer ces paramètres, nous vous invitons à nous faire part de vos commentaires pour nous aider à affiner l'expérience.",
+				"description": "Cette section vous permet de créer une sauvegarde de votre serveur. Vous pouvez choisir d'inclure la base de données et/ou la configuration ZeroTier dans la sauvegarde. La sauvegarde sera enregistrée avec le nom spécifié et pourra être téléchargée immédiatement après sa création.",
 				"inputFields": {
 					"label": "Ajouter une organisation",
 					"description": "Créer une nouvelle organisation",

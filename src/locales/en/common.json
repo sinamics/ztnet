@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "Backup & Restore",
-			"description": "Create, manage, and restore backups of your ZTNet installation including database and ZeroTier configuration.",
+			"description": "This section allows you to create a backup of your server. You can choose to include the database and/or ZeroTier configuration in the backup. The backup will be saved with the specified name and can be downloaded immediately after creation.",
 			"createBackup": {
 				"sectionTitle": "Create Backup",
 				"includeDatabase": "Include Database",

@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "备份与恢复",
-			"description": "创建、管理和恢复您的 ZTNet 安装备份，包括数据库和 ZeroTier 配置。",
+			"description": "此部分允许您创建服务器的备份。您可以选择在备份中包含数据库和/或ZeroTier配置。备份将以指定的名称保存，并可在创建后立即下载。",
 			"createBackup": {
 				"sectionTitle": "创建备份",
 				"includeDatabase": "包含数据库",

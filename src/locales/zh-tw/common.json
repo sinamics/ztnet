@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "備份與還原",
-			"description": "建立、管理和還原您的 ZTNet 安裝備份，包括資料庫和 ZeroTier 設定。",
+			"description": "此部分允許您建立伺服器的備份。您可以選擇在備份中包含資料庫和/或ZeroTier設定。備份將以指定的名稱儲存，並可在建立後立即下載。",
 			"createBackup": {
 				"sectionTitle": "建立備份",
 				"includeDatabase": "包含資料庫",

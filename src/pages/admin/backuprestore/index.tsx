@@ -78,7 +78,8 @@ const BackupRestore = () => {
 				byteNumbers[i] = byteCharacters.charCodeAt(i);
 			}
 			const byteArray = new Uint8Array(byteNumbers);
-			const blob = new Blob([byteArray], { type: "application/zip" });
+			// Updated MIME type for tar.gz files
+			const blob = new Blob([byteArray], { type: "application/gzip" });
 
 			const url = window.URL.createObjectURL(blob);
 			const a = document.createElement("a");
@@ -122,9 +123,15 @@ const BackupRestore = () => {
 		});
 	};
 
+	// Helper function to check if file is a valid tar file
+	const isValidTarFile = (fileName: string) => {
+		const validExtensions = [".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tar.xz"];
+		return validExtensions.some((ext) => fileName.toLowerCase().endsWith(ext));
+	};
+
 	const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0];
-		if (file?.name.endsWith(".zip")) {
+		if (file && isValidTarFile(file.name)) {
 			setUploadedFile(file);
 		} else {
 			callModal({
@@ -151,7 +158,8 @@ const BackupRestore = () => {
 					const reader = new FileReader();
 					reader.onload = () => {
 						const base64Data = reader.result as string;
-						const base64String = base64Data.split(",")[1]; // Remove data:application/zip;base64, prefix
+						// Remove data:application/octet-stream;base64, or similar prefix
+						const base64String = base64Data.split(",")[1];
 
 						// Upload the file first
 						uploadBackup({
@@ -212,6 +220,9 @@ const BackupRestore = () => {
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{/* Create Backup Section */}
 			<MenuSectionDividerWrapper title={t("createBackup.sectionTitle")}>
+				<div className="pb-5">
+					<p className="text-sm text-gray-500">{t("description")}</p>
+				</div>
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="form-control">
@@ -267,7 +278,7 @@ const BackupRestore = () => {
 					</div>
 
 					<button
-						className={`btn btn-primary ${creatingBackup ? "loading" : ""}`}
+						className={`btn ${creatingBackup ? "loading" : ""}`}
 						onClick={handleCreateBackup}
 						disabled={
 							creatingBackup ||
@@ -346,7 +357,7 @@ const BackupRestore = () => {
 			{/* Restore from File Section */}
 			<MenuSectionDividerWrapper title={t("restoreFromFile.sectionTitle")} className="">
 				<div className="space-y-4">
-					<div className="alert alert-warning">
+					<div className="alert alert-error">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="stroke-current shrink-0 h-6 w-6"
@@ -407,14 +418,14 @@ const BackupRestore = () => {
 						<input
 							ref={fileInputRef}
 							type="file"
-							accept=".zip"
+							accept=".tar,.tar.gz,.tgz,.tar.bz2,.tar.xz"
 							className="file-input file-input-bordered w-full"
 							onChange={handleFileUpload}
 						/>
 					</div>
 
 					{uploadedFile && (
-						<div className="alert alert-info">
+						<div className="alert">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"

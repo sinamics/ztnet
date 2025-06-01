@@ -709,7 +709,7 @@
 		},
 		"backupRestore": {
 			"title": "Kopia Zapasowa i Przywracanie",
-			"description": "Twórz, zarządzaj i przywracaj kopie zapasowe instalacji ZTNet obejmujące bazę danych i konfigurację ZeroTier.",
+			"description": "Ta sekcja umożliwia utworzenie kopii zapasowej serwera. Możesz wybrać, czy dołączyć bazę danych i/lub konfigurację ZeroTier do kopii zapasowej. Kopia zapasowa zostanie zapisana pod określoną nazwą i będzie mogła zostać pobrana natychmiast po utworzeniu.",
 			"createBackup": {
 				"sectionTitle": "Utwórz Kopię Zapasową",
 				"includeDatabase": "Uwzględnij Bazę Danych",
