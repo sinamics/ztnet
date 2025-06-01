@@ -21,7 +21,7 @@ const AdminSettings = ({ orgIds }) => {
 
 	const router = useRouter();
 	const { tab = "members" } = router.query;
-	const t = useTranslations("commonMenuTabs");
+	const t = useTranslations("sidebar");
 
 	useOrganizationWebsocket(orgIds);
 	interface ITab {
@@ -62,7 +62,7 @@ const AdminSettings = ({ orgIds }) => {
 			component: <Organization />,
 		},
 		{
-			name: "Backup & Restore",
+			name: t("backuprestore"),
 			value: "backup-restore",
 			component: <BackupRestore />,
 		},

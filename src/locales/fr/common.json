@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Paramètres",
 		"network": "Réseau",
-		"mail": "Courrier",
-		"users": "Utilisateurs",
-		"notification": "Notification",
-		"controller": "Contrôleur",
-		"organization": "Organisation",
 		"webhooks": "Webhooks",
 		"invites": "Invitations"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Notification",
 		"controller": "Contrôleur ZT",
 		"organization": "Organisation",
+		"backuprestore": "Sauvegardes",
 		"account": "Compte",
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "Restaurer depuis la Sauvegarde",
-					"description": "Cela écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !"
+					"description": "Ceci écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT :</span><br></br>Restaurer la configuration ZeroTier répliquera l'identité ZeroTier exacte de la source de sauvegarde. Cela signifie que ce serveur aura la même identité ZeroTier que le serveur d'origine.<br></br>Avoir deux serveurs avec des identités ZeroTier identiques peut causer des conflits réseau et un comportement imprévisible. Ne procédez que si vous migrez depuis le serveur d'origine ou si le serveur d'origine est définitivement hors service."
 				},
 				"deleteSuccessToast": "Sauvegarde supprimée avec succès"
 			},
@@ -763,8 +760,9 @@
 					"description": "Échec du traitement du téléchargement de fichier. Veuillez réessayer."
 				},
 				"restoreModal": {
-					"title": "Restaurer depuis un Fichier",
-					"description": "Cela écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !"
+					"title": "Restaurer depuis la Sauvegarde",
+					"description": "Ceci écrasera vos données actuelles. Assurez-vous de créer une sauvegarde d'abord !<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT :</span><br></br>Restaurer la configuration ZeroTier répliquera l'identité ZeroTier exacte de la source de sauvegarde. Cela signifie que ce serveur aura la même identité ZeroTier que le serveur d'origine.<br></br>Avoir deux serveurs avec des identités ZeroTier identiques peut causer des conflits réseau et un comportement imprévisible. Ne procédez que si vous migrez depuis le serveur d'origine ou si le serveur d'origine est définitivement hors service."
 				}
 			}
 		}

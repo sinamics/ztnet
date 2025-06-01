@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "設定",
 		"network": "網路",
-		"mail": "郵件",
-		"users": "使用者",
-		"notification": "通知",
-		"controller": "控制器",
-		"organization": "組織",
 		"webhooks": "網路鉤子",
 		"invites": "邀請"
 	},
@@ -133,6 +128,7 @@
 		"notification": "通知",
 		"controller": "控制器",
 		"organization": "組織",
+		"backuprestore": "備份",
 		"account": "帳戶",
 		"user-settings": "使用者設定",
 		"logout": "登出"
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "從備份還原",
-					"description": "這將覆蓋您目前的資料。請確保先建立備份！"
+					"description": "這將覆蓋您目前的資料。請確保先建立備份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
 				},
 				"deleteSuccessToast": "備份刪除成功"
 			},
@@ -763,8 +760,9 @@
 					"description": "檔案上傳處理失敗。請重試。"
 				},
 				"restoreModal": {
-					"title": "從檔案還原",
-					"description": "這將覆蓋您目前的資料。請確保先建立備份！"
+					"title": "從備份還原",
+					"description": "這將覆蓋您目前的資料。請確保先建立備份！<br></br>",
+					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
 				}
 			}
 		}

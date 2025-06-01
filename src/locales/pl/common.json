@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Ustawienia",
 		"network": "Sieć",
-		"mail": "E-mail",
-		"users": "Użytkownicy",
-		"notification": "Powiadomienie",
-		"controller": "Kontroler",
-		"organization": "Organizacja",
 		"webhooks": "Webhooki",
 		"invites": "Zaproszenia"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Powiadomienia",
 		"controller": "Kontroler ZT",
 		"organization": "Organizacje",
+		"backuprestore": "Kopie Zapasowe",
 		"account": "Konto",
 		"user-settings": "Ustawienia konta",
 		"logout": "Wyloguj"
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "Przywróć z Kopii Zapasowej",
-					"description": "To nadpisze twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!"
+					"description": "To zastąpi twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!<br></br>",
+					"zerotierWarning": "⚠️ <span>WAŻNE:</span><br></br>Przywracanie konfiguracji ZeroTier spowoduje replikację dokładnej tożsamości ZeroTier ze źródła kopii zapasowej. Oznacza to, że ten serwer będzie miał taką samą tożsamość ZeroTier jak oryginalny serwer.<br></br>Posiadanie dwóch serwerów z identycznymi tożsamościami ZeroTier może powodować konflikty sieciowe i nieprzewidywalne zachowanie. Kontynuuj tylko wtedy, gdy migrujesz z oryginalnego serwera lub gdy oryginalny serwer jest trwale wyłączony z eksploatacji."
 				},
 				"deleteSuccessToast": "Kopia zapasowa usunięta pomyślnie"
 			},
@@ -763,8 +760,9 @@
 					"description": "Nie udało się przetworzyć przesyłania pliku. Proszę spróbować ponownie."
 				},
 				"restoreModal": {
-					"title": "Przywróć z Pliku",
-					"description": "To nadpisze twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!"
+					"title": "Przywróć z Kopii Zapasowej",
+					"description": "To zastąpi twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!<br></br>",
+					"zerotierWarning": "⚠️ <span>WAŻNE:</span><br></br>Przywracanie konfiguracji ZeroTier spowoduje replikację dokładnej tożsamości ZeroTier ze źródła kopii zapasowej. Oznacza to, że ten serwer będzie miał taką samą tożsamość ZeroTier jak oryginalny serwer.<br></br>Posiadanie dwóch serwerów z identycznymi tożsamościami ZeroTier może powodować konflikty sieciowe i nieprzewidywalne zachowanie. Kontynuuj tylko wtedy, gdy migrujesz z oryginalnego serwera lub gdy oryginalny serwer jest trwale wyłączony z eksploatacji."
 				}
 			}
 		}

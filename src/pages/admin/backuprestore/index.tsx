@@ -144,6 +144,28 @@ const BackupRestore = () => {
 	const handleRestoreFromUpload = async () => {
 		if (!uploadedFile) return;
 
+		const description = (
+			<>
+				<div>
+					{t.rich("restoreFromFile.restoreModal.description", {
+						br: () => (
+							<span>
+								<br />
+								<br />
+							</span>
+						),
+					})}
+				</div>
+				{restoreOptions.restoreZerotier && (
+					<div>
+						{t.rich("restoreFromFile.restoreModal.zerotierWarning", {
+							br: () => <br />,
+							span: (chunks) => <span className="font-bold">{chunks}</span>,
+						})}
+					</div>
+				)}
+			</>
+		);
 		callModal({
 			title: (
 				<p>
@@ -151,7 +173,7 @@ const BackupRestore = () => {
 					<span className="text-primary">{uploadedFile.name}</span>
 				</p>
 			),
-			description: t("restoreFromFile.restoreModal.description"),
+			description,
 			yesAction: () => {
 				try {
 					// Convert file to base64
@@ -187,6 +209,30 @@ const BackupRestore = () => {
 	};
 
 	const handleRestoreFromExisting = (fileName: string) => {
+		// Create detailed description based on restore options
+		const description = (
+			<>
+				<div>
+					{t.rich("existingBackups.restoreModal.description", {
+						br: () => (
+							<span>
+								<br />
+								<br />
+							</span>
+						),
+					})}
+				</div>
+				{restoreOptions.restoreZerotier && (
+					<div>
+						{t.rich("existingBackups.restoreModal.zerotierWarning", {
+							br: () => <br />,
+							span: (chunks) => <span className="font-bold">{chunks}</span>,
+						})}
+					</div>
+				)}
+			</>
+		);
+
 		callModal({
 			title: (
 				<p>
@@ -194,7 +240,7 @@ const BackupRestore = () => {
 					<span className="text-primary">{fileName}</span>
 				</p>
 			),
-			description: t("existingBackups.restoreModal.description"),
+			description,
 			yesAction: () => {
 				restoreBackup({
 					fileName,
@@ -220,9 +266,6 @@ const BackupRestore = () => {
 		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
 			{/* Create Backup Section */}
 			<MenuSectionDividerWrapper title={t("createBackup.sectionTitle")}>
-				<div className="pb-5">
-					<p className="text-sm text-gray-500">{t("description")}</p>
-				</div>
 				<div className="space-y-4">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 						<div className="form-control">
@@ -278,7 +321,7 @@ const BackupRestore = () => {
 					</div>
 
 					<button
-						className={`btn ${creatingBackup ? "loading" : ""}`}
+						className={`btn btn-primary ${creatingBackup ? "loading" : ""}`}
 						onClick={handleCreateBackup}
 						disabled={
 							creatingBackup ||
@@ -357,7 +400,7 @@ const BackupRestore = () => {
 			{/* Restore from File Section */}
 			<MenuSectionDividerWrapper title={t("restoreFromFile.sectionTitle")} className="">
 				<div className="space-y-4">
-					<div className="alert alert-error">
+					<div className="alert alert-warning">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							className="stroke-current shrink-0 h-6 w-6"
@@ -425,7 +468,7 @@ const BackupRestore = () => {
 					</div>
 
 					{uploadedFile && (
-						<div className="alert">
+						<div className="alert alert-info">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								fill="none"

@@ -445,7 +445,7 @@ const Sidebar = (): JSX.Element => {
 											/>
 										</svg>
 									</span>
-									<span className="ml-3">Backup-Restore</span>
+									<span className="ml-3">{t("backuprestore")}</span>
 								</Link>
 							</li>
 						</>

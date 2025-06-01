@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Settings",
 		"network": "Network",
-		"mail": "Mail",
-		"users": "Users",
-		"notification": "Notification",
-		"controller": "Controller",
-		"organization": "Organization",
 		"webhooks": "Webhooks",
 		"invites": "Invites"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Notification",
 		"controller": "ZT Controller",
 		"organization": "Organization",
+		"backuprestore": "Backup & Restore",
 		"account": "Account",
 		"user-settings": "User Settings",
 		"logout": "Logout"
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "Restore from Backup",
-					"description": "This will overwrite your current data. Make sure to create a backup first!"
+					"description": "This will overwrite your current data. Make sure to create a backup first!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
 				},
 				"deleteSuccessToast": "Backup deleted successfully"
 			},
@@ -764,7 +761,8 @@
 				},
 				"restoreModal": {
 					"title": "Restore from File",
-					"description": "This will overwrite your current data. Make sure to create a backup first!"
+					"description": "This will overwrite your current data. Make sure to create a backup first!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
 				}
 			}
 		}

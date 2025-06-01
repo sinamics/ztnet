@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Configuración",
 		"network": "Red",
-		"mail": "Correo",
-		"users": "Usuarios",
-		"notification": "Notificación",
-		"controller": "Controlador",
-		"organization": "Organización",
 		"webhooks": "Webhooks",
 		"invites": "Invitaciones"
 	},
@@ -133,6 +128,7 @@
 		"notification": "Notificación",
 		"controller": "Controlador",
 		"organization": "Organización",
+		"backuprestore": "Respaldos",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "Restaurar desde Copia de Seguridad",
-					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!"
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
 				},
 				"deleteSuccessToast": "Copia de seguridad eliminada exitosamente"
 			},
@@ -763,8 +760,9 @@
 					"description": "Error al procesar la subida del archivo. Por favor inténtalo de nuevo."
 				},
 				"restoreModal": {
-					"title": "Restaurar desde Archivo",
-					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!"
+					"title": "Restaurar desde Copia de Seguridad",
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
 				}
 			}
 		}

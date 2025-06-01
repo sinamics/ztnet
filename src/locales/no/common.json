@@ -5,11 +5,6 @@
 	"commonMenuTabs": {
 		"settings": "Innstillinger",
 		"network": "Nettverk",
-		"mail": "E-post",
-		"users": "Brukere",
-		"notification": "Varsling",
-		"controller": "Kontroller",
-		"organization": "Organisasjon",
 		"webhooks": "Webhooks",
 		"invites": "Invitasjoner"
 	},
@@ -132,6 +127,7 @@
 		"users": "Brukere",
 		"notification": "Varsling",
 		"controller": "ZT Kontroller",
+		"backuprestore": "Sikkerhetskopi",
 		"account": "Konto",
 		"organization": "Organisasjon",
 		"user-settings": "Brukerinnstillinger",
@@ -738,7 +734,8 @@
 				},
 				"restoreModal": {
 					"title": "Gjenopprett fra Sikkerhetskopi",
-					"description": "Dette vil overskrive dine nåværende data. Sørg for å opprette en sikkerhetskopi først!"
+					"description": "Dette vil overskrive dine nåværende data. Sørg for å lage en sikkerhetskopi først!<br></br>",
+					"zerotierWarning": "⚠️ <span>VIKTIG:</span><br></br>Gjenoppretting av ZeroTier-konfigurasjon vil replikere den eksakte ZeroTier-identiteten fra sikkerhetskopi-kilden. Dette betyr at denne serveren vil ha samme ZeroTier-identitet som den opprinnelige serveren.<br></br>Å ha to servere med identiske ZeroTier-identiteter kan forårsake nettverkskonflikter og uforutsigbar oppførsel. Fortsett kun hvis du migrerer fra den opprinnelige serveren eller hvis den opprinnelige serveren er permanent stengt ned."
 				},
 				"deleteSuccessToast": "Sikkerhetskopi slettet vellykket"
 			},
@@ -763,8 +760,9 @@
 					"description": "Kunne ikke behandle filopplasting. Vennligst prøv igjen."
 				},
 				"restoreModal": {
-					"title": "Gjenopprett fra Fil",
-					"description": "Dette vil overskrive dine nåværende data. Sørg for å opprette en sikkerhetskopi først!"
+					"title": "Gjenopprett fra Sikkerhetskopi",
+					"description": "Dette vil overskrive dine nåværende data. Sørg for å lage en sikkerhetskopi først!<br></br>",
+					"zerotierWarning": "⚠️ <span>VIKTIG:</span><br></br>Gjenoppretting av ZeroTier-konfigurasjon vil replikere den eksakte ZeroTier-identiteten fra sikkerhetskopi-kilden. Dette betyr at denne serveren vil ha samme ZeroTier-identitet som den opprinnelige serveren.<br></br>Å ha to servere med identiske ZeroTier-identiteter kan forårsake nettverkskonflikter og uforutsigbar oppførsel. Fortsett kun hvis du migrerer fra den opprinnelige serveren eller hvis den opprinnelige serveren er permanent stengt ned."
 				}
 			}
 		}
