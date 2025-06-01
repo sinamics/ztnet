@@ -764,6 +764,21 @@
 					"description": "To zastąpi twoje obecne dane. Upewnij się, że najpierw utworzysz kopię zapasową!<br></br>",
 					"zerotierWarning": "⚠️ <span>WAŻNE:</span><br></br>Przywracanie konfiguracji ZeroTier spowoduje replikację dokładnej tożsamości ZeroTier ze źródła kopii zapasowej. Oznacza to, że ten serwer będzie miał taką samą tożsamość ZeroTier jak oryginalny serwer.<br></br>Posiadanie dwóch serwerów z identycznymi tożsamościami ZeroTier może powodować konflikty sieciowe i nieprzewidywalne zachowanie. Kontynuuj tylko wtedy, gdy migrujesz z oryginalnego serwera lub gdy oryginalny serwer jest trwale wyłączony z eksploatacji."
 				}
+			},
+			"restoreCompleteModal": {
+				"title": "Przywracanie Zakończone",
+				"successMessage": "✅ Przywracanie kopii zapasowej zakończone pomyślnie!",
+				"docker": {
+					"description": "Ponieważ używasz Docker, uruchom ponownie kontener ZeroTier aby zastosować zmiany:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ Usługi ZeroTier mogą być tymczasowo niedostępne podczas ponownego uruchomienia."
+				},
+				"host": {
+					"description": "Usługi ZeroTier zostały automatycznie uruchomione ponownie.",
+					"info": "ℹ️ Jeśli wystąpią problemy, może być konieczne ręczne ponowne uruchomienie aplikacji."
+				},
+				"databaseRestored": "Baza danych została przywrócona. Może być konieczne odświeżenie strony aby zobaczyć zaktualizowane dane.",
+				"gotItButton": "Rozumiem!"
 			}
 		}
 	},

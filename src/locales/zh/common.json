@@ -764,6 +764,21 @@
 					"description": "这将覆盖您当前的数据。请确保先创建备份！<br></br>",
 					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>恢复ZeroTier配置将复制备份源的确切ZeroTier身份。这意味着此服务器将具有与原始服务器相同的ZeroTier身份。<br></br>拥有两个具有相同ZeroTier身份的服务器可能会导致网络冲突和不可预测的行为。仅在您从原始服务器迁移或原始服务器已永久停用时才继续。"
 				}
+			},
+			"restoreCompleteModal": {
+				"title": "恢复完成",
+				"successMessage": "✅ 备份恢复成功完成！",
+				"docker": {
+					"description": "由于您正在使用 Docker，请重启 ZeroTier 容器以应用更改：",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ 重启期间 ZeroTier 服务可能暂时不可用。"
+				},
+				"host": {
+					"description": "ZeroTier 服务已自动重启。",
+					"info": "ℹ️ 如果遇到任何问题，您可能需要手动重启应用程序。"
+				},
+				"databaseRestored": "数据库已恢复。您可能需要刷新页面以查看更新的数据。",
+				"gotItButton": "知道了！"
 			}
 		}
 	},

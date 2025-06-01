@@ -764,6 +764,21 @@
 					"description": "This will overwrite your current data. Make sure to create a backup first!<br></br>",
 					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
 				}
+			},
+			"restoreCompleteModal": {
+				"title": "Restore Complete",
+				"successMessage": "✅ Backup restoration completed successfully!",
+				"docker": {
+					"description": "Since you're running in Docker, please restart the ZeroTier container to apply the changes:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ ZeroTier services may be temporarily unavailable during restart."
+				},
+				"host": {
+					"description": "The ZeroTier services have been automatically restarted.",
+					"info": "ℹ️ If you experience any issues, you may need to manually restart the application."
+				},
+				"databaseRestored": "Database has been restored. You may need to refresh the page to see updated data.",
+				"gotItButton": "Got it!"
 			}
 		}
 	},

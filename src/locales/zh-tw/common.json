@@ -764,6 +764,21 @@
 					"description": "這將覆蓋您目前的資料。請確保先建立備份！<br></br>",
 					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
 				}
+			},
+			"restoreCompleteModal": {
+				"title": "復原完成",
+				"successMessage": "✅ 備份復原成功完成！",
+				"docker": {
+					"description": "由於您正在使用 Docker，請重新啟動 ZeroTier 容器以套用變更：",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ 重新啟動期間 ZeroTier 服務可能暫時無法使用。"
+				},
+				"host": {
+					"description": "ZeroTier 服務已自動重新啟動。",
+					"info": "ℹ️ 如果遇到任何問題，您可能需要手動重新啟動應用程式。"
+				},
+				"databaseRestored": "資料庫已復原。您可能需要重新整理頁面以查看更新的資料。",
+				"gotItButton": "知道了！"
 			}
 		}
 	},
