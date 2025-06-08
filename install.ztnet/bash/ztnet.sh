@@ -143,7 +143,7 @@ exec 3>&1 4>&2
 trap 'cleanup; exit' SIGINT
 
 # Remove directories and then recreate the target directory
-rm -rf "$TEMP_INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src"
+rm -rf "$TEMP_INSTALL_DIR" "$TARGET_DIR/.next" "$TARGET_DIR/prisma" "$TARGET_DIR/src" "$TARGET_DIR/public"
 mkdir -p "$TARGET_DIR"
 
 # Function to check if a command exists
