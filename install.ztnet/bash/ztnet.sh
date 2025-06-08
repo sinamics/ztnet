@@ -1037,7 +1037,7 @@ mkdir -p "$TARGET_DIR/prisma"
 
 # Copy relevant files and directories
 cp "$TEMP_REPO_DIR/next.config.mjs" "$TARGET_DIR/"
-cp -r "$TEMP_REPO_DIR/public" "$TARGET_DIR/public"
+cp -r "$TEMP_REPO_DIR/public" "$TARGET_DIR/"
 cp "$TEMP_REPO_DIR/package.json" "$TARGET_DIR/package.json"
 
 # Copy .next and prisma directories
