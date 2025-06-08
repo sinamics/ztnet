@@ -94,6 +94,12 @@ To stop the `ztnet` service from starting at boot, run the following command:
 sudo systemctl disable ztnet
 ```
 
+## Install a specific version
+If you want to install a specific version of ztnet, you can specify the version like this, change `v0.7.0` to the version you want to install:
+```bash
+curl -s http://install.ztnet.network | sudo bash -s -- -v v0.7.0
+```
+
 ## Testing other branches
 :::note
 Do not test in production; use a designated testing environment. Database schemas can vary between branches, and deploying a branch instead of a release may cause issues.
