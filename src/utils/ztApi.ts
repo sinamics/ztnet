@@ -165,7 +165,7 @@ const getData = async <T>(
 				throw new APIError("Invalid API Key", error);
 			}
 			if (statusCode === 404) {
-				throw new APIError("Network Not Found", error);
+				throw new APIError("Network or Member Not Found", error);
 			}
 		}
 		const message = `An error occurred fetching data from ${addr}`;
@@ -610,17 +610,11 @@ export const member_details = async (
 ): Promise<MemberEntity> => {
 	// get headers based on local or central api
 	const { headers, ztCentralApiUrl, localControllerUrl } = await getOptions(ctx, central);
+	const addr = central
+		? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
+		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
 
-	try {
-		const addr = central
-			? `${ztCentralApiUrl}/network/${nwid}/member/${memberId}`
-			: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
-
-		return await getData<MemberEntity>(addr, headers);
-	} catch (error) {
-		const message = "Member not found!";
-		throw new APIError(message, error as AxiosError);
-	}
+	return await getData<MemberEntity>(addr, headers);
 };
 
 // Get all peers
