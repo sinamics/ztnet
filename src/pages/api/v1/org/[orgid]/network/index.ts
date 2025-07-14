@@ -67,7 +67,7 @@ export const POST_orgCreateNewNetwork = SecuredOrganizationApiRoute(
 );
 
 export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
-	{ requiredRole: Role.USER },
+	{ requiredRole: Role.READ_ONLY },
 	async (_req, res, { orgId, ctx }) => {
 		try {
 			// @ts-expect-error
