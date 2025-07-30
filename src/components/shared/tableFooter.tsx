@@ -3,39 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
-const BackForwardBtn = ({ table }: { table: Table<unknown> }) => (
-	<>
-		<button
-			className="btn btn-primary btn-outline btn-sm"
-			onClick={() => table.setPageIndex(0)}
-			disabled={!table.getCanPreviousPage()}
-		>
-			{"<<"}
-		</button>
-		<button
-			className="btn btn-primary btn-outline btn-sm"
-			onClick={() => table.previousPage()}
-			disabled={!table.getCanPreviousPage()}
-		>
-			{"<"}
-		</button>
-		<button
-			className="btn btn-primary btn-outline btn-sm"
-			onClick={() => table.nextPage()}
-			disabled={!table.getCanNextPage()}
-		>
-			{">"}
-		</button>
-		<button
-			className="btn btn-primary btn-outline btn-sm"
-			onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-			disabled={!table.getCanNextPage()}
-		>
-			{">>"}
-		</button>
-	</>
-);
-
 const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -67,11 +34,29 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 	if (totalMembersCount < MIN_COUNT_TO_SHOW_FOOTER) return null;
 
 	return (
-		<>
-			<div className="space-x-3 p-2">
-				<BackForwardBtn table={table} />
+		<div className="flex items-center justify-between gap-4">
+			{/* Left side - Previous navigation */}
+			<div className="flex items-center gap-2">
+				<button
+					className="btn btn-primary btn-outline btn-sm"
+					onClick={() => table.setPageIndex(0)}
+					disabled={!table.getCanPreviousPage()}
+					title="First page"
+				>
+					{"<<"}
+				</button>
+				<button
+					className="btn btn-primary btn-outline btn-sm"
+					onClick={() => table.previousPage()}
+					disabled={!table.getCanPreviousPage()}
+					title="Previous page"
+				>
+					{"<"}
+				</button>
 			</div>
-			<div className="space-x-3 p-2">
+
+			{/* Center - Page size selector and page info */}
+			<div className="flex items-center gap-4">
 				<select
 					className="select select-bordered select-sm"
 					value={pageSize}
@@ -86,9 +71,8 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 					))}
 					<option value="all">{t("tableFooter.show")} All</option>
 				</select>
-			</div>
-			<div className="space-x-3 p-2">
-				<span className="flex items-center gap-1 text-xs">
+
+				<span className="flex items-center gap-1 text-xs text-base-content/70">
 					<div>{t("tableFooter.page")}</div>
 					<strong>
 						{table.getState().pagination.pageIndex + 1} {t("tableFooter.of")}{" "}
@@ -96,7 +80,27 @@ const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
 					</strong>
 				</span>
 			</div>
-		</>
+
+			{/* Right side - Next navigation */}
+			<div className="flex items-center gap-2">
+				<button
+					className="btn btn-primary btn-outline btn-sm"
+					onClick={() => table.nextPage()}
+					disabled={!table.getCanNextPage()}
+					title="Next page"
+				>
+					{">"}
+				</button>
+				<button
+					className="btn btn-primary btn-outline btn-sm"
+					onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+					disabled={!table.getCanNextPage()}
+					title="Last page"
+				>
+					{">>"}
+				</button>
+			</div>
+		</div>
 	);
 };
 

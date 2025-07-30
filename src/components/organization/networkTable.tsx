@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
 import {
 	useReactTable,
@@ -54,9 +54,17 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 
 	const router = useRouter();
 	const t = useTranslations();
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
+
+	// Auto-focus search input when component mounts
+	useEffect(() => {
+		if (searchInputRef.current) {
+			searchInputRef.current.focus();
+		}
+	}, []);
 
 	const columnHelper = createColumnHelper<OrgMemberEntity>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -155,12 +163,25 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 		void router.push(`/organization/${orgId}/${nwid}`);
 	};
 
+	const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter") {
+			// Get the first row from filtered results
+			const firstRow = table.getRowModel().rows[0];
+			if (firstRow) {
+				const nwid = firstRow.original.nwid;
+				handleRowClick(nwid);
+			}
+		}
+	};
+
 	return (
 		<div className="inline-block w-full p-1.5 align-middle">
 			<div>
 				<DebouncedInput
+					ref={searchInputRef}
 					value={globalFilter ?? ""}
 					onChange={(value) => setGlobalFilter(String(value))}
+					onKeyDown={handleSearchKeyDown}
 					className="font-lg border-block border p-2 shadow"
 					placeholder={t("commonTable.search.networkSearchPlaceholder")}
 				/>
