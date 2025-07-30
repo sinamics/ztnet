@@ -585,7 +585,12 @@
 					"networkLimitPlaceholder": "Límite de red",
 					"networkLimitDescription": "Establece el número máximo de redes que pueden ser creadas por usuarios en este grupo",
 					"useAsDefaultPlaceholder": "Usar como predeterminado",
-					"useAsDefaultDescription": "Establecer este grupo como el grupo predeterminado para nuevos usuarios"
+					"useAsDefaultDescription": "Establecer este grupo como el grupo predeterminado para nuevos usuarios",
+					"expirationDatePlaceholder": "Fecha de Expiración",
+					"expirationDateDescription": "Establece la fecha cuando las cuentas de usuario en este grupo expirarán. La verificación de expiración se ejecuta diariamente a medianoche. Los usuarios asignados a este grupo serán automáticamente desactivados en esta fecha. Déjalo vacío para sin expiración.",
+					"expiredGroupWarning": "Este grupo ha expirado. Los usuarios serán desactivados.",
+					"expiredLabel": "EXPIRADO",
+					"expiresLabel": "Expira"
 				}
 			}
 		},

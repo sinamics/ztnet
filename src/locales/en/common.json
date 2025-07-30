@@ -573,7 +573,7 @@
 			},
 			"groups": {
 				"sectionTitle": "Groups",
-				"description": "Create a new user group to better organize platform users. Assigning users to specific groups allows for controlled access, setting of limits, and adjusting settings based on user types.",
+				"description": "Create a new user group to better organize platform users. Assigning users to specific groups allows for controlled access, setting of limits, adjusting settings based on user types, and setting expiration dates for automatic account management.",
 				"addGroup": {
 					"editGroupTitle": "Edit Group",
 					"deleteGroupTitle": "Delete Group",
@@ -585,7 +585,12 @@
 					"networkLimitPlaceholder": "Network Limit",
 					"networkLimitDescription": "Set the maximum number of networks that can be created by users in this group",
 					"useAsDefaultPlaceholder": "Use as Default",
-					"useAsDefaultDescription": "Set this group as the default group for new users"
+					"useAsDefaultDescription": "Set this group as the default group for new users",
+					"expirationDatePlaceholder": "Expiration Date",
+					"expirationDateDescription": "Set the date when user accounts in this group will expire. Expiration check runs daily at midnight. Users assigned to this group will automatically be deactivated on this date. Leave empty for no expiration.",
+					"expiredGroupWarning": "This group has expired. Users will be deactivated.",
+					"expiredLabel": "EXPIRED",
+					"expiresLabel": "Expires"
 				}
 			}
 		},

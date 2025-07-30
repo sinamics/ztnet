@@ -585,7 +585,12 @@
 					"networkLimitPlaceholder": "網路限制",
 					"networkLimitDescription": "設定此群組中使用者可建立的網路數量的最大值",
 					"useAsDefaultPlaceholder": "預設使用",
-					"useAsDefaultDescription": "將此群組設為新使用者的預設群組"
+					"useAsDefaultDescription": "將此群組設為新使用者的預設群組",
+					"expirationDatePlaceholder": "到期日期",
+					"expirationDateDescription": "設定此群組中的使用者帳戶到期日期。到期檢查每天午夜運行。分配到此群組的使用者將在此日期自動停用。留空表示無到期。",
+					"expiredGroupWarning": "此群組已到期。使用者將被停用。",
+					"expiredLabel": "已到期",
+					"expiresLabel": "到期"
 				}
 			}
 		},

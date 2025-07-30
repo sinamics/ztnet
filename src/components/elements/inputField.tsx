@@ -18,6 +18,7 @@ interface FieldConfig {
 	value?: string | number | boolean;
 	elementType?: "input" | "select" | "textarea" | "dropdown";
 	selectOptions?: string[] | { value: string; label: string }[];
+	min?: string; // For date inputs to set minimum selectable date
 }
 
 type SubmitHandlerType = (
@@ -407,6 +408,7 @@ const InputField = ({
 											onChange={handleChange}
 											name={field.name}
 											className={`input-bordered input-${size} w-full`}
+											min={field.min}
 										/>
 									</div>
 								);
