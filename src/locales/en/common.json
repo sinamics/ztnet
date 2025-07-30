@@ -163,7 +163,8 @@
 			"or": "OR",
 			"dontHaveAccount": "Don't have an account?",
 			"getStarted": "Get Started!",
-			"havingIssues": "Having issues?"
+			"havingIssues": "Having issues?",
+			"oauthExclusiveButNotConfigured": "OAuth exclusive login is enabled but OAuth is not configured. Please contact your administrator."
 		},
 		"signup": {
 			"signUpWithCredentials": "Create an account",
@@ -514,6 +515,10 @@
 				"header": "Authentication",
 				"enableUserRegistration": "Enable user registration?",
 				"enableUserRegistrationDescription": "This will allow users to click the Sign-Up button at the landing page.",
+				"oauthExclusiveLoginEnabled": "OAuth Exclusive Login is enabled.",
+				"oauthExclusiveLoginDescription": "Users can only authenticate via OAuth. The signup form is hidden regardless of the registration setting below.",
+				"oauthAllowNewUsers": "New users can register via OAuth.",
+				"oauthExistingUsersOnly": "Only existing users can login via OAuth.",
 				"generateInvitation": {
 					"header": "Generate invitation link",
 					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",

@@ -22,12 +22,15 @@ const Users = () => {
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
 
+	const { data: adminSettings, isLoading: loadingAdminSettings } =
+		api.settings.getAdminOptions.useQuery();
+
 	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchOptions] }),
 		onError: handleApiError,
 	});
 
-	if (loadingOptions) {
+	if (loadingOptions || loadingAdminSettings) {
 		return (
 			<div className="flex flex-col items-center justify-center">
 				<h1 className="text-center text-2xl font-semibold">
@@ -44,6 +47,32 @@ const Users = () => {
 				className="col-span-2 xl:w-6/12"
 			>
 				<div className="">
+					{adminSettings?.oauthExclusiveLogin && (
+						<div className="alert alert-info mb-4">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								className="stroke-current shrink-0 w-6 h-6"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth="2"
+									d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+								></path>
+							</svg>
+							<span>
+								<strong>{t("users.authentication.oauthExclusiveLoginEnabled")}</strong>{" "}
+								{t("users.authentication.oauthExclusiveLoginDescription")}
+								{adminSettings?.oauthAllowNewUsers ? (
+									<> {t("users.authentication.oauthAllowNewUsers")}</>
+								) : (
+									<> {t("users.authentication.oauthExistingUsersOnly")}</>
+								)}
+							</span>
+						</div>
+					)}
 					<div className="flex items-center justify-between">
 						<label>
 							<p className="font-medium">

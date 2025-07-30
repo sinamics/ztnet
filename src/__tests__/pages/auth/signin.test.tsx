@@ -43,7 +43,7 @@ jest.mock("../../../utils/api", () => ({
 			},
 			registrationAllowed: {
 				useQuery: jest.fn().mockReturnValue({
-					data: { allowed: true },
+					data: { enableRegistration: true, oauthExclusiveLogin: false },
 					isLoading: false,
 				}),
 			},

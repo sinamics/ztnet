@@ -163,7 +163,8 @@
 			"or": "O",
 			"dontHaveAccount": "¿No tienes una cuenta?",
 			"getStarted": "¡Comienza ahora!",
-			"havingIssues": "¿Tienes problemas?"
+			"havingIssues": "¿Tienes problemas?",
+			"oauthExclusiveButNotConfigured": "El inicio de sesión exclusivo OAuth está habilitado pero OAuth no está configurado. Póngase en contacto con su administrador."
 		},
 		"signup": {
 			"signUpWithCredentials": "Crea una cuenta",
@@ -514,6 +515,10 @@
 				"header": "Autenticación",
 				"enableUserRegistration": "¿Habilitar el registro de usuarios?",
 				"enableUserRegistrationDescription": "Esto permitirá a los usuarios hacer clic en el botón de Registro en la página de inicio.",
+				"oauthExclusiveLoginEnabled": "El inicio de sesión exclusivo OAuth está habilitado.",
+				"oauthExclusiveLoginDescription": "Los usuarios solo pueden autenticarse mediante OAuth. El formulario de registro está oculto independientemente de la configuración de registro a continuación.",
+				"oauthAllowNewUsers": "Los nuevos usuarios pueden registrarse mediante OAuth.",
+				"oauthExistingUsersOnly": "Solo los usuarios existentes pueden iniciar sesión mediante OAuth.",
 				"generateInvitation": {
 					"header": "Generar enlace de invitación",
 					"secretMessageLabel": "Se le pedirá al usuario que ingrese este mensaje al registrarse (sensible a mayúsculas y minúsculas)",

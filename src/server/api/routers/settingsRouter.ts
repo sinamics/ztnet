@@ -35,4 +35,23 @@ export const settingsRouter = createTRPCRouter({
 
 		return publicOptions;
 	}),
+	getAdminOptions: protectedProcedure.query(async ({ ctx }) => {
+		const options = await ctx.prisma.globalOptions.findFirst({
+			where: {
+				id: 1,
+			},
+			select: {
+				enableRegistration: true,
+			},
+		});
+
+		const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
+		const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
+
+		return {
+			...options,
+			oauthExclusiveLogin,
+			oauthAllowNewUsers,
+		};
+	}),
 });

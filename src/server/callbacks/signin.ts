@@ -18,6 +18,17 @@ import { randomBytes } from "crypto";
 async function createUser(userData: User, isOauth = false): Promise<Partial<User>> {
 	const userCount = await prisma.user.count();
 
+	// Validate required fields
+	if (!userData.email || userData.email.trim() === "") {
+		throw new Error("Email is required to create a user");
+	}
+
+	// Ensure we have a name
+	const userName =
+		userData.name && userData.name.trim() !== ""
+			? userData.name
+			: userData.email.split("@")[0] || "User";
+
 	// Check if admin has created a default user group for new users
 	const defaultUserGroup = await prisma.userGroup.findFirst({
 		where: { isDefault: true },
@@ -25,12 +36,12 @@ async function createUser(userData: User, isOauth = false): Promise<Partial<User
 	const currentDate = new Date().toISOString();
 	return await prisma.user.create({
 		data: {
-			name: userData.name,
-			email: userData.email,
+			name: userName,
+			email: userData.email.trim(),
 			lastLogin: currentDate,
 			emailVerified: isOauth ? currentDate : null,
 			role: userCount === 0 ? "ADMIN" : "USER",
-			image: userData.image,
+			image: userData.image || null,
 			userGroupId: defaultUserGroup?.id,
 			options: {
 				create: {
@@ -156,15 +167,45 @@ export function signInCallback(
 			}
 
 			if (account.provider === "oauth") {
+				// Validate required OAuth fields
+				if (!user.email || user.email.trim() === "") {
+					return `/auth/login?error=${ErrorCode.OauthMissingEmail}`;
+				}
+
+				// Ensure we have a name, fallback to email if not provided
+				if (!user.name || user.name.trim() === "") {
+					user.name = user.email.split("@")[0] || "OAuth User";
+				}
+
 				if (!userExist) {
-					// check if the oauth user is allowed to sign up.
-					const siteSettings = await prisma.globalOptions.findFirst();
-					if (!siteSettings?.enableRegistration) {
+					// Check if OAuth allows new users (default to true for backward compatibility)
+					const oauthAllowNewUsers =
+						process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
+					const oauthExclusiveLogin =
+						process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
+
+					// Always respect OAUTH_ALLOW_NEW_USERS for OAuth registrations
+					// If OAuth exclusive login is enabled, only check OAUTH_ALLOW_NEW_USERS
+					// If OAuth exclusive login is disabled, check both OAUTH_ALLOW_NEW_USERS AND general registration
+					let canCreateUser = oauthAllowNewUsers;
+
+					if (!oauthExclusiveLogin && oauthAllowNewUsers) {
+						// Also check general registration setting when not in exclusive mode
+						const globalOptions = await prisma.globalOptions.findFirst();
+						canCreateUser = globalOptions?.enableRegistration ?? false;
+					}
+
+					if (!canCreateUser) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
 					}
 
-					const emailIsValid = true;
-					userExist = (await createUser(user, emailIsValid)) as User;
+					try {
+						const emailIsValid = true;
+						userExist = (await createUser(user, emailIsValid)) as User;
+					} catch (error) {
+						console.error("Error creating OAuth user:", error);
+						return `/auth/login?error=${ErrorCode.InternalServerError}`;
+					}
 				}
 			}
 
@@ -187,6 +228,7 @@ export function signInCallback(
 				await upsertDeviceInfo(deviceInfo);
 
 				// set the device id, we will use it in the jwt callback
+				// Only set this after user creation to avoid Prisma adapter issues
 				user.deviceId = deviceInfo.deviceId;
 				if (account.provider === "oauth") {
 					profile.deviceId = deviceInfo.deviceId;

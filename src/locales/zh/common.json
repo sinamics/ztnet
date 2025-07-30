@@ -163,7 +163,8 @@
 			"or": "或",
 			"dontHaveAccount": "没有账户？",
 			"getStarted": "立即开始！",
-			"havingIssues": "遇到问题？"
+			"havingIssues": "遇到问题？",
+			"oauthExclusiveButNotConfigured": "已启用OAuth独占登录，但未配置OAuth。请联系您的管理员。"
 		},
 		"signup": {
 			"signUpWithCredentials": "创建账户",
@@ -514,6 +515,10 @@
 				"header": "身份验证",
 				"enableUserRegistration": "启用用户注册？",
 				"enableUserRegistrationDescription": "这将允许用户在着陆页上点击注册按钮。",
+				"oauthExclusiveLoginEnabled": "已启用OAuth独占登录。",
+				"oauthExclusiveLoginDescription": "用户只能通过OAuth进行身份验证。无论下面的注册设置如何，注册表单都会被隐藏。",
+				"oauthAllowNewUsers": "新用户可以通过OAuth注册。",
+				"oauthExistingUsersOnly": "只有现有用户可以通过OAuth登录。",
 				"generateInvitation": {
 					"header": "生成邀请链接",
 					"secretMessageLabel": "用户注册时将被要求输入此消息（区分大小写）",

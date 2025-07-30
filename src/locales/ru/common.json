@@ -163,7 +163,8 @@
 			"or": "ИЛИ",
 			"dontHaveAccount": "Нет аккаунта?",
 			"getStarted": "Начать!",
-			"havingIssues": "Проблемы?"
+			"havingIssues": "Проблемы?",
+			"oauthExclusiveButNotConfigured": "Эксклюзивный вход через OAuth включен, но OAuth не настроен. Обратитесь к администратору."
 		},
 		"signup": {
 			"signUpWithCredentials": "Создать аккаунт",
@@ -514,6 +515,10 @@
 				"header": "Аутентификация",
 				"enableUserRegistration": "Включить регистрацию пользователей?",
 				"enableUserRegistrationDescription": "Это позволит пользователям нажимать кнопку регистрации на странице входа.",
+				"oauthExclusiveLoginEnabled": "Включен эксклюзивный вход через OAuth.",
+				"oauthExclusiveLoginDescription": "Пользователи могут аутентифицироваться только через OAuth. Форма регистрации скрыта независимо от настройки регистрации ниже.",
+				"oauthAllowNewUsers": "Новые пользователи могут регистрироваться через OAuth.",
+				"oauthExistingUsersOnly": "Только существующие пользователи могут входить через OAuth.",
 				"generateInvitation": {
 					"header": "Сгенерировать ссылку приглашения",
 					"secretMessageLabel": "Пользователь будет должен ввести это сообщение при регистрации (учитывается регистр)",

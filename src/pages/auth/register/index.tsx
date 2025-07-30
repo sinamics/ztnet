@@ -71,7 +71,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 	const ztnetOrganizationInvite =
 		!!context.query?.organizationInvite && context.query?.organizationInvite.length > 50;
 
+	const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
+
 	const session = await getSession(context);
+	// redirect user to login if OAuth exclusive login is enabled and no special invites
+	if (oauthExclusiveLogin && !ztnetInvite && !ztnetOrganizationInvite) {
+		return {
+			redirect: {
+				destination: "/auth/login",
+				permanent: false,
+			},
+		};
+	}
+
 	// redirect user to 404 if registration is disabled
 	if (!options?.enableRegistration && !ztnetInvite && !ztnetOrganizationInvite) {
 		return {

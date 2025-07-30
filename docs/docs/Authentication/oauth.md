@@ -42,6 +42,14 @@ Standard OAuth 2.0 is used by various providers, including GitHub and Facebook. 
 - `OAUTH_USER_INFO`: URL to fetch the user's profile information after authentication. For example: `"https://api.github.com/user"` for GitHub.
 - `OAUTH_SCOPE`: Defines the scope of access. For example: `"read:user user:email"` for GitHub.
 
+### OAuth Exclusive Login
+
+For enhanced security, you can configure ZTNET to use OAuth as the exclusive authentication method:
+
+- `OAUTH_EXCLUSIVE_LOGIN`: Set to `true` to disable the traditional email/password login form and only allow OAuth authentication. This prevents unauthorized registrations via the signup form.
+- `OAUTH_ALLOW_NEW_USERS`: Set to `true` to allow new users to register via OAuth, or `false` to restrict OAuth login to existing users only.
+
+When `OAUTH_EXCLUSIVE_LOGIN=true`, the signup form will be completely hidden from the login page, providing better security for public instances.
 
 ### Callback URL
 - `https://<your_domain>/api/auth/callback/oauth`
