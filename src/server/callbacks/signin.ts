@@ -157,15 +157,20 @@ export function signInCallback(
 
 			if (account.provider === "oauth") {
 				if (!userExist) {
-					// Check if OAuth allows new users
-					const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS !== "false";
-					const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
+					// Check if OAuth allows new users (default to true for backward compatibility)
+					const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
+					const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
 
-					// If OAuth exclusive login is enabled, allow new users based on OAUTH_ALLOW_NEW_USERS
-					// Otherwise, check the general registration setting
-					const canCreateUser = oauthExclusiveLogin
-						? oauthAllowNewUsers
-						: (await prisma.globalOptions.findFirst())?.enableRegistration;
+					// Always respect OAUTH_ALLOW_NEW_USERS for OAuth registrations
+					// If OAuth exclusive login is enabled, only check OAUTH_ALLOW_NEW_USERS
+					// If OAuth exclusive login is disabled, check both OAUTH_ALLOW_NEW_USERS AND general registration
+					let canCreateUser = oauthAllowNewUsers;
+					
+					if (!oauthExclusiveLogin && oauthAllowNewUsers) {
+						// Also check general registration setting when not in exclusive mode
+						const globalOptions = await prisma.globalOptions.findFirst();
+						canCreateUser = globalOptions?.enableRegistration ?? false;
+					}
 
 					if (!canCreateUser) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
