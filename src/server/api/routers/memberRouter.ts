@@ -679,4 +679,134 @@ export const networkMemberRouter = createTRPCRouter({
 				});
 			}
 		}),
+	bulkDeleteStashed: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+				organizationId: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { nwid, organizationId } = input;
+
+			// Get the network with permission check
+			let network: { nwid: string } | null;
+			if (organizationId) {
+				// Organization network - check organization membership
+				const userOrganizationRole = await ctx.prisma.userOrganizationRole.findFirst({
+					where: {
+						userId: ctx.session.user.id,
+						organizationId,
+					},
+				});
+
+				if (!userOrganizationRole) {
+					throw new TRPCError({
+						code: "UNAUTHORIZED",
+						message: "User is not a member of this organization.",
+					});
+				}
+
+				// Get organization network
+				network = await ctx.prisma.network.findFirst({
+					where: {
+						nwid,
+						organizationId,
+					},
+				});
+			} else {
+				// Personal network - check ownership
+				network = await ctx.prisma.network.findFirst({
+					where: {
+						nwid,
+						authorId: ctx.session.user.id,
+					},
+				});
+			}
+
+			if (!network) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Network not found or access denied.",
+				});
+			}
+
+			// Find all members that are stashed (deleted=true)
+			const membersToDelete = await ctx.prisma.network_members.findMany({
+				where: {
+					nwid,
+					deleted: true,
+				},
+			});
+
+			if (membersToDelete.length === 0) {
+				return {
+					deletedCount: 0,
+					message: "No stashed members found to delete.",
+				};
+			}
+
+			const memberIds = membersToDelete.map((member) => member.id);
+			let deletedFromController = 0;
+
+			// Permanently delete each member from ZeroTier controller and database
+			for (const member of membersToDelete) {
+				try {
+					// Delete from ZT controller
+					if (member.deleted) {
+						await ztController.member_delete({
+							ctx,
+							central: false,
+							nwid,
+							memberId: member.id,
+						});
+						deletedFromController++;
+					}
+				} catch (error) {
+					// Log error but continue with database cleanup
+					console.error(
+						`Failed to delete member ${member.id} from ZT controller:`,
+						error,
+					);
+				}
+			}
+
+			// Delete from database in batch
+			const deletedFromDatabase = await ctx.prisma.network_members.deleteMany({
+				where: {
+					nwid,
+					id: { in: memberIds },
+				},
+			});
+
+			// Log the activity
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Bulk deleted ${deletedFromDatabase.count} stashed members from network ${nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: organizationId || null,
+				},
+			});
+
+			// Send webhook notification for bulk delete
+			try {
+				await sendWebhook<MemberDeleted>({
+					organizationId,
+					hookType: HookType.MEMBER_DELETED,
+					deletedMemberId: "bulk",
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: nwid,
+				});
+			} catch (error) {
+				// Log webhook error but don't fail the operation
+				console.error("Failed to send bulk delete webhook:", error);
+			}
+
+			return {
+				deletedCount: deletedFromDatabase.count,
+				deletedFromController,
+				message: `Successfully deleted ${deletedFromDatabase.count} stashed members from database and ${deletedFromController} from controller.`,
+			};
+		}),
 });

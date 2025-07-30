@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import TimeAgo from "react-timeago";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useModalStore } from "~/utils/store";
+import { useTranslations } from "next-intl";
 import {
 	useReactTable,
 	getCoreRowModel,
@@ -13,7 +14,7 @@ import {
 	type SortingState,
 	type ColumnDef,
 } from "@tanstack/react-table";
-import { type MemberEntity } from "~/types/local/member";
+import { type network_members } from "@prisma/client";
 
 interface IProps {
 	nwid: string;
@@ -22,6 +23,7 @@ interface IProps {
 
 export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => {
 	const { query } = useRouter();
+	const t = useTranslations("networkById");
 	const [sorting, setSorting] = useState<SortingState>([
 		{
 			id: "id",
@@ -48,9 +50,14 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			void refetchNetworkById();
 		},
 	});
-	const columnHelper = createColumnHelper<MemberEntity>();
+	const { mutate: bulkDeleteStashed } = api.networkMember.bulkDeleteStashed.useMutation({
+		onSuccess: () => {
+			void refetchNetworkById();
+		},
+	});
+	const columnHelper = createColumnHelper<network_members>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	const columns = useMemo<ColumnDef<MemberEntity>[]>(
+	const columns = useMemo<ColumnDef<network_members>[]>(
 		() => [
 			columnHelper.accessor("authorized", {
 				header: () => <span>Authorized</span>,
@@ -75,12 +82,12 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 					return <TimeAgo date={creationDate} title={creationDate} />;
 				},
 			}),
-			columnHelper.accessor("conStatus", {
+			columnHelper.display({
 				header: () => <span>Conn Status</span>,
 				id: "conStatus",
 				cell: () => <span>stashed</span>,
 			}),
-			columnHelper.accessor("action", {
+			columnHelper.display({
 				header: () => <span>Action</span>,
 				id: "action",
 				cell: ({
@@ -136,9 +143,15 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 		],
 		[],
 	);
-	const [data, setData] = useState(networkById.zombieMembers);
-	const table = useReactTable({
-		//@ts-expect-error
+	const [data, setData] = useState<network_members[]>([]);
+
+	// Update data when networkById changes
+	useEffect(() => {
+		// Ensure zombieMembers are cast to the correct type
+		const zombieMembers = networkById?.zombieMembers as network_members[] || [];
+		setData(zombieMembers);
+	}, [networkById?.zombieMembers]);
+	const table = useReactTable<network_members>({
 		data,
 		columns,
 		onSortingChange: setSorting,
@@ -152,7 +165,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			updateData: (rowIndex, columnId, value) => {
 				// Skip page index reset until after next rerender
 				// skipAutoResetPageIndex()
-				setData((old: MemberEntity[] = []) =>
+				setData((old: network_members[] = []) =>
 					old.map((row, index) => {
 						if (index === rowIndex) {
 							return {
@@ -169,6 +182,40 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 	});
 	return (
 		<span className="pt-2">
+			{data && data.length > 0 && (
+				<div className="mb-4 flex justify-end">
+					<button
+						onClick={() =>
+							callModal({
+								title: <p>{t("deletedNetworkMembersTable.bulkDelete.modalTitle")}</p>,
+								description: (
+									<>
+										<p>
+											{t("deletedNetworkMembersTable.bulkDelete.modalDescription", {
+												count: data.length,
+											})}
+										</p>
+										<p className="mt-2 text-warning">
+											<strong>
+												{t("deletedNetworkMembersTable.bulkDelete.modalWarning")}
+											</strong>
+										</p>
+									</>
+								),
+								yesAction: () => {
+									bulkDeleteStashed({
+										nwid,
+										organizationId,
+									});
+								},
+							})
+						}
+						className="btn btn-error btn-sm"
+					>
+						{t("deletedNetworkMembersTable.buttons.deleteAll", { count: data.length })}
+					</button>
+				</div>
+			)}
 			<table className="w-full overflow-x-auto border border-gray-500">
 				<thead className="bg-base-100">
 					{

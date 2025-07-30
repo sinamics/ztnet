@@ -369,7 +369,13 @@
 		},
 		"deletedNetworkMembersTable": {
 			"buttons": {
-				"viewStashedMembers": "View stashed members"
+				"viewStashedMembers": "View stashed members",
+				"deleteAll": "Delete All Stashed ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "Delete All Stashed Members?",
+				"modalDescription": "This will permanently delete all {count} stashed members from both the database and ZeroTier controller.",
+				"modalWarning": "Warning: This action cannot be undone. To re-add these members in the future, you must manually enter their Member IDs."
 			}
 		},
 		"inviteMemberByMail": {

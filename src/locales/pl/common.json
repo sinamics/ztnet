@@ -369,7 +369,13 @@
 		},
 		"deletedNetworkMembersTable": {
 			"buttons": {
-				"viewStashedMembers": "Pokaż ukrytych"
+				"viewStashedMembers": "Pokaż ukrytych",
+				"deleteAll": "Usuń Wszystkich Ukrytych ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "Usunąć Wszystkich Ukrytych Członków?",
+				"modalDescription": "To trwale usunie wszystkich {count} ukrytych członków z bazy danych i kontrolera ZeroTier.",
+				"modalWarning": "Ostrzeżenie: Ta akcja nie może być cofnięta. Aby ponownie dodać tych członków w przyszłości, musisz ręcznie wprowadzić ich identyfikatory członków."
 			}
 		},
 		"inviteMemberByMail": {
