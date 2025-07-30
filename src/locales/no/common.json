@@ -585,7 +585,12 @@
 					"networkLimitPlaceholder": "Nettverksbegrensning",
 					"networkLimitDescription": "Sett maksimalt antall nettverk som kan opprettes av brukere i denne gruppen",
 					"useAsDefaultPlaceholder": "Bruk som standard",
-					"useAsDefaultDescription": "Sett denne gruppen som standardgruppen for nye brukere"
+					"useAsDefaultDescription": "Sett denne gruppen som standardgruppen for nye brukere",
+					"expirationDatePlaceholder": "Utløpsdato",
+					"expirationDateDescription": "Sett datoen når brukerkontoer i denne gruppen vil utløpe. Utløpskontroll kjører daglig ved midnatt. Brukere tildelt denne gruppen vil automatisk bli deaktivert på denne datoen. La stå tom for ingen utløp.",
+					"expiredGroupWarning": "Denne gruppen har utløpt. Brukere vil bli deaktivert.",
+					"expiredLabel": "UTLØPT",
+					"expiresLabel": "Utløper"
 				}
 			}
 		},

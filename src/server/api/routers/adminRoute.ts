@@ -23,6 +23,7 @@ import { MailTemplateKey } from "~/utils/enums";
 import path from "node:path";
 import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
+import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 
@@ -607,6 +608,34 @@ export const adminRouter = createTRPCRouter({
 					.refine((val) => val !== undefined, {
 						message: "Default is required",
 					}),
+				expiresAt: z
+					.string()
+					.optional()
+					.transform((val) => {
+						if (!val || val === "") return null;
+						return val;
+					})
+					.refine(
+						(val) => {
+							if (val === null) return true;
+							return !Number.isNaN(Date.parse(val));
+						},
+						{
+							message: "Invalid date format",
+						},
+					)
+					.refine(
+						(val) => {
+							if (val === null) return true;
+							const selectedDate = new Date(val);
+							const today = new Date();
+							today.setHours(0, 0, 0, 0); // Set to start of day for comparison
+							return selectedDate >= today;
+						},
+						{
+							message: "Expiration date cannot be in the past",
+						},
+					),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -623,6 +652,15 @@ export const adminRouter = createTRPCRouter({
 					});
 				}
 
+				// Parse the expiration date if provided and set to end of day
+				let expiresAt: Date | null = null;
+				if (input.expiresAt && input.expiresAt !== "") {
+					const date = new Date(input.expiresAt);
+					// Set to end of day (23:59:59.999) to ensure expiration happens after the full day
+					date.setHours(23, 59, 59, 999);
+					expiresAt = date;
+				}
+
 				// Use upsert to either update or create a new userGroup
 				return await ctx.prisma.userGroup.upsert({
 					where: {
@@ -632,11 +670,13 @@ export const adminRouter = createTRPCRouter({
 						name: input.groupName,
 						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
+						expiresAt,
 					},
 					update: {
 						name: input.groupName,
 						maxNetworks: Number.parseInt(input.maxNetworks),
 						isDefault: input.isDefault,
+						expiresAt,
 					},
 				});
 			} catch (err: unknown) {
@@ -656,6 +696,7 @@ export const adminRouter = createTRPCRouter({
 				name: true,
 				maxNetworks: true,
 				isDefault: true,
+				expiresAt: true,
 				_count: {
 					select: {
 						users: true,
@@ -738,6 +779,7 @@ export const adminRouter = createTRPCRouter({
 						},
 						data: {
 							userGroupId: null, // Remove the user's association with a userGroup
+							expiresAt: null, // Remove expiration when removing from group
 						},
 					});
 				}
@@ -746,10 +788,22 @@ export const adminRouter = createTRPCRouter({
 					where: {
 						id: Number.parseInt(input.userGroupId),
 					},
+					select: {
+						id: true,
+						name: true,
+						expiresAt: true,
+					},
 				});
 
 				if (!user || !userGroup) {
 					throw new Error("User or UserGroup not found");
+				}
+
+				// Calculate expiration date if the group has expiration settings
+				let expiresAt: Date | null = null;
+				if (userGroup.expiresAt) {
+					// If the group has an expiration date, set the user's expiration to that date
+					expiresAt = new Date(userGroup.expiresAt);
 				}
 
 				// Assign the user to the user group
@@ -759,6 +813,7 @@ export const adminRouter = createTRPCRouter({
 					},
 					data: {
 						userGroupId: Number.parseInt(input.userGroupId), // Link the user to the userGroup
+						expiresAt, // Set expiration based on group settings
 					},
 				});
 			} catch (err: unknown) {

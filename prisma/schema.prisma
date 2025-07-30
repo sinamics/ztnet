@@ -219,6 +219,7 @@ model UserGroup {
   maxNetworks    Int          @default(5)
   accessLevel    AccessLevel  @default(WRITE)
   isDefault      Boolean      @default(false)
+  expiresAt      DateTime? // When users in this group should expire, null for no expiration
   users          User[]
   userInvitation Invitation[]
 }
