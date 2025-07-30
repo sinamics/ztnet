@@ -39,8 +39,8 @@ export const sortingPhysicalIpAddress = (
 	rowB: Row<MemberEntity>,
 ): number => {
 	const stripPort = (ip: string) => ip.split("/")[0];
-	const a = rowA.original.peers?.physicalAddress;
-	const b = rowB.original?.peers?.physicalAddress;
+	const a = rowA.original.physicalAddress;
+	const b = rowB.original.physicalAddress;
 
 	const convertToBigInt = (value: string | string[] | undefined): bigint => {
 		if (Array.isArray(value)) {
