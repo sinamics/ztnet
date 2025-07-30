@@ -101,7 +101,7 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				});
 			}
-			// check if user exist in db, and if so set deleted:false
+			// check if user exist in db, and if so set deleted:false and permanentlyDeleted:false
 			const member = await ctx.prisma.network_members.findUnique({
 				where: {
 					id_nwid: {
@@ -120,6 +120,7 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 					data: {
 						deleted: false,
+						permanentlyDeleted: false,
 					},
 				});
 			}
@@ -578,16 +579,47 @@ export const networkMemberRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-			// remove member from controller
-			const deleted = await ztController.member_delete({
-				ctx,
-				central: input.central,
-				nwid: input.nwid,
-				memberId: input.id,
+
+			// Check if member is already stashed (deleted=true) in database
+			const existingMember = await ctx.prisma.network_members.findFirst({
+				where: {
+					id: input.id,
+					nwid: input.nwid,
+				},
 			});
 
-			if (input.central) return deleted;
+			// If member is not already stashed, remove from controller first
+			if (!existingMember?.deleted) {
+				await ztController.member_delete({
+					ctx,
+					central: input.central,
+					nwid: input.nwid,
+					memberId: input.id,
+				});
+			}
+			// For stashed members, we only delete from database to prevent reappearing as "new nodes"
 
+			if (input.central) return { deleted: true };
+
+			// For stashed members (deleted=true), mark as permanently deleted
+			// Keep them in database to prevent reappearing as "new nodes"
+			if (existingMember?.deleted) {
+				// Member is already stashed, mark as permanently deleted
+				await ctx.prisma.network_members.update({
+					where: {
+						id_nwid: {
+							id: input.id,
+							nwid: input.nwid,
+						},
+					},
+					data: {
+						permanentlyDeleted: true,
+					},
+				});
+				return { deleted: true };
+			}
+
+			// Regular member deletion - remove from database completely
 			await ctx.prisma.network_members.delete({
 				where: {
 					id_nwid: {
@@ -678,5 +710,116 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				});
 			}
+		}),
+	bulkDeleteStashed: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+				organizationId: z.string().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { nwid, organizationId } = input;
+
+			// Get the network with permission check
+			let network: { nwid: string } | null;
+			if (organizationId) {
+				// Organization network - check organization membership
+				const userOrganizationRole = await ctx.prisma.userOrganizationRole.findFirst({
+					where: {
+						userId: ctx.session.user.id,
+						organizationId,
+					},
+				});
+
+				if (!userOrganizationRole) {
+					throw new TRPCError({
+						code: "UNAUTHORIZED",
+						message: "User is not a member of this organization.",
+					});
+				}
+
+				// Get organization network
+				network = await ctx.prisma.network.findFirst({
+					where: {
+						nwid,
+						organizationId,
+					},
+				});
+			} else {
+				// Personal network - check ownership
+				network = await ctx.prisma.network.findFirst({
+					where: {
+						nwid,
+						authorId: ctx.session.user.id,
+					},
+				});
+			}
+
+			if (!network) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Network not found or access denied.",
+				});
+			}
+
+			// Find all members that are stashed (deleted=true)
+			const membersToDelete = await ctx.prisma.network_members.findMany({
+				where: {
+					nwid,
+					deleted: true,
+				},
+			});
+
+			if (membersToDelete.length === 0) {
+				return {
+					deletedCount: 0,
+					message: "No stashed members found to delete.",
+				};
+			}
+
+			const memberIds = membersToDelete.map((member) => member.id);
+
+			// Mark all stashed members as permanently deleted instead of deleting them
+			// This prevents them from reappearing as "new nodes" when they reconnect
+			const updatedMembers = await ctx.prisma.network_members.updateMany({
+				where: {
+					nwid,
+					id: { in: memberIds },
+					deleted: true, // Only update members that are already stashed
+				},
+				data: {
+					permanentlyDeleted: true,
+				},
+			});
+
+			// Log the activity
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Bulk deleted ${updatedMembers.count} stashed members from network ${nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: organizationId || null,
+				},
+			});
+
+			// Send webhook notification for bulk delete
+			try {
+				await sendWebhook<MemberDeleted>({
+					organizationId,
+					hookType: HookType.MEMBER_DELETED,
+					deletedMemberId: "bulk",
+					userId: ctx.session.user.id,
+					userEmail: ctx.session.user.email,
+					networkId: nwid,
+				});
+			} catch (error) {
+				// Log webhook error but don't fail the operation
+				console.error("Failed to send bulk delete webhook:", error);
+			}
+
+			return {
+				deletedCount: updatedMembers.count,
+				message: `Successfully marked ${updatedMembers.count} stashed members as permanently deleted. They will not reappear as new nodes if they reconnect.`,
+			};
 		}),
 });

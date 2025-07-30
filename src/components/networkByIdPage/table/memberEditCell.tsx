@@ -27,6 +27,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
+	const utils = api.useUtils();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -40,9 +41,10 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({
-			actions: [refetchNetworkById],
-		}),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({ nwid, central });
+			handleApiSuccess({ actions: [refetchNetworkById] })();
+		},
 	});
 
 	const deleteIpAssignment = (ipAssignments: Array<string>, Ipv4: string, id: string) => {
