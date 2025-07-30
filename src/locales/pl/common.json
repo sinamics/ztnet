@@ -128,7 +128,7 @@
 		"notification": "Powiadomienia",
 		"controller": "Kontroler ZT",
 		"organization": "Organizacje",
-		"backuprestore": "Kopie Zapasowe",
+		"backuprestore": "Kopie zapasowe",
 		"account": "Konto",
 		"user-settings": "Ustawienia konta",
 		"logout": "Wyloguj"
@@ -374,8 +374,8 @@
 				"deleteAll": "Usuń Wszystkich Ukrytych ({count})"
 			},
 			"bulkDelete": {
-				"modalTitle": "Usunąć Wszystkich Ukrytych Członków?",
-				"modalDescription": "To trwale usunie wszystkich {count} ukrytych członków z bazy danych. Pozostaną w kontrolerze ZeroTier i muszą zostać dodani ręcznie.",
+				"modalTitle": "Usunąć wszystkich ukrytych członków?",
+				"modalDescription": "Operacja trwale usunie wszystkich {count} ukrytych członków z bazy danych. Pozostaną oni w kontrolerze ZeroTier i należy ich ponownie dodać ręcznie.",
 				"modalWarning": "Ostrzeżenie: Ta akcja nie może być cofnięta. Aby ponownie dodać tych członków w przyszłości, musisz ręcznie wprowadzić ich identyfikatory członków."
 			}
 		},
@@ -591,9 +591,9 @@
 					"networkLimitDescription": "Ustaw maksymalną liczbę sieci, którą może utworzyć użytkownik w tej grupie",
 					"useAsDefaultPlaceholder": "Użyj jako domyślnej",
 					"useAsDefaultDescription": "Ustaw tę grupę jako domyślną dla nowych użytkowników",
-					"expirationDatePlaceholder": "Data Wygaśnięcia",
-					"expirationDateDescription": "Ustaw datę wygaśnięcia kont użytkowników w tej grupie. Sprawdzanie wygaśnięcia uruchamia się codziennie o północy. Użytkownicy przypisani do tej grupy zostaną automatycznie dezaktywowani w tej dacie. Pozostaw puste aby nie ustawiać wygaśnięcia.",
-					"expiredGroupWarning": "Ta grupa wygasła. Użytkownicy zostaną dezaktywowani.",
+					"expirationDatePlaceholder": "Data wygaśnięcia",
+					"expirationDateDescription": "Ustaw datę wygaśnięcia kont użytkowników w tej grupie. Sprawdzanie wygaśnięcia uruchamia się codziennie o północy. Użytkownicy przypisani do tej grupy zostaną automatycznie dezaktywowani w tym dniu. Pozostaw to pole puste, aby nie ustawiać daty wygaśnięcia.",
+					"expiredGroupWarning": "Ta grupa wygasła. Użytkownicy zostali dezaktywowani.",
 					"expiredLabel": "WYGASŁA",
 					"expiresLabel": "Wygasa"
 				}
