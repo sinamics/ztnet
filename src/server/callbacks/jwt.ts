@@ -57,13 +57,27 @@ export function jwtCallback(res) {
 					},
 					data: updateObject,
 				});
+
+				// Refresh user data to get updated requestChangePassword flag
+				const updatedUser = await prisma.user.findFirst({
+					where: {
+						id: token.id,
+					},
+					select: {
+						requestChangePassword: true,
+					},
+				});
+
+				if (updatedUser) {
+					token.requestChangePassword = updatedUser.requestChangePassword;
+				}
 			}
 			return token;
 		}
 
 		if (user) {
-			const { id, name, email, role } = user;
-			Object.assign(token, { id, name, email, role });
+			const { id, name, email, role, requestChangePassword } = user;
+			Object.assign(token, { id, name, email, role, requestChangePassword });
 			if (account?.provider === "oauth") {
 				// set the device from sign in callback
 				token.deviceId = profile.deviceId;

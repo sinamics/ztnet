@@ -68,6 +68,7 @@
 			"authorized": "Aut.",
 			"id": "ID",
 			"created": "Opprettet",
+			"expires": "Utløper",
 			"networks": "Nettverk",
 			"lastseen": "Sett",
 			"group": "Gruppe",
@@ -574,6 +575,50 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Rolle endret vellykket",
 					"errorOccurred": "Det oppstod en ukjent feil"
+				},
+				"createNewUserButton": "Opprett Ny Bruker",
+				"createUser": {
+					"title": "Opprett Ny Bruker",
+					"nameLabel": "Navn",
+					"namePlaceholder": "Skriv inn brukernavn",
+					"emailLabel": "E-post",
+					"emailPlaceholder": "Skriv inn e-postadresse",
+					"emailDescription": "Bruker kan bruke falske e-poster som john@c.c siden SMTP ikke er påkrevd",
+					"passwordLabel": "Passord",
+					"passwordPlaceholder": "Skriv inn passord",
+					"generatePasswordButton": "Generer Passord",
+					"roleLabel": "Rolle",
+					"userGroupLabel": "Brukergruppe",
+					"defaultGroupOption": "Velg brukergruppe (valgfritt)",
+					"forcePasswordChangeLabel": "Krev Passordendring ved Første Innlogging",
+					"forcePasswordChangeDescription": "Brukeren vil bli bedt om å endre passord ved første innlogging",
+					"createButton": "Opprett Bruker",
+					"successMessage": "Bruker opprettet vellykket! Du kan kopiere detaljene nedenfor for å dele.",
+					"userAccountCreated": "Brukerkonto Opprettet:",
+					"userAccountDetails": "Brukerkonto Detaljer:",
+					"copyInfoButton": "Kopier Info",
+					"doneButton": "Ferdig",
+					"toast": {
+						"createUserSuccess": "Bruker opprettet vellykket",
+						"copySuccess": "Brukerinformasjon kopiert til utklippstavle!",
+						"copyError": "Kunne ikke kopiere til utklippstavle"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "søk brukere",
+					"optionsButton": "Alternativer",
+					"optionsModalTitle": "Alternativer for bruker",
+					"accountStatus": {
+						"active": "Aktiv",
+						"disabled": "Deaktivert"
+					},
+					"headers": {
+						"created": "Opprettet",
+						"expires": "Utløper"
+					},
+					"values": {
+						"never": "Aldri"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +861,11 @@
 				"currentPasswordPlaceholder": "Nåværende Passord",
 				"newPasswordPlaceholder": "Nytt Passord",
 				"repeatNewPasswordPlaceholder": "Gjenta Nytt Passord",
-				"role": "Rolle"
+				"role": "Rolle",
+				"passwordChangeRequired": {
+					"title": "Passordendring Påkrevd",
+					"description": "Du må endre passordet ditt før du får tilgang til andre deler av applikasjonen. Vennligst oppdater passordet ditt i Sikkerhet-seksjonen nedenfor."
+				}
 			},
 			"totp": {
 				"title": "Tofaktorautentisering",

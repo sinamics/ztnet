@@ -68,6 +68,7 @@
 			"authorized": "Auth",
 			"id": "ID",
 			"created": "Creado",
+			"expires": "Expira",
 			"networks": "Redes",
 			"lastseen": "Visto",
 			"group": "Grupo",
@@ -197,6 +198,16 @@
 			"successMessage": "Tu correo electrónico ha sido verificado exitosamente.",
 			"redirectMessage": "Serás redirigido automáticamente en {seconds} segundos.",
 			"goNowButton": "Ir ahora"
+		},
+		"passwordChangeRequired": {
+			"title": "Cambio de Contraseña Requerido",
+			"description": "Por razones de seguridad, debes cambiar tu contraseña antes de acceder a la aplicación.",
+			"formTitle": "Cambia Tu Contraseña",
+			"submitButton": "Actualizar Contraseña",
+			"successMessage": "¡Contraseña actualizada exitosamente! Redirigiendo...",
+			"updatingTitle": "Actualizando Contraseña",
+			"updatingDescription": "Por favor espera mientras actualizamos tu contraseña y refrescamos tu sesión.",
+			"note": "No puedes acceder a otras partes de la aplicación hasta que cambies tu contraseña."
 		}
 	},
 	"networks": {
@@ -574,6 +585,50 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Rol cambiado exitosamente",
 					"errorOccurred": "Ocurrió un error desconocido"
+				},
+				"createNewUserButton": "Crear Nuevo Usuario",
+				"createUser": {
+					"title": "Crear Nuevo Usuario",
+					"nameLabel": "Nombre",
+					"namePlaceholder": "Ingrese el nombre de usuario",
+					"emailLabel": "Correo Electrónico",
+					"emailPlaceholder": "Ingrese la dirección de correo",
+					"emailDescription": "El usuario puede usar correos falsos como john@c.c ya que SMTP no es requerido",
+					"passwordLabel": "Contraseña",
+					"passwordPlaceholder": "Ingrese la contraseña",
+					"generatePasswordButton": "Generar Contraseña",
+					"roleLabel": "Rol",
+					"userGroupLabel": "Grupo de Usuario",
+					"defaultGroupOption": "Seleccionar grupo de usuario (opcional)",
+					"forcePasswordChangeLabel": "Solicitar Cambio de Contraseña en Primer Inicio",
+					"forcePasswordChangeDescription": "Se le pedirá al usuario que cambie la contraseña cuando inicie sesión por primera vez",
+					"createButton": "Crear Usuario",
+					"successMessage": "¡Usuario creado exitosamente! Puedes copiar los detalles a continuación para compartir.",
+					"userAccountCreated": "Cuenta de Usuario Creada:",
+					"userAccountDetails": "Detalles de la Cuenta de Usuario:",
+					"copyInfoButton": "Copiar Información",
+					"doneButton": "Hecho",
+					"toast": {
+						"createUserSuccess": "Usuario creado exitosamente",
+						"copySuccess": "¡Información del usuario copiada al portapapeles!",
+						"copyError": "Error al copiar al portapapeles"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "buscar usuarios",
+					"optionsButton": "Opciones",
+					"optionsModalTitle": "Opciones para usuario",
+					"accountStatus": {
+						"active": "Activo",
+						"disabled": "Deshabilitado"
+					},
+					"headers": {
+						"created": "Creado",
+						"expires": "Expira"
+					},
+					"values": {
+						"never": "Nunca"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +871,11 @@
 				"currentPasswordPlaceholder": "Contraseña Actual",
 				"newPasswordPlaceholder": "Nueva Contraseña",
 				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
-				"role": "Rol"
+				"role": "Rol",
+				"passwordChangeRequired": {
+					"title": "Cambio de Contraseña Requerido",
+					"description": "Debes cambiar tu contraseña antes de acceder a otras partes de la aplicación. Por favor actualiza tu contraseña en la sección de Seguridad a continuación."
+				}
 			},
 			"totp": {
 				"title": "Autenticación de dos factores",

@@ -68,6 +68,7 @@
 			"authorized": "Авторизован",
 			"id": "ID",
 			"created": "Создан",
+			"expires": "Истекает",
 			"networks": "Сети",
 			"lastseen": "Видели",
 			"group": "Группа",
@@ -574,6 +575,53 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Роль успешно изменена",
 					"errorOccurred": "Произошла неизвестная ошибка"
+				},
+				"createNewUserButton": "Создать Нового Пользователя",
+				"createUser": {
+					"title": "Создать Нового Пользователя",
+					"nameLabel": "Имя",
+					"namePlaceholder": "Введите имя пользователя",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Введите адрес электронной почты",
+					"emailDescription": "Пользователь может использовать поддельные адреса электронной почты, такие как john@c.c, поскольку SMTP не требуется",
+					"passwordLabel": "Пароль",
+					"passwordPlaceholder": "Введите пароль",
+					"generatePasswordButton": "Сгенерировать Пароль",
+					"roleLabel": "Роль",
+					"userGroupLabel": "Группа Пользователя",
+					"defaultGroupOption": "Выберите группу пользователя (необязательно)",
+					"expirationLabel": "Истекает Через Дней",
+					"expirationPlaceholder": "Оставьте пустым для отсутствия истечения",
+					"expirationDescription": "Количество дней, после которых учетная запись пользователя истечет",
+					"forcePasswordChangeLabel": "Запросить Смену Пароля при Первом Входе",
+					"forcePasswordChangeDescription": "Пользователю будет предложено сменить пароль при первом входе в систему",
+					"createButton": "Создать Пользователя",
+					"successMessage": "Пользователь успешно создан! Вы можете скопировать данные ниже для передачи.",
+					"userAccountCreated": "Учетная Запись Пользователя Создана:",
+					"userAccountDetails": "Детали Учетной Записи Пользователя:",
+					"copyInfoButton": "Копировать Информацию",
+					"doneButton": "Готово",
+					"toast": {
+						"createUserSuccess": "Пользователь успешно создан",
+						"copySuccess": "Информация о пользователе скопирована в буфер обмена!",
+						"copyError": "Не удалось скопировать в буфер обмена"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "поиск пользователей",
+					"optionsButton": "Опции",
+					"optionsModalTitle": "Опции для пользователя",
+					"accountStatus": {
+						"active": "Активен",
+						"disabled": "Отключен"
+					},
+					"headers": {
+						"created": "Создан",
+						"expires": "Истекает"
+					},
+					"values": {
+						"never": "Никогда"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +864,11 @@
 				"currentPasswordPlaceholder": "Текущий пароль",
 				"newPasswordPlaceholder": "Новый пароль",
 				"repeatNewPasswordPlaceholder": "Повторите новый пароль",
-				"role": "Роль"
+				"role": "Роль",
+				"passwordChangeRequired": {
+					"title": "Требуется Смена Пароля",
+					"description": "Вы должны сменить пароль перед доступом к другим частям приложения. Пожалуйста, обновите свой пароль в разделе Безопасность ниже."
+				}
 			},
 			"totp": {
 				"title": "Двухфакторная аутентификация",

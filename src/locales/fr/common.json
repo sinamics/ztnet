@@ -68,6 +68,7 @@
 			"authorized": "Autoriser",
 			"id": "Identifiant",
 			"created": "Créé",
+			"expires": "Expire",
 			"networks": "Réseaux",
 			"lastseen": "Vu",
 			"group": "Groupe",
@@ -574,6 +575,53 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Le rôle a été modifié avec succès",
 					"errorOccurred": "Une erreur inconnue est survenue"
+				},
+				"createNewUserButton": "Créer un Nouvel Utilisateur",
+				"createUser": {
+					"title": "Créer un Nouvel Utilisateur",
+					"nameLabel": "Nom",
+					"namePlaceholder": "Entrer le nom d'utilisateur",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Entrer l'adresse email",
+					"emailDescription": "L'utilisateur peut utiliser de faux emails comme john@c.c car SMTP n'est pas requis",
+					"passwordLabel": "Mot de passe",
+					"passwordPlaceholder": "Entrer le mot de passe",
+					"generatePasswordButton": "Générer un Mot de passe",
+					"roleLabel": "Rôle",
+					"userGroupLabel": "Groupe d'Utilisateur",
+					"defaultGroupOption": "Sélectionner le groupe d'utilisateur (optionnel)",
+					"expirationLabel": "Expire Après Jours",
+					"expirationPlaceholder": "Laisser vide pour aucune expiration",
+					"expirationDescription": "Nombre de jours après lesquels le compte utilisateur expirera",
+					"forcePasswordChangeLabel": "Demander un Changement de Mot de passe à la Première Connexion",
+					"forcePasswordChangeDescription": "L'utilisateur sera invité à changer son mot de passe lors de sa première connexion",
+					"createButton": "Créer l'Utilisateur",
+					"successMessage": "Utilisateur créé avec succès! Vous pouvez copier les détails ci-dessous pour les partager.",
+					"userAccountCreated": "Compte Utilisateur Créé:",
+					"userAccountDetails": "Détails du Compte Utilisateur:",
+					"copyInfoButton": "Copier les Informations",
+					"doneButton": "Terminé",
+					"toast": {
+						"createUserSuccess": "Utilisateur créé avec succès",
+						"copySuccess": "Informations utilisateur copiées dans le presse-papiers!",
+						"copyError": "Échec de la copie dans le presse-papiers"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "rechercher des utilisateurs",
+					"optionsButton": "Options",
+					"optionsModalTitle": "Options pour l'utilisateur",
+					"accountStatus": {
+						"active": "Actif",
+						"disabled": "Désactivé"
+					},
+					"headers": {
+						"created": "Créé",
+						"expires": "Expire"
+					},
+					"values": {
+						"never": "Jamais"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +864,11 @@
 				"currentPasswordPlaceholder": "Mot de passe actuel",
 				"newPasswordPlaceholder": "Nouveau mot de passe",
 				"repeatNewPasswordPlaceholder": "Répété le nouveau mot de passe",
-				"role": "Rôle"
+				"role": "Rôle",
+				"passwordChangeRequired": {
+					"title": "Changement de Mot de Passe Requis",
+					"description": "Vous devez changer votre mot de passe avant d'accéder aux autres parties de l'application. Veuillez mettre à jour votre mot de passe dans la section Sécurité ci-dessous."
+				}
 			},
 			"totp": {
 				"title": "Authentification à deux facteurs",

@@ -103,6 +103,91 @@ export const adminRouter = createTRPCRouter({
 				},
 			});
 		}),
+	createUser: adminRoleProtectedRoute
+		.input(
+			z.object({
+				name: z.string().min(1, "Name is required"),
+				email: z.string().email("Valid email is required"),
+				password: z.string().min(6, "Password must be at least 6 characters"),
+				role: z.nativeEnum(Role).default(Role.READ_ONLY),
+				userGroupId: z.number().optional(),
+				expiresAfterDays: z.number().optional(),
+				requestChangePassword: z.boolean().default(false),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const {
+				name,
+				email,
+				password,
+				role,
+				userGroupId,
+				expiresAfterDays,
+				requestChangePassword,
+			} = input;
+
+			// Check if user with this email already exists
+			const existingUser = await ctx.prisma.user.findUnique({
+				where: { email },
+			});
+
+			if (existingUser) {
+				throwError("User with this email already exists");
+			}
+
+			// Hash the password
+			const bcrypt = await import("bcryptjs");
+			const hash = bcrypt.hashSync(password, 10);
+
+			// Calculate expiration date if specified
+			let expiresAt: Date | null = null;
+			if (expiresAfterDays && expiresAfterDays > 0) {
+				expiresAt = new Date();
+				expiresAt.setDate(expiresAt.getDate() + expiresAfterDays);
+			}
+
+			// Get user group if specified, or default group
+			let finalUserGroupId = userGroupId;
+			if (!finalUserGroupId) {
+				const defaultUserGroup = await ctx.prisma.userGroup.findFirst({
+					where: { isDefault: true },
+				});
+				finalUserGroupId = defaultUserGroup?.id;
+			}
+
+			// Create the user
+			const newUser = await ctx.prisma.user.create({
+				data: {
+					name,
+					email,
+					hash,
+					role,
+					userGroupId: finalUserGroupId,
+					expiresAt,
+					requestChangePassword,
+					lastLogin: new Date().toISOString(),
+					options: {
+						create: {
+							localControllerUrl: isRunningInDocker()
+								? "http://zerotier:9993"
+								: "http://127.0.0.1:9993",
+						},
+					},
+				},
+				select: {
+					id: true,
+					name: true,
+					email: true,
+					role: true,
+					userGroupId: true,
+					expiresAt: true,
+					requestChangePassword: true,
+					createdAt: true,
+				},
+			});
+
+			return newUser;
+		}),
 	getUser: adminRoleProtectedRoute
 		.input(
 			z.object({
