@@ -519,7 +519,6 @@
 				"oauthExclusiveLoginDescription": "用戶只能透過OAuth進行身分驗證。無論下面的註冊設定如何，註冊表單都會被隱藏。",
 				"oauthAllowNewUsers": "新用戶可以透過OAuth註冊。",
 				"oauthExistingUsersOnly": "只有現有用戶可以透過OAuth登入。",
-				"oauthExclusiveButNotConfigured": "已啟用OAuth獨佔登入，但未配置OAuth。請聯絡您的管理員。",
 				"generateInvitation": {
 					"header": "建立邀請連結",
 					"secretMessageLabel": "使用者註冊時將被要求輸入此訊息（區分大小寫）",

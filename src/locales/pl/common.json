@@ -519,7 +519,6 @@
 				"oauthExclusiveLoginDescription": "Użytkownicy mogą uwierzytelniać się tylko przez OAuth. Formularz rejestracyjny jest ukryty niezależnie od poniższego ustawienia rejestracji.",
 				"oauthAllowNewUsers": "Nowi użytkownicy mogą się rejestrować przez OAuth.",
 				"oauthExistingUsersOnly": "Tylko istniejący użytkownicy mogą logować się przez OAuth.",
-				"oauthExclusiveButNotConfigured": "Wyłączne logowanie OAuth jest włączone, ale OAuth nie jest skonfigurowane. Skontaktuj się z administratorem.",
 				"generateInvitation": {
 					"header": "Generuj link zaproszenia",
 					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej informacji podczas rejestracji (wielkość liter ma znaczenie)",

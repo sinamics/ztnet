@@ -519,7 +519,6 @@
 				"oauthExclusiveLoginDescription": "Brukere kan kun autentisere via OAuth. Registreringsskjemaet er skjult uavhengig av registreringsinnstillingen nedenfor.",
 				"oauthAllowNewUsers": "Nye brukere kan registrere seg via OAuth.",
 				"oauthExistingUsersOnly": "Kun eksisterende brukere kan logge inn via OAuth.",
-				"oauthExclusiveButNotConfigured": "OAuth eksklusiv pålogging er aktivert, men OAuth er ikke konfigurert. Vennligst kontakt din administrator.",
 				"generateInvitation": {
 					"header": "Generer invitasjonslenke",
 					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",

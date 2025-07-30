@@ -519,7 +519,6 @@
 				"oauthExclusiveLoginDescription": "Users can only authenticate via OAuth. The signup form is hidden regardless of the registration setting below.",
 				"oauthAllowNewUsers": "New users can register via OAuth.",
 				"oauthExistingUsersOnly": "Only existing users can login via OAuth.",
-				"oauthExclusiveButNotConfigured": "OAuth exclusive login is enabled but OAuth is not configured. Please contact your administrator.",
 				"generateInvitation": {
 					"header": "Generate invitation link",
 					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",

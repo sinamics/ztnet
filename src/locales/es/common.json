@@ -519,7 +519,6 @@
 				"oauthExclusiveLoginDescription": "Los usuarios solo pueden autenticarse mediante OAuth. El formulario de registro está oculto independientemente de la configuración de registro a continuación.",
 				"oauthAllowNewUsers": "Los nuevos usuarios pueden registrarse mediante OAuth.",
 				"oauthExistingUsersOnly": "Solo los usuarios existentes pueden iniciar sesión mediante OAuth.",
-				"oauthExclusiveButNotConfigured": "El inicio de sesión exclusivo OAuth está habilitado pero OAuth no está configurado. Póngase en contacto con su administrador.",
 				"generateInvitation": {
 					"header": "Generar enlace de invitación",
 					"secretMessageLabel": "Se le pedirá al usuario que ingrese este mensaje al registrarse (sensible a mayúsculas y minúsculas)",
