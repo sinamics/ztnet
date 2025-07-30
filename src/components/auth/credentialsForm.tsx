@@ -55,8 +55,14 @@ const CredentialsForm: React.FC = () => {
 				case ErrorCode.SecondFactorRequired:
 					setShowOTP(true);
 					break;
-				default:
-					toast.error(getErrorMessage(response.error as ErrorCode), { duration: 10000 });
+				default: {
+					// Check if the error is a known ErrorCode, otherwise use the raw error message
+					const errorMessage = Object.values(ErrorCode).includes(response.error as ErrorCode)
+						? getErrorMessage(response.error as ErrorCode)
+						: response.error;
+					toast.error(errorMessage, { duration: 10000 });
+					break;
+				}
 			}
 		} catch (error) {
 			toast.error(error.message);
