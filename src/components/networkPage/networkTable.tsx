@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
 import {
 	useReactTable,
@@ -42,9 +42,11 @@ const TruncateText = ({ text }: { text: string }) => {
 		</div>
 	);
 };
-export const NetworkTable = ({ tableData = [] }) => {
+export const NetworkTable = ({ tableData = [], onCreateNetwork }) => {
 	const router = useRouter();
 	const t = useTranslations();
+	const b = useTranslations("commonButtons");
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	const callModal = useModalStore((state) => state.callModal);
 
@@ -54,6 +56,13 @@ export const NetworkTable = ({ tableData = [] }) => {
 	]);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
+
+	// Auto-focus search input when component mounts
+	useEffect(() => {
+		if (searchInputRef.current) {
+			searchInputRef.current.focus();
+		}
+	}, []);
 
 	type ColumnsType = {
 		name: string;
@@ -95,8 +104,8 @@ export const NetworkTable = ({ tableData = [] }) => {
 								}}
 								title={t("commonToast.copyToClipboard.title")}
 							>
-								<div className="cursor-pointer flex items-center justify-center">
-									{original.nwid}
+								<div className="cursor-pointer flex items-center gap-1">
+									<span>{original.nwid}</span>
 									<CopyIcon />
 								</div>
 							</CopyToClipboard>
@@ -200,78 +209,133 @@ export const NetworkTable = ({ tableData = [] }) => {
 		void router.push(`/network/${nwid}`);
 	};
 
+	const handleSearchKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter") {
+			// Get the first row from filtered results
+			const firstRow = table.getRowModel().rows[0];
+			if (firstRow) {
+				const nwid = firstRow.original.nwid;
+				handleRowClick(nwid);
+			}
+		}
+	};
+
 	return (
-		<div className="inline-block w-full p-1.5 align-middle">
-			<div>
-				<DebouncedInput
-					value={globalFilter ?? ""}
-					onChange={(value) => setGlobalFilter(String(value))}
-					className="font-lg border-block border p-2 shadow"
-					placeholder={t("commonTable.search.networkSearchPlaceholder")}
-				/>
+		<div className="w-full space-y-4">
+			{/* Search and Create Button Header */}
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+				<div className="flex-1 max-w-sm">
+					<DebouncedInput
+						ref={searchInputRef}
+						value={globalFilter ?? ""}
+						onChange={(value) => setGlobalFilter(String(value))}
+						onKeyDown={handleSearchKeyDown}
+						className="input input-bordered input-sm w-full shadow-sm focus:shadow-md transition-shadow"
+						placeholder={t("commonTable.search.networkSearchPlaceholder")}
+					/>
+				</div>
+				{onCreateNetwork && (
+					<div className="flex-shrink-0">
+						<button
+							className="btn btn-primary btn-sm gap-2 shadow-md hover:shadow-lg transition-all"
+							onClick={onCreateNetwork}
+							title={b("addNetwork")}
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth="1.5"
+								stroke="currentColor"
+								className="h-4 w-4"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M12 4.5v15m7.5-7.5h-15"
+								/>
+							</svg>
+							<span>{b("addNetwork")}</span>
+						</button>
+					</div>
+				)}
 			</div>
-			<div className="overflow-auto rounded-lg border border-base-200/50">
-				<table className="min-w-full divide-y text-center">
-					<thead className="">
-						{table.getHeaderGroups().map((headerGroup) => (
-							<tr key={headerGroup.id}>
-								{headerGroup.headers.map((header) => {
-									return (
-										<th
-											key={header.id}
-											colSpan={header.colSpan}
-											className="bg-base-300/50 p-2 "
-											style={{
-												width: header.getSize() !== 150 ? header.getSize() : undefined,
-											}}
-										>
-											{header.isPlaceholder ? null : (
-												<div
-													{...{
-														className: header.column.getCanSort()
-															? "cursor-pointer select-none"
-															: "",
-														onClick: header.column.getToggleSortingHandler(),
-													}}
-												>
-													{flexRender(
-														header.column.columnDef.header,
-														header.getContext(),
-													)}
-													{{
-														asc: " 🔼",
-														desc: " 🔽",
-													}[header.column.getIsSorted() as string] ?? null}
-												</div>
-											)}
-										</th>
-									);
-								})}
-							</tr>
-						))}
-					</thead>
-					<tbody className="divide-y">
-						{table.getRowModel().rows.map((row) => {
-							return (
-								<tr
-									key={row.id}
-									// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-									onClick={() => handleRowClick(row?.original?.nwid as string)}
-									className="cursor-pointer border-base-300/50 hover:bg-primary/5"
-								>
-									{row.getVisibleCells().map((cell) => {
+
+			{/* Elegant Table */}
+			<div className="rounded-xl shadow-sm border border-base-300/50 overflow-hidden bg-base-100/50 backdrop-blur-sm">
+				<div className="overflow-x-auto">
+					<table className="table w-full">
+						<thead className="bg-base-200/80">
+							{table.getHeaderGroups().map((headerGroup) => (
+								<tr key={headerGroup.id}>
+									{headerGroup.headers.map((header) => {
 										return (
-											<td key={cell.id} className="p-2">
-												{flexRender(cell.column.columnDef.cell, cell.getContext())}
-											</td>
+											<th
+												key={header.id}
+												colSpan={header.colSpan}
+												className="text-base-content font-semibold text-sm tracking-wide py-4 px-6 border-b border-base-300/30"
+												style={{
+													width: header.getSize() !== 150 ? header.getSize() : undefined,
+												}}
+											>
+												{header.isPlaceholder ? null : (
+													<div
+														{...{
+															className: header.column.getCanSort()
+																? "cursor-pointer select-none flex items-center gap-2 hover:text-primary transition-colors"
+																: "flex items-center gap-2",
+															onClick: header.column.getToggleSortingHandler(),
+														}}
+													>
+														{flexRender(
+															header.column.columnDef.header,
+															header.getContext(),
+														)}
+														{header.column.getCanSort() && (
+															<span className="text-xs opacity-60">
+																{{
+																	asc: "↑",
+																	desc: "↓",
+																}[header.column.getIsSorted() as string] ?? "↕"}
+															</span>
+														)}
+													</div>
+												)}
+											</th>
 										);
 									})}
 								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-				<div className="flex flex-col items-center justify-between py-3 sm:flex-row">
+							))}
+						</thead>
+						<tbody>
+							{table.getRowModel().rows.map((row, index) => {
+								const isLastRow = index === table.getRowModel().rows.length - 1;
+								const isEvenRow = index % 2 === 0;
+								return (
+									<tr
+										key={row.id}
+										// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+										onClick={() => handleRowClick(row?.original?.nwid as string)}
+										className={`cursor-pointer hover:bg-primary/10 transition-all duration-200 ${
+											isEvenRow ? "bg-base-50/30" : "bg-transparent"
+										} ${!isLastRow ? "border-b border-base-300/20" : ""}`}
+									>
+										{row.getVisibleCells().map((cell) => {
+											return (
+												<td key={cell.id} className="py-4 px-6 text-sm">
+													{flexRender(cell.column.columnDef.cell, cell.getContext())}
+												</td>
+											);
+										})}
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
+
+				{/* Footer */}
+				<div className="bg-base-200/80 border-t border-base-300/30 px-6 py-4">
 					<TableFooter table={table} page="networkTable" />
 				</div>
 			</div>
