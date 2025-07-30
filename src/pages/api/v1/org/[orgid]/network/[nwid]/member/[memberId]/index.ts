@@ -219,7 +219,7 @@ export const DELETE_orgStashNetworkMember = SecuredOrganizationApiRoute(
  * @returns The network member and associated network information.
  */
 export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
-	{ requiredRole: Role.USER, requireNetworkId: true },
+	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
 	async (_req, res, context) => {
 		try {
 			const validatedContext = HandlerContextSchema.parse(context);

@@ -40,7 +40,7 @@ export default async function apiNetworkMembersHandler(
 }
 
 export const GET_orgNetworkMembers = SecuredOrganizationApiRoute(
-	{ requiredRole: Role.USER, requireNetworkId: true },
+	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
 	async (_req, res, { networkId, orgId, ctx }) => {
 		try {
 			// Check if the user is an organization admin
