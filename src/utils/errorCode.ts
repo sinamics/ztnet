@@ -25,7 +25,7 @@ interface ErrorDetails {
 
 export const ErrorMessages: Record<ErrorCode, ErrorDetails> = {
 	[ErrorCode.IncorrectUsernamePassword]: {
-		message: "Incorrect username or password.",
+		message: "Invalid email or password.",
 		action: "Please check your credentials and try again.",
 	},
 	[ErrorCode.UserNotFound]: {

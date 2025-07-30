@@ -96,7 +96,7 @@ describe("LoginPage", () => {
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
-					<LoginPage title="test" oauthExclusiveLogin={false} oauthEnabled={true} />
+					<LoginPage oauthExclusiveLogin={false} oauthEnabled={true} />
 				</NextIntlClientProvider>
 			</QueryClientProvider>,
 		);
@@ -157,7 +157,7 @@ describe("LoginPage", () => {
 
 	it("displays error toast for invalid credentials", async () => {
 		(signIn as jest.Mock).mockResolvedValue({
-			error: ErrorCode.IncorrectPassword,
+			error: ErrorCode.IncorrectUsernamePassword,
 		});
 		renderLoginPage();
 
@@ -171,7 +171,7 @@ describe("LoginPage", () => {
 
 		await waitFor(() => {
 			expect(reactHotToast.toast.error).toHaveBeenCalledWith(
-				ErrorCode.IncorrectPassword,
+				"Invalid email or password. Please check your credentials and try again.",
 				{
 					duration: 10000,
 				},
@@ -181,7 +181,7 @@ describe("LoginPage", () => {
 
 	it("requires password input", async () => {
 		(signIn as jest.Mock).mockResolvedValue({
-			error: "email or password is wrong!",
+			error: ErrorCode.IncorrectUsernamePassword,
 		});
 		renderLoginPage();
 
@@ -193,7 +193,7 @@ describe("LoginPage", () => {
 
 		await waitFor(() => {
 			expect(reactHotToast.toast.error).toHaveBeenCalledWith(
-				"email or password is wrong!",
+				"Invalid email or password. Please check your credentials and try again.",
 				{
 					duration: 10000,
 				},

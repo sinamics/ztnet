@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { ErrorCode } from "~/utils/errorCode";
+import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
 import Link from "next/link";
 import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
@@ -55,8 +55,16 @@ const CredentialsForm: React.FC = () => {
 				case ErrorCode.SecondFactorRequired:
 					setShowOTP(true);
 					break;
-				default:
-					toast.error(response.error, { duration: 10000 });
+				default: {
+					// Check if the error is a known ErrorCode, otherwise use the raw error message
+					const errorMessage = Object.values(ErrorCode).includes(
+						response.error as ErrorCode,
+					)
+						? getErrorMessage(response.error as ErrorCode)
+						: response.error;
+					toast.error(errorMessage, { duration: 10000 });
+					break;
+				}
 			}
 		} catch (error) {
 			toast.error(error.message);
