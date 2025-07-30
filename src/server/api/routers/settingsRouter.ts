@@ -45,8 +45,8 @@ export const settingsRouter = createTRPCRouter({
 			},
 		});
 
-		const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
-		const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS !== "false";
+		const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
+		const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
 
 		return {
 			...options,
