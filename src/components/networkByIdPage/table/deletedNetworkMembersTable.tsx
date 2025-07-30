@@ -31,6 +31,8 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 		},
 	]);
 	const callModal = useModalStore((state) => state.callModal);
+	const utils = api.useUtils();
+
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -41,17 +43,29 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 		);
 
 	const { mutate: updateUser } = api.networkMember.UpdateDatabaseOnly.useMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: nwid as string,
+				central: false,
+			});
 			void refetchNetworkById();
 		},
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: nwid as string,
+				central: false,
+			});
 			void refetchNetworkById();
 		},
 	});
 	const { mutate: bulkDeleteStashed } = api.networkMember.bulkDeleteStashed.useMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: nwid as string,
+				central: false,
+			});
 			void refetchNetworkById();
 		},
 	});
@@ -148,7 +162,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 	// Update data when networkById changes
 	useEffect(() => {
 		// Ensure zombieMembers are cast to the correct type
-		const zombieMembers = networkById?.zombieMembers as network_members[] || [];
+		const zombieMembers = (networkById?.zombieMembers as network_members[]) || [];
 		setData(zombieMembers);
 	}, [networkById?.zombieMembers]);
 	const table = useReactTable<network_members>({

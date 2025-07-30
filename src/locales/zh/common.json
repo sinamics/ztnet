@@ -374,7 +374,7 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "删除所有隐藏的成员？",
-				"modalDescription": "这将永久删除数据库和ZeroTier控制器中的所有{count}个隐藏成员。",
+				"modalDescription": "这将永久删除数据库中的所有{count}个隐藏成员。它们将保留在ZeroTier控制器中，必须手动重新添加。",
 				"modalWarning": "警告：此操作无法撤销。要在将来重新添加这些成员，您必须手动输入他们的成员ID。"
 			}
 		},

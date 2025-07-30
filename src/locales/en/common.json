@@ -374,7 +374,7 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "Delete All Stashed Members?",
-				"modalDescription": "This will permanently delete all {count} stashed members from both the database and ZeroTier controller.",
+				"modalDescription": "This will permanently delete all {count} stashed members from the database. They will remain in ZeroTier controller and must be manually re-added.",
 				"modalWarning": "Warning: This action cannot be undone. To re-add these members in the future, you must manually enter their Member IDs."
 			}
 		},

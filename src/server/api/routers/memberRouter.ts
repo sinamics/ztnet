@@ -101,7 +101,7 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				});
 			}
-			// check if user exist in db, and if so set deleted:false
+			// check if user exist in db, and if so set deleted:false and permanentlyDeleted:false
 			const member = await ctx.prisma.network_members.findUnique({
 				where: {
 					id_nwid: {
@@ -120,6 +120,7 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 					data: {
 						deleted: false,
+						permanentlyDeleted: false,
 					},
 				});
 			}
@@ -578,16 +579,47 @@ export const networkMemberRouter = createTRPCRouter({
 					organizationId: input.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-			// remove member from controller
-			const deleted = await ztController.member_delete({
-				ctx,
-				central: input.central,
-				nwid: input.nwid,
-				memberId: input.id,
+
+			// Check if member is already stashed (deleted=true) in database
+			const existingMember = await ctx.prisma.network_members.findFirst({
+				where: {
+					id: input.id,
+					nwid: input.nwid,
+				},
 			});
 
-			if (input.central) return deleted;
+			// If member is not already stashed, remove from controller first
+			if (!existingMember?.deleted) {
+				await ztController.member_delete({
+					ctx,
+					central: input.central,
+					nwid: input.nwid,
+					memberId: input.id,
+				});
+			}
+			// For stashed members, we only delete from database to prevent reappearing as "new nodes"
 
+			if (input.central) return { deleted: true };
+
+			// For stashed members (deleted=true), mark as permanently deleted
+			// Keep them in database to prevent reappearing as "new nodes"
+			if (existingMember?.deleted) {
+				// Member is already stashed, mark as permanently deleted
+				await ctx.prisma.network_members.update({
+					where: {
+						id_nwid: {
+							id: input.id,
+							nwid: input.nwid,
+						},
+					},
+					data: {
+						permanentlyDeleted: true,
+					},
+				});
+				return { deleted: true };
+			}
+
+			// Regular member deletion - remove from database completely
 			await ctx.prisma.network_members.delete({
 				where: {
 					id_nwid: {
@@ -747,42 +779,24 @@ export const networkMemberRouter = createTRPCRouter({
 			}
 
 			const memberIds = membersToDelete.map((member) => member.id);
-			let deletedFromController = 0;
 
-			// Permanently delete each member from ZeroTier controller and database
-			for (const member of membersToDelete) {
-				try {
-					// Delete from ZT controller
-					if (member.deleted) {
-						await ztController.member_delete({
-							ctx,
-							central: false,
-							nwid,
-							memberId: member.id,
-						});
-						deletedFromController++;
-					}
-				} catch (error) {
-					// Log error but continue with database cleanup
-					console.error(
-						`Failed to delete member ${member.id} from ZT controller:`,
-						error,
-					);
-				}
-			}
-
-			// Delete from database in batch
-			const deletedFromDatabase = await ctx.prisma.network_members.deleteMany({
+			// Mark all stashed members as permanently deleted instead of deleting them
+			// This prevents them from reappearing as "new nodes" when they reconnect
+			const updatedMembers = await ctx.prisma.network_members.updateMany({
 				where: {
 					nwid,
 					id: { in: memberIds },
+					deleted: true, // Only update members that are already stashed
+				},
+				data: {
+					permanentlyDeleted: true,
 				},
 			});
 
 			// Log the activity
 			await ctx.prisma.activityLog.create({
 				data: {
-					action: `Bulk deleted ${deletedFromDatabase.count} stashed members from network ${nwid}`,
+					action: `Bulk deleted ${updatedMembers.count} stashed members from network ${nwid}`,
 					performedById: ctx.session.user.id,
 					organizationId: organizationId || null,
 				},
@@ -804,9 +818,8 @@ export const networkMemberRouter = createTRPCRouter({
 			}
 
 			return {
-				deletedCount: deletedFromDatabase.count,
-				deletedFromController,
-				message: `Successfully deleted ${deletedFromDatabase.count} stashed members from database and ${deletedFromController} from controller.`,
+				deletedCount: updatedMembers.count,
+				message: `Successfully marked ${updatedMembers.count} stashed members as permanently deleted. They will not reappear as new nodes if they reconnect.`,
 			};
 		}),
 });

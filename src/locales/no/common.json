@@ -374,7 +374,7 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "Slett Alle Lagrede Medlemmer?",
-				"modalDescription": "Dette vil permanent slette alle {count} lagrede medlemmer fra både databasen og ZeroTier-kontrolleren.",
+				"modalDescription": "Dette vil permanent slette alle {count} lagrede medlemmer fra databasen. De vil forbli i ZeroTier-kontrolleren og må legges til manuelt.",
 				"modalWarning": "Advarsel: Denne handlingen kan ikke angres. For å legge til disse medlemmene igjen i fremtiden, må du manuelt skrive inn deres medlems-ID-er."
 			}
 		},

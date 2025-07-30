@@ -40,6 +40,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const callModal = useModalStore((state) => state.callModal);
+	const utils = api.useUtils();
 	const { data: me } = api.auth.me.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
@@ -50,14 +51,23 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 			{ enabled: !!nwid },
 		);
 	const { mutate: stashUser } = api.networkMember.stash.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({ nwid, central });
+			refetchNetworkById();
+		},
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
-		onSuccess: () => refetchNetworkById(),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({ nwid, central });
+			refetchNetworkById();
+		},
 	});
 	const { mutate: updateMember } = api.networkMember.Update.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({ nwid, central });
+			handleApiSuccess({ actions: [refetchNetworkById] })();
+		},
 	});
 
 	const columnHelper = createColumnHelper<MemberEntity>();

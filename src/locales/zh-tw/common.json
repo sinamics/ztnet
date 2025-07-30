@@ -374,7 +374,7 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "刪除所有隱藏的成員？",
-				"modalDescription": "這將永久刪除資料庫和ZeroTier控制器中的所有{count}個隱藏成員。",
+				"modalDescription": "這將永久刪除資料庫中的所有{count}個隱藏成員。它們將保留在ZeroTier控制器中，必須手動重新添加。",
 				"modalWarning": "警告：此操作無法撤銷。要在將來重新添加這些成員，您必須手動輸入他們的成員ID。"
 			}
 		},

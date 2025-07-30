@@ -374,7 +374,7 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "¿Eliminar Todos los Miembros Almacenados?",
-				"modalDescription": "Esto eliminará permanentemente todos los {count} miembros almacenados tanto de la base de datos como del controlador ZeroTier.",
+				"modalDescription": "Esto eliminará permanentemente todos los {count} miembros almacenados de la base de datos. Permanecerán en el controlador ZeroTier y deben ser agregados manualmente.",
 				"modalWarning": "Advertencia: Esta acción no se puede deshacer. Para volver a agregar estos miembros en el futuro, debe ingresar manualmente sus IDs de miembro."
 			}
 		},
