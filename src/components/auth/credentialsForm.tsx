@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { ErrorCode } from "~/utils/errorCode";
+import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
 import Link from "next/link";
 import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
@@ -56,7 +56,7 @@ const CredentialsForm: React.FC = () => {
 					setShowOTP(true);
 					break;
 				default:
-					toast.error(response.error, { duration: 10000 });
+					toast.error(getErrorMessage(response.error as ErrorCode), { duration: 10000 });
 			}
 		} catch (error) {
 			toast.error(error.message);

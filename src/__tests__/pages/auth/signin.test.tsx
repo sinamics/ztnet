@@ -171,7 +171,7 @@ describe("LoginPage", () => {
 
 		await waitFor(() => {
 			expect(reactHotToast.toast.error).toHaveBeenCalledWith(
-				ErrorCode.IncorrectUsernamePassword,
+				"Invalid email or password. Please check your credentials and try again.",
 				{
 					duration: 10000,
 				},
@@ -193,7 +193,7 @@ describe("LoginPage", () => {
 
 		await waitFor(() => {
 			expect(reactHotToast.toast.error).toHaveBeenCalledWith(
-				ErrorCode.IncorrectUsernamePassword,
+				"Invalid email or password. Please check your credentials and try again.",
 				{
 					duration: 10000,
 				},
