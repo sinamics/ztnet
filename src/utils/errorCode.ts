@@ -16,6 +16,7 @@ export enum ErrorCode {
 	ThirdPartyIdentityProviderEnabled = "third-party-identity-provider-enabled",
 	TooManyRequests = "too-many-requests",
 	RegistrationDisabled = "registration_disabled",
+	OauthMissingEmail = "oauth-missing-email",
 }
 
 interface ErrorDetails {
@@ -89,6 +90,10 @@ export const ErrorMessages: Record<ErrorCode, ErrorDetails> = {
 	[ErrorCode.RegistrationDisabled]: {
 		message: "Registration is currently disabled.",
 		action: "Please contact the administrator for assistance.",
+	},
+	[ErrorCode.OauthMissingEmail]: {
+		message: "OAuth provider did not provide a valid email address.",
+		action: "Please ensure your OAuth provider account has a verified email address, or contact the administrator.",
 	},
 };
 
