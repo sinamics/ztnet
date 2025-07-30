@@ -35,7 +35,7 @@ export default async function apiNetworkHandler(
 }
 
 const GET_organizationUsers = SecuredOrganizationApiRoute(
-	{ requiredRole: Role.USER },
+	{ requiredRole: Role.READ_ONLY },
 	async (_req, res, { orgId, ctx }) => {
 		try {
 			// @ts-expect-error ctx is not a valid parameter
