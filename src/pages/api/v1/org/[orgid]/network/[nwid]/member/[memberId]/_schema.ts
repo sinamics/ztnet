@@ -14,7 +14,7 @@ export const HandlerContextSchema = z.object({
 	orgId: z.string(),
 	memberId: z.string(),
 	userId: z.string(),
-	body: z.record(z.unknown()),
+	body: z.record(z.unknown()).optional().default({}),
 	ctx: z.object({
 		prisma: z.any(),
 		session: z.object({
