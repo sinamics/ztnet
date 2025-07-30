@@ -591,7 +591,12 @@
 					"networkLimitPlaceholder": "Limit sieci",
 					"networkLimitDescription": "Ustaw maksymalną liczbę sieci, którą może utworzyć użytkownik w tej grupie",
 					"useAsDefaultPlaceholder": "Użyj jako domyślnej",
-					"useAsDefaultDescription": "Ustaw tę grupę jako domyślną dla nowych użytkowników"
+					"useAsDefaultDescription": "Ustaw tę grupę jako domyślną dla nowych użytkowników",
+					"expirationDatePlaceholder": "Data Wygaśnięcia",
+					"expirationDateDescription": "Ustaw datę wygaśnięcia kont użytkowników w tej grupie. Sprawdzanie wygaśnięcia uruchamia się codziennie o północy. Użytkownicy przypisani do tej grupy zostaną automatycznie dezaktywowani w tej dacie. Pozostaw puste aby nie ustawiać wygaśnięcia.",
+					"expiredGroupWarning": "Ta grupa wygasła. Użytkownicy zostaną dezaktywowani.",
+					"expiredLabel": "WYGASŁA",
+					"expiresLabel": "Wygasa"
 				}
 			}
 		},

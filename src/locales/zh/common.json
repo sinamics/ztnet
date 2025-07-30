@@ -591,7 +591,12 @@
 					"networkLimitPlaceholder": "网络限制",
 					"networkLimitDescription": "设置此组中用户可以创建的网络数量的最大值",
 					"useAsDefaultPlaceholder": "默认使用",
-					"useAsDefaultDescription": "将此组设置为新用户的默认组"
+					"useAsDefaultDescription": "将此组设置为新用户的默认组",
+					"expirationDatePlaceholder": "过期日期",
+					"expirationDateDescription": "设置此组中的用户账户过期日期。过期检查每天午夜运行。分配到此组的用户将在此日期自动停用。留空表示无过期。",
+					"expiredGroupWarning": "此组已过期。用户将被停用。",
+					"expiredLabel": "已过期",
+					"expiresLabel": "过期"
 				}
 			}
 		},
