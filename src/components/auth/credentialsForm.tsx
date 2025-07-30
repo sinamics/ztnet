@@ -57,7 +57,9 @@ const CredentialsForm: React.FC = () => {
 					break;
 				default: {
 					// Check if the error is a known ErrorCode, otherwise use the raw error message
-					const errorMessage = Object.values(ErrorCode).includes(response.error as ErrorCode)
+					const errorMessage = Object.values(ErrorCode).includes(
+						response.error as ErrorCode,
+					)
 						? getErrorMessage(response.error as ErrorCode)
 						: response.error;
 					toast.error(errorMessage, { duration: 10000 });
