@@ -163,7 +163,8 @@
 			"or": "OU",
 			"dontHaveAccount": "Vous n'avez pas de compte?",
 			"getStarted": "Commencez!",
-			"havingIssues": "Vous avez des problèmes?"
+			"havingIssues": "Vous avez des problèmes?",
+			"oauthExclusiveButNotConfigured": "La connexion exclusive OAuth est activée mais OAuth n'est pas configuré. Veuillez contacter votre administrateur."
 		},
 		"signup": {
 			"signUpWithCredentials": "Créer un compte",
@@ -514,6 +515,11 @@
 				"header": "Authentification",
 				"enableUserRegistration": "Activer l'enregistrement des utilisateurs ?",
 				"enableUserRegistrationDescription": "Cela permettra aux utilisateurs de cliquer sur le bouton S'inscrire sur la page d'accueil.",
+				"oauthExclusiveLoginEnabled": "La connexion exclusive OAuth est activée.",
+				"oauthExclusiveLoginDescription": "Les utilisateurs ne peuvent s'authentifier que via OAuth. Le formulaire d'inscription est masqué quel que soit le paramètre d'inscription ci-dessous.",
+				"oauthAllowNewUsers": "Les nouveaux utilisateurs peuvent s'inscrire via OAuth.",
+				"oauthExistingUsersOnly": "Seuls les utilisateurs existants peuvent se connecter via OAuth.",
+				"oauthExclusiveButNotConfigured": "La connexion exclusive OAuth est activée mais OAuth n'est pas configuré. Veuillez contacter votre administrateur.",
 				"generateInvitation": {
 					"header": "Générer un lien d'invitation",
 					"secretMessageLabel": "L'utilisateur sera invité à saisir ce message lors de l'inscription (sensible à la casse)",

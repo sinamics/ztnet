@@ -163,7 +163,8 @@
 			"or": "ELLER",
 			"dontHaveAccount": "Har du ikke en konto?",
 			"getStarted": "Kom i gang!",
-			"havingIssues": "Har du problemer?"
+			"havingIssues": "Har du problemer?",
+			"oauthExclusiveButNotConfigured": "OAuth eksklusiv pålogging er aktivert, men OAuth er ikke konfigurert. Vennligst kontakt din administrator."
 		},
 		"signup": {
 			"signUpWithCredentials": "Opprett en brukerkonto",
@@ -514,6 +515,11 @@
 				"header": "Autentisering",
 				"enableUserRegistration": "Aktiver brukerregistrering?",
 				"enableUserRegistrationDescription": "Dette vil tillate brukere å klikke på Registrer-knappen på landingssiden.",
+				"oauthExclusiveLoginEnabled": "OAuth eksklusiv pålogging er aktivert.",
+				"oauthExclusiveLoginDescription": "Brukere kan kun autentisere via OAuth. Registreringsskjemaet er skjult uavhengig av registreringsinnstillingen nedenfor.",
+				"oauthAllowNewUsers": "Nye brukere kan registrere seg via OAuth.",
+				"oauthExistingUsersOnly": "Kun eksisterende brukere kan logge inn via OAuth.",
+				"oauthExclusiveButNotConfigured": "OAuth eksklusiv pålogging er aktivert, men OAuth er ikke konfigurert. Vennligst kontakt din administrator.",
 				"generateInvitation": {
 					"header": "Generer invitasjonslenke",
 					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",

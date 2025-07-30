@@ -110,8 +110,12 @@ See [OAuth](/authentication/oauth) for more information.
   - Default: `"openid profile email"`.
 
 - `OAUTH_EXCLUSIVE_LOGIN`
-  - Description: If set to `true`, users can only log in using OAuth. If set to `false`, users can log in using either OAuth or email credentials.
+  - Description: If set to `true`, users can only log in using OAuth. If set to `false`, users can log in using either OAuth or email credentials. When enabled, the signup form will be hidden to prevent unauthorized registrations.
   - Default: `false`.
+
+- `OAUTH_ALLOW_NEW_USERS`
+  - Description: If set to `true`, new users can register via OAuth. If set to `false`, only existing users can log in via OAuth. This setting works independently of the general registration setting and is particularly useful when `OAUTH_EXCLUSIVE_LOGIN` is enabled.
+  - Default: `true`.
 
 ## NEXTAUTH Configuration
 For more information on NEXTAUTH environment variables, see [NEXTAUTH Environment Variables](https://next-auth.js.org/configuration/options#environment-variables).

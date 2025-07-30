@@ -157,9 +157,17 @@ export function signInCallback(
 
 			if (account.provider === "oauth") {
 				if (!userExist) {
-					// check if the oauth user is allowed to sign up.
-					const siteSettings = await prisma.globalOptions.findFirst();
-					if (!siteSettings?.enableRegistration) {
+					// Check if OAuth allows new users
+					const oauthAllowNewUsers = process.env.OAUTH_ALLOW_NEW_USERS !== "false";
+					const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
+
+					// If OAuth exclusive login is enabled, allow new users based on OAUTH_ALLOW_NEW_USERS
+					// Otherwise, check the general registration setting
+					const canCreateUser = oauthExclusiveLogin
+						? oauthAllowNewUsers
+						: (await prisma.globalOptions.findFirst())?.enableRegistration;
+
+					if (!canCreateUser) {
 						return `/auth/login?error=${ErrorCode.RegistrationDisabled}`;
 					}
 
