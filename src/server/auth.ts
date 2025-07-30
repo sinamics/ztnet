@@ -172,7 +172,7 @@ export const getAuthOptions = (
 
 				if (!user || !user.email || !user.hash)
 					//  return a nextauth error message
-					throw new Error("User does not exist!");
+					throw new Error(ErrorCode.IncorrectUsernamePassword);
 
 				// Check if the user is in a cooldown period
 				if (
@@ -201,7 +201,7 @@ export const getAuthOptions = (
 							lastFailedLoginAttempt: new Date(),
 						},
 					});
-					throw new Error("email or password is wrong!");
+					throw new Error(ErrorCode.IncorrectUsernamePassword);
 				}
 
 				if (!user.isActive) {
