@@ -22,6 +22,8 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
+	const utils = api.useUtils();
+
 	const { refetch: refecthNetworkById } = api.network.getNetworkById.useQuery(
 		{
 			nwid: query.id as string,
@@ -31,7 +33,14 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 	);
 
 	const { mutate: createUser } = api.networkMember.create.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			// Invalidate and refetch the network data to ensure all components are updated
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 		onError: handleApiError,
 	});
 

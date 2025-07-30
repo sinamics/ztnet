@@ -72,6 +72,7 @@ describe("NetworkById component", () => {
 	});
 	let queryClient: QueryClient;
 	beforeEach(() => {
+		api.useUtils = jest.fn();
 		queryClient = new QueryClient();
 		(useRouter as jest.Mock).mockImplementation(() => ({
 			query: {

@@ -369,7 +369,13 @@
 		},
 		"deletedNetworkMembersTable": {
 			"buttons": {
-				"viewStashedMembers": "Ver miembros almacenados"
+				"viewStashedMembers": "Ver miembros almacenados",
+				"deleteAll": "Eliminar Todos los Almacenados ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "¿Eliminar Todos los Miembros Almacenados?",
+				"modalDescription": "Esto eliminará permanentemente todos los {count} miembros almacenados de la base de datos. Permanecerán en el controlador ZeroTier y deben ser agregados manualmente.",
+				"modalWarning": "Advertencia: Esta acción no se puede deshacer. Para volver a agregar estos miembros en el futuro, debe ingresar manualmente sus IDs de miembro."
 			}
 		},
 		"inviteMemberByMail": {

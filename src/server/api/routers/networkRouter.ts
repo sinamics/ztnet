@@ -168,38 +168,69 @@ export const networkRouter = createTRPCRouter({
 				ztControllerResponse.members,
 			);
 
-			/**
-			 * Fetches zombie members.
-			 */
-			const zombieMembers = await fetchZombieMembers(
-				input.nwid,
-				ztControllerResponse.members,
-			);
-
 			// Generate CIDR options for IP configuration
 			const { cidrOptions } = IPv4gen(null, []);
 
 			/**
-			 * Merging logic to ensure that members who only exist in local database ( added manually ) are also included in the response
-			 * Create a map to store members by their id for efficient lookup
+			 * Merging logic to ensure proper member visibility:
+			 * 1. Start with database members (both active and stashed)
+			 * 2. Only add controller members if they don't exist in database
+			 * 3. Filter out stashed members from final result
 			 */
 			const mergedMembersMap = new Map();
-			for (const member of membersWithStatusAndPeers) {
-				mergedMembersMap.set(member.id, member);
-			}
 
-			// Fetch members from the database for a given network ID where the members are not deleted
-			const databaseMembers = await ctx.prisma.network_members.findMany({
+			// First, fetch ALL members from database (including deleted/stashed ones)
+			const allDatabaseMembers = await ctx.prisma.network_members.findMany({
 				where: {
 					nwid: input.nwid,
-					deleted: false,
 				},
 			});
 
-			// Process databaseMembers
-			for (const member of databaseMembers) {
-				if (!mergedMembersMap.has(member.id)) {
+			/**
+			 * Get stashed/zombie members directly from database.
+			 * These are members that were previously stashed (deleted: true) but not permanently deleted
+			 */
+			const zombieMembers = allDatabaseMembers.filter(
+				(member) => member.deleted && !member.permanentlyDeleted,
+			);
+
+			// Add all database members to the map (this gives us the authoritative record)
+			for (const member of allDatabaseMembers) {
+				// For database members, merge with controller data if available
+				const controllerMember = membersWithStatusAndPeers.find(
+					(m) => m.id === member.id,
+				);
+				if (controllerMember && !member.deleted) {
+					// Merge database and controller data for active members
+					mergedMembersMap.set(member.id, {
+						...controllerMember,
+						...member, // Database data takes precedence
+					});
+				} else if (!member.deleted) {
+					// Database-only member (manually added), not stashed
 					mergedMembersMap.set(member.id, member);
+				}
+				// Note: Stashed members (deleted: true) are deliberately not added to the map
+			}
+
+			// Then, add controller members that don't exist in database at all
+			// BUT exclude members that were permanently deleted
+			for (const member of membersWithStatusAndPeers) {
+				if (!allDatabaseMembers.some((dbMember) => dbMember.id === member.id)) {
+					// Check if this member was permanently deleted
+					const wasPermanentlyDeleted = await ctx.prisma.network_members.findFirst({
+						where: {
+							id: member.id,
+							nwid: input.nwid,
+							permanentlyDeleted: true,
+						},
+						select: { id: true },
+					});
+
+					// Only add as new member if it was never permanently deleted
+					if (!wasPermanentlyDeleted) {
+						mergedMembersMap.set(member.id, member);
+					}
 				}
 			}
 
