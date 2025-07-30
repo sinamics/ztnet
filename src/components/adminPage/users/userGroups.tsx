@@ -52,16 +52,19 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 		<div className="flex flex-wrap gap-2 text-left">
 			{groups?.map((group) => {
 				const isExpired = group.expiresAt && new Date(group.expiresAt) < new Date();
-				
+
 				return (
 					<div
 						key={group.id}
-						className={cn("card shadow-sm border p-3 min-w-40 cursor-pointer hover:shadow-md transition-shadow", {
-							"bg-primary text-primary-content": group.isDefault && !isExpired,
-							"bg-error text-error-content": isExpired,
-							"bg-base-200 border-base-300": !group.isDefault && !isExpired,
-							"border-error": isExpired,
-						})}
+						className={cn(
+							"card shadow-sm border p-3 min-w-40 cursor-pointer hover:shadow-md transition-shadow",
+							{
+								"bg-primary text-primary-content": group.isDefault && !isExpired,
+								"bg-error text-error-content": isExpired,
+								"bg-base-200 border-base-300": !group.isDefault && !isExpired,
+								"border-error": isExpired,
+							},
+						)}
 						onClick={() => {
 							// open modal
 							callModal({
@@ -101,7 +104,9 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 												type: "date",
 												placeholder: t("users.groups.addGroup.expirationDatePlaceholder"),
 												description: t("users.groups.addGroup.expirationDateDescription"),
-												value: group?.expiresAt ? new Date(group.expiresAt).toISOString().slice(0, 10) : "",
+												value: group?.expiresAt
+													? new Date(group.expiresAt).toISOString().slice(0, 10)
+													: "",
 												min: new Date().toISOString().slice(0, 10), // Prevent selecting dates in the past
 											},
 											{
@@ -127,17 +132,25 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 							<div className="flex-1">
 								<div className="font-medium text-sm mb-1">{group.name}</div>
 								<div className="text-xs opacity-75 mb-1">
-									{group._count.users} {group._count.users === 1 ? 'user' : 'users'}
+									{group._count.users} {group._count.users === 1 ? "user" : "users"}
 								</div>
 								{group.expiresAt && (
-									<div className={cn("text-xs px-1.5 py-0.5 rounded-full inline-block", {
-										"bg-error text-error-content opacity-100": isExpired,
-										"bg-warning text-warning-content opacity-90": !isExpired,
-									})}>
+									<div
+										className={cn("text-xs px-1.5 py-0.5 rounded-full inline-block", {
+											"bg-error text-error-content opacity-100": isExpired,
+											"bg-warning text-warning-content opacity-90": !isExpired,
+										})}
+									>
 										{isExpired ? (
-											<>❌ {t("users.groups.addGroup.expiredLabel")}: {new Date(group.expiresAt).toLocaleDateString()}</>
+											<>
+												❌ {t("users.groups.addGroup.expiredLabel")}:{" "}
+												{new Date(group.expiresAt).toLocaleDateString()}
+											</>
 										) : (
-											<>⏰ {t("users.groups.addGroup.expiresLabel")}: {new Date(group.expiresAt).toLocaleDateString()}</>
+											<>
+												⏰ {t("users.groups.addGroup.expiresLabel")}:{" "}
+												{new Date(group.expiresAt).toLocaleDateString()}
+											</>
 										)}
 									</div>
 								)}
@@ -147,13 +160,11 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 									</div>
 								)}
 								{group.isDefault && !isExpired && (
-									<div className="text-xs mt-0.5 opacity-90">
-										📌 Default Group
-									</div>
+									<div className="text-xs mt-0.5 opacity-90">📌 Default Group</div>
 								)}
 							</div>
 
-							<div 
+							<div
 								className="ml-1"
 								onClick={(e) => {
 									e.stopPropagation(); // Prevent card click when clicking delete button
@@ -276,7 +287,8 @@ const UserGroups = () => {
 						Existing Groups
 					</h3>
 					<p className="text-sm text-base-content/70">
-						Click on any group card to edit its settings, or use the delete button to remove it.
+						Click on any group card to edit its settings, or use the delete button to
+						remove it.
 					</p>
 				</div>
 				<GroupLabel groups={usergroups as UserGroupWithCount[]} />

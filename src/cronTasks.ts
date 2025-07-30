@@ -72,8 +72,8 @@ export const checkAndDeactivateExpiredUsers = async (): Promise<number> => {
 			expiresAt: Date | null;
 		} | null;
 	}> = [
-		...expUsers.map(user => ({ ...user, userGroup: undefined })),
-		...usersInExpiredGroups
+		...expUsers.map((user) => ({ ...user, userGroup: undefined })),
+		...usersInExpiredGroups,
 	];
 
 	// if no users return
@@ -120,7 +120,10 @@ export const checkAndDeactivateExpiredUsers = async (): Promise<number> => {
 				}
 			} catch (error) {
 				// Continue with other networks if one fails
-				console.error(`Failed to deauthorize members for network ${network.nwid}:`, error);
+				console.error(
+					`Failed to deauthorize members for network ${network.nwid}:`,
+					error,
+				);
 			}
 		}
 
