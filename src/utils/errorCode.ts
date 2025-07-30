@@ -93,7 +93,8 @@ export const ErrorMessages: Record<ErrorCode, ErrorDetails> = {
 	},
 	[ErrorCode.OauthMissingEmail]: {
 		message: "OAuth provider did not provide a valid email address.",
-		action: "Please ensure your OAuth provider account has a verified email address, or contact the administrator.",
+		action:
+			"Please ensure your OAuth provider account has a verified email address, or contact the administrator.",
 	},
 };
 

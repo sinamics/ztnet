@@ -24,9 +24,10 @@ async function createUser(userData: User, isOauth = false): Promise<Partial<User
 	}
 
 	// Ensure we have a name
-	const userName = userData.name && userData.name.trim() !== "" 
-		? userData.name 
-		: userData.email.split("@")[0] || "User";
+	const userName =
+		userData.name && userData.name.trim() !== ""
+			? userData.name
+			: userData.email.split("@")[0] || "User";
 
 	// Check if admin has created a default user group for new users
 	const defaultUserGroup = await prisma.userGroup.findFirst({
