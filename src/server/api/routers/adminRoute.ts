@@ -113,6 +113,8 @@ export const adminRouter = createTRPCRouter({
 				userGroupId: z.number().optional(),
 				expiresAfterDays: z.number().optional(),
 				requestChangePassword: z.boolean().default(false),
+				organizationId: z.string().optional(),
+				organizationRole: z.nativeEnum(Role).default(Role.USER),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -124,6 +126,8 @@ export const adminRouter = createTRPCRouter({
 				userGroupId,
 				expiresAfterDays,
 				requestChangePassword,
+				organizationId,
+				organizationRole,
 			} = input;
 
 			// Check if user with this email already exists
@@ -185,6 +189,40 @@ export const adminRouter = createTRPCRouter({
 					createdAt: true,
 				},
 			});
+
+			// If organization is specified, add user to organization with specified role
+			if (organizationId && organizationRole) {
+				// Verify that the organization exists and the current admin has access to it
+				const organization = await ctx.prisma.organization.findFirst({
+					where: {
+						id: organizationId,
+						ownerId: ctx.session.user.id, // Only allow adding to organizations owned by the admin
+					},
+				});
+
+				if (!organization) {
+					throwError("Organization not found or access denied");
+				}
+
+				// Add the user to the organization
+				await ctx.prisma.organization.update({
+					where: { id: organizationId },
+					data: {
+						users: {
+							connect: { id: newUser.id },
+						},
+					},
+				});
+
+				// Set the user's role in the organization
+				await ctx.prisma.userOrganizationRole.create({
+					data: {
+						userId: newUser.id,
+						organizationId: organizationId,
+						role: organizationRole,
+					},
+				});
+			}
 
 			return newUser;
 		}),

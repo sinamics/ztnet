@@ -18,6 +18,8 @@ const CreateUserModal = () => {
 		role: "USER" as "USER" | "ADMIN",
 		userGroupId: undefined as number | undefined,
 		requestChangePassword: false,
+		organizationId: undefined as string | undefined,
+		organizationRole: "USER" as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
 	});
 
 	const [createdUser, setCreatedUser] = useState<{
@@ -25,10 +27,15 @@ const CreateUserModal = () => {
 		email: string;
 		password: string;
 		role: string;
+		organizationName?: string;
+		organizationRole?: string;
 	} | null>(null);
 
 	// Fetch user groups for the dropdown
 	const { data: userGroups } = api.admin.getUserGroups.useQuery();
+
+	// Fetch organizations for the dropdown
+	const { data: organizations } = api.org.getAllOrg.useQuery();
 
 	// Refetch users after creation
 	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
@@ -43,11 +50,14 @@ const CreateUserModal = () => {
 			toast.success(t("users.users.createUser.toast.createUserSuccess"));
 
 			// Store created user info for display
+			const selectedOrg = organizations?.find(org => org.id === formData.organizationId);
 			setCreatedUser({
 				name: formData.name.trim(),
 				email: formData.email.trim(),
 				password: formData.password,
 				role: formData.role,
+				organizationName: selectedOrg?.orgName,
+				organizationRole: formData.organizationId ? formData.organizationRole : undefined,
 			});
 		},
 	});
@@ -64,11 +74,21 @@ const CreateUserModal = () => {
 
 	const copyUserInfo = () => {
 		if (createdUser) {
-			const userInfo = `${t("users.users.createUser.userAccountCreated")}
+			let userInfo = `${t("users.users.createUser.userAccountCreated")}
 Name: ${createdUser.name}
 Email: ${createdUser.email}
 Password: ${createdUser.password}
 Role: ${createdUser.role}`;
+
+			if (createdUser.organizationName) {
+				userInfo += `
+Organization: ${createdUser.organizationName}`;
+			}
+
+			if (createdUser.organizationRole) {
+				userInfo += `
+Organization Role: ${createdUser.organizationRole}`;
+			}
 
 			// Try modern clipboard API first
 			if (navigator.clipboard?.writeText) {
@@ -123,6 +143,8 @@ Role: ${createdUser.role}`;
 			role: "USER" as "USER" | "ADMIN",
 			userGroupId: undefined as number | undefined,
 			requestChangePassword: false,
+			organizationId: undefined as string | undefined,
+			organizationRole: "USER" as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
 		});
 		closeModal();
 	};
@@ -150,6 +172,8 @@ Role: ${createdUser.role}`;
 			role: formData.role,
 			userGroupId: formData.userGroupId,
 			requestChangePassword: formData.requestChangePassword,
+			organizationId: formData.organizationId,
+			organizationRole: formData.organizationRole,
 		});
 	};
 
@@ -198,6 +222,16 @@ Role: ${createdUser.role}`;
 							<div>
 								<span className="font-semibold">Role:</span> {createdUser.role}
 							</div>
+							{createdUser.organizationName && (
+								<div>
+									<span className="font-semibold">Organization:</span> {createdUser.organizationName}
+								</div>
+							)}
+							{createdUser.organizationRole && (
+								<div>
+									<span className="font-semibold">Organization Role:</span> {createdUser.organizationRole}
+								</div>
+							)}
 						</div>
 					</div>
 
@@ -326,6 +360,68 @@ Role: ${createdUser.role}`;
 							))}
 						</select>
 					</div>
+
+					{/* Organization Field */}
+					<div className="form-control">
+						<label className="label">
+							<span className="label-text font-medium">
+								{t("users.users.createUser.organizationLabel")}
+							</span>
+						</label>
+						<select
+							value={formData.organizationId || ""}
+							onChange={(e) =>
+								setFormData({
+									...formData,
+									organizationId: e.target.value || undefined,
+								})
+							}
+							className="select select-bordered select-sm w-full"
+						>
+							<option value="">{t("users.users.createUser.defaultOrganizationOption")}</option>
+							{organizations?.map((org) => (
+								<option key={org.id} value={org.id}>
+									{org.orgName}
+								</option>
+							))}
+						</select>
+						<label className="label">
+							<span className="label-text-alt text-gray-500">
+								{t("users.users.createUser.organizationDescription")}
+							</span>
+						</label>
+					</div>
+
+					{/* Organization Role Field - only show if organization is selected */}
+					{formData.organizationId && (
+						<div className="form-control">
+							<label className="label">
+								<span className="label-text font-medium">
+									{t("users.users.createUser.organizationRoleLabel")}
+								</span>
+							</label>
+							<select
+								value={formData.organizationRole}
+								onChange={(e) =>
+									setFormData({
+										...formData,
+										organizationRole: e.target.value as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
+									})
+								}
+								className="select select-bordered select-sm w-full"
+							>
+								<option value="READ_ONLY">READ_ONLY</option>
+								<option value="USER">USER</option>
+								<option value="MODERATOR">MODERATOR</option>
+								<option value="ADMIN">ADMIN</option>
+							</select>
+							<label className="label">
+								<span className="label-text-alt text-gray-500">
+									{t("users.users.createUser.organizationRoleDescription")}
+								</span>
+							</label>
+						</div>
+					)}
 
 					{/* Force Password Change */}
 					<div className="form-control">
