@@ -50,7 +50,9 @@ const CreateUserModal = () => {
 			toast.success(t("users.users.createUser.toast.createUserSuccess"));
 
 			// Store created user info for display
-			const selectedOrg = organizations?.find(org => org.id === formData.organizationId);
+			const selectedOrg = organizations?.find(
+				(org) => org.id === formData.organizationId,
+			);
 			setCreatedUser({
 				name: formData.name.trim(),
 				email: formData.email.trim(),
@@ -213,32 +215,46 @@ Organization Role: ${createdUser.organizationRole}`;
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div className="space-y-3 font-mono text-sm">
 									<div className="flex flex-col">
-										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Name</span>
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+											Name
+										</span>
 										<span className="text-base">{createdUser.name}</span>
 									</div>
 									<div className="flex flex-col">
-										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Email</span>
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+											Email
+										</span>
 										<span className="text-base">{createdUser.email}</span>
 									</div>
 									<div className="flex flex-col">
-										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Password</span>
-										<span className="text-base font-mono bg-base-300 px-2 py-1 rounded">{createdUser.password}</span>
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+											Password
+										</span>
+										<span className="text-base font-mono bg-base-300 px-2 py-1 rounded">
+											{createdUser.password}
+										</span>
 									</div>
 								</div>
 								<div className="space-y-3 font-mono text-sm">
 									<div className="flex flex-col">
-										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Role</span>
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+											Role
+										</span>
 										<span className="text-base">{createdUser.role}</span>
 									</div>
 									{createdUser.organizationName && (
 										<div className="flex flex-col">
-											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Organization</span>
+											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+												Organization
+											</span>
 											<span className="text-base">{createdUser.organizationName}</span>
 										</div>
 									)}
 									{createdUser.organizationRole && (
 										<div className="flex flex-col">
-											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Organization Role</span>
+											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">
+												Organization Role
+											</span>
 											<span className="text-base">{createdUser.organizationRole}</span>
 										</div>
 									)}
@@ -272,8 +288,12 @@ Organization Role: ${createdUser.organizationRole}`;
 						{/* Left Column - Basic Information */}
 						<div className="space-y-6">
 							<div className="pb-2 border-b border-base-200">
-								<h3 className="text-lg font-medium text-base-content">Basic Information</h3>
-								<p className="text-sm text-base-content/70">Personal details and credentials</p>
+								<h3 className="text-lg font-medium text-base-content">
+									Basic Information
+								</h3>
+								<p className="text-sm text-base-content/70">
+									Personal details and credentials
+								</p>
 							</div>
 
 							{/* Name Field */}
@@ -326,12 +346,17 @@ Organization Role: ${createdUser.organizationRole}`;
 									<input
 										type="text"
 										value={formData.password}
-										onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+										onChange={(e) =>
+											setFormData({ ...formData, password: e.target.value })
+										}
 										placeholder={t("users.users.createUser.passwordPlaceholder")}
 										className="input input-bordered input-sm flex-1"
 										required
 									/>
-									<div className="tooltip" data-tip={t("users.users.createUser.generatePasswordButton")}>
+									<div
+										className="tooltip"
+										data-tip={t("users.users.createUser.generatePasswordButton")}
+									>
 										<button
 											type="button"
 											onClick={generatePassword}
@@ -350,7 +375,10 @@ Organization Role: ${createdUser.organizationRole}`;
 										type="checkbox"
 										checked={formData.requestChangePassword}
 										onChange={(e) =>
-											setFormData({ ...formData, requestChangePassword: e.target.checked })
+											setFormData({
+												...formData,
+												requestChangePassword: e.target.checked,
+											})
 										}
 										className="checkbox checkbox-primary checkbox-sm"
 									/>
@@ -369,8 +397,12 @@ Organization Role: ${createdUser.organizationRole}`;
 						{/* Right Column - Permissions & Organization */}
 						<div className="space-y-6">
 							<div className="pb-2 border-b border-base-200">
-								<h3 className="text-lg font-medium text-base-content">Permissions & Organization</h3>
-								<p className="text-sm text-base-content/70">Access levels and group assignments</p>
+								<h3 className="text-lg font-medium text-base-content">
+									Permissions & Organization
+								</h3>
+								<p className="text-sm text-base-content/70">
+									Access levels and group assignments
+								</p>
 							</div>
 
 							{/* Role Field */}
@@ -412,7 +444,9 @@ Organization Role: ${createdUser.organizationRole}`;
 									}
 									className="select select-bordered select-sm w-full"
 								>
-									<option value="">{t("users.users.createUser.defaultGroupOption")}</option>
+									<option value="">
+										{t("users.users.createUser.defaultGroupOption")}
+									</option>
 									{userGroups?.map((group) => (
 										<option key={group.id} value={group.id}>
 											{group.name}
@@ -438,7 +472,9 @@ Organization Role: ${createdUser.organizationRole}`;
 									}
 									className="select select-bordered select-sm w-full"
 								>
-									<option value="">{t("users.users.createUser.defaultOrganizationOption")}</option>
+									<option value="">
+										{t("users.users.createUser.defaultOrganizationOption")}
+									</option>
 									{organizations?.map((org) => (
 										<option key={org.id} value={org.id}>
 											{org.orgName}
@@ -465,7 +501,10 @@ Organization Role: ${createdUser.organizationRole}`;
 										onChange={(e) =>
 											setFormData({
 												...formData,
-												organizationRole: e.target.value as "READ_ONLY" | "USER" | "ADMIN",
+												organizationRole: e.target.value as
+													| "READ_ONLY"
+													| "USER"
+													| "ADMIN",
 											})
 										}
 										className="select select-bordered select-sm w-full"
