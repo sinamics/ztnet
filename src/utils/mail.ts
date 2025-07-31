@@ -32,7 +32,7 @@ export const inviteUserTemplate = () => {
 			"For Example:<br />zerotier-cli join <%= nwid %><br /><br />" +
 			"Make sure to let <%= fromName %> know your device ID so that they can authorize it.<br /><br />" +
 			"For detailed instructions and download links, visit:<br />" +
-			"<a href='https://www.zerotier.com/download.shtml' style='color: blue; text-decoration: underline;'>https://www.zerotier.com/download.shtml</a><br /><br />" +
+			"<a href='https://www.zerotier.com/download' style='color: blue; text-decoration: underline;'>https://www.zerotier.com/download</a><br /><br />" +
 			"Sincerely,<br />--<br />ZTNET",
 	};
 };
