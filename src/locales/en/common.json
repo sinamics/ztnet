@@ -68,6 +68,7 @@
 			"authorized": "Auth",
 			"id": "ID",
 			"created": "Created",
+			"expires": "Expires",
 			"networks": "Networks",
 			"lastseen": "Last Seen",
 			"group": "Group",
@@ -197,6 +198,16 @@
 			"successMessage": "Your email has been successfully verified.",
 			"redirectMessage": "You will be redirected automatically in {seconds} seconds.",
 			"goNowButton": "Go Now"
+		},
+		"passwordChangeRequired": {
+			"title": "Password Change Required",
+			"description": "For security reasons, you must change your password before accessing the application.",
+			"formTitle": "Change Your Password",
+			"submitButton": "Update Password",
+			"successMessage": "Password updated successfully! Redirecting...",
+			"updatingTitle": "Updating Password",
+			"updatingDescription": "Please wait while we update your password and refresh your session.",
+			"note": "You cannot access other parts of the application until your password is changed."
 		}
 	},
 	"networks": {
@@ -574,6 +585,55 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Role changed successfully",
 					"errorOccurred": "An unknown error occurred"
+				},
+				"createNewUserButton": "Create New User",
+				"createUser": {
+					"title": "Create New User",
+					"nameLabel": "Name",
+					"namePlaceholder": "Enter user name",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Enter email address",
+					"emailDescription": "Any email format is accepted. Email verification is not required",
+					"passwordLabel": "Password",
+					"passwordPlaceholder": "Enter password",
+					"generatePasswordButton": "Generate Password",
+					"roleLabel": "Role",
+					"userGroupLabel": "User Group",
+					"defaultGroupOption": "Select user group (optional)",
+					"organizationLabel": "Organization",
+					"organizationDescription": "Select an organization to add the user to",
+					"defaultOrganizationOption": "None (Personal User)",
+					"organizationRoleLabel": "Organization Role",
+					"organizationRoleDescription": "Role within the selected organization",
+					"forcePasswordChangeLabel": "Request Password Change on First Login",
+					"forcePasswordChangeDescription": "User will be asked to change password when they first log in",
+					"createButton": "Create User",
+					"successMessage": "User created successfully! You can copy the details below to share.",
+					"userAccountCreated": "User Account Created:",
+					"userAccountDetails": "User Account Details:",
+					"copyInfoButton": "Copy Info",
+					"doneButton": "Done",
+					"toast": {
+						"createUserSuccess": "User created successfully",
+						"copySuccess": "User information copied to clipboard!",
+						"copyError": "Failed to copy to clipboard"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "search users",
+					"optionsButton": "Options",
+					"optionsModalTitle": "Options for user",
+					"accountStatus": {
+						"active": "Active",
+						"disabled": "Disabled"
+					},
+					"headers": {
+						"created": "Created",
+						"expires": "Expires"
+					},
+					"values": {
+						"never": "Never"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +876,11 @@
 				"currentPasswordPlaceholder": "Current Password",
 				"newPasswordPlaceholder": "New Password",
 				"repeatNewPasswordPlaceholder": "Repeat New Password",
-				"role": "Role"
+				"role": "Role",
+				"passwordChangeRequired": {
+					"title": "Password Change Required",
+					"description": "You must change your password before accessing other parts of the application. Please update your password in the Security section below."
+				}
 			},
 			"totp": {
 				"title": "Two Factor Authentication",

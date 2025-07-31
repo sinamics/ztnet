@@ -68,6 +68,7 @@
 			"authorized": "Autoryzacja",
 			"id": "ID",
 			"created": "Utworzono",
+			"expires": "Wygasa",
 			"networks": "Sieci",
 			"lastseen": "Widziano",
 			"group": "Grupa",
@@ -574,6 +575,55 @@
 				"toastMessages": {
 					"roleChangeSuccess": "Rola została pomyślnie zmieniona",
 					"errorOccurred": "Wystąpił nieznany błąd"
+				},
+				"createNewUserButton": "Utwórz Nowego Użytkownika",
+				"createUser": {
+					"title": "Utwórz Nowego Użytkownika",
+					"nameLabel": "Nazwa",
+					"namePlaceholder": "Wprowadź nazwę użytkownika",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Wprowadź adres email",
+					"emailDescription": "Akceptowany jest dowolny format email. Weryfikacja email nie jest wymagana",
+					"passwordLabel": "Hasło",
+					"passwordPlaceholder": "Wprowadź hasło",
+					"generatePasswordButton": "Wygeneruj Hasło",
+					"roleLabel": "Rola",
+					"userGroupLabel": "Grupa Użytkownika",
+					"defaultGroupOption": "Wybierz grupę użytkownika (opcjonalne)",
+					"organizationLabel": "Organizacja",
+					"organizationDescription": "Wybierz organizację do dodania użytkownika",
+					"defaultOrganizationOption": "Brak (Użytkownik Osobisty)",
+					"organizationRoleLabel": "Rola w Organizacji",
+					"organizationRoleDescription": "Rola w wybranej organizacji",
+					"forcePasswordChangeLabel": "Żądaj Zmiany Hasła przy Pierwszym Logowaniu",
+					"forcePasswordChangeDescription": "Użytkownik zostanie poproszony o zmianę hasła przy pierwszym logowaniu",
+					"createButton": "Utwórz Użytkownika",
+					"successMessage": "Użytkownik utworzony pomyślnie! Możesz skopiować szczegóły poniżej aby je udostępnić.",
+					"userAccountCreated": "Konto Użytkownika Utworzone:",
+					"userAccountDetails": "Szczegóły Konta Użytkownika:",
+					"copyInfoButton": "Kopiuj Informacje",
+					"doneButton": "Gotowe",
+					"toast": {
+						"createUserSuccess": "Użytkownik utworzony pomyślnie",
+						"copySuccess": "Informacje o użytkowniku skopiowane do schowka!",
+						"copyError": "Nie udało się skopiować do schowka"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "szukaj użytkowników",
+					"optionsButton": "Opcje",
+					"optionsModalTitle": "Opcje dla użytkownika",
+					"accountStatus": {
+						"active": "Aktywny",
+						"disabled": "Wyłączony"
+					},
+					"headers": {
+						"created": "Utworzony",
+						"expires": "Wygasa"
+					},
+					"values": {
+						"never": "Nigdy"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +866,11 @@
 				"currentPasswordPlaceholder": "Aktualne hasło",
 				"newPasswordPlaceholder": "Nowe hasło",
 				"repeatNewPasswordPlaceholder": "Powtórz nowe hasło",
-				"role": "Rola"
+				"role": "Rola",
+				"passwordChangeRequired": {
+					"title": "Wymagana Zmiana Hasła",
+					"description": "Musisz zmienić hasło przed uzyskaniem dostępu do innych części aplikacji. Proszę zaktualizuj swoje hasło w sekcji Bezpieczeństwo poniżej."
+				}
 			},
 			"totp": {
 				"title": "Uwierzytelnianie dwuskładnikowe (2FA)",
