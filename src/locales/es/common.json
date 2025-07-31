@@ -593,7 +593,7 @@
 					"namePlaceholder": "Ingrese el nombre de usuario",
 					"emailLabel": "Correo Electrónico",
 					"emailPlaceholder": "Ingrese la dirección de correo",
-					"emailDescription": "El usuario puede usar correos falsos como john@c.c ya que SMTP no es requerido",
+					"emailDescription": "Se acepta cualquier formato de email. No se requiere verificación de email",
 					"passwordLabel": "Contraseña",
 					"passwordPlaceholder": "Ingrese la contraseña",
 					"generatePasswordButton": "Generar Contraseña",

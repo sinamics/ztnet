@@ -593,7 +593,7 @@
 					"namePlaceholder": "Enter user name",
 					"emailLabel": "Email",
 					"emailPlaceholder": "Enter email address",
-					"emailDescription": "User can use fake emails like john@c.c since SMTP is not required",
+					"emailDescription": "Any email format is accepted. Email verification is not required",
 					"passwordLabel": "Password",
 					"passwordPlaceholder": "Enter password",
 					"generatePasswordButton": "Generate Password",

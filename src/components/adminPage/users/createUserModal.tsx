@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { api } from "~/utils/api";
 import toast from "react-hot-toast";
 import { useModalStore } from "~/utils/store";
@@ -15,7 +15,7 @@ const CreateUserModal = () => {
 		name: "",
 		email: "",
 		password: "",
-		role: "READ_ONLY" as "READ_ONLY" | "USER" | "ADMIN",
+		role: "USER" as "USER" | "ADMIN",
 		userGroupId: undefined as number | undefined,
 		requestChangePassword: false,
 	});
@@ -120,7 +120,7 @@ Role: ${createdUser.role}`;
 			name: "",
 			email: "",
 			password: "",
-			role: "READ_ONLY" as "READ_ONLY" | "USER" | "ADMIN",
+			role: "USER" as "USER" | "ADMIN",
 			userGroupId: undefined as number | undefined,
 			requestChangePassword: false,
 		});
@@ -290,12 +290,12 @@ Role: ${createdUser.role}`;
 							onChange={(e) =>
 								setFormData({
 									...formData,
-									role: e.target.value as "READ_ONLY" | "USER" | "ADMIN",
+									role: e.target.value as "USER" | "ADMIN",
 								})
 							}
 							className="select select-bordered select-sm w-full"
 						>
-							<option value="READ_ONLY">READ_ONLY</option>
+							{/* <option value="READ_ONLY">READ_ONLY</option> */}
 							<option value="USER">USER</option>
 							<option value="ADMIN">ADMIN</option>
 						</select>

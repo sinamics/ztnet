@@ -583,7 +583,7 @@
 					"namePlaceholder": "Введите имя пользователя",
 					"emailLabel": "Email",
 					"emailPlaceholder": "Введите адрес электронной почты",
-					"emailDescription": "Пользователь может использовать поддельные адреса электронной почты, такие как john@c.c, поскольку SMTP не требуется",
+					"emailDescription": "Принимается любой формат email. Проверка email не требуется",
 					"passwordLabel": "Пароль",
 					"passwordPlaceholder": "Введите пароль",
 					"generatePasswordButton": "Сгенерировать Пароль",

@@ -583,7 +583,7 @@
 					"namePlaceholder": "Wprowadź nazwę użytkownika",
 					"emailLabel": "Email",
 					"emailPlaceholder": "Wprowadź adres email",
-					"emailDescription": "Użytkownik może używać fałszywych emaili jak john@c.c ponieważ SMTP nie jest wymagane",
+					"emailDescription": "Akceptowany jest dowolny format email. Weryfikacja email nie jest wymagana",
 					"passwordLabel": "Hasło",
 					"passwordPlaceholder": "Wprowadź hasło",
 					"generatePasswordButton": "Wygeneruj Hasło",

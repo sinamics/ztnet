@@ -583,7 +583,7 @@
 					"namePlaceholder": "Skriv inn brukernavn",
 					"emailLabel": "E-post",
 					"emailPlaceholder": "Skriv inn e-postadresse",
-					"emailDescription": "Bruker kan bruke falske e-poster som john@c.c siden SMTP ikke er påkrevd",
+					"emailDescription": "Ethvert e-postformat aksepteres. E-postbekreftelse er ikke påkrevd",
 					"passwordLabel": "Passord",
 					"passwordPlaceholder": "Skriv inn passord",
 					"generatePasswordButton": "Generer Passord",

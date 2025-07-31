@@ -583,7 +583,7 @@
 					"namePlaceholder": "输入用户名",
 					"emailLabel": "邮箱",
 					"emailPlaceholder": "输入邮箱地址",
-					"emailDescription": "用户可以使用虚假邮箱如john@c.c，因为不需要SMTP",
+					"emailDescription": "接受任何邮箱格式。无需邮箱验证",
 					"passwordLabel": "密码",
 					"passwordPlaceholder": "输入密码",
 					"generatePasswordButton": "生成密码",

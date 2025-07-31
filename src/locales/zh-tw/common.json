@@ -583,7 +583,7 @@
 					"namePlaceholder": "輸入使用者名稱",
 					"emailLabel": "電子郵件",
 					"emailPlaceholder": "輸入電子郵件地址",
-					"emailDescription": "使用者可以使用假電子郵件如john@c.c，因為不需要SMTP",
+					"emailDescription": "接受任何電子郵件格式。無需電子郵件驗證",
 					"passwordLabel": "密碼",
 					"passwordPlaceholder": "輸入密碼",
 					"generatePasswordButton": "產生密碼",
