@@ -522,6 +522,7 @@
 				"oauthExistingUsersOnly": "Seuls les utilisateurs existants peuvent se connecter via OAuth.",
 				"generateInvitation": {
 					"header": "Générer un lien d'invitation",
+					"description": "Générez des liens d'invitation sécurisés pour permettre aux nouveaux utilisateurs de s'inscrire à votre instance ZTNET.",
 					"secretMessageLabel": "L'utilisateur sera invité à saisir ce message lors de l'inscription (sensible à la casse)",
 					"secretMessagePlaceholder": "Ajouter un message secret",
 					"expireTimeLabel": "Le lien d'invitation expirera après cette heure",
@@ -529,7 +530,16 @@
 					"timeUsedLabel": "Combien de fois ce lien peut-il être utilisé ? (Facultatif, par défaut 1)",
 					"timeUsedPlaceholder": "Nombre d'utilisation",
 					"assignGroupLabel": "Attribuer l'utilisateur à un groupe",
-					"activeInvitationsLabel": "Invitations actives (cliquez pour plus d'informations)",
+					"activeInvitationsLabel": "Invitations actives",
+					"activeInvitationsDescription": "Cliquez sur n'importe quelle carte d'invitation pour voir les détails, copier le lien ou la supprimer.",
+					"emptyState": {
+						"noInvitations": "Aucune invitation active trouvée.",
+						"createInvitation": "Créez un lien d'invitation ci-dessus pour commencer."
+					},
+					"deleteConfirmation": {
+						"title": "Supprimer l'Invitation",
+						"description": "Êtes-vous sûr de vouloir supprimer ce lien d'invitation ? Cette action ne peut pas être annulée."
+					},
 					"invitationModal": {
 						"header": "Détails de l'invitation",
 						"secretLabel": "Code secret:",
@@ -649,6 +659,10 @@
 					"expiredGroupWarning": "Ce groupe a expiré. Les utilisateurs seront désactivés.",
 					"expiredLabel": "EXPIRÉ",
 					"expiresLabel": "Expire"
+				},
+				"existingGroups": {
+					"title": "Groupes Existants",
+					"description": "Cliquez sur n'importe quelle carte de groupe pour modifier ses paramètres, ou utilisez le bouton supprimer pour le retirer."
 				}
 			}
 		},

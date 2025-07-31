@@ -532,6 +532,7 @@
 				"oauthExistingUsersOnly": "Only existing users can login via OAuth.",
 				"generateInvitation": {
 					"header": "Generate invitation link",
+					"description": "Generate secure invitation links to allow new users to register for your ZTNET instance.",
 					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",
 					"secretMessagePlaceholder": "Add secret message",
 					"expireTimeLabel": "Invitation link will expire after this time",
@@ -539,7 +540,16 @@
 					"timeUsedLabel": "How many times can this link be used? (Optional, default 1)",
 					"timeUsedPlaceholder": "Times can be used",
 					"assignGroupLabel": "Assign user to a group",
-					"activeInvitationsLabel": "Active invitations (click for more info)",
+					"activeInvitationsLabel": "Active invitations",
+					"activeInvitationsDescription": "Click on any invitation card to view details, copy the link, or delete it.",
+					"emptyState": {
+						"noInvitations": "No active invitations found.",
+						"createInvitation": "Create an invitation link above to get started."
+					},
+					"deleteConfirmation": {
+						"title": "Delete Invitation",
+						"description": "Are you sure you want to delete this invitation link? This action cannot be undone."
+					},
 					"invitationModal": {
 						"header": "Invitation Details",
 						"secretLabel": "Secret:",
@@ -656,6 +666,10 @@
 					"expiredGroupWarning": "This group has expired. Users will be deactivated.",
 					"expiredLabel": "EXPIRED",
 					"expiresLabel": "Expires"
+				},
+				"existingGroups": {
+					"title": "Existing Groups",
+					"description": "Click on any group card to edit its settings, or use the delete button to remove it."
 				}
 			}
 		},

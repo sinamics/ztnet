@@ -49,7 +49,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 	if (!Array.isArray(groups) || !groups) return null;
 
 	return (
-		<div className="flex flex-wrap gap-2 text-left">
+		<div className="flex flex-wrap gap-3 text-left">
 			{groups?.map((group) => {
 				const isExpired = group.expiresAt && new Date(group.expiresAt) < new Date();
 
@@ -57,12 +57,11 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 					<div
 						key={group.id}
 						className={cn(
-							"card shadow-sm border p-3 min-w-40 cursor-pointer hover:shadow-md transition-shadow",
+							"card shadow-sm border p-3 min-w-48 cursor-pointer hover:shadow-md transition-shadow",
 							{
-								"bg-primary text-primary-content": group.isDefault && !isExpired,
-								"bg-error text-error-content": isExpired,
+								"bg-primary text-primary-content border-primary": group.isDefault && !isExpired,
+								"bg-error text-error-content border-error": isExpired,
 								"bg-base-200 border-base-300": !group.isDefault && !isExpired,
-								"border-error": isExpired,
 							},
 						)}
 						onClick={() => {
@@ -70,7 +69,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 							callModal({
 								title: <p>{t("users.groups.addGroup.editGroupTitle")}</p>,
 								rootStyle: "text-left",
-								showButtons: true,
+								showButtons: false,
 								closeModalOnSubmit: true,
 								content: (
 									<InputFields
@@ -280,19 +279,20 @@ const UserGroups = () => {
 				/>
 			</div>
 
-			{/* Existing Groups Section */}
-			<div className="space-y-4">
-				<div>
-					<h3 className="text-lg font-semibold text-base-content mb-1">
-						Existing Groups
-					</h3>
-					<p className="text-sm text-base-content/70">
-						Click on any group card to edit its settings, or use the delete button to
-						remove it.
-					</p>
+			{/* Existing Groups Section - Only show if groups exist */}
+			{usergroups && usergroups.length > 0 && (
+				<div className="space-y-4">
+					<div>
+						<h3 className="text-lg font-semibold text-base-content mb-1">
+							{t("users.groups.existingGroups.title")}
+						</h3>
+						<p className="text-sm text-base-content/70">
+							{t("users.groups.existingGroups.description")}
+						</p>
+					</div>
+					<GroupLabel groups={usergroups as UserGroupWithCount[]} />
 				</div>
-				<GroupLabel groups={usergroups as UserGroupWithCount[]} />
-			</div>
+			)}
 		</div>
 	);
 };

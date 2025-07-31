@@ -522,6 +522,7 @@
 				"oauthExistingUsersOnly": "只有现有用户可以通过OAuth登录。",
 				"generateInvitation": {
 					"header": "生成邀请链接",
+					"description": "生成安全的邀请链接，允许新用户注册到您的ZTNET实例。",
 					"secretMessageLabel": "用户注册时将被要求输入此消息（区分大小写）",
 					"secretMessagePlaceholder": "添加秘密消息",
 					"expireTimeLabel": "邀请链接将在此时间后过期",
@@ -529,7 +530,16 @@
 					"timeUsedLabel": "此链接可以使用多少次？（可选，默认1次）",
 					"timeUsedPlaceholder": "可使用次数",
 					"assignGroupLabel": "将用户分配到组",
-					"activeInvitationsLabel": "有效邀请（点击获取更多信息）",
+					"activeInvitationsLabel": "有效邀请",
+					"activeInvitationsDescription": "点击任何邀请卡片来查看详情、复制链接或删除它。",
+					"emptyState": {
+						"noInvitations": "未找到有效邀请。",
+						"createInvitation": "在上方创建邀请链接以开始使用。"
+					},
+					"deleteConfirmation": {
+						"title": "删除邀请",
+						"description": "您确定要删除此邀请链接吗？此操作无法撤销。"
+					},
 					"invitationModal": {
 						"header": "邀请详情",
 						"secretLabel": "密钥:",
@@ -646,6 +656,10 @@
 					"expiredGroupWarning": "此组已过期。用户将被停用。",
 					"expiredLabel": "已过期",
 					"expiresLabel": "过期"
+				},
+				"existingGroups": {
+					"title": "现有群组",
+					"description": "点击任何群组卡片来编辑其设置，或使用删除按钮来移除它。"
 				}
 			}
 		},
