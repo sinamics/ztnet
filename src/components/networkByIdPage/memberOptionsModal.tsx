@@ -331,6 +331,35 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				</div>
 				<div className="grid grid-cols-4 items-start gap-4 py-3">
 					<div className="col-span-3">
+						<header>{t("networkById.memberOptionModal.memberDescription.header")}</header>
+						<p className="text-sm text-gray-500">
+							{t("networkById.memberOptionModal.memberDescription.description")}
+						</p>
+					</div>
+					<div className="col-span-1">
+						<input
+							type="text"
+							placeholder={t(
+								"networkById.memberOptionModal.memberDescription.placeholder",
+							)}
+							value={memberById?.description || ""}
+							className="input input-bordered input-sm w-full"
+							onChange={(e) => {
+								updateMember({
+									updateParams: {
+										description: e.target.value,
+									},
+									organizationId,
+									memberId,
+									central,
+									nwid,
+								});
+							}}
+						/>
+					</div>
+				</div>
+				<div className="grid grid-cols-4 items-start gap-4 py-3">
+					<div className="col-span-3">
 						<header>
 							{t("networkById.memberOptionModal.allowEthernetBridging.header")}
 						</header>

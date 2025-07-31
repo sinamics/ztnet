@@ -2,6 +2,7 @@
 export interface MemberEntity {
 	id: string;
 	name: string;
+	description?: string;
 	hidden: boolean;
 	activeBridge: boolean;
 	address: string;
@@ -64,6 +65,7 @@ interface CentralMemberConfig {
 	vRev: number;
 	vProto: number;
 	ssoExempt: boolean;
+	description?: string;
 }
 
 export interface Peers {

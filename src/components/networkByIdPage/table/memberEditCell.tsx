@@ -67,6 +67,8 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const inputRef = useRef<HTMLInputElement>(null);
 			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const textareaRef = useRef<HTMLTextAreaElement>(null);
+			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const isSubmittingRef = useRef(false);
 
 			// We need to keep and update the state of the cell normally
@@ -80,6 +82,21 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 					isSubmittingRef.current = true;
 					updateMember({
 						updateParams: { name: value as string },
+						memberId: original.id,
+						organizationId,
+						nwid,
+						central,
+					});
+					// Reset the flag after a short delay to allow for the mutation to complete
+					setTimeout(() => {
+						isSubmittingRef.current = false;
+					}, 100);
+				}
+				// For description field, also submit the change (but only if not already submitting)
+				if (id === "description" && value !== initialValue && !isSubmittingRef.current) {
+					isSubmittingRef.current = true;
+					updateMember({
+						updateParams: { description: value as string },
 						memberId: original.id,
 						organizationId,
 						nwid,
@@ -113,10 +130,39 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				}, 100);
 				// updateMyData(index, id, value, original);
 			};
+
+			const submitDescription = (e: React.MouseEvent<HTMLButtonElement>) => {
+				e.preventDefault();
+				if (isSubmittingRef.current) return; // Prevent duplicate submission
+
+				isSubmittingRef.current = true;
+				updateMember({
+					updateParams: { description: value as string },
+					memberId: original.id,
+					organizationId,
+					nwid,
+					central,
+				});
+
+				textareaRef.current?.blur();
+				// Reset the flag after a short delay
+				setTimeout(() => {
+					isSubmittingRef.current = false;
+				}, 100);
+			};
 			// If the initialValue is changed external, sync it up with our state
 			useEffect(() => {
 				setValue(initialValue);
 			}, [initialValue]);
+
+			// Auto-resize textarea for description field
+			useEffect(() => {
+				if (id === "description" && textareaRef.current) {
+					const textarea = textareaRef.current;
+					textarea.style.height = "auto";
+					textarea.style.height = `${textarea.scrollHeight}px`;
+				}
+			}, [id]);
 
 			if (id === "name") {
 				const notations = original.notations || [];
@@ -146,13 +192,109 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 										onBlur={onBlur}
 										value={(value as string) || ""}
 										type="text"
-										className="input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full"
+										className="input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full whitespace-normal break-words text-sm"
 									/>
 								</div>
 							</div>
 							<button type="submit" onClick={submitName} className="hidden" />
 						</form>
 					</div>
+				);
+			}
+			if (id === "description") {
+				const textValue = (value as string) || "";
+				const isEmpty = textValue.trim().length === 0;
+				// eslint-disable-next-line react-hooks/rules-of-hooks
+				const [isEditing, setIsEditing] = useState(false);
+
+				// Auto-resize textarea when editing
+				// eslint-disable-next-line react-hooks/rules-of-hooks
+				useEffect(() => {
+					if (isEditing && textareaRef.current) {
+						const textarea = textareaRef.current;
+						textarea.style.height = "auto";
+						textarea.style.height = `${textarea.scrollHeight}px`;
+						textarea.focus();
+					}
+				}, [isEditing]);
+
+				const handleCellClick = () => {
+					if (!isEditing) {
+						setIsEditing(true);
+					}
+				};
+
+				const handleBlur = () => {
+					setIsEditing(false);
+					onBlur();
+				};
+
+				const handleKeyDown = (e: React.KeyboardEvent) => {
+					if (e.key === "Escape") {
+						setValue(initialValue);
+						setIsEditing(false);
+					} else if (e.key === "Enter" && !e.shiftKey) {
+						e.preventDefault();
+						setIsEditing(false);
+						onBlur();
+					}
+				};
+
+				if (isEditing) {
+					return (
+						<form className="w-full">
+							<div className="flex items-start w-full">
+								<div className="flex-grow w-full">
+									<textarea
+										ref={textareaRef}
+										placeholder={t(
+											"networkById.networkMembersTable.tableRow.updateDescription",
+										)}
+										name="memberDescription"
+										maxLength={500}
+										onChange={(e) => {
+											setValue(e.target.value);
+											// Auto-resize textarea based on content
+											e.target.style.height = "auto";
+											e.target.style.height = `${e.target.scrollHeight}px`;
+										}}
+										onBlur={handleBlur}
+										onKeyDown={handleKeyDown}
+										value={textValue}
+										className="bg-transparent border border-primary rounded px-2 py-1 min-w-full text-sm resize-none whitespace-normal break-words focus:outline-none"
+										style={{
+											minHeight: "2rem",
+										}}
+									/>
+									<div className="text-xs text-gray-400 mt-1">{textValue.length}/500</div>
+								</div>
+							</div>
+							<button type="submit" onClick={submitDescription} className="hidden" />
+						</form>
+					);
+				}
+
+				// Display mode - render as simple text like other columns
+				if (isEmpty) {
+					return (
+						<span
+							className="text-gray-400 italic cursor-pointer text-sm"
+							onClick={handleCellClick}
+							style={{ textAlign: "left", display: "block" }}
+						>
+							{t("networkById.networkMembersTable.tableRow.updateDescription")}
+						</span>
+					);
+				}
+
+				return (
+					<span
+						className="cursor-pointer text-sm"
+						onClick={handleCellClick}
+						style={{ textAlign: "left", display: "block" }}
+					>
+						{textValue}
+					</span>
 				);
 			}
 			if (id === "ipAssignments") {
@@ -162,7 +304,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 				if (!original.ipAssignments?.length && !hasRfc4193 && !has6plane) {
 					return (
-						<p className="text-gray-500">
+						<p className="text-gray-500 text-sm">
 							{t("commonTable.header.ipAssignments.notAssigned")}
 						</p>
 					);
@@ -181,7 +323,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 							title={t("commonToast.copyToClipboard.title")}
 						>
 							<div className="cursor-pointer">
-								<div className="badge badge-ghost rounded-md">{ip}</div>
+								<div className="badge badge-ghost rounded-md text-sm">{ip}</div>
 							</div>
 						</CopyToClipboard>
 					) : null;
@@ -218,7 +360,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 											}
 											title={t("commonToast.copyToClipboard.title")}
 										>
-											<div className="cursor-pointer">{assignedIp}</div>
+											<div className="cursor-pointer text-sm">{assignedIp}</div>
 										</CopyToClipboard>
 										<div className="text-xs">
 											{original?.peers?.latency > 0 && ` (${original?.peers.latency}ms)`}

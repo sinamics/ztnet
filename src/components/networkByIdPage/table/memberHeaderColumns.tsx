@@ -170,11 +170,20 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 				},
 				id: "name",
 			}),
+			columnHelper.accessor("description", {
+				header: () => <span>{c("header.description")}</span>,
+				meta: {
+					style: {
+						textAlign: "left",
+					},
+				},
+				id: "description",
+			}),
 			columnHelper.accessor("id", {
 				header: () => <span>{c("header.id")}</span>,
 				id: "id",
 				sortingFn: sortingMemberHex,
-				cell: (info) => info.getValue(),
+				cell: (info) => <span className="text-sm">{info.getValue()}</span>,
 			}),
 			columnHelper.accessor("ipAssignments", {
 				header: () => <span>{c("header.ipAssignments.header")}</span>,
@@ -232,7 +241,9 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 									</span>
 								);
 
-							return centralPhysicalAddress.split("/")[0];
+							return (
+								<span className="text-sm">{centralPhysicalAddress.split("/")[0]}</span>
+							);
 						}
 						const physicalAddress = getValue();
 						if (!physicalAddress || typeof physicalAddress !== "string")
@@ -249,7 +260,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 										{physicalAddress.split("/")[0]}
 									</span>
 								) : (
-									<span>{physicalAddress.split("/")[0]}</span>
+									<span className="text-sm">{physicalAddress.split("/")[0]}</span>
 								)}
 							</div>
 						);
@@ -288,7 +299,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 							return (
 								<span
 									style={cursorStyle}
-									className="text-success" // Change the className to whatever you use for positive/online statuses
+									className="text-success text-sm" // Change the className to whatever you use for positive/online statuses
 									title="User is online"
 								>
 									ONLINE
@@ -297,7 +308,11 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 						}
 						// The user is considered offline
 						return (
-							<span style={cursorStyle} className="text-error" title="User is offline">
+							<span
+								style={cursorStyle}
+								className="text-error text-sm"
+								title="User is offline"
+							>
 								<span>{c("header.conStatus.offline")}</span>
 								<span>
 									<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
@@ -309,7 +324,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 						return (
 							<span
 								style={cursorStyle}
-								className="cursor-pointer text-warning"
+								className="cursor-pointer text-warning text-sm"
 								title="Controller"
 							>
 								CONTROLLER
@@ -320,7 +335,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 						return (
 							<span
 								style={cursorStyle}
-								className="cursor-pointer text-warning"
+								className="cursor-pointer text-warning text-sm"
 								title={c("header.conStatus.toolTip")}
 							>
 								{c("header.conStatus.relayed")}
@@ -342,7 +357,11 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 								: "";
 
 						return (
-							<div style={cursorStyle} className="text-success " title={directTitle}>
+							<div
+								style={cursorStyle}
+								className="text-success text-sm"
+								title={directTitle}
+							>
 								{c("header.conStatus.direct", {
 									version: versionInfo,
 								})}{" "}
@@ -353,7 +372,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 					return (
 						<span
 							style={cursorStyle}
-							className="text-error space-x-1"
+							className="text-error space-x-1 text-sm"
 							title="User is offline"
 						>
 							<span>{c("header.conStatus.offline")}</span>
