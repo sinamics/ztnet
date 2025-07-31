@@ -25,6 +25,14 @@ describe("<NetworkIpAssignment />", () => {
 
 	beforeEach(() => {
 		queryClient = new QueryClient();
+		// Mock the useUtils function that returns invalidate methods
+		api.useUtils = jest.fn().mockReturnValue({
+			network: {
+				getNetworkById: {
+					invalidate: jest.fn().mockResolvedValue(undefined),
+				},
+			},
+		});
 		(useRouter as jest.Mock).mockImplementation(() => ({
 			query: {
 				id: "test-id",
