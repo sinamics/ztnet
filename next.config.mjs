@@ -24,5 +24,14 @@ const config = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
+	async redirects() {
+		return [
+			{
+				source: "/",
+				destination: "/auth/login",
+				permanent: true,
+			},
+		];
+	},
 };
 export default config;

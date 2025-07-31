@@ -328,6 +328,10 @@ export const adminRouter = createTRPCRouter({
 		const invite = await ctx.prisma.invitation.findMany({
 			where: {
 				invitedById: ctx.session.user.id,
+				// Exclude organization invitations by filtering out invitations that have organizations
+				organizations: {
+					none: {}
+				}
 			},
 		});
 
