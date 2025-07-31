@@ -24,6 +24,14 @@ describe("<NetworkMulticast />", () => {
 	let queryClient: QueryClient;
 
 	beforeEach(() => {
+		// Mock the useUtils function that returns invalidate methods
+		api.useUtils = jest.fn().mockReturnValue({
+			network: {
+				getNetworkById: {
+					invalidate: jest.fn().mockResolvedValue(undefined),
+				},
+			},
+		});
 		queryClient = new QueryClient();
 		(useRouter as jest.Mock).mockImplementation(() => ({
 			query: {

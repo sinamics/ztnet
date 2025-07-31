@@ -23,6 +23,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const utils = api.useUtils();
 
 	const { query } = useRouter();
 	const [ipRange, setIpRange] = useState({ rangeStart: "", rangeEnd: "" });
@@ -41,16 +42,34 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: enableIpv4AutoAssign } = api.network.enableIpv4AutoAssign.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 	});
 	const { mutate: easyIpAssignment } = api.network.easyIpAssignment.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 	});
 
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 	});
 
 	const rangeChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

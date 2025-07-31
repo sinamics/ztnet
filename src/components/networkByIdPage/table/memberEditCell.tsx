@@ -66,6 +66,8 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			const initialValue = getValue();
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const inputRef = useRef<HTMLInputElement>(null);
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const isSubmittingRef = useRef(false);
 
 			// We need to keep and update the state of the cell normally
 			// eslint-disable-next-line react-hooks/rules-of-hooks
@@ -73,11 +75,29 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 
 			// When the input is blurred, we'll call our table meta's updateData function
 			const onBlur = () => {
+				// For name field, also submit the change (but only if not already submitting)
+				if (id === "name" && value !== initialValue && !isSubmittingRef.current) {
+					isSubmittingRef.current = true;
+					updateMember({
+						updateParams: { name: value as string },
+						memberId: original.id,
+						organizationId,
+						nwid,
+						central,
+					});
+					// Reset the flag after a short delay to allow for the mutation to complete
+					setTimeout(() => {
+						isSubmittingRef.current = false;
+					}, 100);
+				}
 				table.options.meta?.updateData(index, id, value);
 			};
 
 			const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
 				e.preventDefault();
+				if (isSubmittingRef.current) return; // Prevent duplicate submission
+
+				isSubmittingRef.current = true;
 				updateMember({
 					updateParams: { name: value as string },
 					memberId: original.id,
@@ -87,6 +107,10 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				});
 
 				inputRef.current?.blur();
+				// Reset the flag after a short delay
+				setTimeout(() => {
+					isSubmittingRef.current = false;
+				}, 100);
 				// updateMyData(index, id, value, original);
 			};
 			// If the initialValue is changed external, sync it up with our state

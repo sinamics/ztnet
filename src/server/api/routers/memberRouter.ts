@@ -111,6 +111,81 @@ export const networkMemberRouter = createTRPCRouter({
 				},
 			});
 			if (member) {
+				// Get user options to determine naming behavior for existing member
+				const userOptions = await ctx.prisma.userOptions.findFirst({
+					where: {
+						userId: ctx.session.user.id,
+					},
+				});
+
+				// Determine the name for the existing member
+				let memberName: string | null = member.name; // Keep existing name by default
+
+				// Check if global naming is enabled and look for existing name
+				const shouldUseGlobalNaming = userOptions?.renameNodeGlobally || false;
+
+				// Only look for existing names if global naming is enabled
+				if (shouldUseGlobalNaming) {
+					if (!input.organizationId) {
+						// Look for existing name in other networks
+						const existingMember = await ctx.prisma.network_members.findFirst({
+							where: {
+								id: input.id,
+								deleted: false,
+								nwid_ref: {
+									authorId: ctx.session.user.id,
+									organizationId: null,
+								},
+								nwid: {
+									not: input.nwid, // Exclude current network
+								},
+								name: {
+									not: null,
+								},
+							},
+							select: { name: true },
+						});
+
+						if (existingMember?.name) {
+							memberName = existingMember.name;
+						}
+					} else {
+						// Check organization settings for global naming
+						const organizationOptions = await ctx.prisma.organizationSettings.findUnique({
+							where: { organizationId: input.organizationId },
+						});
+
+						if (organizationOptions?.renameNodeGlobally) {
+							// Look for existing name in organization networks
+							const existingMember = await ctx.prisma.network_members.findFirst({
+								where: {
+									id: input.id,
+									deleted: false,
+									nwid_ref: {
+										organizationId: input.organizationId,
+									},
+									nwid: {
+										not: input.nwid, // Exclude current network
+									},
+									name: {
+										not: null,
+									},
+								},
+								select: { name: true },
+							});
+
+							if (existingMember?.name) {
+								memberName = existingMember.name;
+							}
+						}
+					}
+				} else {
+					// Global naming is disabled, check if "Add Member ID as Name" is enabled
+					if (userOptions?.addMemberIdAsName) {
+						memberName = input.id;
+					}
+				}
+
 				return await ctx.prisma.network_members.update({
 					where: {
 						id_nwid: {
@@ -121,6 +196,7 @@ export const networkMemberRouter = createTRPCRouter({
 					data: {
 						deleted: false,
 						permanentlyDeleted: false,
+						name: memberName,
 					},
 				});
 			}
@@ -139,10 +215,80 @@ export const networkMemberRouter = createTRPCRouter({
 			}
 
 			// if not, create new member
+			// Get user options to determine naming behavior
+			const userOptions = await ctx.prisma.userOptions.findFirst({
+				where: {
+					userId: ctx.session.user.id,
+				},
+			});
+
+			// Determine the name for the new member
+			let memberName: string | undefined = undefined;
+
+			// Check if global naming is enabled and look for existing name
+			const shouldUseGlobalNaming = userOptions?.renameNodeGlobally || false;
+
+			// Only look for existing names if global naming is enabled
+			if (shouldUseGlobalNaming) {
+				if (!input.organizationId) {
+					// Look for existing name in other networks
+					const existingMember = await ctx.prisma.network_members.findFirst({
+						where: {
+							id: input.id,
+							deleted: false,
+							nwid_ref: {
+								authorId: ctx.session.user.id,
+								organizationId: null,
+							},
+							name: {
+								not: null,
+							},
+						},
+						select: { name: true },
+					});
+
+					if (existingMember?.name) {
+						memberName = existingMember.name;
+					}
+				} else {
+					// Check organization settings for global naming
+					const organizationOptions = await ctx.prisma.organizationSettings.findUnique({
+						where: { organizationId: input.organizationId },
+					});
+
+					if (organizationOptions?.renameNodeGlobally) {
+						// Look for existing name in organization networks
+						const existingMember = await ctx.prisma.network_members.findFirst({
+							where: {
+								id: input.id,
+								deleted: false,
+								nwid_ref: {
+									organizationId: input.organizationId,
+								},
+								name: {
+									not: null,
+								},
+							},
+							select: { name: true },
+						});
+
+						if (existingMember?.name) {
+							memberName = existingMember.name;
+						}
+					}
+				}
+			}
+
+			// If no name from global naming (or global naming is disabled) and "Add Member ID as Name" is enabled, use member ID
+			if (!memberName && userOptions?.addMemberIdAsName) {
+				memberName = input.id;
+			}
+
 			await ctx.prisma.network_members.create({
 				data: {
 					id: input.id,
 					address: input.id,
+					name: memberName,
 					lastSeen: new Date(),
 					creationTime: new Date(),
 					nwid_ref: {
@@ -220,14 +366,27 @@ export const networkMemberRouter = createTRPCRouter({
 						select: { nwid: true },
 					});
 
-					// Update name only in networks where the member exists
+					// Update both controller and database for all networks where the member exists
 					for (const { nwid: networkId } of networksWithMember) {
+						// Update ZeroTier controller
 						await ztController.member_update({
 							ctx,
 							nwid: networkId,
 							memberId: memberId,
 							//@ts-expect-error
 							updateParams: updateParams,
+						});
+
+						// Update database
+						await ctx.prisma.network_members.updateMany({
+							where: {
+								id: memberId,
+								nwid: networkId,
+								deleted: false,
+							},
+							data: {
+								name: updateParams.name,
+							},
 						});
 					}
 				} else if (organizationId) {
@@ -251,14 +410,27 @@ export const networkMemberRouter = createTRPCRouter({
 							select: { nwid: true },
 						});
 
-						// Update name only in networks where the member exists
+						// Update both controller and database for all networks where the member exists
 						for (const { nwid: networkId } of networksWithMember) {
+							// Update ZeroTier controller
 							await ztController.member_update({
 								ctx,
 								nwid: networkId,
 								memberId: memberId,
 								//@ts-expect-error
 								updateParams: updateParams,
+							});
+
+							// Update database
+							await ctx.prisma.network_members.updateMany({
+								where: {
+									id: memberId,
+									nwid: networkId,
+									deleted: false,
+								},
+								data: {
+									name: updateParams.name,
+								},
 							});
 						}
 					}
@@ -301,6 +473,61 @@ export const networkMemberRouter = createTRPCRouter({
 						code: "FORBIDDEN",
 					});
 				});
+
+			// Update database for non-central networks (skip if global naming already handled it)
+			if (!central) {
+				// Check if global naming was used
+				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
+				const isOrganizationGlobalNaming =
+					organizationId &&
+					(
+						await ctx.prisma.organizationSettings.findUnique({
+							where: { organizationId },
+						})
+					)?.renameNodeGlobally;
+
+				const globalNamingUsed =
+					updateParams.name && (shouldUpdateNameGlobally || isOrganizationGlobalNaming);
+
+				// Only update database if global naming wasn't used, or if we need to update other fields
+				if (!globalNamingUsed || payload.authorized !== undefined) {
+					// Check if member exists in database
+					const dbMember = await ctx.prisma.network_members.findUnique({
+						where: {
+							id_nwid: {
+								id: memberId,
+								nwid: nwid,
+							},
+						},
+					});
+
+					if (dbMember) {
+						// Prepare database update data - only include fields that are stored in database
+						const databaseUpdateData: Partial<typeof dbMember> = {};
+
+						// Only include name if global naming wasn't used
+						if (payload.name !== undefined && !globalNamingUsed) {
+							databaseUpdateData.name = payload.name;
+						}
+						if (payload.authorized !== undefined) {
+							databaseUpdateData.authorized = payload.authorized;
+						}
+
+						// Update database if there are fields to update
+						if (Object.keys(databaseUpdateData).length > 0) {
+							await ctx.prisma.network_members.update({
+								where: {
+									id_nwid: {
+										id: memberId,
+										nwid: nwid,
+									},
+								},
+								data: databaseUpdateData,
+							});
+						}
+					}
+				}
+			}
 
 			try {
 				// Send webhook

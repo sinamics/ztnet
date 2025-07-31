@@ -49,6 +49,7 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations("networkById");
 
 	const handleApiError = useTrpcApiErrorHandler();
+	const utils = api.useUtils();
 
 	const client = useQueryClient();
 	const [state, setState] = useState({
@@ -75,12 +76,16 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 	}, [networkById?.network?.name]);
 
 	const { mutate: updateNetworkName } = api.network.networkName.useMutation({
-		onSuccess: (data) => {
+		onSuccess: async (data) => {
 			const input = {
 				nwid: query.id as string,
 				central,
 			};
 			updateCache({ client, data, input });
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
 		},
 		onError: handleApiError,
 	});

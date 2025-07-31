@@ -17,6 +17,7 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const utils = api.useUtils();
 
 	const [state, setState] = useState({
 		multicastLimit: "",
@@ -38,10 +39,16 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 
 	const { mutate: updateNetwork } = api.network.multiCast.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({
-			actions: [refetchNetwork],
-			toastMessage: t("networkMulticast.MulticastUpdatedSuccessfully"),
-		}),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({
+				actions: [refetchNetwork],
+				toastMessage: t("networkMulticast.MulticastUpdatedSuccessfully"),
+			})();
+		},
 	});
 
 	useEffect(() => {

@@ -26,14 +26,19 @@ interface useEditableColumnProps {
 }
 
 export const useEditableColumn = ({ refetchNetworkById }: useEditableColumnProps) => {
+	const utils = api.useUtils();
+	const { query } = useRouter();
+
 	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central: false,
+			});
 			toast.success("Route updated successfully");
 			void refetchNetworkById();
 		},
 	});
-
-	const { query } = useRouter();
 	const defaultColumn: Partial<ColumnDef<RoutesEntity>> = {
 		cell: ({ getValue, row: { original }, column: { id } }) => {
 			// Check if this column is editable

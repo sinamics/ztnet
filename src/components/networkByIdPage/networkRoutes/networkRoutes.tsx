@@ -30,6 +30,8 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const [showRouteInput, setShowRouteInput] = useState<boolean>(false);
 	const [routeInput, setRouteInput] = useState<RoutesEntity>(initialRouteInput);
 
+	const utils = api.useUtils();
+
 	const { query } = useRouter();
 	const {
 		data: networkById,
@@ -44,7 +46,13 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateManageRoutes } = api.network.managedRoutes.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 	});
 
 	const routeHandler = (event: ChangeEvent<HTMLInputElement>) => {
