@@ -17,6 +17,7 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const utils = api.useUtils();
 
 	const [state, setState] = useState({
 		address: "",
@@ -39,7 +40,13 @@ export const NetworkDns = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateNetwork } = api.network.dns.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refetchNetwork] })();
+		},
 	});
 
 	useEffect(() => {

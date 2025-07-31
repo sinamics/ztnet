@@ -21,6 +21,7 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const utils = api.useUtils();
 
 	const { query } = useRouter();
 	const { data: networkByIdQuery, refetch: refecthNetworkById } =
@@ -34,15 +35,27 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: setIpv6 } = api.network.ipv6.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({
-			actions: [refecthNetworkById],
-			// toastMessage: t("networkIpAssignments.ipv6.rfc4193Updated"),
-		}),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({
+				actions: [refecthNetworkById],
+				// toastMessage: t("networkIpAssignments.ipv6.rfc4193Updated"),
+			})();
+		},
 	});
 
 	const { mutate: advancedIpAssignment } = api.network.advancedIpAssignment.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refecthNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refecthNetworkById] })();
+		},
 	});
 
 	const submitIpRange = (e: React.MouseEvent<HTMLButtonElement>) => {

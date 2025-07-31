@@ -47,6 +47,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	const t = useTranslations();
 
 	const handleApiError = useTrpcApiErrorHandler();
+	const utils = api.useUtils();
 
 	const textareaRef = React.useRef<HTMLTextAreaElement>(null); // <-- Create a ref for the textarea
 	const [state, setState] = useState({
@@ -96,13 +97,17 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 	}, [networkById?.network?.description]);
 
 	const { mutate: networkDescription } = api.network.networkDescription.useMutation({
-		onSuccess: (data) => {
+		onSuccess: async (data) => {
 			const input = {
 				nwid: query.id as string,
 				central,
 			};
 			// void refecthNetworkById();
 			updateCache({ client, data, input });
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
 			toast.success("Description updated successfully");
 		},
 		onError: handleApiError,

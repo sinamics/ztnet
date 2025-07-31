@@ -96,7 +96,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			const submitName = (e: React.MouseEvent<HTMLButtonElement>) => {
 				e.preventDefault();
 				if (isSubmittingRef.current) return; // Prevent duplicate submission
-				
+
 				isSubmittingRef.current = true;
 				updateMember({
 					updateParams: { name: value as string },

@@ -77,6 +77,7 @@ export const NetworkRoutesTable = React.memo(
 
 		const handleApiError = useTrpcApiErrorHandler();
 		const handleApiSuccess = useTrpcApiSuccessHandler();
+		const utils = api.useUtils();
 
 		const { query } = useRouter();
 		const { data: networkById, refetch: refetchNetworkById } =
@@ -94,7 +95,13 @@ export const NetworkRoutesTable = React.memo(
 		const { mutate: updateManageRoutes, isLoading: isUpdating } =
 			api.network.managedRoutes.useMutation({
 				onError: handleApiError,
-				onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+				onSuccess: async () => {
+					await utils.network.getNetworkById.invalidate({
+						nwid: query.id as string,
+						central,
+					});
+					handleApiSuccess({ actions: [refetchNetworkById] })();
+				},
 			});
 
 		const deleteRoute = useCallback(

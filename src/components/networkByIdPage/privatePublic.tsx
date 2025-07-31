@@ -9,7 +9,7 @@ interface CardProps {
 	onClick: () => void;
 }
 
-const CardComponent: React.FC<CardProps> = ({
+const PrivatePublicCard: React.FC<CardProps> = ({
 	onClick,
 	title,
 	content,
@@ -51,4 +51,4 @@ const CardComponent: React.FC<CardProps> = ({
 	);
 };
 
-export default CardComponent;
+export default PrivatePublicCard;

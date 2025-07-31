@@ -16,6 +16,8 @@ interface IProps {
 
 export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	const { query } = useRouter();
+	const utils = api.useUtils();
+
 	// Local state to store changes to the flow route
 	const {
 		data: defaultFlowRoute,
@@ -28,8 +30,12 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	// const debouncedFlowRoute = useDebounce(flowRoute, 500);
 
 	const { mutate: updateFlowRoute } = api.network.setFlowRule.useMutation({
-		onSuccess: () => {
+		onSuccess: async () => {
 			void fetchFlowRoute({ nwid: query.id as string, reset: false });
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central: false,
+			});
 			void toast.success("Flow rules updated successfully");
 		},
 		onError: ({ message }) => {

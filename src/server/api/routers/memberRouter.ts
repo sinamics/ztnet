@@ -123,7 +123,7 @@ export const networkMemberRouter = createTRPCRouter({
 
 				// Check if global naming is enabled and look for existing name
 				const shouldUseGlobalNaming = userOptions?.renameNodeGlobally || false;
-				
+
 				// Only look for existing names if global naming is enabled
 				if (shouldUseGlobalNaming) {
 					if (!input.organizationId) {
@@ -145,7 +145,7 @@ export const networkMemberRouter = createTRPCRouter({
 							},
 							select: { name: true },
 						});
-						
+
 						if (existingMember?.name) {
 							memberName = existingMember.name;
 						}
@@ -173,7 +173,7 @@ export const networkMemberRouter = createTRPCRouter({
 								},
 								select: { name: true },
 							});
-							
+
 							if (existingMember?.name) {
 								memberName = existingMember.name;
 							}
@@ -227,7 +227,7 @@ export const networkMemberRouter = createTRPCRouter({
 
 			// Check if global naming is enabled and look for existing name
 			const shouldUseGlobalNaming = userOptions?.renameNodeGlobally || false;
-			
+
 			// Only look for existing names if global naming is enabled
 			if (shouldUseGlobalNaming) {
 				if (!input.organizationId) {
@@ -246,7 +246,7 @@ export const networkMemberRouter = createTRPCRouter({
 						},
 						select: { name: true },
 					});
-					
+
 					if (existingMember?.name) {
 						memberName = existingMember.name;
 					}
@@ -271,7 +271,7 @@ export const networkMemberRouter = createTRPCRouter({
 							},
 							select: { name: true },
 						});
-						
+
 						if (existingMember?.name) {
 							memberName = existingMember.name;
 						}
@@ -478,13 +478,16 @@ export const networkMemberRouter = createTRPCRouter({
 			if (!central) {
 				// Check if global naming was used
 				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
-				const isOrganizationGlobalNaming = organizationId && 
-					(await ctx.prisma.organizationSettings.findUnique({
-						where: { organizationId }
-					}))?.renameNodeGlobally;
+				const isOrganizationGlobalNaming =
+					organizationId &&
+					(
+						await ctx.prisma.organizationSettings.findUnique({
+							where: { organizationId },
+						})
+					)?.renameNodeGlobally;
 
-				const globalNamingUsed = updateParams.name && 
-					(shouldUpdateNameGlobally || isOrganizationGlobalNaming);
+				const globalNamingUsed =
+					updateParams.name && (shouldUpdateNameGlobally || isOrganizationGlobalNaming);
 
 				// Only update database if global naming wasn't used, or if we need to update other fields
 				if (!globalNamingUsed || payload.authorized !== undefined) {
@@ -501,7 +504,7 @@ export const networkMemberRouter = createTRPCRouter({
 					if (dbMember) {
 						// Prepare database update data - only include fields that are stored in database
 						const databaseUpdateData: Partial<typeof dbMember> = {};
-						
+
 						// Only include name if global naming wasn't used
 						if (payload.name !== undefined && !globalNamingUsed) {
 							databaseUpdateData.name = payload.name;

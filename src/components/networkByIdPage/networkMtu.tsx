@@ -20,6 +20,7 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const utils = api.useUtils();
 
 	const { query } = useRouter();
 	const {
@@ -36,7 +37,13 @@ export const NetworkMTU = ({ central = false, organizationId }: IProp) => {
 
 	const { mutate: updateNetwork } = api.network.mtu.useMutation({
 		onError: handleApiError,
-		onSuccess: handleApiSuccess({ actions: [refetchNetwork] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refetchNetwork] })();
+		},
 	});
 
 	useEffect(() => {

@@ -116,145 +116,172 @@ export const networkRouter = createTRPCRouter({
 			if (input.central) {
 				return await ztController.central_network_detail(ctx, input.nwid, input.central);
 			}
-			// First, retrieve the network with organization details
-			const networkFromDatabase = await ctx.prisma.network.findUnique({
-				where: {
-					nwid: input.nwid,
-				},
-				include: {
-					organization: true,
-					routes: true,
-				},
-			});
 
-			if (!networkFromDatabase) {
-				return throwError("Network not found!");
-			}
-
-			// Check if the user is the author of the network or part of the associated organization
-			const isAuthor = networkFromDatabase.authorId === ctx.session.user.id;
-			const isMemberOfOrganization =
-				networkFromDatabase.organizationId &&
-				(await ctx.prisma.organization.findFirst({
+			try {
+				// First, retrieve the network with organization details
+				const networkFromDatabase = await ctx.prisma.network.findUnique({
 					where: {
-						id: networkFromDatabase.organizationId,
-						users: {
-							some: { id: ctx.session.user.id },
-						},
+						nwid: input.nwid,
 					},
-				}));
-
-			if (!isAuthor && !isMemberOfOrganization) {
-				return throwError("You do not have access to this network!");
-			}
-
-			/**
-			 * Response from the ztController.local_network_detail method.
-			 * @type {Promise<any>}
-			 */
-			const ztControllerResponse = await ztController
-				.local_network_detail(ctx, networkFromDatabase.nwid, false)
-				.catch((err: APIError) => {
-					throwError(`${err.message}`);
+					include: {
+						organization: true,
+						routes: true,
+					},
 				});
 
-			if (!ztControllerResponse) return throwError("Failed to get network details!");
-			/**
-			 * Syncs member peers and status.
-			 */
-			const membersWithStatusAndPeers = await syncMemberPeersAndStatus(
-				ctx,
-				input.nwid,
-				ztControllerResponse.members,
-			);
-
-			// Generate CIDR options for IP configuration
-			const { cidrOptions } = IPv4gen(null, []);
-
-			/**
-			 * Merging logic to ensure proper member visibility:
-			 * 1. Start with database members (both active and stashed)
-			 * 2. Only add controller members if they don't exist in database
-			 * 3. Filter out stashed members from final result
-			 */
-			const mergedMembersMap = new Map();
-
-			// First, fetch ALL members from database (including deleted/stashed ones)
-			const allDatabaseMembers = await ctx.prisma.network_members.findMany({
-				where: {
-					nwid: input.nwid,
-				},
-			});
-
-			/**
-			 * Get stashed/zombie members directly from database.
-			 * These are members that were previously stashed (deleted: true) but not permanently deleted
-			 */
-			const zombieMembers = allDatabaseMembers.filter(
-				(member) => member.deleted && !member.permanentlyDeleted,
-			);
-
-			// Add all database members to the map (this gives us the authoritative record)
-			for (const member of allDatabaseMembers) {
-				// For database members, merge with controller data if available
-				const controllerMember = membersWithStatusAndPeers.find(
-					(m) => m.id === member.id,
-				);
-				if (controllerMember && !member.deleted) {
-					// Merge database and controller data for active members
-					mergedMembersMap.set(member.id, {
-						...controllerMember,
-						...member, // Database data takes precedence
-					});
-				} else if (!member.deleted) {
-					// Database-only member (manually added), not stashed
-					mergedMembersMap.set(member.id, member);
+				if (!networkFromDatabase) {
+					return throwError("Network not found!");
 				}
-				// Note: Stashed members (deleted: true) are deliberately not added to the map
-			}
 
-			// Then, add controller members that don't exist in database at all
-			// BUT exclude members that were permanently deleted
-			for (const member of membersWithStatusAndPeers) {
-				if (!allDatabaseMembers.some((dbMember) => dbMember.id === member.id)) {
-					// Check if this member was permanently deleted
-					const wasPermanentlyDeleted = await ctx.prisma.network_members.findFirst({
+				// Check if the user is the author of the network or part of the associated organization
+				const isAuthor = networkFromDatabase.authorId === ctx.session.user.id;
+				const isMemberOfOrganization =
+					networkFromDatabase.organizationId &&
+					(await ctx.prisma.organization.findFirst({
 						where: {
-							id: member.id,
-							nwid: input.nwid,
-							permanentlyDeleted: true,
+							id: networkFromDatabase.organizationId,
+							users: {
+								some: { id: ctx.session.user.id },
+							},
 						},
-						select: { id: true },
+					}));
+
+				if (!isAuthor && !isMemberOfOrganization) {
+					return throwError("You do not have access to this network!");
+				}
+
+				/**
+				 * Response from the ztController.local_network_detail method.
+				 * @type {Promise<any>}
+				 */
+				const ztControllerResponse = await ztController
+					.local_network_detail(ctx, networkFromDatabase.nwid, false)
+					.catch((err: APIError) => {
+						throwError(`${err.message}`);
 					});
 
-					// Only add as new member if it was never permanently deleted
-					if (!wasPermanentlyDeleted) {
+				if (!ztControllerResponse) return throwError("Failed to get network details!");
+
+				/**
+				 * Syncs member peers and status.
+				 */
+				const membersWithStatusAndPeers = await syncMemberPeersAndStatus(
+					ctx,
+					input.nwid,
+					ztControllerResponse.members,
+				).catch((err) => {
+					console.error("Error syncing member peers and status:", err);
+					// Return empty array on sync error to prevent complete failure
+					return [];
+				});
+
+				// Generate CIDR options for IP configuration
+				const { cidrOptions } = IPv4gen(null, []);
+
+				/**
+				 * Merging logic to ensure proper member visibility:
+				 * 1. Start with database members (both active and stashed)
+				 * 2. Only add controller members if they don't exist in database
+				 * 3. Filter out stashed members from final result
+				 */
+				const mergedMembersMap = new Map();
+
+				// First, fetch ALL members from database (including deleted/stashed ones)
+				const allDatabaseMembers = await ctx.prisma.network_members.findMany({
+					where: {
+						nwid: input.nwid,
+					},
+				});
+
+				/**
+				 * Get stashed/zombie members directly from database.
+				 * These are members that were previously stashed (deleted: true) but not permanently deleted
+				 */
+				const zombieMembers = allDatabaseMembers.filter(
+					(member) => member.deleted && !member.permanentlyDeleted,
+				);
+
+				// Add all database members to the map (this gives us the authoritative record)
+				for (const member of allDatabaseMembers) {
+					// For database members, merge with controller data if available
+					const controllerMember = membersWithStatusAndPeers.find(
+						(m) => m.id === member.id,
+					);
+					if (controllerMember && !member.deleted) {
+						// Merge database and controller data for active members
+						mergedMembersMap.set(member.id, {
+							...controllerMember,
+							...member, // Database data takes precedence
+						});
+					} else if (!member.deleted) {
+						// Database-only member (manually added), not stashed
 						mergedMembersMap.set(member.id, member);
 					}
+					// Note: Stashed members (deleted: true) are deliberately not added to the map
 				}
-			}
 
-			// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
-			await syncNetworkRoutes({
-				networkId: input.nwid,
-				networkFromDatabase,
-				ztControllerRoutes: ztControllerResponse.network.routes,
-			});
+				// Pre-fetch permanently deleted members to avoid N+1 queries in the loop
+				const permanentlyDeletedMemberIds = new Set(
+					(
+						await ctx.prisma.network_members.findMany({
+							where: {
+								nwid: input.nwid,
+								permanentlyDeleted: true,
+							},
+							select: { id: true },
+						})
+					).map((member) => member.id),
+				);
 
-			// check if there is other network using same routes and return a notification
-			const targetIPs = ztControllerResponse.network.routes.map((route) => route.target);
-			interface DuplicateRoutes {
-				authorId: string;
-				routes: RoutesEntity[];
-				name: string;
-			}
+				// Then, add controller members that don't exist in database at all
+				// BUT exclude members that were permanently deleted
+				for (const member of membersWithStatusAndPeers) {
+					if (!allDatabaseMembers.some((dbMember) => dbMember.id === member.id)) {
+						// Only add as new member if it was never permanently deleted
+						if (!permanentlyDeletedMemberIds.has(member.id)) {
+							mergedMembersMap.set(member.id, member);
+						}
+					}
+				}
 
-			// check if there are any other networks with the same routes.
-			let duplicateRoutes: DuplicateRoutes[] = [];
+				// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
+				// Only sync if routes actually differ to avoid unnecessary database operations
+				const dbRouteKeys = new Set(
+					networkFromDatabase.routes?.map((r) => `${r.target}|${r.via || "null"}`) || [],
+				);
+				const ztRouteKeys = new Set(
+					ztControllerResponse.network.routes?.map(
+						(r) => `${r.target}|${r.via || "null"}`,
+					) || [],
+				);
+				const routesAreDifferent =
+					dbRouteKeys.size !== ztRouteKeys.size ||
+					![...dbRouteKeys].every((key) => ztRouteKeys.has(key));
 
-			// Disabled duplicates for organization networks for now. Not sure it's needed.
-			if (targetIPs.length > 0 && !isMemberOfOrganization) {
-				duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
+				if (routesAreDifferent) {
+					await syncNetworkRoutes({
+						networkId: input.nwid,
+						networkFromDatabase,
+						ztControllerRoutes: ztControllerResponse.network.routes,
+					});
+				}
+
+				// check if there is other network using same routes and return a notification
+				const targetIPs = ztControllerResponse.network.routes.map(
+					(route) => route.target,
+				);
+				interface DuplicateRoutes {
+					authorId: string;
+					routes: RoutesEntity[];
+					name: string;
+				}
+
+				// check if there are any other networks with the same routes.
+				let duplicateRoutes: DuplicateRoutes[] = [];
+
+				// Disabled duplicates for organization networks for now. Not sure it's needed.
+				if (targetIPs.length > 0 && !isMemberOfOrganization) {
+					duplicateRoutes = await ctx.prisma.$queryRaw<DuplicateRoutes[]>`
 					SELECT 
 						n."authorId",
 						n."name",
@@ -274,46 +301,40 @@ export const networkRouter = createTRPCRouter({
 						AND n."nwid" != ${input.nwid}
 					GROUP BY n."authorId", n."name", n."nwid"
 				`;
+				}
+
+				// Extract duplicated IPs
+				const duplicatedIPs = duplicateRoutes.flatMap((network) =>
+					network.routes
+						.filter((route) => targetIPs.includes(route.target))
+						.map((route) => route.target),
+				);
+
+				// Remove duplicates from the list of duplicated IPs
+				const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
+
+				// Convert the map back to an array of merged members
+				const mergedMembers = [...mergedMembersMap.values()];
+
+				// Construct the final response object using the already fetched network data
+				return {
+					network: {
+						...ztControllerResponse?.network,
+						...networkFromDatabase,
+						cidr: cidrOptions,
+						duplicateRoutes: duplicateRoutes.map((network) => ({
+							...network,
+							duplicatedIPs: uniqueDuplicatedIPs,
+						})),
+					},
+					members: mergedMembers as MemberEntity[],
+					zombieMembers,
+				};
+			} catch (error) {
+				console.error("Error in getNetworkById:", error);
+				// Re-throw to maintain API contract
+				throw error;
 			}
-
-			// Extract duplicated IPs
-			const duplicatedIPs = duplicateRoutes.flatMap((network) =>
-				network.routes
-					.filter((route) => targetIPs.includes(route.target))
-					.map((route) => route.target),
-			);
-
-			// Remove duplicates from the list of duplicated IPs
-			const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
-
-			// Convert the map back to an array of merged members
-			const mergedMembers = [...mergedMembersMap.values()];
-
-			// Retrieve the updated values from network with organization details
-			const updatedNetworkFromDatabase = await ctx.prisma.network.findUnique({
-				where: {
-					nwid: input.nwid,
-				},
-				include: {
-					organization: true,
-					routes: true,
-				},
-			});
-
-			// Construct the final response object
-			return {
-				network: {
-					...ztControllerResponse?.network,
-					...updatedNetworkFromDatabase,
-					cidr: cidrOptions,
-					duplicateRoutes: duplicateRoutes.map((network) => ({
-						...network,
-						duplicatedIPs: uniqueDuplicatedIPs,
-					})),
-				},
-				members: mergedMembers as MemberEntity[],
-				zombieMembers,
-			};
 		}),
 	deleteNetwork: protectedProcedure
 		.input(

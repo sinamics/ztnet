@@ -18,6 +18,7 @@ interface IProp {
 const initialErrorState = { error: null, line: null };
 export const CentralFlowRules = ({ central = true }: IProp) => {
 	const { query } = useRouter();
+	const utils = api.useUtils();
 
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
@@ -43,7 +44,13 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 	// const debouncedFlowRoute = useDebounce(flowRoute, 500);
 
 	const { mutate: updateFlowRoute } = api.network.setFlowRule.useMutation({
-		onSuccess: handleApiSuccess({ actions: [refetchNetworkById] }),
+		onSuccess: async () => {
+			await utils.network.getNetworkById.invalidate({
+				nwid: query.id as string,
+				central,
+			});
+			handleApiSuccess({ actions: [refetchNetworkById] })();
+		},
 		onError: ({ message }) => {
 			try {
 				const err = JSON.parse(message) as CustomBackendError;
