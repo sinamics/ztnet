@@ -522,6 +522,7 @@
 				"oauthExistingUsersOnly": "Kun eksisterende brukere kan logge inn via OAuth.",
 				"generateInvitation": {
 					"header": "Generer invitasjonslenke",
+					"description": "Generer sikre invitasjonslenker for å la nye brukere registrere seg på din ZTNET-instans.",
 					"secretMessageLabel": "Brukeren vil bli bedt om å skrive inn denne meldingen ved registrering (Case sensitive)",
 					"secretMessagePlaceholder": "Legg til hemmelig melding",
 					"expireTimeLabel": "Invitasjonslenken vil utløpe etter denne tiden",
@@ -529,7 +530,16 @@
 					"timeUsedLabel": "Hvor mange ganger kan denne lenken brukes? (Valgfritt, standard 1)",
 					"timeUsedPlaceholder": "Ganger kan brukes",
 					"assignGroupLabel": "Tildele bruker til en gruppe",
-					"activeInvitationsLabel": "Aktive invitasjoner (klikk for mer info)",
+					"activeInvitationsLabel": "Aktive invitasjoner",
+					"activeInvitationsDescription": "Klikk på et invitasjonskort for å se detaljer, kopiere lenken eller slette det.",
+					"emptyState": {
+						"noInvitations": "Ingen aktive invitasjoner funnet.",
+						"createInvitation": "Opprett en invitasjonslenke ovenfor for å komme i gang."
+					},
+					"deleteConfirmation": {
+						"title": "Slett Invitasjon",
+						"description": "Er du sikker på at du vil slette denne invitasjonslenken? Denne handlingen kan ikke angres."
+					},
 					"invitationModal": {
 						"header": "Invitasjonsdetaljer",
 						"secretLabel": "Hemmelighet:",
@@ -646,6 +656,10 @@
 					"expiredGroupWarning": "Denne gruppen har utløpt. Brukere vil bli deaktivert.",
 					"expiredLabel": "UTLØPT",
 					"expiresLabel": "Utløper"
+				},
+				"existingGroups": {
+					"title": "Eksisterende Grupper",
+					"description": "Klikk på ethvert gruppekort for å redigere innstillingene, eller bruk slett-knappen for å fjerne det."
 				}
 			}
 		},

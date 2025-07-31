@@ -522,6 +522,7 @@
 				"oauthExistingUsersOnly": "Tylko istniejący użytkownicy mogą logować się przez OAuth.",
 				"generateInvitation": {
 					"header": "Generuj link zaproszenia",
+					"description": "Generuj bezpieczne linki zaproszenia, aby umożliwić nowym użytkownikom rejestrację w Twojej instancji ZTNET.",
 					"secretMessageLabel": "Użytkownik zostanie poproszony o wprowadzenie tej informacji podczas rejestracji (wielkość liter ma znaczenie)",
 					"secretMessagePlaceholder": "Dodaj sekretną wiadomość",
 					"expireTimeLabel": "Link z zaproszeniem wygaśnie po tym czasie",
@@ -529,7 +530,16 @@
 					"timeUsedLabel": "Ile razy można użyć tego linku? (Opcjonalne, domyślnie 1)",
 					"timeUsedPlaceholder": "Można użyć okresów",
 					"assignGroupLabel": "Przypisz użytkownika do grupy",
-					"activeInvitationsLabel": "Aktywne zaproszenia (kliknij po więcej informacji)",
+					"activeInvitationsLabel": "Aktywne zaproszenia",
+					"activeInvitationsDescription": "Kliknij na dowolną kartę zaproszenia, aby zobaczyć szczegóły, skopiować link lub ją usunąć.",
+					"emptyState": {
+						"noInvitations": "Nie znaleziono aktywnych zaproszeń.",
+						"createInvitation": "Utwórz link zaproszenia powyżej, aby rozpocząć."
+					},
+					"deleteConfirmation": {
+						"title": "Usuń Zaproszenie",
+						"description": "Czy na pewno chcesz usunąć ten link zaproszenia? Tej czynności nie można cofnąć."
+					},
 					"invitationModal": {
 						"header": "Szczegóły zaproszenia",
 						"secretLabel": "Sekret:",
@@ -646,6 +656,10 @@
 					"expiredGroupWarning": "Ta grupa wygasła. Użytkownicy zostali dezaktywowani.",
 					"expiredLabel": "WYGASŁA",
 					"expiresLabel": "Wygasa"
+				},
+				"existingGroups": {
+					"title": "Istniejące Grupy",
+					"description": "Kliknij na dowolną kartę grupy, aby edytować jej ustawienia, lub użyj przycisku usuń, aby ją usunąć."
 				}
 			}
 		},
