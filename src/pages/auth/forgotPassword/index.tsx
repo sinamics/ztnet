@@ -22,7 +22,7 @@ const ForgotPassword = () => {
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 
-			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full">
+			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full shadow-xl">
 				<h3 className="text-xl font-semibold">
 					{t("authPages.forgot.forgotPasswordTitle")}
 				</h3>
