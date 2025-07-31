@@ -19,7 +19,7 @@ const CreateUserModal = () => {
 		userGroupId: undefined as number | undefined,
 		requestChangePassword: false,
 		organizationId: undefined as string | undefined,
-		organizationRole: "USER" as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
+		organizationRole: "USER" as "READ_ONLY" | "USER" | "ADMIN",
 	});
 
 	const [createdUser, setCreatedUser] = useState<{
@@ -144,7 +144,7 @@ Organization Role: ${createdUser.organizationRole}`;
 			userGroupId: undefined as number | undefined,
 			requestChangePassword: false,
 			organizationId: undefined as string | undefined,
-			organizationRole: "USER" as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
+			organizationRole: "USER" as "READ_ONLY" | "USER" | "ADMIN",
 		});
 		closeModal();
 	};
@@ -178,7 +178,7 @@ Organization Role: ${createdUser.organizationRole}`;
 	};
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 max-w-4xl mx-auto">
 			{isCreating && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center">
 					<span className="loading loading-bars loading-lg"></span>
@@ -187,7 +187,7 @@ Organization Role: ${createdUser.organizationRole}`;
 
 			{createdUser ? (
 				// Success screen with user info
-				<div className="space-y-4">
+				<div className="space-y-6">
 					<div className="alert alert-success">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -205,33 +205,45 @@ Organization Role: ${createdUser.organizationRole}`;
 						<span>{t("users.users.createUser.successMessage")}</span>
 					</div>
 
-					<div className="bg-base-200 p-4 rounded-lg">
-						<h3 className="font-semibold mb-3">
-							{t("users.users.createUser.userAccountDetails")}
-						</h3>
-						<div className="space-y-2 font-mono text-sm">
-							<div>
-								<span className="font-semibold">Name:</span> {createdUser.name}
-							</div>
-							<div>
-								<span className="font-semibold">Email:</span> {createdUser.email}
-							</div>
-							<div>
-								<span className="font-semibold">Password:</span> {createdUser.password}
-							</div>
-							<div>
-								<span className="font-semibold">Role:</span> {createdUser.role}
-							</div>
-							{createdUser.organizationName && (
-								<div>
-									<span className="font-semibold">Organization:</span> {createdUser.organizationName}
+					<div className="card bg-base-200 shadow-sm">
+						<div className="card-body">
+							<h3 className="card-title text-lg mb-4">
+								{t("users.users.createUser.userAccountDetails")}
+							</h3>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								<div className="space-y-3 font-mono text-sm">
+									<div className="flex flex-col">
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Name</span>
+										<span className="text-base">{createdUser.name}</span>
+									</div>
+									<div className="flex flex-col">
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Email</span>
+										<span className="text-base">{createdUser.email}</span>
+									</div>
+									<div className="flex flex-col">
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Password</span>
+										<span className="text-base font-mono bg-base-300 px-2 py-1 rounded">{createdUser.password}</span>
+									</div>
 								</div>
-							)}
-							{createdUser.organizationRole && (
-								<div>
-									<span className="font-semibold">Organization Role:</span> {createdUser.organizationRole}
+								<div className="space-y-3 font-mono text-sm">
+									<div className="flex flex-col">
+										<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Role</span>
+										<span className="text-base">{createdUser.role}</span>
+									</div>
+									{createdUser.organizationName && (
+										<div className="flex flex-col">
+											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Organization</span>
+											<span className="text-base">{createdUser.organizationName}</span>
+										</div>
+									)}
+									{createdUser.organizationRole && (
+										<div className="flex flex-col">
+											<span className="font-semibold text-base-content/70 text-xs uppercase tracking-wide">Organization Role</span>
+											<span className="text-base">{createdUser.organizationRole}</span>
+										</div>
+									)}
 								</div>
-							)}
+							</div>
 						</div>
 					</div>
 
@@ -246,207 +258,234 @@ Organization Role: ${createdUser.organizationRole}`;
 				</div>
 			) : (
 				// Form screen
-				<form onSubmit={handleSubmit} className="space-y-4">
-					{/* Name Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.nameLabel")}
-							</span>
-						</label>
-						<input
-							type="text"
-							value={formData.name}
-							onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-							placeholder={t("users.users.createUser.namePlaceholder")}
-							className="input input-bordered input-sm w-full"
-							required
-						/>
+				<form onSubmit={handleSubmit} className="space-y-6">
+					{/* Header */}
+					<div className="text-center pb-4 border-b border-base-300">
+						<h2 className="text-xl font-semibold">{t("users.users.createUser.title")}</h2>
+						<p className="text-sm text-base-content/70 mt-1">
+							Fill in the details below to create a new user account
+						</p>
 					</div>
 
-					{/* Email Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.emailLabel")}
-							</span>
-						</label>
-						<input
-							type="email"
-							value={formData.email}
-							onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-							placeholder={t("users.users.createUser.emailPlaceholder")}
-							className="input input-bordered input-sm w-full"
-							required
-						/>
-						<label className="label">
-							<span className="label-text-alt text-gray-500">
-								{t("users.users.createUser.emailDescription")}
-							</span>
-						</label>
-					</div>
+					{/* Main Content Grid */}
+					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+						{/* Left Column - Basic Information */}
+						<div className="space-y-6">
+							<div className="pb-2 border-b border-base-200">
+								<h3 className="text-lg font-medium text-base-content">Basic Information</h3>
+								<p className="text-sm text-base-content/70">Personal details and credentials</p>
+							</div>
 
-					{/* Password Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.passwordLabel")}
-							</span>
-						</label>
-						<div className="flex gap-2">
-							<input
-								type="text"
-								value={formData.password}
-								onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-								placeholder={t("users.users.createUser.passwordPlaceholder")}
-								className="input input-bordered input-sm flex-1"
-								required
-							/>
-							<button
-								type="button"
-								onClick={generatePassword}
-								className="btn btn-outline btn-sm"
-							>
-								{t("users.users.createUser.generatePasswordButton")}
-							</button>
+							{/* Name Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.nameLabel")}
+									</span>
+								</label>
+								<input
+									type="text"
+									value={formData.name}
+									onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+									placeholder={t("users.users.createUser.namePlaceholder")}
+									className="input input-bordered input-sm w-full"
+									required
+								/>
+							</div>
+
+							{/* Email Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.emailLabel")}
+									</span>
+								</label>
+								<input
+									type="email"
+									value={formData.email}
+									onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+									placeholder={t("users.users.createUser.emailPlaceholder")}
+									className="input input-bordered input-sm w-full"
+									required
+								/>
+								<label className="label">
+									<span className="label-text-alt text-gray-500">
+										{t("users.users.createUser.emailDescription")}
+									</span>
+								</label>
+							</div>
+
+							{/* Password Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.passwordLabel")}
+									</span>
+								</label>
+								<div className="flex gap-2">
+									<input
+										type="text"
+										value={formData.password}
+										onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+										placeholder={t("users.users.createUser.passwordPlaceholder")}
+										className="input input-bordered input-sm flex-1"
+										required
+									/>
+									<div className="tooltip" data-tip={t("users.users.createUser.generatePasswordButton")}>
+										<button
+											type="button"
+											onClick={generatePassword}
+											className="btn btn-outline btn-sm"
+										>
+											🎲
+										</button>
+									</div>
+								</div>
+							</div>
+
+							{/* Force Password Change */}
+							<div className="form-control">
+								<label className="label cursor-pointer justify-start gap-3">
+									<input
+										type="checkbox"
+										checked={formData.requestChangePassword}
+										onChange={(e) =>
+											setFormData({ ...formData, requestChangePassword: e.target.checked })
+										}
+										className="checkbox checkbox-primary checkbox-sm"
+									/>
+									<span className="label-text font-medium">
+										{t("users.users.createUser.forcePasswordChangeLabel")}
+									</span>
+								</label>
+								<label className="label">
+									<span className="label-text-alt text-gray-500">
+										{t("users.users.createUser.forcePasswordChangeDescription")}
+									</span>
+								</label>
+							</div>
 						</div>
-					</div>
 
-					{/* Role Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.roleLabel")}
-							</span>
-						</label>
-						<select
-							value={formData.role}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									role: e.target.value as "USER" | "ADMIN",
-								})
-							}
-							className="select select-bordered select-sm w-full"
-						>
-							{/* <option value="READ_ONLY">READ_ONLY</option> */}
-							<option value="USER">USER</option>
-							<option value="ADMIN">ADMIN</option>
-						</select>
-					</div>
+						{/* Right Column - Permissions & Organization */}
+						<div className="space-y-6">
+							<div className="pb-2 border-b border-base-200">
+								<h3 className="text-lg font-medium text-base-content">Permissions & Organization</h3>
+								<p className="text-sm text-base-content/70">Access levels and group assignments</p>
+							</div>
 
-					{/* User Group Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.userGroupLabel")}
-							</span>
-						</label>
-						<select
-							value={formData.userGroupId || ""}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									userGroupId: e.target.value ? Number(e.target.value) : undefined,
-								})
-							}
-							className="select select-bordered select-sm w-full"
-						>
-							<option value="">{t("users.users.createUser.defaultGroupOption")}</option>
-							{userGroups?.map((group) => (
-								<option key={group.id} value={group.id}>
-									{group.name}
-								</option>
-							))}
-						</select>
-					</div>
+							{/* Role Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.roleLabel")}
+									</span>
+								</label>
+								<select
+									value={formData.role}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											role: e.target.value as "USER" | "ADMIN",
+										})
+									}
+									className="select select-bordered select-sm w-full"
+								>
+									<option value="USER">USER</option>
+									<option value="ADMIN">ADMIN</option>
+								</select>
+							</div>
 
-					{/* Organization Field */}
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-medium">
-								{t("users.users.createUser.organizationLabel")}
-							</span>
-						</label>
-						<select
-							value={formData.organizationId || ""}
-							onChange={(e) =>
-								setFormData({
-									...formData,
-									organizationId: e.target.value || undefined,
-								})
-							}
-							className="select select-bordered select-sm w-full"
-						>
-							<option value="">{t("users.users.createUser.defaultOrganizationOption")}</option>
-							{organizations?.map((org) => (
-								<option key={org.id} value={org.id}>
-									{org.orgName}
-								</option>
-							))}
-						</select>
-						<label className="label">
-							<span className="label-text-alt text-gray-500">
-								{t("users.users.createUser.organizationDescription")}
-							</span>
-						</label>
-					</div>
+							{/* User Group Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.userGroupLabel")}
+									</span>
+								</label>
+								<select
+									value={formData.userGroupId || ""}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											userGroupId: e.target.value ? Number(e.target.value) : undefined,
+										})
+									}
+									className="select select-bordered select-sm w-full"
+								>
+									<option value="">{t("users.users.createUser.defaultGroupOption")}</option>
+									{userGroups?.map((group) => (
+										<option key={group.id} value={group.id}>
+											{group.name}
+										</option>
+									))}
+								</select>
+							</div>
 
-					{/* Organization Role Field - only show if organization is selected */}
-					{formData.organizationId && (
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text font-medium">
-									{t("users.users.createUser.organizationRoleLabel")}
-								</span>
-							</label>
-							<select
-								value={formData.organizationRole}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										organizationRole: e.target.value as "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN",
-									})
-								}
-								className="select select-bordered select-sm w-full"
-							>
-								<option value="READ_ONLY">READ_ONLY</option>
-								<option value="USER">USER</option>
-								<option value="MODERATOR">MODERATOR</option>
-								<option value="ADMIN">ADMIN</option>
-							</select>
-							<label className="label">
-								<span className="label-text-alt text-gray-500">
-									{t("users.users.createUser.organizationRoleDescription")}
-								</span>
-							</label>
+							{/* Organization Field */}
+							<div className="form-control">
+								<label className="label">
+									<span className="label-text font-medium">
+										{t("users.users.createUser.organizationLabel")}
+									</span>
+								</label>
+								<select
+									value={formData.organizationId || ""}
+									onChange={(e) =>
+										setFormData({
+											...formData,
+											organizationId: e.target.value || undefined,
+										})
+									}
+									className="select select-bordered select-sm w-full"
+								>
+									<option value="">{t("users.users.createUser.defaultOrganizationOption")}</option>
+									{organizations?.map((org) => (
+										<option key={org.id} value={org.id}>
+											{org.orgName}
+										</option>
+									))}
+								</select>
+								<label className="label">
+									<span className="label-text-alt text-gray-500">
+										{t("users.users.createUser.organizationDescription")}
+									</span>
+								</label>
+							</div>
+
+							{/* Organization Role Field - only show if organization is selected */}
+							{formData.organizationId && (
+								<div className="form-control">
+									<label className="label">
+										<span className="label-text font-medium">
+											{t("users.users.createUser.organizationRoleLabel")}
+										</span>
+									</label>
+									<select
+										value={formData.organizationRole}
+										onChange={(e) =>
+											setFormData({
+												...formData,
+												organizationRole: e.target.value as "READ_ONLY" | "USER" | "ADMIN",
+											})
+										}
+										className="select select-bordered select-sm w-full"
+									>
+										<option value="READ_ONLY">READ_ONLY</option>
+										<option value="USER">USER</option>
+										<option value="ADMIN">ADMIN</option>
+									</select>
+									<label className="label">
+										<span className="label-text-alt text-gray-500">
+											{t("users.users.createUser.organizationRoleDescription")}
+										</span>
+									</label>
+								</div>
+							)}
 						</div>
-					)}
-
-					{/* Force Password Change */}
-					<div className="form-control">
-						<label className="label cursor-pointer justify-start gap-3">
-							<input
-								type="checkbox"
-								checked={formData.requestChangePassword}
-								onChange={(e) =>
-									setFormData({ ...formData, requestChangePassword: e.target.checked })
-								}
-								className="checkbox checkbox-primary checkbox-sm"
-							/>
-							<span className="label-text font-medium">
-								{t("users.users.createUser.forcePasswordChangeLabel")}
-							</span>
-						</label>
-						<label className="label">
-							<span className="label-text-alt text-gray-500">
-								{t("users.users.createUser.forcePasswordChangeDescription")}
-							</span>
-						</label>
 					</div>
 
 					{/* Submit Buttons */}
-					<div className="flex justify-end gap-3 pt-4">
+					<div className="flex justify-end gap-3 pt-6 border-t border-base-300">
 						<button
 							type="button"
 							onClick={closeModal}

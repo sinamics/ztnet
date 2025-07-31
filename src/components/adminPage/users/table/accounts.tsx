@@ -273,9 +273,8 @@ export const Accounts = () => {
 					<button
 						onClick={() =>
 							callModal({
-								title: t("users.users.createUser.title"),
 								showButtons: false,
-								rootStyle: "text-left max-w-3xl",
+								rootStyle: "text-left max-w-5xl",
 								content: <CreateUserModal />,
 							})
 						}
