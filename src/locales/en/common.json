@@ -6,7 +6,8 @@
 		"settings": "Settings",
 		"network": "Network",
 		"webhooks": "Webhooks",
-		"invites": "Invites"
+		"invites": "Invites",
+		"notification": "Notifications"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "Organization Settings",
@@ -53,7 +54,9 @@
 		"enable2fa": "Enable 2FA",
 		"disable2fa": "Disable 2FA",
 		"next": "Next",
-		"back": "Back"
+		"back": "Back",
+		"notification": "Notifications",
+		"changeTemplate": "Change Template"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "When enabled, this feature will:",
 					"bulletPoints": "Maintain a consistent name for each node across all networks in the organization.\nUpdate the node's name in all networks when you rename it in one network.\nUpon member registration, check if the member exists in your organization and use the first name found.",
 					"note": "Note: This is applicable exclusively to networks within this particular organization."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Admin Notifications",
+					"description": "Configure when organization administrators should receive notifications about important events. These notifications help keep admins informed about changes and activities within the organization."
+				},
+				"nodeEvents": {
+					"title": "Node Events",
+					"nodeAdded": {
+						"title": "Node Added",
+						"description": "Notify admins when a new node joins any network in the organization"
+					},
+					"nodeDeleted": {
+						"title": "Node Deleted",
+						"description": "Notify admins when a node is removed from any network in the organization"
+					}
+				},
+				"userEvents": {
+					"title": "User Events",
+					"userAdded": {
+						"title": "User Added to Organization",
+						"description": "Notify admins when a new user joins the organization"
+					},
+					"userRemoved": {
+						"title": "User Removed from Organization",
+						"description": "Notify admins when a user leaves or is removed from the organization"
+					},
+					"permissionChanged": {
+						"title": "User Permissions Changed",
+						"description": "Notify admins when a user's role or permissions are modified within the organization"
+					}
+				},
+				"networkEvents": {
+					"title": "Network Events",
+					"networkCreated": {
+						"title": "Network Created",
+						"description": "Notify admins when a new network is created in the organization"
+					},
+					"networkDeleted": {
+						"title": "Network Deleted",
+						"description": "Notify admins when a network is deleted from the organization"
+					}
+				},
+				"emailSettings": {
+					"title": "Email Delivery Settings",
+					"description": "Configure how notifications are delivered to organization administrators.",
+					"enableEmails": {
+						"title": "Enable Email Notifications",
+						"description": "Send notifications via email to all organization administrators"
+					}
+				},
+				"templates": {
+					"editTemplate": "Edit Email Template",
+					"availableTags": "Available Template Tags:",
+					"subject": "Subject",
+					"subjectPlaceholder": "Enter email subject...",
+					"htmlBody": "Email Body (HTML)",
+					"bodyPlaceholder": "Enter email body content...",
+					"saveTemplate": "Save Template",
+					"resetToDefault": "Reset to Default",
+					"sendTest": "Send Test Email",
+					"sendingTest": "Sending...",
+					"successToastTemplateSaved": "Template saved successfully",
+					"successToastTestSent": "Test email sent successfully",
+					"errorFields": "Subject and body are required",
+					"errorSaveFirst": "Please save your changes before sending a test email"
 				}
 			}
 		},

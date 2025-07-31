@@ -530,6 +530,26 @@ export const organizationRouter = createTRPCRouter({
 				// add error messge that webhook failed
 				throwError(error.message);
 			}
+
+			// Send notification to organization admins
+			try {
+				const { sendOrganizationAdminNotification } = await import(
+					"~/utils/organizationNotifications"
+				);
+				await sendOrganizationAdminNotification({
+					organizationId: input.organizationId,
+					eventType: "NETWORK_CREATED",
+					eventData: {
+						actorEmail: ctx.session.user.email,
+						actorName: ctx.session.user.name,
+						networkId: newNw.nwid,
+						networkName: input.networkName,
+					},
+				});
+			} catch (_error) {
+				// Don't fail the operation if notification fails
+			}
+
 			return newNw;
 		}),
 	changeUserRole: protectedProcedure
@@ -554,13 +574,26 @@ export const organizationRouter = createTRPCRouter({
 				});
 			}
 
-			// get the user name
+			// get the user name and current role
 			const user = await ctx.prisma.user.findUnique({
 				where: {
 					id: input.userId,
 				},
 				select: {
 					name: true,
+					email: true,
+				},
+			});
+
+			const currentRole = await ctx.prisma.userOrganizationRole.findUnique({
+				where: {
+					userId_organizationId: {
+						organizationId: input.organizationId,
+						userId: input.userId,
+					},
+				},
+				select: {
+					role: true,
 				},
 			});
 
@@ -572,8 +605,9 @@ export const organizationRouter = createTRPCRouter({
 					organizationId: input.organizationId || null,
 				},
 			});
-			// chagne the user's role in the organization
-			return await ctx.prisma.userOrganizationRole.update({
+
+			// change the user's role in the organization
+			const result = await ctx.prisma.userOrganizationRole.update({
 				where: {
 					userId_organizationId: {
 						organizationId: input.organizationId,
@@ -584,6 +618,29 @@ export const organizationRouter = createTRPCRouter({
 					role: input.role as Role,
 				},
 			});
+
+			// Send notification to organization admins
+			try {
+				const { sendOrganizationAdminNotification } = await import(
+					"~/utils/organizationNotifications"
+				);
+				await sendOrganizationAdminNotification({
+					organizationId: input.organizationId,
+					eventType: "PERMISSION_CHANGED",
+					eventData: {
+						actorEmail: ctx.session.user.email,
+						actorName: ctx.session.user.name,
+						targetName: user.name,
+						targetEmail: user.email,
+						oldRole: currentRole?.role || "UNKNOWN",
+						newRole: input.role,
+					},
+				});
+			} catch (_error) {
+				// Don't fail the operation if notification fails
+			}
+
+			return result;
 		}),
 	sendMessage: protectedProcedure
 		.input(
@@ -849,6 +906,25 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
+			// Send notification to organization admins
+			try {
+				const { sendOrganizationAdminNotification } = await import(
+					"~/utils/organizationNotifications"
+				);
+				await sendOrganizationAdminNotification({
+					organizationId: input.organizationId,
+					eventType: "USER_ADDED",
+					eventData: {
+						actorEmail: ctx.session.user.email,
+						actorName: ctx.session.user.name,
+						targetName: input.userName,
+						newRole: input.organizationRole,
+					},
+				});
+			} catch (_error) {
+				// Don't fail the operation if notification fails
+			}
+
 			return updatedOrganization;
 		}),
 	leave: protectedProcedure
@@ -884,6 +960,17 @@ export const organizationRouter = createTRPCRouter({
 				throw new Error("User not found in organization.");
 			}
 
+			// Get the full user details for notifications
+			const fullUser = await ctx.prisma.user.findUnique({
+				where: {
+					id: input.userId,
+				},
+				select: {
+					name: true,
+					email: true,
+				},
+			});
+
 			// Send webhook
 			try {
 				await sendWebhook<OrgMemberRemoved>({
@@ -918,6 +1005,25 @@ export const organizationRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			// Send notification to organization admins
+			try {
+				const { sendOrganizationAdminNotification } = await import(
+					"~/utils/organizationNotifications"
+				);
+				await sendOrganizationAdminNotification({
+					organizationId: input.organizationId,
+					eventType: "USER_REMOVED",
+					eventData: {
+						actorEmail: ctx.session.user.email,
+						actorName: ctx.session.user.name,
+						targetName: fullUser?.name || user.email,
+						targetEmail: user.email,
+					},
+				});
+			} catch (_error) {
+				// Don't fail the operation if notification fails
+			}
 
 			// Log the action
 			return await ctx.prisma.activityLog.create({
@@ -1570,5 +1676,350 @@ export const organizationRouter = createTRPCRouter({
 					organizationId: input.organizationId,
 				},
 			});
+		}),
+	updateOrganizationNotificationSettings: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				nodeAddedNotification: z.boolean().optional(),
+				nodeDeletedNotification: z.boolean().optional(),
+				userAddedNotification: z.boolean().optional(),
+				userRemovedNotification: z.boolean().optional(),
+				permissionChangedNotification: z.boolean().optional(),
+				networkCreatedNotification: z.boolean().optional(),
+				networkDeletedNotification: z.boolean().optional(),
+				emailNotificationsEnabled: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			const { organizationId, ...updateData } = input;
+
+			// update organization notification settings
+			return await ctx.prisma.organizationSettings.upsert({
+				where: {
+					organizationId: input.organizationId,
+				},
+				create: {
+					organizationId: input.organizationId,
+					...updateData,
+				},
+				update: {
+					...updateData,
+				},
+			});
+		}),
+
+	getOrganizationNotificationTemplate: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				templateType: z.string(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			const settings = await ctx.prisma.organizationSettings.findUnique({
+				where: {
+					organizationId: input.organizationId,
+				},
+			});
+
+			// Get the template field name based on template type
+			const templateFieldMap: { [key: string]: keyof typeof settings } = {
+				nodeAdded: "nodeAddedTemplate",
+				nodeDeleted: "nodeDeletedTemplate",
+				userAdded: "userAddedTemplate",
+				userRemoved: "userRemovedTemplate",
+				permissionChanged: "permissionChangedTemplate",
+				networkCreated: "networkCreatedTemplate",
+				networkDeleted: "networkDeletedTemplate",
+			};
+
+			const templateField = templateFieldMap[input.templateType];
+			if (!templateField) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Invalid template type",
+				});
+			}
+
+			// If organization has a custom template, return it
+			if (settings?.[templateField]) {
+				return settings[templateField];
+			}
+
+			// Otherwise return default template based on type
+			const defaultTemplates = {
+				nodeAdded: {
+					subject: "New Node Added to {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new node has been added to the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				nodeDeleted: {
+					subject: "Node Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A node has been deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				userAdded: {
+					subject: "New User Added to {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new user has been added to the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				userRemoved: {
+					subject: "User Removed from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A user has been removed from the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				permissionChanged: {
+					subject: "User Permissions Changed in {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />User permissions have been changed in the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Old Role: {{oldRole}}<br />- New Role: {{newRole}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				networkCreated: {
+					subject: "New Network Created in {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new network has been created in the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				networkDeleted: {
+					subject: "Network Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A network has been deleted from the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+			};
+
+			return defaultTemplates[input.templateType] || defaultTemplates.nodeAdded;
+		}),
+
+	getDefaultOrganizationNotificationTemplate: protectedProcedure
+		.input(
+			z.object({
+				templateType: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const defaultTemplates = {
+				nodeAdded: {
+					subject: "New Node Added to {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new node has been added to the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				nodeDeleted: {
+					subject: "Node Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A node has been deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				userAdded: {
+					subject: "New User Added to {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new user has been added to the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				userRemoved: {
+					subject: "User Removed from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A user has been removed from the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				permissionChanged: {
+					subject: "User Permissions Changed in {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />User permissions have been changed in the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Old Role: {{oldRole}}<br />- New Role: {{newRole}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				networkCreated: {
+					subject: "New Network Created in {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A new network has been created in the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				networkDeleted: {
+					subject: "Network Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A network has been deleted from the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+			};
+
+			return defaultTemplates[input.templateType] || defaultTemplates.nodeAdded;
+		}),
+
+	updateOrganizationNotificationTemplate: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				templateType: z.string(),
+				template: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// Parse and validate the template JSON
+			let templateData: { subject: string; body: string };
+			try {
+				templateData = JSON.parse(input.template) as { subject: string; body: string };
+			} catch {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Invalid template JSON",
+				});
+			}
+
+			// Get the template field name based on template type
+			const templateFieldMap: { [key: string]: string } = {
+				nodeAdded: "nodeAddedTemplate",
+				nodeDeleted: "nodeDeletedTemplate",
+				userAdded: "userAddedTemplate",
+				userRemoved: "userRemovedTemplate",
+				permissionChanged: "permissionChangedTemplate",
+				networkCreated: "networkCreatedTemplate",
+				networkDeleted: "networkDeletedTemplate",
+			};
+
+			const templateField = templateFieldMap[input.templateType];
+			if (!templateField) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Invalid template type",
+				});
+			}
+
+			// Update the organization settings with the new template
+			return await ctx.prisma.organizationSettings.upsert({
+				where: {
+					organizationId: input.organizationId,
+				},
+				create: {
+					organizationId: input.organizationId,
+					[templateField]: templateData,
+				},
+				update: {
+					[templateField]: templateData,
+				},
+			});
+		}),
+
+	sendTestOrganizationNotification: protectedProcedure
+		.input(
+			z.object({
+				organizationId: z.string(),
+				templateType: z.string(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// make sure the user is member of the organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// Get organization details
+			const organization = await ctx.prisma.organization.findUnique({
+				where: { id: input.organizationId },
+			});
+
+			if (!organization) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+					message: "Organization not found",
+				});
+			}
+
+			// Get template
+			const templateResult = await ctx.prisma.organizationSettings.findUnique({
+				where: { organizationId: input.organizationId },
+			});
+
+			const templateFieldMap: { [key: string]: keyof typeof templateResult } = {
+				nodeAdded: "nodeAddedTemplate",
+				nodeDeleted: "nodeDeletedTemplate",
+				userAdded: "userAddedTemplate",
+				userRemoved: "userRemovedTemplate",
+				permissionChanged: "permissionChangedTemplate",
+				networkCreated: "networkCreatedTemplate",
+				networkDeleted: "networkDeletedTemplate",
+			};
+
+			const templateField = templateFieldMap[input.templateType];
+			let template = templateResult?.[templateField];
+
+			// Use default template if no custom template exists
+			if (!template) {
+				const defaultTemplates = {
+					nodeAdded: {
+						subject: "New Node Added to {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A new node has been added to the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					nodeDeleted: {
+						subject: "Node Deleted from {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A node has been deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					userAdded: {
+						subject: "New User Added to {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A new user has been added to the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					userRemoved: {
+						subject: "User Removed from {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A user has been removed from the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					permissionChanged: {
+						subject: "User Permissions Changed in {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />User permissions have been changed in the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Old Role: {{oldRole}}<br />- New Role: {{newRole}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					networkCreated: {
+						subject: "New Network Created in {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A new network has been created in the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+					networkDeleted: {
+						subject: "Network Deleted from {{organizationName}}",
+						body: "Hello {{adminName}},<br /><br />A network has been deleted from the organization {{organizationName}}.<br /><br />Network Details:<br />- Name: {{networkName}}<br />- ID: {{networkId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+					},
+				};
+				template = defaultTemplates[input.templateType];
+			}
+
+			if (!template) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Template not found",
+				});
+			}
+
+			// Prepare test data
+			const testData = {
+				organizationName: organization.orgName,
+				adminName: ctx.session.user.name || "Admin",
+				timestamp: new Date().toLocaleString(),
+				nodeName: "Test Node",
+				nodeId: "test123456",
+				userName: "Test User",
+				userEmail: "test@example.com",
+				oldRole: "USER",
+				newRole: "ADMIN",
+				networkName: "Test Network",
+				networkId: "nw123456789",
+			};
+
+			// Replace template variables
+			let subject = (template as { subject: string; body: string }).subject;
+			let body = (template as { subject: string; body: string }).body;
+
+			for (const [key, value] of Object.entries(testData)) {
+				const placeholder = `{{${key}}}`;
+				subject = subject.replace(new RegExp(placeholder, "g"), value);
+				body = body.replace(new RegExp(placeholder, "g"), value);
+			}
+
+			// Send test email to the current user
+			await sendMailWithTemplate(MailTemplateKey.Notification, {
+				to: ctx.session.user.email,
+				userId: ctx.session.user.id,
+				templateData: {
+					toName: ctx.session.user.name || "Admin",
+					notificationMessage: `[TEST] ${subject}\n\n${body}`,
+				},
+			});
+
+			return { success: true };
 		}),
 });

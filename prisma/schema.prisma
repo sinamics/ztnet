@@ -412,10 +412,30 @@ model LastReadMessage {
 }
 
 model OrganizationSettings {
-  id                 Int          @id @default(autoincrement())
-  renameNodeGlobally Boolean?     @default(false)
-  organizationId     String       @unique
-  organization       Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  id                 Int      @id @default(autoincrement())
+  renameNodeGlobally Boolean? @default(false)
+
+  // Admin notification settings
+  nodeAddedNotification         Boolean? @default(false)
+  nodeDeletedNotification       Boolean? @default(false)
+  userAddedNotification         Boolean? @default(false)
+  userRemovedNotification       Boolean? @default(false)
+  permissionChangedNotification Boolean? @default(false)
+  networkCreatedNotification    Boolean? @default(false)
+  networkDeletedNotification    Boolean? @default(false)
+  emailNotificationsEnabled     Boolean? @default(true)
+
+  // Email template overrides for organization notifications
+  nodeAddedTemplate         Json?
+  nodeDeletedTemplate       Json?
+  userAddedTemplate         Json?
+  userRemovedTemplate       Json?
+  permissionChangedTemplate Json?
+  networkCreatedTemplate    Json?
+  networkDeletedTemplate    Json?
+
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model MembershipRequest {

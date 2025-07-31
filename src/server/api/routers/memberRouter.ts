@@ -553,6 +553,47 @@ export const networkMemberRouter = createTRPCRouter({
 				throwError(error.message);
 			}
 
+			// Send organization admin notification for node (member) authorization changes
+			if (organizationId && payload.authorized !== undefined) {
+				try {
+					const { sendOrganizationAdminNotification } = await import(
+						"~/utils/organizationNotifications"
+					);
+					const eventType = payload.authorized ? "NODE_ADDED" : "NODE_DELETED";
+
+					// Get network and member info for notification
+					const network = await ctx.prisma.network.findUnique({
+						where: { nwid },
+						select: { name: true },
+					});
+
+					const member = await ctx.prisma.network_members.findUnique({
+						where: {
+							id_nwid: {
+								id: memberId,
+								nwid: nwid,
+							},
+						},
+						select: { name: true },
+					});
+
+					await sendOrganizationAdminNotification({
+						organizationId,
+						eventType,
+						eventData: {
+							actorEmail: ctx.session.user.email,
+							actorName: ctx.session.user.name,
+							networkId: nwid,
+							networkName: network?.name || nwid,
+							nodeId: memberId,
+							nodeName: member?.name || payload.name || memberId,
+						},
+					});
+				} catch (_error) {
+					// Don't fail the operation if notification fails
+				}
+			}
+
 			return updatedMember;
 		}),
 	Tags: protectedProcedure
@@ -785,6 +826,46 @@ export const networkMemberRouter = createTRPCRouter({
 			} catch (error) {
 				// add error messge that webhook failed
 				throwError(error.message);
+			}
+
+			// Send organization admin notification for node deletion (stashing)
+			if (input.organizationId) {
+				try {
+					const { sendOrganizationAdminNotification } = await import(
+						"~/utils/organizationNotifications"
+					);
+
+					// Get network and member info for notification
+					const network = await ctx.prisma.network.findUnique({
+						where: { nwid: input.nwid },
+						select: { name: true },
+					});
+
+					const member = await ctx.prisma.network_members.findUnique({
+						where: {
+							id_nwid: {
+								id: input.id,
+								nwid: input.nwid,
+							},
+						},
+						select: { name: true },
+					});
+
+					await sendOrganizationAdminNotification({
+						organizationId: input.organizationId,
+						eventType: "NODE_DELETED",
+						eventData: {
+							actorEmail: ctx.session.user.email,
+							actorName: ctx.session.user.name,
+							networkId: input.nwid,
+							networkName: network?.name || input.nwid,
+							nodeId: input.id,
+							nodeName: member?.name || input.id,
+						},
+					});
+				} catch (_error) {
+					// Don't fail the operation if notification fails
+				}
 			}
 
 			return response;

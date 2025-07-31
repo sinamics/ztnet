@@ -6,7 +6,8 @@
 		"settings": "Ustawienia",
 		"network": "Sieć",
 		"webhooks": "Webhooki",
-		"invites": "Zaproszenia"
+		"invites": "Zaproszenia",
+		"notification": "Powiadomienia"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "Ustawienia organizacji",
@@ -53,7 +54,9 @@
 		"enable2fa": "Włącz 2FA",
 		"disable2fa": "Wyłącz 2FA",
 		"next": "Dalej",
-		"back": "Wstecz"
+		"back": "Wstecz",
+		"notification": "Powiadomienia",
+		"changeTemplate": "Zmień Szablon"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "Po włączeniu ta funkcja będzie:",
 					"bulletPoints": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach tej organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka sprawdzać, czy członek istnieje w Twojej organizacji i będzie używać pierwszej znalezionej nazwy.",
 					"note": "Uwaga: Dotyczy to wyłącznie sieci w ramach tej konkretnej organizacji."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Powiadomienia dla Administratorów",
+					"description": "Skonfiguruj, kiedy administratorzy organizacji powinni otrzymywać powiadomienia o ważnych wydarzeniach. Te powiadomienia pomagają utrzymać administratorów w pełnej informacji o zmianach i działaniach w organizacji."
+				},
+				"nodeEvents": {
+					"title": "Wydarzenia Węzłów",
+					"nodeAdded": {
+						"title": "Węzeł Dodany",
+						"description": "Powiadom administratorów, gdy nowy węzeł dołączy do sieci w organizacji"
+					},
+					"nodeDeleted": {
+						"title": "Węzeł Usunięty",
+						"description": "Powiadom administratorów, gdy węzeł zostanie usunięty z sieci w organizacji"
+					}
+				},
+				"userEvents": {
+					"title": "Wydarzenia Użytkowników",
+					"userAdded": {
+						"title": "Użytkownik Dodany do Organizacji",
+						"description": "Powiadom administratorów, gdy nowy użytkownik dołączy do organizacji"
+					},
+					"userRemoved": {
+						"title": "Użytkownik Usunięty z Organizacji",
+						"description": "Powiadom administratorów, gdy użytkownik opuści lub zostanie usunięty z organizacji"
+					},
+					"permissionChanged": {
+						"title": "Uprawnienia Użytkownika Zmienione",
+						"description": "Powiadom administratorów, gdy rola lub uprawnienia użytkownika zostaną zmodyfikowane w organizacji"
+					}
+				},
+				"networkEvents": {
+					"title": "Wydarzenia Sieci",
+					"networkCreated": {
+						"title": "Sieć Utworzona",
+						"description": "Powiadom administratorów, gdy nowa sieć zostanie utworzona w organizacji"
+					},
+					"networkDeleted": {
+						"title": "Sieć Usunięta",
+						"description": "Powiadom administratorów, gdy sieć zostanie usunięta z organizacji"
+					}
+				},
+				"emailSettings": {
+					"title": "Ustawienia Dostarczania Email",
+					"description": "Skonfiguruj sposób dostarczania powiadomień do administratorów organizacji.",
+					"enableEmails": {
+						"title": "Włącz Powiadomienia Email",
+						"description": "Wysyłaj powiadomienia przez email do wszystkich administratorów organizacji"
+					}
+				},
+				"templates": {
+					"editTemplate": "Edytuj Szablon Email",
+					"availableTags": "Dostępne Tagi Szablonu:",
+					"subject": "Temat",
+					"subjectPlaceholder": "Wprowadź temat email...",
+					"htmlBody": "Treść Email (HTML)",
+					"bodyPlaceholder": "Wprowadź treść email...",
+					"saveTemplate": "Zapisz Szablon",
+					"resetToDefault": "Przywróć Domyślny",
+					"sendTest": "Wyślij Testowy Email",
+					"sendingTest": "Wysyłanie...",
+					"successToastTemplateSaved": "Szablon zapisany pomyślnie",
+					"successToastTestSent": "Testowy email wysłany pomyślnie",
+					"errorFields": "Temat i treść są wymagane",
+					"errorSaveFirst": "Proszę zapisać zmiany przed wysłaniem testowego email"
 				}
 			}
 		},

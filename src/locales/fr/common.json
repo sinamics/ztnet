@@ -6,7 +6,8 @@
 		"settings": "Paramètres",
 		"network": "Réseau",
 		"webhooks": "Webhooks",
-		"invites": "Invitations"
+		"invites": "Invitations",
+		"notification": "Notifications"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "Paramètres de l'Organisation",
@@ -53,7 +54,9 @@
 		"enable2fa": "Activer 2FA",
 		"disable2fa": "Désactiver 2FA",
 		"next": "Suivant",
-		"back": "Retour"
+		"back": "Retour",
+		"notification": "Notifications",
+		"changeTemplate": "Modifier le Modèle"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "Lorsqu'elle est activée, cette fonctionnalité va :",
 					"bulletPoints": "Maintenir un nom cohérent pour chaque nœud dans tous les réseaux de l'organisation.\nMettre à jour le nom du nœud dans tous les réseaux lorsque vous le renommez dans un réseau.\nLors de l'enregistrement d'un membre, vérifier si le membre existe dans votre organisation et utiliser le premier nom trouvé.",
 					"note": "Remarque : Ceci s'applique exclusivement aux réseaux au sein de cette organisation particulière."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Notifications d'Administrateur",
+					"description": "Configurez quand les administrateurs de l'organisation doivent recevoir des notifications sur les événements importants. Ces notifications aident à maintenir les administrateurs informés des changements et activités au sein de l'organisation."
+				},
+				"nodeEvents": {
+					"title": "Événements de Nœud",
+					"nodeAdded": {
+						"title": "Nœud Ajouté",
+						"description": "Notifier les administrateurs lorsqu'un nouveau nœud rejoint un réseau dans l'organisation"
+					},
+					"nodeDeleted": {
+						"title": "Nœud Supprimé",
+						"description": "Notifier les administrateurs lorsqu'un nœud est retiré d'un réseau dans l'organisation"
+					}
+				},
+				"userEvents": {
+					"title": "Événements d'Utilisateur",
+					"userAdded": {
+						"title": "Utilisateur Ajouté à l'Organisation",
+						"description": "Notifier les administrateurs lorsqu'un nouvel utilisateur rejoint l'organisation"
+					},
+					"userRemoved": {
+						"title": "Utilisateur Retiré de l'Organisation",
+						"description": "Notifier les administrateurs lorsqu'un utilisateur quitte ou est retiré de l'organisation"
+					},
+					"permissionChanged": {
+						"title": "Permissions d'Utilisateur Modifiées",
+						"description": "Notifier les administrateurs lorsque le rôle ou les permissions d'un utilisateur sont modifiés dans l'organisation"
+					}
+				},
+				"networkEvents": {
+					"title": "Événements de Réseau",
+					"networkCreated": {
+						"title": "Réseau Créé",
+						"description": "Notifier les administrateurs lorsqu'un nouveau réseau est créé dans l'organisation"
+					},
+					"networkDeleted": {
+						"title": "Réseau Supprimé",
+						"description": "Notifier les administrateurs lorsqu'un réseau est supprimé de l'organisation"
+					}
+				},
+				"emailSettings": {
+					"title": "Paramètres de Livraison Email",
+					"description": "Configurez comment les notifications sont livrées aux administrateurs de l'organisation.",
+					"enableEmails": {
+						"title": "Activer les Notifications par Email",
+						"description": "Envoyer des notifications par email à tous les administrateurs de l'organisation"
+					}
+				},
+				"templates": {
+					"editTemplate": "Modifier le Modèle d'Email",
+					"availableTags": "Balises de Modèle Disponibles:",
+					"subject": "Sujet",
+					"subjectPlaceholder": "Entrez le sujet de l'email...",
+					"htmlBody": "Corps de l'Email (HTML)",
+					"bodyPlaceholder": "Entrez le contenu du corps de l'email...",
+					"saveTemplate": "Sauvegarder le Modèle",
+					"resetToDefault": "Remettre par Défaut",
+					"sendTest": "Envoyer un Email de Test",
+					"sendingTest": "Envoi en cours...",
+					"successToastTemplateSaved": "Modèle sauvegardé avec succès",
+					"successToastTestSent": "Email de test envoyé avec succès",
+					"errorFields": "Le sujet et le corps sont requis",
+					"errorSaveFirst": "Veuillez sauvegarder vos changements avant d'envoyer un email de test"
 				}
 			}
 		},

@@ -6,7 +6,8 @@
 		"settings": "設定",
 		"network": "網路",
 		"webhooks": "網路鉤子",
-		"invites": "邀請"
+		"invites": "邀請",
+		"notification": "通知"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "組織設定",
@@ -53,7 +54,9 @@
 		"enable2fa": "啟用雙重認證",
 		"disable2fa": "停用雙重認證",
 		"next": "下一步",
-		"back": "返回"
+		"back": "返回",
+		"notification": "通知",
+		"changeTemplate": "更改範本"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "啟用後，此功能將：",
 					"bulletPoints": "在組織的所有網路中為每個節點維護一致的名稱。\n當你在一個網路中重新命名節點時，會在所有網路中更新該節點的名稱。\n在成員註冊時，檢查該成員是否存在於你的組織中，並使用找到的第一個名稱。",
 					"note": "注意：這僅適用於此特定組織內的網路。"
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "管理員通知",
+					"description": "配置組織管理員何時應收到重要事件的通知。這些通知有助於讓管理員了解組織內的變化和活動。"
+				},
+				"nodeEvents": {
+					"title": "節點事件",
+					"nodeAdded": {
+						"title": "節點已新增",
+						"description": "當新節點加入組織中的任何網路時通知管理員"
+					},
+					"nodeDeleted": {
+						"title": "節點已刪除",
+						"description": "當節點從組織中的任何網路中移除時通知管理員"
+					}
+				},
+				"userEvents": {
+					"title": "用戶事件",
+					"userAdded": {
+						"title": "用戶已新增到組織",
+						"description": "當新用戶加入組織時通知管理員"
+					},
+					"userRemoved": {
+						"title": "用戶已從組織中移除",
+						"description": "當用戶離開或被從組織中移除時通知管理員"
+					},
+					"permissionChanged": {
+						"title": "用戶權限已變更",
+						"description": "當用戶的角色或權限在組織內被修改時通知管理員"
+					}
+				},
+				"networkEvents": {
+					"title": "網路事件",
+					"networkCreated": {
+						"title": "網路已建立",
+						"description": "當在組織中建立新網路時通知管理員"
+					},
+					"networkDeleted": {
+						"title": "網路已刪除",
+						"description": "當從組織中刪除網路時通知管理員"
+					}
+				},
+				"emailSettings": {
+					"title": "郵件傳遞設定",
+					"description": "配置如何向組織管理員傳遞通知。",
+					"enableEmails": {
+						"title": "啟用郵件通知",
+						"description": "透過郵件向所有組織管理員發送通知"
+					}
+				},
+				"templates": {
+					"editTemplate": "編輯郵件範本",
+					"availableTags": "可用範本標籤：",
+					"subject": "主旨",
+					"subjectPlaceholder": "輸入郵件主旨...",
+					"htmlBody": "郵件內文 (HTML)",
+					"bodyPlaceholder": "輸入郵件內文內容...",
+					"saveTemplate": "儲存範本",
+					"resetToDefault": "重設為預設",
+					"sendTest": "發送測試郵件",
+					"sendingTest": "發送中...",
+					"successToastTemplateSaved": "範本儲存成功",
+					"successToastTestSent": "測試郵件發送成功",
+					"errorFields": "主旨和內文為必填項目",
+					"errorSaveFirst": "請在發送測試郵件之前儲存您的變更"
 				}
 			}
 		},

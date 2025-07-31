@@ -6,7 +6,8 @@
 		"settings": "Configuración",
 		"network": "Red",
 		"webhooks": "Webhooks",
-		"invites": "Invitaciones"
+		"invites": "Invitaciones",
+		"notification": "Notificaciones"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "Configuración de la Organización",
@@ -53,7 +54,9 @@
 		"enable2fa": "Activar 2FA",
 		"disable2fa": "Desactivar 2FA",
 		"next": "Siguiente",
-		"back": "Atrás"
+		"back": "Atrás",
+		"notification": "Notificaciones",
+		"changeTemplate": "Cambiar Plantilla"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "Cuando se habilita, esta función:",
 					"bulletPoints": "Mantendrá un nombre consistente para cada nodo en todas las redes de la organización.\nActualizará el nombre del nodo en todas las redes cuando lo renombres en una red.\nAl registrar un miembro, verificará si el miembro existe en tu organización y usará el primer nombre encontrado.",
 					"note": "Nota: Esto se aplica exclusivamente a las redes dentro de esta organización en particular."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Notificaciones de Administrador",
+					"description": "Configura cuándo los administradores de la organización deben recibir notificaciones sobre eventos importantes. Estas notificaciones ayudan a mantener a los administradores informados sobre cambios y actividades dentro de la organización."
+				},
+				"nodeEvents": {
+					"title": "Eventos de Nodo",
+					"nodeAdded": {
+						"title": "Nodo Agregado",
+						"description": "Notificar a los administradores cuando un nuevo nodo se une a cualquier red en la organización"
+					},
+					"nodeDeleted": {
+						"title": "Nodo Eliminado",
+						"description": "Notificar a los administradores cuando un nodo es removido de cualquier red en la organización"
+					}
+				},
+				"userEvents": {
+					"title": "Eventos de Usuario",
+					"userAdded": {
+						"title": "Usuario Agregado a la Organización",
+						"description": "Notificar a los administradores cuando un nuevo usuario se une a la organización"
+					},
+					"userRemoved": {
+						"title": "Usuario Removido de la Organización",
+						"description": "Notificar a los administradores cuando un usuario deja o es removido de la organización"
+					},
+					"permissionChanged": {
+						"title": "Permisos de Usuario Modificados",
+						"description": "Notificar a los administradores cuando el rol o permisos de un usuario son modificados dentro de la organización"
+					}
+				},
+				"networkEvents": {
+					"title": "Eventos de Red",
+					"networkCreated": {
+						"title": "Red Creada",
+						"description": "Notificar a los administradores cuando una nueva red es creada en la organización"
+					},
+					"networkDeleted": {
+						"title": "Red Eliminada",
+						"description": "Notificar a los administradores cuando una red es eliminada de la organización"
+					}
+				},
+				"emailSettings": {
+					"title": "Configuración de Entrega de Email",
+					"description": "Configura cómo las notificaciones son entregadas a los administradores de la organización.",
+					"enableEmails": {
+						"title": "Habilitar Notificaciones por Email",
+						"description": "Enviar notificaciones por email a todos los administradores de la organización"
+					}
+				},
+				"templates": {
+					"editTemplate": "Editar Plantilla de Email",
+					"availableTags": "Etiquetas de Plantilla Disponibles:",
+					"subject": "Asunto",
+					"subjectPlaceholder": "Ingrese el asunto del email...",
+					"htmlBody": "Cuerpo del Email (HTML)",
+					"bodyPlaceholder": "Ingrese el contenido del cuerpo del email...",
+					"saveTemplate": "Guardar Plantilla",
+					"resetToDefault": "Restablecer a Predeterminado",
+					"sendTest": "Enviar Email de Prueba",
+					"sendingTest": "Enviando...",
+					"successToastTemplateSaved": "Plantilla guardada exitosamente",
+					"successToastTestSent": "Email de prueba enviado exitosamente",
+					"errorFields": "El asunto y el cuerpo son requeridos",
+					"errorSaveFirst": "Por favor guarda tus cambios antes de enviar un email de prueba"
 				}
 			}
 		},

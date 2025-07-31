@@ -6,7 +6,8 @@
 		"settings": "Innstillinger",
 		"network": "Nettverk",
 		"webhooks": "Webhooks",
-		"invites": "Invitasjoner"
+		"invites": "Invitasjoner",
+		"notification": "Varsler"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "Organisasjonsinnstillinger",
@@ -53,7 +54,9 @@
 		"enable2fa": "Aktiver 2FA",
 		"disable2fa": "Deaktiver 2FA",
 		"next": "Neste",
-		"back": "Tilbake"
+		"back": "Tilbake",
+		"notification": "Varsler",
+		"changeTemplate": "Endre Mal"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "Når denne funksjonen er aktivert, vil den:",
 					"bulletPoints": "Opprettholde et konsistent navn for hver node på tvers av alle nettverk i organisasjonen.\nOppdatere nodens navn i alle nettverk når du endrer navnet i ett nettverk.\nVed registrering av medlem, sjekke om medlemmet eksisterer i organisasjonen din og bruke det første navnet som blir funnet.",
 					"note": "Merk: Dette gjelder utelukkende for nettverk innenfor denne spesifikke organisasjonen."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Administrator-varsler",
+					"description": "Konfigurer når organisasjonsadministratorer skal motta varsler om viktige hendelser. Disse varslene hjelper med å holde administratorer informert om endringer og aktiviteter i organisasjonen."
+				},
+				"nodeEvents": {
+					"title": "Node-hendelser",
+					"nodeAdded": {
+						"title": "Node Lagt Til",
+						"description": "Varsle administratorer når en ny node kobler seg til et nettverk i organisasjonen"
+					},
+					"nodeDeleted": {
+						"title": "Node Slettet",
+						"description": "Varsle administratorer når en node fjernes fra et nettverk i organisasjonen"
+					}
+				},
+				"userEvents": {
+					"title": "Bruker-hendelser",
+					"userAdded": {
+						"title": "Bruker Lagt Til i Organisasjonen",
+						"description": "Varsle administratorer når en ny bruker blir med i organisasjonen"
+					},
+					"userRemoved": {
+						"title": "Bruker Fjernet fra Organisasjonen",
+						"description": "Varsle administratorer når en bruker forlater eller fjernes fra organisasjonen"
+					},
+					"permissionChanged": {
+						"title": "Bruker-tillatelser Endret",
+						"description": "Varsle administratorer når en brukers rolle eller tillatelser endres i organisasjonen"
+					}
+				},
+				"networkEvents": {
+					"title": "Nettverk-hendelser",
+					"networkCreated": {
+						"title": "Nettverk Opprettet",
+						"description": "Varsle administratorer når et nytt nettverk opprettes i organisasjonen"
+					},
+					"networkDeleted": {
+						"title": "Nettverk Slettet",
+						"description": "Varsle administratorer når et nettverk slettes fra organisasjonen"
+					}
+				},
+				"emailSettings": {
+					"title": "E-post Leveringsinnstillinger",
+					"description": "Konfigurer hvordan varsler leveres til organisasjonsadministratorer.",
+					"enableEmails": {
+						"title": "Aktiver E-postvarsler",
+						"description": "Send varsler via e-post til alle organisasjonsadministratorer"
+					}
+				},
+				"templates": {
+					"editTemplate": "Rediger E-postmal",
+					"availableTags": "Tilgjengelige Mal-tagger:",
+					"subject": "Emne",
+					"subjectPlaceholder": "Skriv inn e-postemne...",
+					"htmlBody": "E-postkropp (HTML)",
+					"bodyPlaceholder": "Skriv inn e-postkroppinnhold...",
+					"saveTemplate": "Lagre Mal",
+					"resetToDefault": "Tilbakestill til Standard",
+					"sendTest": "Send Test E-post",
+					"sendingTest": "Sender...",
+					"successToastTemplateSaved": "Mal lagret vellykket",
+					"successToastTestSent": "Test e-post sendt vellykket",
+					"errorFields": "Emne og kropp er påkrevd",
+					"errorSaveFirst": "Vennligst lagre endringene dine før du sender en test e-post"
 				}
 			}
 		},

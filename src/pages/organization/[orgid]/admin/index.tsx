@@ -9,6 +9,7 @@ import OrganizationSettings from "./settings";
 import OrganizationWebhook from "./webhooks";
 import OrganizationNetworkSetting from "./network";
 import OrganizationInvites from "./invite";
+import OrganizationNotification from "./notification";
 import { api } from "~/utils/api";
 
 const OrganizationAdminSettings = ({ orgIds, user }) => {
@@ -45,6 +46,12 @@ const OrganizationAdminSettings = ({ orgIds, user }) => {
 			name: t("network"),
 			value: "organization-network-settings",
 			component: <OrganizationNetworkSetting />,
+		},
+		{
+			userRole: "ADMIN",
+			name: t("notification"),
+			value: "organization-notification-settings",
+			component: <OrganizationNotification />,
 		},
 		{
 			userRole: "ADMIN",
