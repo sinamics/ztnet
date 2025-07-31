@@ -215,7 +215,7 @@ export const organizationRouter = createTRPCRouter({
 				invitations: org.invitations.map((orgInvitation) => {
 					return {
 						...orgInvitation,
-						tokenUrl: `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${orgInvitation.invitation.token}`,
+						tokenUrl: `${process.env.NEXTAUTH_URL}/locale-redirect?organizationInvite=${orgInvitation.invitation.token}`,
 					};
 				}),
 			};
@@ -1120,7 +1120,7 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${invitation.token}`;
+			const invitationLink = `${process.env.NEXTAUTH_URL}/locale-redirect?organizationInvite=${invitation.token}`;
 
 			// Return the invitation link
 			return { invitationLink, encryptedToken };
@@ -1163,7 +1163,7 @@ export const organizationRouter = createTRPCRouter({
 
 			try {
 				// create invitation link
-				const invitationLink = `${process.env.NEXTAUTH_URL}/auth/register?organizationInvite=${orgInvite.invitation.token}`;
+				const invitationLink = `${process.env.NEXTAUTH_URL}/locale-redirect?organizationInvite=${orgInvite.invitation.token}`;
 
 				// get organization name
 				const organization = await ctx.prisma.organization.findUnique({
@@ -1287,7 +1287,7 @@ export const organizationRouter = createTRPCRouter({
 				// create invitation link
 				const invitationLink = `${normalizeBaseUrl(
 					process.env.NEXTAUTH_URL,
-				)}/auth/register?organizationInvite=${encryptedToken}`;
+				)}/locale-redirect?organizationInvite=${encryptedToken}`;
 
 				// get organization name
 				const organization = await ctx.prisma.organization.findUnique({
