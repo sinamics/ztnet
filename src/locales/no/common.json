@@ -198,6 +198,16 @@
 			"successMessage": "E-posten din har blitt bekreftet.",
 			"redirectMessage": "Du vil bli videresendt automatisk om {seconds} sekunder.",
 			"goNowButton": "Gå nå"
+		},
+		"passwordChangeRequired": {
+			"title": "Passordendring påkrevd",
+			"description": "Av sikkerhetsgrunner må du endre passordet ditt før du får tilgang til applikasjonen.",
+			"formTitle": "Endre passordet ditt",
+			"submitButton": "Oppdater passord",
+			"successMessage": "Passord oppdatert vellykket! Omdirigerer...",
+			"updatingTitle": "Oppdaterer passord",
+			"updatingDescription": "Vennligst vent mens vi oppdaterer passordet ditt og oppdaterer økten din.",
+			"note": "Du kan ikke få tilgang til andre deler av applikasjonen før passordet ditt er endret."
 		}
 	},
 	"networks": {
@@ -355,7 +365,12 @@
 			"searchPlaceholder": "Søk etter noe...",
 			"optionModalTitle": "Alternativer for medlem",
 			"tableRow": {
-				"updateName": "Klikk for å endre navn"
+				"updateName": "Klikk for å endre navn",
+				"updateDescription": "Klikk for å legge til beskrivelse"
+			},
+			"toggles": {
+				"showExtendedView": "Utvidet visning",
+				"hideExtendedView": "Kompakt visning"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "Medlemnavnet oppdatert vellykket"
@@ -414,6 +429,11 @@
 			"ipAssignment": {
 				"header": "IP-tildeling",
 				"description": "Legg til eller fjern en IP-adresse for dette medlemmet."
+			},
+			"memberDescription": {
+				"header": "Beskrivelse",
+				"description": "Legg til en beskrivelse for å hjelpe med å identifisere dette medlemmet",
+				"placeholder": "Medlemsbeskrivelse..."
 			},
 			"deleteIpAssignment": {
 				"title": "Slett IP-tildeling"
