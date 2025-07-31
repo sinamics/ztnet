@@ -365,7 +365,12 @@
 			"searchPlaceholder": "Search anything...",
 			"optionModalTitle": "Options for member",
 			"tableRow": {
-				"updateName": "Click to change name"
+				"updateName": "Click to change name",
+				"updateDescription": "Click to add description"
+			},
+			"toggles": {
+				"showExtendedView": "Extended View",
+				"hideExtendedView": "Compact View"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "Member name updated successfully"
@@ -424,6 +429,11 @@
 			"ipAssignment": {
 				"header": "IP Assignment",
 				"description": "Add or remove an IP address for this member."
+			},
+			"memberDescription": {
+				"header": "Description",
+				"description": "Add a description to help identify this member",
+				"placeholder": "Member description..."
 			},
 			"deleteIpAssignment": {
 				"title": "Delete IP assignment"

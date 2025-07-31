@@ -365,7 +365,12 @@
 			"searchPlaceholder": "Buscar cualquier cosa...",
 			"optionModalTitle": "Opciones para miembro",
 			"tableRow": {
-				"updateName": "Haz clic para cambiar el nombre"
+				"updateName": "Haz clic para cambiar el nombre",
+				"updateDescription": "Haz clic para agregar descripción"
+			},
+			"toggles": {
+				"showExtendedView": "Vista extendida",
+				"hideExtendedView": "Vista compacta"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "El nombre del miembro se ha actualizado correctamente"
@@ -424,6 +429,11 @@
 			"ipAssignment": {
 				"header": "Asignación de IP",
 				"description": "Agregar o quitar una dirección IP para este miembro."
+			},
+			"memberDescription": {
+				"header": "Descripción",
+				"description": "Agregar una descripción para ayudar a identificar este miembro",
+				"placeholder": "Descripción del miembro..."
 			},
 			"deleteIpAssignment": {
 				"title": "Eliminar asignación de IP"

@@ -198,6 +198,16 @@
 			"successMessage": "Votre e-mail a été vérifié avec succès.",
 			"redirectMessage": "Vous serez redirigé automatiquement dans {seconds} secondes.",
 			"goNowButton": "Aller maintenant"
+		},
+		"passwordChangeRequired": {
+			"title": "Changement de mot de passe requis",
+			"description": "Pour des raisons de sécurité, vous devez changer votre mot de passe avant d'accéder à l'application.",
+			"formTitle": "Changez votre mot de passe",
+			"submitButton": "Mettre à jour le mot de passe",
+			"successMessage": "Mot de passe mis à jour avec succès ! Redirection en cours...",
+			"updatingTitle": "Mise à jour du mot de passe",
+			"updatingDescription": "Veuillez patienter pendant que nous mettons à jour votre mot de passe et actualisons votre session.",
+			"note": "Vous ne pouvez pas accéder aux autres parties de l'application tant que votre mot de passe n'est pas changé."
 		}
 	},
 	"networks": {
@@ -355,7 +365,12 @@
 			"searchPlaceholder": "Rechercher n'importe quoi...",
 			"optionModalTitle": "Options pour les membres",
 			"tableRow": {
-				"updateName": "Cliquez pour changer de nom"
+				"updateName": "Cliquez pour changer de nom",
+				"updateDescription": "Cliquez pour ajouter une description"
+			},
+			"toggles": {
+				"showExtendedView": "Vue étendue",
+				"hideExtendedView": "Vue compacte"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "Nom du membre mis à jour avec succès"
@@ -414,6 +429,11 @@
 			"ipAssignment": {
 				"header": "Attribution de l'IP",
 				"description": "Ajoutez ou supprimez une adresse IP pour ce membre."
+			},
+			"memberDescription": {
+				"header": "Description",
+				"description": "Ajoutez une description pour aider à identifier ce membre",
+				"placeholder": "Description du membre..."
 			},
 			"deleteIpAssignment": {
 				"title": "Supprimer l'attribution IP"
@@ -605,9 +625,6 @@
 					"defaultOrganizationOption": "Aucune (Utilisateur Personnel)",
 					"organizationRoleLabel": "Rôle dans l'Organisation",
 					"organizationRoleDescription": "Rôle dans l'organisation sélectionnée",
-					"expirationLabel": "Expire Après Jours",
-					"expirationPlaceholder": "Laisser vide pour aucune expiration",
-					"expirationDescription": "Nombre de jours après lesquels le compte utilisateur expirera",
 					"forcePasswordChangeLabel": "Demander un Changement de Mot de passe à la Première Connexion",
 					"forcePasswordChangeDescription": "L'utilisateur sera invité à changer son mot de passe lors de sa première connexion",
 					"createButton": "Créer l'Utilisateur",

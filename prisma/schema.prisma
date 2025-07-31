@@ -88,6 +88,7 @@ model network_members {
   deleted            Boolean?                @default(false)
   permanentlyDeleted Boolean?                @default(false)
   name               String?
+  description        String?
   address            String?                 @default("")
   creationTime       DateTime
   notations          NetworkMemberNotation[]

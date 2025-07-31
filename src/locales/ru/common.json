@@ -198,6 +198,16 @@
 			"successMessage": "Ваш email успешно подтвержден.",
 			"redirectMessage": "Вы будете автоматически перенаправлены через {seconds} секунд.",
 			"goNowButton": "Перейти сейчас"
+		},
+		"passwordChangeRequired": {
+			"title": "Требуется смена пароля",
+			"description": "По соображениям безопасности вы должны сменить пароль перед доступом к приложению.",
+			"formTitle": "Смените ваш пароль",
+			"submitButton": "Обновить пароль",
+			"successMessage": "Пароль успешно обновлен! Перенаправление...",
+			"updatingTitle": "Обновление пароля",
+			"updatingDescription": "Пожалуйста, подождите, пока мы обновляем ваш пароль и обновляем сессию.",
+			"note": "Вы не можете получить доступ к другим частям приложения, пока не смените пароль."
 		}
 	},
 	"networks": {
@@ -355,7 +365,12 @@
 			"searchPlaceholder": "Поиск...",
 			"optionModalTitle": "Опции для участника",
 			"tableRow": {
-				"updateName": "Нажмите, чтобы изменить имя"
+				"updateName": "Нажмите, чтобы изменить имя",
+				"updateDescription": "Нажмите, чтобы добавить описание"
+			},
+			"toggles": {
+				"showExtendedView": "Расширенный вид",
+				"hideExtendedView": "Компактный вид"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "Имя участника успешно обновлено"
@@ -414,6 +429,11 @@
 			"ipAssignment": {
 				"header": "Назначение IP",
 				"description": "Добавить или удалить IP-адрес для этого участника."
+			},
+			"memberDescription": {
+				"header": "Описание",
+				"description": "Добавить описание для идентификации этого участника",
+				"placeholder": "Описание участника..."
 			},
 			"deleteIpAssignment": {
 				"title": "Удалить назначение IP"
@@ -605,9 +625,6 @@
 					"defaultOrganizationOption": "Нет (Личный Пользователь)",
 					"organizationRoleLabel": "Роль в Организации",
 					"organizationRoleDescription": "Роль в выбранной организации",
-					"expirationLabel": "Истекает Через Дней",
-					"expirationPlaceholder": "Оставьте пустым для отсутствия истечения",
-					"expirationDescription": "Количество дней, после которых учетная запись пользователя истечет",
 					"forcePasswordChangeLabel": "Запросить Смену Пароля при Первом Входе",
 					"forcePasswordChangeDescription": "Пользователю будет предложено сменить пароль при первом входе в систему",
 					"createButton": "Создать Пользователя",

@@ -198,6 +198,16 @@
 			"successMessage": "您的邮箱已成功验证。",
 			"redirectMessage": "您将在 {seconds} 秒后自动重定向。",
 			"goNowButton": "立即前往"
+		},
+		"passwordChangeRequired": {
+			"title": "需要更改密码",
+			"description": "出于安全考虑，您必须在访问应用程序之前更改密码。",
+			"formTitle": "更改您的密码",
+			"submitButton": "更新密码",
+			"successMessage": "密码更新成功！正在重定向...",
+			"updatingTitle": "正在更新密码",
+			"updatingDescription": "请稍候，我们正在更新您的密码并刷新您的会话。",
+			"note": "在更改密码之前，您无法访问应用程序的其他部分。"
 		}
 	},
 	"networks": {
@@ -355,7 +365,12 @@
 			"searchPlaceholder": "搜索任何东西...",
 			"optionModalTitle": "成员选项",
 			"tableRow": {
-				"updateName": "点击更改名称"
+				"updateName": "点击更改名称",
+				"updateDescription": "点击添加描述"
+			},
+			"toggles": {
+				"showExtendedView": "扩展视图",
+				"hideExtendedView": "紧凑视图"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "成员名称更新成功"
@@ -414,6 +429,11 @@
 			"ipAssignment": {
 				"header": "IP分配",
 				"description": "为此成员添加或删除IP地址。"
+			},
+			"memberDescription": {
+				"header": "描述",
+				"description": "添加描述以帮助识别此成员",
+				"placeholder": "成员描述..."
 			},
 			"deleteIpAssignment": {
 				"title": "删除IP分配"

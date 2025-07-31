@@ -4,6 +4,7 @@ import { z } from "zod";
 export const PostBodySchema = z
 	.object({
 		name: z.string().optional(),
+		description: z.string().optional(),
 		authorized: z.boolean().optional(),
 	})
 	.strict();

@@ -307,6 +307,7 @@ export const networkMemberRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					name: z.string().optional(),
+					description: z.string().optional(),
 					activeBridge: z.boolean().optional(),
 					noAutoAssignIps: z.boolean().optional(),
 					ipAssignments: z
@@ -386,6 +387,9 @@ export const networkMemberRouter = createTRPCRouter({
 							},
 							data: {
 								name: updateParams.name,
+								...(updateParams.description !== undefined && {
+									description: updateParams.description,
+								}),
 							},
 						});
 					}
@@ -503,7 +507,7 @@ export const networkMemberRouter = createTRPCRouter({
 
 					if (dbMember) {
 						// Prepare database update data - only include fields that are stored in database
-						const databaseUpdateData: Partial<typeof dbMember> = {};
+						const databaseUpdateData: Record<string, unknown> = {};
 
 						// Only include name if global naming wasn't used
 						if (payload.name !== undefined && !globalNamingUsed) {
@@ -511,6 +515,10 @@ export const networkMemberRouter = createTRPCRouter({
 						}
 						if (payload.authorized !== undefined) {
 							databaseUpdateData.authorized = payload.authorized;
+						}
+						// Add description field support
+						if (updateParams.description !== undefined) {
+							databaseUpdateData.description = updateParams.description;
 						}
 
 						// Update database if there are fields to update
@@ -630,6 +638,7 @@ export const networkMemberRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					deleted: z.boolean().optional(),
+					description: z.string().optional(),
 				}),
 			}),
 		)

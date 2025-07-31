@@ -66,6 +66,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 
 		const updateableFields = {
 			name: { type: "string", destinations: ["controller"] },
+			description: { type: "string", destinations: ["database"] },
 			authorized: { type: "boolean", destinations: ["controller"] },
 		};
 

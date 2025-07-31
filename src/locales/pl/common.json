@@ -198,6 +198,16 @@
 			"successMessage": "Twój e-mail został pomyślnie zweryfikowany.",
 			"redirectMessage": "Zostaniesz automatycznie przekierowany za {seconds} sekund.",
 			"goNowButton": "Przejdź teraz"
+		},
+		"passwordChangeRequired": {
+			"title": "Wymagana zmiana hasła",
+			"description": "Ze względów bezpieczeństwa musisz zmienić hasło przed uzyskaniem dostępu do aplikacji.",
+			"formTitle": "Zmień swoje hasło",
+			"submitButton": "Zaktualizuj hasło",
+			"successMessage": "Hasło zostało pomyślnie zaktualizowane! Przekierowywanie...",
+			"updatingTitle": "Aktualizowanie hasła",
+			"updatingDescription": "Proszę czekać, aktualizujemy Twoje hasło i odświeżamy sesję.",
+			"note": "Nie możesz uzyskać dostępu do innych części aplikacji, dopóki nie zmienisz hasła."
 		}
 	},
 	"networks": {
@@ -355,7 +365,12 @@
 			"searchPlaceholder": "Szukaj cokolwiek...",
 			"optionModalTitle": "Opcje członka sieci",
 			"tableRow": {
-				"updateName": "Kliknij aby zmienić nazwę"
+				"updateName": "Kliknij aby zmienić nazwę",
+				"updateDescription": "Kliknij aby dodać opis"
+			},
+			"toggles": {
+				"showExtendedView": "Widok rozszerzony",
+				"hideExtendedView": "Widok kompaktowy"
 			},
 			"toastMessages": {
 				"memberNameUpdated": "Nazwa członka sieci została pomyślnie zaktualizowana"
@@ -414,6 +429,11 @@
 			"ipAssignment": {
 				"header": "Przypisywanie adresu IP",
 				"description": "Dodaj lub usuń adres IP dla tego członka."
+			},
+			"memberDescription": {
+				"header": "Opis",
+				"description": "Dodaj opis, aby pomóc zidentyfikować tego członka",
+				"placeholder": "Opis członka..."
 			},
 			"deleteIpAssignment": {
 				"title": "Usuń przypisanie IP"
