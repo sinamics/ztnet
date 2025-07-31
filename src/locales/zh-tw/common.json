@@ -68,6 +68,7 @@
 			"authorized": "授權",
 			"id": "ID",
 			"created": "建立時間",
+			"expires": "過期時間",
 			"networks": "網路",
 			"lastseen": "看到",
 			"group": "群組",
@@ -574,6 +575,55 @@
 				"toastMessages": {
 					"roleChangeSuccess": "角色成功修改",
 					"errorOccurred": "發生未知錯誤"
+				},
+				"createNewUserButton": "建立新使用者",
+				"createUser": {
+					"title": "建立新使用者",
+					"nameLabel": "姓名",
+					"namePlaceholder": "輸入使用者名稱",
+					"emailLabel": "電子郵件",
+					"emailPlaceholder": "輸入電子郵件地址",
+					"emailDescription": "接受任何電子郵件格式。無需電子郵件驗證",
+					"passwordLabel": "密碼",
+					"passwordPlaceholder": "輸入密碼",
+					"generatePasswordButton": "產生密碼",
+					"roleLabel": "角色",
+					"userGroupLabel": "使用者群組",
+					"defaultGroupOption": "選擇使用者群組（可選）",
+					"organizationLabel": "組織",
+					"organizationDescription": "選擇要添加使用者的組織",
+					"defaultOrganizationOption": "無（個人使用者）",
+					"organizationRoleLabel": "組織角色",
+					"organizationRoleDescription": "在所選組織中的角色",
+					"forcePasswordChangeLabel": "首次登入時要求更改密碼",
+					"forcePasswordChangeDescription": "使用者首次登入時將被要求更改密碼",
+					"createButton": "建立使用者",
+					"successMessage": "使用者建立成功！您可以複製以下詳細資訊進行分享。",
+					"userAccountCreated": "使用者帳戶已建立：",
+					"userAccountDetails": "使用者帳戶詳情：",
+					"copyInfoButton": "複製資訊",
+					"doneButton": "完成",
+					"toast": {
+						"createUserSuccess": "使用者建立成功",
+						"copySuccess": "使用者資訊已複製到剪貼簿！",
+						"copyError": "複製到剪貼簿失敗"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "搜尋使用者",
+					"optionsButton": "選項",
+					"optionsModalTitle": "使用者選項",
+					"accountStatus": {
+						"active": "活躍",
+						"disabled": "已停用"
+					},
+					"headers": {
+						"created": "建立時間",
+						"expires": "過期時間"
+					},
+					"values": {
+						"never": "永不"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +866,11 @@
 				"currentPasswordPlaceholder": "當前密碼",
 				"newPasswordPlaceholder": "新密碼",
 				"repeatNewPasswordPlaceholder": "重複新密碼",
-				"role": "角色"
+				"role": "角色",
+				"passwordChangeRequired": {
+					"title": "需要更改密碼",
+					"description": "您必須在訪問應用程式的其他部分之前更改密碼。請在下面的安全部分更新您的密碼。"
+				}
 			},
 			"totp": {
 				"title": "雙因素驗證",

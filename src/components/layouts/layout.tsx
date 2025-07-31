@@ -12,6 +12,7 @@ import Modal from "../shared/modal";
 import { OrgNavBar } from "../organization/orgNavBar";
 import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 import { WelcomeMessage } from "../auth/welcomeMessage";
+import { usePasswordChangeEnforcement } from "~/hooks/usePasswordChangeEnforcement";
 
 type TUser = {
 	user: User;
@@ -42,6 +43,25 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 	const { fontSize } = useFontSizeStore();
 	const headerRef = useDynamicViewportHeight([fontSize]);
 
+	// Add password change enforcement
+	const { shouldBlockContent } = usePasswordChangeEnforcement();
+
+	// If password change is required, show a loading state instead of content
+	if (shouldBlockContent) {
+		return (
+			<div className="outer-container">
+				<Modal />
+				<Header ref={headerRef} />
+				<div className="flex items-center justify-center min-h-[50vh]">
+					<div className="text-center">
+						<div className="loading loading-spinner loading-lg"></div>
+						<p className="mt-4 text-gray-600">Redirecting to password change...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="outer-container">
 			<Modal />
@@ -64,9 +84,30 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
 	const isAdmin = props?.user?.role === "ADMIN";
+
+	// Add password change enforcement
+	const { shouldBlockContent } = usePasswordChangeEnforcement();
+
 	if (!isAdmin) {
 		return <FourOhFour />;
 	}
+
+	// If password change is required, show a loading state instead of content
+	if (shouldBlockContent) {
+		return (
+			<div className="outer-container">
+				<Modal />
+				<Header />
+				<div className="flex items-center justify-center min-h-[50vh]">
+					<div className="text-center">
+						<div className="loading loading-spinner loading-lg"></div>
+						<p className="mt-4 text-gray-600">Redirecting to password change...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="outer-container">
 			<Modal />

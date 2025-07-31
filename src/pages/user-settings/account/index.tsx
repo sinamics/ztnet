@@ -21,6 +21,7 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
+import { getServerSideProps } from "~/server/getServerSideProps";
 
 const defaultLocale = "en";
 
@@ -370,4 +371,5 @@ Account.getLayout = function getLayout(page: ReactElement) {
 	return <LayoutAuthenticated>{page}</LayoutAuthenticated>;
 };
 
+export { getServerSideProps };
 export default Account;

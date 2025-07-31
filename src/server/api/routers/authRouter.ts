@@ -436,6 +436,8 @@ export const authRouter = createTRPCRouter({
 					email: input.email || user.email,
 					name: input.name || user.name,
 					hash: input.newPassword ? bcrypt.hashSync(input.newPassword, 10) : user.hash,
+					// Clear the requestChangePassword flag when user changes password
+					requestChangePassword: input.newPassword ? false : user.requestChangePassword,
 				},
 			});
 		}),

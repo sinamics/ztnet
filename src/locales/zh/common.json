@@ -68,6 +68,7 @@
 			"authorized": "授权",
 			"id": "ID",
 			"created": "创建时间",
+			"expires": "过期时间",
 			"networks": "网络",
 			"lastseen": "见到",
 			"group": "组",
@@ -574,6 +575,55 @@
 				"toastMessages": {
 					"roleChangeSuccess": "角色成功更改",
 					"errorOccurred": "发生未知错误"
+				},
+				"createNewUserButton": "创建新用户",
+				"createUser": {
+					"title": "创建新用户",
+					"nameLabel": "姓名",
+					"namePlaceholder": "输入用户名",
+					"emailLabel": "邮箱",
+					"emailPlaceholder": "输入邮箱地址",
+					"emailDescription": "接受任何邮箱格式。无需邮箱验证",
+					"passwordLabel": "密码",
+					"passwordPlaceholder": "输入密码",
+					"generatePasswordButton": "生成密码",
+					"roleLabel": "角色",
+					"userGroupLabel": "用户组",
+					"defaultGroupOption": "选择用户组（可选）",
+					"organizationLabel": "组织",
+					"organizationDescription": "选择要添加用户的组织",
+					"defaultOrganizationOption": "无（个人用户）",
+					"organizationRoleLabel": "组织角色",
+					"organizationRoleDescription": "在所选组织中的角色",
+					"forcePasswordChangeLabel": "首次登录时要求更改密码",
+					"forcePasswordChangeDescription": "用户首次登录时将被要求更改密码",
+					"createButton": "创建用户",
+					"successMessage": "用户创建成功！您可以复制以下详细信息进行分享。",
+					"userAccountCreated": "用户账户已创建：",
+					"userAccountDetails": "用户账户详情：",
+					"copyInfoButton": "复制信息",
+					"doneButton": "完成",
+					"toast": {
+						"createUserSuccess": "用户创建成功",
+						"copySuccess": "用户信息已复制到剪贴板！",
+						"copyError": "复制到剪贴板失败"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "搜索用户",
+					"optionsButton": "选项",
+					"optionsModalTitle": "用户选项",
+					"accountStatus": {
+						"active": "活跃",
+						"disabled": "已禁用"
+					},
+					"headers": {
+						"created": "创建时间",
+						"expires": "过期时间"
+					},
+					"values": {
+						"never": "永不"
+					}
 				}
 			},
 			"groups": {
@@ -816,7 +866,11 @@
 				"currentPasswordPlaceholder": "当前密码",
 				"newPasswordPlaceholder": "新密码",
 				"repeatNewPasswordPlaceholder": "重复新密码",
-				"role": "角色"
+				"role": "角色",
+				"passwordChangeRequired": {
+					"title": "需要更改密码",
+					"description": "您必须在访问应用程序的其他部分之前更改密码。请在下面的安全部分更新您的密码。"
+				}
 			},
 			"totp": {
 				"title": "双因素认证",

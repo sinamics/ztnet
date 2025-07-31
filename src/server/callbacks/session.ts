@@ -33,6 +33,8 @@ export function sessionCallback(
 			...session,
 			user: {
 				...token,
+				// Include fresh requestChangePassword status from database
+				requestChangePassword: user.requestChangePassword,
 			},
 		};
 	};

@@ -17,6 +17,7 @@ import { useSkipper } from "../../../../hooks/useSkipper";
 import { DebouncedInput } from "../../../elements/debouncedInput";
 import { User } from "@prisma/client";
 import UserOptionsModal from "../userOptionsModal";
+import CreateUserModal from "../createUserModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
 import TimeAgo from "react-timeago";
@@ -90,7 +91,7 @@ export const Accounts = () => {
 				enableHiding: true,
 			}),
 			columnHelper.accessor("createdAt", {
-				header: () => <span>Created</span>,
+				header: () => <span>{ct("header.created")}</span>,
 				id: "createdAt",
 				cell: ({ getValue }) => {
 					const date = getValue();
@@ -98,11 +99,15 @@ export const Accounts = () => {
 				},
 			}),
 			columnHelper.accessor("expiresAt", {
-				header: () => <span>Expires</span>,
+				header: () => <span>{ct("header.expires")}</span>,
 				id: "expiresAt",
 				cell: ({ getValue }) => {
 					const date = getValue();
-					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "Never";
+					return date ? (
+						<TimeAgo date={date} formatter={timeAgoFormatter} />
+					) : (
+						t("users.users.table.values.never")
+					);
 				},
 			}),
 			// columnHelper.accessor("emailVerified", {
@@ -130,7 +135,11 @@ export const Accounts = () => {
 				id: "lastseen",
 				cell: ({ getValue }) => {
 					const date = getValue();
-					return date ? <TimeAgo date={date} formatter={timeAgoFormatter} /> : "Never";
+					return date ? (
+						<TimeAgo date={date} formatter={timeAgoFormatter} />
+					) : (
+						t("users.users.table.values.never")
+					);
 				},
 			}),
 			columnHelper.accessor("userGroupId", {
@@ -150,7 +159,9 @@ export const Accounts = () => {
 				id: "isActive",
 				minSize: 80,
 				cell: ({ getValue }) => {
-					return getValue() ? "Active" : "Disabled";
+					return getValue()
+						? t("users.users.table.accountStatus.active")
+						: t("users.users.table.accountStatus.disabled");
 				},
 			}),
 			columnHelper.accessor("role", {
@@ -172,7 +183,7 @@ export const Accounts = () => {
 									callModal({
 										title: (
 											<p>
-												<span>Options for user </span>
+												<span>{t("users.users.table.optionsModalTitle")} </span>
 												<span className="text-primary">{`${
 													original.name ? original.name : original.id
 												}`}</span>
@@ -184,7 +195,7 @@ export const Accounts = () => {
 								}
 								className="btn btn-outline btn-xs rounded-sm"
 							>
-								Options
+								{t("users.users.table.optionsButton")}
 							</button>
 						</div>
 					);
@@ -250,17 +261,31 @@ export const Accounts = () => {
 	}
 	return (
 		<div className="overflow-x-auto w-full">
-			<p className="text-sm text-gray-500">{t("users.users.description")}</p>
-
-			<div className="inline-block py-5 ">
-				<div className="p-2">
+			<div className="mb-4">
+				<p className="text-sm text-gray-500 mb-4">{t("users.users.description")}</p>
+				<div className="flex justify-between items-center gap-4">
 					<DebouncedInput
 						value={globalFilter ?? ""}
 						onChange={(value) => setGlobalFilter(String(value))}
-						className="font-lg border-block border p-2 shadow"
-						placeholder="search users"
+						className="font-lg border-block border p-2 shadow flex-1"
+						placeholder={t("users.users.table.searchPlaceholder")}
 					/>
+					<button
+						onClick={() =>
+							callModal({
+								showButtons: false,
+								rootStyle: "text-left max-w-5xl",
+								content: <CreateUserModal />,
+							})
+						}
+						className="btn btn-primary btn-sm"
+					>
+						+ {t("users.users.createNewUserButton")}
+					</button>
 				</div>
+			</div>
+
+			<div className="inline-block">
 				<div className="overflow-hidden rounded-lg border w-full">
 					<table className="overflow-x-auto text-center  table-wrapper divide-y divide-gray-400">
 						<thead className="bg-base-100">

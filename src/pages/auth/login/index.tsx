@@ -38,7 +38,7 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 
 			<div
 				className={classNames(
-					"rounded-xl sm:border sm:p-12 space-y-5 w-full max-w-md mx-auto",
+					"rounded-xl sm:border sm:p-12 space-y-5 w-full max-w-md mx-auto shadow-xl",
 					{
 						"border-red-500": !!errorMessage,
 						"border-primary/50": !errorMessage,
