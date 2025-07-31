@@ -330,8 +330,8 @@ export const adminRouter = createTRPCRouter({
 				invitedById: ctx.session.user.id,
 				// Exclude organization invitations by filtering out invitations that have organizations
 				organizations: {
-					none: {}
-				}
+					none: {},
+				},
 			},
 		});
 
