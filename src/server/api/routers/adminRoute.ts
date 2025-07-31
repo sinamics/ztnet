@@ -307,7 +307,7 @@ export const adminRouter = createTRPCRouter({
 			const token = jwt.sign({ secret }, process.env.NEXTAUTH_SECRET, {
 				expiresIn: `${expireTime}m`,
 			});
-			const url = `${process.env.NEXTAUTH_URL}/auth/register?invite=${token}`;
+			const url = `${process.env.NEXTAUTH_URL}/locale-redirect?invite=${token}`;
 
 			// Store the token, email, createdBy, and expiration in the UserInvitation table
 			await ctx.prisma.invitation.create({
@@ -328,6 +328,10 @@ export const adminRouter = createTRPCRouter({
 		const invite = await ctx.prisma.invitation.findMany({
 			where: {
 				invitedById: ctx.session.user.id,
+				// Exclude organization invitations by filtering out invitations that have organizations
+				organizations: {
+					none: {},
+				},
 			},
 		});
 
