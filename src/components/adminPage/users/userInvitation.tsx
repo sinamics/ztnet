@@ -131,7 +131,9 @@ const ActiveInvitationsList = () => {
 	if (!invitationData?.length) {
 		return (
 			<div className="text-center py-8 text-gray-500">
-				<p>{t("admin.users.authentication.generateInvitation.emptyState.noInvitations")}</p>
+				<p>
+					{t("admin.users.authentication.generateInvitation.emptyState.noInvitations")}
+				</p>
 				<p className="text-sm mt-1">
 					{t("admin.users.authentication.generateInvitation.emptyState.createInvitation")}
 				</p>
@@ -191,8 +193,12 @@ const ActiveInvitationsList = () => {
 									className="h-3 w-3 cursor-pointer hover:opacity-70"
 									onClick={() => {
 										callModal({
-											title: t("admin.users.authentication.generateInvitation.deleteConfirmation.title"),
-											description: t("admin.users.authentication.generateInvitation.deleteConfirmation.description"),
+											title: t(
+												"admin.users.authentication.generateInvitation.deleteConfirmation.title",
+											),
+											description: t(
+												"admin.users.authentication.generateInvitation.deleteConfirmation.description",
+											),
 											yesAction: () => {
 												deleteInvitation({ id: invite.id });
 											},
@@ -220,7 +226,8 @@ const UserInvitationLink = () => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { data: invitationData, refetch: refetchInvitations } = api.admin.getInvitationLink.useQuery();
+	const { data: invitationData, refetch: refetchInvitations } =
+		api.admin.getInvitationLink.useQuery();
 	const { data: userGroups } = api.admin.getUserGroups.useQuery();
 	const { mutate: generateInvitation } = api.admin.generateInviteLink.useMutation({
 		onSuccess: handleApiSuccess({ actions: [refetchInvitations] }),
@@ -325,7 +332,9 @@ const UserInvitationLink = () => {
 							{t("admin.users.authentication.generateInvitation.activeInvitationsLabel")}
 						</h3>
 						<p className="text-sm text-base-content/70">
-							{t("admin.users.authentication.generateInvitation.activeInvitationsDescription")}
+							{t(
+								"admin.users.authentication.generateInvitation.activeInvitationsDescription",
+							)}
 						</p>
 					</div>
 					<ActiveInvitationsList />

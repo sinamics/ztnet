@@ -59,7 +59,8 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 						className={cn(
 							"card shadow-sm border p-3 min-w-48 cursor-pointer hover:shadow-md transition-shadow",
 							{
-								"bg-primary text-primary-content border-primary": group.isDefault && !isExpired,
+								"bg-primary text-primary-content border-primary":
+									group.isDefault && !isExpired,
 								"bg-error text-error-content border-error": isExpired,
 								"bg-base-200 border-base-300": !group.isDefault && !isExpired,
 							},
