@@ -32,6 +32,14 @@ const AdminHamburgerMenu = ({ organization, userRole }) => {
 					</li>
 					<li>
 						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-notification-settings`}
+							className="justify-between cursor-pointer uppercase"
+						>
+							<div className="rounded-full uppercase">{b("notification")}</div>
+						</Link>
+					</li>
+					<li>
+						<Link
 							href={`/organization/${organization?.id}/admin?tab=webhook-setting`}
 							className="justify-between cursor-pointer uppercase"
 						>
@@ -74,6 +82,14 @@ const AdminNavMenu = ({ organization, userRole }) => {
 							className="text-md"
 						>
 							<div className="rounded-full uppercase">{b("network")}</div>
+						</Link>
+					</div>
+					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">
+						<Link
+							href={`/organization/${organization?.id}/admin?tab=organization-notification-settings`}
+							className="text-md"
+						>
+							<div className="rounded-full uppercase">{b("notification")}</div>
 						</Link>
 					</div>
 					<div className="h-full hover:border-b hover:text-gray-500 border-gray-400">

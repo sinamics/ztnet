@@ -408,6 +408,19 @@ export const networkRouter = createTRPCRouter({
 				throw error;
 			}
 
+			// Get network name for notification before deletion
+			const networkToDelete = await ctx.prisma.network.findFirst({
+				where: {
+					nwid: input.nwid,
+					...(input.organizationId
+						? { organizationId: input.organizationId }
+						: { authorId: ctx.session.user.id }),
+				},
+				select: {
+					name: true,
+				},
+			});
+
 			try {
 				// Send webhook
 				await sendWebhook<NetworkDeleted>({
@@ -420,6 +433,27 @@ export const networkRouter = createTRPCRouter({
 			} catch (error) {
 				// add error messge that webhook failed
 				throwError(error.message);
+			}
+
+			// Send notification to organization admins if this is an organization network
+			if (input.organizationId) {
+				try {
+					const { sendOrganizationAdminNotification } = await import(
+						"~/utils/organizationNotifications"
+					);
+					await sendOrganizationAdminNotification({
+						organizationId: input.organizationId,
+						eventType: "NETWORK_DELETED",
+						eventData: {
+							actorEmail: ctx.session.user.email,
+							actorName: ctx.session.user.name,
+							networkId: input.nwid,
+							networkName: networkToDelete?.name || input.nwid,
+						},
+					});
+				} catch (_error) {
+					// Don't fail the operation if notification fails
+				}
 			}
 
 			return true;

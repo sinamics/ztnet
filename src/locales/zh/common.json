@@ -6,7 +6,8 @@
 		"settings": "设置",
 		"network": "网络",
 		"webhooks": "网络钩子",
-		"invites": "邀请"
+		"invites": "邀请",
+		"notification": "通知"
 	},
 	"commonMenuTiles": {
 		"organizationSettings": "组织设置",
@@ -53,7 +54,9 @@
 		"enable2fa": "启用双重认证",
 		"disable2fa": "禁用双重认证",
 		"next": "下一步",
-		"back": "返回"
+		"back": "返回",
+		"notification": "通知",
+		"changeTemplate": "更改模板"
 	},
 	"commonTable": {
 		"header": {
@@ -1116,6 +1119,73 @@
 					"description": "启用后，此功能将：",
 					"bulletPoints": "在组织的所有网络中为每个节点维护一致的名称。\n当你在一个网络中重命名节点时，会在所有网络中更新该节点的名称。\n在成员注册时，检查该成员是否存在于你的组织中，并使用找到的第一个名称。",
 					"note": "注意：这仅适用于此特定组织内的网络。"
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "管理员通知",
+					"description": "配置组织管理员何时应收到重要事件的通知。这些通知有助于让管理员了解组织内的变化和活动。"
+				},
+				"nodeEvents": {
+					"title": "节点事件",
+					"nodeAdded": {
+						"title": "节点已添加",
+						"description": "当新节点加入组织中的任何网络时通知管理员"
+					},
+					"nodeDeleted": {
+						"title": "节点已删除",
+						"description": "当节点从组织中的任何网络中移除时通知管理员"
+					}
+				},
+				"userEvents": {
+					"title": "用户事件",
+					"userAdded": {
+						"title": "用户已添加到组织",
+						"description": "当新用户加入组织时通知管理员"
+					},
+					"userRemoved": {
+						"title": "用户已从组织中移除",
+						"description": "当用户离开或被从组织中移除时通知管理员"
+					},
+					"permissionChanged": {
+						"title": "用户权限已更改",
+						"description": "当用户的角色或权限在组织内被修改时通知管理员"
+					}
+				},
+				"networkEvents": {
+					"title": "网络事件",
+					"networkCreated": {
+						"title": "网络已创建",
+						"description": "当在组织中创建新网络时通知管理员"
+					},
+					"networkDeleted": {
+						"title": "网络已删除",
+						"description": "当从组织中删除网络时通知管理员"
+					}
+				},
+				"emailSettings": {
+					"title": "邮件传递设置",
+					"description": "配置如何向组织管理员传递通知。",
+					"enableEmails": {
+						"title": "启用邮件通知",
+						"description": "通过邮件向所有组织管理员发送通知"
+					}
+				},
+				"templates": {
+					"editTemplate": "编辑邮件模板",
+					"availableTags": "可用模板标签：",
+					"subject": "主题",
+					"subjectPlaceholder": "输入邮件主题...",
+					"htmlBody": "邮件正文 (HTML)",
+					"bodyPlaceholder": "输入邮件正文内容...",
+					"saveTemplate": "保存模板",
+					"resetToDefault": "重置为默认",
+					"sendTest": "发送测试邮件",
+					"sendingTest": "发送中...",
+					"successToastTemplateSaved": "模板保存成功",
+					"successToastTestSent": "测试邮件发送成功",
+					"errorFields": "主题和正文为必填项",
+					"errorSaveFirst": "请在发送测试邮件之前保存您的更改"
 				}
 			}
 		},
