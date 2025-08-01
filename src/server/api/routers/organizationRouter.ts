@@ -2010,15 +2010,30 @@ export const organizationRouter = createTRPCRouter({
 				body = body.replace(new RegExp(placeholder, "g"), value);
 			}
 
-			// Send test email to the current user
-			await sendMailWithTemplate(MailTemplateKey.Notification, {
-				to: ctx.session.user.email,
-				userId: ctx.session.user.id,
-				templateData: {
-					toName: ctx.session.user.name || "Admin",
-					notificationMessage: `[TEST] ${subject}\n\n${body}`,
-				},
+			// Send test email to the current user using the transporter directly
+			const { createTransporter } = await import("~/utils/mail");
+			const transporter = await createTransporter();
+
+			const globalOptions = await ctx.prisma.globalOptions.findFirst({
+				where: { id: 1 },
 			});
+
+			if (!globalOptions?.smtpEmail) {
+				throw new TRPCError({
+					code: "INTERNAL_SERVER_ERROR",
+					message: "SMTP configuration not found",
+				});
+			}
+
+			const mailOptions = {
+				from: globalOptions.smtpEmail,
+				to: ctx.session.user.email,
+				subject: `[TEST] ${subject}`,
+				html: body,
+			};
+
+			// Send the email directly
+			await transporter.sendMail(mailOptions);
 
 			return { success: true };
 		}),
