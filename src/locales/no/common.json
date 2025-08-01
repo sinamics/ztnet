@@ -1135,6 +1135,10 @@
 					"nodeDeleted": {
 						"title": "Node Slettet",
 						"description": "Varsle administratorer når en node fjernes fra et nettverk i organisasjonen"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Node Permanent Slettet",
+						"description": "Varsle administratorer når en node slettes permanent fra et nettverk i organisasjonen"
 					}
 				},
 				"userEvents": {

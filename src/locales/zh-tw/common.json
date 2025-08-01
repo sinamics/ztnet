@@ -1135,6 +1135,10 @@
 					"nodeDeleted": {
 						"title": "節點已刪除",
 						"description": "當節點從組織中的任何網路中移除時通知管理員"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "節點已永久刪除",
+						"description": "當節點從組織中的任何網路中永久刪除時通知管理員"
 					}
 				},
 				"userEvents": {

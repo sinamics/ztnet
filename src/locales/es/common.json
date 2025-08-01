@@ -1135,6 +1135,10 @@
 					"nodeDeleted": {
 						"title": "Nodo Eliminado",
 						"description": "Notificar a los administradores cuando un nodo es removido de cualquier red en la organización"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Nodo Eliminado Permanentemente",
+						"description": "Notificar a los administradores cuando un nodo es eliminado permanentemente de cualquier red en la organización"
 					}
 				},
 				"userEvents": {
