@@ -1127,17 +1127,17 @@
 					"description": "Skonfiguruj, kiedy administratorzy organizacji powinni otrzymywać powiadomienia o ważnych wydarzeniach. Te powiadomienia pomagają utrzymać administratorów w pełnej informacji o zmianach i działaniach w organizacji."
 				},
 				"nodeEvents": {
-					"title": "Wydarzenia Węzłów",
+					"title": "Zdarzenia węzłów",
 					"nodeAdded": {
-						"title": "Węzeł Dodany",
+						"title": "Węzeł dodany",
 						"description": "Powiadom administratorów, gdy nowy węzeł dołączy do sieci w organizacji"
 					},
 					"nodeDeleted": {
-						"title": "Węzeł Usunięty",
+						"title": "Węzeł usunięty",
 						"description": "Powiadom administratorów, gdy węzeł zostanie usunięty z sieci w organizacji"
 					},
 					"nodePermanentlyDeleted": {
-						"title": "Węzeł Usunięty Trwale",
+						"title": "Węzeł trwale usunięty",
 						"description": "Powiadom administratorów, gdy węzeł zostanie trwale usunięty z sieci w organizacji"
 					}
 				},
