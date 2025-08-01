@@ -74,9 +74,12 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 			// We need to keep and update the state of the cell normally
 			// eslint-disable-next-line react-hooks/rules-of-hooks
 			const [value, setValue] = useState(initialValue);
+			// eslint-disable-next-line react-hooks/rules-of-hooks
+			const [isUserEditing, setIsUserEditing] = useState(false);
 
 			// When the input is blurred, we'll call our table meta's updateData function
 			const onBlur = () => {
+				setIsUserEditing(false);
 				// For name field, also submit the change (but only if not already submitting)
 				if (id === "name" && value !== initialValue && !isSubmittingRef.current) {
 					isSubmittingRef.current = true;
@@ -151,9 +154,12 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				}, 100);
 			};
 			// If the initialValue is changed external, sync it up with our state
+			// But only if the user is not currently editing the field
 			useEffect(() => {
-				setValue(initialValue);
-			}, [initialValue]);
+				if (!isUserEditing) {
+					setValue(initialValue);
+				}
+			}, [initialValue, isUserEditing]);
 
 			// Auto-resize textarea for description field
 			useEffect(() => {
@@ -189,6 +195,7 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 										placeholder={t("networkById.networkMembersTable.tableRow.updateName")}
 										name="memberName"
 										onChange={(e) => setValue(e.target.value)}
+										onFocus={() => setIsUserEditing(true)}
 										onBlur={onBlur}
 										value={(value as string) || ""}
 										type="text"
@@ -221,11 +228,13 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 				const handleCellClick = () => {
 					if (!isEditing) {
 						setIsEditing(true);
+						setIsUserEditing(true);
 					}
 				};
 
 				const handleBlur = () => {
 					setIsEditing(false);
+					setIsUserEditing(false);
 					onBlur();
 				};
 
@@ -233,9 +242,11 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 					if (e.key === "Escape") {
 						setValue(initialValue);
 						setIsEditing(false);
+						setIsUserEditing(false);
 					} else if (e.key === "Enter" && !e.shiftKey) {
 						e.preventDefault();
 						setIsEditing(false);
+						setIsUserEditing(false);
 						onBlur();
 					}
 				};
