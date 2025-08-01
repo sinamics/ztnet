@@ -911,6 +911,13 @@ export const organizationRouter = createTRPCRouter({
 				const { sendOrganizationAdminNotification } = await import(
 					"~/utils/organizationNotifications"
 				);
+
+				// Get the user's email for the notification
+				const targetUser = await ctx.prisma.user.findUnique({
+					where: { id: input.userId },
+					select: { email: true },
+				});
+
 				await sendOrganizationAdminNotification({
 					organizationId: input.organizationId,
 					eventType: "USER_ADDED",
@@ -918,6 +925,7 @@ export const organizationRouter = createTRPCRouter({
 						actorEmail: ctx.session.user.email,
 						actorName: ctx.session.user.name,
 						targetName: input.userName,
+						targetEmail: targetUser?.email || input.userId, // Use email or fallback to userId
 						newRole: input.organizationRole,
 					},
 				});
@@ -1683,6 +1691,7 @@ export const organizationRouter = createTRPCRouter({
 				organizationId: z.string(),
 				nodeAddedNotification: z.boolean().optional(),
 				nodeDeletedNotification: z.boolean().optional(),
+				nodePermanentlyDeletedNotification: z.boolean().optional(),
 				userAddedNotification: z.boolean().optional(),
 				userRemovedNotification: z.boolean().optional(),
 				permissionChangedNotification: z.boolean().optional(),

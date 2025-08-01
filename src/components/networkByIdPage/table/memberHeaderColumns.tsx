@@ -423,6 +423,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 											central,
 											id: original.id,
 											nwid: original.nwid,
+											organizationId,
 										})
 									}
 									className="btn btn-error btn-outline btn-xs rounded-sm"
@@ -436,6 +437,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 											{
 												nwid,
 												id: original.id,
+												organizationId,
 											},
 											{ onSuccess: () => void refetchNetworkById() },
 										)

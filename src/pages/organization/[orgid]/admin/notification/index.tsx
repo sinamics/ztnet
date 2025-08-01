@@ -142,6 +142,42 @@ const OrganizationNotification = () => {
 						/>
 					</div>
 				</div>
+
+				<div className="flex items-center justify-between">
+					<div>
+						<p className="font-medium">
+							{t("organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title")}
+						</p>
+						<p className="text-xs text-gray-500">
+							{t(
+								"organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.description",
+							)}
+						</p>
+					</div>
+					<div className="flex items-center space-x-2">
+						<EditIcon
+							className="hover:text-primary-focus"
+							onClick={() =>
+								openTemplateModal(
+									"nodePermanentlyDeleted",
+									t("organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title"),
+								)
+							}
+						/>
+						<input
+							type="checkbox"
+							disabled={loadingSettings}
+							checked={settings?.nodePermanentlyDeletedNotification || false}
+							className="checkbox-primary checkbox checkbox-sm"
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								updateSettings({
+									organizationId,
+									nodePermanentlyDeletedNotification: e.target.checked,
+								});
+							}}
+						/>
+					</div>
+				</div>
 			</MenuSectionDividerWrapper>
 
 			{/* User Events */}

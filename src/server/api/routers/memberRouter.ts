@@ -186,7 +186,7 @@ export const networkMemberRouter = createTRPCRouter({
 					}
 				}
 
-				return await ctx.prisma.network_members.update({
+				const updatedMember = await ctx.prisma.network_members.update({
 					where: {
 						id_nwid: {
 							id: input.id,
@@ -199,6 +199,37 @@ export const networkMemberRouter = createTRPCRouter({
 						name: memberName,
 					},
 				});
+
+				// Send organization admin notification for manually adding existing member
+				if (input.organizationId) {
+					try {
+						const { sendOrganizationAdminNotification } = await import(
+							"~/utils/organizationNotifications"
+						);
+
+						// Get network info for notification
+						const network = await ctx.prisma.network.findUnique({
+							where: { nwid: input.nwid },
+							select: { name: true },
+						});
+
+						await sendOrganizationAdminNotification({
+							organizationId: input.organizationId,
+							eventType: "NODE_ADDED",
+							eventData: {
+								networkId: input.nwid,
+								networkName: network?.name || input.nwid,
+								nodeId: input.id,
+								nodeName: memberName || input.id,
+							},
+						});
+					} catch (error) {
+						// Don't fail the operation if notification fails
+						console.error("Failed to send node added notification:", error);
+					}
+				}
+
+				return updatedMember;
 			}
 
 			try {
@@ -296,6 +327,35 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			// Send organization admin notification for manually adding new member
+			if (input.organizationId) {
+				try {
+					const { sendOrganizationAdminNotification } = await import(
+						"~/utils/organizationNotifications"
+					);
+
+					// Get network info for notification
+					const network = await ctx.prisma.network.findUnique({
+						where: { nwid: input.nwid },
+						select: { name: true },
+					});
+
+					await sendOrganizationAdminNotification({
+						organizationId: input.organizationId,
+						eventType: "NODE_ADDED",
+						eventData: {
+							networkId: input.nwid,
+							networkName: network?.name || input.nwid,
+							nodeId: input.id,
+							nodeName: memberName || input.id,
+						},
+					});
+				} catch (error) {
+					// Don't fail the operation if notification fails
+					console.error("Failed to send node added notification:", error);
+				}
+			}
 		}),
 
 	Update: protectedProcedure
@@ -559,36 +619,39 @@ export const networkMemberRouter = createTRPCRouter({
 					const { sendOrganizationAdminNotification } = await import(
 						"~/utils/organizationNotifications"
 					);
-					const eventType = payload.authorized ? "NODE_ADDED" : "NODE_DELETED";
 
-					// Get network and member info for notification
-					const network = await ctx.prisma.network.findUnique({
-						where: { nwid },
-						select: { name: true },
-					});
+					// Only send NODE_DELETED notification when node is being de-authorized
+					// NODE_ADDED is now handled when the node first joins in memberService.ts
+					if (!payload.authorized) {
+						// Get network and member info for notification
+						const network = await ctx.prisma.network.findUnique({
+							where: { nwid },
+							select: { name: true },
+						});
 
-					const member = await ctx.prisma.network_members.findUnique({
-						where: {
-							id_nwid: {
-								id: memberId,
-								nwid: nwid,
+						const member = await ctx.prisma.network_members.findUnique({
+							where: {
+								id_nwid: {
+									id: memberId,
+									nwid: nwid,
+								},
 							},
-						},
-						select: { name: true },
-					});
+							select: { name: true },
+						});
 
-					await sendOrganizationAdminNotification({
-						organizationId,
-						eventType,
-						eventData: {
-							actorEmail: ctx.session.user.email,
-							actorName: ctx.session.user.name,
-							networkId: nwid,
-							networkName: network?.name || nwid,
-							nodeId: memberId,
-							nodeName: member?.name || payload.name || memberId,
-						},
-					});
+						await sendOrganizationAdminNotification({
+							organizationId,
+							eventType: "NODE_DELETED",
+							eventData: {
+								actorEmail: ctx.session.user.email,
+								actorName: ctx.session.user.name,
+								networkId: nwid,
+								networkName: network?.name || nwid,
+								nodeId: memberId,
+								nodeName: member?.name || payload.name || memberId,
+							},
+						});
+					}
 				} catch (_error) {
 					// Don't fail the operation if notification fails
 				}
@@ -781,6 +844,7 @@ export const networkMemberRouter = createTRPCRouter({
 				response = await caller.Update({
 					memberId: input.id,
 					nwid: input.nwid,
+					organizationId: input.organizationId,
 					updateParams: {
 						authorized: false,
 						ipAssignments: [],
@@ -826,46 +890,6 @@ export const networkMemberRouter = createTRPCRouter({
 			} catch (error) {
 				// add error messge that webhook failed
 				throwError(error.message);
-			}
-
-			// Send organization admin notification for node deletion (stashing)
-			if (input.organizationId) {
-				try {
-					const { sendOrganizationAdminNotification } = await import(
-						"~/utils/organizationNotifications"
-					);
-
-					// Get network and member info for notification
-					const network = await ctx.prisma.network.findUnique({
-						where: { nwid: input.nwid },
-						select: { name: true },
-					});
-
-					const member = await ctx.prisma.network_members.findUnique({
-						where: {
-							id_nwid: {
-								id: input.id,
-								nwid: input.nwid,
-							},
-						},
-						select: { name: true },
-					});
-
-					await sendOrganizationAdminNotification({
-						organizationId: input.organizationId,
-						eventType: "NODE_DELETED",
-						eventData: {
-							actorEmail: ctx.session.user.email,
-							actorName: ctx.session.user.name,
-							networkId: input.nwid,
-							networkName: network?.name || input.nwid,
-							nodeId: input.id,
-							nodeName: member?.name || input.id,
-						},
-					});
-				} catch (_error) {
-					// Don't fail the operation if notification fails
-				}
 			}
 
 			return response;
@@ -933,6 +957,42 @@ export const networkMemberRouter = createTRPCRouter({
 						permanentlyDeleted: true,
 					},
 				});
+
+				// Send organization admin notification for permanent deletion
+				if (input.organizationId) {
+					try {
+						const { sendOrganizationAdminNotification } = await import(
+							"~/utils/organizationNotifications"
+						);
+
+						// Get network and member info for notification
+						const [network, member] = await Promise.all([
+							ctx.prisma.network.findUnique({
+								where: { nwid: input.nwid },
+								select: { name: true },
+							}),
+							ctx.prisma.network_members.findFirst({
+								where: { id: input.id, nwid: input.nwid },
+								select: { name: true },
+							}),
+						]);
+
+						await sendOrganizationAdminNotification({
+							organizationId: input.organizationId,
+							eventType: "NODE_PERMANENTLY_DELETED",
+							eventData: {
+								networkId: input.nwid,
+								networkName: network?.name || input.nwid,
+								nodeId: input.id,
+								nodeName: member?.name || input.id,
+							},
+						});
+					} catch (error) {
+						// Don't fail the operation if notification fails
+						console.error("Failed to send node permanently deleted notification:", error);
+					}
+				}
+
 				return { deleted: true };
 			}
 
@@ -945,6 +1005,35 @@ export const networkMemberRouter = createTRPCRouter({
 					},
 				},
 			});
+
+			// Send organization admin notification for permanent deletion
+			if (input.organizationId) {
+				try {
+					const { sendOrganizationAdminNotification } = await import(
+						"~/utils/organizationNotifications"
+					);
+
+					// Get network info for notification
+					const network = await ctx.prisma.network.findUnique({
+						where: { nwid: input.nwid },
+						select: { name: true },
+					});
+
+					await sendOrganizationAdminNotification({
+						organizationId: input.organizationId,
+						eventType: "NODE_PERMANENTLY_DELETED",
+						eventData: {
+							networkId: input.nwid,
+							networkName: network?.name || input.nwid,
+							nodeId: input.id,
+							nodeName: existingMember?.name || input.id,
+						},
+					});
+				} catch (error) {
+					// Don't fail the operation if notification fails
+					console.error("Failed to send node permanently deleted notification:", error);
+				}
+			}
 
 			try {
 				// Send webhook

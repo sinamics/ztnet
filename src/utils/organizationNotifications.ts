@@ -7,6 +7,7 @@ interface OrganizationAdminNotificationData {
 	eventType:
 		| "NODE_ADDED"
 		| "NODE_DELETED"
+		| "NODE_PERMANENTLY_DELETED"
 		| "USER_ADDED"
 		| "USER_REMOVED"
 		| "PERMISSION_CHANGED"
@@ -48,14 +49,36 @@ export async function sendOrganizationAdminNotification(
 		let notificationMessage = "";
 
 		switch (data.eventType) {
-			case "NODE_ADDED":
+			case "NODE_ADDED": {
 				isEventEnabled = orgSettings.nodeAddedNotification ?? false;
-				notificationMessage = `A new node "${data.eventData.nodeName}" (${data.eventData.nodeId}) has joined ${data.eventData.networkName ? `network "${data.eventData.networkName}"` : "a network"} in your organization.`;
+				// Check if network name is just the network ID (fallback case when name is null)
+				const hasNetworkName = data.eventData.networkName && data.eventData.networkName !== data.eventData.networkId;
+				const networkDisplay = hasNetworkName 
+					? `network "${data.eventData.networkName}" (${data.eventData.networkId})`
+					: `network ${data.eventData.networkId}`;
+				notificationMessage = `A new node "${data.eventData.nodeName}" (${data.eventData.nodeId}) has joined ${networkDisplay} in your organization.`;
 				break;
-			case "NODE_DELETED":
+			}
+			case "NODE_DELETED": {
 				isEventEnabled = orgSettings.nodeDeletedNotification ?? false;
-				notificationMessage = `Node "${data.eventData.nodeName}" (${data.eventData.nodeId}) has been removed from ${data.eventData.networkName ? `network "${data.eventData.networkName}"` : "a network"} in your organization.`;
+				// Check if network name is just the network ID (fallback case when name is null)
+				const hasNetworkName = data.eventData.networkName && data.eventData.networkName !== data.eventData.networkId;
+				const networkDisplay = hasNetworkName 
+					? `network "${data.eventData.networkName}" (${data.eventData.networkId})`
+					: `network ${data.eventData.networkId}`;
+				notificationMessage = `Node "${data.eventData.nodeName}" (${data.eventData.nodeId}) has been stashed from ${networkDisplay} in your organization.`;
 				break;
+			}
+			case "NODE_PERMANENTLY_DELETED": {
+				isEventEnabled = orgSettings.nodePermanentlyDeletedNotification ?? false;
+				// Check if network name is just the network ID (fallback case when name is null)
+				const hasNetworkName = data.eventData.networkName && data.eventData.networkName !== data.eventData.networkId;
+				const networkDisplay = hasNetworkName 
+					? `network "${data.eventData.networkName}" (${data.eventData.networkId})`
+					: `network ${data.eventData.networkId}`;
+				notificationMessage = `Node "${data.eventData.nodeName}" (${data.eventData.nodeId}) has been permanently deleted from ${networkDisplay} in your organization.`;
+				break;
+			}
 			case "USER_ADDED":
 				isEventEnabled = orgSettings.userAddedNotification ?? false;
 				notificationMessage = `User "${data.eventData.targetName}" (${data.eventData.targetEmail}) has been added to your organization by ${data.eventData.actorName}.`;
@@ -68,14 +91,24 @@ export async function sendOrganizationAdminNotification(
 				isEventEnabled = orgSettings.permissionChangedNotification ?? false;
 				notificationMessage = `User "${data.eventData.targetName}" (${data.eventData.targetEmail}) role has been changed from "${data.eventData.oldRole}" to "${data.eventData.newRole}" by ${data.eventData.actorName}.`;
 				break;
-			case "NETWORK_CREATED":
+			case "NETWORK_CREATED": {
 				isEventEnabled = orgSettings.networkCreatedNotification ?? false;
-				notificationMessage = `A new network "${data.eventData.networkName}" (${data.eventData.networkId}) has been created in your organization by ${data.eventData.actorName}.`;
+				// Check if network name is just the network ID (fallback case when name is null)
+				const hasNetworkName = data.eventData.networkName !== data.eventData.networkId;
+				notificationMessage = hasNetworkName 
+					? `A new network "${data.eventData.networkName}" (${data.eventData.networkId}) has been created in your organization by ${data.eventData.actorName}.`
+					: `A new network ${data.eventData.networkId} has been created in your organization by ${data.eventData.actorName}.`;
 				break;
-			case "NETWORK_DELETED":
+			}
+			case "NETWORK_DELETED": {
 				isEventEnabled = orgSettings.networkDeletedNotification ?? false;
-				notificationMessage = `Network "${data.eventData.networkName}" (${data.eventData.networkId}) has been deleted from your organization by ${data.eventData.actorName}.`;
+				// Check if network name is just the network ID (fallback case when name is null)
+				const hasNetworkName = data.eventData.networkName !== data.eventData.networkId;
+				notificationMessage = hasNetworkName 
+					? `Network "${data.eventData.networkName}" (${data.eventData.networkId}) has been deleted from your organization by ${data.eventData.actorName}.`
+					: `Network ${data.eventData.networkId} has been deleted from your organization by ${data.eventData.actorName}.`;
 				break;
+			}
 			default:
 				return;
 		}

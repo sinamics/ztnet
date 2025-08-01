@@ -151,6 +151,7 @@ const OrganizationNotificationTemplateEditor: React.FC<ITemplateEditor> = ({
 		switch (templateType) {
 			case "nodeAdded":
 			case "nodeDeleted":
+			case "nodePermanentlyDeleted":
 				return [...commonTags, "nodeName", "nodeId"];
 			case "userAdded":
 			case "userRemoved":

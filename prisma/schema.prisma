@@ -417,8 +417,9 @@ model OrganizationSettings {
 
   // Admin notification settings
   nodeAddedNotification         Boolean? @default(false)
-  nodeDeletedNotification       Boolean? @default(false)
-  userAddedNotification         Boolean? @default(false)
+  nodeDeletedNotification           Boolean? @default(false)
+  nodePermanentlyDeletedNotification Boolean? @default(false)
+  userAddedNotification             Boolean? @default(false)
   userRemovedNotification       Boolean? @default(false)
   permissionChangedNotification Boolean? @default(false)
   networkCreatedNotification    Boolean? @default(false)

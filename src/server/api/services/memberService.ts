@@ -249,6 +249,33 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 			// add error messge that webhook failed
 			throwError(error.message);
 		}
+
+		// Send organization admin notification for new node joining
+		try {
+			const { sendOrganizationAdminNotification } = await import(
+				"~/utils/organizationNotifications"
+			);
+
+			// Get network info for notification
+			const network = await prisma.network.findUnique({
+				where: { nwid: member.nwid },
+				select: { name: true },
+			});
+
+			await sendOrganizationAdminNotification({
+				organizationId: memberOfOrganization.organizationId,
+				eventType: "NODE_ADDED",
+				eventData: {
+					networkId: member.nwid,
+					networkName: network?.name || member.nwid,
+					nodeId: member.id,
+					nodeName: name || member.id,
+				},
+			});
+		} catch (error) {
+			// Don't fail the operation if notification fails
+			console.error("Failed to send node added notification:", error);
+		}
 	}
 
 	// Member is not joining an organization network

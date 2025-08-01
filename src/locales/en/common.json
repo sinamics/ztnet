@@ -1133,8 +1133,12 @@
 						"description": "Notify admins when a new node joins any network in the organization"
 					},
 					"nodeDeleted": {
-						"title": "Node Deleted",
-						"description": "Notify admins when a node is removed from any network in the organization"
+						"title": "Node Stashed",
+						"description": "Notify admins when a node is de-authorized or stashed from any network in the organization"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Node Permanently Deleted", 
+						"description": "Notify admins when a node is permanently deleted from any network in the organization"
 					}
 				},
 				"userEvents": {
