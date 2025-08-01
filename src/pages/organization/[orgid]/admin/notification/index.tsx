@@ -146,7 +146,9 @@ const OrganizationNotification = () => {
 				<div className="flex items-center justify-between">
 					<div>
 						<p className="font-medium">
-							{t("organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title")}
+							{t(
+								"organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title",
+							)}
 						</p>
 						<p className="text-xs text-gray-500">
 							{t(
@@ -160,7 +162,9 @@ const OrganizationNotification = () => {
 							onClick={() =>
 								openTemplateModal(
 									"nodePermanentlyDeleted",
-									t("organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title"),
+									t(
+										"organization.settings.notifications.nodeEvents.nodePermanentlyDeleted.title",
+									),
 								)
 							}
 						/>
