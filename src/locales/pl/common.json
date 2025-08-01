@@ -1135,6 +1135,10 @@
 					"nodeDeleted": {
 						"title": "Węzeł Usunięty",
 						"description": "Powiadom administratorów, gdy węzeł zostanie usunięty z sieci w organizacji"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Węzeł Usunięty Trwale",
+						"description": "Powiadom administratorów, gdy węzeł zostanie trwale usunięty z sieci w organizacji"
 					}
 				},
 				"userEvents": {
