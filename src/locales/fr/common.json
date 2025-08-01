@@ -1135,6 +1135,10 @@
 					"nodeDeleted": {
 						"title": "Nœud Supprimé",
 						"description": "Notifier les administrateurs lorsqu'un nœud est retiré d'un réseau dans l'organisation"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Nœud Supprimé Définitivement",
+						"description": "Notifier les administrateurs lorsqu'un nœud est supprimé définitivement de tout réseau dans l'organisation"
 					}
 				},
 				"userEvents": {
