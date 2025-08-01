@@ -168,6 +168,9 @@ export const getAuthOptions = (
 					where: {
 						email: _credentials?.email,
 					},
+					include: {
+						userGroup: true, // Include user group to check for expiration
+					},
 				});
 
 				if (!user || !user.email || !user.hash)
@@ -205,9 +208,17 @@ export const getAuthOptions = (
 				}
 
 				if (!user.isActive) {
-					throw new Error(
-						"Account has been disabled. Contact an administrator to reactivate your account.",
-					);
+					throw new Error(ErrorCode.AccountExpired);
+				}
+
+				// Check if user account has expired individually
+				if (user.expiresAt && new Date(user.expiresAt) < new Date()) {
+					throw new Error(ErrorCode.AccountExpired);
+				}
+
+				// Check if user's group has expired (skip for admins)
+				if (user.role !== "ADMIN" && user.userGroup?.expiresAt && new Date(user.userGroup.expiresAt) < new Date()) {
+					throw new Error(ErrorCode.AccountExpired);
 				}
 
 				if (user.twoFactorEnabled) {
