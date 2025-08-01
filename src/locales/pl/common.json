@@ -1138,54 +1138,54 @@
 					}
 				},
 				"userEvents": {
-					"title": "Wydarzenia Użytkowników",
+					"title": "Zdarzenia użytkowników",
 					"userAdded": {
-						"title": "Użytkownik Dodany do Organizacji",
+						"title": "Użytkownik dodany do organizacji",
 						"description": "Powiadom administratorów, gdy nowy użytkownik dołączy do organizacji"
 					},
 					"userRemoved": {
-						"title": "Użytkownik Usunięty z Organizacji",
+						"title": "Użytkownik usunięty z organizacji",
 						"description": "Powiadom administratorów, gdy użytkownik opuści lub zostanie usunięty z organizacji"
 					},
 					"permissionChanged": {
-						"title": "Uprawnienia Użytkownika Zmienione",
+						"title": "Uprawnienia użytkownika zmienione",
 						"description": "Powiadom administratorów, gdy rola lub uprawnienia użytkownika zostaną zmodyfikowane w organizacji"
 					}
 				},
 				"networkEvents": {
-					"title": "Wydarzenia Sieci",
+					"title": "Zdarzenia sieci",
 					"networkCreated": {
-						"title": "Sieć Utworzona",
+						"title": "Sieć utworzona",
 						"description": "Powiadom administratorów, gdy nowa sieć zostanie utworzona w organizacji"
 					},
 					"networkDeleted": {
-						"title": "Sieć Usunięta",
+						"title": "Sieć usunięta",
 						"description": "Powiadom administratorów, gdy sieć zostanie usunięta z organizacji"
 					}
 				},
 				"emailSettings": {
-					"title": "Ustawienia Dostarczania Email",
+					"title": "Ustawienia dostarczania e-maili",
 					"description": "Skonfiguruj sposób dostarczania powiadomień do administratorów organizacji.",
 					"enableEmails": {
-						"title": "Włącz Powiadomienia Email",
+						"title": "Włącz powiadomienia e-mail",
 						"description": "Wysyłaj powiadomienia przez email do wszystkich administratorów organizacji"
 					}
 				},
 				"templates": {
-					"editTemplate": "Edytuj Szablon Email",
-					"availableTags": "Dostępne Tagi Szablonu:",
+					"editTemplate": "Edytuj szablon e-mail",
+					"availableTags": "Dostępne tagi szablonu:",
 					"subject": "Temat",
-					"subjectPlaceholder": "Wprowadź temat email...",
-					"htmlBody": "Treść Email (HTML)",
-					"bodyPlaceholder": "Wprowadź treść email...",
-					"saveTemplate": "Zapisz Szablon",
-					"resetToDefault": "Przywróć Domyślny",
-					"sendTest": "Wyślij Testowy Email",
+					"subjectPlaceholder": "Wprowadź temat e-maila...",
+					"htmlBody": "Treść e-maila (HTML)",
+					"bodyPlaceholder": "Wprowadź treść e-maila...",
+					"saveTemplate": "Zapisz szablon",
+					"resetToDefault": "Przywróć domyślny",
+					"sendTest": "Wyślij testowego e-maila",
 					"sendingTest": "Wysyłanie...",
 					"successToastTemplateSaved": "Szablon zapisany pomyślnie",
-					"successToastTestSent": "Testowy email wysłany pomyślnie",
+					"successToastTestSent": "Testowy e-mail wysłany pomyślnie",
 					"errorFields": "Temat i treść są wymagane",
-					"errorSaveFirst": "Proszę zapisać zmiany przed wysłaniem testowego email"
+					"errorSaveFirst": "Proszę zapisać zmiany przed wysłaniem testowego e-maila"
 				}
 			}
 		},
