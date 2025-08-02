@@ -401,7 +401,7 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 												}`}</span>
 											</p>
 										),
-										rootStyle: "text-left",
+										rootStyle: "text-left max-w-4xl w-full",
 										content: (
 											<MemberOptionsModal
 												nwid={original.nwid}

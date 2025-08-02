@@ -194,27 +194,28 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		};
 
 		if (!caps || !Object.entries(caps).length)
-			return <p className="text-sm text-gray-500">None</p>;
+			return <p className="text-sm text-base-content/70">None</p>;
 		return (
-			<div className="flex flex-wrap">
+			<div className="grid grid-cols-1 gap-2">
 				{Object.entries(caps).map(([capability, capId]) => {
 					const isChecked =
 						isCapabilitiesArray(memberById?.capabilities) &&
 						memberById.capabilities.includes(capId);
 
 					return (
-						<div key={capId}>
-							<label className="flex items-center gap-2 p-2">
-								<input
-									type="checkbox"
-									name={capability}
-									checked={isChecked || false}
-									className="checkbox-primary checkbox checkbox-sm justify-self-end"
-									onChange={(e) => handleCheckboxChange(e, capId)}
-								/>
-								{capability}
-							</label>
-						</div>
+						<label
+							key={capId}
+							className="flex items-center gap-3 p-2 hover:bg-base-200 rounded cursor-pointer"
+						>
+							<input
+								type="checkbox"
+								name={capability}
+								checked={isChecked || false}
+								className="checkbox checkbox-primary checkbox-sm"
+								onChange={(e) => handleCheckboxChange(e, capId)}
+							/>
+							<span className="text-sm">{capability}</span>
+						</label>
 					);
 				})}
 			</div>
@@ -238,238 +239,234 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	};
 
 	return (
-		<div>
+		<div className="space-y-6">
 			{updateMemberLoading ? (
 				<div className="fixed inset-0 z-50 flex items-center justify-center">
 					<span className="loading loading-bars loading-lg"></span>
 				</div>
 			) : null}
 			<div className={cn({ "opacity-30": updateMemberLoading })}>
-				<div className="text-xs flex items-center space-x-1 mb-2 text-gray-500">
-					<p>{t("networkById.memberOptionModal.header.created")}</p>
-					<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4">
-					<div className="col-span-3">
-						<header>{t("networkById.memberOptionModal.ipAssignment.header")}</header>
-						<p className="text-sm text-gray-500">
-							{t("networkById.memberOptionModal.ipAssignment.description")}
-						</p>
+				{/* Header with creation time */}
+				<div className="flex items-center justify-between mb-6 pb-4 border-b border-base-200">
+					<div className="flex items-center space-x-2 text-sm text-base-content/70">
+						<p>{t("networkById.memberOptionModal.header.created")}</p>
+						<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
 					</div>
 				</div>
-				<div className="flex flex-wrap gap-3 text-center">
-					{ipAssignments.map((assignedIp) => {
-						const subnetMatch = isIPInSubnet(
-							assignedIp,
-							networkById?.network?.routes as RoutesEntity[],
-						);
-						return (
-							<div
-								key={assignedIp}
-								className={`${
-									subnetMatch
-										? "badge badge-primary badge-lg rounded-md"
-										: "badge badge-ghost badge-lg rounded-md opacity-60"
-								} flex min-w-fit justify-between`}
-							>
-								<div className="cursor-pointer">{assignedIp}</div>
 
-								{ipAssignments.length > 0 && (
-									<div
-										title={t("networkById.memberOptionModal.deleteIpAssignment.title")}
-									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											strokeWidth="1.5"
-											stroke="currentColor"
-											className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
-											onClick={() =>
-												deleteIpAssignment(ipAssignments, assignedIp, memberId)
-											}
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-											/>
-										</svg>
+				{/* Two Column Layout */}
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					{/* Left Column */}
+					<div className="space-y-6">
+						{/* IP Assignment Section */}
+						<div className="card bg-base-100 border border-base-200 shadow-sm">
+							<div className="card-body p-6">
+								<div className="mb-4">
+									<h3 className="card-title text-lg">
+										{t("networkById.memberOptionModal.ipAssignment.header")}
+									</h3>
+									<p className="text-sm text-base-content/70 mt-1">
+										{t("networkById.memberOptionModal.ipAssignment.description")}
+									</p>
+								</div>
+
+								{/* Current IP Assignments */}
+								<div className="mb-4">
+									<div className="flex flex-wrap gap-2">
+										{ipAssignments.map((assignedIp) => {
+											const subnetMatch = isIPInSubnet(
+												assignedIp,
+												networkById?.network?.routes as RoutesEntity[],
+											);
+											return (
+												<div
+													key={assignedIp}
+													className={`${
+														subnetMatch
+															? "badge badge-primary badge-lg rounded-md"
+															: "badge badge-ghost badge-lg rounded-md opacity-60"
+													} flex min-w-fit justify-between gap-2`}
+												>
+													<span className="cursor-pointer">{assignedIp}</span>
+													{ipAssignments.length > 0 && (
+														<button
+															type="button"
+															title={t(
+																"networkById.memberOptionModal.deleteIpAssignment.title",
+															)}
+															onClick={() =>
+																deleteIpAssignment(ipAssignments, assignedIp, memberId)
+															}
+															className="text-warning hover:text-error"
+														>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																fill="none"
+																viewBox="0 0 24 24"
+																strokeWidth="1.5"
+																stroke="currentColor"
+																className="h-4 w-4"
+															>
+																<path
+																	strokeLinecap="round"
+																	strokeLinejoin="round"
+																	d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+																/>
+															</svg>
+														</button>
+													)}
+												</div>
+											);
+										})}
 									</div>
-								)}
+								</div>
+
+								{/* Add IP Form */}
+								<form onSubmit={handleIpSubmit}>
+									<div className="join w-full">
+										<span className="join-item px-4 bg-base-200 items-center flex text-sm">
+											{t("networkById.memberOptionModal.addressInput.label")}
+										</span>
+										<input
+											type="text"
+											name="ipInput"
+											onChange={handleInputChange}
+											value={state.ipInput || ""}
+											placeholder="192.168.169.x"
+											className={cn("input input-bordered input-sm join-item flex-1", {
+												"border-error": !state.isValid && state.ipInput.length > 0,
+												"border-success": state.isValid,
+											})}
+										/>
+										<button type="submit" className="btn btn-primary btn-sm join-item">
+											{t("networkById.memberOptionModal.addButton.text")}
+										</button>
+									</div>
+								</form>
 							</div>
-						);
-					})}
-				</div>
-				<div className="my-5">
-					<form>
-						<div className="join">
-							<span className="join-item px-4 bg-base-200 items-center flex">
-								{t("networkById.memberOptionModal.addressInput.label")}
-							</span>
-
-							<input
-								type="text"
-								name="ipInput"
-								onChange={handleInputChange}
-								value={state.ipInput || ""}
-								placeholder="192.168.169.x"
-								className={cn("input input-bordered input-sm join-item", {
-									"border-error": !state.isValid && state.ipInput.length > 0,
-									"border-success": state.isValid,
-								})}
-							/>
-							<button
-								onClick={handleIpSubmit}
-								type="submit"
-								className="btn-active btn-sm join-item"
-							>
-								{t("networkById.memberOptionModal.addButton.text")}
-							</button>
 						</div>
-					</form>
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-3">
-						<header>{t("networkById.memberOptionModal.memberDescription.header")}</header>
-						<p className="text-sm text-gray-500">
-							{t("networkById.memberOptionModal.memberDescription.description")}
-						</p>
-					</div>
-					<div className="col-span-1">
-						<input
-							type="text"
-							placeholder={t(
-								"networkById.memberOptionModal.memberDescription.placeholder",
-							)}
-							value={memberById?.description || ""}
-							className="input input-bordered input-sm w-full"
-							onChange={(e) => {
-								updateMember({
-									updateParams: {
-										description: e.target.value,
-									},
-									organizationId,
-									memberId,
-									central,
-									nwid,
-								});
-							}}
-						/>
-					</div>
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-3">
-						<header>
-							{t("networkById.memberOptionModal.allowEthernetBridging.header")}
-						</header>
-						<p className="text-sm text-gray-500">
-							{t("networkById.memberOptionModal.allowEthernetBridging.description")}
-						</p>
-					</div>
-					<input
-						type="checkbox"
-						checked={memberById?.activeBridge || false}
-						className="checkbox-primary checkbox checkbox-sm justify-self-end"
-						onChange={(e) => {
-							updateMember({
-								updateParams: {
-									activeBridge: e.target.checked,
-								},
-								organizationId,
-								memberId,
-								central,
-								nwid,
-							});
-						}}
-					/>
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-3">
-						<header>
-							{t("networkById.memberOptionModal.doNotAutoAssignIPs.header")}
-						</header>
-						<p className="text-sm text-gray-500">
-							{t("networkById.memberOptionModal.doNotAutoAssignIPs.description")}
-						</p>
-					</div>
-					<input
-						type="checkbox"
-						checked={memberById?.noAutoAssignIps || false}
-						className="checkbox-primary checkbox checkbox-sm justify-self-end"
-						onChange={(e) => {
-							updateMember({
-								updateParams: {
-									noAutoAssignIps: e.target.checked,
-								},
-								organizationId,
-								memberId,
-								central,
-								nwid,
-							});
-						}}
-					/>
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-4">
-						<header>{t("networkById.memberOptionModal.capabilities.header")}</header>
-						{CapabilityCheckboxes(
-							networkById?.network?.capabilitiesByName as CapabilitiesByName,
+
+						{/* Annotation Section */}
+						{!central && (
+							<div className="card bg-base-100 border border-base-200 shadow-sm">
+								<div className="card-body p-6">
+									<Anotation
+										nwid={nwid}
+										//@ts-expect-error
+										nodeid={memberById?.nodeid}
+										organizationId={organizationId}
+									/>
+								</div>
+							</div>
 						)}
 					</div>
-				</div>
-				<div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-4">
-						<header>{t("networkById.memberOptionModal.tags.header")}</header>
-						<FlagsAndTags
-							organizationId={organizationId}
-							nwid={nwid}
-							memberId={memberId}
-							central={central}
-						/>
-					</div>
-				</div>
-				{!central ? (
-					<div className="grid grid-cols-4 items-start gap-4 py-3">
-						<div className="col-span-4">
-							<Anotation
-								nwid={nwid}
-								//@ts-expect-error
-								nodeid={memberById?.nodeid}
-								organizationId={organizationId}
-							/>
+
+					{/* Right Column */}
+					<div className="space-y-6">
+						{/* Network Settings Section */}
+						<div className="card bg-base-100 border border-base-200 shadow-sm">
+							<div className="card-body p-6">
+								<h3 className="card-title text-lg mb-4">Network Settings</h3>
+
+								<div className="space-y-4">
+									{/* Ethernet Bridging */}
+									<div className="flex items-start justify-between gap-4">
+										<div className="flex-1">
+											<h4 className="font-medium text-sm">
+												{t("networkById.memberOptionModal.allowEthernetBridging.header")}
+											</h4>
+											<p className="text-xs text-base-content/70 mt-1">
+												{t(
+													"networkById.memberOptionModal.allowEthernetBridging.description",
+												)}
+											</p>
+										</div>
+										<input
+											type="checkbox"
+											checked={memberById?.activeBridge || false}
+											className="checkbox checkbox-primary checkbox-sm"
+											onChange={(e) => {
+												updateMember({
+													updateParams: {
+														activeBridge: e.target.checked,
+													},
+													organizationId,
+													memberId,
+													central,
+													nwid,
+												});
+											}}
+										/>
+									</div>
+
+									{/* Auto-assign IPs */}
+									<div className="flex items-start justify-between gap-4">
+										<div className="flex-1">
+											<h4 className="font-medium text-sm">
+												{t("networkById.memberOptionModal.doNotAutoAssignIPs.header")}
+											</h4>
+											<p className="text-xs text-base-content/70 mt-1">
+												{t(
+													"networkById.memberOptionModal.doNotAutoAssignIPs.description",
+												)}
+											</p>
+										</div>
+										<input
+											type="checkbox"
+											checked={memberById?.noAutoAssignIps || false}
+											className="checkbox checkbox-primary checkbox-sm"
+											onChange={(e) => {
+												updateMember({
+													updateParams: {
+														noAutoAssignIps: e.target.checked,
+													},
+													organizationId,
+													memberId,
+													central,
+													nwid,
+												});
+											}}
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* Flow Rules Section (Capabilities & Tags) */}
+						<div className="card bg-base-100 border border-base-200 shadow-sm">
+							<div className="card-body p-6">
+								<h3 className="card-title text-lg mb-6">Flow Rules</h3>
+
+								{/* Capabilities Subsection */}
+								<div className="mb-6">
+									<h4 className="font-semibold text-base mb-3">
+										{t("networkById.memberOptionModal.capabilities.header")}
+									</h4>
+									<div className="max-h-32 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-3 border border-base-200">
+										{CapabilityCheckboxes(
+											networkById?.network?.capabilitiesByName as CapabilitiesByName,
+										)}
+									</div>
+								</div>
+
+								{/* Tags Subsection */}
+								<div>
+									<h4 className="font-semibold text-base mb-3">
+										{t("networkById.memberOptionModal.tags.header")}
+									</h4>
+									<div className="bg-base-50 rounded-lg p-3 border border-base-200">
+										<FlagsAndTags
+											organizationId={organizationId}
+											nwid={nwid}
+											memberId={memberId}
+											central={central}
+										/>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
-				) : null}
-
-				{/* <div className="grid grid-cols-4 items-start gap-4 py-3">
-					<div className="col-span-4 space-y-4">
-						<p>{b("userActions")}</p>
-
-						{central ? (
-							<button
-								onClick={() =>
-									deleteMember({
-										organizationId,
-										central,
-										id: memberId,
-										nwid,
-									})
-								}
-								className="btn btn-error btn-outline btn-sm rounded-sm"
-							>
-								{b("delete")}
-							</button>
-						) : (
-							<button
-								onClick={() => stashMember(memberId)}
-								className="btn btn-warning btn-outline btn-sm rounded-sm"
-							>
-								{b("stash")}
-							</button>
-						)}
-					</div>
-				</div> */}
+				</div>
 			</div>
 		</div>
 	);

@@ -102,58 +102,62 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 	);
 
 	return (
-		<div>
-			<div className="flex items-center justify-between">
-				<div>
-					<p>{t("memberOptionModal.anotation.header")}</p>
-					<p className="text-sm text-gray-500">
-						{t("memberOptionModal.anotation.description")}
-					</p>
-				</div>
-				<form>
-					<Input
-						useTooltip
-						type="text"
-						className="input-bordered input-sm"
-						name="name"
-						placeholder={t("memberOptionModal.anotation.placeholder")}
-						value={input?.name || ""}
-						onChange={inputHandler}
-						list="anotation-list"
-					/>
-					<datalist id="anotation-list">
-						{filteredAnotations?.map((anotation) => (
-							<option key={anotation.name} value={anotation.name} />
-						))}
-					</datalist>
-					<button
-						onClick={(e) => {
-							e.preventDefault();
-							setAnotation(
-								{
-									name: input?.name,
-									color: getRandomColor(),
-									nwid,
-									organizationId,
-									nodeid,
-								},
-								{
-									onSuccess: () => {
-										void refetchMemberAnotation();
-										void refetchAnotation();
-										void refetchNetworkById();
-										setInput({ name: "" });
-									},
-								},
-							);
-						}}
-						type="submit"
-						className="hidden"
-					/>
-				</form>
+		<div className="space-y-4">
+			{/* Header and Description */}
+			<div>
+				<h3 className="card-title text-lg mb-2">
+					{t("memberOptionModal.anotation.header")}
+				</h3>
+				<p className="text-sm text-base-content/70">
+					{t("memberOptionModal.anotation.description")}
+				</p>
 			</div>
 
-			<div className="flex gap-2">
+			{/* Input Form */}
+			<form>
+				<Input
+					useTooltip
+					type="text"
+					className="input-bordered input-sm w-full"
+					name="name"
+					placeholder={t("memberOptionModal.anotation.placeholder")}
+					value={input?.name || ""}
+					onChange={inputHandler}
+					list="anotation-list"
+				/>
+				<datalist id="anotation-list">
+					{filteredAnotations?.map((anotation) => (
+						<option key={anotation.name} value={anotation.name} />
+					))}
+				</datalist>
+				<button
+					onClick={(e) => {
+						e.preventDefault();
+						setAnotation(
+							{
+								name: input?.name,
+								color: getRandomColor(),
+								nwid,
+								organizationId,
+								nodeid,
+							},
+							{
+								onSuccess: () => {
+									void refetchMemberAnotation();
+									void refetchAnotation();
+									void refetchNetworkById();
+									setInput({ name: "" });
+								},
+							},
+						);
+					}}
+					type="submit"
+					className="hidden"
+				/>
+			</form>
+
+			{/* Current Annotations */}
+			<div className="flex flex-wrap gap-2">
 				{memberAnotationArray?.map((anotation) => (
 					<div
 						key={anotation.label.id}
