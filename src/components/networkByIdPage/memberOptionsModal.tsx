@@ -283,8 +283,8 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 													key={assignedIp}
 													className={`${
 														subnetMatch
-															? "badge badge-primary badge-lg rounded-md"
-															: "badge badge-ghost badge-lg rounded-md opacity-60"
+															? "badge badge-primary rounded-md"
+															: "badge badge-ghost rounded-md opacity-60"
 													} flex min-w-fit justify-between gap-2`}
 												>
 													<span className="cursor-pointer">{assignedIp}</span>
@@ -305,7 +305,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 																viewBox="0 0 24 24"
 																strokeWidth="1.5"
 																stroke="currentColor"
-																className="h-4 w-4"
+																className="h-3 w-3"
 															>
 																<path
 																	strokeLinecap="round"
@@ -433,38 +433,45 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						</div>
 
 						{/* Flow Rules Section (Capabilities & Tags) */}
-						<div className="card bg-base-100 border border-base-200 shadow-sm">
-							<div className="card-body p-4">
-								<h3 className="card-title text-base mb-4">Flow Rules</h3>
+						{((networkById?.network?.capabilitiesByName && Object.entries(networkById?.network?.capabilitiesByName).length > 0) || 
+						  (networkById?.network?.tagsByName && Object.entries(networkById?.network?.tagsByName).length > 0)) && (
+							<div className="card bg-base-100 border border-base-200 shadow-sm">
+								<div className="card-body p-4">
+									<h3 className="card-title text-base mb-4">Flow Rules</h3>
 
-								{/* Capabilities Subsection */}
-								<div className="mb-4">
-									<h4 className="font-semibold text-sm mb-2">
-										{t("networkById.memberOptionModal.capabilities.header")}
-									</h4>
-									<div className="max-h-28 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-2 border border-base-200">
-										{CapabilityCheckboxes(
-											networkById?.network?.capabilitiesByName as CapabilitiesByName,
-										)}
-									</div>
-								</div>
+									{/* Capabilities Subsection */}
+									{networkById?.network?.capabilitiesByName && Object.entries(networkById?.network?.capabilitiesByName).length > 0 && (
+										<div className="mb-4">
+											<h4 className="font-semibold text-sm mb-2">
+												{t("networkById.memberOptionModal.capabilities.header")}
+											</h4>
+											<div className="max-h-28 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-2 border border-base-200">
+												{CapabilityCheckboxes(
+													networkById?.network?.capabilitiesByName as CapabilitiesByName,
+												)}
+											</div>
+										</div>
+									)}
 
-								{/* Tags Subsection */}
-								<div>
-									<h4 className="font-semibold text-sm mb-2">
-										{t("networkById.memberOptionModal.tags.header")}
-									</h4>
-									<div className="bg-base-50 rounded-lg p-2 border border-base-200">
-										<FlagsAndTags
-											organizationId={organizationId}
-											nwid={nwid}
-											memberId={memberId}
-											central={central}
-										/>
-									</div>
+									{/* Tags Subsection */}
+									{networkById?.network?.tagsByName && Object.entries(networkById?.network?.tagsByName).length > 0 && (
+										<div>
+											<h4 className="font-semibold text-sm mb-2">
+												{t("networkById.memberOptionModal.tags.header")}
+											</h4>
+											<div className="bg-base-50 rounded-lg p-2 border border-base-200">
+												<FlagsAndTags
+													organizationId={organizationId}
+													nwid={nwid}
+													memberId={memberId}
+													central={central}
+												/>
+											</div>
+										</div>
+									)}
 								</div>
 							</div>
-						</div>
+						)}
 					</div>
 				</div>
 			</div>
