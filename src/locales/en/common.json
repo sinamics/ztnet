@@ -666,6 +666,9 @@
 					"editGroupTitle": "Edit Group",
 					"deleteGroupTitle": "Delete Group",
 					"deleteGroupDescription": "Are you sure you want to delete this group? If assigned, it will be removed from the user.",
+					"deleteGroupWithUsersWarning": "Warning: This group has {count} {userText} assigned to it.",
+					"deleteGroupWithUsersDescription": "Deleting this group will automatically remove all users from the group. The users themselves will not be deleted, but they will no longer belong to any group.",
+					"deleteGroupConfirmation": "This action cannot be undone. Are you sure you want to continue?",
 					"addGroupLabel": "Add new group",
 					"addGroupButton": "Add Group",
 					"groupNamePlaceholder": "Group Name",
@@ -1137,7 +1140,7 @@
 						"description": "Notify admins when a node is de-authorized or stashed from any network in the organization"
 					},
 					"nodePermanentlyDeleted": {
-						"title": "Node Permanently Deleted", 
+						"title": "Node Permanently Deleted",
 						"description": "Notify admins when a node is permanently deleted from any network in the organization"
 					}
 				},

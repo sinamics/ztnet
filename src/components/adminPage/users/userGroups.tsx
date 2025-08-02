@@ -181,15 +181,47 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 										"text-error hover:text-error-focus": !isExpired,
 									})}
 									onClick={() => {
-										callModal({
-											title: t("users.groups.addGroup.deleteGroupTitle"),
-											description: t("users.groups.addGroup.deleteGroupDescription"),
-											yesAction: () => {
-												deleteGroup({
-													id: group.id,
-												});
-											},
-										});
+										// Check if group has users and show appropriate modal
+										if (group._count.users > 0) {
+											const userText = group._count.users === 1 ? "user" : "users";
+											callModal({
+												title: `⚠️ ${t("users.groups.addGroup.deleteGroupTitle")}`,
+												description: (
+													<div className="space-y-2">
+														<p className="font-medium text-warning">
+															{t("users.groups.addGroup.deleteGroupWithUsersWarning", {
+																count: group._count.users,
+																userText: userText,
+															})}
+														</p>
+														<p>
+															{t("users.groups.addGroup.deleteGroupWithUsersDescription")}
+														</p>
+														<p className="font-medium">
+															{t("users.groups.addGroup.deleteGroupConfirmation")}
+														</p>
+													</div>
+												),
+												yesAction: () => {
+													deleteGroup({
+														id: group.id,
+														removeUsers: true,
+													});
+												},
+											});
+										} else {
+											// No users in group, show simple confirmation
+											callModal({
+												title: t("users.groups.addGroup.deleteGroupTitle"),
+												description: t("users.groups.addGroup.deleteGroupDescription"),
+												yesAction: () => {
+													deleteGroup({
+														id: group.id,
+														removeUsers: false,
+													});
+												},
+											});
+										}
 									}}
 								>
 									<path

@@ -33,6 +33,15 @@ export async function sendOrganizationAdminNotification(
 	data: OrganizationAdminNotificationData,
 ) {
 	try {
+		// Check if organizationId is provided
+		if (!data.organizationId) {
+			console.warn(
+				"sendOrganizationAdminNotification called with null or undefined organizationId. Event type:",
+				data.eventType,
+			);
+			return;
+		}
+
 		// Get organization settings to check if notifications are enabled
 		const orgSettings = await prisma.organizationSettings.findFirst({
 			where: {

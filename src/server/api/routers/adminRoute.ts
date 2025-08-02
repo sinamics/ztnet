@@ -840,6 +840,7 @@ export const adminRouter = createTRPCRouter({
 				id: z.number().refine((val) => val > 0, {
 					message: "A valid group ID is required",
 				}),
+				removeUsers: z.boolean().default(false).optional(), // Option to automatically remove users
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -855,6 +856,38 @@ export const adminRouter = createTRPCRouter({
 					throwError("User group not found!");
 				}
 
+				// Check if there are users still assigned to this group
+				const usersInGroup = await ctx.prisma.user.findMany({
+					where: {
+						userGroupId: input.id,
+					},
+					select: {
+						id: true,
+						name: true,
+						email: true,
+					},
+				});
+
+				if (usersInGroup.length > 0) {
+					if (input.removeUsers) {
+						// Remove all users from the group first
+						await ctx.prisma.user.updateMany({
+							where: {
+								userGroupId: input.id,
+							},
+							data: {
+								userGroupId: null,
+								expiresAt: null, // Remove expiration when removing from group
+							},
+						});
+					} else {
+						const userList = usersInGroup.map((u) => u.name || u.email).join(", ");
+						throwError(
+							`Cannot delete user group "${existingGroup.name}". ${usersInGroup.length} user(s) are still assigned to this group: ${userList}. Please manually remove these users from the group first by editing each user individually, then try deleting the group again.`,
+						);
+					}
+				}
+
 				// Delete the user group
 				await ctx.prisma.userGroup.delete({
 					where: {
@@ -862,11 +895,16 @@ export const adminRouter = createTRPCRouter({
 					},
 				});
 
-				return { message: "User group successfully deleted." };
+				const removedUsersMessage =
+					usersInGroup.length > 0 && input.removeUsers
+						? ` ${usersInGroup.length} user(s) were automatically removed from the group.`
+						: "";
+
+				return { message: `User group successfully deleted.${removedUsersMessage}` };
 			} catch (err: unknown) {
 				if (err instanceof Error) {
 					// Log the error and throw a custom error message
-					throwError("Could not delete user group! Please try again.");
+					throwError(`Could not delete user group: ${err.message}`);
 				} else {
 					// Throw a generic error for unknown error types
 					throwError("An unknown error occurred.");
