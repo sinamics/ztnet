@@ -1137,7 +1137,7 @@
 					},
 					"nodeDeleted": {
 						"title": "Node Stashed",
-						"description": "Notify admins when a node is de-authorized or stashed from any network in the organization"
+						"description": "Notify admins when a node is stashed from any network in the organization"
 					},
 					"nodePermanentlyDeleted": {
 						"title": "Node Permanently Deleted",
