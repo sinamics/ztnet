@@ -158,7 +158,12 @@ export function signInCallback(
 ) {
 	return async function signIn({ user, account, profile }) {
 		try {
-			let userExist = await prisma.user.findUnique({ where: { email: user.email } });
+			let userExist = await prisma.user.findUnique({
+				where: { email: user.email },
+				include: {
+					userGroup: true, // Include user group to check for expiration
+				},
+			});
 
 			if (account.provider === "credentials") {
 				if (!userExist) {
@@ -201,7 +206,14 @@ export function signInCallback(
 
 					try {
 						const emailIsValid = true;
-						userExist = (await createUser(user, emailIsValid)) as User;
+						const newUser = (await createUser(user, emailIsValid)) as User;
+						// Refetch user with userGroup for expiration checks
+						userExist = await prisma.user.findUnique({
+							where: { id: newUser.id },
+							include: {
+								userGroup: true,
+							},
+						});
 					} catch (error) {
 						console.error("Error creating OAuth user:", error);
 						return `/auth/login?error=${ErrorCode.InternalServerError}`;
@@ -210,6 +222,25 @@ export function signInCallback(
 			}
 
 			if (!userExist) return false;
+
+			// Check if user account has expired individually
+			if (userExist.expiresAt && new Date(userExist.expiresAt) < new Date()) {
+				return `/auth/login?error=${ErrorCode.AccountExpired}`;
+			}
+
+			// Check if user's group has expired (skip for admins)
+			if (
+				userExist.role !== "ADMIN" &&
+				userExist.userGroup?.expiresAt &&
+				new Date(userExist.userGroup.expiresAt) < new Date()
+			) {
+				return `/auth/login?error=${ErrorCode.AccountExpired}`;
+			}
+
+			// Check if user is inactive (could be deactivated by cron job)
+			if (!userExist.isActive && userExist.role !== "ADMIN") {
+				return `/auth/login?error=${ErrorCode.AccountExpired}`;
+			}
 
 			const userAgent =
 				account.provider === "credentials"

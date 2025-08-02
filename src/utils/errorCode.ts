@@ -17,6 +17,7 @@ export enum ErrorCode {
 	TooManyRequests = "too-many-requests",
 	RegistrationDisabled = "registration_disabled",
 	OauthMissingEmail = "oauth-missing-email",
+	AccountExpired = "account-expired",
 }
 
 interface ErrorDetails {
@@ -95,6 +96,10 @@ export const ErrorMessages: Record<ErrorCode, ErrorDetails> = {
 		message: "OAuth provider did not provide a valid email address.",
 		action:
 			"Please ensure your OAuth provider account has a verified email address, or contact the administrator.",
+	},
+	[ErrorCode.AccountExpired]: {
+		message: "Your account has expired.",
+		action: "Please contact the administrator to reactivate your account.",
 	},
 };
 

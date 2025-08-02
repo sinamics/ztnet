@@ -409,16 +409,18 @@ export const networkMemberRouter = createTRPCRouter({
 				},
 			});
 
-			// Handle global name updates
+			// Handle global name updates ONLY when global naming is enabled
+			// This section handles updating names across multiple networks, not the current network
 			if (updateParams.name) {
 				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
 
 				if (shouldUpdateNameGlobally && !organizationId) {
-					// Find all networks where this member actually exists
+					// Personal networks: Find all OTHER networks where this member exists
 					const networksWithMember = await ctx.prisma.network_members.findMany({
 						where: {
 							id: memberId,
 							deleted: false,
+							nwid: { not: nwid }, // Exclude current network - it gets updated later
 							nwid_ref: {
 								authorId: ctx.session.user.id,
 								organizationId: null,
@@ -427,7 +429,7 @@ export const networkMemberRouter = createTRPCRouter({
 						select: { nwid: true },
 					});
 
-					// Update both controller and database for all networks where the member exists
+					// Update both controller and database for OTHER networks where the member exists
 					for (const { nwid: networkId } of networksWithMember) {
 						// Update ZeroTier controller
 						await ztController.member_update({
@@ -462,11 +464,12 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 
 					if (organizationOptions.renameNodeGlobally) {
-						// Find all organization networks where this member exists
+						// Organization networks: Find all OTHER networks where this member exists
 						const networksWithMember = await ctx.prisma.network_members.findMany({
 							where: {
 								id: memberId,
 								deleted: false,
+								nwid: { not: nwid }, // Exclude current network - it gets updated later
 								nwid_ref: {
 									organizationId: organizationId,
 								},
@@ -474,7 +477,7 @@ export const networkMemberRouter = createTRPCRouter({
 							select: { nwid: true },
 						});
 
-						// Update both controller and database for all networks where the member exists
+						// Update both controller and database for OTHER networks where the member exists
 						for (const { nwid: networkId } of networksWithMember) {
 							// Update ZeroTier controller
 							await ztController.member_update({
@@ -538,61 +541,45 @@ export const networkMemberRouter = createTRPCRouter({
 					});
 				});
 
-			// Update database for non-central networks (skip if global naming already handled it)
+			// Update database for non-central networks
 			if (!central) {
-				// Check if global naming was used
-				const shouldUpdateNameGlobally = userOptions?.renameNodeGlobally || false;
-				const isOrganizationGlobalNaming =
-					organizationId &&
-					(
-						await ctx.prisma.organizationSettings.findUnique({
-							where: { organizationId },
-						})
-					)?.renameNodeGlobally;
-
-				const globalNamingUsed =
-					updateParams.name && (shouldUpdateNameGlobally || isOrganizationGlobalNaming);
-
-				// Only update database if global naming wasn't used, or if we need to update other fields
-				if (!globalNamingUsed || payload.authorized !== undefined) {
-					// Check if member exists in database
-					const dbMember = await ctx.prisma.network_members.findUnique({
-						where: {
-							id_nwid: {
-								id: memberId,
-								nwid: nwid,
-							},
+				// Check if member exists in database
+				const dbMember = await ctx.prisma.network_members.findUnique({
+					where: {
+						id_nwid: {
+							id: memberId,
+							nwid: nwid,
 						},
-					});
+					},
+				});
 
-					if (dbMember) {
-						// Prepare database update data - only include fields that are stored in database
-						const databaseUpdateData: Record<string, unknown> = {};
+				if (dbMember) {
+					// Prepare database update data - only include fields that are stored in database
+					const databaseUpdateData: Record<string, unknown> = {};
 
-						// Only include name if global naming wasn't used
-						if (payload.name !== undefined && !globalNamingUsed) {
-							databaseUpdateData.name = payload.name;
-						}
-						if (payload.authorized !== undefined) {
-							databaseUpdateData.authorized = payload.authorized;
-						}
-						// Add description field support
-						if (updateParams.description !== undefined) {
-							databaseUpdateData.description = updateParams.description;
-						}
+					// Always include name if it's being updated - global naming doesn't prevent current network updates
+					if (payload.name !== undefined) {
+						databaseUpdateData.name = payload.name;
+					}
+					if (payload.authorized !== undefined) {
+						databaseUpdateData.authorized = payload.authorized;
+					}
+					// Add description field support
+					if (updateParams.description !== undefined) {
+						databaseUpdateData.description = updateParams.description;
+					}
 
-						// Update database if there are fields to update
-						if (Object.keys(databaseUpdateData).length > 0) {
-							await ctx.prisma.network_members.update({
-								where: {
-									id_nwid: {
-										id: memberId,
-										nwid: nwid,
-									},
+					// Update database if there are fields to update
+					if (Object.keys(databaseUpdateData).length > 0) {
+						await ctx.prisma.network_members.update({
+							where: {
+								id_nwid: {
+									id: memberId,
+									nwid: nwid,
 								},
-								data: databaseUpdateData,
-							});
-						}
+							},
+							data: databaseUpdateData,
+						});
 					}
 				}
 			}

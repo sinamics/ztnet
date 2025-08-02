@@ -176,7 +176,10 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 									viewBox="0 0 24 24"
 									strokeWidth="1.5"
 									stroke="currentColor"
-									className="h-3 w-3 cursor-pointer text-error hover:text-error-focus"
+									className={cn("h-5 w-5 cursor-pointer", {
+										"text-error-content hover:text-base-100": isExpired,
+										"text-error hover:text-error-focus": !isExpired,
+									})}
 									onClick={() => {
 										callModal({
 											title: t("users.groups.addGroup.deleteGroupTitle"),
