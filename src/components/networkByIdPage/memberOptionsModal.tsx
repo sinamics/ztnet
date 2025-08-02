@@ -323,24 +323,50 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 								{/* Add IP Form */}
 								<form onSubmit={handleIpSubmit}>
-									<div className="join w-full">
-										<span className="join-item px-3 bg-base-200 items-center flex text-xs">
+									{/* Mobile Layout - Stacked */}
+									<div className="block sm:hidden space-y-2">
+										<div className="text-xs text-base-content/70">
 											{t("networkById.memberOptionModal.addressInput.label")}
-										</span>
-										<input
-											type="text"
-											name="ipInput"
-											onChange={handleInputChange}
-											value={state.ipInput || ""}
-											placeholder="192.168.169.x"
-											className={cn("input input-bordered input-sm join-item flex-1", {
-												"border-error": !state.isValid && state.ipInput.length > 0,
-												"border-success": state.isValid,
-											})}
-										/>
-										<button type="submit" className="btn btn-primary btn-sm join-item">
-											{t("networkById.memberOptionModal.addButton.text")}
-										</button>
+										</div>
+										<div className="flex gap-2">
+											<input
+												type="text"
+												name="ipInput"
+												onChange={handleInputChange}
+												value={state.ipInput || ""}
+												placeholder="192.168.169.x"
+												className={cn("input input-bordered input-sm flex-1", {
+													"border-error": !state.isValid && state.ipInput.length > 0,
+													"border-success": state.isValid,
+												})}
+											/>
+											<button type="submit" className="btn btn-primary btn-sm">
+												{t("networkById.memberOptionModal.addButton.text")}
+											</button>
+										</div>
+									</div>
+
+									{/* Desktop Layout - Joined */}
+									<div className="hidden sm:block">
+										<div className="join w-full">
+											<span className="join-item px-3 bg-base-200 items-center flex text-xs">
+												{t("networkById.memberOptionModal.addressInput.label")}
+											</span>
+											<input
+												type="text"
+												name="ipInput"
+												onChange={handleInputChange}
+												value={state.ipInput || ""}
+												placeholder="192.168.169.x"
+												className={cn("input input-bordered input-sm join-item flex-1", {
+													"border-error": !state.isValid && state.ipInput.length > 0,
+													"border-success": state.isValid,
+												})}
+											/>
+											<button type="submit" className="btn btn-primary btn-sm join-item">
+												{t("networkById.memberOptionModal.addButton.text")}
+											</button>
+										</div>
 									</div>
 								</form>
 							</div>
@@ -433,42 +459,48 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						</div>
 
 						{/* Flow Rules Section (Capabilities & Tags) */}
-						{((networkById?.network?.capabilitiesByName && Object.entries(networkById?.network?.capabilitiesByName).length > 0) || 
-						  (networkById?.network?.tagsByName && Object.entries(networkById?.network?.tagsByName).length > 0)) && (
+						{((networkById?.network?.capabilitiesByName &&
+							Object.entries(networkById?.network?.capabilitiesByName).length > 0) ||
+							(networkById?.network?.tagsByName &&
+								Object.entries(networkById?.network?.tagsByName).length > 0)) && (
 							<div className="card bg-base-100 border border-base-200 shadow-sm">
 								<div className="card-body p-4">
 									<h3 className="card-title text-base mb-4">Flow Rules</h3>
 
 									{/* Capabilities Subsection */}
-									{networkById?.network?.capabilitiesByName && Object.entries(networkById?.network?.capabilitiesByName).length > 0 && (
-										<div className="mb-4">
-											<h4 className="font-semibold text-sm mb-2">
-												{t("networkById.memberOptionModal.capabilities.header")}
-											</h4>
-											<div className="max-h-28 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-2 border border-base-200">
-												{CapabilityCheckboxes(
-													networkById?.network?.capabilitiesByName as CapabilitiesByName,
-												)}
+									{networkById?.network?.capabilitiesByName &&
+										Object.entries(networkById?.network?.capabilitiesByName).length >
+											0 && (
+											<div className="mb-4">
+												<h4 className="font-semibold text-sm mb-2">
+													{t("networkById.memberOptionModal.capabilities.header")}
+												</h4>
+												<div className="max-h-28 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-2 border border-base-200">
+													{CapabilityCheckboxes(
+														networkById?.network
+															?.capabilitiesByName as CapabilitiesByName,
+													)}
+												</div>
 											</div>
-										</div>
-									)}
+										)}
 
 									{/* Tags Subsection */}
-									{networkById?.network?.tagsByName && Object.entries(networkById?.network?.tagsByName).length > 0 && (
-										<div>
-											<h4 className="font-semibold text-sm mb-2">
-												{t("networkById.memberOptionModal.tags.header")}
-											</h4>
-											<div className="bg-base-50 rounded-lg p-2 border border-base-200">
-												<FlagsAndTags
-													organizationId={organizationId}
-													nwid={nwid}
-													memberId={memberId}
-													central={central}
-												/>
+									{networkById?.network?.tagsByName &&
+										Object.entries(networkById?.network?.tagsByName).length > 0 && (
+											<div>
+												<h4 className="font-semibold text-sm mb-2">
+													{t("networkById.memberOptionModal.tags.header")}
+												</h4>
+												<div className="bg-base-50 rounded-lg p-2 border border-base-200">
+													<FlagsAndTags
+														organizationId={organizationId}
+														nwid={nwid}
+														memberId={memberId}
+														central={central}
+													/>
+												</div>
 											</div>
-										</div>
-									)}
+										)}
 								</div>
 							</div>
 						)}
