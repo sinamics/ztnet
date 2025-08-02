@@ -102,13 +102,13 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 	);
 
 	return (
-		<div className="space-y-4">
+		<div className="space-y-3">
 			{/* Header and Description */}
 			<div>
-				<h3 className="card-title text-lg mb-2">
+				<h3 className="card-title text-base mb-1">
 					{t("memberOptionModal.anotation.header")}
 				</h3>
-				<p className="text-sm text-base-content/70">
+				<p className="text-xs text-base-content/70">
 					{t("memberOptionModal.anotation.description")}
 				</p>
 			</div>
@@ -157,14 +157,14 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 			</form>
 
 			{/* Current Annotations */}
-			<div className="flex flex-wrap gap-2">
+			<div className="flex flex-wrap gap-1">
 				{memberAnotationArray?.map((anotation) => (
 					<div
 						key={anotation.label.id}
-						className={"badge badge-lg rounded-md"}
+						className={"badge rounded-md"}
 						style={{ backgroundColor: `${anotation.label.color}` }}
 					>
-						<p>{anotation?.label?.name}</p>
+						<p className="text-xs">{anotation?.label?.name}</p>
 						<div title="delete ip assignment">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +172,7 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 								viewBox="0 0 24 24"
 								strokeWidth="1.5"
 								stroke="currentColor"
-								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
+								className="z-10 ml-2 h-3 w-3 cursor-pointer text-warning"
 								onClick={() =>
 									removeAnotation({
 										organizationId,

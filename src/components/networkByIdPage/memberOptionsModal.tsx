@@ -194,9 +194,9 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		};
 
 		if (!caps || !Object.entries(caps).length)
-			return <p className="text-sm text-base-content/70">None</p>;
+			return <p className="text-xs text-base-content/70">None</p>;
 		return (
-			<div className="grid grid-cols-1 gap-2">
+			<div className="grid grid-cols-1 gap-1">
 				{Object.entries(caps).map(([capability, capId]) => {
 					const isChecked =
 						isCapabilitiesArray(memberById?.capabilities) &&
@@ -205,16 +205,16 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					return (
 						<label
 							key={capId}
-							className="flex items-center gap-3 p-2 hover:bg-base-200 rounded cursor-pointer"
+							className="flex items-center gap-2 p-1.5 hover:bg-base-200 rounded cursor-pointer"
 						>
 							<input
 								type="checkbox"
 								name={capability}
 								checked={isChecked || false}
-								className="checkbox checkbox-primary checkbox-sm"
+								className="checkbox checkbox-primary checkbox-xs"
 								onChange={(e) => handleCheckboxChange(e, capId)}
 							/>
-							<span className="text-sm">{capability}</span>
+							<span className="text-xs">{capability}</span>
 						</label>
 					);
 				})}
@@ -239,7 +239,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	};
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-3">
 			{updateMemberLoading ? (
 				<div className="fixed inset-0 z-50 flex items-center justify-center">
 					<span className="loading loading-bars loading-lg"></span>
@@ -247,31 +247,31 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 			) : null}
 			<div className={cn({ "opacity-30": updateMemberLoading })}>
 				{/* Header with creation time */}
-				<div className="flex items-center justify-between mb-6 pb-4 border-b border-base-200">
-					<div className="flex items-center space-x-2 text-sm text-base-content/70">
+				<div className="flex items-center justify-between mb-4 pb-2 border-b border-base-200">
+					<div className="flex items-center space-x-2 text-xs text-base-content/70">
 						<p>{t("networkById.memberOptionModal.header.created")}</p>
 						<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
 					</div>
 				</div>
 
 				{/* Two Column Layout */}
-				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+				<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 					{/* Left Column */}
-					<div className="space-y-6">
+					<div className="space-y-4">
 						{/* IP Assignment Section */}
 						<div className="card bg-base-100 border border-base-200 shadow-sm">
-							<div className="card-body p-6">
-								<div className="mb-4">
-									<h3 className="card-title text-lg">
+							<div className="card-body p-4">
+								<div className="mb-3">
+									<h3 className="card-title text-base">
 										{t("networkById.memberOptionModal.ipAssignment.header")}
 									</h3>
-									<p className="text-sm text-base-content/70 mt-1">
+									<p className="text-xs text-base-content/70 mt-1">
 										{t("networkById.memberOptionModal.ipAssignment.description")}
 									</p>
 								</div>
 
 								{/* Current IP Assignments */}
-								<div className="mb-4">
+								<div className="mb-3">
 									<div className="flex flex-wrap gap-2">
 										{ipAssignments.map((assignedIp) => {
 											const subnetMatch = isIPInSubnet(
@@ -324,7 +324,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 								{/* Add IP Form */}
 								<form onSubmit={handleIpSubmit}>
 									<div className="join w-full">
-										<span className="join-item px-4 bg-base-200 items-center flex text-sm">
+										<span className="join-item px-3 bg-base-200 items-center flex text-xs">
 											{t("networkById.memberOptionModal.addressInput.label")}
 										</span>
 										<input
@@ -349,7 +349,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						{/* Annotation Section */}
 						{!central && (
 							<div className="card bg-base-100 border border-base-200 shadow-sm">
-								<div className="card-body p-6">
+								<div className="card-body p-4">
 									<Anotation
 										nwid={nwid}
 										//@ts-expect-error
@@ -362,20 +362,20 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 					</div>
 
 					{/* Right Column */}
-					<div className="space-y-6">
+					<div className="space-y-4">
 						{/* Network Settings Section */}
 						<div className="card bg-base-100 border border-base-200 shadow-sm">
-							<div className="card-body p-6">
-								<h3 className="card-title text-lg mb-4">Network Settings</h3>
+							<div className="card-body p-4">
+								<h3 className="card-title text-base mb-3">Network Settings</h3>
 
-								<div className="space-y-4">
+								<div className="space-y-3">
 									{/* Ethernet Bridging */}
-									<div className="flex items-start justify-between gap-4">
+									<div className="flex items-start justify-between gap-3">
 										<div className="flex-1">
-											<h4 className="font-medium text-sm">
+											<h4 className="font-medium text-xs">
 												{t("networkById.memberOptionModal.allowEthernetBridging.header")}
 											</h4>
-											<p className="text-xs text-base-content/70 mt-1">
+											<p className="text-xs text-base-content/70 mt-0.5">
 												{t(
 													"networkById.memberOptionModal.allowEthernetBridging.description",
 												)}
@@ -400,12 +400,12 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 									</div>
 
 									{/* Auto-assign IPs */}
-									<div className="flex items-start justify-between gap-4">
+									<div className="flex items-start justify-between gap-3">
 										<div className="flex-1">
-											<h4 className="font-medium text-sm">
+											<h4 className="font-medium text-xs">
 												{t("networkById.memberOptionModal.doNotAutoAssignIPs.header")}
 											</h4>
-											<p className="text-xs text-base-content/70 mt-1">
+											<p className="text-xs text-base-content/70 mt-0.5">
 												{t(
 													"networkById.memberOptionModal.doNotAutoAssignIPs.description",
 												)}
@@ -434,15 +434,15 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 						{/* Flow Rules Section (Capabilities & Tags) */}
 						<div className="card bg-base-100 border border-base-200 shadow-sm">
-							<div className="card-body p-6">
-								<h3 className="card-title text-lg mb-6">Flow Rules</h3>
+							<div className="card-body p-4">
+								<h3 className="card-title text-base mb-4">Flow Rules</h3>
 
 								{/* Capabilities Subsection */}
-								<div className="mb-6">
-									<h4 className="font-semibold text-base mb-3">
+								<div className="mb-4">
+									<h4 className="font-semibold text-sm mb-2">
 										{t("networkById.memberOptionModal.capabilities.header")}
 									</h4>
-									<div className="max-h-32 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-3 border border-base-200">
+									<div className="max-h-28 overflow-y-auto custom-scrollbar bg-base-50 rounded-lg p-2 border border-base-200">
 										{CapabilityCheckboxes(
 											networkById?.network?.capabilitiesByName as CapabilitiesByName,
 										)}
@@ -451,10 +451,10 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 
 								{/* Tags Subsection */}
 								<div>
-									<h4 className="font-semibold text-base mb-3">
+									<h4 className="font-semibold text-sm mb-2">
 										{t("networkById.memberOptionModal.tags.header")}
 									</h4>
-									<div className="bg-base-50 rounded-lg p-3 border border-base-200">
+									<div className="bg-base-50 rounded-lg p-2 border border-base-200">
 										<FlagsAndTags
 											organizationId={organizationId}
 											nwid={nwid}
