@@ -158,11 +158,11 @@ export function signInCallback(
 ) {
 	return async function signIn({ user, account, profile }) {
 		try {
-			let userExist = await prisma.user.findUnique({ 
+			let userExist = await prisma.user.findUnique({
 				where: { email: user.email },
 				include: {
 					userGroup: true, // Include user group to check for expiration
-				}
+				},
 			});
 
 			if (account.provider === "credentials") {
@@ -208,11 +208,11 @@ export function signInCallback(
 						const emailIsValid = true;
 						const newUser = (await createUser(user, emailIsValid)) as User;
 						// Refetch user with userGroup for expiration checks
-						userExist = await prisma.user.findUnique({ 
+						userExist = await prisma.user.findUnique({
 							where: { id: newUser.id },
 							include: {
 								userGroup: true,
-							}
+							},
 						});
 					} catch (error) {
 						console.error("Error creating OAuth user:", error);
@@ -229,7 +229,11 @@ export function signInCallback(
 			}
 
 			// Check if user's group has expired (skip for admins)
-			if (userExist.role !== "ADMIN" && userExist.userGroup?.expiresAt && new Date(userExist.userGroup.expiresAt) < new Date()) {
+			if (
+				userExist.role !== "ADMIN" &&
+				userExist.userGroup?.expiresAt &&
+				new Date(userExist.userGroup.expiresAt) < new Date()
+			) {
 				return `/auth/login?error=${ErrorCode.AccountExpired}`;
 			}
 

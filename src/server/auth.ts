@@ -217,7 +217,11 @@ export const getAuthOptions = (
 				}
 
 				// Check if user's group has expired (skip for admins)
-				if (user.role !== "ADMIN" && user.userGroup?.expiresAt && new Date(user.userGroup.expiresAt) < new Date()) {
+				if (
+					user.role !== "ADMIN" &&
+					user.userGroup?.expiresAt &&
+					new Date(user.userGroup.expiresAt) < new Date()
+				) {
 					throw new Error(ErrorCode.AccountExpired);
 				}
 
