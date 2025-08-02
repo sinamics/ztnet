@@ -29,7 +29,7 @@ const TagComponent: React.FC<TagComponentProps> = ({
 		"None";
 
 	return (
-		<div className="form-control rounded-md border w-full border-base-300 p-2">
+		<div className="form-control rounded-md bg-base-100 w-full p-3">
 			<div>
 				<label className="label">
 					<span className="label-text">{tagName.toUpperCase()}</span>

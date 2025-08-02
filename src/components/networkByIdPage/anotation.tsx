@@ -102,65 +102,69 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 	);
 
 	return (
-		<div>
-			<div className="flex items-center justify-between">
-				<div>
-					<p>{t("memberOptionModal.anotation.header")}</p>
-					<p className="text-sm text-gray-500">
-						{t("memberOptionModal.anotation.description")}
-					</p>
-				</div>
-				<form>
-					<Input
-						useTooltip
-						type="text"
-						className="input-bordered input-sm"
-						name="name"
-						placeholder={t("memberOptionModal.anotation.placeholder")}
-						value={input?.name || ""}
-						onChange={inputHandler}
-						list="anotation-list"
-					/>
-					<datalist id="anotation-list">
-						{filteredAnotations?.map((anotation) => (
-							<option key={anotation.name} value={anotation.name} />
-						))}
-					</datalist>
-					<button
-						onClick={(e) => {
-							e.preventDefault();
-							setAnotation(
-								{
-									name: input?.name,
-									color: getRandomColor(),
-									nwid,
-									organizationId,
-									nodeid,
-								},
-								{
-									onSuccess: () => {
-										void refetchMemberAnotation();
-										void refetchAnotation();
-										void refetchNetworkById();
-										setInput({ name: "" });
-									},
-								},
-							);
-						}}
-						type="submit"
-						className="hidden"
-					/>
-				</form>
+		<div className="space-y-3">
+			{/* Header and Description */}
+			<div>
+				<h3 className="card-title text-base mb-1">
+					{t("memberOptionModal.anotation.header")}
+				</h3>
+				<p className="text-xs text-base-content/70">
+					{t("memberOptionModal.anotation.description")}
+				</p>
 			</div>
 
-			<div className="flex gap-2">
+			{/* Input Form */}
+			<form>
+				<Input
+					useTooltip
+					type="text"
+					className="input-bordered input-sm w-full"
+					name="name"
+					placeholder={t("memberOptionModal.anotation.placeholder")}
+					value={input?.name || ""}
+					onChange={inputHandler}
+					list="anotation-list"
+				/>
+				<datalist id="anotation-list">
+					{filteredAnotations?.map((anotation) => (
+						<option key={anotation.name} value={anotation.name} />
+					))}
+				</datalist>
+				<button
+					onClick={(e) => {
+						e.preventDefault();
+						setAnotation(
+							{
+								name: input?.name,
+								color: getRandomColor(),
+								nwid,
+								organizationId,
+								nodeid,
+							},
+							{
+								onSuccess: () => {
+									void refetchMemberAnotation();
+									void refetchAnotation();
+									void refetchNetworkById();
+									setInput({ name: "" });
+								},
+							},
+						);
+					}}
+					type="submit"
+					className="hidden"
+				/>
+			</form>
+
+			{/* Current Annotations */}
+			<div className="flex flex-wrap gap-1">
 				{memberAnotationArray?.map((anotation) => (
 					<div
 						key={anotation.label.id}
-						className={"badge badge-lg rounded-md"}
+						className={"badge rounded-md"}
 						style={{ backgroundColor: `${anotation.label.color}` }}
 					>
-						<p>{anotation?.label?.name}</p>
+						<p className="text-xs">{anotation?.label?.name}</p>
 						<div title="delete ip assignment">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +172,7 @@ const Anotation = ({ nwid, nodeid, organizationId }: IProps) => {
 								viewBox="0 0 24 24"
 								strokeWidth="1.5"
 								stroke="currentColor"
-								className="z-10 ml-4 h-4 w-4 cursor-pointer text-warning"
+								className="z-10 ml-2 h-3 w-3 cursor-pointer text-warning"
 								onClick={() =>
 									removeAnotation({
 										organizationId,
