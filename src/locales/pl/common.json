@@ -61,7 +61,7 @@
 	"commonTable": {
 		"header": {
 			"name": "Nazwa",
-			"description": "Opis sieci",
+			"description": "Opis",
 			"networkId": "ID Sieci",
 			"members": "Ilość członków",
 			"memberActTot": "Węzły Akt/Całk",
