@@ -1781,6 +1781,10 @@ export const organizationRouter = createTRPCRouter({
 					subject: "Node Deleted from {{organizationName}}",
 					body: "Hello {{adminName}},<br /><br />A node has been deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
 				},
+				nodePermanentlyDeleted: {
+					subject: "Node Permanently Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A node has been permanently deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
 				userAdded: {
 					subject: "New User Added to {{organizationName}}",
 					body: "Hello {{adminName}},<br /><br />A new user has been added to the organization {{organizationName}}.<br /><br />User Details:<br />- Name: {{userName}}<br />- Email: {{userEmail}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
@@ -1821,6 +1825,10 @@ export const organizationRouter = createTRPCRouter({
 				nodeDeleted: {
 					subject: "Node Deleted from {{organizationName}}",
 					body: "Hello {{adminName}},<br /><br />A node has been deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
+				},
+				nodePermanentlyDeleted: {
+					subject: "Node Permanently Deleted from {{organizationName}}",
+					body: "Hello {{adminName}},<br /><br />A node has been permanently deleted from the organization {{organizationName}}.<br /><br />Node Details:<br />- Name: {{nodeName}}<br />- ID: {{nodeId}}<br />- Timestamp: {{timestamp}}<br /><br />Best regards,<br />The ZTNet Team",
 				},
 				userAdded: {
 					subject: "New User Added to {{organizationName}}",
