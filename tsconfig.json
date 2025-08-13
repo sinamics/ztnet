@@ -25,16 +25,23 @@
       "~/*": [
         "./src/*"
       ]
-    }
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
   },
   "include": [
+    "**/*.cjs",
+    "**/*.mjs",
+    "**/*.ts",
+    "**/*.tsx",
     "./src/global.d.ts",
     ".eslintrc.cjs",
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.cjs",
-    "**/*.mjs",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
