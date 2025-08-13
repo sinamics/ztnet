@@ -13,7 +13,6 @@ import { network_members } from "@prisma/client";
  * Synchronizes the peers and connection status of the given members.
  * @param ctx - The user context.
  * @param members - An array of member entities.
- * @param peersByAddress - An array of peers grouped by address.
  */
 export const syncMemberPeersAndStatus = async (
 	ctx: UserContext,
@@ -41,6 +40,10 @@ export const syncMemberPeersAndStatus = async (
 			const activePreferredPath = findActivePreferredPeerPath(peers);
 			const { physicalAddress, ...restOfDbMembers } = dbMember || {};
 
+			// Capture DB name before merge so we can restore it if controller data overwrites with empty value
+			// Need to safely access because restOfDbMembers may be an empty object
+			const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
 			// Merge the data from the database with the data from Controller
 			const updatedMember = {
 				...restOfDbMembers,
@@ -48,6 +51,11 @@ export const syncMemberPeersAndStatus = async (
 				physicalAddress: activePreferredPath?.address ?? physicalAddress,
 				peers: peers || {},
 			} as MemberEntity;
+
+			// ISSUE #719: Preserve stored member name if controller provides no (or empty) name.
+			if (dbName && !updatedMember.name) {
+				updatedMember.name = dbName;
+			}
 
 			// Update the connection status
 			updatedMember.conStatus = determineConnectionStatus(updatedMember);
