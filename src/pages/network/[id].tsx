@@ -202,29 +202,29 @@ const NetworkById = ({ orgIds }: IProps) => {
 			<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				{t("networkById.networkSettings")}
 			</div>
-			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base 2xl-:grid 2xl-:space-y-3 2xl:flex 2xl:space-y-0">
 				{/* Ipv4 assignment  */}
-				<div className="w-6/6 xl:w-3/6">
+				<div className="w-6/6 2xl-:w-full 2xl:w-3/6">
 					<NetworkIpAssignment />
 				</div>
 
-				<div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex" />
+				<div className="divider col-start-2 hidden lg:divider-horizontal 2xl-:hidden 2xl:inline-flex" />
 
 				{/* Manged routes section */}
-				<div className="w-6/6 xl:w-3/6 ">
+				<div className="w-6/6 2xl-:w-full 2xl:w-3/6 ">
 					<NetworkRoutes central={false} />
 				</div>
 			</div>
-			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base 2xl-:grid 2xl-:space-y-3 2xl:flex 2xl:space-y-0">
 				{/* Ipv4 assignment  */}
-				<div className="w-6/6 xl:w-3/6">
+				<div className="w-6/6 2xl-:w-full 2xl:w-3/6">
 					<NetworkDns />
 				</div>
 
-				<div className="divider col-start-2 hidden lg:divider-horizontal xl:inline-flex" />
+				<div className="divider col-start-2 hidden lg:divider-horizontal 2xl-:hidden 2xl:inline-flex" />
 
 				{/* Manged broadcast section */}
-				<div className="w-6/6 xl:w-3/6">
+				<div className="w-6/6 2xl-:w-full 2xl:w-3/6">
 					<NetworkMulticast />
 				</div>
 			</div>
@@ -309,7 +309,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 					</div>
 				)}
 			</div>
-			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base xl:flex xl:space-y-0">
+			<div className="mx-auto grid grid-cols-1 space-y-3 px-4 py-4 text-sm sm:px-10 md:text-base 2xl-:grid 2xl-:space-y-3 2xl:flex 2xl:space-y-0">
 				{/* Ipv4 assignment  */}
 				<div className="flex w-full flex-wrap space-x-0 space-y-5 xl:space-x-5 xl:space-y-0">
 					<InviteMemberByMail />

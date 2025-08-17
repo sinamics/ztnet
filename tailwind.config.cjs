@@ -6,6 +6,9 @@ const config = {
 			animation: {
 				fadeIn: "fadeIn 0.2s ease-in-out",
 			},
+			screens: {
+				'2xl-': {'max': '1400px'},
+			},
 		},
 	},
 	//@ts-ignore
