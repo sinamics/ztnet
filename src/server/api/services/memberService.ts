@@ -52,8 +52,15 @@ export const syncMemberPeersAndStatus = async (
 				peers: peers || {},
 			} as MemberEntity;
 
-			// ISSUE #719: Preserve stored member name if controller provides no (or empty) name.
-			if (dbName && !updatedMember.name) {
+			// ISSUE #719: Smart name preservation - use database name if available, fallback to controller name
+			if (dbName?.trim()) {
+				// Database has a name - use it (preserves user customizations)
+				updatedMember.name = dbName;
+			} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+				// Database has no name but controller does - use controller name
+				updatedMember.name = ztMember.name;
+			} else if (dbName && !updatedMember.name) {
+				// Fallback: preserve any database name if controller provides empty
 				updatedMember.name = dbName;
 			}
 
@@ -80,6 +87,11 @@ export const syncMemberPeersAndStatus = async (
 			// update physicalAddress if the member is connected
 			if (memberIsOnline && updatedMember?.physicalAddress) {
 				updateData.physicalAddress = updatedMember.physicalAddress;
+			}
+
+			// ISSUE #719: Persist resolved name to database to ensure consistency
+			if (updatedMember.name !== dbMember?.name) {
+				updateData.name = updatedMember.name;
 			}
 
 			// Update the member in the database

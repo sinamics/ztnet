@@ -5,13 +5,13 @@ import { describe, test, expect } from "@jest/globals";
  *
  * GitHub Issue: https://github.com/sinamics/ztnet/issues/719
  *
- * PROBLEM: After updating the ztnet container, all custom peer names were reset
- * because the controller data would overwrite stored names with empty values.
+ * PROBLEM: After updating the ztnet container, peer names disappeared from UI
+ * because names stored only in controller were ignored when database was prioritized.
  *
  */
 describe("Issue #719 - Name Preservation Logic", () => {
 	test("should preserve database name when controller provides empty name", () => {
-		// Simulate the exact logic from memberService.ts lines 43-57
+		// Simulate the exact logic from memberService.ts lines 43-66
 
 		// Mock database member with stored name (what we get from DB)
 		const dbMember = {
@@ -45,8 +45,15 @@ describe("Issue #719 - Name Preservation Logic", () => {
 			peers: {},
 		};
 
-		// Apply the fix: Preserve stored member name if controller provides no (or empty) name
-		if (dbName && !updatedMember.name) {
+		// Apply the enhanced fix: Smart name preservation
+		if (dbName?.trim()) {
+			// Database has a name - use it (preserves user customizations)
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			// Database has no name but controller does - use controller name
+			updatedMember.name = ztMember.name;
+		} else if (dbName && !updatedMember.name) {
+			// Fallback: preserve any database name if controller provides empty
 			updatedMember.name = dbName;
 		}
 
@@ -56,17 +63,17 @@ describe("Issue #719 - Name Preservation Logic", () => {
 		expect(updatedMember.authorized).toBe(true);
 	});
 
-	test("should keep controller name when controller provides valid name", () => {
-		// Mock database member
+	test("should prioritize database name over controller name", () => {
+		// Mock database member with existing name
 		const dbMember = {
-			name: "Old Device Name",
+			name: "Database Device Name",
 			authorized: true,
 			physicalAddress: "192.168.1.100",
 		};
 
-		// Mock controller member with valid name
+		// Mock controller member with different name
 		const ztMember = {
-			name: "New Controller Name", // Controller provides valid name
+			name: "Controller Name", // Controller provides different name
 			authorized: true,
 		};
 
@@ -80,13 +87,21 @@ describe("Issue #719 - Name Preservation Logic", () => {
 			physicalAddress: physicalAddress,
 		};
 
-		// Apply the fix
-		if (dbName && !updatedMember.name) {
+		// Apply the smart name resolution logic
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		} else if (dbName && !updatedMember.name) {
 			updatedMember.name = dbName;
 		}
 
-		// Controller name should be preserved since it's valid
-		expect(updatedMember.name).toBe("New Controller Name");
+		// Database name should take precedence
+		expect(updatedMember.name).toBe("Database Device Name");
+
+		// Should not persist since name unchanged
+		const shouldPersistName = updatedMember.name !== dbMember?.name;
+		expect(shouldPersistName).toBe(false);
 	});
 
 	test("should handle null database name gracefully", () => {
@@ -219,28 +234,26 @@ describe("Issue #719 - Name Preservation Logic", () => {
 	});
 
 	test("should demonstrate the original bug scenario", () => {
-		// This test shows what would happen WITHOUT the fix
-
 		// Database has important name
 		const dbMember = {
 			name: "Critical Production Server",
 		};
 
-		// Controller overwrites with empty name (the bug)
+		// Controller overwrites with empty name
 		const ztMember = {
-			name: "", // BUG: Controller loses the name
+			name: "",
 		};
 
 		// Without the fix, this would lose the name:
 		const updatedMemberWithoutFix = {
 			...dbMember,
-			...ztMember, // Overwrites name with empty string
+			...ztMember,
 		};
 
 		// Demonstrate the bug
-		expect(updatedMemberWithoutFix.name).toBe(""); // Name is lost!
+		expect(updatedMemberWithoutFix.name).toBe("");
 
-		// Now demonstrate the fix:
+		// With the fix:
 		const { ...restOfDbMembers } = dbMember;
 		const dbName = restOfDbMembers?.name;
 
@@ -255,6 +268,137 @@ describe("Issue #719 - Name Preservation Logic", () => {
 		}
 
 		// Verify the fix works
-		expect(updatedMemberWithFix.name).toBe("Critical Production Server"); // Name is preserved!
+		expect(updatedMemberWithFix.name).toBe("Critical Production Server");
+	});
+
+	test("should use controller name when database has no name and persist to database", () => {
+		// Database has no name, but controller has one
+		const dbMember = {
+			id: "test-member-id",
+			name: null, // Database has no name
+			authorized: true,
+			physicalAddress: "192.168.1.100",
+		};
+
+		const ztMember = {
+			id: "test-member-id",
+			name: "ZeroTier Client Name",
+			authorized: true,
+		};
+
+		// Simulate the logic
+		const { physicalAddress, ...restOfDbMembers } = dbMember || {};
+		const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
+		const updatedMember = {
+			...restOfDbMembers,
+			...ztMember,
+			physicalAddress: physicalAddress,
+		};
+
+		// Apply the smart name resolution logic
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		} else if (dbName && !updatedMember.name) {
+			updatedMember.name = dbName;
+		}
+
+		// Should use controller name since database has none
+		expect(updatedMember.name).toBe("ZeroTier Client Name");
+
+		// Should persist to database since name changed
+		const shouldPersistName = updatedMember.name !== dbMember?.name;
+		expect(shouldPersistName).toBe(true);
+	});
+
+	test("should handle whitespace-only names correctly", () => {
+		const dbMember = { name: "   ", authorized: true };
+		const ztMember = { name: "Valid Controller Name", authorized: true };
+
+		const { ...restOfDbMembers } = dbMember || {};
+		const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
+		const updatedMember = { ...restOfDbMembers, ...ztMember };
+
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		} else if (dbName && !updatedMember.name) {
+			updatedMember.name = dbName;
+		}
+
+		// Should use controller name since database name is just whitespace
+		expect(updatedMember.name).toBe("Valid Controller Name");
+	});
+
+	test("should handle both names empty gracefully", () => {
+		const dbMember = { name: null, authorized: true };
+		const ztMember = { name: "", authorized: true };
+
+		const { ...restOfDbMembers } = dbMember || {};
+		const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
+		const updatedMember = { ...restOfDbMembers, ...ztMember };
+
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		} else if (dbName && !updatedMember.name) {
+			updatedMember.name = dbName;
+		}
+
+		// Should result in empty name when both sources are empty
+		expect(updatedMember.name).toBe("");
+	});
+
+	test("should persist controller name to database when database is empty", () => {
+		// Test database persistence scenario
+		const dbMember = { id: "test-id", name: null, authorized: true };
+		const ztMember = { id: "test-id", name: "Controller Device", authorized: true };
+
+		const { ...restOfDbMembers } = dbMember || {};
+		const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
+		const updatedMember = { ...restOfDbMembers, ...ztMember };
+
+		// Apply name resolution
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		}
+
+		// Verify name is resolved
+		expect(updatedMember.name).toBe("Controller Device");
+
+		// Verify it should be persisted to database (name changed)
+		const shouldPersist = updatedMember.name !== dbMember?.name;
+		expect(shouldPersist).toBe(true);
+	});
+
+	test("should not persist when names are identical", () => {
+		const dbMember = { name: "Same Name", authorized: true };
+		const ztMember = { name: "Same Name", authorized: true };
+
+		const { ...restOfDbMembers } = dbMember || {};
+		const dbName = (restOfDbMembers as { name?: string } | undefined)?.name;
+
+		const updatedMember = { ...restOfDbMembers, ...ztMember };
+
+		if (dbName?.trim()) {
+			updatedMember.name = dbName;
+		} else if (!dbName && ztMember.name && ztMember.name.trim()) {
+			updatedMember.name = ztMember.name;
+		}
+
+		expect(updatedMember.name).toBe("Same Name");
+
+		// Should NOT persist since names are identical
+		const shouldPersist = updatedMember.name !== dbMember?.name;
+		expect(shouldPersist).toBe(false);
 	});
 });
