@@ -146,7 +146,10 @@ export const NetworkRoutesTable = React.memo(
 
 		return (
 			<div className="overflow-x-auto">
-				<table role="routesTable" className="table-auto w-full min-w-[600px] border-collapse">
+				<table
+					role="routesTable"
+					className="table-auto w-full min-w-[600px] border-collapse"
+				>
 					<TableHeader headerGroups={headerGroups} />
 					<TableBody rows={rows} />
 				</table>
