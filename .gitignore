@@ -41,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 zeronsd.sh*
+
+# Claude
+CLAUDE.md
+settings.local.json
