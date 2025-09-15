@@ -101,6 +101,7 @@ print_ztnet
    ###    ##     ## ##     ## #### ##     ## ########  ######## ########  ######  
 
 INSTALLER_LAST_UPDATED=""
+ZEROTIER_VERSION="1.14.2"
 APT_PROGRAMS=("git" "curl" "jq" "postgresql" "postgresql-contrib")
 HOST_OS=$(( lsb_release -ds || cat /etc/*release || uname -om ) 2>/dev/null | head -n1)
 INSTALL_NODE=false
@@ -652,7 +653,7 @@ printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
 printf "This script will perform the following actions:\n"
 printf "  1. Install PostgreSQL if it's not already present.\n"
 printf "  2. Ensure Node.js version ${NODE_MAJOR} is installed.\n"
-printf "  3. Install Zerotier if it's missing.\n"
+printf "  3. Install Zerotier $ZEROTIER_VERSION if it's missing.\n"
 printf "  4. Clone the ZTnet repository into the /tmp folder and build artifacts from the latest tag.\n"
 printf "  5. Transfer the artifacts to the ${YELLOW}${TARGET_DIR}${NC} directory.\n\n"
 
@@ -922,9 +923,9 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 ######## ######## ##     ##  #######     ##    #### ######## ##     ## 
 
 setup_zerotier(){
-  # Install ZeroTier version 1.14.2
+  # Install ZeroTier version
   if ! command_exists zerotier-cli; then
-      print_status "Installing ZeroTier version 1.14.2..."
+      print_status "Installing ZeroTier version $ZEROTIER_VERSION..."
       
       # Detect distribution codename
       if command_exists lsb_release; then
@@ -939,19 +940,19 @@ setup_zerotier(){
       # Determine architecture for package name
       case "$ARCH" in
           "amd64")
-              ZT_PACKAGE="zerotier-one_1.14.2_amd64.deb"
+              ZT_PACKAGE="zerotier-one_${ZEROTIER_VERSION}_amd64.deb"
               ;;
           "arm64")
-              ZT_PACKAGE="zerotier-one_1.14.2_arm64.deb"
+              ZT_PACKAGE="zerotier-one_${ZEROTIER_VERSION}_arm64.deb"
               ;;
           *)
-              print_status ">>> Unsupported architecture for ZeroTier 1.14.2: $ARCH"
+              print_status ">>> Unsupported architecture for ZeroTier $ZEROTIER_VERSION: $ARCH"
               exit 1
               ;;
       esac
       
       # Download and install specific version from correct URL
-      $STD curl -o "$TEMP_INSTALL_DIR/$ZT_PACKAGE" "https://download.zerotier.com/RELEASES/1.14.2/dist/debian/$DISTRO_CODENAME/$ZT_PACKAGE"
+      $STD curl -o "$TEMP_INSTALL_DIR/$ZT_PACKAGE" "https://download.zerotier.com/RELEASES/$ZEROTIER_VERSION/dist/debian/$DISTRO_CODENAME/$ZT_PACKAGE"
       $STD sudo dpkg -i "$TEMP_INSTALL_DIR/$ZT_PACKAGE"
       $STD sudo apt-get install -f -y  # Fix any dependency issues
       
