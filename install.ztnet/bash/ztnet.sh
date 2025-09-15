@@ -922,15 +922,76 @@ export NODE_OPTIONS=--dns-result-order=ipv4first
 ######## ######## ##     ##  #######     ##    #### ######## ##     ## 
 
 setup_zerotier(){
-  # Install ZeroTier
+  # Install ZeroTier version 1.14.2
   if ! command_exists zerotier-cli; then
-      print_status "Installing ZeroTier..."
-      # curl https://install.zerotier.com | sudo bash
-      # Download the script
-      $STD curl https://install.zerotier.com -o $TEMP_INSTALL_DIR/zerotier.sh
-
-      # Execute the script if it's safe
-      $STD sudo bash $TEMP_INSTALL_DIR/zerotier.sh
+      print_status "Installing ZeroTier version 1.14.2..."
+      
+      # Detect distribution codename
+      if command_exists lsb_release; then
+          DISTRO_CODENAME=$(lsb_release -cs)
+      elif [ -f /etc/os-release ]; then
+          DISTRO_CODENAME=$(grep VERSION_CODENAME /etc/os-release | cut -d= -f2 | tr -d '"')
+      else
+          # Default fallback
+          DISTRO_CODENAME="bullseye"
+      fi
+      
+      # Determine architecture for package name
+      case "$ARCH" in
+          "amd64")
+              ZT_PACKAGE="zerotier-one_1.14.2_amd64.deb"
+              ;;
+          "arm64")
+              ZT_PACKAGE="zerotier-one_1.14.2_arm64.deb"
+              ;;
+          *)
+              print_status ">>> Unsupported architecture for ZeroTier 1.14.2: $ARCH"
+              exit 1
+              ;;
+      esac
+      
+      # Download and install specific version from correct URL
+      $STD curl -o "$TEMP_INSTALL_DIR/$ZT_PACKAGE" "https://download.zerotier.com/RELEASES/1.14.2/dist/debian/$DISTRO_CODENAME/$ZT_PACKAGE"
+      $STD sudo dpkg -i "$TEMP_INSTALL_DIR/$ZT_PACKAGE"
+      $STD sudo apt-get install -f -y  # Fix any dependency issues
+      
+      print_status "Configuring ZeroTier service..."
+      
+      # Service management logic from official ZeroTier installer
+      if [ -e /usr/bin/systemctl -o -e /usr/sbin/systemctl -o -e /sbin/systemctl -o -e /bin/systemctl ]; then
+          if [[ -d /run/systemd/system ]]; then
+              $STD sudo systemctl enable zerotier-one
+              $STD sudo systemctl start zerotier-one
+              if [ "$?" != "0" ]; then
+                  print_status "Package installed but cannot start service! You may be in a Docker container or using a non-standard init service."
+                  exit 1
+              fi
+          else
+              print_status "Package installed but cannot start service! You may be in a Docker container or using a non-standard init service."
+              exit 0
+          fi
+      else
+          if [ -e /sbin/update-rc.d -o -e /usr/sbin/update-rc.d -o -e /bin/update-rc.d -o -e /usr/bin/update-rc.d ]; then
+              $STD sudo update-rc.d zerotier-one defaults
+          else
+              $STD sudo chkconfig zerotier-one on
+          fi
+          $STD sudo /etc/init.d/zerotier-one start
+      fi
+      
+      print_status "Waiting for ZeroTier identity generation..."
+      
+      # Wait for identity generation
+      while [ ! -f /var/lib/zerotier-one/identity.secret ]; do
+          sleep 1
+      done
+      
+      # Display ZeroTier address
+      if [ -f /var/lib/zerotier-one/identity.public ]; then
+          ZT_ADDRESS=$(cat /var/lib/zerotier-one/identity.public | cut -d: -f1)
+          print_status "ZeroTier installed successfully! Address: $ZT_ADDRESS"
+      fi
+      
   else
       print_status "ZeroTier is already installed."
   fi
