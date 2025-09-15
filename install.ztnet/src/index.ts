@@ -4,6 +4,7 @@ import http from 'http';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { getBashInstaller } from './routes/getBashInstaller';
+import { getBetaInstaller } from './routes/getBetaInstaller';
 import path from 'path';
 import { postError } from './routes/postError';
 import { getHealth } from './routes/health';
@@ -41,6 +42,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/health', getHealthLimiter, getHealth);
+app.get('/beta', getRateLimiter, getBetaInstaller);
 app.get('(/)?', getRateLimiter, getBashInstaller);
 app.post('/post/error', errorRateLimiter, postError);
 app.get('*', (_, res) => res.download(path.join(__dirname, '..', 'bash/error.sh'), 'error.sh'));
