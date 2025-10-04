@@ -12,7 +12,7 @@ export class APIError extends Error {
 			this.name = "APIError";
 			this.status = axiosError.response?.status;
 			this.statusText = axiosError.response?.statusText;
-			this.cause = axiosError.cause;
+			this.cause = axiosError.cause as Error | undefined;
 		}
 	}
 }
