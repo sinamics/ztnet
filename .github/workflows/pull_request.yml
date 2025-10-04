@@ -3,8 +3,8 @@ name: On pull request
 on: pull_request
 
 jobs:
-  web_lint_test:
-    name: Web - Lint - Format - Test
+  web_lint_test_build:
+    name: Web - Lint - Format - Test - Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,28 +33,6 @@ jobs:
         
       - name: Test
         run: npm run test
-
-  test_build:
-    name: Test Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref }}
-
-      - uses: actions/setup-node@master
-        with:
-          node-version: 18.x
-
-      - name: Write local env file
-        run: |
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
-          echo "NEXTAUTH_SECRET=dummy_key" >> .env
-          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
-          echo "NEXT_PUBLIC_APP_VERSION=test" >> .env
-          echo "IS_GITHUB_ACTION=true" >> .env
-
-      - run: npm install
 
       - name: Build
         run: npm run build
