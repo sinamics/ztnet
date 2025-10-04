@@ -273,7 +273,7 @@
 			"privateCardTitle": "Private",
 			"privateCardContent": "Each user needs to be authorized by the network administrator.",
 			"publicCardTitle": "Public",
-			"publicCardContent": "All users can connect to this network without Autorization",
+			"publicCardContent": "All users can connect to this network without authorization",
 			"loading": "Loading"
 		},
 		"networkIpAssignments": {
