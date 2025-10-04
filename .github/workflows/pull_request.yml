@@ -42,27 +42,19 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - id: lowercaseRepo
-        uses: ASzc/change-string-case-action@v5
+      - uses: actions/setup-node@master
         with:
-          string: ${{ github.repository }}
+          node-version: 18.x
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Write local env file
+        run: |
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres?schema=public" >> .env
+          echo "NEXTAUTH_SECRET=dummy_key" >> .env
+          echo "NEXTAUTH_URL=http://localhost:3000" >> .env
+          echo "NEXT_PUBLIC_APP_VERSION=test" >> .env
+          echo "IS_GITHUB_ACTION=true" >> .env
 
-      - name: Create short sha
-        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - run: npm install
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: false
-          build-args: |
-            "NEXT_PUBLIC_APP_VERSION=test"
-          tags: |
-            sinamics/ztnet:latest-dev
+      - name: Build
+        run: npm run build
