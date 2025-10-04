@@ -382,6 +382,11 @@ export const organizationRouter = createTRPCRouter({
 			// Get authorized member and total member counts for each network
 			for (const network of organization.networks) {
 				for (const member of network.networkMembers) {
+					// Skip deleted or permanently deleted members
+					if (member.deleted || member.permanentlyDeleted) {
+						continue;
+					}
+
 					try {
 						const memberDetails = await ztController.member_details(
 							ctx,
