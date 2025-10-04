@@ -86,11 +86,17 @@ export const networkRouter = createTRPCRouter({
 
 			// Process all networks and calculate member counts
 			const networks: NetworkWithMemberCount[] = rawNetworks.map((network) => {
-				// Count authorized members directly from database
+				// Only count truly active members (not deleted and not permanently deleted)
+				const activeMembersFilter = (m: network_members) =>
+					!m.deleted && !m.permanentlyDeleted;
+
+				// Count authorized active members
 				const authorizedCount = network.networkMembers.filter(
-					(m) => m.authorized && !m.deleted,
+					(m) => m.authorized && activeMembersFilter(m),
 				).length;
-				const totalCount = network.networkMembers.filter((m) => !m.deleted).length;
+
+				// Count total active members
+				const totalCount = network.networkMembers.filter(activeMembersFilter).length;
 
 				return {
 					...network,
