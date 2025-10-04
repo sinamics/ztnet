@@ -32,7 +32,7 @@ zerotier-one -d
 ### Build Prisma Binary
 ```bash
 git clone https://github.com/prisma/prisma-engines.git
-cd prisma-engines && git checkout 5.16.0
+cd prisma-engines && git checkout 6.16.3
 
 # Build all workspace binaries
 cargo build --release
