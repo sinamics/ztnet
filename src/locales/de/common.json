@@ -1219,5 +1219,13 @@
 				"events": "Ereignisse"
 			}
 		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Seite nicht gefunden",
+			"description": "Hoppla! Die Seite, die Sie suchen, existiert nicht. Sie wurde möglicherweise verschoben oder gelöscht.",
+			"goHome": "Zur Startseite"
+		}
 	}
 }
