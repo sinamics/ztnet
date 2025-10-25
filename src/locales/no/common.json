@@ -1219,5 +1219,13 @@
 				"events": "Hendelser"
 			}
 		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Siden ble ikke funnet",
+			"description": "Oops! Siden du leter etter eksisterer ikke. Den kan ha blitt flyttet eller slettet.",
+			"goHome": "Gå til hjem"
+		}
 	}
 }
