@@ -124,7 +124,22 @@ const config = {
       },
     ]
   ],
-  themes: ["docusaurus-theme-openapi-docs"], // export theme components
+  themes: [
+    "docusaurus-theme-openapi-docs", // export theme components
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        language: ["en"],
+        highlightSearchTermsOnTargetPage: true,
+        indexBlog: false,
+        indexDocs: true,
+        indexPages: true,
+        docsRouteBasePath: "/",
+        removeDefaultStopWordFilter: true,
+      }
+    ]
+  ],
   presets: [
     [
 
