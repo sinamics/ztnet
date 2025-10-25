@@ -31,7 +31,7 @@ DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ztnet?schema=public
 NEXTAUTH_URL=http://your_server_ip:3000
 ```
 
-## Available Environment options
+## Available Environment options {#environment-variables}
 
 Configure the application using the following environment variables:
 ### ZTNET Configuration
