@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Gültige SSL/TLS-Zertifikate erzwingen. Bei Verwendung selbstsignierter Zertifikate deaktivieren.",
 			"senderEmail": "Absender-E-Mail",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "Absendername",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Benutzername",
 			"password": "Passwort",
 			"useSSL": "TLS verwenden",
