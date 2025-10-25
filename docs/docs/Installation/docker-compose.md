@@ -36,9 +36,9 @@ sudo sh get-docker.sh
 
 :::warning IMPORTANT
 
-Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of your site.  
+Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of your site.
 **Example:**
-- If your server's IP address is 123.456.78.90, set NEXTAUTH_URL to http://123.456.78.90:3000.
+- If your server's IP address is 192.168.1.100, set NEXTAUTH_URL to `http://192.168.1.100:3000`.
 - If you have a domain name, use it in place of the IP address.
 :::
 

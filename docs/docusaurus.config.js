@@ -1,9 +1,9 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-// const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-const darkCodeTheme = require("prism-react-renderer/themes/oceanicNext");
+const {themes} = require('prism-react-renderer');
+const lightCodeTheme = themes.github;
+const darkCodeTheme = themes.oceanicNext;
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -24,8 +24,20 @@ const config = {
   projectName: 'ztnet', // Usually your repo name.
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   deploymentBranch: 'main',
+  markdown: {
+    format: 'mdx',
+    mermaid: false,
+    preprocessor: undefined,
+    mdx1Compat: {
+      comments: true,
+      admonitions: true,
+      headingIds: true,
+    },
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
@@ -47,6 +59,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           // Personal Controller
           personal_user: {
@@ -55,6 +68,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           personal_network: { // the <id> for network
             specPath: "docs/Rest Api/Personal/_source/network.yml", // path to OpenAPI spec, URLs supported
@@ -62,6 +76,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           personal_network_member: { // the <id> for network
             specPath: "docs/Rest Api/Personal/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
@@ -69,6 +84,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
 
           // Organization Controller
@@ -78,6 +94,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_users: {
             specPath: "docs/Rest Api/Organization/_source/users.yml", // path to OpenAPI spec, URLs supported
@@ -85,6 +102,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_network: {
             specPath: "docs/Rest Api/Organization/_source/network.yml", // path to OpenAPI spec, URLs supported
@@ -92,6 +110,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_network_member: {
             specPath: "docs/Rest Api/Organization/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
@@ -99,6 +118,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
         }
       },
@@ -112,7 +132,6 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          docLayoutComponent: "@theme/DocPage",
           docItemComponent: "@theme/ApiItem",
           routeBasePath: '/', // Set this value to '/'.
           sidebarPath: require.resolve('./sidebars.js'),
@@ -120,7 +139,7 @@ const config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             'https://github.com/sinamics/ztnet',
-            
+
         },
         gtag: {
           trackingID: 'G-K5FT4B5HF2',
