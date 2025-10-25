@@ -119,6 +119,22 @@ const Mail = () => {
 
 				<EditableField
 					isLoading={false}
+					label={t("mail.senderName")}
+					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
+					size="sm"
+					fields={[
+						{
+							name: "smtpFromName",
+							type: "text",
+							placeholder: options?.smtpFromName || t("mail.senderNamePlaceholder"),
+							value: options?.smtpFromName,
+						},
+					]}
+					submitHandler={(params) => inputHandler(params)}
+				/>
+
+				<EditableField
+					isLoading={false}
 					label={t("mail.username")}
 					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"

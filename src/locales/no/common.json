@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Krev gyldige SSL/TLS-sertifikater. Deaktiver kun ved bruk av selvsignerte sertifikater.",
 			"senderEmail": "Avsenders e-post",
 			"mailPlaceholder": "post@eksempel.com",
+			"senderName": "Avsenders navn",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Brukernavn",
 			"password": "Passord",
 			"useSSL": "Bruk SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "Siste Levering",
 				"events": "Hendelser"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Siden ble ikke funnet",
+			"description": "Oops! Siden du leter etter eksisterer ikke. Den kan ha blitt flyttet eller slettet.",
+			"goHome": "Gå til hjem"
 		}
 	}
 }

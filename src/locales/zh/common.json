@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "强制要求有效的SSL/TLS证书。仅在使用自签名证书时禁用。",
 			"senderEmail": "发件人电子邮件",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "发件人名称",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "用户名",
 			"password": "密码",
 			"useSSL": "使用SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "最后交付",
 				"events": "事件"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "页面未找到",
+			"description": "糟糕！您要查找的页面不存在。它可能已被移动或删除。",
+			"goHome": "返回主页"
 		}
 	}
 }

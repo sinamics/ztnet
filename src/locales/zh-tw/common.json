@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "強制要求有效的SSL/TLS憑證。僅在使用自行簽署憑證時停用。",
 			"senderEmail": "寄件人電子郵件",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "寄件人名稱",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "使用者名稱",
 			"password": "密碼",
 			"useSSL": "使用SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "最後送達",
 				"events": "事件"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "找不到頁面",
+			"description": "糟糕！您要查找的頁面不存在。它可能已被移動或刪除。",
+			"goHome": "返回首頁"
 		}
 	}
 }

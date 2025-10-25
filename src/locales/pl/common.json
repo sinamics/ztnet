@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Wymagaj ważnych certyfikatów SSL/TLS. Wyłącz tylko w przypadku certyfikatów samopodpisanych.",
 			"senderEmail": "E-mail nadawcy",
 			"mailPlaceholder": "imie@twojadomena.pl",
+			"senderName": "Nazwa nadawcy",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Nazwa użytkownika",
 			"password": "Hasło",
 			"useSSL": "Użyj SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "Ostatnie dostarczenie danych",
 				"events": "Wydarzenia"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Strona nie została znaleziona",
+			"description": "Ups! Strona, której szukasz, nie istnieje. Mogła zostać przeniesiona lub usunięta.",
+			"goHome": "Powrót do strony głównej"
 		}
 	}
 }

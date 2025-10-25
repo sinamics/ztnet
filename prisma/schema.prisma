@@ -31,6 +31,7 @@ model GlobalOptions {
   smtpHost                           String?
   smtpPort                           String  @default("587")
   smtpEmail                          String?
+  smtpFromName                       String? @default("ZTNET")
   smtpUsername                       String?
   smtpPassword                       String?
   smtpUseSSL                         Boolean @default(false)

@@ -1,7 +1,7 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: ZTNet User Rest API
-  # version: 1.0.0
+  version: 1.0.0
   description: |
       Access the ZTNet suite through our RESTful Web API.
 
@@ -10,21 +10,21 @@ info:
 servers:
   - url: https://ztnet.network/api/v1
     description: ZTNet API
-    variables:
-      version:
-        default: v1
-        description: API version
 tags:
   - name: user
     description: Users API
     x-displayName: Users API
         
 components:
-  $ref: '../../_schema/security.yml#/components'
+  securitySchemes:
+    x-ztnet-auth:
+      type: apiKey
+      in: header
+      name: x-ztnet-auth
+      description: API key required for access
 
 security:
   - x-ztnet-auth: []
-
 paths:
   /user:
     post:
@@ -72,14 +72,7 @@ paths:
               name: "Ztnet User"
               expiresAt: "2023-11-03T00:00:00.000Z"
               generateApiToken: true
-      # parameters:
-      #   - name: x-ztnet-auth
-      #     in: header
-      #     required: true
-      #     schema:
-      #       type: string
-      #     description: API key required if any users have been created.
-          
+
       responses:
         200:
           description: User successfully created

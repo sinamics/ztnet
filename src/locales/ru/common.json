@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Требовать действительные SSL/TLS сертификаты. Отключите только при использовании самоподписанных сертификатов.",
 			"senderEmail": "Email отправителя",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "Имя отправителя",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Имя пользователя",
 			"password": "Пароль",
 			"useSSL": "Использовать SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "Последняя доставка",
 				"events": "События"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Страница не найдена",
+			"description": "Упс! Страница, которую вы ищете, не существует. Возможно, она была перемещена или удалена.",
+			"goHome": "Вернуться на главную"
 		}
 	}
 }

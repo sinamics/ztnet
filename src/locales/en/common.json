@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Enforce valid SSL/TLS certificates. Disable only if using self-signed certificates.",
 			"senderEmail": "Sender Email",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "Sender Name",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Username",
 			"password": "Password",
 			"useSSL": "Use SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "Last Delivery",
 				"events": "Events"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Page Not Found",
+			"description": "Oops! The page you're looking for doesn't exist. It might have been moved or deleted.",
+			"goHome": "Go Home"
 		}
 	}
 }

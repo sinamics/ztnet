@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Exigir certificados SSL/TLS válidos. Desactivar solo si usa certificados autofirmados.",
 			"senderEmail": "Correo electrónico del remitente",
 			"mailPlaceholder": "correo@ejemplo.com",
+			"senderName": "Nombre del remitente",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Nombre de usuario",
 			"password": "Contraseña",
 			"useSSL": "Usar SSL",
@@ -1216,6 +1218,14 @@
 				"lastDelivery": "Última Entrega",
 				"events": "Eventos"
 			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Página no encontrada",
+			"description": "¡Ups! La página que buscas no existe. Puede que haya sido movida o eliminada.",
+			"goHome": "Volver al inicio"
 		}
 	}
 }
