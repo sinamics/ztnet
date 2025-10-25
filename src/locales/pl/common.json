@@ -1219,5 +1219,13 @@
 				"events": "Wydarzenia"
 			}
 		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Strona nie została znaleziona",
+			"description": "Ups! Strona, której szukasz, nie istnieje. Mogła zostać przeniesiona lub usunięta.",
+			"goHome": "Powrót do strony głównej"
+		}
 	}
 }

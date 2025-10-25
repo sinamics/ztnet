@@ -1219,5 +1219,13 @@
 				"events": "Events"
 			}
 		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Page Not Found",
+			"description": "Oops! The page you're looking for doesn't exist. It might have been moved or deleted.",
+			"goHome": "Go Home"
+		}
 	}
 }

@@ -1219,5 +1219,13 @@
 				"events": "Eventos"
 			}
 		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Página no encontrada",
+			"description": "¡Ups! La página que buscas no existe. Puede que haya sido movida o eliminada.",
+			"goHome": "Volver al inicio"
+		}
 	}
 }
