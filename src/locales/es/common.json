@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Exigir certificados SSL/TLS válidos. Desactivar solo si usa certificados autofirmados.",
 			"senderEmail": "Correo electrónico del remitente",
 			"mailPlaceholder": "correo@ejemplo.com",
+			"senderName": "Nombre del remitente",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Nombre de usuario",
 			"password": "Contraseña",
 			"useSSL": "Usar SSL",

@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Enforce valid SSL/TLS certificates. Disable only if using self-signed certificates.",
 			"senderEmail": "Sender Email",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "Sender Name",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Username",
 			"password": "Password",
 			"useSSL": "Use SSL",

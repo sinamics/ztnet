@@ -516,6 +516,7 @@ export const adminRouter = createTRPCRouter({
 				smtpPort: z.string().optional(),
 				smtpSecure: z.boolean().optional(),
 				smtpEmail: z.string().optional(),
+				smtpFromName: z.string().optional(),
 				smtpPassword: z.string().optional(),
 				smtpUsername: z.string().optional(),
 				smtpUseSSL: z.boolean().optional(),
@@ -610,6 +611,7 @@ export const adminRouter = createTRPCRouter({
 				to: user.email,
 				userId: user.id,
 				templateData,
+				sendInBackground: false, // Wait for actual SMTP response for test emails
 			});
 
 			return { success: true, message: `Test email for ${type} sent successfully` };
