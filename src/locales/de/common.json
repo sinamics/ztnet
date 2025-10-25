@@ -132,7 +132,7 @@
 		"notification": "Benachrichtigung",
 		"controller": "ZT Controller",
 		"organization": "Organisation",
-		"backuprestore": "Sichern & Wiederherstellen",
+		"backuprestore": "Datensicherung",
 		"account": "Konto",
 		"user-settings": "Benutzereinstellungen",
 		"logout": "Abmelden"
