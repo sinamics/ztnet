@@ -158,8 +158,12 @@ export async function sendMailWithTemplate(
 
 	const parsedTemplate = parseRenderedTemplate(renderedTemplate);
 
+	const fromAddress = globalOptions.smtpFromName
+		? { name: globalOptions.smtpFromName, address: globalOptions.smtpEmail }
+		: globalOptions.smtpEmail;
+
 	const mailOptions = {
-		from: globalOptions.smtpEmail,
+		from: fromAddress,
 		to: options.to,
 		subject: parsedTemplate.subject,
 		html: parsedTemplate.body,

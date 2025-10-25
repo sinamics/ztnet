@@ -516,6 +516,7 @@ export const adminRouter = createTRPCRouter({
 				smtpPort: z.string().optional(),
 				smtpSecure: z.boolean().optional(),
 				smtpEmail: z.string().optional(),
+				smtpFromName: z.string().optional(),
 				smtpPassword: z.string().optional(),
 				smtpUsername: z.string().optional(),
 				smtpUseSSL: z.boolean().optional(),

@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Krev gyldige SSL/TLS-sertifikater. Deaktiver kun ved bruk av selvsignerte sertifikater.",
 			"senderEmail": "Avsenders e-post",
 			"mailPlaceholder": "post@eksempel.com",
+			"senderName": "Avsenders navn",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Brukernavn",
 			"password": "Passord",
 			"useSSL": "Bruk SSL",

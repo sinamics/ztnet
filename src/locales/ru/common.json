@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Требовать действительные SSL/TLS сертификаты. Отключите только при использовании самоподписанных сертификатов.",
 			"senderEmail": "Email отправителя",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "Имя отправителя",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Имя пользователя",
 			"password": "Пароль",
 			"useSSL": "Использовать SSL",

@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "强制要求有效的SSL/TLS证书。仅在使用自签名证书时禁用。",
 			"senderEmail": "发件人电子邮件",
 			"mailPlaceholder": "mail@example.com",
+			"senderName": "发件人名称",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "用户名",
 			"password": "密码",
 			"useSSL": "使用SSL",
