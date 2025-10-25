@@ -130,6 +130,7 @@ interface EmailOptions {
 	to: string;
 	templateData: Record<string, unknown>;
 	userId?: string;
+	sendInBackground?: boolean;
 }
 
 export async function sendMailWithTemplate(
@@ -169,14 +170,20 @@ export async function sendMailWithTemplate(
 		html: parsedTemplate.body,
 	};
 
-	// Run SMTP operation in background
-	setImmediate(async () => {
-		try {
-			await sendEmail(transporter, mailOptions);
-		} catch (error) {
-			console.error("Email sending failed:", error);
-		}
-	});
+	// For test emails or when explicit synchronous sending is requested, wait for the result
+	// For production emails (default), send in background to avoid blocking
+	if (options.sendInBackground === false) {
+		await sendEmail(transporter, mailOptions);
+	} else {
+		// Run SMTP operation in background
+		setImmediate(async () => {
+			try {
+				await sendEmail(transporter, mailOptions);
+			} catch (error) {
+				console.error("Email sending failed:", error);
+			}
+		});
+	}
 }
 
 /**
