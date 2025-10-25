@@ -132,8 +132,11 @@ const config = {
         hashed: true,
         language: ["en"],
         highlightSearchTermsOnTargetPage: true,
-        explicitSearchResultPath: true,
         indexBlog: false,
+        indexDocs: true,
+        indexPages: true,
+        docsRouteBasePath: "/",
+        removeDefaultStopWordFilter: true,
       }
     ]
   ],
