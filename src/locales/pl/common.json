@@ -509,6 +509,8 @@
 			"smtpRequireTLSDescription": "Wymagaj ważnych certyfikatów SSL/TLS. Wyłącz tylko w przypadku certyfikatów samopodpisanych.",
 			"senderEmail": "E-mail nadawcy",
 			"mailPlaceholder": "imie@twojadomena.pl",
+			"senderName": "Nazwa nadawcy",
+			"senderNamePlaceholder": "ZTNET",
 			"username": "Nazwa użytkownika",
 			"password": "Hasło",
 			"useSSL": "Użyj SSL",
