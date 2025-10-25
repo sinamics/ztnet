@@ -1,27 +1,27 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: ZTNet Statistics Rest API
-  # version: 1.0.0
+  version: 1.0.0
   description: |
-    Access the ZTNet Statistics API to get various statistics that can be used in 3rd party applications.  
+    Access the ZTNet Statistics API to get various statistics that can be used in 3rd party applications.
     Available from version v0.6.4.
-    
+
     This interface is subject to a rate limit of 50 requests per minute to ensure service reliability.
 
 servers:
   - url: https://ztnet.network/api/v1
     description: ZTNet API
-    variables:
-      version:
-        default: v1
-        description: API version
-        
+
 components:
-  $ref: '../../_schema/security.yml#/components'
+  securitySchemes:
+    x-ztnet-auth:
+      type: apiKey
+      in: header
+      name: x-ztnet-auth
+      description: API key required for access
 
 security:
   - x-ztnet-auth: []
-
 paths:
   /stats:
     get:
