@@ -1,4 +1,4 @@
-export const supportedLocales = ["en", "fr", "no", "zh", "pl", "zh-tw", "es", "ru"];
+export const supportedLocales = ["en", "fr", "no", "zh", "pl", "zh-tw", "es", "ru", "de"];
 export const languageNames = {
 	default: "System",
 	en: "English",
@@ -9,4 +9,5 @@ export const languageNames = {
 	"zh-tw": "Traditional Chinese",
 	es: "Spanish",
 	ru: "Русский",
+	de: "German",
 };
