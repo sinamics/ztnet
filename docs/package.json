@@ -17,6 +17,7 @@
   "dependencies": {
     "@docusaurus/core": "3.9.2",
     "@docusaurus/preset-classic": "3.9.2",
+    "@easyops-cn/docusaurus-search-local": "^0.52.1",
     "@mdx-js/react": "^3.1.0",
     "@stackql/docusaurus-plugin-structured-data": "^1.3.2",
     "clsx": "^2.1.1",
