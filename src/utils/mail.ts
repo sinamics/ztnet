@@ -170,8 +170,8 @@ export async function sendMailWithTemplate(
 		html: parsedTemplate.body,
 	};
 
-	// For test emails or when explicit synchronous sending is requested, wait for the result
-	// For production emails (default), send in background to avoid blocking
+	// If explicit synchronous sending is requested (sendInBackground === false), wait for the result
+	// Otherwise (default), send in background to avoid blocking
 	if (options.sendInBackground === false) {
 		await sendEmail(transporter, mailOptions);
 	} else {
