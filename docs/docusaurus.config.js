@@ -59,6 +59,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           // Personal Controller
           personal_user: {
@@ -67,6 +68,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           personal_network: { // the <id> for network
             specPath: "docs/Rest Api/Personal/_source/network.yml", // path to OpenAPI spec, URLs supported
@@ -74,6 +76,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           personal_network_member: { // the <id> for network
             specPath: "docs/Rest Api/Personal/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
@@ -81,6 +84,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
 
           // Organization Controller
@@ -90,6 +94,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_users: {
             specPath: "docs/Rest Api/Organization/_source/users.yml", // path to OpenAPI spec, URLs supported
@@ -97,6 +102,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_network: {
             specPath: "docs/Rest Api/Organization/_source/network.yml", // path to OpenAPI spec, URLs supported
@@ -104,6 +110,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
           organization_network_member: {
             specPath: "docs/Rest Api/Organization/_source/networkMember.yml", // path to OpenAPI spec, URLs supported
@@ -111,6 +118,7 @@ const config = {
             sidebarOptions: { // optional, instructs plugin to generate sidebar.js
               groupPathsBy: "tag", // group sidebar items by operation "tag"
             },
+            hideSendButton: true,
           },
         }
       },
