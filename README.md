@@ -95,6 +95,14 @@ View the following images for a visual overview of the ZTNet application:
 </summary>
 </details>
 
+<a href="https://star-history.com/#sinamics/ztnet&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date" />
+ </picture>
+</a>
+
 ## ⚠️ Disclaimer:
 
 Please note that ZTNet is currently in BETA. While this application aims to make managing ZeroTier networks easier, it is provided "as is" without any warranties or guarantees of any kind. As this is a beta release, you may encounter bugs or unexpected behavior. By using this application, you acknowledge and accept full responsibility for all actions and consequences resulting from its use.
@@ -103,3 +111,4 @@ Please note that ZTNet is currently in BETA. While this application aims to make
 This project utilizes the **mkworld** tool, written in Go, to generate the custom planet file. While the original mkworld tool was developed by ZeroTier, the version we are using was adapted and re-implemented in Go by Patrick Young (@kmahyyg). This Go adaptation is licensed under the GNU General Public License v3.0. We would like to express our appreciation to Patrick Young (@kmahyyg) for his efforts in creating this Go version, which has benefited our project.
 
 Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file. -->
+
