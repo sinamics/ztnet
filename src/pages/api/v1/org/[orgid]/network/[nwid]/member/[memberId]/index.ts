@@ -7,6 +7,11 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
+import {
+	splitUpdatePayload,
+	updateNetworkMemberInDatabase,
+	updateNetworkMemberInController,
+} from "~/utils/api/networkMemberHelpers";
 import { HandlerContextSchema, PostBodySchema } from "./_schema";
 
 // Number of allowed requests per minute
@@ -67,27 +72,10 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				authorized: { type: "boolean", destinations: ["controller"] },
 			};
 
-			const databasePayload: Partial<network_members> = {};
-			const controllerPayload: Partial<network_members> = {};
-
-			// Iterate over keys in the request body
-			for (const [key, value] of Object.entries(validatedBody)) {
-				// Check if the key is not in updateableFields
-				if (!(key in updateableFields)) {
-					return res.status(400).json({ error: `Invalid field: ${key}` });
-				}
-
-				try {
-					if (updateableFields[key].destinations.includes("database")) {
-						databasePayload[key] = value;
-					}
-					if (updateableFields[key].destinations.includes("controller")) {
-						controllerPayload[key] = value;
-					}
-				} catch (error) {
-					return res.status(400).json({ error: error.message });
-				}
-			}
+			const { databasePayload, controllerPayload } = splitUpdatePayload(
+				validatedBody,
+				updateableFields,
+			);
 
 			// assemble the context object
 			const ctx = {
@@ -123,47 +111,8 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 					.json({ error: "Member or Network not found or access denied." });
 			}
 
-			if (Object.keys(databasePayload).length > 0) {
-				// if users click the re-generate icon on IP address
-				await ctx.prisma.network.update({
-					where: {
-						nwid: networkId,
-					},
-					data: {
-						networkMembers: {
-							update: {
-								where: {
-									id_nwid: {
-										id: memberId,
-										nwid: networkId,
-									},
-								},
-								data: {
-									...databasePayload,
-								},
-							},
-						},
-					},
-					select: {
-						networkMembers: {
-							where: {
-								id: memberId,
-							},
-						},
-					},
-				});
-			}
-
-			if (Object.keys(controllerPayload).length > 0) {
-				await ztController.member_update({
-					// @ts-expect-error
-					ctx,
-					nwid: networkId,
-					memberId: memberId,
-					// @ts-expect-error
-					updateParams: controllerPayload,
-				});
-			}
+			await updateNetworkMemberInDatabase(ctx, networkId, memberId, databasePayload);
+			await updateNetworkMemberInController(ctx, networkId, memberId, controllerPayload);
 
 			// @ts-expect-error
 			const caller = appRouter.createCaller(ctx);

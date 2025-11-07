@@ -7,6 +7,11 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
 import {
+	splitUpdatePayload,
+	updateNetworkMemberInDatabase,
+	updateNetworkMemberInController,
+} from "~/utils/api/networkMemberHelpers";
+import {
 	deleteHandlerContextSchema,
 	handlerContextSchema,
 	updateableFieldsMetaSchema,
@@ -74,22 +79,10 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 			return res.status(400).json({ error: "No data provided for update" });
 		}
 
-		const databasePayload: Partial<network_members> = {};
-		const controllerPayload: Partial<network_members> = {};
-
-		// Iterate over keys in the request body
-		for (const [key, value] of Object.entries(validatedInput)) {
-			try {
-				if (updateableFields[key].destinations.includes("database")) {
-					databasePayload[key] = value;
-				}
-				if (updateableFields[key].destinations.includes("controller")) {
-					controllerPayload[key] = value;
-				}
-			} catch (error) {
-				return res.status(400).json({ error: error.message });
-			}
-		}
+		const { databasePayload, controllerPayload } = splitUpdatePayload(
+			validatedInput,
+			updateableFields,
+		);
 
 		try {
 			// make sure the member is valid
@@ -104,46 +97,11 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 
 			const dbMember = network?.networkMembers?.[0];
 
-			if (dbMember && Object.keys(databasePayload).length > 0) {
-				await ctx.prisma.network.update({
-					where: {
-						nwid: networkId,
-					},
-					data: {
-						networkMembers: {
-							update: {
-								where: {
-									id_nwid: {
-										id: memberId,
-										nwid: networkId,
-									},
-								},
-								data: {
-									...databasePayload,
-								},
-							},
-						},
-					},
-					select: {
-						networkMembers: {
-							where: {
-								id: memberId,
-							},
-						},
-					},
-				});
+			if (dbMember) {
+				await updateNetworkMemberInDatabase(ctx, networkId, memberId, databasePayload);
 			}
 
-			if (Object.keys(controllerPayload).length > 0) {
-				await ztController.member_update({
-					// @ts-expect-error
-					ctx,
-					nwid: networkId,
-					memberId: memberId,
-					// @ts-expect-error
-					updateParams: controllerPayload,
-				});
-			}
+			await updateNetworkMemberInController(ctx, networkId, memberId, controllerPayload);
 
 			// Fetch the latest data from both database and controller
 			const [updatedDbMember, controllerMember] = await Promise.all([
