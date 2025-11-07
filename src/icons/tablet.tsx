@@ -1,28 +1,14 @@
-interface Icon {
-	// add optional className prop
-	className?: string;
-	onClick?: () => void;
-}
+import { IconProps, IconWrapper } from "./iconWrapper";
 
-const Tablet = ({ className, onClick, ...rest }: Icon) => {
+const Tablet = ({ className, onClick, ...rest }: IconProps) => {
 	return (
-		<span onClick={onClick}>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				strokeWidth="1.5"
-				stroke="currentColor"
-				className={`h-4 w-4 cursor-pointer text-primary ${className}`}
-				{...rest}
-			>
-				<path
-					strokeLinecap="round"
-					strokeLinejoin="round"
-					d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z"
-				/>
-			</svg>
-		</span>
+		<IconWrapper className={className} onClick={onClick} {...rest}>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-15a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 4.5v15a2.25 2.25 0 0 0 2.25 2.25Z"
+			/>
+		</IconWrapper>
 	);
 };
 
