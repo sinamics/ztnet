@@ -6,7 +6,7 @@ import * as ztController from "~/utils/ztApi";
  */
 export interface UpdateableField {
 	type: string;
-	destinations: ("database" | "controller")[];
+	destinations: readonly ("database" | "controller")[];
 }
 
 export interface UpdateableFieldsConfig {
@@ -49,7 +49,7 @@ export function splitUpdatePayload(
  * @param databasePayload - The data to update in the database
  */
 export async function updateNetworkMemberInDatabase(
-	ctx: { prisma: PrismaClient },
+	ctx: { prisma?: PrismaClient } | { prisma: PrismaClient },
 	networkId: string,
 	memberId: string,
 	databasePayload: Partial<network_members>,
@@ -58,7 +58,12 @@ export async function updateNetworkMemberInDatabase(
 		return;
 	}
 
-	await ctx.prisma.network.update({
+	const prisma = ctx.prisma;
+	if (!prisma) {
+		throw new Error("Prisma client not found in context");
+	}
+
+	await prisma.network.update({
 		where: {
 			nwid: networkId,
 		},
@@ -96,7 +101,7 @@ export async function updateNetworkMemberInDatabase(
  * @param controllerPayload - The data to update in the controller
  */
 export async function updateNetworkMemberInController(
-	ctx: { prisma: PrismaClient },
+	ctx: { prisma?: PrismaClient } | { prisma: PrismaClient },
 	networkId: string,
 	memberId: string,
 	controllerPayload: Partial<network_members>,
