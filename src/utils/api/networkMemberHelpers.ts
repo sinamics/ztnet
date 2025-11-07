@@ -29,10 +29,17 @@ export function splitUpdatePayload(
 
 	// Iterate over keys in the request body
 	for (const [key, value] of Object.entries(validatedInput)) {
-		if (updateableFields[key].destinations.includes("database")) {
+		const fieldConfig = updateableFields[key];
+
+		// Skip if field is not in updateableFields configuration
+		if (!fieldConfig) {
+			continue;
+		}
+
+		if (fieldConfig.destinations.includes("database")) {
 			databasePayload[key] = value;
 		}
-		if (updateableFields[key].destinations.includes("controller")) {
+		if (fieldConfig.destinations.includes("controller")) {
 			controllerPayload[key] = value;
 		}
 	}
