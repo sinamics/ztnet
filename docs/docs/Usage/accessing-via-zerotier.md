@@ -142,6 +142,6 @@ To verify the setup is working:
 
 ## Related Resources
 
-- [Docker Compose Installation](/docs/Installation/docker-compose)
-- [Environment Variables](/docs/Installation/options#zerotier-controller-configuration)
+- [Docker Compose Installation](/installation/docker-compose)
+- [Environment Variables](/installation/options#zerotier-controller-configuration)
 - [GitHub Issue #249](https://github.com/sinamics/ztnet/issues/249)
