@@ -12,7 +12,7 @@ By default, the ZTNET web interface is not accessible via ZeroTier network IPs w
 
 This guide provides solutions to access your ZTNET web interface (port 3000) using ZeroTier-assigned IP addresses.
 
-## Option 1: Host Network Mode (Recommended)
+## Option 1: Host Network Mode
 
 This solution configures the ZeroTier container to use the host's network stack directly.
 
