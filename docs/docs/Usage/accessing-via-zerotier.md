@@ -12,11 +12,19 @@ By default, the ZTNET web interface is not accessible via ZeroTier network IPs w
 
 This guide provides solutions to access your ZTNET web interface (port 3000) using ZeroTier-assigned IP addresses.
 
-## Option 1: Host Network Mode
+**Choose your installation type:**
+- [Docker Installation](#docker-installation)
+- [Standalone Installation](#standalone-installation)
+
+---
+
+## Docker Installation
+
+### Option 1: Host Network Mode
 
 This solution configures the ZeroTier container to use the host's network stack directly.
 
-### Step 1: Modify docker-compose.yml
+#### Step 1: Modify docker-compose.yml
 
 Edit your `docker-compose.yml` file and update the `zerotier` service. Remove `networks` and `ports` sections, and add `network_mode: "host"`:
 
@@ -41,7 +49,7 @@ zerotier:
     - ZT_ALLOW_MANAGEMENT_FROM=0.0.0.0/0
 ```
 
-### Step 2: Update ZTNET Environment Variables
+#### Step 2: Update ZTNET Environment Variables
 
 In the `ztnet` service section, update the `ZT_ADDR` to point to your host machine's IP, and update `NEXTAUTH_URL` to use your ZeroTier-assigned IP:
 
@@ -58,18 +66,26 @@ ztnet:
 The `NEXTAUTH_URL` should be set to the ZeroTier IP address you'll use to access ZTNET. You can find this IP after the host joins the ZeroTier network.
 :::
 
-### Step 3: Restart Containers
+#### Step 3: Restart Containers
 
 ```bash
 docker-compose down
 docker-compose up -d
 ```
 
-After the ZeroTier container joins its own network, you can access ZTNET at `http://<zerotier-ip>:3000`.
+#### Step 4: Join ZeroTier Network
+
+On the server hosting ZTNET, join the ZeroTier controller to your network:
+
+```bash
+docker exec zerotier zerotier-cli join <network-id>
+```
+
+Then log in to ZTNET web interface, authorize the new member, and note the assigned IP address.
 
 ---
 
-## Option 2: Host-Based ZeroTier Installation
+### Option 2: Host-Based ZeroTier Installation
 
 This solution runs ZeroTier directly on your host system instead of in a container.
 
@@ -77,11 +93,11 @@ This solution runs ZeroTier directly on your host system instead of in a contain
 You cannot run ZeroTier on the host and in Docker simultaneously, as both use port 9993.
 :::
 
-### Step 1: Comment Out ZeroTier Service
+#### Step 1: Comment Out ZeroTier Service
 
 In your `docker-compose.yml`, comment out or remove the entire `zerotier` service.
 
-### Step 2: Install ZeroTier on Host
+#### Step 2: Install ZeroTier on Host
 
 Install ZeroTier One on your host system:
 
@@ -89,7 +105,7 @@ Install ZeroTier One on your host system:
 curl -s https://install.zerotier.com | sudo bash
 ```
 
-### Step 3: Configure Management Access
+#### Step 3: Configure Management Access
 
 Edit `/var/lib/zerotier-one/local.conf` to allow remote management:
 
@@ -105,13 +121,13 @@ Edit `/var/lib/zerotier-one/local.conf` to allow remote management:
 The `0.0.0.0/0` setting allows management from any IP. For production environments, consider restricting this to specific IP ranges.
 :::
 
-### Step 4: Restart ZeroTier
+#### Step 4: Restart ZeroTier
 
 ```bash
 sudo systemctl restart zerotier-one
 ```
 
-### Step 5: Update ZTNET Configuration
+#### Step 5: Update ZTNET Configuration
 
 In your `docker-compose.yml`, update the `ztnet` service:
 
@@ -124,10 +140,50 @@ ztnet:
     # ... other environment variables
 ```
 
-### Step 6: Restart ZTNET
+#### Step 6: Join ZeroTier Network
+
+On the server hosting ZTNET, join the ZeroTier controller to your network:
+
+```bash
+sudo zerotier-cli join <network-id>
+```
+
+Then log in to ZTNET web interface, authorize the new member, and note the assigned IP address.
+
+#### Step 7: Restart ZTNET
 
 ```bash
 docker-compose restart ztnet
+```
+
+---
+
+## Standalone Installation
+
+If you installed ZTNET directly on your host (not using Docker), the setup is simpler since ZeroTier is already running on the same system and the installer has already configured the necessary settings.
+
+#### Step 1: Join ZeroTier Network
+
+On the server hosting ZTNET, join the ZeroTier controller to your network:
+
+```bash
+sudo zerotier-cli join <network-id>
+```
+
+Then log in to ZTNET web interface, authorize the new member, and note the assigned IP address.
+
+#### Step 2: Update ZTNET Configuration
+
+Update your `.env` file with the ZeroTier-assigned IP:
+
+```bash
+NEXTAUTH_URL=http://10.147.20.1:3000  # Replace with your ZeroTier-assigned IP
+```
+
+#### Step 3: Restart ZTNET
+
+```bash
+sudo systemctl restart ztnet
 ```
 
 ---
