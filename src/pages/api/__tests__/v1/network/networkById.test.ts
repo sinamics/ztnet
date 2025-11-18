@@ -20,7 +20,7 @@ jest.mock("~/utils/ztApi", () => {
 	const originalModule = jest.requireActual("~/utils/ztApi");
 	return {
 		...originalModule,
-		local_network_and_members: jest.fn(),
+		local_network_and_membercount: jest.fn(),
 	};
 });
 
@@ -51,8 +51,9 @@ describe("/api/getNetworkById", () => {
 		});
 
 		// Mock the ztController to return a network detail
-		(ztController.local_network_and_members as jest.Mock).mockResolvedValue({
+		(ztController.local_network_and_membercount as jest.Mock).mockResolvedValue({
 			network: { id: "networkId", name: "networkName" },
+			memberCount: 5,
 		});
 
 		const req = {
@@ -77,6 +78,7 @@ describe("/api/getNetworkById", () => {
 			authorId: "userId",
 			nwid: "test_nw_id",
 			nwname: "credent_second",
+			memberCount: 5,
 		});
 	});
 
@@ -129,7 +131,7 @@ describe("/api/getNetworkById", () => {
 			message: "Internal server error",
 		});
 
-		(ztController.local_network_and_members as jest.Mock).mockRejectedValue(error);
+		(ztController.local_network_and_membercount as jest.Mock).mockRejectedValue(error);
 
 		const req = {
 			method: "GET",
