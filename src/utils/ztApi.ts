@@ -477,11 +477,13 @@ export const local_network_and_membercount = async (
 	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
 
 	try {
-		// Fetch network details and member list in parallel for better performance
-		const [network, members] = await Promise.all([
-			getData<NetworkEntity>(`${localControllerUrl}/controller/network/${nwid}`, headers),
-			network_members(ctx, nwid, isCentral),
-		]);
+		// Fetch network details first, then members sequentially
+		// This avoids hitting concurrent connection limits when multiple networks are fetched in parallel
+		const network = await getData<NetworkEntity>(
+			`${localControllerUrl}/controller/network/${nwid}`,
+			headers,
+		);
+		const members = await network_members(ctx, nwid, isCentral);
 
 		// Calculate member count without fetching individual details
 		let memberCount = 0;
@@ -509,11 +511,13 @@ export const local_network_and_members = async (
 	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
 
 	try {
-		// Fetch network details and member list in parallel
-		const [network, members] = await Promise.all([
-			getData<NetworkEntity>(`${localControllerUrl}/controller/network/${nwid}`, headers),
-			network_members(ctx, nwid, isCentral),
-		]);
+		// Fetch network details first, then members sequentially
+		// This avoids hitting concurrent connection limits when multiple networks are fetched in parallel
+		const network = await getData<NetworkEntity>(
+			`${localControllerUrl}/controller/network/${nwid}`,
+			headers,
+		);
+		const members = await network_members(ctx, nwid, isCentral);
 
 		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 		let memberIds: string[] = [];
@@ -561,11 +565,10 @@ export const central_network_and_members = async (
 			? `${ztCentralApiUrl}/network/${nwid}`
 			: `${localControllerUrl}/controller/network/${nwid}`;
 
-		// PERFORMANCE: Fetch network and members list in parallel
-		const [network, members] = await Promise.all([
-			getData<CentralNetwork>(addr, headers),
-			network_members(ctx, nwid, isCentral),
-		]);
+		// Fetch network details first, then members sequentially
+		// This avoids hitting concurrent connection limits when multiple networks are fetched in parallel
+		const network = await getData<CentralNetwork>(addr, headers);
+		const members = await network_members(ctx, nwid, isCentral);
 
 		const membersArr = Array.isArray(members)
 			? await Promise.all(
