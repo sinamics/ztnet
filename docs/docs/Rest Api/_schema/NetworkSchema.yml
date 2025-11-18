@@ -46,6 +46,9 @@ NetworkResponse:
       type: integer
     multicastLimit:
       type: integer
+    memberCount:
+      type: integer
+      description: Total number of members in the network
     name:
       type: string
     nwid:
