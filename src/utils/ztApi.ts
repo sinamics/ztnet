@@ -193,7 +193,7 @@ const getData = async <T>(
 	headers: GetOptionsResponse["headers"],
 ): Promise<T> => {
 	try {
-		const { data} = await axios.get<T>(addr, {
+		const { data } = await axios.get<T>(addr, {
 			headers,
 			timeout: 10000, // 10 second timeout
 		});
@@ -479,10 +479,7 @@ export const local_network_and_membercount = async (
 	try {
 		// Fetch network details and member list in parallel for better performance
 		const [network, members] = await Promise.all([
-			getData<NetworkEntity>(
-				`${localControllerUrl}/controller/network/${nwid}`,
-				headers,
-			),
+			getData<NetworkEntity>(`${localControllerUrl}/controller/network/${nwid}`, headers),
 			network_members(ctx, nwid, isCentral),
 		]);
 
