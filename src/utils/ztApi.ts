@@ -26,22 +26,6 @@ import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
 import os from "os";
 import { prisma } from "~/server/db";
-import http from "http";
-import https from "https";
-
-// Configure HTTP agents with unlimited connections to avoid queuing
-// Default Node.js behavior can limit concurrent connections causing request batching
-const httpAgent = new http.Agent({
-	keepAlive: true,
-	maxSockets: Infinity,
-	maxFreeSockets: 256,
-});
-
-const httpsAgent = new https.Agent({
-	keepAlive: true,
-	maxSockets: Infinity,
-	maxFreeSockets: 256,
-});
 
 export let ZT_FOLDER: string;
 
@@ -209,11 +193,9 @@ const getData = async <T>(
 	headers: GetOptionsResponse["headers"],
 ): Promise<T> => {
 	try {
-		const { data } = await axios.get<T>(addr, {
+		const { data} = await axios.get<T>(addr, {
 			headers,
 			timeout: 10000, // 10 second timeout
-			httpAgent, // Use custom HTTP agent with unlimited sockets
-			httpsAgent, // Use custom HTTPS agent with unlimited sockets
 		});
 		return data;
 	} catch (error) {
@@ -238,8 +220,6 @@ const postData = async <T, P = unknown>(
 	try {
 		const { data } = await axios.post<T>(addr, payload, {
 			headers,
-			httpAgent, // Use custom HTTP agent with unlimited sockets
-			httpsAgent, // Use custom HTTPS agent with unlimited sockets
 		});
 
 		return data;
@@ -411,8 +391,6 @@ export async function network_delete(
 	try {
 		const response = await axios.delete(addr, {
 			headers,
-			httpAgent,
-			httpsAgent,
 		});
 
 		return { status: response.status, data: undefined };
@@ -675,8 +653,6 @@ export const member_delete = async ({
 	try {
 		const response: AxiosResponse = await axios.delete(addr, {
 			headers,
-			httpAgent,
-			httpsAgent,
 		});
 		return response.status as MemberDeleteResponse;
 	} catch (error) {
@@ -749,8 +725,6 @@ export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer[]> =>
 	try {
 		const response: AxiosResponse = await axios.get(addr, {
 			headers,
-			httpAgent,
-			httpsAgent,
 		});
 		return response.data as ZTControllerGetPeer[];
 	} catch (error) {
@@ -788,8 +762,6 @@ export const get_controller_metrics = async ({ ctx }: Ictx) => {
 		const response = await axios.get(addr, {
 			headers,
 			responseType: "text",
-			httpAgent,
-			httpsAgent,
 		});
 		return response.data;
 	} catch (error) {
