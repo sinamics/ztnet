@@ -120,7 +120,11 @@ export const networkRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
-				return await ztController.central_network_detail(ctx, input.nwid, input.central);
+				return await ztController.central_network_and_members(
+					ctx,
+					input.nwid,
+					input.central,
+				);
 			}
 
 			try {
@@ -157,11 +161,11 @@ export const networkRouter = createTRPCRouter({
 				}
 
 				/**
-				 * Response from the ztController.local_network_detail method.
+				 * Response from the ztController.local_network_and_members method.
 				 * @type {Promise<any>}
 				 */
 				const ztControllerResponse = await ztController
-					.local_network_detail(ctx, networkFromDatabase.nwid, false)
+					.local_network_and_members(ctx, networkFromDatabase.nwid, false)
 					.catch((err: APIError) => {
 						throwError(`${err.message}`);
 					});

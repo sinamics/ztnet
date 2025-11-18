@@ -45,8 +45,9 @@ const GET_network = SecuredPrivateApiRoute(
 			select: { authorId: true, description: true },
 		});
 
+		// PERFORMANCE: Use lightweight version since we only need network details, not members
 		try {
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.local_network_and_membercount(
 				//@ts-expect-error
 				ctx,
 				networkId,
@@ -55,6 +56,7 @@ const GET_network = SecuredPrivateApiRoute(
 			return res.status(200).json({
 				...network,
 				...ztControllerResponse?.network,
+				memberCount: ztControllerResponse?.memberCount,
 			});
 		} catch (cause) {
 			return handleApiErrors(cause, res);

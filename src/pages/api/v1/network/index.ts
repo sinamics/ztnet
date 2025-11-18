@@ -89,9 +89,10 @@ const GET_userNetworks = SecuredPrivateApiRoute(
 				return res.status(404).json({ error: "User or networks not found" });
 			}
 
+			// PERFORMANCE: Use lightweight version since we only need network details, not members
 			const networksWithDetails = await Promise.all(
 				userWithNetworks.network.map(async (network) => {
-					const ztControllerResponse = await ztController.local_network_detail(
+					const ztControllerResponse = await ztController.local_network_and_membercount(
 						//@ts-expect-error
 						ctx,
 						network.nwid,
@@ -100,10 +101,10 @@ const GET_userNetworks = SecuredPrivateApiRoute(
 					return {
 						...network,
 						...ztControllerResponse.network,
+						memberCount: ztControllerResponse.memberCount,
 					};
 				}),
 			);
-
 			return res.status(200).json(networksWithDetails);
 		} catch (cause) {
 			return handleApiErrors(cause, res);

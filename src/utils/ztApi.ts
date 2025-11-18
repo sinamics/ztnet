@@ -26,6 +26,22 @@ import { type NetworkAndMemberResponse } from "~/types/network";
 import { UserContext } from "~/types/ctx";
 import os from "os";
 import { prisma } from "~/server/db";
+import http from "http";
+import https from "https";
+
+// Configure HTTP agents with unlimited connections to avoid queuing
+// Default Node.js behavior can limit concurrent connections causing request batching
+const httpAgent = new http.Agent({
+	keepAlive: true,
+	maxSockets: Infinity,
+	maxFreeSockets: 256,
+});
+
+const httpsAgent = new https.Agent({
+	keepAlive: true,
+	maxSockets: Infinity,
+	maxFreeSockets: 256,
+});
 
 export let ZT_FOLDER: string;
 
@@ -55,6 +71,22 @@ const ZT_SECRET =
 				}
 			})());
 
+// Request-level cache for API credentials to avoid repeated DB queries
+const credentialsCache = new Map<
+	string,
+	{
+		credentials: {
+			ztCentralApiKey: string | null;
+			ztCentralApiUrl: string | null;
+			localControllerSecret: string | null;
+			localControllerUrl: string | null;
+		};
+		timestamp: number;
+	}
+>();
+
+const CACHE_TTL = 60000; // 60 seconds
+
 const getApiCredentials = async (
 	ctx: UserContext,
 ): Promise<{
@@ -63,9 +95,18 @@ const getApiCredentials = async (
 	localControllerSecret: string | null;
 	localControllerUrl: string | null;
 }> => {
+	const userId = ctx.session.user.id;
+	const now = Date.now();
+
+	// Check cache first
+	const cached = credentialsCache.get(userId);
+	if (cached && now - cached.timestamp < CACHE_TTL) {
+		return cached.credentials;
+	}
+
 	const userWithOptions = await prisma.user.findFirst({
 		where: {
-			id: ctx.session.user.id,
+			id: userId,
 		},
 		select: {
 			options: {
@@ -79,15 +120,27 @@ const getApiCredentials = async (
 		},
 	});
 
-	// Return only the options. If options are not available, return null values.
-	return (
-		userWithOptions?.options || {
-			ztCentralApiKey: null,
-			ztCentralApiUrl: null,
-			localControllerSecret: null,
-			localControllerUrl: null,
+	const credentials = userWithOptions?.options || {
+		ztCentralApiKey: null,
+		ztCentralApiUrl: null,
+		localControllerSecret: null,
+		localControllerUrl: null,
+	};
+
+	// Store in cache
+	credentialsCache.set(userId, { credentials, timestamp: now });
+
+	// Clean up old entries (simple cleanup)
+	if (credentialsCache.size > 100) {
+		const entries = Array.from(credentialsCache.entries());
+		for (const [key, value] of entries) {
+			if (now - value.timestamp > CACHE_TTL) {
+				credentialsCache.delete(key);
+			}
 		}
-	);
+	}
+
+	return credentials;
 };
 interface GetOptionsResponse {
 	ztCentralApiUrl?: string;
@@ -156,7 +209,12 @@ const getData = async <T>(
 	headers: GetOptionsResponse["headers"],
 ): Promise<T> => {
 	try {
-		const { data } = await axios.get<T>(addr, { headers });
+		const { data } = await axios.get<T>(addr, {
+			headers,
+			timeout: 10000, // 10 second timeout
+			httpAgent, // Use custom HTTP agent with unlimited sockets
+			httpsAgent, // Use custom HTTPS agent with unlimited sockets
+		});
 		return data;
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
@@ -178,7 +236,11 @@ const postData = async <T, P = unknown>(
 	payload: P,
 ): Promise<T> => {
 	try {
-		const { data } = await axios.post<T>(addr, payload, { headers });
+		const { data } = await axios.post<T>(addr, payload, {
+			headers,
+			httpAgent, // Use custom HTTP agent with unlimited sockets
+			httpsAgent, // Use custom HTTPS agent with unlimited sockets
+		});
 
 		return data;
 	} catch (error) {
@@ -347,7 +409,11 @@ export async function network_delete(
 		: `${localControllerUrl}/controller/network/${nwid}`;
 
 	try {
-		const response = await axios.delete(addr, { headers });
+		const response = await axios.delete(addr, {
+			headers,
+			httpAgent,
+			httpsAgent,
+		});
 
 		return { status: response.status, data: undefined };
 	} catch (error) {
@@ -377,6 +443,7 @@ export const network_members = async (
 
 	// fetch members
 	const fetchedMembers = await getData<MemberEntity[]>(addr, headers);
+
 	// fix bug in zerotier version 1.12.1
 	// https://github.com/zerotier/ZeroTierOne/issues/2114
 	if (!isCentral && Array.isArray(fetchedMembers)) {
@@ -413,7 +480,52 @@ export const get_network = async (
 	}
 };
 
-export const local_network_detail = async (
+/**
+ * Optimized version that fetches network details without individual member details.
+ * This significantly improves performance for list operations by avoiding N+1 HTTP calls.
+ * Use this for listing networks when full member details are not required.
+ *
+ * @param ctx - User context
+ * @param nwid - Network ID
+ * @param isCentral - Whether to use central API (default: false)
+ * @returns Network details with member count only
+ */
+export const local_network_and_membercount = async (
+	ctx: UserContext,
+	nwid: string,
+	isCentral = false,
+): Promise<{ network: NetworkEntity; memberCount: number }> => {
+	// get headers based on local or central api
+	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+
+	try {
+		// Fetch network details and member list in parallel for better performance
+		const [network, members] = await Promise.all([
+			getData<NetworkEntity>(
+				`${localControllerUrl}/controller/network/${nwid}`,
+				headers,
+			),
+			network_members(ctx, nwid, isCentral),
+		]);
+
+		// Calculate member count without fetching individual details
+		let memberCount = 0;
+		if (Array.isArray(members)) {
+			memberCount = members.length;
+		} else if (typeof members === "object") {
+			memberCount = Object.keys(members).length;
+		}
+
+		return {
+			network: { ...network },
+			memberCount,
+		};
+	} catch (error) {
+		throw new APIError(error, error as AxiosError);
+	}
+};
+
+export const local_network_and_members = async (
 	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
@@ -422,12 +534,12 @@ export const local_network_detail = async (
 	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
 
 	try {
-		// get all members for a specific network
-		const members = await network_members(ctx, nwid);
-		const network = await getData<NetworkEntity>(
-			`${localControllerUrl}/controller/network/${nwid}`,
-			headers,
-		);
+		// Fetch network details and member list in parallel
+		const [network, members] = await Promise.all([
+			getData<NetworkEntity>(`${localControllerUrl}/controller/network/${nwid}`, headers),
+			network_members(ctx, nwid, isCentral),
+		]);
+
 		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
 		let memberIds: string[] = [];
 
@@ -437,15 +549,16 @@ export const local_network_detail = async (
 			memberIds = Object.keys(members);
 		}
 
-		const membersArr: MemberEntity[] = [];
-		for (const [memberId] of Object.entries(members)) {
-			const memberDetails = await getData<MemberEntity>(
-				`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
-				headers,
-			);
-
-			membersArr.push(memberDetails);
-		}
+		// PERFORMANCE OPTIMIZATION: Fetch all member details in parallel instead of sequentially
+		// This significantly reduces total request time from O(n) to O(1) for network latency
+		const membersArr: MemberEntity[] = await Promise.all(
+			Object.entries(members).map(async ([memberId]) => {
+				return await getData<MemberEntity>(
+					`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
+					headers,
+				);
+			}),
+		);
 
 		return {
 			network: { ...network },
@@ -458,7 +571,7 @@ export const local_network_detail = async (
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 
-export const central_network_detail = async (
+export const central_network_and_members = async (
 	ctx: UserContext,
 	nwid: string,
 	isCentral = false,
@@ -473,9 +586,11 @@ export const central_network_detail = async (
 			? `${ztCentralApiUrl}/network/${nwid}`
 			: `${localControllerUrl}/controller/network/${nwid}`;
 
-		// get all members for a specific network
-		const members = await network_members(ctx, nwid, isCentral);
-		const network = await getData<CentralNetwork>(addr, headers);
+		// PERFORMANCE: Fetch network and members list in parallel
+		const [network, members] = await Promise.all([
+			getData<CentralNetwork>(addr, headers),
+			network_members(ctx, nwid, isCentral),
+		]);
 
 		const membersArr = Array.isArray(members)
 			? await Promise.all(
@@ -507,7 +622,7 @@ export const central_network_detail = async (
 		};
 	} catch (error) {
 		const source = isCentral ? "[ZT CENTRAL]" : "";
-		const message = `${source} ${error} (central_network_detail)`;
+		const message = `${source} ${error} (central_network_and_members)`;
 		throw new APIError(message, error as AxiosError);
 	}
 };
@@ -558,7 +673,11 @@ export const member_delete = async ({
 		: `${localControllerUrl}/controller/network/${nwid}/member/${memberId}`;
 
 	try {
-		const response: AxiosResponse = await axios.delete(addr, { headers });
+		const response: AxiosResponse = await axios.delete(addr, {
+			headers,
+			httpAgent,
+			httpsAgent,
+		});
 		return response.status as MemberDeleteResponse;
 	} catch (error) {
 		const prefix = central ? "[CENTRAL] " : "";
@@ -628,7 +747,11 @@ export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer[]> =>
 	const { headers } = await getOptions(ctx, false);
 
 	try {
-		const response: AxiosResponse = await axios.get(addr, { headers });
+		const response: AxiosResponse = await axios.get(addr, {
+			headers,
+			httpAgent,
+			httpsAgent,
+		});
 		return response.data as ZTControllerGetPeer[];
 	} catch (error) {
 		const message = `${error} (peers)`;
@@ -665,6 +788,8 @@ export const get_controller_metrics = async ({ ctx }: Ictx) => {
 		const response = await axios.get(addr, {
 			headers,
 			responseType: "text",
+			httpAgent,
+			httpsAgent,
 		});
 		return response.data;
 	} catch (error) {

@@ -225,16 +225,15 @@ export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 			const validatedContext = HandlerContextSchema.parse(context);
 			const { networkId, memberId, ctx } = validatedContext;
 
-			const controllerMember = await ztController.local_network_detail(
+			// PERFORMANCE: Fetch only the single member we need, not all members
+			const controllerMemberDetails = await ztController.member_details(
 				// @ts-expect-error: fake request object
 				ctx,
 				networkId,
+				memberId,
 				false,
 			);
 
-			const findControllermemberById = controllerMember.members.find(
-				(member) => member.id === memberId,
-			);
 			// @ts-expect-error
 			const caller = appRouter.createCaller(ctx);
 			const networkAndMembers = await caller.networkMember.getMemberById({
@@ -242,7 +241,7 @@ export const GET_orgNetworkMemberById = SecuredOrganizationApiRoute(
 				id: memberId,
 			});
 
-			return res.status(200).json({ ...networkAndMembers, ...findControllermemberById });
+			return res.status(200).json({ ...networkAndMembers, ...controllerMemberDetails });
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}
