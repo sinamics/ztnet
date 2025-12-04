@@ -20,7 +20,8 @@ export const networkRoutesColumns = (
 		header: "Via",
 		cell: (info) => <div className="">{info.row.original.via || "LAN"}</div>,
 	}),
-	columnHelper.accessor("nodeName", {
+	columnHelper.display({
+		id: "nodeName",
 		header: "Node Name",
 		cell: (info) => {
 			// check if ipAssignments has the via ip and return the node name
@@ -33,7 +34,8 @@ export const networkRoutesColumns = (
 	columnHelper.accessor("notes", {
 		header: "Notes",
 	}),
-	columnHelper.accessor("actions", {
+	columnHelper.display({
+		id: "actions",
 		header: "",
 		cell: (info) => (
 			<svg
