@@ -169,3 +169,9 @@ export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
  * It verifies the session is valid and guarantees `ctx.session.user` is not null and has the ADMIN role.
  */
 export const adminRoleProtectedRoute = t.procedure.use(enforceUserIsAdmin);
+
+/**
+ * Export the t instance for type inference in client
+ * This allows the client to know the transformer is configured
+ */
+export type TRPCContext = typeof t;

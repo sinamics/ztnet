@@ -62,7 +62,7 @@
 		"react-timeago": "7.1.0",
 		"socket.io": "4.8.1",
 		"socket.io-client": "4.8.1",
-		"superjson": "1.9.1",
+		"superjson": "2.2.6",
 		"ua-parser-js": "1.0.38",
 		"unique-names-generator": "4.7.1",
 		"unzipper": "0.10.14",
