@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
 // Prisma CLI configuration
