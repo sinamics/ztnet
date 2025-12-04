@@ -21,9 +21,6 @@ const config = {
 		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru", "de"],
 	},
 	trailingSlash: true,
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
 	async redirects() {
 		return [
 			{
