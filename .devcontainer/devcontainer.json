@@ -15,6 +15,13 @@
   "features": {
     "ghcr.io/devcontainers/features/node:1": {}
   },
+  "mounts": [
+    "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly"
+  ],
+  "postCreateCommand": "bash .devcontainer/setup-ssh.sh",
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/tmp/ssh-agent-vscode.sock"
+  },
   "customizations": {
     "vscode": {
       "settings": {
