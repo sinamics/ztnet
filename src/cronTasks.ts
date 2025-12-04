@@ -239,11 +239,10 @@ export const updatePeers = async () => {
 							};
 
 							// get members from the zt controller
-							const ztControllerResponse = await ztController.local_network_detail(
+							const ztControllerResponse = await ztController.local_network_and_members(
 								// @ts-expect-error
 								context,
 								network.nwid,
-								false,
 							);
 							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
 

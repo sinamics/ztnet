@@ -87,9 +87,10 @@ export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
 					);
 
 					// Use Promise.all to wait for all network detail fetches to complete
+					// PERFORMANCE: Use lightweight version to avoid N+1 HTTP calls for member details
 					const networksDetails = await Promise.all(
 						org.networks.map(async (network) => {
-							const controller = await ztController.local_network_detail(
+							const controller = await ztController.local_network_and_membercount(
 								//@ts-expect-error ctx is mocked
 								ctx,
 								network.nwid,
@@ -100,6 +101,7 @@ export const GET_orgUserNetworks = SecuredOrganizationApiRoute(
 							return {
 								...dbInfo,
 								...controller.network,
+								memberCount: controller.memberCount,
 							};
 						}),
 					);

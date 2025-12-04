@@ -132,11 +132,10 @@ export const POST_network = SecuredOrganizationApiRoute(
 				});
 			}
 
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.local_network_and_membercount(
 				//@ts-expect-error
 				ctx,
 				networkId,
-				false,
 			);
 			return res.status(200).json(ztControllerResponse?.network);
 		} catch (cause) {
@@ -158,11 +157,10 @@ export const GET_network = SecuredOrganizationApiRoute(
 				return res.status(401).json({ error: "Network not found or access denied." });
 			}
 
-			const ztControllerResponse = await ztController.local_network_detail(
+			const ztControllerResponse = await ztController.local_network_and_membercount(
 				//@ts-expect-error
 				ctx,
 				networkId,
-				false,
 			);
 			return res.status(200).json({
 				...network,

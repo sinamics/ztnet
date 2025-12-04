@@ -377,10 +377,9 @@ export const adminRouter = createTRPCRouter({
 			let totalMembers = 0;
 			const assignedIPs = new Set<string>();
 			for (const network of networks) {
-				const networkDetails = await ztController.local_network_detail(
+				const networkDetails = await ztController.local_network_and_members(
 					ctx,
 					network as string,
-					isCentral,
 				);
 				totalMembers += networkDetails?.members.length;
 
@@ -658,7 +657,7 @@ export const adminRouter = createTRPCRouter({
 				if (input.getDetails) {
 					const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
 						unlinkedNetworks.map((unlinked) =>
-							ztController.local_network_detail(ctx, unlinked, false),
+							ztController.local_network_and_members(ctx, unlinked),
 						),
 					);
 					return unlinkArr;

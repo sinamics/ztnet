@@ -12,6 +12,7 @@ NetworkExample:
       ipRangeStart: "172.25.25.1"
   mtu: 2800
   multicastLimit: 32
+  memberCount: 5
   name: "slimy-earwig"
   nwid: "8056c2e21c000001"
   objtype: "network"
@@ -50,6 +51,7 @@ NetworkArrayExample:
         ipRangeStart: "172.25.25.1"
     mtu: 2800
     multicastLimit: 32
+    memberCount: 5
     name: "slimy-earwig"
     nwid: "8056c2e21c000001"
     objtype: "network"
@@ -86,6 +88,7 @@ NetworkArrayExample:
         ipRangeStart: "172.25.25.1"
     mtu: 2800
     multicastLimit: 32
+    memberCount: 12
     name: "slimy-earwig"
     nwid: "network_id"
     objtype: "network"

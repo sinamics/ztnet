@@ -20,6 +20,20 @@ export const syncMemberPeersAndStatus = async (
 	ztMembers: MemberEntity[],
 ) => {
 	if (ztMembers.length === 0) return [];
+
+	// PERFORMANCE OPTIMIZATION: Fetch all database members in a single query instead of N queries
+	const dbMembersArray = await prisma.network_members.findMany({
+		where: {
+			nwid,
+			id: { in: ztMembers.map((m) => m.id) },
+			deleted: false,
+		},
+		include: { notations: { include: { label: true } } },
+	});
+
+	// Create a Map for O(1) lookup instead of repeated database queries
+	const dbMembersMap = new Map(dbMembersArray.map((m) => [m.id, m]));
+
 	// get peers
 	const controllerPeers = await ztController.peers(ctx);
 
@@ -33,8 +47,8 @@ export const syncMemberPeersAndStatus = async (
 				(peer) => peer.address === ztMember.address,
 			)[0];
 
-			// Retrieve the member from the database
-			const dbMember = await retrieveActiveMemberFromDatabase(nwid, ztMember.id);
+			// PERFORMANCE: Retrieve from in-memory Map instead of database query
+			const dbMember = dbMembersMap.get(ztMember.id) || null;
 
 			// Find the active preferred path in the peers object
 			const activePreferredPath = findActivePreferredPeerPath(peers);
@@ -335,23 +349,6 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 	} catch (error) {
 		console.error("Error upserting network member:", error);
 	}
-};
-
-/**
- * Retrieves an active member from the database based on the network ID and member ID.
- * @param nwid - The network ID.
- * @param memberId - The member ID.
- * @returns The active member object if found, otherwise null.
- */
-export const retrieveActiveMemberFromDatabase = async (
-	nwid: string,
-	memberId: string,
-) => {
-	const dbMember = await prisma.network_members.findFirst({
-		where: { nwid, id: memberId, deleted: false },
-		include: { notations: { include: { label: true } } },
-	});
-	return dbMember && !dbMember.deleted ? dbMember : null;
 };
 
 /**
