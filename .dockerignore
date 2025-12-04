@@ -6,3 +6,4 @@ npm-debug.log
 README.md
 .next
 .git
+prisma.config.ts
