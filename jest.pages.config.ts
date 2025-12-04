@@ -6,6 +6,7 @@ const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
   dir: "./",
 });
+
 const jestConfig: JestConfigWithTsJest = {
   clearMocks: true,
   coverageProvider: "v8",
@@ -16,11 +17,17 @@ const jestConfig: JestConfigWithTsJest = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jest-environment-jsdom",
+  modulePathIgnorePatterns: ["<rootDir>/docs/"],
   moduleNameMapper: {
     "^~/(.*)$": "<rootDir>/src/$1",
     "^lib/(.*)$": "<rootDir>/common/$1",
   },
   testMatch: ["**/__tests__/**/*.test.tsx"],
 };
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
-export default createJestConfig(jestConfig as any);
+
+// Use async wrapper to properly set transformIgnorePatterns after Next.js processes config
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async () => ({
+  ...(await createJestConfig(jestConfig as any)()),
+  transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+});

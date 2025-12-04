@@ -37,9 +37,14 @@ const jestConfig: JestConfigWithTsJest = {
 	...filesConfig,
 	...moduleConfig,
 	...testConfig,
+	modulePathIgnorePatterns: ["<rootDir>/docs/"],
 };
 
 const createJestConfig = nextJest(nextConfig);
 
+// Use async wrapper to properly set transformIgnorePatterns after Next.js processes config
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export default createJestConfig(jestConfig as any);
+export default async () => ({
+	...(await createJestConfig(jestConfig as any)()),
+	transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+});
