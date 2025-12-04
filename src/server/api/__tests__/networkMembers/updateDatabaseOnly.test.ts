@@ -58,7 +58,7 @@ test("updateDatabaseOnly test", async () => {
 	const result = await caller.networkMember.UpdateDatabaseOnly(input);
 
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	expect(prisma.network.update).toBeCalledWith({
+	expect(prisma.network.update).toHaveBeenCalledWith({
 		where: {
 			nwid: input.nwid,
 		},
