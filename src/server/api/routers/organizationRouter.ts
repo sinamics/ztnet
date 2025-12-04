@@ -808,7 +808,7 @@ export const organizationRouter = createTRPCRouter({
 			});
 		}),
 	getOrgNotifications: protectedProcedure
-		.input(z.object({})) // No input required if fetching for all organizations
+		.input(z.object({}).default({})) // No input required if fetching for all organizations
 		.query(async ({ ctx }) => {
 			// Get the current user's ID
 			const userId = ctx.session.user.id;

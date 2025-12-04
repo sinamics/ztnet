@@ -634,9 +634,11 @@ export const adminRouter = createTRPCRouter({
 	 */
 	unlinkedNetwork: adminRoleProtectedRoute
 		.input(
-			z.object({
-				getDetails: z.boolean().optional(),
-			}),
+			z
+				.object({
+					getDetails: z.boolean().default(false),
+				})
+				.default({}),
 		)
 		.query(async ({ ctx, input }) => {
 			try {

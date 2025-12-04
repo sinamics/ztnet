@@ -48,9 +48,11 @@ const RoutesArraySchema = z.array(RouteSchema);
 export const networkRouter = createTRPCRouter({
 	getUserNetworks: protectedProcedure
 		.input(
-			z.object({
-				central: z.boolean().optional().default(false),
-			}),
+			z
+				.object({
+					central: z.boolean().default(false),
+				})
+				.default({}),
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
