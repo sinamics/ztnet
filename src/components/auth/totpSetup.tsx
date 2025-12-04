@@ -28,8 +28,8 @@ const WithStep = ({
 
 const ShowSteps = ({ step }: { step: number }) => {
 	const t = useTranslations();
-	return [
-		<ul className="steps w-full" key="steps">
+	return (
+		<ul className="steps w-full">
 			<li
 				data-content={`${step > 0 ? "✓" : "?"}`}
 				className={classNames("step step-neutral", {
@@ -57,8 +57,8 @@ const ShowSteps = ({ step }: { step: number }) => {
 			>
 				{t("userSettings.account.totp.totpActivation.steps.step3")}
 			</li>
-		</ul>,
-	];
+		</ul>
+	);
 };
 
 const TOTPSetup: React.FC = () => {

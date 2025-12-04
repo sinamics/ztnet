@@ -10,7 +10,7 @@ WORKDIR /app
 # Install Prisma Client - remove if not using Prisma
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 COPY prisma ./
-RUN npx prisma generate
+RUN npx prisma@6.16.3 generate
 
 # Install dependencies based on the preferred package manager
 RUN \
@@ -56,19 +56,19 @@ ARG NEXTAUTH_URL
 ARG NEXTAUTH_SECRET
 
 ARG NEXT_PUBLIC_APP_VERSION
-ENV NEXT_PUBLIC_APP_VERSION ${NEXT_PUBLIC_APP_VERSION}
+ENV NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # Disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # need to install these package for seeding the database
-RUN npm install @prisma/client @paralleldrive/cuid2
-RUN npm install -g prisma ts-node
+RUN npm install @prisma/client@6.16.3 @paralleldrive/cuid2
+RUN npm install -g prisma@6.16.3 ts-node
 RUN mkdir -p /var/lib/zerotier-one && chown -R nextjs:nodejs /var/lib/zerotier-one && chmod -R 777 /var/lib/zerotier-one
 
 COPY --from=builder /app/next.config.mjs ./
@@ -92,7 +92,7 @@ RUN chmod u+x init-db.sh
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 
 ENTRYPOINT ["/app/init-db.sh"]
 CMD ["node", "server.js"]
