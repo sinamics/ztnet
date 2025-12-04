@@ -243,7 +243,6 @@ export const updatePeers = async () => {
 								// @ts-expect-error
 								context,
 								network.nwid,
-								false,
 							);
 							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
 

@@ -136,7 +136,6 @@ export const POST_network = SecuredOrganizationApiRoute(
 				//@ts-expect-error
 				ctx,
 				networkId,
-				false,
 			);
 			return res.status(200).json(ztControllerResponse?.network);
 		} catch (cause) {
@@ -162,7 +161,6 @@ export const GET_network = SecuredOrganizationApiRoute(
 				//@ts-expect-error
 				ctx,
 				networkId,
-				false,
 			);
 			return res.status(200).json({
 				...network,

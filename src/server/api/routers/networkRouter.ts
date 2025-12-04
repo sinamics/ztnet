@@ -165,7 +165,7 @@ export const networkRouter = createTRPCRouter({
 				 * @type {Promise<any>}
 				 */
 				const ztControllerResponse = await ztController
-					.local_network_and_members(ctx, networkFromDatabase.nwid, false)
+					.local_network_and_members(ctx, networkFromDatabase.nwid)
 					.catch((err: APIError) => {
 						throwError(`${err.message}`);
 					});

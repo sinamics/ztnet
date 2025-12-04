@@ -220,6 +220,7 @@ const postData = async <T, P = unknown>(
 	try {
 		const { data } = await axios.post<T>(addr, payload, {
 			headers,
+			timeout: 10000, // 10 second timeout
 		});
 
 		return data;
@@ -391,6 +392,7 @@ export async function network_delete(
 	try {
 		const response = await axios.delete(addr, {
 			headers,
+			timeout: 10000, // 10 second timeout
 		});
 
 		return { status: response.status, data: undefined };
@@ -465,16 +467,13 @@ export const get_network = async (
  *
  * @param ctx - User context
  * @param nwid - Network ID
- * @param isCentral - Whether to use central API (default: false)
  * @returns Network details with member count only
  */
 export const local_network_and_membercount = async (
 	ctx: UserContext,
 	nwid: string,
-	isCentral = false,
 ): Promise<{ network: NetworkEntity; memberCount: number }> => {
-	// get headers based on local or central api
-	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+	const { headers, localControllerUrl } = await getOptions(ctx, false);
 
 	try {
 		// Fetch network details first, then members sequentially
@@ -483,7 +482,7 @@ export const local_network_and_membercount = async (
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
-		const members = await network_members(ctx, nwid, isCentral);
+		const members = await network_members(ctx, nwid, false);
 
 		// Calculate member count without fetching individual details
 		let memberCount = 0;
@@ -494,7 +493,7 @@ export const local_network_and_membercount = async (
 		}
 
 		return {
-			network: { ...network },
+			network,
 			memberCount,
 		};
 	} catch (error) {
@@ -505,10 +504,8 @@ export const local_network_and_membercount = async (
 export const local_network_and_members = async (
 	ctx: UserContext,
 	nwid: string,
-	isCentral = false,
 ): Promise<NetworkAndMemberResponse> => {
-	// get headers based on local or central api
-	const { headers, localControllerUrl } = await getOptions(ctx, isCentral);
+	const { headers, localControllerUrl } = await getOptions(ctx, false);
 
 	try {
 		// Fetch network details first, then members sequentially
@@ -517,16 +514,7 @@ export const local_network_and_members = async (
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
-		const members = await network_members(ctx, nwid, isCentral);
-
-		// biome-ignore lint/correctness/noUnusedVariables: <explanation>
-		let memberIds: string[] = [];
-
-		if (Array.isArray(members)) {
-			memberIds = members.map((obj) => Object.keys(obj)[0]);
-		} else if (typeof members === "object") {
-			memberIds = Object.keys(members);
-		}
+		const members = await network_members(ctx, nwid, false);
 
 		// PERFORMANCE OPTIMIZATION: Fetch all member details in parallel instead of sequentially
 		// This significantly reduces total request time from O(n) to O(1) for network latency
@@ -540,8 +528,8 @@ export const local_network_and_members = async (
 		);
 
 		return {
-			network: { ...network },
-			members: [...membersArr],
+			network,
+			members: membersArr,
 		};
 	} catch (error) {
 		throw new APIError(error, error as AxiosError);
@@ -653,6 +641,7 @@ export const member_delete = async ({
 	try {
 		const response: AxiosResponse = await axios.delete(addr, {
 			headers,
+			timeout: 10000, // 10 second timeout
 		});
 		return response.status as MemberDeleteResponse;
 	} catch (error) {

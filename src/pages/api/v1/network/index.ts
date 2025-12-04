@@ -96,7 +96,6 @@ const GET_userNetworks = SecuredPrivateApiRoute(
 						//@ts-expect-error
 						ctx,
 						network.nwid,
-						false,
 					);
 					return {
 						...network,

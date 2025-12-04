@@ -51,7 +51,6 @@ const GET_network = SecuredPrivateApiRoute(
 				//@ts-expect-error
 				ctx,
 				networkId,
-				false,
 			);
 			return res.status(200).json({
 				...network,

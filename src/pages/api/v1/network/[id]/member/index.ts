@@ -44,7 +44,6 @@ const GET_networkMembers = SecuredPrivateApiRoute(
 				// @ts-expect-error: fake request object
 				ctx,
 				networkId,
-				false,
 			);
 
 			const networkMembers = await Promise.all(
