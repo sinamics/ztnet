@@ -508,20 +508,29 @@ export const local_network_and_members = async (
 	const { headers, localControllerUrl } = await getOptions(ctx, false);
 
 	try {
-		const members = await network_members(ctx, nwid, false);
 		const network = await getData<NetworkEntity>(
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
+		const members = await network_members(ctx, nwid, false);
 
-		// Fetch member details sequentially to avoid overwhelming the ZeroTier controller
+		// Fetch member details in batches to avoid overwhelming the ZeroTier controller
+		// Batch size of 5 balances performance with reliability on resource-constrained systems
+		const BATCH_SIZE = 5;
+		const memberEntries = Object.entries(members);
 		const membersArr: MemberEntity[] = [];
-		for (const [memberId] of Object.entries(members)) {
-			const memberDetails = await getData<MemberEntity>(
-				`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
-				headers,
+
+		for (let i = 0; i < memberEntries.length; i += BATCH_SIZE) {
+			const batch = memberEntries.slice(i, i + BATCH_SIZE);
+			const batchResults = await Promise.all(
+				batch.map(async ([memberId]) => {
+					return await getData<MemberEntity>(
+						`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
+						headers,
+					);
+				}),
 			);
-			membersArr.push(memberDetails);
+			membersArr.push(...batchResults);
 		}
 
 		return {
