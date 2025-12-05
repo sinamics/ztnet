@@ -508,24 +508,21 @@ export const local_network_and_members = async (
 	const { headers, localControllerUrl } = await getOptions(ctx, false);
 
 	try {
-		// Fetch network details first, then members sequentially
-		// This avoids hitting concurrent connection limits when multiple networks are fetched in parallel
+		const members = await network_members(ctx, nwid, false);
 		const network = await getData<NetworkEntity>(
 			`${localControllerUrl}/controller/network/${nwid}`,
 			headers,
 		);
-		const members = await network_members(ctx, nwid, false);
 
-		// PERFORMANCE OPTIMIZATION: Fetch all member details in parallel instead of sequentially
-		// This significantly reduces total request time from O(n) to O(1) for network latency
-		const membersArr: MemberEntity[] = await Promise.all(
-			Object.entries(members).map(async ([memberId]) => {
-				return await getData<MemberEntity>(
-					`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
-					headers,
-				);
-			}),
-		);
+		// Fetch member details sequentially to avoid overwhelming the ZeroTier controller
+		const membersArr: MemberEntity[] = [];
+		for (const [memberId] of Object.entries(members)) {
+			const memberDetails = await getData<MemberEntity>(
+				`${localControllerUrl}/controller/network/${nwid}/member/${memberId}`,
+				headers,
+			);
+			membersArr.push(memberDetails);
+		}
 
 		return {
 			network,
