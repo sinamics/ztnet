@@ -1053,7 +1053,7 @@ EOF
   fi
 
   print_status "Installing dependencies..."
-  $STD npm ci
+  $STD npm install
 }
 
 pull_checkout_ztnet
@@ -1082,6 +1082,9 @@ set_env_temp_var "ZT_ADDR" "$ZT_ADDR"
 set_env_temp_var "NEXTAUTH_URL" "$NEXTAUTH_URL"
 set_env_temp_var "NEXT_PUBLIC_APP_VERSION" "$NEXT_PUBLIC_APP_VERSION"
 set_env_temp_var "NEXTAUTH_SECRET" "$NEXTAUTH_SECRET"
+
+# Export DATABASE_URL for Prisma commands (prisma.config.ts skips .env loading)
+export DATABASE_URL
 
 print_status "Database migrations..."
 # Populate PostgreSQL and build Next.js
