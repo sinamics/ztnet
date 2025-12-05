@@ -1053,7 +1053,7 @@ EOF
   fi
 
   print_status "Installing dependencies..."
-  $STD npm ci
+  $STD npm install
 }
 
 pull_checkout_ztnet
