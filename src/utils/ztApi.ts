@@ -515,7 +515,6 @@ export const local_network_and_members = async (
 		const members = await network_members(ctx, nwid, false);
 
 		// Fetch member details in batches to avoid overwhelming the ZeroTier controller
-		// Batch size of 5 balances performance with reliability on resource-constrained systems
 		const BATCH_SIZE = 5;
 		const memberEntries = Object.entries(members);
 		const membersArr: MemberEntity[] = [];
