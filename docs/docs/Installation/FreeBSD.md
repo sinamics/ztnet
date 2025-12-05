@@ -32,7 +32,7 @@ zerotier-one -d
 ### Build Prisma Binary
 ```bash
 git clone https://github.com/prisma/prisma-engines.git
-cd prisma-engines && git checkout 6.16.3
+cd prisma-engines && git checkout 6.19.0
 
 # Build all workspace binaries
 cargo build --release
@@ -85,15 +85,19 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     NEXTAUTH_SECRET="random_secret"
     ```
 
-6. Populate the PostgreSQL database with the necessary tables:
+6. Set environment variables and populate the database:
     ```bash
+    # FreeBSD requires setting DATABASE_URL as shell environment variable
+    # (Prisma config skips .env file loading on FreeBSD)
+    setenv DATABASE_URL "postgresql://postgres:postgres@localhost:5432/ztnet?schema=public"
+
     npx prisma generate && npx prisma migrate deploy
     npx prisma db seed
     ```
 
 7. Build Next.js production:
     ```bash
-    npm run build
+    npm run build:webpack
     cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/
     ```
 
