@@ -4,7 +4,9 @@
 	"private": true,
 	"scripts": {
 		"build": "next build",
+		"build:webpack": "next build --webpack",
 		"dev": "WATCHPACK_POLLING=false next dev",
+		"dev:webpack": "WATCHPACK_POLLING=false next dev --webpack",
 		"postinstall": "prisma generate",
 		"lint": "biome check src",
 		"lint:fix": "biome check src --apply",
