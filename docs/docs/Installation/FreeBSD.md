@@ -88,7 +88,6 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
 6. Set environment variables and populate the database:
     ```bash
     # FreeBSD requires setting DATABASE_URL as shell environment variable
-    # (Prisma config skips .env file loading on FreeBSD)
     setenv DATABASE_URL "postgresql://postgres:postgres@localhost:5432/ztnet?schema=public"
 
     npx prisma generate && npx prisma migrate deploy
