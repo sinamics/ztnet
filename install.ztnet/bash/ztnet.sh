@@ -109,7 +109,7 @@ SILENT_MODE=No
 TEMP_INSTALL_DIR="/tmp/ztnet"
 TEMP_REPO_DIR="$TEMP_INSTALL_DIR/repo"
 TARGET_DIR="/opt/ztnet"
-NODE_MAJOR=18
+NODE_MAJOR=20
 UNINSTALL=0
 
 # Architecture and OS
@@ -652,7 +652,7 @@ printf "Last updated: %s\n" "$(date -d "$INSTALLER_LAST_UPDATED" "+%d %b %Y")"
 printf "\n\n${YELLOW}ZTNET installation script.${NC}\n"
 printf "This script will perform the following actions:\n"
 printf "  1. Install PostgreSQL if it's not already present.\n"
-printf "  2. Ensure Node.js version ${NODE_MAJOR} is installed.\n"
+printf "  2. Ensure Node.js version %s is installed.\n" "$NODE_MAJOR"
 printf "  3. Install Zerotier $ZEROTIER_VERSION if it's missing.\n"
 printf "  4. Clone the ZTnet repository into the /tmp folder and build artifacts from the latest tag.\n"
 printf "  5. Transfer the artifacts to the ${YELLOW}${TARGET_DIR}${NC} directory.\n\n"
