@@ -1,13 +1,12 @@
 // utility.ts or a relevant utility file
 import { TRPCError } from "@trpc/server";
-import { Invitation, PrismaClient } from "@prisma/client";
+import type { Invitation } from "@prisma/client";
 import {
 	ORG_INVITE_TOKEN_SECRET,
 	decrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
-
-const prisma = new PrismaClient();
+import { prisma } from "~/server/db";
 
 interface OrganizationInvitationData {
 	organizationId: string;

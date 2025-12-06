@@ -1,10 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import { type PrismaClient } from "@prisma/client";
 import { type Session } from "next-auth";
 import { appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
 import { TRPCError } from "@trpc/server";
+import { type DeepMockProxy, mockDeep } from "jest-mock-extended";
 
-const prisma = new PrismaClient();
+const mock = mockDeep<PrismaClient>();
+const prisma: DeepMockProxy<PrismaClient> =
+	mock as unknown as DeepMockProxy<PrismaClient>;
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
 	update: { name: "test" },
@@ -16,7 +19,7 @@ const mockSession: PartialDeep<Session> = {
 };
 
 it("should throw an error if the user is not the author of the network", async () => {
-	prisma.network.findUnique = jest.fn().mockRejectedValue(
+	prisma.network.findUnique.mockRejectedValue(
 		new TRPCError({
 			message: "Network not found!",
 			code: "BAD_REQUEST",

@@ -1,9 +1,10 @@
 import { test, expect } from "@jest/globals";
 import { appRouter } from "../../root";
 import { type Session } from "next-auth";
-import { PrismaClient } from "@prisma/client";
+import { type PrismaClient } from "@prisma/client";
 import { type PartialDeep } from "type-fest";
 import { MemberCounts } from "~/types/local/member";
+import { type DeepMockProxy, mockDeep } from "jest-mock-extended";
 
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
@@ -29,7 +30,9 @@ jest.mock("~/utils/ztApi", () => ({
 }));
 
 test("getUserNetworks", async () => {
-	const prismaMock = new PrismaClient();
+	const mock = mockDeep<PrismaClient>();
+	const prismaMock: DeepMockProxy<PrismaClient> =
+		mock as unknown as DeepMockProxy<PrismaClient>;
 
 	interface Network {
 		nwid: string;
@@ -67,7 +70,8 @@ test("getUserNetworks", async () => {
 		},
 	];
 
-	prismaMock.network.findMany = jest.fn().mockResolvedValue(mockOutput);
+	// @ts-expect-error -- mock type mismatch
+	prismaMock.network.findMany.mockResolvedValue(mockOutput);
 
 	const caller = appRouter.createCaller({
 		session: mockSession as Session,
