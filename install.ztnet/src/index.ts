@@ -43,6 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/health', getHealthLimiter, getHealth);
 app.get('/beta', getRateLimiter, getBetaInstaller);
+app.get('/ztnet_*', getRateLimiter, getBashInstaller);
 app.get('(/)?', getRateLimiter, getBashInstaller);
 app.post('/post/error', errorRateLimiter, postError);
 app.get('*', (_, res) => res.download(path.join(__dirname, '..', 'bash/error.sh'), 'error.sh'));
