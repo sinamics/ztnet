@@ -30,6 +30,10 @@ jest.mock("~/utils/rateLimit", () => ({
 	default: jest.fn(() => ({
 		check: jest.fn().mockResolvedValue(null), // Mock implementation of the check method
 	})),
+	RATE_LIMIT_CONFIG: {
+		API_WINDOW_MS: 60 * 1000,
+		API_MAX_REQUESTS: 50,
+	},
 }));
 
 describe("/api/getNetworkById", () => {
