@@ -23,6 +23,10 @@ jest.mock("~/utils/rateLimit", () => ({
 	default: () => ({
 		check: jest.fn().mockResolvedValue(true),
 	}),
+	RATE_LIMIT_CONFIG: {
+		API_WINDOW_MS: 60 * 1000,
+		API_MAX_REQUESTS: 50,
+	},
 }));
 jest.mock("~/server/api/trpc");
 

@@ -26,14 +26,32 @@ import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
 import { mediumPassword, passwordSchema } from "./_schema";
 
-// allow 15 requests per 10 minutes
+// Rate limit configuration from environment variables
+// RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
+// RATE_LIMIT_MAX_REQUESTS: Max requests for general operations (default: 60)
+// RATE_LIMIT_MAX_REQUESTS_SHORT: Max requests for sensitive operations (default: 5)
+const RATE_LIMIT_WINDOW_MS =
+	(Number.parseInt(process.env.RATE_LIMIT_WINDOW || "10", 10) || 10) * 60 * 1000;
+const GENERAL_REQUEST_LIMIT =
+	Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "60", 10) || 60;
+const SHORT_REQUEST_LIMIT =
+	Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS_SHORT || "10", 10) || 10;
+
 const limiter = rateLimit({
-	interval: 10 * 60 * 1000, // 600 seconds or 10 minutes
+	interval: RATE_LIMIT_WINDOW_MS,
 	uniqueTokenPerInterval: 1000,
 });
 
-const GENERAL_REQUEST_LIMIT = 60;
-const SHORT_REQUEST_LIMIT = 5;
+// Rate limit tokens - each endpoint should have its own token to prevent
+// different operations from consuming each other's rate limits
+const RATE_LIMIT_TOKENS = {
+	REGISTER_USER: "REGISTER_USER",
+	VALIDATE_RESET_TOKEN: "VALIDATE_RESET_TOKEN",
+	PASSWORD_RESET_LINK: "PASSWORD_RESET_LINK",
+	CHANGE_PASSWORD: "CHANGE_PASSWORD",
+	SEND_EMAIL_VERIFICATION: "SEND_EMAIL_VERIFICATION",
+	EMAIL_VERIFICATION_LINK: "EMAIL_VERIFICATION_LINK",
+} as const;
 
 export const authRouter = createTRPCRouter({
 	register: publicProcedure
@@ -54,7 +72,11 @@ export const authRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "REGISTER_USER");
+				await limiter.check(
+					ctx.res,
+					GENERAL_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.REGISTER_USER,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -456,7 +478,11 @@ export const authRouter = createTRPCRouter({
 
 				// add rate limit
 				try {
-					await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+					await limiter.check(
+						ctx.res,
+						GENERAL_REQUEST_LIMIT,
+						RATE_LIMIT_TOKENS.VALIDATE_RESET_TOKEN,
+					);
 				} catch {
 					throw new TRPCError({
 						code: "TOO_MANY_REQUESTS",
@@ -490,7 +516,11 @@ export const authRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const { email } = input;
 			try {
-				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					SHORT_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.PASSWORD_RESET_LINK,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -553,7 +583,11 @@ export const authRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			const { token, password, newPassword } = input;
 			try {
-				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "PASSWORD_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					SHORT_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.CHANGE_PASSWORD,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -601,7 +635,11 @@ export const authRouter = createTRPCRouter({
 	sendVerificationEmail: protectedProcedure.mutation(async ({ ctx }) => {
 		// add cooldown to prevent spam
 		try {
-			await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "SEND_EMAIL_VERIFICATION");
+			await limiter.check(
+				ctx.res,
+				SHORT_REQUEST_LIMIT,
+				RATE_LIMIT_TOKENS.SEND_EMAIL_VERIFICATION,
+			);
 		} catch {
 			throw new TRPCError({
 				code: "TOO_MANY_REQUESTS",
@@ -659,7 +697,11 @@ export const authRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, SHORT_REQUEST_LIMIT, "EMAIL_VERIFICATION_LINK");
+				await limiter.check(
+					ctx.res,
+					SHORT_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.EMAIL_VERIFICATION_LINK,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",

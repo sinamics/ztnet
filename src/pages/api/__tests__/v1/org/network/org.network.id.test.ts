@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { REQUEST_PR_MINUTE } from "~/pages/api/v1/org/[orgid]/network/[nwid]";
 import apiNetworkHandler from "~/pages/api/v1/org/[orgid]/network/[nwid]";
+import { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { createGenericApiTests } from "../../apiAuthentication";
 jest.mock("~/server/db", () => ({
 	prisma: {
@@ -56,7 +56,7 @@ describe("organization networkid api validation", () => {
 	describe("NetworkById PORT tests ", createGenericApiTests(apiNetworkHandler, "POST"));
 
 	test("should enforce rate limiting", async () => {
-		for (let i = 0; i < REQUEST_PR_MINUTE; i++) {
+		for (let i = 0; i < RATE_LIMIT_CONFIG.API_MAX_REQUESTS; i++) {
 			mockRequest.headers["x-ztnet-auth"] = `validToken${i}`;
 			await apiNetworkHandler(
 				mockRequest as NextApiRequest,
