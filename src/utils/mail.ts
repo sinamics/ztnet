@@ -262,14 +262,77 @@ interface SendMailResult {
 	accepted: string[];
 }
 
+/**
+ * Converts technical SMTP errors into user-friendly messages
+ */
+function getReadableSmtpError(error: Error): string {
+	const message = error.message || "";
+
+	// SSL/TLS version mismatch errors
+	if (message.includes("wrong version number") || message.includes("ssl3_get_record")) {
+		return "SSL/TLS connection failed. Please check your encryption settings: use SSL/TLS for port 465, or STARTTLS for port 587.";
+	}
+
+	// Connection refused
+	if (message.includes("ECONNREFUSED")) {
+		return "Connection refused. Please verify the SMTP host and port are correct and the server is accessible.";
+	}
+
+	// Connection timeout
+	if (message.includes("ETIMEDOUT") || message.includes("ESOCKET")) {
+		return "Connection timed out. Please verify the SMTP host and port are correct and the server is accessible.";
+	}
+
+	// DNS resolution failure
+	if (message.includes("ENOTFOUND") || message.includes("getaddrinfo")) {
+		return "Could not resolve SMTP host. Please verify the hostname is correct.";
+	}
+
+	// Authentication failures
+	if (message.includes("Invalid login") || message.includes("authentication failed")) {
+		return "Authentication failed. Please check your username and password.";
+	}
+
+	if (message.includes("EAUTH") || message.includes("535")) {
+		return "Authentication failed. Please check your credentials or enable authentication if required by your mail server.";
+	}
+
+	// Certificate errors
+	if (
+		message.includes("self signed certificate") ||
+		message.includes("certificate has expired") ||
+		message.includes("unable to verify")
+	) {
+		return "SSL certificate verification failed. If using a self-signed certificate, disable 'Verify SSL Certificate' in settings.";
+	}
+
+	// STARTTLS required but not available
+	if (message.includes("STARTTLS") || message.includes("Must issue a STARTTLS")) {
+		return "Server requires STARTTLS. Please change encryption setting to STARTTLS.";
+	}
+
+	// Generic TLS errors
+	if (message.includes("TLS") || message.includes("SSL") || message.includes("ssl")) {
+		return `SSL/TLS error: ${message}. Please verify your encryption settings match your mail server requirements.`;
+	}
+
+	// Return original message if no specific handler
+	return `Email sending failed: ${message}`;
+}
+
 async function sendEmail(
 	transporter: nodemailer.Transporter<unknown>,
 	mailOptions: nodemailer.SendMailOptions,
 ) {
-	const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
+	try {
+		const info = (await transporter.sendMail(mailOptions)) as SendMailResult;
 
-	if (!info.accepted.includes(mailOptions.to as string)) {
-		return throwError("Email could not be sent, check your credentials");
+		if (!info.accepted.includes(mailOptions.to as string)) {
+			return throwError("Email could not be sent, check your credentials");
+		}
+	} catch (error) {
+		const readableError = getReadableSmtpError(error as Error);
+		return throwError(readableError);
 	}
 }
 
@@ -291,12 +354,35 @@ export async function createTransporter() {
 			generateInstanceSecret(SMTP_SECRET),
 		);
 	}
+
+	// Determine encryption settings based on smtpEncryption field
+	// Fall back to legacy smtpUseSSL field for backward compatibility
+	const encryption =
+		globalOptions.smtpEncryption || (globalOptions.smtpUseSSL ? "SSL" : "STARTTLS");
+
+	// secure: true for SSL/TLS (port 465), false for STARTTLS (port 587) or NONE
+	const secure = encryption === "SSL";
+
+	// requireTLS: true for STARTTLS to force upgrade, false otherwise
+	const requireTLS = encryption === "STARTTLS";
+
+	// ignoreTLS: true for NONE (plaintext), false otherwise
+	const ignoreTLS = encryption === "NONE";
+
+	// Determine if authentication should be used
+	// Fall back to checking if credentials exist for backward compatibility
+	const useAuth =
+		globalOptions.smtpUseAuthentication ??
+		(Boolean(globalOptions.smtpUsername) || Boolean(globalOptions.smtpPassword));
+
 	return nodemailer.createTransport({
 		host: globalOptions.smtpHost,
 		port: globalOptions.smtpPort,
-		secure: globalOptions.smtpUseSSL,
+		secure,
+		requireTLS,
+		ignoreTLS,
 		auth:
-			globalOptions.smtpUsername || globalOptions.smtpPassword
+			useAuth && (globalOptions.smtpUsername || globalOptions.smtpPassword)
 				? {
 						user: globalOptions.smtpUsername,
 						pass: globalOptions.smtpPassword,
@@ -304,7 +390,6 @@ export async function createTransporter() {
 				: undefined,
 		tls: {
 			rejectUnauthorized: globalOptions.smtpRequireTLS,
-			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
 }
