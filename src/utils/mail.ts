@@ -267,9 +267,10 @@ interface SendMailResult {
  */
 export function getReadableSmtpError(error: Error): string {
 	const message = error.message || "";
+	const messageLower = message.toLowerCase();
 
 	// SSL/TLS version mismatch errors
-	if (message.includes("wrong version number") || message.includes("ssl3_get_record")) {
+	if (messageLower.includes("wrong version number") || messageLower.includes("ssl3_get_record")) {
 		return "SSL/TLS connection failed. Please check your encryption settings: use SSL/TLS for port 465, or STARTTLS for port 587.";
 	}
 
@@ -284,12 +285,12 @@ export function getReadableSmtpError(error: Error): string {
 	}
 
 	// DNS resolution failure
-	if (message.includes("ENOTFOUND") || message.includes("getaddrinfo")) {
+	if (message.includes("ENOTFOUND") || messageLower.includes("getaddrinfo")) {
 		return "Could not resolve SMTP host. Please verify the hostname is correct.";
 	}
 
 	// Authentication failures
-	if (message.includes("Invalid login") || message.includes("authentication failed")) {
+	if (messageLower.includes("invalid login") || messageLower.includes("authentication failed")) {
 		return "Authentication failed. Please check your username and password.";
 	}
 
@@ -299,20 +300,20 @@ export function getReadableSmtpError(error: Error): string {
 
 	// Certificate errors
 	if (
-		message.includes("self signed certificate") ||
-		message.includes("certificate has expired") ||
-		message.includes("unable to verify")
+		messageLower.includes("self signed certificate") ||
+		messageLower.includes("certificate has expired") ||
+		messageLower.includes("unable to verify")
 	) {
 		return "SSL certificate verification failed. If using a self-signed certificate, disable 'Verify SSL Certificate' in settings.";
 	}
 
 	// STARTTLS required but not available
-	if (message.includes("STARTTLS") || message.includes("Must issue a STARTTLS")) {
+	if (messageLower.includes("starttls") || messageLower.includes("must issue a starttls")) {
 		return "Server requires STARTTLS. Please change encryption setting to STARTTLS.";
 	}
 
-	// Generic TLS errors
-	if (message.includes("TLS") || message.includes("SSL") || message.includes("ssl")) {
+	// Generic TLS/SSL errors (case-insensitive)
+	if (messageLower.includes("tls") || messageLower.includes("ssl")) {
 		return `SSL/TLS error: ${message}. Please verify your encryption settings match your mail server requirements.`;
 	}
 

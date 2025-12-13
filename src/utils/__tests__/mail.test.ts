@@ -27,6 +27,14 @@ describe("getReadableSmtpError", () => {
 			);
 		});
 
+		test("should handle WRONG VERSION NUMBER in uppercase", () => {
+			const error = new Error("SSL: WRONG VERSION NUMBER");
+			const result = getReadableSmtpError(error);
+			expect(result).toBe(
+				"SSL/TLS connection failed. Please check your encryption settings: use SSL/TLS for port 465, or STARTTLS for port 587.",
+			);
+		});
+
 		test("should handle generic TLS error", () => {
 			const error = new Error("TLS negotiation failed");
 			const result = getReadableSmtpError(error);
@@ -40,6 +48,22 @@ describe("getReadableSmtpError", () => {
 			const result = getReadableSmtpError(error);
 			expect(result).toBe(
 				"SSL/TLS error: SSL connection error. Please verify your encryption settings match your mail server requirements.",
+			);
+		});
+
+		test("should handle lowercase tls error", () => {
+			const error = new Error("tls handshake failure");
+			const result = getReadableSmtpError(error);
+			expect(result).toBe(
+				"SSL/TLS error: tls handshake failure. Please verify your encryption settings match your mail server requirements.",
+			);
+		});
+
+		test("should handle mixed case Ssl error", () => {
+			const error = new Error("Ssl protocol error");
+			const result = getReadableSmtpError(error);
+			expect(result).toBe(
+				"SSL/TLS error: Ssl protocol error. Please verify your encryption settings match your mail server requirements.",
 			);
 		});
 	});
