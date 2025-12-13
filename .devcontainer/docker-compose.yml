@@ -19,7 +19,7 @@ services:
       dockerfile: .devcontainer/Dockerfile.dev
       args:
         NEXT_PUBLIC_CLIENTVAR: "clientvar"
-      
+
     working_dir: /workspaces
     volumes:
       - .:/workspaces:cached
