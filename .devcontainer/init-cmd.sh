@@ -10,17 +10,11 @@ until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER"
   sleep 1
 done
 
-# Fix ZeroTier directory permissions for node user using shared group
+# Fix ZeroTier directory permissions for node user (dev only - world readable)
 if [ -d "/var/lib/zerotier-one" ]; then
-  # Create shared group and add both root and node to it
-  sudo groupadd -f ztnet
-  sudo usermod -aG ztnet root
-  sudo usermod -aG ztnet node
-  # Set group ownership and permissions
-  sudo chown -R root:ztnet /var/lib/zerotier-one
-  sudo chmod -R 775 /var/lib/zerotier-one
-  sudo chmod 660 /var/lib/zerotier-one/authtoken.secret 2>/dev/null || true
-  echo "✓ ZeroTier permissions fixed (shared group: ztnet)"
+  sudo chmod -R 755 /var/lib/zerotier-one
+  sudo chmod 644 /var/lib/zerotier-one/authtoken.secret 2>/dev/null || true
+  echo "✓ ZeroTier permissions fixed"
 fi
 
 # Install dependencies if node_modules doesn't exist
