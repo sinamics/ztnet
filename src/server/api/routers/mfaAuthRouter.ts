@@ -14,13 +14,24 @@ import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
 
-// allow 15 requests per 10 minutes
+// Rate limit configuration from environment variables
+const RATE_LIMIT_WINDOW_MS =
+	(Number.parseInt(process.env.RATE_LIMIT_WINDOW || "10", 10) || 10) * 60 * 1000;
+const GENERAL_REQUEST_LIMIT =
+	Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS_SHORT || "10", 10) || 10;
+
 const limiter = rateLimit({
-	interval: 10 * 60 * 1000, // 600 seconds or 10 minutes
+	interval: RATE_LIMIT_WINDOW_MS,
 	uniqueTokenPerInterval: 1000,
 });
 
-const GENERAL_REQUEST_LIMIT = 10;
+// Rate limit tokens for MFA operations
+const RATE_LIMIT_TOKENS = {
+	MFA_VALIDATE_TOKEN: "MFA_VALIDATE_TOKEN",
+	MFA_RESET_LINK: "MFA_RESET_LINK",
+	MFA_RESET_VALIDATION: "MFA_RESET_VALIDATION",
+	MFA_VALIDATE_RECOVERY: "MFA_VALIDATE_RECOVERY",
+} as const;
 
 async function verifyRecoveryCode(
 	providedCode: string,
@@ -56,7 +67,11 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					GENERAL_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.MFA_VALIDATE_TOKEN,
+				);
 			} catch {
 				return { error: ErrorCode.TooManyRequests };
 			}
@@ -93,7 +108,11 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					GENERAL_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.MFA_RESET_LINK,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -157,7 +176,11 @@ export const mfaAuthRouter = createTRPCRouter({
 			const { token, email, recoveryCode } = input;
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					GENERAL_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.MFA_RESET_VALIDATION,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",
@@ -258,7 +281,11 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// add rate limit
 			try {
-				await limiter.check(ctx.res, GENERAL_REQUEST_LIMIT, "MFA_RESET_LINK");
+				await limiter.check(
+					ctx.res,
+					GENERAL_REQUEST_LIMIT,
+					RATE_LIMIT_TOKENS.MFA_VALIDATE_RECOVERY,
+				);
 			} catch {
 				throw new TRPCError({
 					code: "TOO_MANY_REQUESTS",

@@ -26,14 +26,21 @@ import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
 import { mediumPassword, passwordSchema } from "./_schema";
 
-// allow 15 requests per 10 minutes
+// Rate limit configuration from environment variables
+// RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
+// RATE_LIMIT_MAX_REQUESTS: Max requests for general operations (default: 60)
+// RATE_LIMIT_MAX_REQUESTS_SHORT: Max requests for sensitive operations (default: 5)
+const RATE_LIMIT_WINDOW_MS =
+	(Number.parseInt(process.env.RATE_LIMIT_WINDOW || "10", 10) || 10) * 60 * 1000;
+const GENERAL_REQUEST_LIMIT =
+	Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "60", 10) || 60;
+const SHORT_REQUEST_LIMIT =
+	Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS_SHORT || "10", 10) || 10;
+
 const limiter = rateLimit({
-	interval: 10 * 60 * 1000, // 600 seconds or 10 minutes
+	interval: RATE_LIMIT_WINDOW_MS,
 	uniqueTokenPerInterval: 1000,
 });
-
-const GENERAL_REQUEST_LIMIT = 60;
-const SHORT_REQUEST_LIMIT = 5;
 
 // Rate limit tokens - each endpoint should have its own token to prevent
 // different operations from consuming each other's rate limits

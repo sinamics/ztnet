@@ -3,22 +3,20 @@ import { prisma } from "~/server/db";
 import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import { globalSiteVersion } from "~/utils/global";
-import rateLimit from "~/utils/rateLimit";
+import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 
-// Number of allowed requests per minute
+// Rate limit using environment configuration
 const limiter = rateLimit({
-	interval: 60 * 1000, // 60 seconds
-	uniqueTokenPerInterval: 500, // Max 500 users per second
+	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
+	uniqueTokenPerInterval: 500,
 });
-
-const REQUEST_PR_MINUTE = 50;
 
 export default async function createStatsHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "CREATE_USER_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(res, RATE_LIMIT_CONFIG.API_MAX_REQUESTS, "STATS_CACHE_TOKEN");
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}

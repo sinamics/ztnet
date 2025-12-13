@@ -40,8 +40,12 @@ import { MemberCounts } from "~/types/local/member";
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
 
+// Rate limit configuration from environment variables
+const RATE_LIMIT_WINDOW_MS =
+	(Number.parseInt(process.env.RATE_LIMIT_WINDOW || "10", 10) || 10) * 60 * 1000;
+
 const invitationRateLimit = rateLimit({
-	interval: 5 * 60 * 1000, // 300 seconds or 5 minutes
+	interval: RATE_LIMIT_WINDOW_MS,
 	uniqueTokenPerInterval: 1000,
 });
 

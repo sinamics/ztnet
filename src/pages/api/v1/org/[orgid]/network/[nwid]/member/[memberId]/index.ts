@@ -4,25 +4,27 @@ import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
-import rateLimit from "~/utils/rateLimit";
+import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
 import { HandlerContextSchema, PostBodySchema } from "./_schema";
 
-// Number of allowed requests per minute
+// Rate limit using environment configuration
 const limiter = rateLimit({
-	interval: 60 * 1000, // 60 seconds
-	uniqueTokenPerInterval: 500, // Max 500 users per second
+	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
+	uniqueTokenPerInterval: 500,
 });
-
-export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkUpdateMembersHandler(
 	req: NextApiRequest,
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, REQUEST_PR_MINUTE, "ORGANIZATION_MEMBERID_CACHE_TOKEN"); // 10 requests per minute
+		await limiter.check(
+			res,
+			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
+			"ORGANIZATION_MEMBERID_CACHE_TOKEN",
+		);
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}

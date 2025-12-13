@@ -6,6 +6,17 @@ type Options = {
 	interval?: number;
 };
 
+// Rate limit configuration from environment variables
+// These are exported so they can be used by API routes
+export const RATE_LIMIT_CONFIG = {
+	// Time window in minutes (default: 1 minute for REST API)
+	API_WINDOW_MS:
+		(Number.parseInt(process.env.RATE_LIMIT_API_WINDOW || "1", 10) || 1) * 60 * 1000,
+	// Max requests per window for REST API (default: 50)
+	API_MAX_REQUESTS:
+		Number.parseInt(process.env.RATE_LIMIT_API_MAX_REQUESTS || "50", 10) || 50,
+} as const;
+
 export default function rateLimit(options?: Options) {
 	const tokenCache = new LRUCache({
 		max: options?.uniqueTokenPerInterval || 500,

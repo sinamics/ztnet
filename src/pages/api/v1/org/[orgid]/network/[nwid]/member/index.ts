@@ -3,16 +3,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
-import rateLimit from "~/utils/rateLimit";
+import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 
-// Number of allowed requests per minute
+// Rate limit using environment configuration
 const limiter = rateLimit({
-	interval: 60 * 1000, // 60 seconds
-	uniqueTokenPerInterval: 500, // Max 500 users per second
+	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
+	uniqueTokenPerInterval: 500,
 });
-
-export const REQUEST_PR_MINUTE = 50;
 
 export default async function apiNetworkMembersHandler(
 	req: NextApiRequest,
@@ -21,9 +19,9 @@ export default async function apiNetworkMembersHandler(
 	try {
 		await limiter.check(
 			res,
-			REQUEST_PR_MINUTE,
+			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"ORGANIZATION_NETWORK_MEMBERS_CACHE_TOKEN",
-		); // 10 requests per minute
+		);
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}

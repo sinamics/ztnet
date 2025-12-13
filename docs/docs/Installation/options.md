@@ -136,4 +136,35 @@ For more information on NEXTAUTH environment variables, see [NEXTAUTH Environmen
   - Description: Duration (in seconds) before the user is logged out due to inactivity.
   - Default: 2592000 (30 Days).
 
+## Rate Limiting Configuration
+
+Rate limiting helps protect against brute force attacks and abuse. There are separate configurations for authentication endpoints and REST API endpoints.
+
+### Authentication Endpoints
+
+These settings control rate limiting for authentication operations (registration, password reset, email verification, MFA).
+
+- `RATE_LIMIT_WINDOW`
+  - Description: Time window in minutes for rate limit calculation. Requests are counted within this sliding window.
+  - Default: `10` (10 minutes).
+
+- `RATE_LIMIT_MAX_REQUESTS`
+  - Description: Maximum number of requests allowed within the rate limit window for general operations (e.g., registration, token validation).
+  - Default: `60`.
+
+- `RATE_LIMIT_MAX_REQUESTS_SHORT`
+  - Description: Maximum number of requests allowed within the rate limit window for sensitive operations (e.g., password reset requests, password changes, email verification).
+  - Default: `10`.
+
+### REST API Endpoints
+
+These settings control rate limiting for all REST API endpoints under `/api/v1/*`.
+
+- `RATE_LIMIT_API_WINDOW`
+  - Description: Time window in minutes for REST API rate limit calculation.
+  - Default: `1` (1 minute).
+
+- `RATE_LIMIT_API_MAX_REQUESTS`
+  - Description: Maximum number of requests allowed within the rate limit window for REST API endpoints.
+  - Default: `50`.
 
