@@ -510,6 +510,8 @@
 			"emailTemplates": "Шаблоны писем",
 			"smtpHost": "SMTP-хост",
 			"smtpPort": "SMTP-порт",
+			"portInvalid": "Порт должен быть от 1 до 65535",
+			"portUncommon": "Нестандартный порт. Стандартные SMTP-порты: 25, 465, 587, 2525",
 			"senderEmail": "Email отправителя",
 			"mailPlaceholder": "mail@example.com",
 			"senderName": "Имя отправителя",

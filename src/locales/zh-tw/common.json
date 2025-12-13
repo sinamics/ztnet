@@ -510,6 +510,8 @@
 			"emailTemplates": "郵件範本",
 			"smtpHost": "SMTP主機",
 			"smtpPort": "SMTP連接埠",
+			"portInvalid": "連接埠必須在1到65535之間",
+			"portUncommon": "非常用連接埠。常用SMTP連接埠：25、465、587、2525",
 			"senderEmail": "寄件人電子郵件",
 			"mailPlaceholder": "mail@example.com",
 			"senderName": "寄件人名稱",

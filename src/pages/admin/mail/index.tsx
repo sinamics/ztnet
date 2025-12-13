@@ -29,6 +29,7 @@ interface MailFormState {
 }
 
 const PASSWORD_PLACEHOLDER = "••••••••";
+const COMMON_SMTP_PORTS = [25, 465, 587, 2525];
 
 const Mail = () => {
 	const t = useTranslations("admin");
@@ -108,6 +109,21 @@ const Mail = () => {
 		setPasswordChanged(true);
 		setHasChanges(true);
 	};
+
+	// Validate port number
+	const getPortValidation = () => {
+		const port = Number.parseInt(formState.smtpPort, 10);
+		if (!formState.smtpPort) return null;
+		if (Number.isNaN(port) || port < 1 || port > 65535) {
+			return { isError: true, message: t("mail.portInvalid") };
+		}
+		if (!COMMON_SMTP_PORTS.includes(port)) {
+			return { isError: false, message: t("mail.portUncommon") };
+		}
+		return null;
+	};
+
+	const portValidation = getPortValidation();
 
 	const handleSave = () => {
 		setMailOptions({
@@ -198,11 +214,26 @@ const Mail = () => {
 						</label>
 						<input
 							type="number"
-							className="input input-bordered input-sm w-full"
+							className={`input input-bordered input-sm w-full ${
+								portValidation?.isError ? "input-error" : ""
+							}`}
 							placeholder="587"
+							min="1"
+							max="65535"
 							value={formState.smtpPort}
 							onChange={(e) => handleInputChange("smtpPort", e.target.value)}
 						/>
+						{portValidation && (
+							<label className="label">
+								<span
+									className={`label-text-alt ${
+										portValidation.isError ? "text-error" : "text-warning"
+									}`}
+								>
+									{portValidation.message}
+								</span>
+							</label>
+						)}
 					</div>
 				</div>
 				<div className="form-control w-full sm:w-1/2">
@@ -300,7 +331,7 @@ const Mail = () => {
 				<button
 					type="button"
 					className="btn btn-primary btn-sm"
-					disabled={!hasChanges || isSaving}
+					disabled={!hasChanges || isSaving || portValidation?.isError}
 					onClick={handleSave}
 				>
 					{isSaving ? (

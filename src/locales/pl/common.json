@@ -510,6 +510,8 @@
 			"emailTemplates": "Szablony e-mail",
 			"smtpHost": "Host SMTP",
 			"smtpPort": "Port SMTP",
+			"portInvalid": "Port musi być między 1 a 65535",
+			"portUncommon": "Nietypowy port. Typowe porty SMTP: 25, 465, 587, 2525",
 			"senderEmail": "E-mail nadawcy",
 			"mailPlaceholder": "imie@twojadomena.pl",
 			"senderName": "Nazwa nadawcy",

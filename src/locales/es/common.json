@@ -510,6 +510,8 @@
 			"emailTemplates": "Plantillas de correo",
 			"smtpHost": "Host SMTP",
 			"smtpPort": "Puerto SMTP",
+			"portInvalid": "El puerto debe estar entre 1 y 65535",
+			"portUncommon": "Puerto poco común. Puertos SMTP comunes: 25, 465, 587, 2525",
 			"senderEmail": "Correo del remitente",
 			"mailPlaceholder": "correo@ejemplo.com",
 			"senderName": "Nombre del remitente",

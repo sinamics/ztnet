@@ -510,6 +510,8 @@
 			"emailTemplates": "Modèles d'e-mail",
 			"smtpHost": "Hôte SMTP",
 			"smtpPort": "Port SMTP",
+			"portInvalid": "Le port doit être compris entre 1 et 65535",
+			"portUncommon": "Port inhabituel. Ports SMTP courants : 25, 465, 587, 2525",
 			"senderEmail": "E-mail de l'expéditeur",
 			"mailPlaceholder": "mail@exemple.com",
 			"senderName": "Nom de l'expéditeur",

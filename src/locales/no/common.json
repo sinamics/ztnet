@@ -510,6 +510,8 @@
 			"emailTemplates": "E-postmaler",
 			"smtpHost": "SMTP-vert",
 			"smtpPort": "SMTP-port",
+			"portInvalid": "Port må være mellom 1 og 65535",
+			"portUncommon": "Uvanlig port. Vanlige SMTP-porter: 25, 465, 587, 2525",
 			"senderEmail": "Avsenders e-post",
 			"mailPlaceholder": "post@eksempel.com",
 			"senderName": "Avsenders navn",

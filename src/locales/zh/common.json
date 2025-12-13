@@ -510,6 +510,8 @@
 			"emailTemplates": "邮件模板",
 			"smtpHost": "SMTP主机",
 			"smtpPort": "SMTP端口",
+			"portInvalid": "端口必须在1到65535之间",
+			"portUncommon": "非常用端口。常用SMTP端口：25、465、587、2525",
 			"senderEmail": "发件人邮箱",
 			"mailPlaceholder": "mail@example.com",
 			"senderName": "发件人名称",
