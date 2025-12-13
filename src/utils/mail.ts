@@ -270,7 +270,10 @@ export function getReadableSmtpError(error: Error): string {
 	const messageLower = message.toLowerCase();
 
 	// SSL/TLS version mismatch errors
-	if (messageLower.includes("wrong version number") || messageLower.includes("ssl3_get_record")) {
+	if (
+		messageLower.includes("wrong version number") ||
+		messageLower.includes("ssl3_get_record")
+	) {
 		return "SSL/TLS connection failed. Please check your encryption settings: use SSL/TLS for port 465, or STARTTLS for port 587.";
 	}
 
@@ -290,7 +293,10 @@ export function getReadableSmtpError(error: Error): string {
 	}
 
 	// Authentication failures
-	if (messageLower.includes("invalid login") || messageLower.includes("authentication failed")) {
+	if (
+		messageLower.includes("invalid login") ||
+		messageLower.includes("authentication failed")
+	) {
 		return "Authentication failed. Please check your username and password.";
 	}
 
@@ -308,7 +314,10 @@ export function getReadableSmtpError(error: Error): string {
 	}
 
 	// STARTTLS required but not available
-	if (messageLower.includes("starttls") || messageLower.includes("must issue a starttls")) {
+	if (
+		messageLower.includes("starttls") ||
+		messageLower.includes("must issue a starttls")
+	) {
 		return "Server requires STARTTLS. Please change encryption setting to STARTTLS.";
 	}
 

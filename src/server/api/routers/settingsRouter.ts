@@ -1,5 +1,4 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
-import { SMTP_SECRET, decrypt, generateInstanceSecret } from "~/utils/encryption";
 
 export const settingsRouter = createTRPCRouter({
 	// Set global options
@@ -9,17 +8,13 @@ export const settingsRouter = createTRPCRouter({
 				id: 1,
 			},
 		});
-		if (options?.smtpPassword) {
-			try {
-				options.smtpPassword = decrypt(
-					options.smtpPassword,
-					generateInstanceSecret(SMTP_SECRET),
-				);
-			} catch (_err) {
-				console.warn(
-					"Failed to decrypt SMTP password. Has the NextAuth secret been changed?. Re-save the SMTP password to fix this.",
-				);
-			}
+		// Never send actual password to client - only indicate if one exists
+		if (options) {
+			return {
+				...options,
+				smtpPassword: null,
+				hasSmtpPassword: Boolean(options.smtpPassword),
+			};
 		}
 		return options;
 	}),

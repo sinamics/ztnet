@@ -28,6 +28,8 @@ interface MailFormState {
 	smtpRequireTLS: boolean;
 }
 
+const PASSWORD_PLACEHOLDER = "••••••••";
+
 const Mail = () => {
 	const t = useTranslations("admin");
 
@@ -72,6 +74,9 @@ const Mail = () => {
 	// Track if form has unsaved changes
 	const [hasChanges, setHasChanges] = useState(false);
 
+	// Track if password field has been modified by user
+	const [passwordChanged, setPasswordChanged] = useState(false);
+
 	// Initialize form state from server data
 	useEffect(() => {
 		if (options) {
@@ -84,15 +89,23 @@ const Mail = () => {
 					(options.smtpEncryption as "NONE" | "SSL" | "STARTTLS") || "STARTTLS",
 				smtpUseAuthentication: options.smtpUseAuthentication ?? true,
 				smtpUsername: options.smtpUsername || "",
-				smtpPassword: options.smtpPassword || "",
+				// Don't populate password - use empty string, show placeholder if password exists
+				smtpPassword: "",
 				smtpRequireTLS: options.smtpRequireTLS || false,
 			});
 			setHasChanges(false);
+			setPasswordChanged(false);
 		}
 	}, [options]);
 
 	const handleInputChange = (field: keyof MailFormState, value: string | boolean) => {
 		setFormState((prev) => ({ ...prev, [field]: value }));
+		setHasChanges(true);
+	};
+
+	const handlePasswordChange = (value: string) => {
+		setFormState((prev) => ({ ...prev, smtpPassword: value }));
+		setPasswordChanged(true);
 		setHasChanges(true);
 	};
 
@@ -105,10 +118,12 @@ const Mail = () => {
 			smtpEncryption: formState.smtpEncryption,
 			smtpUseAuthentication: formState.smtpUseAuthentication,
 			smtpUsername: formState.smtpUsername || undefined,
-			smtpPassword: formState.smtpPassword || undefined,
+			// Only send password if user explicitly changed it
+			smtpPassword: passwordChanged ? formState.smtpPassword || undefined : undefined,
 			smtpRequireTLS: formState.smtpRequireTLS,
 		});
 		setHasChanges(false);
+		setPasswordChanged(false);
 	};
 
 	if (loadingOptions) {
@@ -253,9 +268,9 @@ const Mail = () => {
 							<input
 								type="password"
 								className="input input-bordered input-sm w-full"
-								placeholder="••••••••"
+								placeholder={options?.hasSmtpPassword ? PASSWORD_PLACEHOLDER : ""}
 								value={formState.smtpPassword}
-								onChange={(e) => handleInputChange("smtpPassword", e.target.value)}
+								onChange={(e) => handlePasswordChange(e.target.value)}
 							/>
 						</div>
 					</div>
