@@ -290,6 +290,7 @@ const Mail = () => {
 								placeholder={t("mail.username")}
 								value={formState.smtpUsername}
 								onChange={(e) => handleInputChange("smtpUsername", e.target.value)}
+								autoComplete="off"
 							/>
 						</div>
 						<div className="form-control w-full">
@@ -302,6 +303,7 @@ const Mail = () => {
 								placeholder={options?.hasSmtpPassword ? PASSWORD_PLACEHOLDER : ""}
 								value={formState.smtpPassword}
 								onChange={(e) => handlePasswordChange(e.target.value)}
+								autoComplete="new-password"
 							/>
 						</div>
 					</div>

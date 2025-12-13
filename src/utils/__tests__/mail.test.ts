@@ -372,7 +372,7 @@ describe("getSmtpEncryptionConfig", () => {
 
 	describe("invalid encryption value handling", () => {
 		test("should default to STARTTLS for invalid encryption value", () => {
-			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 			const result = getSmtpEncryptionConfig({
 				smtpEncryption: "INVALID_VALUE",
 			});
@@ -386,7 +386,7 @@ describe("getSmtpEncryptionConfig", () => {
 		});
 
 		test("should default to STARTTLS for lowercase encryption value", () => {
-			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 			const result = getSmtpEncryptionConfig({
 				smtpEncryption: "ssl", // lowercase - invalid
 			});
@@ -404,7 +404,7 @@ describe("getSmtpEncryptionConfig", () => {
 		});
 
 		test("should default to STARTTLS for numeric encryption value", () => {
-			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 			const result = getSmtpEncryptionConfig({
 				// @ts-expect-error Testing invalid type from database
 				smtpEncryption: 123,
@@ -415,7 +415,7 @@ describe("getSmtpEncryptionConfig", () => {
 		});
 
 		test("should default to STARTTLS for object encryption value", () => {
-			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 			const result = getSmtpEncryptionConfig({
 				// @ts-expect-error Testing invalid type from database
 				smtpEncryption: { type: "SSL" },

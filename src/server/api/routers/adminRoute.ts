@@ -26,6 +26,10 @@ import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 
 type WithError<T> = T & { error?: boolean; message?: string };
+type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
+	smtpPassword: null;
+	hasSmtpPassword: boolean;
+};
 
 export const adminRouter = createTRPCRouter({
 	updateUser: adminRoleProtectedRoute
@@ -404,31 +408,33 @@ export const adminRouter = createTRPCRouter({
 	}),
 
 	// Set global options
-	getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		let options = (await ctx.prisma.globalOptions.findFirst({
-			where: {
-				id: 1,
-			},
-		})) as WithError<GlobalOptions>;
+	getAllOptions: adminRoleProtectedRoute.query(
+		async ({ ctx }): Promise<GlobalOptionsResponse | null> => {
+			let options = (await ctx.prisma.globalOptions.findFirst({
+				where: {
+					id: 1,
+				},
+			})) as WithError<GlobalOptions>;
 
-		if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
-			options = {
-				...options,
-				error: true,
-				message:
-					"Please re-enter your SMTP password to enhance security through database hashing.",
-			};
-		}
-		// Never send actual password to client - only indicate if one exists
-		if (options) {
-			return {
-				...options,
-				smtpPassword: null,
-				hasSmtpPassword: Boolean(options.smtpPassword),
-			};
-		}
-		return options;
-	}),
+			if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
+				options = {
+					...options,
+					error: true,
+					message:
+						"Please re-enter your SMTP password to enhance security through database hashing.",
+				};
+			}
+			// Never send actual password to client - only indicate if one exists
+			if (options) {
+				return {
+					...options,
+					smtpPassword: null,
+					hasSmtpPassword: Boolean(options.smtpPassword),
+				} as GlobalOptionsResponse;
+			}
+			return null;
+		},
+	),
 
 	// Set global options
 	changeRole: adminRoleProtectedRoute
