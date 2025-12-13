@@ -12,9 +12,6 @@
   // The optional 'workspaceFolder' property is the path VS Code should open by default when
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
   "workspaceFolder": "/workspaces",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {}
-  },
   "mounts": [
     "source=${localEnv:HOME}/.ssh,target=/tmp/host-ssh,type=bind,readonly"
   ],
@@ -22,6 +19,7 @@
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/tmp/ssh-agent-vscode.sock"
   },
+  "remoteUser": "node",
   "customizations": {
     "vscode": {
       "settings": {

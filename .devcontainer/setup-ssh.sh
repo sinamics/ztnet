@@ -9,13 +9,13 @@ SSH_SOCK="/tmp/ssh-agent-vscode.sock"
 # --- Copy SSH keys from host ---
 if [ -d "/tmp/host-ssh" ]; then
     sudo cp -r /tmp/host-ssh /tmp/ssh-copy
-    sudo chown -R node:node /tmp/ssh-copy
+    sudo chown -R $(whoami) /tmp/ssh-copy
     mkdir -p ~/.ssh
     cp /tmp/ssh-copy/* ~/.ssh/ 2>/dev/null
     chmod 700 ~/.ssh
     chmod 600 ~/.ssh/id_* 2>/dev/null
     chmod 644 ~/.ssh/*.pub ~/.ssh/known_hosts ~/.ssh/config 2>/dev/null
-    rm -rf /tmp/ssh-copy
+    sudo rm -rf /tmp/ssh-copy
     echo "✓ SSH keys copied"
 fi
 
