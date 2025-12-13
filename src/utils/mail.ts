@@ -262,6 +262,57 @@ interface SendMailResult {
 	accepted: string[];
 }
 
+interface SmtpEncryptionInput {
+	smtpEncryption?: string | null;
+	smtpUseSSL?: boolean | null;
+	smtpPort?: string | null;
+}
+
+interface SmtpEncryptionConfig {
+	secure: boolean;
+	requireTLS: boolean;
+	ignoreTLS: boolean;
+	resolvedEncryption: "NONE" | "SSL" | "STARTTLS";
+}
+
+/**
+ * Determines SMTP transport encryption settings based on configuration.
+ * Handles both new smtpEncryption field and legacy smtpUseSSL fallback.
+ *
+ * @param input - SMTP encryption configuration options
+ * @returns Transport options for nodemailer (secure, requireTLS, ignoreTLS)
+ */
+export function getSmtpEncryptionConfig(
+	input: SmtpEncryptionInput,
+): SmtpEncryptionConfig {
+	// Determine encryption settings based on smtpEncryption field
+	// Fall back to legacy fields for backward compatibility
+	let encryption: "NONE" | "SSL" | "STARTTLS";
+
+	if (input.smtpEncryption) {
+		encryption = input.smtpEncryption as "NONE" | "SSL" | "STARTTLS";
+	} else if (input.smtpUseSSL) {
+		encryption = "SSL";
+	} else if (input.smtpPort === "25") {
+		// Port 25 typically uses no encryption or opportunistic STARTTLS
+		encryption = "NONE";
+	} else {
+		// Port 587 (default) uses STARTTLS
+		encryption = "STARTTLS";
+	}
+
+	return {
+		// secure: true for SSL/TLS (port 465), false for STARTTLS (port 587) or NONE
+		secure: encryption === "SSL",
+		// requireTLS: true for STARTTLS to force upgrade, false otherwise
+		requireTLS: encryption === "STARTTLS",
+		// ignoreTLS: true for NONE (plaintext), false otherwise
+		ignoreTLS: encryption === "NONE",
+		// Return the resolved encryption mode for testing
+		resolvedEncryption: encryption,
+	};
+}
+
 /**
  * Converts technical SMTP errors into user-friendly messages
  */
@@ -365,29 +416,11 @@ export async function createTransporter() {
 		);
 	}
 
-	// Determine encryption settings based on smtpEncryption field
-	// Fall back to legacy fields for backward compatibility
-	let encryption = globalOptions.smtpEncryption;
-	if (!encryption) {
-		if (globalOptions.smtpUseSSL) {
-			encryption = "SSL";
-		} else if (globalOptions.smtpPort === "25") {
-			// Port 25 typically uses no encryption or opportunistic STARTTLS
-			encryption = "NONE";
-		} else {
-			// Port 587 (default) uses STARTTLS
-			encryption = "STARTTLS";
-		}
-	}
-
-	// secure: true for SSL/TLS (port 465), false for STARTTLS (port 587) or NONE
-	const secure = encryption === "SSL";
-
-	// requireTLS: true for STARTTLS to force upgrade, false otherwise
-	const requireTLS = encryption === "STARTTLS";
-
-	// ignoreTLS: true for NONE (plaintext), false otherwise
-	const ignoreTLS = encryption === "NONE";
+	const { secure, requireTLS, ignoreTLS } = getSmtpEncryptionConfig({
+		smtpEncryption: globalOptions.smtpEncryption,
+		smtpUseSSL: globalOptions.smtpUseSSL,
+		smtpPort: globalOptions.smtpPort,
+	});
 
 	// Determine if authentication should be used
 	// Fall back to checking if credentials exist for backward compatibility

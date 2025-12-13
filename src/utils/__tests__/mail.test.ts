@@ -1,5 +1,5 @@
 import { describe, test, expect } from "@jest/globals";
-import { getReadableSmtpError } from "../mail";
+import { getReadableSmtpError, getSmtpEncryptionConfig } from "../mail";
 
 /**
  * Tests for getReadableSmtpError function
@@ -209,6 +209,249 @@ describe("getReadableSmtpError", () => {
 			const error = {} as Error;
 			const result = getReadableSmtpError(error);
 			expect(result).toBe("Email sending failed: ");
+		});
+	});
+});
+
+/**
+ * Tests for getSmtpEncryptionConfig function
+ *
+ * This function determines SMTP transport encryption settings.
+ * It handles both the new smtpEncryption field and legacy smtpUseSSL fallback.
+ * Critical for establishing correct SMTP connections.
+ */
+describe("getSmtpEncryptionConfig", () => {
+	describe("new smtpEncryption field", () => {
+		test("should configure SSL encryption correctly", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "SSL" });
+			expect(result).toEqual({
+				secure: true,
+				requireTLS: false,
+				ignoreTLS: false,
+				resolvedEncryption: "SSL",
+			});
+		});
+
+		test("should configure STARTTLS encryption correctly", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "STARTTLS" });
+			expect(result).toEqual({
+				secure: false,
+				requireTLS: true,
+				ignoreTLS: false,
+				resolvedEncryption: "STARTTLS",
+			});
+		});
+
+		test("should configure NONE encryption correctly", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "NONE" });
+			expect(result).toEqual({
+				secure: false,
+				requireTLS: false,
+				ignoreTLS: true,
+				resolvedEncryption: "NONE",
+			});
+		});
+
+		test("should prioritize smtpEncryption over legacy smtpUseSSL", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "STARTTLS",
+				smtpUseSSL: true, // Should be ignored
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(result.secure).toBe(false);
+		});
+
+		test("should prioritize smtpEncryption over port-based detection", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "SSL",
+				smtpPort: "25", // Would normally result in NONE
+			});
+			expect(result.resolvedEncryption).toBe("SSL");
+			expect(result.secure).toBe(true);
+		});
+	});
+
+	describe("legacy smtpUseSSL fallback", () => {
+		test("should use SSL when smtpUseSSL is true", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpUseSSL: true,
+			});
+			expect(result).toEqual({
+				secure: true,
+				requireTLS: false,
+				ignoreTLS: false,
+				resolvedEncryption: "SSL",
+			});
+		});
+
+		test("should use SSL when smtpUseSSL is true regardless of port", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpUseSSL: true,
+				smtpPort: "587",
+			});
+			expect(result.resolvedEncryption).toBe("SSL");
+			expect(result.secure).toBe(true);
+		});
+	});
+
+	describe("port-based fallback when no encryption specified", () => {
+		test("should use NONE for port 25 (legacy plaintext)", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpPort: "25",
+				smtpUseSSL: false,
+			});
+			expect(result).toEqual({
+				secure: false,
+				requireTLS: false,
+				ignoreTLS: true,
+				resolvedEncryption: "NONE",
+			});
+		});
+
+		test("should use STARTTLS for port 587 (default)", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpPort: "587",
+				smtpUseSSL: false,
+			});
+			expect(result).toEqual({
+				secure: false,
+				requireTLS: true,
+				ignoreTLS: false,
+				resolvedEncryption: "STARTTLS",
+			});
+		});
+
+		test("should use STARTTLS for port 465 when smtpUseSSL is false", () => {
+			// This tests backward compatibility - if user had port 465 but smtpUseSSL false,
+			// they likely misconfigured, but we default to STARTTLS for non-25 ports
+			const result = getSmtpEncryptionConfig({
+				smtpPort: "465",
+				smtpUseSSL: false,
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+
+		test("should use STARTTLS for port 2525", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpPort: "2525",
+				smtpUseSSL: false,
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+	});
+
+	describe("default behavior with minimal input", () => {
+		test("should default to STARTTLS with no configuration", () => {
+			const result = getSmtpEncryptionConfig({});
+			expect(result).toEqual({
+				secure: false,
+				requireTLS: true,
+				ignoreTLS: false,
+				resolvedEncryption: "STARTTLS",
+			});
+		});
+
+		test("should default to STARTTLS with null values", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: null,
+				smtpUseSSL: null,
+				smtpPort: null,
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+
+		test("should default to STARTTLS with undefined values", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: undefined,
+				smtpUseSSL: undefined,
+				smtpPort: undefined,
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+	});
+
+	describe("nodemailer transport options correctness", () => {
+		test("SSL mode should work with port 465 (implicit TLS)", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "SSL" });
+			// Port 465 requires secure:true from the start
+			expect(result.secure).toBe(true);
+			expect(result.requireTLS).toBe(false);
+			expect(result.ignoreTLS).toBe(false);
+		});
+
+		test("STARTTLS mode should work with port 587 (explicit TLS upgrade)", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "STARTTLS" });
+			// Port 587 starts unencrypted then upgrades via STARTTLS
+			expect(result.secure).toBe(false);
+			expect(result.requireTLS).toBe(true);
+			expect(result.ignoreTLS).toBe(false);
+		});
+
+		test("NONE mode should work with port 25 (plaintext)", () => {
+			const result = getSmtpEncryptionConfig({ smtpEncryption: "NONE" });
+			// Port 25 with no encryption - ignore TLS entirely
+			expect(result.secure).toBe(false);
+			expect(result.requireTLS).toBe(false);
+			expect(result.ignoreTLS).toBe(true);
+		});
+	});
+
+	describe("real-world configuration scenarios", () => {
+		test("Gmail SMTP (port 587 with STARTTLS)", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "STARTTLS",
+				smtpPort: "587",
+			});
+			expect(result.secure).toBe(false);
+			expect(result.requireTLS).toBe(true);
+		});
+
+		test("Gmail SMTP (port 465 with SSL)", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "SSL",
+				smtpPort: "465",
+			});
+			expect(result.secure).toBe(true);
+			expect(result.requireTLS).toBe(false);
+		});
+
+		test("Local mail server (port 25 no encryption)", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "NONE",
+				smtpPort: "25",
+			});
+			expect(result.secure).toBe(false);
+			expect(result.ignoreTLS).toBe(true);
+		});
+
+		test("Migrated config: legacy SSL on port 465", () => {
+			// User had old config with smtpUseSSL: true before migration
+			const result = getSmtpEncryptionConfig({
+				smtpUseSSL: true,
+				smtpPort: "465",
+			});
+			expect(result.resolvedEncryption).toBe("SSL");
+			expect(result.secure).toBe(true);
+		});
+
+		test("Migrated config: legacy port 25 plaintext", () => {
+			// User had old config with port 25 and smtpUseSSL: false
+			const result = getSmtpEncryptionConfig({
+				smtpUseSSL: false,
+				smtpPort: "25",
+			});
+			expect(result.resolvedEncryption).toBe("NONE");
+			expect(result.ignoreTLS).toBe(true);
+		});
+
+		test("Migrated config: legacy port 587 STARTTLS", () => {
+			// User had old config with port 587 and smtpUseSSL: false
+			const result = getSmtpEncryptionConfig({
+				smtpUseSSL: false,
+				smtpPort: "587",
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(result.requireTLS).toBe(true);
 		});
 	});
 });
