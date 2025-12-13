@@ -530,6 +530,8 @@
 			"useAuthenticationDescription": "Aktivieren, wenn Ihr SMTP-Server Benutzername und Passwort erfordert.",
 			"username": "Benutzername",
 			"password": "Passwort",
+			"clearPassword": "Passwort löschen",
+			"passwordWillBeCleared": "Das Passwort wird beim Speichern gelöscht",
 			"verifyCertificate": "SSL-Zertifikat überprüfen",
 			"verifyCertificateDescription": "Nur bei selbstsignierten Zertifikaten deaktivieren",
 			"useSSL": "SSL verwenden",

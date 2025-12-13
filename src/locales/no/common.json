@@ -530,6 +530,8 @@
 			"useAuthenticationDescription": "Aktiver hvis SMTP-serveren din krever brukernavn og passord.",
 			"username": "Brukernavn",
 			"password": "Passord",
+			"clearPassword": "Fjern passord",
+			"passwordWillBeCleared": "Passordet vil bli fjernet når du lagrer",
 			"verifyCertificate": "Verifiser SSL-sertifikat",
 			"verifyCertificateDescription": "Deaktiver kun for selvsignerte sertifikater",
 			"useSSL": "Bruk SSL",

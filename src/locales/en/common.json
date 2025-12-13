@@ -530,6 +530,8 @@
 			"useAuthenticationDescription": "Enable if your SMTP server requires username and password.",
 			"username": "Username",
 			"password": "Password",
+			"clearPassword": "Clear password",
+			"passwordWillBeCleared": "Password will be cleared when you save",
 			"verifyCertificate": "Verify SSL Certificate",
 			"verifyCertificateDescription": "Disable only for self-signed certificates",
 			"useSSL": "Use SSL",

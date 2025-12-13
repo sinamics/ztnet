@@ -126,6 +126,15 @@ const Mail = () => {
 	const portValidation = getPortValidation();
 
 	const handleSave = () => {
+		// Determine password value to send:
+		// - undefined: don't change (user didn't touch the field)
+		// - null: clear the password (user cleared the field)
+		// - string: set new password (user entered a value)
+		let passwordValue: string | null | undefined = undefined;
+		if (passwordChanged) {
+			passwordValue = formState.smtpPassword || null; // empty string becomes null to clear
+		}
+
 		setMailOptions({
 			smtpEmail: formState.smtpEmail || undefined,
 			smtpFromName: formState.smtpFromName || undefined,
@@ -134,8 +143,7 @@ const Mail = () => {
 			smtpEncryption: formState.smtpEncryption,
 			smtpUseAuthentication: formState.smtpUseAuthentication,
 			smtpUsername: formState.smtpUsername || undefined,
-			// Only send password if user explicitly changed it
-			smtpPassword: passwordChanged ? formState.smtpPassword || undefined : undefined,
+			smtpPassword: passwordValue,
 			smtpRequireTLS: formState.smtpRequireTLS,
 		});
 		setHasChanges(false);
@@ -297,14 +305,37 @@ const Mail = () => {
 							<label className="label">
 								<span className="label-text">{t("mail.password")}</span>
 							</label>
-							<input
-								type="password"
-								className="input input-bordered input-sm w-full"
-								placeholder={options?.hasSmtpPassword ? PASSWORD_PLACEHOLDER : ""}
-								value={formState.smtpPassword}
-								onChange={(e) => handlePasswordChange(e.target.value)}
-								autoComplete="new-password"
-							/>
+							<div className="flex gap-2">
+								<input
+									type="password"
+									className="input input-bordered input-sm w-full"
+									placeholder={options?.hasSmtpPassword ? PASSWORD_PLACEHOLDER : ""}
+									value={formState.smtpPassword}
+									onChange={(e) => handlePasswordChange(e.target.value)}
+									autoComplete="new-password"
+								/>
+								{options?.hasSmtpPassword && !passwordChanged && (
+									<button
+										type="button"
+										className="btn btn-outline btn-error btn-sm"
+										onClick={() => {
+											setFormState((prev) => ({ ...prev, smtpPassword: "" }));
+											setPasswordChanged(true);
+											setHasChanges(true);
+										}}
+										title={t("mail.clearPassword")}
+									>
+										✕
+									</button>
+								)}
+							</div>
+							{passwordChanged && !formState.smtpPassword && options?.hasSmtpPassword && (
+								<label className="label">
+									<span className="label-text-alt text-warning">
+										{t("mail.passwordWillBeCleared")}
+									</span>
+								</label>
+							)}
 						</div>
 					</div>
 				)}

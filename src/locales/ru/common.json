@@ -530,6 +530,8 @@
 			"useAuthenticationDescription": "Включите, если SMTP-сервер требует имя пользователя и пароль.",
 			"username": "Имя пользователя",
 			"password": "Пароль",
+			"clearPassword": "Удалить пароль",
+			"passwordWillBeCleared": "Пароль будет удалён при сохранении",
 			"verifyCertificate": "Проверять SSL-сертификат",
 			"verifyCertificateDescription": "Отключите только для самоподписанных сертификатов",
 			"useSSL": "Использовать SSL",

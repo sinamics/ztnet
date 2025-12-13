@@ -530,6 +530,8 @@
 			"useAuthenticationDescription": "如果您的SMTP伺服器需要使用者名稱和密碼，請啟用此選項。",
 			"username": "使用者名稱",
 			"password": "密碼",
+			"clearPassword": "清除密碼",
+			"passwordWillBeCleared": "儲存時將清除密碼",
 			"verifyCertificate": "驗證SSL憑證",
 			"verifyCertificateDescription": "僅在使用自行簽署憑證時停用",
 			"useSSL": "使用SSL",
