@@ -265,7 +265,7 @@ interface SendMailResult {
 /**
  * Converts technical SMTP errors into user-friendly messages
  */
-function getReadableSmtpError(error: Error): string {
+export function getReadableSmtpError(error: Error): string {
 	const message = error.message || "";
 
 	// SSL/TLS version mismatch errors
@@ -356,9 +356,19 @@ export async function createTransporter() {
 	}
 
 	// Determine encryption settings based on smtpEncryption field
-	// Fall back to legacy smtpUseSSL field for backward compatibility
-	const encryption =
-		globalOptions.smtpEncryption || (globalOptions.smtpUseSSL ? "SSL" : "STARTTLS");
+	// Fall back to legacy fields for backward compatibility
+	let encryption = globalOptions.smtpEncryption;
+	if (!encryption) {
+		if (globalOptions.smtpUseSSL) {
+			encryption = "SSL";
+		} else if (globalOptions.smtpPort === "25") {
+			// Port 25 typically uses no encryption or opportunistic STARTTLS
+			encryption = "NONE";
+		} else {
+			// Port 587 (default) uses STARTTLS
+			encryption = "STARTTLS";
+		}
+	}
 
 	// secure: true for SSL/TLS (port 465), false for STARTTLS (port 587) or NONE
 	const secure = encryption === "SSL";

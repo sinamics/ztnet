@@ -29,6 +29,7 @@ const testConfig = {
 	testMatch: [
 		"**/server/api/__tests__/**/*.test.ts",
 		"**/pages/api/__tests__/**/*.test.ts",
+		"**/utils/__tests__/**/*.test.ts",
 	],
 };
 
