@@ -44,8 +44,8 @@ const jestConfig: JestConfigWithTsJest = {
 const createJestConfig = nextJest(nextConfig);
 
 // Use async wrapper to properly set transformIgnorePatterns after Next.js processes config
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export default async () => ({
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	...(await createJestConfig(jestConfig as any)()),
 	transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
 });
