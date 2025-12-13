@@ -1,4 +1,4 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, test, expect, jest } from "@jest/globals";
 import { getReadableSmtpError, getSmtpEncryptionConfig } from "../mail";
 
 /**
@@ -367,6 +367,62 @@ describe("getSmtpEncryptionConfig", () => {
 				smtpPort: undefined,
 			});
 			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+	});
+
+	describe("invalid encryption value handling", () => {
+		test("should default to STARTTLS for invalid encryption value", () => {
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "INVALID_VALUE",
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(result.secure).toBe(false);
+			expect(result.requireTLS).toBe(true);
+			expect(consoleSpy).toHaveBeenCalledWith(
+				'Invalid smtpEncryption value "INVALID_VALUE", defaulting to STARTTLS',
+			);
+			consoleSpy.mockRestore();
+		});
+
+		test("should default to STARTTLS for lowercase encryption value", () => {
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "ssl", // lowercase - invalid
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		});
+
+		test("should default to STARTTLS for empty string encryption value", () => {
+			const result = getSmtpEncryptionConfig({
+				smtpEncryption: "",
+			});
+			// Empty string is falsy, so falls through to default behavior
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+		});
+
+		test("should default to STARTTLS for numeric encryption value", () => {
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const result = getSmtpEncryptionConfig({
+				// @ts-expect-error Testing invalid type from database
+				smtpEncryption: 123,
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
+		});
+
+		test("should default to STARTTLS for object encryption value", () => {
+			const consoleSpy = jest.spyOn(console, "warn").mockImplementation();
+			const result = getSmtpEncryptionConfig({
+				// @ts-expect-error Testing invalid type from database
+				smtpEncryption: { type: "SSL" },
+			});
+			expect(result.resolvedEncryption).toBe("STARTTLS");
+			expect(consoleSpy).toHaveBeenCalled();
+			consoleSpy.mockRestore();
 		});
 	});
 

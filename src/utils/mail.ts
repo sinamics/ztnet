@@ -275,6 +275,18 @@ interface SmtpEncryptionConfig {
 	resolvedEncryption: "NONE" | "SSL" | "STARTTLS";
 }
 
+const VALID_ENCRYPTION_VALUES = ["NONE", "SSL", "STARTTLS"] as const;
+type EncryptionType = (typeof VALID_ENCRYPTION_VALUES)[number];
+
+/**
+ * Validates and returns a valid encryption type, or null if invalid.
+ */
+function isValidEncryption(value: unknown): value is EncryptionType {
+	return (
+		typeof value === "string" && VALID_ENCRYPTION_VALUES.includes(value as EncryptionType)
+	);
+}
+
 /**
  * Determines SMTP transport encryption settings based on configuration.
  * Handles both new smtpEncryption field and legacy smtpUseSSL fallback.
@@ -287,10 +299,16 @@ export function getSmtpEncryptionConfig(
 ): SmtpEncryptionConfig {
 	// Determine encryption settings based on smtpEncryption field
 	// Fall back to legacy fields for backward compatibility
-	let encryption: "NONE" | "SSL" | "STARTTLS";
+	let encryption: EncryptionType;
 
-	if (input.smtpEncryption) {
-		encryption = input.smtpEncryption as "NONE" | "SSL" | "STARTTLS";
+	if (input.smtpEncryption && isValidEncryption(input.smtpEncryption)) {
+		encryption = input.smtpEncryption;
+	} else if (input.smtpEncryption) {
+		// Invalid value in database - log warning and use safe default
+		console.warn(
+			`Invalid smtpEncryption value "${input.smtpEncryption}", defaulting to STARTTLS`,
+		);
+		encryption = "STARTTLS";
 	} else if (input.smtpUseSSL) {
 		encryption = "SSL";
 	} else if (input.smtpPort === "25") {
@@ -443,6 +461,8 @@ export async function createTransporter() {
 				: undefined,
 		tls: {
 			rejectUnauthorized: globalOptions.smtpRequireTLS,
+			// Enforce minimum TLS 1.2 to prevent downgrade attacks to vulnerable versions
+			minVersion: "TLSv1.2",
 		},
 	} as TransportOptions);
 }
