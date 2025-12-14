@@ -29,6 +29,7 @@ const testConfig = {
 	testMatch: [
 		"**/server/api/__tests__/**/*.test.ts",
 		"**/pages/api/__tests__/**/*.test.ts",
+		"**/utils/__tests__/**/*.test.ts",
 	],
 };
 
@@ -43,8 +44,8 @@ const jestConfig: JestConfigWithTsJest = {
 const createJestConfig = nextJest(nextConfig);
 
 // Use async wrapper to properly set transformIgnorePatterns after Next.js processes config
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export default async () => ({
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	...(await createJestConfig(jestConfig as any)()),
 	transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
 });

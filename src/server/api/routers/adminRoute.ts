@@ -26,6 +26,10 @@ import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 
 type WithError<T> = T & { error?: boolean; message?: string };
+type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
+	smtpPassword: null;
+	hasSmtpPassword: boolean;
+};
 
 export const adminRouter = createTRPCRouter({
 	updateUser: adminRoleProtectedRoute
@@ -404,34 +408,33 @@ export const adminRouter = createTRPCRouter({
 	}),
 
 	// Set global options
-	getAllOptions: adminRoleProtectedRoute.query(async ({ ctx }) => {
-		let options = (await ctx.prisma.globalOptions.findFirst({
-			where: {
-				id: 1,
-			},
-		})) as WithError<GlobalOptions>;
+	getAllOptions: adminRoleProtectedRoute.query(
+		async ({ ctx }): Promise<GlobalOptionsResponse | null> => {
+			let options = (await ctx.prisma.globalOptions.findFirst({
+				where: {
+					id: 1,
+				},
+			})) as WithError<GlobalOptions>;
 
-		if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
-			options = {
-				...options,
-				error: true,
-				message:
-					"Please re-enter your SMTP password to enhance security through database hashing.",
-			};
-		} else if (options?.smtpPassword) {
-			try {
-				options.smtpPassword = decrypt(
-					options.smtpPassword,
-					generateInstanceSecret(SMTP_SECRET),
-				);
-			} catch (_err) {
-				console.warn(
-					"Failed to decrypt SMTP password. Has the NextAuth secret been changed?. Re-save the SMTP password to fix this.",
-				);
+			if (options?.smtpPassword && !options.smtpPassword.includes(":")) {
+				options = {
+					...options,
+					error: true,
+					message:
+						"Please re-enter your SMTP password to enhance security through database hashing.",
+				};
 			}
-		}
-		return options;
-	}),
+			// Never send actual password to client - only indicate if one exists
+			if (options) {
+				return {
+					...options,
+					smtpPassword: null,
+					hasSmtpPassword: Boolean(options.smtpPassword),
+				} as GlobalOptionsResponse;
+			}
+			return null;
+		},
+	),
 
 	// Set global options
 	changeRole: adminRoleProtectedRoute
@@ -516,28 +519,38 @@ export const adminRouter = createTRPCRouter({
 				smtpSecure: z.boolean().optional(),
 				smtpEmail: z.string().optional(),
 				smtpFromName: z.string().optional(),
-				smtpPassword: z.string().optional(),
+				smtpPassword: z.string().nullable().optional(), // null = clear, string = set, undefined = no change
 				smtpUsername: z.string().optional(),
 				smtpUseSSL: z.boolean().optional(),
 				smtpIgnoreTLS: z.boolean().optional(),
 				smtpRequireTLS: z.boolean().optional(),
+				smtpEncryption: z.enum(["NONE", "SSL", "STARTTLS"]).optional(),
+				smtpUseAuthentication: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			if (input.smtpPassword) {
-				// Encrypt SMTP password before storing
-				input.smtpPassword = encrypt(
-					input.smtpPassword,
-					generateInstanceSecret(SMTP_SECRET),
-				);
+			// Handle password: encrypt if set, clear if null, ignore if undefined
+			let passwordUpdate: { smtpPassword?: string | null } = {};
+			if (input.smtpPassword === null) {
+				// Explicitly clear the password
+				passwordUpdate = { smtpPassword: null };
+			} else if (input.smtpPassword) {
+				// Encrypt and set new password
+				passwordUpdate = {
+					smtpPassword: encrypt(input.smtpPassword, generateInstanceSecret(SMTP_SECRET)),
+				};
 			}
+			// If undefined, don't include in update (keeps existing value)
+
+			const { smtpPassword, ...restInput } = input;
 
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
 				},
 				data: {
-					...input,
+					...restInput,
+					...passwordUpdate,
 				},
 			});
 		}),

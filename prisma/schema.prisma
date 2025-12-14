@@ -38,6 +38,9 @@ model GlobalOptions {
   smtpSecure                         Boolean @default(false)
   smtpRequireTLS                     Boolean @default(false)
   smtpIgnoreTLS                      Boolean @default(false)
+  // New email configuration fields
+  smtpEncryption                     String  @default("STARTTLS") // "NONE", "SSL", "STARTTLS"
+  smtpUseAuthentication              Boolean @default(true)
   inviteUserTemplate                 Json?
   inviteAdminTemplate                Json?
   inviteOrganizationTemplate         Json?
