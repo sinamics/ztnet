@@ -30,7 +30,7 @@
     "@trpc/client": "10.45.2",
     "@trpc/next": "10.45.2",
     "@trpc/react-query": "10.45.2",
-    "@trpc/server": "10.45.2",
+    "@trpc/server": "10.45.3",
     "@uiw/codemirror-extensions-classname": "4.21.7",
     "@uiw/codemirror-theme-okaidia": "4.21.7",
     "@uiw/react-codemirror": "4.21.7",
