@@ -38,9 +38,7 @@ const Sidebar = (): JSX.Element => {
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
 
-	const { data: orgNotification } = api.org.getOrgNotifications.useQuery({
-		organizationId: orgId,
-	});
+	const { data: orgNotification } = api.org.getOrgNotifications.useQuery();
 
 	useEffect(() => {
 		if (orgNotification) {
