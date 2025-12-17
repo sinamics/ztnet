@@ -1,10 +1,12 @@
 import type React from "react";
 import RootForm from "./rootForm";
 import { useTranslations } from "next-intl";
-import type { Planet } from "@prisma/client";
+import type { RouterOutputs } from "~/utils/api";
+
+type GetPlanetOutput = RouterOutputs["admin"]["getPlanet"];
 
 interface IProps {
-	getPlanet: Planet & { error?: Error };
+	getPlanet?: GetPlanetOutput;
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	resetWorld: () => void;
@@ -23,7 +25,11 @@ const CreatePlanet = ({
 }: IProps) => {
 	const t = useTranslations("admin");
 
-	if (getPlanet?.error) {
+	// Check for error property using type guard
+	const planetError =
+		getPlanet && "error" in getPlanet ? (getPlanet as { error?: Error }).error : null;
+	if (planetError) {
+		const errorMessage = planetError.message || String(planetError);
 		return (
 			<div role="alert" className="alert alert-error mt-10">
 				<svg
@@ -39,7 +45,7 @@ const CreatePlanet = ({
 						d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
 					/>
 				</svg>
-				<span>{getPlanet?.error?.message}</span>
+				<span>{errorMessage}</span>
 				<div>
 					<button onClick={() => resetWorld()} className="btn btn-sm">
 						Reset

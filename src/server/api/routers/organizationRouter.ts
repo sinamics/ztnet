@@ -812,48 +812,48 @@ export const organizationRouter = createTRPCRouter({
 			});
 		}),
 	getOrgNotifications: protectedProcedure.query(async ({ ctx }) => {
-			// Get the current user's ID
-			const userId = ctx.session.user.id;
+		// Get the current user's ID
+		const userId = ctx.session.user.id;
 
-			// Get a list of organizations associated with the user through UserOrganizationRole
-			const userOrganizations = await ctx.prisma.userOrganizationRole.findMany({
-				where: { userId: userId },
-				select: { organizationId: true },
-			});
+		// Get a list of organizations associated with the user through UserOrganizationRole
+		const userOrganizations = await ctx.prisma.userOrganizationRole.findMany({
+			where: { userId: userId },
+			select: { organizationId: true },
+		});
 
-			// Initialize an object to hold the notification status for each organization
-			const notifications = {};
+		// Initialize an object to hold the notification status for each organization
+		const notifications: Record<string, { hasUnreadMessages: boolean }> = {};
 
-			// Check unread messages for each organization
-			for (const userOrg of userOrganizations) {
-				const lastRead = await ctx.prisma.lastReadMessage.findUnique({
-					where: {
-						userId_organizationId: {
-							userId: userId,
-							organizationId: userOrg.organizationId,
-						},
-					},
-				});
-
-				const latestMessage = await ctx.prisma.messages.findFirst({
-					where: {
+		// Check unread messages for each organization
+		for (const userOrg of userOrganizations) {
+			const lastRead = await ctx.prisma.lastReadMessage.findUnique({
+				where: {
+					userId_organizationId: {
+						userId: userId,
 						organizationId: userOrg.organizationId,
 					},
-					orderBy: {
-						createdAt: "desc",
-					},
-				});
+				},
+			});
 
-				const hasUnreadMessages =
-					latestMessage && (!lastRead || latestMessage.id > lastRead.lastMessageId);
+			const latestMessage = await ctx.prisma.messages.findFirst({
+				where: {
+					organizationId: userOrg.organizationId,
+				},
+				orderBy: {
+					createdAt: "desc",
+				},
+			});
 
-				// Add the unread message status to the notifications object
-				notifications[userOrg.organizationId] = { hasUnreadMessages: hasUnreadMessages };
-			}
+			const hasUnreadMessages =
+				latestMessage && (!lastRead || latestMessage.id > lastRead.lastMessageId);
 
-			// Return the notifications object
-			return notifications;
-		}),
+			// Add the unread message status to the notifications object
+			notifications[userOrg.organizationId] = { hasUnreadMessages: hasUnreadMessages };
+		}
+
+		// Return the notifications object
+		return notifications;
+	}),
 
 	addUser: protectedProcedure
 		.input(

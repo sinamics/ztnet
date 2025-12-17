@@ -36,7 +36,6 @@ const Sidebar = (): JSX.Element => {
 	const isBelowMd = useIsBelowMd();
 	const sidebarRef = useRef<HTMLDivElement>();
 	const router = useRouter();
-	const orgId = router.query.orgid as string;
 
 	const { data: orgNotification } = api.org.getOrgNotifications.useQuery();
 
