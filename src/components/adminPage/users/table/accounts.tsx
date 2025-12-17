@@ -10,12 +10,11 @@ import {
 	getPaginationRowModel,
 	getFilteredRowModel,
 } from "@tanstack/react-table";
-import { api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { useSkipper } from "../../../../hooks/useSkipper";
 import { DebouncedInput } from "../../../elements/debouncedInput";
-import { User } from "@prisma/client";
 import UserOptionsModal from "../userOptionsModal";
 import CreateUserModal from "../createUserModal";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
@@ -24,15 +23,9 @@ import TimeAgo from "react-timeago";
 import { timeAgoFormatter } from "~/utils/time";
 import Verified from "~/icons/verified";
 
-type ExtendedUser = {
+type ExtendedUser = RouterOutputs["admin"]["getUsers"][number] & {
 	action?: string;
-	userGroup?: {
-		name: string;
-	};
-	_count: {
-		network: number;
-	};
-} & Partial<User>;
+};
 
 const LOCAL_STORAGE_KEY = "accountTableSorting";
 

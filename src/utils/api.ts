@@ -38,7 +38,6 @@ export const api = createTRPCNext<AppRouter>({
 					 * Transformer used for data de-serialization from the server.
 					 * @see https://trpc.io/docs/data-transformers
 					 */
-					// @ts-expect-error - tRPC v11 requires strict mode for proper type inference
 					transformer: superjson,
 				}),
 			],

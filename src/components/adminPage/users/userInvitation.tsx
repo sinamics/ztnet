@@ -1,4 +1,3 @@
-import React from "react";
 import InputFields from "~/components/elements/inputField";
 import { api } from "~/utils/api";
 import TimeAgo from "react-timeago";
@@ -11,8 +10,6 @@ import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-import { InvitationLinkType } from "~/types/invitation";
-
 const ActiveInvitationsList = () => {
 	const t = useTranslations();
 	const handleApiError = useTrpcApiErrorHandler();
@@ -24,6 +21,8 @@ const ActiveInvitationsList = () => {
 	const { data: invitationData, refetch: refetchInvitations } =
 		api.admin.getInvitationLink.useQuery();
 
+	type InvitationType = NonNullable<typeof invitationData>[number];
+
 	const { mutate: deleteInvitation } = api.admin.deleteInvitationLink.useMutation({
 		onSuccess: handleApiSuccess({
 			actions: [refetchInvitations, closeModal],
@@ -32,7 +31,7 @@ const ActiveInvitationsList = () => {
 		onError: handleApiError,
 	});
 
-	const showInviationDetails = (invite: InvitationLinkType) => {
+	const showInviationDetails = (invite: InvitationType) => {
 		const expired = new Date(invite.expiresAt) < new Date() || invite?.used;
 		callModal({
 			title: t("admin.users.authentication.generateInvitation.invitationModal.header"),

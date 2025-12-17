@@ -1,21 +1,16 @@
 import React from "react";
 import InputFields from "~/components/elements/inputField";
-import { api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import cn from "classnames";
 import { useModalStore } from "~/utils/store";
-import { UserGroup } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 
-type UserGroupWithCount = UserGroup & {
-	_count: {
-		users: number;
-	};
-	expiresAt?: Date | null;
-};
+type UserGroupWithCount = NonNullable<RouterOutputs["admin"]["getUserGroups"]>[number];
+
 type GroupLabelProps = {
 	groups: UserGroupWithCount[];
 };
@@ -326,7 +321,7 @@ const UserGroups = () => {
 							{t("users.groups.existingGroups.description")}
 						</p>
 					</div>
-					<GroupLabel groups={usergroups as UserGroupWithCount[]} />
+					<GroupLabel groups={usergroups ?? []} />
 				</div>
 			)}
 		</div>

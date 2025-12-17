@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -9,7 +8,11 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 
 interface Iuser {
-	user: Partial<User>;
+	user: {
+		id?: string;
+		isActive?: boolean;
+		expiresAt?: string | Date | null;
+	};
 }
 
 const UserIsActive = ({ user }: Iuser) => {

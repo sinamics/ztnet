@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import React from "react";
 import {
 	useTrpcApiErrorHandler,
@@ -7,7 +6,10 @@ import {
 import { api } from "~/utils/api";
 
 interface Iuser {
-	user: Partial<User>;
+	user: {
+		id?: string;
+		userGroupId?: number | null;
+	};
 }
 const UserRole = ({ user }: Iuser) => {
 	const handleApiError = useTrpcApiErrorHandler();

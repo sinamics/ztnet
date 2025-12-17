@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import React from "react";
 import {
@@ -8,7 +7,10 @@ import {
 import { api } from "~/utils/api";
 
 interface Iuser {
-	user: Partial<User>;
+	user: {
+		id?: string;
+		role?: string;
+	};
 }
 const UserRole = ({ user }: Iuser) => {
 	const t = useTranslations("admin");
