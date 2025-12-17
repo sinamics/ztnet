@@ -33,7 +33,7 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 		isAdmin: false,
 	});
 
-	const { mutate: deleteUser, isLoading: userDeleteLoading } =
+	const { mutate: deleteUser, isPending: userDeleteLoading } =
 		api.admin.deleteUser.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

@@ -39,7 +39,7 @@ const OrganizationSettings = ({ user }) => {
 			enabled: !!organizationId,
 		},
 	);
-	const { mutate: updateOrg, isLoading: loadingUpdate } = api.org.updateMeta.useMutation({
+	const { mutate: updateOrg, isPending: loadingUpdate } = api.org.updateMeta.useMutation({
 		onSuccess: () => {
 			toast.success("Organization updated successfully");
 			refecthAllOrg();

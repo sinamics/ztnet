@@ -49,7 +49,7 @@ const DeviceIpChangeNotificationTemplate = () => {
 		});
 	};
 
-	const { mutate: sendTestMail, isLoading: sendingMailLoading } =
+	const { mutate: sendTestMail, isPending: sendingMailLoading } =
 		api.admin.sendTestMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

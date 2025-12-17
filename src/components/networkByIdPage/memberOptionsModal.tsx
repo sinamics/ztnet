@@ -83,7 +83,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		}
 	}, [networkById?.members, memberId]);
 
-	const { mutate: updateMember, isLoading: updateMemberLoading } =
+	const { mutate: updateMember, isPending: updateMemberLoading } =
 		api.networkMember.Update.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({ actions: [refetchNetworkById, refetchMemberById] }),

@@ -43,7 +43,7 @@ const Mail = () => {
 		isLoading: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
 
-	const { mutate: setMailOptions, isLoading: isSaving } = api.admin.setMail.useMutation({
+	const { mutate: setMailOptions, isPending: isSaving } = api.admin.setMail.useMutation({
 		onSuccess: handleApiSuccess({
 			actions: [refetchOptions],
 			toastMessage: t("mail.settingsSaved"),
@@ -51,7 +51,7 @@ const Mail = () => {
 		onError: handleApiError,
 	});
 
-	const { mutate: sendTestMail, isLoading: sendingTestMail } =
+	const { mutate: sendTestMail, isPending: sendingTestMail } =
 		api.admin.sendTestMail.useMutation({
 			onSuccess: handleApiSuccess({
 				toastMessage: t("mail.testEmailSent"),

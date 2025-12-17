@@ -92,7 +92,7 @@ export const NetworkRoutesTable = React.memo(
 			);
 		const { network, members } = networkById || {};
 
-		const { mutate: updateManageRoutes, isLoading: isUpdating } =
+		const { mutate: updateManageRoutes, isPending: isUpdating } =
 			api.network.managedRoutes.useMutation({
 				onError: handleApiError,
 				onSuccess: async () => {

@@ -69,7 +69,7 @@ const OrganizationNotificationTemplateEditor: React.FC<ITemplateEditor> = ({
 		});
 
 	// Send test notification
-	const { mutate: sendTestNotification, isLoading: sendingTest } =
+	const { mutate: sendTestNotification, isPending: sendingTest } =
 		api.org.sendTestOrganizationNotification.useMutation({
 			onSuccess: handleApiSuccess({
 				toastMessage: t(

@@ -27,7 +27,7 @@ const NetworkOptionsModal = ({ networkId }: Iprops) => {
 		central: false,
 	});
 
-	const { mutate: deleteNetwork, isLoading: loadingDeleteNetwork } =
+	const { mutate: deleteNetwork, isPending: loadingDeleteNetwork } =
 		api.network.deleteNetwork.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({ actions: [refetchNetwork, closeModal] }),

@@ -34,7 +34,7 @@ const EditOrganizationUserModal = ({ user, organizationId }: Iprops) => {
 		organizationId,
 	});
 
-	const { mutate: kickUser, isLoading: kickUserLoading } = api.org.leave.useMutation({
+	const { mutate: kickUser, isPending: kickUserLoading } = api.org.leave.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({
 			actions: [refecthOrg, refecthOrgUsers, closeModal],

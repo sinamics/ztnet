@@ -38,7 +38,7 @@ const BackupRestore = () => {
 	} = api.admin.listBackups.useQuery();
 
 	// Mutations
-	const { mutate: createBackup, isLoading: creatingBackup } =
+	const { mutate: createBackup, isPending: creatingBackup } =
 		api.admin.createBackup.useMutation({
 			onSuccess: (data) => {
 				handleApiSuccess({
@@ -52,7 +52,7 @@ const BackupRestore = () => {
 			onError: handleApiError,
 		});
 
-	const { mutate: deleteBackup, isLoading: deletingBackup } =
+	const { mutate: deleteBackup, isPending: deletingBackup } =
 		api.admin.deleteBackup.useMutation({
 			onSuccess: handleApiSuccess({
 				actions: [refetchBackups],
@@ -62,7 +62,7 @@ const BackupRestore = () => {
 		});
 
 	// Updated mutation with translation keys
-	const { mutate: restoreBackup, isLoading: restoringBackup } =
+	const { mutate: restoreBackup, isPending: restoringBackup } =
 		api.admin.restoreBackup.useMutation({
 			onSuccess: (data) => {
 				handleApiSuccess({
@@ -184,7 +184,7 @@ const BackupRestore = () => {
 		onError: handleApiError,
 	});
 
-	const { mutate: uploadBackup, isLoading: uploadingBackup } =
+	const { mutate: uploadBackup, isPending: uploadingBackup } =
 		api.admin.uploadBackup.useMutation({
 			onSuccess: handleApiSuccess({
 				actions: [refetchBackups],

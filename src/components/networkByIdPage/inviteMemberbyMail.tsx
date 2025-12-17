@@ -22,7 +22,7 @@ export const InviteMemberByMail = ({ organizationId }: IProps) => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { mutate: invite, isLoading: loadingInvite } =
+	const { mutate: invite, isPending: loadingInvite } =
 		api.network.inviteUserByMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

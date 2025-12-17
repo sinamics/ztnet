@@ -22,7 +22,7 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 		organizationId,
 	});
 
-	const { mutate: inviteUserByMail, isLoading: inviteLoading } =
+	const { mutate: inviteUserByMail, isPending: inviteLoading } =
 		api.org.inviteUserByMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

@@ -67,7 +67,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 
 	const { refetch } = api.auth.me.useQuery();
 	const { data: session } = useSession();
-	const { mutate: deleteUserDevice, isLoading: deleteLoading } =
+	const { mutate: deleteUserDevice, isPending: deleteLoading } =
 		api.auth.deleteUserDevice.useMutation({
 			onSuccess: () => {
 				// Refresh the devices list

@@ -46,7 +46,7 @@ const Account = () => {
 		onError: handleApiError,
 	});
 
-	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
+	const { mutate: sendVerificationEmail, isPending: sendMailLoading } =
 		api.auth.sendVerificationEmail.useMutation({
 			onError: handleApiError,
 			onSuccess: () => {
