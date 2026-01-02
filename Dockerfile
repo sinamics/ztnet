@@ -1,4 +1,4 @@
-ARG NODEJS_IMAGE=node:22.1-bookworm-slim
+ARG NODEJS_IMAGE=node:24-bookworm-slim
 FROM --platform=$BUILDPLATFORM $NODEJS_IMAGE AS base
 
 # Install dependencies only when needed
@@ -66,6 +66,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Update npm to latest version to suppress update notices
+RUN npm install -g npm@latest
 # need to install these package for seeding the database
 RUN npm install @prisma/client@6.16.3 @paralleldrive/cuid2
 RUN npm install -g prisma@6.16.3 ts-node
