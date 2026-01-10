@@ -18,7 +18,6 @@ export const networkRoutesColumns = (
 	}),
 	columnHelper.accessor("via", {
 		header: "Via",
-		cell: (info) => <div className="">{info.row.original.via || "LAN"}</div>,
 	}),
 	columnHelper.display({
 		id: "nodeName",
