@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { RoutesEntity } from "~/types/local/network";
 import { api } from "~/utils/api";
@@ -19,6 +19,11 @@ const EDITABLE_COLUMNS: EditableColumnConfig[] = [
 		updateParam: "note",
 		placeholder: "Click to add notes",
 	},
+	{
+		id: "via",
+		updateParam: "via",
+		placeholder: "LAN",
+	},
 ];
 
 interface useEditableColumnProps {
@@ -36,6 +41,11 @@ export const useEditableColumn = ({ refetchNetworkById }: useEditableColumnProps
 				central: false,
 			});
 			toast.success("Route updated successfully");
+			void refetchNetworkById();
+		},
+		onError: (error) => {
+			toast.error(error.message || "Failed to update route");
+			// Refetch to reset the input values
 			void refetchNetworkById();
 		},
 	});
@@ -85,9 +95,15 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	const t = useTranslations("networkById");
 	const initialValue = getValue();
 	const inputRef = useRef<HTMLTextAreaElement>(null);
+	const singleLineInputRef = useRef<HTMLInputElement>(null);
 	const [value, setValue] = useState<string | number>(initialValue);
 	// Add a ref to track if update was triggered by Enter key
 	const isEnterUpdateRef = useRef(false);
+
+	// Sync value when initialValue changes (e.g., after successful update or data refresh)
+	useEffect(() => {
+		setValue(initialValue);
+	}, [initialValue]);
 
 	const handleUpdate = () => {
 		if (value !== initialValue) {
@@ -110,15 +126,35 @@ const EditableCell: React.FC<EditableCellProps> = ({
 		isEnterUpdateRef.current = false;
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+	const handleKeyDown = (
+		e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>,
+	) => {
 		if (e.key === "Enter" && !e.shiftKey) {
 			e.preventDefault();
 			// Set the flag before updating
 			isEnterUpdateRef.current = true;
 			handleUpdate();
 			inputRef.current?.blur();
+			singleLineInputRef.current?.blur();
 		}
 	};
+
+	// Use single-line input for via field
+	if (columnConfig.id === "via") {
+		return (
+			<input
+				ref={singleLineInputRef}
+				type="text"
+				placeholder={columnConfig.placeholder}
+				name="routesVia"
+				onChange={(e) => setValue(e.target.value)}
+				onBlur={onBlur}
+				onKeyDown={handleKeyDown}
+				value={(value as string) || ""}
+				className="input input-primary input-sm m-0 border-0 bg-transparent p-0 min-w-full cursor-pointer"
+			/>
+		);
+	}
 
 	return (
 		<TextArea

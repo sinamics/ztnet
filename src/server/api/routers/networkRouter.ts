@@ -609,6 +609,7 @@ export const networkRouter = createTRPCRouter({
 					routes: RoutesArraySchema.optional(),
 					note: z.string().optional(),
 					routeId: z.string().optional(),
+					via: z.union([z.string(), z.null()]).optional(),
 				}),
 			}),
 		)
@@ -633,7 +634,7 @@ export const networkRouter = createTRPCRouter({
 				});
 			}
 
-			const { note } = input.updateParams;
+			const { note, via } = input.updateParams;
 
 			// if note, add it to the database
 			if (typeof note === "string") {
@@ -646,7 +647,30 @@ export const networkRouter = createTRPCRouter({
 					},
 				});
 			}
-			const { routes } = input.updateParams;
+
+			let { routes } = input.updateParams;
+
+			// if via is being updated, fetch current routes and update the specific route
+			if (via !== undefined && input.updateParams.routeId) {
+				// validate via is a valid IP or empty/null
+				if (via !== null && via !== "" && !isValidIP(via)) {
+					throwError("Via must be a valid IP address or empty for LAN");
+				}
+
+				const currentRoutes = await ctx.prisma.routes.findMany({
+					where: { networkId: input.nwid },
+				});
+
+				routes = currentRoutes.map((route) => ({
+					target: route.target,
+					via:
+						route.id === input.updateParams.routeId
+							? via === "" || via === null
+								? null
+								: via
+							: route.via,
+				}));
+			}
 
 			// prepare update params
 			const updateParams = input.central ? { config: { routes } } : { routes };
@@ -665,7 +689,6 @@ export const networkRouter = createTRPCRouter({
 				// add error messge that webhook failed
 				throwError(error.message);
 			}
-
 			// update network
 			return ztController.network_update({
 				ctx,
