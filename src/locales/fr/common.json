@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "Affichez un modal de confirmation pour éviter les désautorisations accidentelles.",
 				"addMemberIdAsNameTitle": "Ajoutez l'identifiant de membre comme nom lors de l'inscription",
 				"addMemberIdAsNameLabel": "Lorsqu'un membre du réseau s'inscrit, l'identifiant du membre (nodeid) sera ajouté comme nom."
+			},
+			"globalNodeNaming": {
+				"title": "Activer la dénomination globale des nœuds",
+				"description": "Lorsqu'elle est activée, cette fonctionnalité va :",
+				"bulletPoint1": "Maintenir un nom cohérent pour chaque nœud dans tous les réseaux que vous gérez.",
+				"bulletPoint2": "Mettre à jour le nom du nœud dans tous vos réseaux lorsque vous le renommez dans un réseau.",
+				"bulletPoint3": "Lors de l'enregistrement d'un membre / nœud, vérifier si le membre existe dans vos autres réseaux et utiliser le premier nom trouvé.",
+				"note": "Remarque : Cette fonctionnalité a priorité sur \"Ajouter l'ID du membre comme nom\". Elle s'applique uniquement aux réseaux dont vous êtes l'auteur et n'affecte pas les réseaux gérés par d'autres ou les organisations."
 			}
 		},
 		"notification": {
