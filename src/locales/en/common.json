@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations.",
 				"addMemberIdAsNameTitle": "Add the member ID as name uppon registration",
 				"addMemberIdAsNameLabel": "When a network member registers, the member ID (nodeid) will be added as name."
+			},
+			"globalNodeNaming": {
+				"title": "Enable global node naming",
+				"description": "When enabled, this feature will:",
+				"bulletPoint1": "Maintain a consistent name for each node across all networks you manage.",
+				"bulletPoint2": "Update the node's name in all your networks when you rename it in one network.",
+				"bulletPoint3": "Upon member / node registration, check if the member exists in your other networks and use the first name found.",
+				"note": "Note: This feature has priority over \"Add Member ID as Name\". It applies only to networks where you are the author and doesn't affect networks managed by others or organizations."
 			}
 		},
 		"notification": {

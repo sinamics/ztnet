@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "Vis en bekreftelsesmodal for å forhindre utilsiktet fjerning av autorisasjoner.",
 				"addMemberIdAsNameTitle": "Legg til medlems-ID som navn ved registrering",
 				"addMemberIdAsNameLabel": "Når et nettverksmedlem registrerer seg, vil medlems-ID-en (nodeid) bli lagt til som navn."
+			},
+			"globalNodeNaming": {
+				"title": "Aktiver global nodenavngivning",
+				"description": "Når denne funksjonen er aktivert, vil den:",
+				"bulletPoint1": "Opprettholde et konsistent navn for hver node på tvers av alle nettverk du administrerer.",
+				"bulletPoint2": "Oppdatere nodens navn i alle dine nettverk når du endrer navnet i ett nettverk.",
+				"bulletPoint3": "Ved registrering av medlem / node, sjekke om medlemmet eksisterer i dine andre nettverk og bruke det første navnet som blir funnet.",
+				"note": "Merk: Denne funksjonen har prioritet over \"Legg til medlems-ID som navn\". Den gjelder kun for nettverk der du er forfatteren og påvirker ikke nettverk administrert av andre eller organisasjoner."
 			}
 		},
 		"notification": {
