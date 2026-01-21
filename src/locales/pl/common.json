@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "Pokaż okno potwierdzenia, aby zapobiec przypadkowym deautoryzacjom.",
 				"addMemberIdAsNameTitle": "Dodaj ID członka sieci jako nazwę po jego dołączeniu",
 				"addMemberIdAsNameLabel": "Po dołączeniu członka do sieci, jego ID (nodeid) będzie dodane jako jego nazwa."
+			},
+			"globalNodeNaming": {
+				"title": "Włącz globalne nazewnictwo węzłów",
+				"description": "Po włączeniu ta funkcja będzie:",
+				"bulletPoint1": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach, którymi zarządzasz.",
+				"bulletPoint2": "Aktualizować nazwę węzła we wszystkich Twoich sieciach, gdy zmienisz ją w jednej sieci.",
+				"bulletPoint3": "Podczas rejestracji członka / węzła sprawdzać, czy członek istnieje w innych Twoich sieciach i używać pierwszej znalezionej nazwy.",
+				"note": "Uwaga: Ta funkcja ma priorytet nad \"Dodaj ID członka jako nazwę\". Dotyczy ona wyłącznie sieci, których jesteś autorem i nie wpływa na sieci zarządzane przez innych lub organizacje."
 			}
 		},
 		"notification": {

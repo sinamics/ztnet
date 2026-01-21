@@ -78,25 +78,17 @@ const UserNetworkSetting = () => {
 			>
 				<div className="flex justify-between">
 					<div>
-						<p className="font-medium">Enable global node naming</p>
-						<p className="text-sm text-gray-500">When enabled, this feature will:</p>
+						<p className="font-medium">{t("network.globalNodeNaming.title")}</p>
+						<p className="text-sm text-gray-500">
+							{t("network.globalNodeNaming.description")}
+						</p>
 						<ul className="list-disc list-inside mt-2 text-sm text-gray-500">
-							<li>
-								Maintain a consistent name for each node across all networks you manage.
-							</li>
-							<li>
-								Update the node's name in all your networks when you rename it in one
-								network.
-							</li>
-							<li>
-								Upon member / node registration, check if the member exists in your other
-								networks and use the first name found.
-							</li>
+							<li>{t("network.globalNodeNaming.bulletPoint1")}</li>
+							<li>{t("network.globalNodeNaming.bulletPoint2")}</li>
+							<li>{t("network.globalNodeNaming.bulletPoint3")}</li>
 						</ul>
 						<p className="mt-2 text-sm text-gray-500">
-							Note: This feature has priority over "Add Member ID as Name". It applies
-							only to networks where you are the author and doesn't affect networks
-							managed by others or organizations.
+							{t("network.globalNodeNaming.note")}
 						</p>
 					</div>
 					<input
