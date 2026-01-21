@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "显示确认模态框以防止意外取消授权。",
 				"addMemberIdAsNameTitle": "注册时将成员ID添加为姓名",
 				"addMemberIdAsNameLabel": "网络成员注册时，成员ID（nodeid）将作为姓名添加。"
+			},
+			"globalNodeNaming": {
+				"title": "启用全局节点命名",
+				"description": "启用后，此功能将：",
+				"bulletPoint1": "在你管理的所有网络中为每个节点维护一致的名称。",
+				"bulletPoint2": "当你在一个网络中重命名节点时，会在你所有的网络中更新该节点的名称。",
+				"bulletPoint3": "在成员/节点注册时，检查该成员是否存在于你的其他网络中，并使用找到的第一个名称。",
+				"note": "注意：此功能优先于\"将成员ID添加为名称\"。它仅适用于你是作者的网络，不会影响其他人管理的网络或组织。"
 			}
 		},
 		"notification": {
