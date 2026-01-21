@@ -1,0 +1,1262 @@
+{
+	"input": {
+		"enterToSave": "Натисніть Enter для збереження"
+	},
+	"commonMenuTabs": {
+		"settings": "Налаштування",
+		"network": "Мережа",
+		"webhooks": "Вебхуки",
+		"invites": "Запрошення",
+		"notification": "Сповіщення"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Налаштування організації",
+		"invites": "Запрошення",
+		"pendingInvites": "Очікуючі запрошення",
+		"members": "Учасники",
+		"webhooks": "Вебхуки",
+		"activeWebhooks": "Активні вебхуки"
+	},
+	"commonSpinners": {
+		"loading": "Завантаження...",
+		"Checking": "Перевірка..."
+	},
+	"commonButtons": {
+		"confirm": "Підтвердити",
+		"add": "Додати",
+		"change": "Змінити",
+		"create": "Створити",
+		"submit": "Надіслати",
+		"cancel": "Скасувати",
+		"delete": "Видалити",
+		"remove": "Видалити",
+		"update": "Оновити",
+		"close": "Закрити",
+		"stash": "Приховати",
+		"yes": "Так",
+		"imSure": "Так, я впевнений",
+		"generate": "Згенерувати",
+		"addNetwork": "Створити мережу",
+		"deleteNetwork": "Видалити мережу",
+		"moveNetwork": "Перемістити мережу",
+		"moveNetworkToOrganization": "Перемістити мережу в організацію",
+		"leaveOrganization": "Покинути організацію",
+		"inviteUser": "Запросити користувача",
+		"meta": "Мета",
+		"users": "Користувачі",
+		"kickUser": "Видалити користувача",
+		"deleteOrganization": "Видалити організацію",
+		"userActions": "Дії користувача",
+		"addWebhooks": "Додати вебхуки",
+		"options": "Опції",
+		"settings": "Налаштування",
+		"resend": "Надіслати знову",
+		"enable2fa": "Увімкнути 2FA",
+		"disable2fa": "Вимкнути 2FA",
+		"next": "Далі",
+		"back": "Назад",
+		"notification": "Сповіщення",
+		"changeTemplate": "Змінити шаблон"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Ім'я",
+			"description": "Опис",
+			"networkId": "ID мережі",
+			"members": "Учасники",
+			"memberActTot": "Вузли активні/усього",
+			"actions": "Дії",
+			"role": "Роль",
+			"email": "Email",
+			"authorized": "Авторизований",
+			"id": "ID",
+			"created": "Створено",
+			"expires": "Спливає",
+			"networks": "Мережі",
+			"lastseen": "Бачили",
+			"group": "Група",
+			"account": "Обліковий запис",
+			"ipAssignments": {
+				"header": "Призначені IP/затримка",
+				"notAssigned": "Не призначено"
+			},
+			"physicalIp": {
+				"header": "Фізичний IP",
+				"unknownValue": "Невідомо"
+			},
+			"conStatus": {
+				"header": "Статус",
+				"toolTip": "Не вдалося встановити пряме з'єднання, наразі йде ретрансляція через сервери ZeroTier з підвищеною затримкою",
+				"relayed": "РЕТРАНСЛЮЄТЬСЯ",
+				"directLan": "Встановлено пряме LAN-з'єднання",
+				"directWan": "Встановлено пряме WAN-з'єднання",
+				"direct": "ПРЯМЕ{version}",
+				"offline": "офлайн"
+			},
+			"status": "Статус"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Пошук мережі",
+			"searchUserPlaceholder": "Пошук користувача"
+		},
+		"tableFooter": {
+			"show": "Показати",
+			"page": "Сторінка",
+			"of": "з"
+		},
+		"cell": {
+			"Options": "Опції"
+		}
+	},
+	"commonToast": {
+		"updatedSuccessfully": "Успішно оновлено",
+		"addedSuccessfully": "Успішно додано",
+		"deletedSuccessfully": "Успішно видалено",
+		"errorOccurred": "Сталася невідома помилка",
+		"organizationDeleted": "Організацію успішно видалено",
+		"sentSuccessfully": "Успішно надіслано",
+		"copyToClipboard": {
+			"title": "Скопіювати в буфер обміну",
+			"success": "{element} скопійовано в буфер обміну"
+		}
+	},
+	"sidebar": {
+		"navigation": "Головна",
+		"dashboard": "Панель керування",
+		"networks": "Лок. контролер",
+		"ztCentral": "ZT Central",
+		"admin": "Керування",
+		"settings": "Налаштування",
+		"mail": "Пошта",
+		"users": "Користувачі",
+		"notification": "Сповіщення",
+		"controller": "Контролер ZT",
+		"organization": "Організація",
+		"backuprestore": "Резервні копії",
+		"account": "Обліковий запис",
+		"user-settings": "Налаштування користувача",
+		"logout": "Вийти"
+	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier дозволяє безпечно та приватно підключати ваші пристрої через інтернет, де б ви не знаходилися. Насолоджуйтеся швидкими й надійними з'єднаннями без звичних перешкод, зберігаючи ваші дані в безпеці та доступності."
+		},
+		"form": {
+			"name": "Ім'я",
+			"namePlaceholder": "Введіть ваше ім'я",
+			"email": "Email",
+			"emailPlaceholder": "mail@example.com",
+			"password": "Пароль",
+			"passwordPlaceholder": "Введіть ваш пароль",
+			"confirmPassword": "Підтвердьте пароль",
+			"confirmPasswordPlaceholder": "Підтвердьте ваш пароль",
+			"forgotPassword": "Забули пароль?",
+			"verify2FA": "Перевірка 2FA",
+			"enter2FAcode": "Введіть код 2FA",
+			"signIn": "Увійти",
+			"signInWith": "Увійти через {provider}",
+			"signUp": "Зареєструватися",
+			"invitationCode": "Код запрошення",
+			"invitationCodePlaceholder": "Введіть ваш код запрошення",
+			"sendMail": "Надіслати лист",
+			"mfaRecoveryCode": "Код відновлення",
+			"mfaRecoveryCodePlaceholder": "Введіть ваш код відновлення"
+		},
+		"signin": {
+			"signInToAccount": "Увійдіть у ваш обліковий запис",
+			"or": "АБО",
+			"dontHaveAccount": "Немає облікового запису?",
+			"getStarted": "Почати!",
+			"havingIssues": "Проблеми?",
+			"oauthExclusiveButNotConfigured": "Ексклюзивний вхід через OAuth увімкнено, але OAuth не налаштовано. Зверніться до адміністратора."
+		},
+		"signup": {
+			"signUpWithCredentials": "Створити обліковий запис",
+			"haveAnAccount": "Вже є обліковий запис?",
+			"login": "Увійти!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Відновити пароль",
+			"forgotPasswordMessage": "Ми надішлемо вам посилання для скидання, якщо обліковий запис існує",
+			"backToLogin": "Назад до входу"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Скидання пароля",
+			"forgotPasswordMessage": "Будь ласка, введіть ваш новий пароль",
+			"backToLogin": "Назад до входу"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Відновлення 2FA",
+			"mfaRecoveryMessage": "Ми надішлемо вам інструкції з відновлення вашого облікового запису",
+			"backToLogin": "Назад до входу"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Відновлення 2FA",
+			"mfaRecoveryResetMessage": "Будь ласка, введіть ваші облікові дані та код відновлення",
+			"backToLogin": "Назад до входу"
+		},
+		"emailVerification": {
+			"emailVerified": "Email підтверджено",
+			"errorMessage": "Сталася помилка під час підтвердження вашого email.",
+			"successMessage": "Ваш email успішно підтверджено.",
+			"redirectMessage": "Вас буде автоматично перенаправлено через {seconds} секунд.",
+			"goNowButton": "Перейти зараз"
+		},
+		"passwordChangeRequired": {
+			"title": "Потрібна зміна пароля",
+			"description": "З міркувань безпеки ви повинні змінити пароль перед доступом до застосунку.",
+			"formTitle": "Змініть ваш пароль",
+			"submitButton": "Оновити пароль",
+			"successMessage": "Пароль успішно оновлено! Перенаправлення...",
+			"updatingTitle": "Оновлення пароля",
+			"updatingDescription": "Будь ласка, зачекайте, поки ми оновлюємо ваш пароль і сесію.",
+			"note": "Ви не можете отримати доступ до інших частин застосунку, доки не зміните пароль."
+		}
+	},
+	"networks": {
+		"loading": "Завантаження",
+		"title": "Мережі",
+		"description": "VPN мережі",
+		"unlinkedNetworks": {
+			"title": "Є {amount} непризначена мережа, зареєстрована в контролері.",
+			"navigate": "Перейти до контролера"
+		},
+		"noNetworksMessage": "Мережі ще не створені. Почніть зі створення однієї, і вона з'явиться тут.",
+		"networkActionModal": {
+			"modalTitle": "Опції для мережі <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Перемістити мережу",
+				"description": "Ви можете знайти ID у URL організації.",
+				"warningText": "<strong>Увага:</strong> Перенесення мережі перемістить і мережу, і її учасників у вибрану організацію. Ця дія незворотна і не може бути скасована. Будь ласка, уважно підтвердьте ID організації перед продовженням.<br></br>Крім того, переконайтеся, що у вас є права запису в організацію, до якої ви переносите мережу."
+			},
+			"deleteNetwork": {
+				"title": "Видалити мережу",
+				"description": "Видалення мережі назавжди видалить її разом з усіма пов'язаними даними.",
+				"warningText": "<strong>Увага:</strong> Ця дія незворотно видалить мережу та всіх пов'язаних учасників, налаштування і дані. Цей процес не може бути скасований. Будь ласка, переконайтеся, що ви зробили резервну копію необхідної інформації перед продовженням видалення."
+			}
+		}
+	},
+	"networkById": {
+		"loading": "Завантаження...",
+		"errorSteps": {
+			"step1": "Переконайтеся, що контейнер ZeroTier працює",
+			"step2": "Якщо інші екземпляри ZeroTier активні локально, будь ласка, вимкніть їх, оскільки це може спричинити конфлікти."
+		},
+		"networkId": "ID мережі:",
+		"networkName": "Ім'я мережі:",
+		"addDescription": "Додати опис",
+		"descriptionPlaceholder": "Опис",
+		"networkStart": "Початок мережі:",
+		"notSet": "не задано",
+		"networkEnd": "Кінець мережі:",
+		"networkCidr": "CIDR мережі:",
+		"networkSettings": "Налаштування мережі",
+		"networkMembers": "Учасники мережі",
+		"noMembersInformation": {
+			"title": "У цій мережі немає учасників, див. інструкції з установлення нижче",
+			"installZerotier": "Встановити ZeroTier",
+			"joinNetwork": "Приєднатися до мережі"
+		},
+		"networkMembersAlert": {
+			"message": "Приєднайтеся до цього ID мережі, і пристрій автоматично відобразиться"
+		},
+		"viewStashedMembers": "Переглянути прихованих учасників",
+		"networkActions": "Дії з мережею",
+		"deleteNetwork": {
+			"title": "Видалити мережу {networkName}",
+			"description": "Ви впевнені, що хочете видалити цю мережу? Ця дія не може бути скасована, і всі учасники будуть видалені з цієї мережі",
+			"yesAction": "Так, видалити",
+			"noAction": "Ні, залишити"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Ваша мережа тепер {authType}",
+			"privateCardTitle": "Приватна",
+			"privateCardContent": "Кожен користувач має бути авторизований адміністратором мережі.",
+			"publicCardTitle": "Публічна",
+			"publicCardContent": "Усі користувачі можуть підключатися до цієї мережі без авторизації",
+			"loading": "Завантаження"
+		},
+		"networkIpAssignments": {
+			"header": "Призначення IP",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6",
+				"mtu": "MTU"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 для кожного пристрою)",
+				"plane6Label": "ZeroTier 6PLANE (/80 маршрутизований для кожного пристрою)",
+				"rfc4193Updated": "rfc4193 оновлено",
+				"plane6Updated": "6plane оновлено"
+			},
+			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "Знайдено {count} інша(і) мережа(і) з тією ж підмережею.",
+					"modal": {
+						"title": "Виявлено дублюючу підмережу",
+						"description": "Наступні мережі мають ту ж підмережу, що й поточна мережа ({name}). Це може не бути проблемою, але якщо ви підключаєте обидві мережі з одного ПК, це може спричинити конфлікт IP-адрес і проблеми з підключенням."
+					}
+				},
+				"please_enter_valid_ip_range": "Будь ласка, введіть допустимий діапазон IP",
+				"ip_range_already_exists": "Діапазон IP уже існує",
+				"auto_assign_from_range": "Автоматично призначати з діапазону",
+				"easy": "Простий",
+				"advanced": "Розширений",
+				"delete_ip_assignment": "Видалити призначення IP",
+				"range_start": "Початок діапазону",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Кінець діапазону",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Надіслати",
+				"confirmationModal": {
+					"title": "Підтвердьте зміну призначення IP",
+					"description": "Ви впевнені, що хочете призначити цей діапазон IP? Це видалить усі керовані маршрути для цієї мережі."
+				},
+				"deleteConfirmation": {
+					"title": "Видалити призначення IP",
+					"description": "Ви впевнені, що хочете видалити це призначення IP? Це видалить діапазон IP з вашої мережі."
+				},
+				"addConfirmation": {
+					"title": "Додати призначення IP",
+					"description": "Ви впевнені, що хочете додати цей діапазон IP? Це додасть новий діапазон IP у вашу мережу."
+				}
+			},
+			"mtu": {
+				"title": "MTU (Максимальний розмір пакета)",
+				"description": "Цей параметр визначає максимальний розмір пакета, який може бути переданий через мережу. Зміна значення MTU може вплинути на продуктивність і ефективність мережі.",
+				"acceptedValue": "Допустимі значення від 1280 до 10000"
+			}
+		},
+		"networkRoutes": {
+			"table": {
+				"destination": "Призначення",
+				"via": "Через",
+				"nodeName": "Ім'я вузла",
+				"notes": "Нотатки"
+			},
+			"managedRoutesTitle": "Керовані маршрути",
+			"noManagedRoutesTitle": "Немає визначених керованих маршрутів.",
+			"noManagedRoutesDescription1": "Пристрої не отримають IP-адресу без відповідного маршруту.",
+			"noManagedRoutesDescription2": "Якщо у вас немає особливих вимог, спробуйте простий режим автопризначення IPv4.",
+			"destinationPlaceholder": "Призначення",
+			"viaPlaceholder": "Через",
+			"notesPlaceholder": "Натисніть для додавання нотаток",
+			"destinationInputLabel": "Призначення",
+			"destinationInputDescription": "Введіть адресу мережі призначення у нотації CIDR",
+			"viaInputLabel": "Через",
+			"viaInputDescription": "Введіть IP-адресу через наступний хоп. Залиште порожнім для спрямування на локальну мережу"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Потрібна ZeroTier версії 1.6.",
+			"clearDNS": "Очистити DNS",
+			"searchDomain": "Пошуковий домен",
+			"serverAddress": "Адреса сервера",
+			"submit": "Надіслати",
+			"servers": "Сервери",
+			"addressAndDomainRequired": "Потрібні адреса і домен"
+		},
+		"networkMulticast": {
+			"Multicast": "Мультикаст",
+			"MulticastRecipientLimit": "Ліміт отримувачів мультикасту",
+			"Submit": "Надіслати",
+			"EnableBroadcast": "Увімкнути широкомовлення",
+			"NumberPlaceholder": "Число",
+			"MulticastUpdatedSuccessfully": "Мультикаст успішно оновлено"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Пошук...",
+			"optionModalTitle": "Опції для учасника",
+			"tableRow": {
+				"updateName": "Натисніть, щоб змінити ім'я",
+				"updateDescription": "Натисніть, щоб додати опис"
+			},
+			"toggles": {
+				"showExtendedView": "Розширений вигляд",
+				"hideExtendedView": "Компактний вигляд"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "Ім'я учасника успішно оновлено"
+			},
+			"unauthorizedRowMessage": "Несанкціонований доступ",
+			"tableFooter": {
+				"RowsPerPage": "Рядків на сторінці",
+				"Of": "з"
+			},
+			"search": {
+				"placeholder": "Пошук..."
+			}
+		},
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "Переглянути прихованих учасників",
+				"deleteAll": "Видалити всіх прихованих ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "Видалити всіх прихованих учасників?",
+				"modalDescription": "Це назавжди видалить усіх {count} прихованих учасників із бази даних. Вони залишаться в контролері ZeroTier і мають бути додані вручну.",
+				"modalWarning": "Попередження: Цю дію не можна скасувати. Щоб знову додати цих учасників у майбутньому, вам потрібно буде вручну ввести їхні ідентифікатори учасників."
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Пошта",
+			"labelText": "Інструкції з приєднання через E-Mail",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Запросити",
+			"loadingText": "Завантаження...",
+			"successMessage": "Успіх! Запрошення надіслано на {email}",
+			"errorMessage": {
+				"unknownError": "Сталася невідома помилка"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Додати учасника вручну. Може бути використано для відновлення учасника.",
+			"memberIdInput": "ID учасника",
+			"placeholder": "10-значне шістнадцяткове число",
+			"submitButton": "Додати",
+			"error": {
+				"unknown": "Сталася невідома помилка"
+			}
+		},
+		"memberOptionModal": {
+			"header": {
+				"created": "Створено"
+			},
+			"loading": {
+				"text": "Завантаження..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} уже призначено",
+				"errorNotValidIp": "IP {target} не є допустимою IP-адресою"
+			},
+			"ipAssignment": {
+				"header": "Призначення IP",
+				"description": "Додати або видалити IP-адресу для цього учасника."
+			},
+			"memberDescription": {
+				"header": "Опис",
+				"description": "Додати опис для ідентифікації цього учасника",
+				"placeholder": "Опис учасника..."
+			},
+			"deleteIpAssignment": {
+				"title": "Видалити призначення IP"
+			},
+			"addressInput": {
+				"label": "Адреса"
+			},
+			"addButton": {
+				"text": "Додати"
+			},
+			"allowEthernetBridging": {
+				"header": "Дозволити Ethernet-міст",
+				"description": "Міст потребує додаткового налаштування на пристрої. Див. посібник і базу знань для отримання додаткової інформації. Мобільні пристрої не можуть бути мостами."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "Не призначати IP автоматично",
+				"description": "Це вимкне можливість автоматичного призначення IP-адрес цьому учаснику."
+			},
+			"capabilities": {
+				"header": "Можливості:"
+			},
+			"tags": {
+				"header": "Теги:"
+			},
+			"anotation": {
+				"header": "Анотація",
+				"description": "Покращуйте організацію учасників, додаючи анотації",
+				"placeholder": "Додати анотацію"
+			}
+		},
+		"networkHelp": {
+			"title": "Допомога по мережі",
+			"networkID": "ID мережі",
+			"networkIDText": "Глобально унікальний 16-значний ID мережі. Наразі не може бути змінений.",
+			"networkName": "Ім'я мережі",
+			"networkNameText": "Визначуване користувачем коротке ім'я для цієї мережі, яке видно учасникам. Ми рекомендуємо використовувати щось на кшталт доменного імені (наприклад, zerotier.com) або адреси електронної пошти.",
+			"accessControl": "Контроль доступу",
+			"accessControlText": "Як контролюється членство? Це слід залишити в налаштуваннях за замовчуванням, якщо ви не хочете створити повністю відкриту мережу для тестування, ігор тощо.",
+			"multicastRecipientLimit": "Ліміт отримувачів мультикасту",
+			"multicastRecipientLimitText": "Максимальна кількість отримувачів, які можуть отримувати Ethernet-мультикаст або широкомовлення. Якщо кількість отримувачів перевищує цей ліміт, випадкова підмножина отримає оголошення. Встановлення цього значення вище робить мультикасти більш надійними у великих мережах за рахунок збільшення пропускної здатності.",
+			"multicastRecipientLimitText2": "Встановлення в 0 вимикає мультикаст, але майте на увазі, що лише IPv6 з емульованим NDP (режими адресації RFC4193 або 6PLANE) або інші протоколи лише з унікастом працюватимуть без мультикасту.",
+			"managedRoutes": "Керовані маршрути",
+			"managedRoutesText": "IPv4-маршрути, які будуть опубліковані учасникам мережі. Це можна використати для створення маршрутів до інших мереж через шлюзи в мережі ZeroTier. Зверніть увагу, що з міркувань безпеки більшість клієнтів не використовуватимуть маршрути за замовчуванням або маршрути, які перетинаються з публічним адресним простором IP, якщо це не дозволено користувачем. Публічні IP-діапазони позначені значком:",
+			"ipv4AutoAssign": "Автопризначення IPv4",
+			"ipv4AutoAssignText": "Діапазон IPv4, з якого автоматично призначаються IP. Зверніть увагу, що IP будуть призначатися лише якщо вони також потрапляють у визначений маршрут. Простий режим дозволяє користувачам обрати IP-діапазон, і визначення маршрутів та пулів будуть створені автоматично.",
+			"dnsPush": "DNS Push",
+			"dnsPushText1": "Потрібна ZeroTier версії 1.6 або новішої.",
+			"dnsPushText2": "Старіші версії ZeroTier ігноруватимуть ці налаштування.",
+			"dnsPushText3": "На macOS, iOS, Windows та Android ZeroTier може автоматично додавати DNS-сервери для певного домену. Він не налаштовує й не хостить DNS-сервер. Ви маєте налаштувати свій власний.",
+			"dnsPushText4": "Якщо ви налаштуєте zt.example.com як пошуковий домен і 10.147.20.1 як адресу сервера, то ваш комп'ютер буде запитувати 10.147.20.1 для пошуку IP-адрес для імен хостів, що закінчуються на zt.example.com.",
+			"dnsPushText5": "Це має бути увімкнено на кожному клієнті за допомогою опції allowDNS. В інтерфейсі є прапорець у деталях кожної мережі, поруч із прапорцем Allow Managed."
+		}
+	},
+	"admin": {
+		"settings": {
+			"application": {
+				"title": "Застосунок",
+				"description": "Налаштуйте зовнішній вигляд і поведінку застосунку для кращої відповідності вашому бренду"
+			},
+			"publicPages": {
+				"sectionTitle": "Публічні сторінки",
+				"description": "Налаштуйте текст, що відображається на ваших сторінках входу та реєстрації, щоб краще відповідати вашому бренду або надати спеціальні інструкції вашим користувачам."
+			}
+		},
+		"mail": {
+			"mailSMTP": "Поштовий SMTP",
+			"senderSettings": "Налаштування відправника",
+			"smtpServer": "SMTP сервер",
+			"authentication": "Аутентифікація",
+			"security": "Безпека",
+			"emailTemplates": "Шаблони листів",
+			"smtpHost": "SMTP-хост",
+			"smtpPort": "SMTP-порт",
+			"portInvalid": "Порт має бути від 1 до 65535",
+			"portUncommon": "Нестандартний порт. Стандартні SMTP-порти: 25, 465, 587, 2525",
+			"senderEmail": "Email відправника",
+			"mailPlaceholder": "mail@example.com",
+			"senderName": "Ім'я відправника",
+			"senderNamePlaceholder": "ZTNET",
+			"encryption": "Шифрування",
+			"encryptionNone": "Немає",
+			"encryptionSSL": "SSL/TLS",
+			"encryptionSTARTTLS": "STARTTLS",
+			"encryptionDescription": "Використовуйте SSL/TLS на порту 465 або STARTTLS на порту 25/587",
+			"sendTestEmail": "Надіслати тестовий лист",
+			"testEmailSent": "Тестовий лист успішно надіслано",
+			"saveSettings": "Зберегти налаштування",
+			"settingsSaved": "Налаштування успішно збережено",
+			"unsavedChanges": "У вас є незбережені зміни",
+			"useAuthentication": "Використовувати аутентифікацію",
+			"useAuthenticationDescription": "Увімкніть, якщо SMTP-сервер вимагає ім'я користувача і пароль.",
+			"username": "Ім'я користувача",
+			"password": "Пароль",
+			"clearPassword": "Видалити пароль",
+			"passwordWillBeCleared": "Пароль буде видалено під час збереження",
+			"verifyCertificate": "Перевіряти SSL-сертифікат",
+			"verifyCertificateDescription": "Вимкніть лише для самопідписаних сертифікатів",
+			"useSSL": "Використовувати SSL",
+			"smtpRequireTLS": "Перевіряти SSL-сертифікат",
+			"smtpRequireTLSDescription": "Вимагати дійсні SSL/TLS сертифікати. Вимкніть лише при використанні самопідписаних сертифікатів.",
+			"inviteUserTemplate": "Шаблон запрошення користувача",
+			"emailVerificationTemplate": "Шаблон підтвердження email",
+			"forgotPasswordTemplate": "Шаблон відновлення пароля",
+			"notificationTemplate": "Шаблон сповіщення",
+			"organizationInviteTemplate": "Шаблон запрошення в організацію",
+			"newDeviceNotificationTemplate": "Шаблон сповіщення про новий пристрій",
+			"deviceIpChangeNotificationTemplate": "Шаблон сповіщення про зміну IP пристрою",
+			"templates": {
+				"availableTags": "Доступні теги:",
+				"subject": "Тема",
+				"inputPlaceholderSubject": "Тема",
+				"htmlBody": "HTML-вміст",
+				"textareaPlaceholderBody": "Шаблон листа",
+				"saveTemplateButton": "Зберегти шаблон",
+				"resetButton": "Скинути",
+				"sendTestMailButton": "Надіслати тестовий лист",
+				"sendTestMailButtonLoading": "Працюю...",
+				"errorFields": "Будь ласка, заповніть усі поля",
+				"successToastMailSent": "Лист надіслано",
+				"successToastTemplateSaved": "Шаблон збережено"
+			}
+		},
+		"users": {
+			"authentication": {
+				"header": "Аутентифікація",
+				"enableUserRegistration": "Увімкнути реєстрацію користувачів?",
+				"enableUserRegistrationDescription": "Це дозволить користувачам натискати кнопку реєстрації на сторінці входу.",
+				"oauthExclusiveLoginEnabled": "Увімкнено ексклюзивний вхід через OAuth.",
+				"oauthExclusiveLoginDescription": "Користувачі можуть аутентифікуватися лише через OAuth. Форма реєстрації прихована незалежно від налаштування реєстрації нижче.",
+				"oauthAllowNewUsers": "Нові користувачі можуть реєструватися через OAuth.",
+				"oauthExistingUsersOnly": "Лише наявні користувачі можуть входити через OAuth.",
+				"generateInvitation": {
+					"header": "Згенерувати посилання запрошення",
+					"description": "Генеруйте безпечні посилання запрошення, щоб дозволити новим користувачам реєструватися у вашому екземплярі ZTNET.",
+					"secretMessageLabel": "Користувач має ввести це повідомлення під час реєстрації (враховується регістр)",
+					"secretMessagePlaceholder": "Додати секретне повідомлення",
+					"expireTimeLabel": "Посилання запрошення сплине після цього часу",
+					"expireTimePlaceholder": "Час спливання в хвилинах",
+					"timeUsedLabel": "Скільки разів можна використати це посилання? (За замовчуванням 1)",
+					"timeUsedPlaceholder": "Кількість використань",
+					"assignGroupLabel": "Призначити користувача до групи",
+					"activeInvitationsLabel": "Активні запрошення",
+					"activeInvitationsDescription": "Натисніть на будь-яку картку запрошення, щоб подивитися деталі, скопіювати посилання або видалити її.",
+					"emptyState": {
+						"noInvitations": "Активні запрошення не знайдено.",
+						"createInvitation": "Створіть посилання запрошення вище, щоб почати."
+					},
+					"deleteConfirmation": {
+						"title": "Видалити запрошення",
+						"description": "Ви впевнені, що хочете видалити це посилання запрошення? Цю дію не можна скасувати."
+					},
+					"invitationModal": {
+						"header": "Деталі запрошення",
+						"secretLabel": "Секрет:",
+						"expiresLabel": "Статус:",
+						"groupIdLabel": "Призначено до групи:",
+						"timesUsedLabel": "Використано разів:",
+						"invitationLinkLabel": "Посилання запрошення:",
+						"clickToCopyLabel": "натисніть для копіювання",
+						"linkCopiedToast": "посилання скопійовано в буфер обміну",
+						"deleteButton": "Видалити"
+					}
+				}
+			},
+			"users": {
+				"sectionTitle": "Користувачі",
+				"description": "Усі зареєстровані користувачі на платформі.",
+				"userOptionModal": {
+					"userGroupLabel": "Група користувача",
+					"userRoleLabel": "Роль користувача",
+					"account": {
+						"title": "ZTNet виконує щоденну перевірку на сплив терміну дії користувачів. Якщо термін дії користувача сплив, усі пов'язані учасники будуть деавторизовані, а обліковий запис користувача буде деактивований.",
+						"userAccountLabel": "Статус облікового запису",
+						"userExpireLabel": "Сплив терміну дії облікового запису"
+					},
+					"userActionsLabel": "Дії користувача",
+					"typeUserName": "Введіть ім'я користувача.",
+					"buttons": {
+						"deleteUser": "Видалити користувача",
+						"cancle": "Скасувати"
+					},
+					"toast": {
+						"deleteUserSuccess": "Користувача успішно видалено",
+						"nameNotEqual": "Введене вами ім'я користувача не збігається з користувачем."
+					}
+				},
+				"roleDescriptions": {
+					"admin": "Як адміністратор, цей користувач матиме повний доступ, включно з доступом до панелі адміністратора.",
+					"user": "Якщо встановлено значення 'Користувач', цей користувач матиме обмежені права і не зможе отримати доступ до панелі адміністратора."
+				},
+				"changeRoleModal": {
+					"title": "Змінити роль для {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Роль успішно змінено",
+					"errorOccurred": "Сталася невідома помилка"
+				},
+				"createNewUserButton": "Створити нового користувача",
+				"createUser": {
+					"title": "Створити нового користувача",
+					"nameLabel": "Ім'я",
+					"namePlaceholder": "Введіть ім'я користувача",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Введіть адресу електронної пошти",
+					"emailDescription": "Приймається будь-який формат email. Перевірка email не потрібна",
+					"passwordLabel": "Пароль",
+					"passwordPlaceholder": "Введіть пароль",
+					"generatePasswordButton": "Згенерувати пароль",
+					"roleLabel": "Роль",
+					"userGroupLabel": "Група користувача",
+					"defaultGroupOption": "Оберіть групу користувача (необов'язково)",
+					"organizationLabel": "Організація",
+					"organizationDescription": "Оберіть організацію для додавання користувача",
+					"defaultOrganizationOption": "Немає (Особистий користувач)",
+					"organizationRoleLabel": "Роль в організації",
+					"organizationRoleDescription": "Роль у вибраній організації",
+					"forcePasswordChangeLabel": "Запросити зміну пароля при першому вході",
+					"forcePasswordChangeDescription": "Користувачу буде запропоновано змінити пароль при першому вході в систему",
+					"createButton": "Створити користувача",
+					"successMessage": "Користувача успішно створено! Ви можете скопіювати дані нижче для передачі.",
+					"userAccountCreated": "Обліковий запис користувача створено:",
+					"userAccountDetails": "Деталі облікового запису користувача:",
+					"copyInfoButton": "Копіювати інформацію",
+					"doneButton": "Готово",
+					"toast": {
+						"createUserSuccess": "Користувача успішно створено",
+						"copySuccess": "Інформацію про користувача скопійовано в буфер обміну!",
+						"copyError": "Не вдалося скопіювати в буфер обміну"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "пошук користувачів",
+					"optionsButton": "Опції",
+					"optionsModalTitle": "Опції для користувача",
+					"accountStatus": {
+						"active": "Активний",
+						"disabled": "Вимкнений"
+					},
+					"headers": {
+						"created": "Створено",
+						"expires": "Спливає"
+					},
+					"values": {
+						"never": "Ніколи"
+					}
+				}
+			},
+			"groups": {
+				"sectionTitle": "Групи",
+				"description": "Створіть нову групу користувачів для кращої організації користувачів платформи. Призначення користувачів у певні групи дозволяє контролювати доступ, встановлювати обмеження та налаштовувати параметри залежно від типів користувачів.",
+				"addGroup": {
+					"editGroupTitle": "Редагувати групу",
+					"deleteGroupTitle": "Видалити групу",
+					"deleteGroupDescription": "Ви впевнені, що хочете видалити цю групу? Якщо вона призначена, вона буде видалена у користувача.",
+					"deleteGroupWithUsersWarning": "Попередження: У цій групі {count} {userText}.",
+					"deleteGroupWithUsersDescription": "Видалення цієї групи автоматично видалить усіх користувачів з групи. Самі користувачі не будуть видалені, але вони більше не належатимуть до жодної групи.",
+					"deleteGroupConfirmation": "Цю дію не можна скасувати. Ви впевнені, що хочете продовжити?",
+					"addGroupLabel": "Додати нову групу",
+					"addGroupButton": "Додати групу",
+					"groupNamePlaceholder": "Назва групи",
+					"groupNameDescription": "Введіть ім'я для нової групи",
+					"networkLimitPlaceholder": "Ліміт мереж",
+					"networkLimitDescription": "Встановіть максимальну кількість мереж, які можуть бути створені користувачами в цій групі",
+					"useAsDefaultPlaceholder": "Використовувати за замовчуванням",
+					"useAsDefaultDescription": "Встановити цю групу як групу за замовчуванням для нових користувачів",
+					"expirationDatePlaceholder": "Дата спливу",
+					"expirationDateDescription": "Встановіть дату спливу облікових записів користувачів у цій групі. Перевірка спливу запускається щоденно опівночі. Користувачі, призначені в цю групу, будуть автоматично деактивовані в цю дату. Залиште порожнім для відсутності спливу.",
+					"expiredGroupWarning": "Ця група спливла. Користувачі будуть деактивовані.",
+					"expiredLabel": "СПЛИВЛА",
+					"expiresLabel": "Спливає"
+				},
+				"existingGroups": {
+					"title": "Наявні групи",
+					"description": "Натисніть на будь-яку картку групи, щоб змінити її налаштування, або використайте кнопку видалення, щоб її видалити."
+				}
+			}
+		},
+		"notification": {
+			"authentication": "Аутентифікація",
+			"whenUserRegister": "Коли користувач реєструється",
+			"allAdminsNotification": "Усі адміністратори отримають сповіщення"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "Мережі та учасники",
+				"totalNetworks": "Всього мереж:",
+				"totalMembers": "Всього учасників:",
+				"totalUnlinkedNetworks": "Всього не пов'язаних мереж:",
+				"unlinkedNetworks": {
+					"title": "Не пов'язані мережі",
+					"description": "У цьому розділі представлена таблиця всіх мереж, які наразі не пов'язані з жодним користувачем у базі даних ztnet. Зазвичай вони походять від користувацьких контролерів ZeroTier, які були додані користувачами, але ще не керуються в ZTNET. Таблиця дає вам можливість призначити ці некеровані мережі конкретним адміністраторам. Це може бути особливо корисно, якщо користувач додав користувацький контролер ZeroTier, який ще не керується в ZTNET.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Ім'я мережі",
+						"creationTime": "Час створення",
+						"members": "Учасники",
+						"assign": "Призначити"
+					},
+					"assignModal": {
+						"title": "Ви впевнені, що хочете призначити користувача {user} на мережу {network}?",
+						"description": "Цю дію не можна скасувати"
+					}
+				}
+			},
+			"management": {
+				"title": "Керування",
+				"allowManagementFrom": "Дозволити керування з:",
+				"allowTcpFallbackRelay": "Дозволити резервну передачу TCP:",
+				"listeningOn": "Слухає на:"
+			},
+			"controllerStatus": {
+				"title": "Статус контролера",
+				"online": "Онлайн:",
+				"tcpFallbackActive": "Резервна передача TCP активна:",
+				"version": "Версія:"
+			},
+			"controllerConfig": {
+				"danger_zone": "НЕБЕЗПЕЧНА ЗОНА",
+				"proceed_with_caution": "<span>Дійте обережно:</span>",
+				"modification_warning": "Зміна URL контролера ZeroTier впливає на всіх користувачів. Хоча це дає гнучкість для тих, хто хоче використовувати користувацький контролер, майте на увазі можливі збої та проблеми сумісності. Завжди робіть резервні копії конфігурацій перед змінами.",
+				"local_zerotier_url": "Локальний URL ZeroTier",
+				"zerotier_secret": "Секрет ZeroTier",
+				"submit_empty_field_default": "Надішліть порожнє поле, щоб використати значення за замовчуванням.",
+				"isUsingEnvVariablesAlert": "Змінна середовища <span>ZT_ADDR або ZT_SECRET</span> має пріоритет і перевизначає будь-які зміни URL, зроблені через інтерфейс. Щоб оновити відповідні поля через інтерфейс, ви повинні спочатку видалити змінні середовища ZT_ADDR або ZT_SECRET."
+			},
+			"generatePlanet": {
+				"updatePlanetWarning": "Оновлення файлу planet змінить основну структуру вашої мережі ZeroTier, впливаючи на маршрути, гнучкість і потенційно доступність. Дійте обережно, розуміючи наслідки.",
+				"customPlanetInUse": "Користувацький planet наразі використовується!",
+				"customPortIsInUse": "УВАГА! Використовується користувацький порт",
+				"customPortIsInUseDescription": "Вам потрібно додати <kbd>ZT_PRIMARY_PORT:port</kbd> у змінні середовища Docker Compose для ZeroTier.",
+				"downloadPlanetInfo": "Якщо вам це потрібно, файл planet доступний для завантаження за наступним URL:",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "Згенерувати Root Label",
+				"generatePrivateRootPlaceholder": "Додайте Root Label до вашого контролера",
+				"commentDescription": "Додайте коментар для цього planet (необов'язково)",
+				"commentPlaceholder": "Введіть коментар",
+				"identityDescription": "Ідентифікатор (необов'язково). Значення за замовчуванням - вміст поточного identity.public",
+				"endpointsDescription": "Введіть зовнішню IP-адресу вашого контролера. Використовуйте формат, розділений комами (IP/PORT) для кількох адрес. Наприклад: '84.17.53.155/9993,2a02:6ea0:d405::/9993'. Переконайтеся, що ці адреси глобально доступні, якщо ви хочете, щоб вузли за межами вашої локальної мережі могли підключатися.",
+				"endpointsPlaceholder": "<зовнішній IP>/9993",
+				"plRecommend": "Автоматично згенерувати ID",
+				"birthLabel": "Birth (plBirth)",
+				"birthPlaceholder": "Введіть Birth",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Введіть ID",
+				"buttons": {
+					"editPlanetConfig": "РЕДАГУВАТИ КОНФІГУРАЦІЮ PLANET",
+					"createPlanet": "СТВОРИТИ PLANET",
+					"uploadConfig": "ЗАВАНТАЖИТИ КОНФІГ",
+					"updateWorld": "Оновити World",
+					"downloadPlanetButton": "Завантажити конфіг",
+					"restoreOriginalPlanetButton": "Відновити оригінальний Planet"
+				},
+				"modal": {
+					"noteTitle": "УВАГА!",
+					"customPlanetGenerated": "Користувацький planet згенеровано.",
+					"restartContainerInstructions": "Вам потрібно перезапустити контейнер zerotier, щоб завантажити нову конфігурацію:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Відновити оригінальний Planet",
+					"restoreOriginalPlanetContent": "Ви впевнені, що хочете відновити оригінальний файл planet? Переконайтеся, що ви зробили резервну копію поточного файлу planet, якщо хочете зберегти поточні ключі"
+				}
+			},
+			"yes": "Так",
+			"no": "Ні"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "Керування командою",
+				"description": "Дослідіть організацію, щоб почати формувати те, як ваша команда працює разом. Призначайте ролі, запрошуйте нових учасників і контролюйте базові дозволи всередині вашої організації. Розроблена для простоти й зручності використання, ця бета-функція надає основу для спільної роботи вашої команди. У міру того, як ми продовжуємо розвивати та покращувати ці налаштування, ми запрошуємо вас надати зворотний зв'язок, щоб допомогти нам покращити досвід.",
+				"inputFields": {
+					"label": "Додати організацію",
+					"description": "Створіть нову організацію",
+					"organizationName": {
+						"description": "Назва організації"
+					},
+					"organizationDescription": {
+						"description": "Опис організації (необов'язково)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Видалити організацію",
+					"description": "Ви впевнені, що хочете видалити цю організацію?",
+					"description2": "Ця дія назавжди видалить організацію разом з усіма її мережами, учасниками та пов'язаними даними. Ця дія не може бути скасована.",
+					"confirmation": "Будь ласка, підтвердьте, що ви хочете продовжити видалення організації.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Введіть назву організації для підтвердження"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Назва організації:",
+				"description": "Опис:",
+				"numberOfMembers": "Кількість учасників:",
+				"pendingInvitations": "Очікуючі запрошення:",
+				"activeWebhooks": "Активні вебхуки:"
+			}
+		},
+		"backupRestore": {
+			"title": "Резервне копіювання та відновлення",
+			"description": "Цей розділ дозволяє створити резервну копію вашого сервера. Ви можете вибрати, чи включати базу даних та/або конфігурацію ZeroTier у резервну копію. Резервна копія буде збережена з вказаним іменем і може бути завантажена одразу після створення.",
+			"createBackup": {
+				"sectionTitle": "Створити резервну копію",
+				"includeDatabase": "Включити базу даних",
+				"includeZerotier": "Включити папку ZeroTier",
+				"backupName": "Ім'я резервної копії (необов'язково)",
+				"backupNamePlaceholder": "Залиште порожнім для авто-згенерованого імені",
+				"createButton": "Створити і завантажити резервну копію",
+				"creatingButton": "Створення резервної копії...",
+				"successToast": "Резервну копію створено: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Наявні резервні копії",
+				"noBackups": "Резервні копії не знайдено. Створіть свою першу резервну копію вище.",
+				"table": {
+					"filename": "Ім'я файлу",
+					"size": "Розмір",
+					"created": "Створено",
+					"actions": "Дії",
+					"download": "Завантажити",
+					"restore": "Відновити",
+					"delete": "Видалити"
+				},
+				"deleteModal": {
+					"title": "Видалити резервну копію",
+					"description": "Ви впевнені, що хочете видалити цю резервну копію? Цю дію не можна скасувати."
+				},
+				"restoreModal": {
+					"title": "Відновити з резервної копії",
+					"description": "Це перезапише ваші поточні дані. Переконайтеся, що спочатку створили резервну копію!<br></br>",
+					"zerotierWarning": "⚠️ <span>ВАЖЛИВО:</span><br></br>Відновлення конфігурації ZeroTier скопіює точну ідентичність ZeroTier з джерела резервної копії. Це означає, що цей сервер матиме ту саму ідентичність ZeroTier, що й початковий сервер.<br></br>Наявність двох серверів з однаковими ідентичностями ZeroTier може спричинити мережеві конфлікти та непередбачувану поведінку. Продовжуйте лише якщо ви мігруєте з початкового сервера або якщо початковий сервер остаточно виведено з експлуатації."
+				},
+				"deleteSuccessToast": "Резервну копію успішно видалено"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Відновити з файлу",
+				"warning": "Відновлення перезапише ваші поточні дані. Переконайтеся, що спочатку створили резервну копію!",
+				"restoreDatabase": "Відновити базу даних",
+				"restoreZerotier": "Відновити папку ZeroTier",
+				"selectFile": "Виберіть файл резервної копії",
+				"selectedFile": "Вибраний файл: {fileName} ({size})",
+				"restoreButton": "Відновити з файлу",
+				"processingButton": "Обробка...",
+				"restoringButton": "Відновлення...",
+				"uploadSuccessToast": "Резервну копію успішно завантажено",
+				"restoreSuccessToast": "Відновлення успішно завершено. Будь ласка, перезапустіть застосунок.",
+				"invalidFileModal": {
+					"title": "Недопустимий файл",
+					"description": "Будь ласка, виберіть дійсний .zip файл резервної копії."
+				},
+				"uploadErrorModal": {
+					"title": "Помилка завантаження",
+					"description": "Не вдалося обробити завантаження файлу. Будь ласка, спробуйте знову."
+				},
+				"restoreModal": {
+					"title": "Відновити з резервної копії",
+					"description": "Це перезапише ваші поточні дані. Переконайтеся, що спочатку створили резервну копію!<br></br>",
+					"zerotierWarning": "⚠️ <span>ВАЖЛИВО:</span><br></br>Відновлення конфігурації ZeroTier скопіює точну ідентичність ZeroTier з джерела резервної копії. Це означає, що цей сервер матиме ту саму ідентичність ZeroTier, що й початковий сервер.<br></br>Наявність двох серверів з однаковими ідентичностями ZeroTier може спричинити мережеві конфлікти та непередбачувану поведінку. Продовжуйте лише якщо ви мігруєте з початкового сервера або якщо початковий сервер остаточно виведено з експлуатації."
+				}
+			},
+			"restoreCompleteModal": {
+				"title": "Відновлення завершено",
+				"successMessage": "✅ Відновлення резервної копії успішно завершено!",
+				"docker": {
+					"description": "Оскільки ви використовуєте Docker, будь ласка, перезапустіть контейнер ZeroTier для застосування змін:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ Сервіси ZeroTier можуть бути тимчасово недоступні під час перезапуску."
+				},
+				"host": {
+					"description": "Сервіси ZeroTier були автоматично перезапущені.",
+					"info": "ℹ️ Якщо у вас виникнуть проблеми, можливо, знадобиться вручну перезапустити застосунок."
+				},
+				"databaseRestored": "Базу даних було відновлено. Можливо, вам потрібно буде оновити сторінку для перегляду оновлених даних.",
+				"gotItButton": "Зрозуміло!"
+			}
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Обліковий запис",
+			"network": "Мережа",
+			"notification": "Сповіщення",
+			"user": "Користувач"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Налаштування облікового запису",
+				"nameLabel": "Ім'я",
+				"emailLabel": "Email",
+				"verifiedBadge": "Підтверджено",
+				"notVerifiedBadge": "Не підтверджено",
+				"passwordLabel": "Пароль",
+				"currentPasswordPlaceholder": "Поточний пароль",
+				"newPasswordPlaceholder": "Новий пароль",
+				"repeatNewPasswordPlaceholder": "Повторіть новий пароль",
+				"role": "Роль",
+				"passwordChangeRequired": {
+					"title": "Потрібна зміна пароля",
+					"description": "Ви повинні змінити пароль перед доступом до інших частин застосунку. Будь ласка, оновіть свій пароль у розділі Безпека нижче."
+				}
+			},
+			"totp": {
+				"title": "Двофакторна аутентифікація",
+				"description": "Це підвищить безпеку облікових записів користувачів, вимагаючи додаткового кроку перевірки.",
+				"mfaNote": "Примітка: 2FA працюватиме лише якщо ви входите з використанням облікових даних. OAuth не використовуватиме цей 2FA, навіть якщо налаштований, оскільки ним керує постачальник OAuth.",
+				"notification": {
+					"title": "Двофакторна аутентифікація (2FA) не ввімкнена",
+					"description": "Ми наполегливо рекомендуємо увімкнути 2FA для підвищення безпеки вашого облікового запису."
+				},
+				"totpActivation": {
+					"title": "Двофакторна аутентифікація",
+					"steps": {
+						"step1": "Пароль",
+						"step2": "Скануйте QR-код",
+						"step3": "Надіслати"
+					},
+					"confirmPassword": {
+						"description": "Введіть ваш пароль"
+					},
+					"displayQrCode": {
+						"description": "Вам потрібен застосунок двофакторної аутентифікації? Завантажте один із наступних",
+						"IOS": "Пристрої iOS",
+						"Android": "Пристрої Android",
+						"Windows": "Пристрої Windows",
+						"appDescription": "Ці застосунки рекомендовані, але інші застосунки аутентифікації також підійдуть.",
+						"scanQrDescription": "Скануйте цей QR-код за допомогою вашого застосунку аутентифікації.",
+						"manualEntry": "Якщо ви не можете сканувати QR-код, ви можете вручну ввести наступне:"
+					},
+					"enterTotpCode": {
+						"description": "Перевірте ваше налаштування TOTP",
+						"enterCode": "Введіть код із вашого застосунку аутентифікації, щоб перевірити та увімкнути TOTP."
+					}
+				}
+			},
+			"userDevices": {
+				"connectedDevices": "Підключені пристрої",
+				"logoutAll": "Вийти з усіх",
+				"accessDenied": "Доступ заборонено",
+				"noDevicesFound": "Пристрої не знайдено.",
+				"activeNow": "Активно зараз",
+				"currentDevice": "Поточний пристрій",
+				"logout": "Вийти"
+			},
+			"restapi": {
+				"sectionTitle": "Токени доступу до API",
+				"description": "Це дозволяє вам згенерувати API-токен, який ви можете використати для аутентифікації та доступу до API нашого застосунку. Маючи дійсний токен, ви можете робити запити до API та взаємодіяти з функціями застосунку програмно.",
+				"viewToken": {
+					"title": "Інформація про токен",
+					"name": "Ім'я",
+					"authorizationType": "Тип авторизації",
+					"expireAt": "Спливає",
+					"isActive": "Активний"
+				},
+				"generateToken": {
+					"title": "Токен Rest API",
+					"tokenName": {
+						"label": "Додайте змістовне ім'я до вашого токена",
+						"placeholder": "Мій чудовий токен"
+					},
+					"tokenAuthorizationType": {
+						"label": "Оберіть тип авторизації API",
+						"placeholder": "Оберіть тип авторизації"
+					},
+					"tokenExpireAt": {
+						"label": "Оберіть дату спливу токена",
+						"placeholder": "Оберіть дату",
+						"values": {
+							"never": "Ніколи",
+							"1day": "1 день",
+							"10day": "10 днів",
+							"1month": "1 місяць",
+							"1year": "1 рік"
+						}
+					}
+				},
+				"buttons": {
+					"submitToken": "Згенерувати токен",
+					"cancle": "Видалити токен"
+				},
+				"response": {
+					"title": "Натисніть на токен, щоб скопіювати",
+					"info": "Цей токен буде показано лише один раз. Будь ласка, скопіюйте його зараз!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Видалити токен",
+						"description": "Ви впевнені, що хочете видалити цей токен? Цю дію не можна скасувати."
+					}
+				}
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Інтеграція вашого ZeroTier Central API дозволить вам керувати вашими центральними мережами напряму з ZTNET. Після інтеграції ключа в боковому меню з'явиться новий пункт для покращеної доступності та контролю.<br></br>Ви можете отримати ключ із порталу ZeroTier Central. https://my.zerotier.com/account",
+				"apiKeyLabel": "API-ключ ZeroTier Central",
+				"apiUrlLabel": "URL API ZeroTier",
+				"apiUrlLabelDescription": "URL API ZeroTier Central, за замовчуванням https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Налаштування облікового запису",
+				"languageLabel": "Мова",
+				"fontSize": "Розмір шрифту"
+			},
+			"application": {
+				"title": "Застосунок",
+				"version": "Версія",
+				"developerMode": "режим розробника"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Анотації учасників",
+				"showMarkerInTable": "Показати маркер у таблиці",
+				"showMarkerInTableDescription": "Це додасть кружок перед ім'ям учасника з кольором анотації.<br></br>Ви все ще можете шукати анотацію, якщо вона вимкнена.",
+				"addBackgroundColorInTable": "Додати колір фону в таблиці",
+				"addBackgroundColorInTableDescription": "Це додасть колір фону рядка на основі кольору анотації.<br></br>Ви все ще можете шукати анотацію, якщо вона вимкнена."
+			},
+			"memberTable": {
+				"memberTableTitle": "Таблиця учасників",
+				"deAuthorizationWarningTitle": "Показати попередження при деавторизації учасника",
+				"deAuthorizationWarningLabel": "Відображати модальне вікно підтвердження, щоб запобігти випадковій деавторизації.",
+				"addMemberIdAsNameTitle": "Додавати ID учасника як ім'я при реєстрації",
+				"addMemberIdAsNameLabel": "Коли учасник мережі реєструється, ID учасника (nodeid) буде додано як ім'я."
+			},
+			"globalNodeNaming": {
+				"title": "Увімкнути глобальне іменування вузлів",
+				"description": "Коли увімкнено, ця функція буде:",
+				"bulletPoint1": "Підтримувати узгоджене ім'я для кожного вузла в усіх мережах, якими ви керуєте.",
+				"bulletPoint2": "Оновлювати ім'я вузла в усіх ваших мережах при перейменуванні його в одній мережі.",
+				"bulletPoint3": "Під час реєстрації учасника / вузла перевіряти, чи існує учасник у ваших інших мережах, і використовувати перше знайдене ім'я.",
+				"note": "Примітка: Ця функція має пріоритет над \"Додати ID учасника як ім'я\". Вона застосовується лише до мереж, автором яких ви є, і не впливає на мережі, керовані іншими, або організації."
+			}
+		},
+		"notification": {
+			"devices": "Пристрої",
+			"newDeviceLogin": {
+				"title": "Сповіщення про вхід з нового пристрою",
+				"description": "Отримуйте лист, коли новий пристрій уперше входить у ваш обліковий запис."
+			},
+			"ipAddressChange": {
+				"title": "Сповіщення про зміну IP-адреси",
+				"description": "Отримуйте лист, коли відомий пристрій отримує доступ до вашого облікового запису з нової IP-адреси."
+			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Зверніться до адміністратора організації, щоб переконатися, що у вас є відповідні дозволи"
+		},
+		"loading": "Завантаження...",
+		"organizationDashboard": {
+			"header": "Панель організації"
+		},
+		"membersSection": {
+			"title": "Учасники",
+			"editUser": "Редагувати користувача",
+			"role": "Роль"
+		},
+		"informationSection": {
+			"title": "Інформація",
+			"name": "Ім'я:",
+			"created": "Створено:",
+			"members": "Учасники:",
+			"pendingInvitations": "Очікуючі запрошення:"
+		},
+		"networkSection": {
+			"title": "Мережі",
+			"noNetworksToShow": "Немає мереж для відображення."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Покинути організацію?",
+			"confirmationMessage": "Ви впевнені, що хочете покинути організацію?",
+			"note": "Примітка: Якщо ви вирішите знову приєднатися до цієї організації в майбутньому, адміністратор повинен буде надіслати вам нове запрошення."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "Повідомлення",
+			"chatHeader": "Повідомлення організації",
+			"chatInfo": "Усі в організації зможуть побачити ваше повідомлення.",
+			"messageInputPlaceholder": "Напишіть повідомлення...",
+			"noMessages": "Повідомлень поки немає."
+		},
+		"logFooter": {
+			"toggleLogLabel": "ЛОГ",
+			"logHeader": "Останні 100 журналів активності",
+			"loading": "Отримання журналів..."
+		},
+		"settings": {
+			"invitation": {
+				"title": "Розширення команди: запросити нових учасників",
+				"description": "Запрошуйте більше людей у свою команду! Ви можете надсилати запрошення електронною поштою або знайти й додати людей, які вже використовують платформу. <br></br> Це полегшує зростання вашої команди та залучає більше учасників.",
+				"pendingInvitations": {
+					"title": "Очікуючі запрошення"
+				},
+				"inviteByEmail": {
+					"title": "Запросити електронною поштою",
+					"description": "Запрошені користувачі, які наразі не є учасниками застосунку, повинні будуть зареєструватися через надане посилання в електронному листі з запрошенням. Посилання дійсне протягом 24 годин.",
+					"emailPlaceholder": "Адреса електронної пошти",
+					"emailDescription": "Введіть адресу електронної пошти людини, яку ви хочете запросити",
+					"selectRoleDescription": "Оберіть роль користувача"
+				},
+				"inviteSiteUser": {
+					"title": "Запросити користувачів сайту",
+					"description": "Перш ніж ви зможете додати користувачів до вашої організації, важливо зазначити, що вони повинні вже бути зареєстровані в застосунку",
+					"inputFields": {
+						"searchUser": {
+							"title": "Пошук користувача, якого ви хочете додати",
+							"placeholder": "Пошук користувача"
+						},
+						"userRole": {
+							"title": "Оберіть роль користувача"
+						}
+					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Увімкнути глобальне іменування вузлів",
+					"description": "Коли увімкнено, ця функція буде:",
+					"bulletPoints": "Підтримувати узгоджене ім'я для кожного вузла в усіх мережах організації.\nОновлювати ім'я вузла в усіх мережах при перейменуванні його в одній мережі.\nПід час реєстрації учасника перевіряти, чи існує учасник у вашій організації, і використовувати перше знайдене ім'я.",
+					"note": "Примітка: Це застосовується виключно до мереж усередині цієї конкретної організації."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Сповіщення для адміністраторів",
+					"description": "Налаштуйте, коли адміністратори організації повинні отримувати сповіщення про важливі події. Ці сповіщення допомагають тримати адміністраторів у курсі змін і активності в організації."
+				},
+				"nodeEvents": {
+					"title": "Події вузлів",
+					"nodeAdded": {
+						"title": "Вузол додано",
+						"description": "Сповіщати адміністраторів, коли новий вузол приєднується до будь-якої мережі в організації"
+					},
+					"nodeDeleted": {
+						"title": "Вузол видалено",
+						"description": "Сповіщати адміністраторів, коли вузол видаляється з будь-якої мережі в організації"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Вузол видалено назавжди",
+						"description": "Сповіщати адміністраторів, коли вузол видаляється назавжди з будь-якої мережі в організації"
+					}
+				},
+				"userEvents": {
+					"title": "Події користувачів",
+					"userAdded": {
+						"title": "Користувача додано до організації",
+						"description": "Сповіщати адміністраторів, коли новий користувач приєднується до організації"
+					},
+					"userRemoved": {
+						"title": "Користувача видалено з організації",
+						"description": "Сповіщати адміністраторів, коли користувач залишає або видаляється з організації"
+					},
+					"permissionChanged": {
+						"title": "Права користувача змінено",
+						"description": "Сповіщати адміністраторів, коли роль або права користувача змінюються в організації"
+					}
+				},
+				"networkEvents": {
+					"title": "Події мережі",
+					"networkCreated": {
+						"title": "Мережу створено",
+						"description": "Сповіщати адміністраторів, коли нова мережа створюється в організації"
+					},
+					"networkDeleted": {
+						"title": "Мережу видалено",
+						"description": "Сповіщати адміністраторів, коли мережа видаляється з організації"
+					}
+				},
+				"emailSettings": {
+					"title": "Налаштування доставки Email",
+					"description": "Налаштуйте спосіб доставки сповіщень адміністраторам організації.",
+					"enableEmails": {
+						"title": "Увімкнути Email сповіщення",
+						"description": "Надсилати сповіщення email усім адміністраторам організації"
+					}
+				},
+				"templates": {
+					"editTemplate": "Редагувати Email шаблон",
+					"availableTags": "Доступні теги шаблону:",
+					"subject": "Тема",
+					"subjectPlaceholder": "Введіть тему email...",
+					"htmlBody": "Тіло Email (HTML)",
+					"bodyPlaceholder": "Введіть вміст тіла email...",
+					"saveTemplate": "Зберегти шаблон",
+					"resetToDefault": "Скинути до типового",
+					"sendTest": "Надіслати тестовий Email",
+					"sendingTest": "Надсилання...",
+					"successToastTemplateSaved": "Шаблон успішно збережено",
+					"successToastTestSent": "Тестовий email успішно надіслано",
+					"errorFields": "Тема і тіло обов'язкові",
+					"errorSaveFirst": "Будь ласка, збережіть зміни перед надсиланням тестового email"
+				}
+			}
+		},
+		"webhook": {
+			"title": "Вебхуки організації",
+			"description": "Розширте можливості вашої організації за допомогою інтеграції вебхуків, пропонуючи сповіщення в реальному часі для критично важливих подій.<br></br>Будьте попереду з миттєвими оновленнями, напряму переданими у вашу систему, забезпечуючи безперебійний робочий процес і можливості негайного реагування.",
+			"createWebhook": {
+				"editWebhookTitle": "Редагувати вебхук",
+				"createWebhookTitle": "Створити вебхук для організації <span>{organization}</span>",
+				"webhookName": "Ім'я вебхука",
+				"webhookNameDescription": "Це поле для введення імені вебхука. Ім'я використовується для ідентифікації вебхука і має бути достатньо описовим, щоб відрізняти його від інших вебхуків.",
+				"selectWebhookActions": "Оберіть дії вебхука",
+				"selectWebhookActionsDescription": "Це випадаюче меню дозволяє обрати конкретні дії, які повинен виконувати ваш вебхук. Кожен варіант представляє собою різний тип дії.",
+				"webhookUrl": "URL вебхука (HTTPS)",
+				"webhookUrlDescription": "Це поле для введення URL, куди вебхук надсилатиме дані. Це має бути дійсний і доступний URL-адрес кінцевої точки, яка може отримувати та обробляти вхідні дані вебхука."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Активні вебхуки",
+				"description": "Опис",
+				"url": "URL",
+				"lastDelivery": "Остання доставка",
+				"events": "Події"
+			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Сторінку не знайдено",
+			"description": "Упс! Сторінка, яку ви шукаєте, не існує. Можливо, її було переміщено або видалено.",
+			"goHome": "Повернутися на головну"
+		}
+	}
+}

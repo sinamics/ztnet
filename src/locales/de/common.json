@@ -1058,6 +1058,14 @@
 				"deAuthorizationWarningLabel": "Bestätigungsfenster anzeigen, um versehentliche Deaktivierungen zu verhindern.",
 				"addMemberIdAsNameTitle": "Fügen Sie bei der Registrierung die Mitgliedsnummer als Namen hinzu",
 				"addMemberIdAsNameLabel": "Wenn sich ein Netzwerkmitglied registriert, wird die Mitglieds-ID (nodeid) als Name hinzugefügt."
+			},
+			"globalNodeNaming": {
+				"title": "Globale Knotennamen aktivieren",
+				"description": "Wenn diese Funktion aktiviert ist, wird sie:",
+				"bulletPoint1": "Einen einheitlichen Namen für jeden Knoten in allen Netzwerken verwenden, die Sie verwalten.",
+				"bulletPoint2": "Den Namen des Knotens in allen Ihren Netzwerken aktualisieren, wenn Sie ihn in einem Netzwerk umbenennen.",
+				"bulletPoint3": "Bei der Registrierung eines Mitglieds / Knotens überprüfen, ob dieses Mitglied in Ihren anderen Netzwerken vorhanden ist und den ersten gefundenen Namen verwenden.",
+				"note": "Hinweis: Diese Funktion hat Vorrang vor \"Mitglieds-ID als Namen hinzufügen\". Sie gilt nur für Netzwerke, deren Autor Sie sind, und beeinflusst keine von anderen verwalteten Netzwerke oder Organisationen."
 			}
 		},
 		"notification": {
@@ -1146,7 +1154,7 @@
 					"title": "Globale Knotennamen aktivieren",
 					"description": "Wenn diese Funktion aktiviert ist, wird sie:",
 					"bulletPoints": "Einen einheitlichen Namen für jeden Knoten in allen Netzwerken der Organisation verwenden.\nDen Namen des Knotens in allen Netzwerken aktualisieren, wenn Sie ihn in einem Netzwerk umbenennen.\nBei der Registrierung eines Mitglieds überprüfen, ob dieses Mitglied in Ihrer Organisation vorhanden ist und den ersten gefundenen Eintrag verwenden.",
-					"note": "Hinweis: Dies gilt ausschließlich für Netzwerke innerhalb dieser bestimmten Organisation." 
+					"note": "Hinweis: Dies gilt ausschließlich für Netzwerke innerhalb dieser bestimmten Organisation."
 				}
 			},
 			"notifications": {

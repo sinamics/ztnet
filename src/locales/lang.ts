@@ -10,4 +10,5 @@ export const languageNames = {
 	es: "Spanish",
 	ru: "Русский",
 	de: "German",
+	ua: "Ukrainian",
 };
