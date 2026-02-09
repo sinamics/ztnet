@@ -383,57 +383,21 @@ export const organizationRouter = createTRPCRouter({
 				})),
 			};
 
-			// Get authorized member and total member counts for each network
+			// Calculate member counts from database (no controller API calls needed)
 			for (const network of organization.networks) {
-				for (const member of network.networkMembers) {
-					// Skip deleted or permanently deleted members
-					if (member.deleted || member.permanentlyDeleted) {
-						continue;
-					}
+				const activeMembers = network.networkMembers.filter(
+					(m) => !m.deleted && !m.permanentlyDeleted,
+				);
 
-					try {
-						const memberDetails = await ztController.member_details(
-							ctx,
-							network.nwid,
-							member.id,
-						);
-						if (memberDetails.authorized) {
-							network.memberCounts.authorized += 1;
-							organization.memberCounts.authorized += 1;
-						}
-						network.memberCounts.total += 1;
-						organization.memberCounts.total += 1;
-					} catch (error) {
-						// Get status code directly from APIError
-						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						const statusCode = (error as any).status;
-						if (statusCode === 404) {
-							// Safe to delete - member or network doesn't exist in ZeroTier
-							try {
-								await ctx.prisma.network_members.delete({
-									where: {
-										id_nwid: {
-											id: member.id,
-											nwid: member.nwid,
-										},
-									},
-								});
-								console.error(`Cleaned up orphaned member ${member.id} from database`);
-							} catch (cleanupError) {
-								console.error(
-									`Failed to cleanup orphaned member ${member.id}:`,
-									cleanupError,
-								);
-							}
-						} else {
-							// For any other error, just log and skip
-							console.error(
-								`Skipping member ${member.id} due to error: ${error.message}`,
-							);
-						}
-					}
-				}
-				network.memberCounts.display = `${network.memberCounts.authorized} (${network.memberCounts.total})`;
+				const authorizedCount = activeMembers.filter((m) => m.authorized).length;
+				const totalCount = activeMembers.length;
+
+				network.memberCounts.authorized = authorizedCount;
+				network.memberCounts.total = totalCount;
+				network.memberCounts.display = `${authorizedCount} (${totalCount})`;
+
+				organization.memberCounts.authorized += authorizedCount;
+				organization.memberCounts.total += totalCount;
 			}
 			organization.memberCounts.display = `${organization.memberCounts.authorized} (${organization.memberCounts.total})`;
 			return organization;
