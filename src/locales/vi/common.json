@@ -1,0 +1,1262 @@
+{
+"input": {
+"enterToSave": "Nhấn Enter để lưu"
+},
+"commonMenuTabs": {
+"settings": "Cài đặt",
+"network": "Mạng",
+"webhooks": "Webhooks",
+"invites": "Lời mời",
+"notification": "Thông báo"
+},
+"commonMenuTiles": {
+"organizationSettings": "Cài đặt tổ chức",
+"invites": "Lời mời",
+"pendingInvites": "Lời mời đang chờ",
+"members": "Thành viên",
+"webhooks": "Webhooks",
+"activeWebhooks": "Webhooks đang hoạt động"
+},
+"commonSpinners": {
+"loading": "Đang tải...",
+"Checking": "Đang kiểm tra..."
+},
+"commonButtons": {
+"confirm": "Xác nhận",
+"add": "Thêm",
+"change": "Thay đổi",
+"create": "Tạo",
+"submit": "Gửi",
+"cancel": "Hủy",
+"delete": "Xóa",
+"remove": "Gỡ bỏ",
+"update": "Cập nhật",
+"close": "Đóng",
+"stash": "Stash",
+"yes": "Có",
+"imSure": "Vâng, tôi chắc chắn",
+"generate": "Tạo",
+"addNetwork": "Tạo mạng mới",
+"deleteNetwork": "Xóa mạng",
+"moveNetwork": "Di chuyển mạng",
+"moveNetworkToOrganization": "Di chuyển mạng sang tổ chức",
+"leaveOrganization": "Rời tổ chức",
+"inviteUser": "Mời người dùng",
+"meta": "Meta",
+"users": "Người dùng",
+"kickUser": "Kick người dùng",
+"deleteOrganization": "Xóa tổ chức",
+"userActions": "Hành động người dùng",
+"addWebhooks": "Thêm Webhooks",
+"options": "Tùy chọn",
+"settings": "Cài đặt",
+"resend": "Gửi lại",
+"enable2fa": "Bật xác thực 2 bước",
+"disable2fa": "Tắt xác thực 2 bước",
+"next": "Tiếp theo",
+"back": "Quay lại",
+"notification": "Thông báo",
+"changeTemplate": "Thay đổi mẫu"
+},
+"commonTable": {
+"header": {
+"name": "Tên",
+"description": "Mô tả",
+"networkId": "ID Mạng",
+"members": "Thành viên",
+"memberActTot": "Node Hoạt động/Tổng",
+"actions": "Hành động",
+"role": "Vai trò",
+"email": "Email",
+"authorized": "Ủy quyền",
+"id": "ID",
+"created": "Ngày tạo",
+"expires": "Hết hạn",
+"networks": "Mạng",
+"lastseen": "Lần cuối thấy",
+"group": "Nhóm",
+"account": "Tài khoản",
+"ipAssignments": {
+"header": "IP Quản lý / Độ trễ",
+"notAssigned": "Chưa gán"
+},
+"physicalIp": {
+"header": "IP Vật lý",
+"unknownValue": "Không xác định"
+},
+"conStatus": {
+"header": "Trạng thái",
+"toolTip": "Không thể thiết lập kết nối trực tiếp và hiện đang được chuyển tiếp qua máy chủ ZeroTier với độ trễ cao hơn",
+"relayed": "RELAYED",
+"directLan": "Kết nối LAN trực tiếp đã được thiết lập",
+"directWan": "Kết nối WAN trực tiếp đã được thiết lập",
+"direct": "TRỰC TIẾP{version}",
+"offline": "ngoại tuyến"
+},
+"status": "Trạng thái"
+},
+"search": {
+"networkSearchPlaceholder": "Tìm kiếm mạng",
+"searchUserPlaceholder": "Tìm kiếm người dùng"
+},
+"tableFooter": {
+"show": "Hiển thị",
+"page": "Trang",
+"of": "của"
+},
+"cell": {
+"Options": "Tùy chọn"
+}
+},
+"commonToast": {
+"updatedSuccessfully": "Cập nhật thành công",
+"addedSuccessfully": "Thêm thành công",
+"deletedSuccessfully": "Xóa thành công",
+"errorOccurred": "Đã xảy ra lỗi không xác định",
+"organizationDeleted": "Tổ chức đã được xóa thành công",
+"sentSuccessfully": "Gửi thành công",
+"copyToClipboard": {
+"title": "sao chép vào bộ nhớ tạm",
+"success": "{element} đã được sao chép vào bộ nhớ tạm"
+}
+},
+"sidebar": {
+"navigation": "Trang chủ",
+"dashboard": "Dashboard",
+"networks": "Điều khiển cục bộ",
+"ztCentral": "ZT Central",
+"admin": "Quản trị",
+"settings": "Cài đặt",
+"mail": "Thư",
+"users": "Người dùng",
+"notification": "Thông báo",
+"controller": "ZT Controller",
+"organization": "Tổ chức",
+"backuprestore": "Sao lưu & Khôi phục",
+"account": "Tài khoản",
+"user-settings": "Cài đặt người dùng",
+"logout": "Đăng xuất"
+},
+"authPages": {
+"welcomeMessage": {
+"slogan": "ZeroTier VPN cho phép bạn kết nối các thiết bị một cách an toàn và riêng tư qua internet, bất kể bạn ở đâu. Tận hưởng kết nối nhanh và đáng tin cậy mà không gặp rào cản thông thường, giữ dữ liệu của bạn an toàn và có thể truy cập được."
+},
+"form": {
+"name": "Tên",
+"namePlaceholder": "Nhập tên của bạn",
+"email": "Email",
+"emailPlaceholder": "mail@example.com",
+"password": "Mật khẩu",
+"passwordPlaceholder": "Nhập mật khẩu của bạn",
+"confirmPassword": "Xác nhận mật khẩu",
+"confirmPasswordPlaceholder": "Xác nhận lại mật khẩu",
+"forgotPassword": "Quên mật khẩu?",
+"verify2FA": "Xác minh 2FA",
+"enter2FAcode": "Nhập mã 2FA",
+"signIn": "Đăng nhập",
+"signInWith": "Đăng nhập bằng {provider}",
+"signUp": "Đăng ký",
+"invitationCode": "Mã mời",
+"invitationCodePlaceholder": "Nhập mã mời của bạn",
+"sendMail": "Gửi thư",
+"mfaRecoveryCode": "Mã khôi phục",
+"mfaRecoveryCodePlaceholder": "Nhập mã khôi phục của bạn"
+},
+"signin": {
+"signInToAccount": "Đăng nhập vào tài khoản của bạn",
+"or": "HOẶC",
+"dontHaveAccount": "Chưa có tài khoản?",
+"getStarted": "Bắt đầu ngay!",
+"havingIssues": "Gặp sự cố?",
+"oauthExclusiveButNotConfigured": "Đăng nhập độc quyền OAuth được bật nhưng OAuth chưa được cấu hình. Vui lòng liên hệ quản trị viên."
+},
+"signup": {
+"signUpWithCredentials": "Tạo tài khoản",
+"haveAnAccount": "Đã có tài khoản?",
+"login": "Đăng nhập!"
+},
+"forgot": {
+"forgotPasswordTitle": "Quên mật khẩu",
+"forgotPasswordMessage": "Chúng tôi sẽ gửi liên kết đặt lại mật khẩu nếu tài khoản tồn tại",
+"backToLogin": "Quay lại đăng nhập"
+},
+"forgotReset": {
+"forgotPasswordTitle": "Đặt lại mật khẩu",
+"forgotPasswordMessage": "Vui lòng nhập mật khẩu mới",
+"backToLogin": "Quay lại đăng nhập"
+},
+"mfaRecovery": {
+"mfaRecoveryTitle": "Khôi phục 2FA",
+"mfaRecoveryMessage": "Chúng tôi sẽ gửi hướng dẫn khôi phục tài khoản cho bạn",
+"backToLogin": "Quay lại đăng nhập"
+},
+"mfaRecoveryReset": {
+"mfaRecoveryResetTitle": "Khôi phục 2FA",
+"mfaRecoveryResetMessage": "Vui lòng nhập thông tin đăng nhập và Mã khôi phục",
+"backToLogin": "Quay lại đăng nhập"
+},
+"emailVerification": {
+"emailVerified": "Email đã được xác minh",
+"errorMessage": "Đã xảy ra lỗi khi xác minh email của bạn.",
+"successMessage": "Email của bạn đã được xác minh thành công.",
+"redirectMessage": "Bạn sẽ được chuyển hướng tự động sau {seconds} giây.",
+"goNowButton": "Đi ngay"
+},
+"passwordChangeRequired": {
+"title": "Yêu cầu đổi mật khẩu",
+"description": "Vì lý do bảo mật, bạn phải đổi mật khẩu trước khi truy cập ứng dụng.",
+"formTitle": "Đổi mật khẩu của bạn",
+"submitButton": "Cập nhật mật khẩu",
+"successMessage": "Cập nhật mật khẩu thành công! Đang chuyển hướng...",
+"updatingTitle": "Đang cập nhật mật khẩu",
+"updatingDescription": "Vui lòng đợi trong khi chúng tôi cập nhật mật khẩu và làm mới phiên làm việc.",
+"note": "Bạn không thể truy cập các phần khác của ứng dụng cho đến khi mật khẩu được thay đổi."
+}
+},
+"networks": {
+"loading": "Đang tải",
+"title": "Mạng",
+"description": "Mạng VPN",
+"unlinkedNetworks": {
+"title": "Có {amount} mạng chưa gán đã đăng ký với controller.",
+"navigate": "Tới Controller"
+},
+"noNetworksMessage": "Chưa có mạng nào được tạo. Hãy bắt đầu bằng cách tạo một mạng và nó sẽ xuất hiện ở đây.",
+"networkActionModal": {
+"modalTitle": "Tùy chọn cho Mạng <span>{networkName}</span>",
+"moveNetwork": {
+"title": "Di chuyển mạng",
+"description": "Bạn có thể tìm ID trong URL tổ chức.",
+"warningText": "<strong>Cảnh báo:</strong> Chuyển mạng sẽ di chuyển cả mạng và các thành viên sang tổ chức đã chọn. Hành động này không thể đảo ngược và không thể hoàn tác. Vui lòng xác nhận kỹ ID tổ chức trước khi tiếp tục.<br></br>Ngoài ra, hãy đảm bảo bạn có quyền ghi đối với tổ chức mà bạn đang chuyển mạng tới."
+},
+"deleteNetwork": {
+"title": "Xóa mạng",
+"description": "Xóa mạng sẽ xóa vĩnh viễn mạng cùng với tất cả dữ liệu liên quan.",
+"warningText": "<strong>Cảnh báo:</strong> Hành động này sẽ xóa vĩnh viễn mạng và tất cả thành viên, cài đặt và dữ liệu liên quan. Quá trình này không thể hoàn tác. Vui lòng đảm bảo bạn đã sao lưu mọi thông tin cần thiết trước khi tiến hành xóa."
+}
+}
+},
+"networkById": {
+"loading": "Đang tải...",
+"errorSteps": {
+"step1": "Xác minh rằng container ZeroTier đang hoạt động",
+"step2": "Nếu các phiên bản ZeroTier khác đang hoạt động cục bộ, vui lòng tắt chúng vì có thể gây xung đột."
+},
+"networkId": "ID Mạng:",
+"networkName": "Tên Mạng:",
+"addDescription": "Thêm mô tả",
+"descriptionPlaceholder": "Mô tả",
+"networkStart": "Mạng bắt đầu:",
+"notSet": "chưa thiết lập",
+"networkEnd": "Mạng kết thúc:",
+"networkCidr": "Network Cidr:",
+"networkSettings": "Cài đặt mạng",
+"networkMembers": "Thành viên mạng",
+"noMembersInformation": {
+"title": "Mạng này chưa có thành viên, xem hướng dẫn cài đặt bên dưới",
+"installZerotier": "Cài đặt ZeroTier",
+"joinNetwork": "Tham gia mạng"
+},
+"networkMembersAlert": {
+"message": "Tham gia ID mạng này và thiết bị sẽ tự động hiển thị"
+},
+"viewStashedMembers": "Xem thành viên đã ẩn",
+"networkActions": "Hành động mạng",
+"deleteNetwork": {
+"title": "Xóa mạng {networkName}",
+"description": "Bạn có chắc chắn muốn xóa mạng này? Hành động này không thể hoàn tác và tất cả thành viên sẽ bị xóa khỏi mạng này",
+"yesAction": "Có, xóa nó",
+"noAction": "Không, giữ lại"
+},
+"privatePublicSwitch": {
+"accessControllMessage": "Mạng của bạn hiện là {authType}",
+"privateCardTitle": "Riêng tư",
+"privateCardContent": "Mỗi người dùng cần được quản trị viên mạng ủy quyền.",
+"publicCardTitle": "Công khai",
+"publicCardContent": "Tất cả người dùng có thể kết nối với mạng này mà không cần ủy quyền",
+"loading": "Đang tải"
+},
+"networkIpAssignments": {
+"header": "Gán IP",
+"tabs": {
+"ipv4": "IPv4",
+"ipv6": "IPv6",
+"mtu": "MTU"
+},
+"ipv6": {
+"rfc4193Label": "ZeroTier RFC4193 (/128 cho mỗi thiết bị)",
+"plane6Label": "ZeroTier 6PLANE (/80 routable cho mỗi thiết bị)",
+"rfc4193Updated": "rfc4193 đã cập nhật",
+"plane6Updated": "6plane đã cập nhật"
+},
+"ipv4": {
+"duplicateIpNotification": {
+"title": "Đã tìm thấy {count} mạng khác có cùng subnet.",
+"modal": {
+"title": "Phát hiện subnet trùng lặp",
+"description": "Các mạng sau có cùng subnet với mạng hiện tại ({name}). Điều này có thể không phải là vấn đề, nhưng nếu bạn kết nối cả hai mạng từ cùng một PC, nó có thể gây xung đột địa chỉ IP và sự cố kết nối."
+}
+},
+"please_enter_valid_ip_range": "Vui lòng nhập dải IP hợp lệ",
+"ip_range_already_exists": "Dải IP đã tồn tại",
+"auto_assign_from_range": "Tự động gán từ Dải",
+"easy": "Dễ",
+"advanced": "Nâng cao",
+"delete_ip_assignment": "Xóa gán IP",
+"range_start": "Bắt đầu dải",
+"range_start_placeholder": "192.168.168.1",
+"range_end": "Kết thúc dải",
+"range_end_placeholder": "192.168.168.254",
+"submit": "Gửi",
+"confirmationModal": {
+"title": "Xác nhận thay đổi gán IP",
+"description": "Bạn có chắc chắn muốn gán dải IP này? Điều này sẽ xóa tất cả các tuyến đường được quản lý cho mạng này."
+},
+"deleteConfirmation": {
+"title": "Xóa gán IP",
+"description": "Bạn có chắc chắn muốn xóa gán IP này? Điều này sẽ loại bỏ dải IP khỏi mạng của bạn."
+},
+"addConfirmation": {
+"title": "Thêm gán IP",
+"description": "Bạn có chắc chắn muốn thêm dải IP này? Điều này sẽ thêm một dải IP mới vào mạng của bạn."
+}
+},
+"mtu": {
+"title": "MTU (Đơn vị truyền tối đa)",
+"description": "Cài đặt này xác định kích thước gói lớn nhất có thể được truyền qua mạng. Điều chỉnh giá trị MTU có thể ảnh hưởng đến hiệu suất và hiệu quả mạng. ",
+"acceptedValue": "Giá trị chấp nhận được nằm trong khoảng từ 1280 đến 10000"
+}
+},
+"networkRoutes": {
+"table": {
+"destination": "Đích",
+"via": "Qua",
+"nodeName": "Tên Node",
+"notes": "Ghi chú"
+},
+"managedRoutesTitle": "Managed Routes",
+"noManagedRoutesTitle": "Không có tuyến được quản lý nào được xác định.",
+"noManagedRoutesDescription1": "Thiết bị sẽ không nhận được địa chỉ IP nếu không có tuyến đường phù hợp.",
+"noManagedRoutesDescription2": "Nếu bạn không có yêu cầu cụ thể, hãy thử chế độ Tự động gán IPv4 Dễ.",
+"destinationPlaceholder": "Đích",
+"viaPlaceholder": "Qua",
+"notesPlaceholder": "Nhấn để thêm ghi chú",
+"destinationInputLabel": "Đích",
+"destinationInputDescription": "Nhập địa chỉ mạng đích theo ký hiệu CIDR",
+"viaInputLabel": "Qua",
+"viaInputDescription": "Nhập địa chỉ IP via của hop tiếp theo. Để trống để nhắm mục tiêu mạng LAN cục bộ"
+},
+"networkDns": {
+"DNS": "DNS",
+"requiresZeroTierVersion": "Yêu cầu phiên bản ZeroTier 1.6.",
+"clearDNS": "Xóa DNS",
+"searchDomain": "Miền tìm kiếm",
+"serverAddress": "Địa chỉ máy chủ",
+"submit": "Gửi",
+"servers": "Máy chủ",
+"addressAndDomainRequired": "Yêu cầu Địa chỉ và Miền"
+},
+"networkMulticast": {
+"Multicast": "Multicast",
+"MulticastRecipientLimit": "Giới hạn người nhận Multicast",
+"Submit": "Gửi",
+"EnableBroadcast": "Bật Broadcast",
+"NumberPlaceholder": "Số",
+"MulticastUpdatedSuccessfully": "Cập nhật Multicast thành công"
+},
+"networkMembersTable": {
+"searchPlaceholder": "Tìm kiếm bất cứ thứ gì...",
+"optionModalTitle": "Tùy chọn cho thành viên",
+"tableRow": {
+"updateName": "Nhấn để đổi tên",
+"updateDescription": "Nhấn để thêm mô tả"
+},
+"toggles": {
+"showExtendedView": "Chế độ xem mở rộng",
+"hideExtendedView": "Chế độ xem thu gọn"
+},
+"toastMessages": {
+"memberNameUpdated": "Tên thành viên cập nhật thành công"
+},
+"unauthorizedRowMessage": "Truy cập trái phép",
+"tableFooter": {
+"RowsPerPage": "Hàng trên mỗi trang",
+"Of": "của"
+},
+"search": {
+"placeholder": "Tìm kiếm bất cứ thứ gì..."
+}
+},
+"deletedNetworkMembersTable": {
+"buttons": {
+"viewStashedMembers": "Xem thành viên đã ẩn",
+"deleteAll": "Xóa tất cả đã ẩn ({count})"
+},
+"bulkDelete": {
+"modalTitle": "Xóa tất cả thành viên đã ẩn?",
+"modalDescription": "Điều này sẽ xóa vĩnh viễn tất cả {count} thành viên đã ẩn khỏi cơ sở dữ liệu. Chúng sẽ vẫn còn trong bộ điều khiển ZeroTier và phải được thêm lại thủ công.",
+"modalWarning": "Cảnh báo: Hành động này không thể hoàn tác. Để thêm lại các thành viên này trong tương lai, bạn phải nhập thủ công ID Thành viên của họ."
+}
+},
+"inviteMemberByMail": {
+"title": "Thư",
+"labelText": "Hướng dẫn tham gia qua E-Mail",
+"placeholder": "ztnet@example.com",
+"buttonText": "Mời",
+"loadingText": "Đang tải...",
+"successMessage": "Thành công! Email mời đã được gửi tới {email}",
+"errorMessage": {
+"unknownError": "Đã xảy ra lỗi không xác định"
+}
+},
+"addMemberById": {
+"labelText": "Thêm thành viên thủ công. Có thể dùng để khôi phục thành viên đã xóa.",
+"memberIdInput": "ID Thành viên",
+"placeholder": "Số hex 10 chữ số",
+"submitButton": "Thêm",
+"error": {
+"unknown": "Đã xảy ra lỗi không xác định"
+}
+},
+"memberOptionModal": {
+"header": {
+"created": "Đã tạo"
+},
+"loading": {
+"text": "Đang tải..."
+},
+"handleSumbit": {
+"errorAssigned": "IP {target} đã được gán",
+"errorNotValidIp": "IP {target} không phải là địa chỉ IP hợp lệ"
+},
+"ipAssignment": {
+"header": "Gán IP",
+"description": "Thêm hoặc xóa địa chỉ IP cho thành viên này."
+},
+"memberDescription": {
+"header": "Mô tả",
+"description": "Thêm mô tả để giúp nhận diện thành viên này",
+"placeholder": "Mô tả thành viên..."
+},
+"deleteIpAssignment": {
+"title": "Xóa gán IP"
+},
+"addressInput": {
+"label": "Địa chỉ"
+},
+"addButton": {
+"text": "Thêm"
+},
+"allowEthernetBridging": {
+"header": "Cho phép Ethernet Bridging",
+"description": "Bridging yêu cầu thiết lập thêm trên thiết bị. Xem tài liệu hướng dẫn và cơ sở kiến thức để biết thêm thông tin. Thiết bị di động không thể làm cầu nối."
+},
+"doNotAutoAssignIPs": {
+"header": "Không tự động gán IP",
+"description": "Điều này sẽ vô hiệu hóa khả năng tự động gán địa chỉ IP cho thành viên này."
+},
+"capabilities": {
+"header": "Khả năng:"
+},
+"tags": {
+"header": "Thẻ:"
+},
+"anotation": {
+"header": "Chú thích (Annotation)",
+"description": "Tăng cường tổ chức thành viên của bạn bằng cách thêm chú thích",
+"placeholder": "Thêm Chú thích"
+}
+},
+"networkHelp": {
+"title": "Trợ giúp Mạng",
+"networkID": "ID Mạng",
+"networkIDText": "ID 16 chữ số duy nhất toàn cầu của mạng. Hiện tại không thể thay đổi ID này.",
+"networkName": "Tên Mạng",
+"networkNameText": "Tên ngắn do người dùng xác định cho mạng này, hiển thị cho các thành viên. Chúng tôi khuyên bạn nên sử dụng tên miền (ví dụ: zerotier.com) hoặc địa chỉ email.",
+"accessControl": "Kiểm soát Truy cập (Access Control)",
+"accessControlText": "Tư cách thành viên được kiểm soát như thế nào? Nên để ở cài đặt mặc định trừ khi bạn muốn tạo một mạng hoàn toàn mở để thử nghiệm, chơi game, v.v.",
+"multicastRecipientLimit": "Giới hạn Người nhận Multicast",
+"multicastRecipientLimitText": "Số lượng người nhận tối đa có thể nhận Ethernet multicast hoặc broadcast. Nếu số lượng người nhận vượt quá giới hạn này, một tập hợp ngẫu nhiên sẽ nhận được thông báo. Đặt giá trị này cao hơn làm cho multicast đáng tin cậy hơn trên các mạng lớn nhưng tốn băng thông.",
+"multicastRecipientLimitText2": "Đặt thành 0 sẽ tắt multicast, nhưng lưu ý rằng chỉ IPv6 với mô phỏng NDP (chế độ địa chỉ RFC4193 hoặc 6PLANE) hoặc các giao thức chỉ unicast khác mới hoạt động mà không có multicast.",
+"managedRoutes": "Các tuyến được quản lý (Managed Routes)",
+"managedRoutesText": "Các tuyến IPv4 được xuất bản cho các thành viên mạng. Điều này có thể được sử dụng để tạo các tuyến đến các mạng khác thông qua các cổng trên mạng ZeroTier. Lưu ý rằng vì lý do bảo mật, hầu hết các client sẽ không sử dụng các tuyến mặc định hoặc các tuyến trùng lặp với không gian địa chỉ IP công cộng trừ khi điều này được người dùng cho phép cụ thể. Các dải IP công cộng được đánh dấu bằng biểu tượng:",
+"ipv4AutoAssign": "Tự động gán IPv4",
+"ipv4AutoAssignText": "Dải IPv4 để tự động gán IP. Lưu ý rằng IP sẽ chỉ được gán nếu chúng cũng nằm trong một tuyến đường đã xác định. Chế độ Dễ cho phép người dùng chọn một dải IP và định nghĩa tuyến đường cùng hồ sơ (pool) sẽ được tạo tự động.",
+"dnsPush": "DNS Push",
+"dnsPushText1": "Yêu cầu phiên bản ZeroTier 1.6 hoặc mới hơn.",
+"dnsPushText2": "Các phiên bản cũ hơn của ZeroTier sẽ bỏ qua các cài đặt này.",
+"dnsPushText3": "Trên macOS, iOS, Windows và Android, ZeroTier có thể tự động thêm máy chủ DNS cho một miền cụ thể. Nó không thiết lập hoặc lưu trữ máy chủ DNS. Bạn phải tự lưu trữ.",
+"dnsPushText4": "Nếu bạn cấu hình zt.example.com là miền tìm kiếm của mình và 10.147.20.1 là địa chỉ máy chủ, thì máy tính của bạn sẽ yêu cầu 10.147.20.1 tìm kiếm địa chỉ IP cho các tên máy chủ kết thúc bằng zt.example.com.",
+"dnsPushText5": "Điều này phải được bật trên mỗi client với tùy chọn allowDNS. Có một hộp kiểm trong giao diện người dùng ở chi tiết mỗi mạng, gần hộp kiểm Allow Managed."
+},
+"admin": {
+"settings": {
+"application": {
+"title": "Ứng dụng",
+"description": "Tùy chỉnh giao diện và hành vi của ứng dụng để phù hợp hơn với thương hiệu của bạn"
+},
+"publicPages": {
+"sectionTitle": "Trang công khai",
+"description": "Tùy chỉnh văn bản hiển thị trên các trang đăng nhập và đăng ký để phù hợp hơn với thương hiệu của bạn hoặc cung cấp hướng dẫn cụ thể cho người dùng."
+}
+},
+"mail": {
+"mailSMTP": "Mail SMTP",
+"senderSettings": "Cài đặt Người gửi",
+"smtpServer": "Máy chủ SMTP",
+"authentication": "Xác thực",
+"security": "Bảo mật",
+"emailTemplates": "Mẫu Email",
+"smtpHost": "SMTP Host",
+"smtpPort": "Cổng SMTP",
+"portInvalid": "Cổng phải từ 1 đến 65535",
+"portUncommon": "Cổng không phổ biến. Các cổng SMTP phổ biến: 25, 465, 587, 2525",
+"senderEmail": "Email Người gửi",
+"mailPlaceholder": "mail@example.com",
+"senderName": "Tên Người gửi",
+"senderNamePlaceholder": "ZTNET",
+"encryption": "Mã hóa",
+"encryptionNone": "Không",
+"encryptionSSL": "SSL/TLS",
+"encryptionSTARTTLS": "STARTTLS",
+"encryptionDescription": "Sử dụng SSL/TLS trên cổng 465, hoặc STARTTLS trên cổng 25/587",
+"sendTestEmail": "Gửi Email thử nghiệm",
+"testEmailSent": "Email thử nghiệm đã gửi thành công",
+"saveSettings": "Lưu cài đặt",
+"settingsSaved": "Cài đặt đã lưu thành công",
+"unsavedChanges": "Bạn có các thay đổi chưa lưu",
+"useAuthentication": "Sử dụng xác thực",
+"useAuthenticationDescription": "Bật nếu máy chủ SMTP của bạn yêu cầu tên người dùng và mật khẩu.",
+"username": "Tên người dùng",
+"password": "Mật khẩu",
+"clearPassword": "Xóa mật khẩu",
+"passwordWillBeCleared": "Mật khẩu sẽ bị xóa khi bạn lưu",
+"verifyCertificate": "Xác minh chứng chỉ SSL",
+"verifyCertificateDescription": "Chỉ tắt đối với chứng chỉ tự ký",
+"useSSL": "Sử dụng SSL",
+"smtpRequireTLS": "Xác minh chứng chỉ SSL",
+"smtpRequireTLSDescription": "Bắt buộc chứng chỉ SSL/TLS hợp lệ. Chỉ tắt nếu sử dụng chứng chỉ tự ký.",
+"inviteUserTemplate": "Mẫu mời người dùng",
+"emailVerificationTemplate": "Mẫu xác minh email",
+"forgotPasswordTemplate": "Mẫu quên mật khẩu",
+"notificationTemplate": "Mẫu thông báo",
+"organizationInviteTemplate": "Mẫu mời vào tổ chức",
+"newDeviceNotificationTemplate": "Mẫu thông báo thiết bị mới",
+"deviceIpChangeNotificationTemplate": "Mẫu thông báo thay đổi IP thiết bị",
+"templates": {
+"availableTags": "Các thẻ có sẵn:",
+"subject": "Chủ đề",
+"inputPlaceholderSubject": "Chủ đề",
+"htmlBody": "Nội dung HTML (Body)",
+"textareaPlaceholderBody": "Mẫu Thư",
+"saveTemplateButton": "Lưu Mẫu",
+"resetButton": "Đặt lại",
+"sendTestMailButton": "Gửi thư thử nghiệm",
+"sendTestMailButtonLoading": "Đang xử lý...",
+"errorFields": "Vui lòng điền tất cả các trường",
+"successToastMailSent": "Thư đã gửi",
+"successToastTemplateSaved": "Mẫu đã lưu"
+}
+},
+"users": {
+"authentication": {
+"header": "Xác thực",
+"enableUserRegistration": "Bật đăng ký người dùng?",
+"enableUserRegistrationDescription": "Điều này sẽ cho phép người dùng nhấp vào nút Đăng ký tại trang đích.",
+"oauthExclusiveLoginEnabled": "Đăng nhập độc quyền OAuth đã được bật.",
+"oauthExclusiveLoginDescription": "Người dùng chỉ có thể xác thực qua OAuth. Biểu mẫu đăng ký bị ẩn bất kể cài đặt đăng ký bên dưới.",
+"oauthAllowNewUsers": "Người dùng mới có thể đăng ký qua OAuth.",
+"oauthExistingUsersOnly": "Chỉ người dùng hiện có mới có thể đăng nhập qua OAuth.",
+"generateInvitation": {
+"header": "Tạo liên kết mời",
+"description": "Tạo liên kết mời an toàn để cho phép người dùng mới đăng ký vào phiên bản ZTNET của bạn.",
+"secretMessageLabel": "Người dùng sẽ được yêu cầu nhập tin nhắn này khi đăng ký (Phân biệt chữ hoa chữ thường)",
+"secretMessagePlaceholder": "Thêm tin nhắn bí mật",
+"expireTimeLabel": "Liên kết mời sẽ hết hạn sau thời gian này",
+"expireTimePlaceholder": "Thời gian hết hạn tính bằng phút",
+"timeUsedLabel": "Liên kết này có thể được sử dụng bao nhiêu lần? (Tùy chọn, mặc định 1)",
+"timeUsedPlaceholder": "Số lần có thể sử dụng",
+"assignGroupLabel": "Gán người dùng vào một nhóm",
+"activeInvitationsLabel": "Các lời mời đang hoạt động",
+"activeInvitationsDescription": "Nhấp vào bất kỳ thẻ lời mời nào để xem chi tiết, sao chép liên kết hoặc xóa nó.",
+"emptyState": {
+"noInvitations": "Không tìm thấy lời mời đang hoạt động nào.",
+"createInvitation": "Tạo liên kết mời ở trên để bắt đầu."
+},
+"deleteConfirmation": {
+"title": "Xóa lời mời",
+"description": "Bạn có chắc chắn muốn xóa liên kết mời này? Hành động này không thể hoàn tác."
+},
+"invitationModal": {
+"header": "Chi tiết lời mời",
+"secretLabel": "Bí mật:",
+"expiresLabel": "Trạng thái:",
+"groupIdLabel": "Được gán vào Nhóm:",
+"timesUsedLabel": "Số lần đã dùng:",
+"invitationLinkLabel": "Liên kết mời:",
+"clickToCopyLabel": "nhấn để sao chép",
+"linkCopiedToast": "liên kết đã được sao chép vào bộ nhớ tạm",
+"deleteButton": "Xóa"
+}
+}
+},
+"users": {
+"sectionTitle": "Người dùng",
+"description": "Tất cả người dùng đã đăng ký trên nền tảng.",
+"userOptionModal": {
+"userGroupLabel": "Nhóm người dùng",
+"userRoleLabel": "Vai trò người dùng",
+"account": {
+"title": "ZTNet thực hiện kiểm tra hàng ngày đối với người dùng hết hạn. Nếu người dùng được tìm thấy đã hết hạn, tất cả các peer liên quan sẽ bị hủy ủy quyền và tài khoản của người dùng sẽ bị hủy kích hoạt.",
+"userAccountLabel": "Trạng thái tài khoản",
+"userExpireLabel": "Hết hạn tài khoản"
+},
+"userActionsLabel": "Hành động người dùng",
+"typeUserName": "Nhập tên của người dùng.",
+"buttons": {
+"deleteUser": "Xóa người dùng",
+"cancle": "Hủy"
+},
+"toast": {
+"deleteUserSuccess": "Người dùng đã xóa thành công",
+"nameNotEqual": "Tên người dùng bạn nhập không giống với người dùng."
+}
+},
+"roleDescriptions": {
+"admin": "Là quản trị viên, người dùng này sẽ có đầy đủ quyền, bao gồm quyền truy cập vào bảng quản trị.",
+"user": "Nếu đặt là Người dùng, người dùng này sẽ có quyền hạn chế và sẽ không thể truy cập vào bảng quản trị."
+},
+"changeRoleModal": {
+"title": "Đổi vai trò cho {name}"
+},
+"toastMessages": {
+"roleChangeSuccess": "Vai trò đã thay đổi thành công",
+"errorOccurred": "Đã xảy ra lỗi không xác định"
+},
+"createNewUserButton": "Tạo người dùng mới",
+"createUser": {
+"title": "Tạo người dùng mới",
+"nameLabel": "Tên",
+"namePlaceholder": "Nhập tên người dùng",
+"emailLabel": "Email",
+"emailPlaceholder": "Nhập địa chỉ email",
+"emailDescription": "Bất kỳ định dạng email nào cũng được chấp nhận. Không yêu cầu xác minh email",
+"passwordLabel": "Mật khẩu",
+"passwordPlaceholder": "Nhập mật khẩu",
+"generatePasswordButton": "Tạo mật khẩu",
+"roleLabel": "Vai trò",
+"userGroupLabel": "Nhóm người dùng",
+"defaultGroupOption": "Chọn nhóm người dùng (tùy chọn)",
+"organizationLabel": "Tổ chức",
+"organizationDescription": "Chọn một tổ chức để thêm người dùng vào",
+"defaultOrganizationOption": "Không (Người dùng cá nhân)",
+"organizationRoleLabel": "Vai trò tổ chức",
+"organizationRoleDescription": "Vai trò trong tổ chức đã chọn",
+"forcePasswordChangeLabel": "Yêu cầu đổi mật khẩu khi đăng nhập lần đầu",
+"forcePasswordChangeDescription": "Người dùng sẽ được yêu cầu đổi mật khẩu khi đăng nhập lần đầu",
+"createButton": "Tạo người dùng",
+"successMessage": "Người dùng tạo thành công! Bạn có thể sao chép chi tiết bên dưới để chia sẻ.",
+"userAccountCreated": "Tài khoản người dùng đã tạo:",
+"userAccountDetails": "Chi tiết tài khoản người dùng:",
+"copyInfoButton": "Sao chép thông tin",
+"doneButton": "Hoàn tất",
+"toast": {
+"createUserSuccess": "Người dùng tạo thành công",
+"copySuccess": "Thông tin người dùng đã sao chép vào bộ nhớ tạm!",
+"copyError": "Không thể sao chép vào bộ nhớ tạm"
+}
+},
+"table": {
+"searchPlaceholder": "tìm kiếm người dùng",
+"optionsButton": "Tùy chọn",
+"optionsModalTitle": "Tùy chọn cho người dùng",
+"accountStatus": {
+"active": "Hoạt động",
+"disabled": "Vô hiệu hóa"
+},
+"headers": {
+"created": "Đã tạo",
+"expires": "Hết hạn"
+},
+"values": {
+"never": "Không bao giờ"
+}
+}
+},
+"groups": {
+"sectionTitle": "Nhóm",
+"description": "Tạo nhóm người dùng mới để tổ chức người dùng nền tảng tốt hơn. Việc gán người dùng vào các nhóm cụ thể cho phép kiểm soát quyền truy cập, thiết lập giới hạn, điều chỉnh cài đặt dựa trên loại người dùng và đặt ngày hết hạn để quản lý tài khoản tự động.",
+"addGroup": {
+"editGroupTitle": "Chỉnh sửa Nhóm",
+"deleteGroupTitle": "Xóa Nhóm",
+"deleteGroupDescription": "Bạn có chắc chắn muốn xóa nhóm này? Nếu được gán, nhóm sẽ bị gỡ khỏi người dùng.",
+"deleteGroupWithUsersWarning": "Cảnh báo: Nhóm này có {count} {userText} được gán vào nó.",
+"deleteGroupWithUsersDescription": "Xóa nhóm này sẽ tự động gỡ bỏ tất cả người dùng khỏi nhóm. Người dùng sẽ không bị xóa, nhưng họ sẽ không còn thuộc bất kỳ nhóm nào.",
+"deleteGroupConfirmation": "Hành động này không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?",
+"addGroupLabel": "Thêm nhóm mới",
+"addGroupButton": "Thêm nhóm",
+"groupNamePlaceholder": "Tên nhóm",
+"groupNameDescription": "Nhập tên cho nhóm mới",
+"networkLimitPlaceholder": "Giới hạn Mạng",
+"networkLimitDescription": "Đặt số lượng mạng tối đa mà người dùng trong nhóm này có thể tạo",
+"useAsDefaultPlaceholder": "Sử dụng làm Mặc định",
+"useAsDefaultDescription": "Đặt nhóm này làm mặc định cho người dùng mới",
+"expirationDatePlaceholder": "Ngày hết hạn",
+"expirationDateDescription": "Đặt ngày hết hạn tài khoản người dùng trong nhóm này. Kiểm tra hết hạn chạy hàng ngày vào lúc nửa đêm. Người dùng được gán vào nhóm này sẽ tự động bị hủy kích hoạt vào ngày này. Để trống nếu không có hết hạn.",
+"expiredGroupWarning": "Nhóm này đã hết hạn. Người dùng sẽ bị hủy kích hoạt.",
+"expiredLabel": "ĐÃ HẾT HẠN",
+"expiresLabel": "Hết hạn"
+},
+"existingGroups": {
+"title": "Các nhóm hiện có",
+"description": "Nhấp vào bất kỳ thẻ nhóm nào để chỉnh sửa cài đặt của nó, hoặc sử dụng nút xóa để gỡ bỏ."
+}
+}
+},
+"notification": {
+"authentication": "Xác thực",
+"whenUserRegister": "Khi một người dùng đăng ký",
+"allAdminsNotification": "Tất cả Admin sẽ nhận được thông báo"
+},
+"controller": {
+"networkMembers": {
+"title": "Mạng & Thành viên",
+"totalNetworks": "Tổng số mạng:",
+"totalMembers": "Tổng số thành viên:",
+"totalUnlinkedNetworks": "Tổng số mạng chưa liên kết:",
+"unlinkedNetworks": {
+"title": "Các mạng chưa liên kết",
+"description": "Phần này cung cấp bảng các mạng hiện không được liên kết với bất kỳ người dùng nào trong cơ sở dữ liệu ztnet. Những mạng này thường bắt nguồn từ các controller ZeroTier tùy chỉnh đã được người dùng thêm vào nhưng chưa được quản lý trong ZTNET. Bảng cho phép bạn gán các mạng không được quản lý này cho người dùng quản trị cụ thể. Điều này đặc biệt hữu ích nếu một người dùng đã thêm một controller ZeroTier tùy chỉnh chưa được ZTNET quản lý.",
+"table": {
+"nwid": "nwid",
+"networkName": "Tên mạng",
+"creationTime": "Thời gian tạo",
+"members": "Thành viên",
+"assign": "Gán"
+},
+"assignModal": {
+"title": "Bạn có chắc chắn muốn gán người dùng {user} cho mạng {network}?",
+"description": "Hành động này không thể hoàn tác"
+}
+}
+},
+"management": {
+"title": "Quản lý",
+"allowManagementFrom": "Cho phép Quản lý Từ:",
+"allowTcpFallbackRelay": "Cho phép TCP Fallback Relay:",
+"listeningOn": "Đang lắng nghe trên:"
+},
+"controllerStatus": {
+"title": "Trạng thái Controller",
+"online": "Trực tuyến:",
+"tcpFallbackActive": "TCP Fallback Đang hoạt động:",
+"version": "Phiên bản:"
+},
+"controllerConfig": {
+"danger_zone": "VÙNG NGUY HIỂM",
+"proceed_with_caution": "<span>Tiến hành thận trọng:</span>",
+"modification_warning": "Việc sửa đổi URL bộ điều khiển ZeroTier ảnh hưởng đến tất cả người dùng. Mặc dù điều này mang lại sự linh hoạt cho những người muốn có bộ điều khiển tùy chỉnh, hãy lưu ý đến khả năng gián đoạn và các vấn đề tương thích. Luôn sao lưu cấu hình trước khi thay đổi.",
+"local_zerotier_url": "Local Zerotier URL",
+"zerotier_secret": "Zerotier Secret",
+"submit_empty_field_default": "Gửi trường trống để sử dụng mặc định.",
+"isUsingEnvVariablesAlert": "Biến môi trường <span>ZT_ADDR hoặc ZT_SECRET</span> được ưu tiên và ghi đè mọi thay đổi URL được thực hiện qua giao diện người dùng. Để cập nhật các trường tương ứng qua giao diện người dùng, trước tiên bạn cần xóa biến môi trường ZT_ADDR hoặc ZT_SECRET."
+},
+"generatePlanet": {
+"updatePlanetWarning": "Cập nhật tệp planet sẽ sửa đổi cấu trúc cốt lõi của mạng ZeroTier của bạn, ảnh hưởng đến các tuyến đường, tính linh hoạt và khả năng sẵn sàng. Hãy tiến hành thận trọng, hiểu rõ các tác động.",
+"customPlanetInUse": "Custom Planet hiện đang được sử dụng!",
+"customPortIsInUse": "LƯU Ý! Cổng tùy chỉnh đang được sử dụng",
+"customPortIsInUseDescription": "Bạn cần thêm <kbd>ZT_PRIMARY_PORT:port</kbd> vào các biến môi trường Docker Compose của ZeroTier.",
+"downloadPlanetInfo": "Nếu bạn cần, tệp planet có sẵn để tải xuống tại URL sau:",
+"downloadPlanetUrl": "api/planet",
+"generatePrivateRootLabel": "Tạo private root",
+"generatePrivateRootPlaceholder": "Thêm một private root vào controller của bạn",
+"commentDescription": "Thêm bình luận cho planet này (tùy chọn)",
+"commentPlaceholder": "Nhập Bình luận",
+"identityDescription": "Identity (tùy chọn). Giá trị mặc định là nội dung của identity.public hiện tại",
+"endpointsDescription": "Nhập địa chỉ IP bên ngoài của controller của bạn. Sử dụng định dạng phân tách bằng dấu phẩy (IP/PORT) cho nhiều địa chỉ. Ví dụ: ''84.17.53.155/9993,2a02:6ea0:d405::/9993''. Đảm bảo các địa chỉ này có thể truy cập toàn cầu nếu bạn muốn các nút bên ngoài mạng nội bộ của mình kết nối được.",
+"endpointsPlaceholder": "ip bên ngoài/9993",
+"plRecommend": "Tự động tạo ID",
+"birthLabel": "Birth (plBirth)",
+"birthPlaceholder": "Nhập Birth",
+"idLabel": "ID (plID)",
+"idPlaceholder": "Nhập ID",
+"buttons": {
+"editPlanetConfig": "SỬA CẤU HÌNH PLANET",
+"createPlanet": "TẠO PLANET",
+"uploadConfig": "TẢI LÊN CẤU HÌNH",
+"updateWorld": "Cập nhật World",
+"downloadPlanetButton": "Tải xuống Cấu hình",
+"restoreOriginalPlanetButton": "Khôi phục Planet gốc"
+},
+"modal": {
+"noteTitle": "LƯU Ý!",
+"customPlanetGenerated": "Planet tùy chỉnh đã được tạo.",
+"restartContainerInstructions": "Bạn sẽ cần khởi động lại container zerotier để tải cấu hình mới:<br></br><br></br><span>docker restart zerotier</span>",
+"restoreOriginalPlanetTitle": "Khôi phục Planet gốc",
+"restoreOriginalPlanetContent": "Bạn có chắc chắn muốn khôi phục tệp planet gốc? Hãy đảm bảo sao lưu tệp planet hiện tại nếu bạn muốn giữ các key hiện tại"
+}
+},
+"yes": "Có",
+"no": "Không"
+},
+"organization": {
+"addOrganization": {
+"title": "Quản lý Đội ngũ",
+"description": "Khám phá Tổ chức để bắt đầu định hình cách đội ngũ của bạn làm việc cùng nhau. Gán vai trò, mời thành viên mới và giám sát các quyền cơ bản trong tổ chức của bạn. Được thiết kế đơn giản và dễ sử dụng, tính năng beta này cung cấp nền tảng cho sự cộng tác của đội ngũ bạn. Khi chúng tôi tiếp tục phát triển và nâng cao các cài đặt này, chúng tôi mời bạn cung cấp phản hồi để giúp chúng tôi hoàn thiện trải nghiệm.",
+"inputFields": {
+"label": "Thêm Tổ chức",
+"description": "Tạo một tổ chức mới",
+"organizationName": {
+"description": "Tên của tổ chức"
+},
+"organizationDescription": {
+"description": "Mô tả Tổ chức (Tùy chọn)"
+}
+},
+"deleteOrganizationModal": {
+"title": "Xóa Tổ chức",
+"description": "Bạn có chắc chắn muốn xóa tổ chức này?",
+"description2": "Hành động này sẽ xóa vĩnh viễn tổ chức cùng với tất cả mạng, thành viên và dữ liệu liên quan. Hành động này không thể hoàn tác.",
+"confirmation": "Vui lòng xác nhận rằng bạn muốn tiến hành xóa tổ chức.",
+"inputFields": {
+"organizationName": {
+"placeholder": "Nhập tên của tổ chức để xác nhận"
+}
+}
+}
+},
+"listOrganization": {
+"organizationName": "Tên Tổ chức:",
+"description": "Mô tả:",
+"numberOfMembers": "Số lượng thành viên:",
+"pendingInvitations": "Lời mời đang chờ:",
+"activeWebhooks": "Webhooks đang hoạt động:"
+}
+},
+"backupRestore": {
+"title": "Sao lưu & Khôi phục",
+"description": "Phần này cho phép bạn tạo bản sao lưu của máy chủ. Bạn có thể chọn bao gồm cơ sở dữ liệu và/hoặc cấu hình ZeroTier trong bản sao lưu. Bản sao lưu sẽ được lưu với tên đã chỉ định và có thể tải xuống ngay sau khi tạo.",
+"createBackup": {
+"sectionTitle": "Tạo Sao lưu",
+"includeDatabase": "Bao gồm Cơ sở dữ liệu",
+"includeZerotier": "Bao gồm thư mục ZeroTier",
+"backupName": "Tên bản sao lưu (tùy chọn)",
+"backupNamePlaceholder": "Để trống để tự động tạo tên",
+"createButton": "Tạo & Tải xuống Bản sao lưu",
+"creatingButton": "Đang tạo Sao lưu...",
+"successToast": "Đã tạo bản sao lưu: {fileName}"
+},
+"existingBackups": {
+"sectionTitle": "Các bản sao lưu hiện có",
+"noBackups": "Không tìm thấy bản sao lưu nào. Tạo bản sao lưu đầu tiên của bạn ở trên.",
+"table": {
+"filename": "Tên tệp",
+"size": "Kích thước",
+"created": "Ngày tạo",
+"actions": "Hành động",
+"download": "Tải xuống",
+"restore": "Khôi phục",
+"delete": "Xóa"
+},
+"deleteModal": {
+"title": "Xóa Bản sao lưu",
+"description": "Bạn có chắc chắn muốn xóa bản sao lưu này? Hành động này không thể hoàn tác."
+},
+"restoreModal": {
+"title": "Khôi phục từ Bản sao lưu",
+"description": "Điều này sẽ ghi đè dữ liệu hiện tại của bạn. Hãy chắc chắn tạo một bản sao lưu trước!<br></br>",
+"zerotierWarning": " <span>QUAN TRỌNG:</span><br></br>Việc khôi phục cấu hình ZeroTier sẽ sao chép chính xác danh tính (identity) ZeroTier từ nguồn sao lưu. Điều này có nghĩa là máy chủ này sẽ có cùng danh tính ZeroTier như máy chủ gốc.<br></br>Việc có hai máy chủ có danh tính ZeroTier giống hệt nhau có thể gây ra xung đột mạng và hành vi không thể đoán trước. Chỉ tiến hành nếu bạn đang di chuyển từ máy chủ gốc hoặc nếu máy chủ gốc đã ngừng hoạt động vĩnh viễn."
+},
+"deleteSuccessToast": "Bản sao lưu xóa thành công"
+},
+"restoreFromFile": {
+"sectionTitle": "Khôi phục từ Tệp",
+"warning": "Việc khôi phục sẽ ghi đè dữ liệu hiện tại của bạn. Hãy chắc chắn tạo bản sao lưu trước!",
+"restoreDatabase": "Khôi phục Cơ sở dữ liệu",
+"restoreZerotier": "Khôi phục thư mục ZeroTier",
+"selectFile": "Chọn Tệp Sao lưu",
+"selectedFile": "Tệp đã chọn: {fileName} ({size})",
+"restoreButton": "Khôi phục từ Tệp",
+"processingButton": "Đang xử lý...",
+"restoringButton": "Đang khôi phục...",
+"uploadSuccessToast": "Tải lên bản sao lưu thành công",
+"restoreSuccessToast": "Khôi phục hoàn tất thành công. Vui lòng khởi động lại ứng dụng.",
+"invalidFileModal": {
+"title": "Tệp không hợp lệ",
+"description": "Vui lòng chọn tệp sao lưu .zip hợp lệ."
+},
+"uploadErrorModal": {
+"title": "Lỗi Tải lên",
+"description": "Không thể xử lý tải lên tệp. Vui lòng thử lại."
+},
+"restoreModal": {
+"title": "Khôi phục từ Tệp",
+"description": "Điều này sẽ ghi đè dữ liệu hiện tại của bạn. Hãy chắc chắn tạo bản sao lưu trước!<br></br>",
+"zerotierWarning": " <span>QUAN TRỌNG:</span><br></br>Việc khôi phục cấu hình ZeroTier sẽ sao chép chính xác danh tính ZeroTier từ nguồn sao lưu. Điều này có nghĩa là máy chủ này sẽ có cùng danh tính ZeroTier như máy chủ gốc.<br></br>Việc có hai máy chủ có danh tính ZeroTier giống hệt nhau có thể gây ra xung đột mạng và hành vi không thể đoán trước. Chỉ tiến hành nếu bạn đang di chuyển từ máy chủ gốc hoặc nếu máy chủ gốc đã ngừng hoạt động vĩnh viễn."
+}
+},
+"restoreCompleteModal": {
+"title": "Khôi phục Hoàn tất",
+"successMessage": " Khôi phục bản sao lưu hoàn tất thành công!",
+"docker": {
+"description": "Vì bạn đang chạy trong Docker, vui lòng khởi động lại container ZeroTier để áp dụng các thay đổi:",
+"command": "sudo docker restart zerotier",
+"warning": " Các dịch vụ ZeroTier có thể tạm thời không khả dụng trong khi khởi động lại."
+},
+"host": {
+"description": "Các dịch vụ ZeroTier đã được tự động khởi động lại.",
+"info": "ℹ Nếu bạn gặp bất kỳ sự cố nào, bạn có thể cần khởi động lại ứng dụng thủ công."
+},
+"databaseRestored": "Cơ sở dữ liệu đã được khôi phục. Bạn có thể cần làm mới trang để xem dữ liệu cập nhật.",
+"gotItButton": "Đã hiểu!"
+}
+}
+},
+"userSettings": {
+"tabs": {
+"account": "Tài khoản",
+"network": "Mạng",
+"notification": "Thông báo",
+"user": "Người dùng"
+},
+"account": {
+"accountSettings": {
+"title": "Cài đặt Tài khoản",
+"nameLabel": "Tên",
+"emailLabel": "Email",
+"verifiedBadge": "Đã xác minh",
+"notVerifiedBadge": "Chưa xác minh",
+"passwordLabel": "Mật khẩu",
+"currentPasswordPlaceholder": "Mật khẩu hiện tại",
+"newPasswordPlaceholder": "Mật khẩu mới",
+"repeatNewPasswordPlaceholder": "Nhập lại mật khẩu mới",
+"role": "Vai trò",
+"passwordChangeRequired": {
+"title": "Yêu cầu Đổi Mật khẩu",
+"description": "Bạn phải đổi mật khẩu trước khi truy cập các phần khác của ứng dụng. Vui lòng cập nhật mật khẩu của bạn trong phần Bảo mật bên dưới."
+}
+},
+"totp": {
+"title": "Xác thực Hai Yếu tố (2FA)",
+"description": "Điều này sẽ tăng cường bảo mật cho tài khoản người dùng bằng cách yêu cầu thêm một bước xác minh.",
+"mfaNote": "Lưu ý: 2FA chỉ hoạt động nếu bạn đăng nhập bằng thông tin xác thực (credentials). OAuth sẽ không sử dụng 2FA này, ngay cả khi được cấu hình, vì nó được quản lý bởi nhà cung cấp OAuth.",
+"notification": {
+"title": "Xác thực Hai Yếu tố (2FA) Chưa được Bật",
+"description": "Chúng tôi thực sự khuyên bạn nên bật 2FA để tăng cường bảo mật tài khoản của mình."
+},
+"totpActivation": {
+"title": "Xác thực Hai Yếu tố",
+"steps": {
+"step1": "Mật khẩu",
+"step2": "Quét mã QR",
+"step3": "Gửi"
+},
+"confirmPassword": {
+"description": "Nhập mật khẩu của bạn"
+},
+"displayQrCode": {
+"description": "Bạn có cần ứng dụng xác thực hai yếu tố? Tải xuống một trong những ứng dụng sau",
+"IOS": "Thiết bị IOS",
+"Android": "Thiết bị Android",
+"Windows": "Thiết bị Windows",
+"appDescription": "Những ứng dụng này được đề xuất, nhưng các ứng dụng xác thực khác cũng sẽ hoạt động.",
+"scanQrDescription": "Quét mã QR này bằng ứng dụng xác thực của bạn.",
+"manualEntry": "Nếu bạn không thể quét mã QR, bạn có thể nhập thủ công nội dung sau:"
+},
+"enterTotpCode": {
+"description": "Xác minh thiết lập TOTP của bạn",
+"enterCode": "Nhập mã từ ứng dụng xác thực của bạn để xác minh và kích hoạt TOTP."
+}
+}
+},
+"userDevices": {
+"connectedDevices": "Thiết bị đã kết nối",
+"logoutAll": "Đăng xuất tất cả",
+"accessDenied": "Truy cập bị từ chối",
+"noDevicesFound": "Không tìm thấy thiết bị nào.",
+"activeNow": "Đang hoạt động",
+"currentDevice": "Thiết bị hiện tại",
+"logout": "Đăng xuất"
+},
+"restapi": {
+"sectionTitle": "Token Truy cập API",
+"description": "Điều này cho phép bạn tạo mã thông báo (token) API mà bạn có thể sử dụng để xác thực và truy cập các dịch vụ API của ứng dụng chúng tôi. Với một mã thông báo hợp lệ, bạn có thể thực hiện các yêu cầu tới API và tương tác với các tính năng của ứng dụng theo chương trình.",
+"viewToken": {
+"title": "Thông tin Token",
+"name": "Tên",
+"authorizationType": "Loại Ủy quyền",
+"expireAt": "Hết hạn lúc",
+"isActive": "Đang hoạt động"
+},
+"generateToken": {
+"title": "Rest Api Token",
+"tokenName": {
+"label": "Thêm tên có ý nghĩa cho token của bạn",
+"placeholder": "Token tuyệt vời của tôi"
+},
+"tokenAuthorizationType": {
+"label": "Chọn Loại Ủy quyền API",
+"placeholder": "Chọn Loại Auth"
+},
+"tokenExpireAt": {
+"label": "Chọn Ngày Hết hạn Token",
+"placeholder": "Chọn Ngày",
+"values": {
+"never": "Không bao giờ",
+"1day": "1 Ngày",
+"10day": "10 Ngày",
+"1month": "1 Tháng",
+"1year": "1 Năm"
+}
+}
+},
+"buttons": {
+"submitToken": "Tạo Token",
+"cancle": "Xóa Token"
+},
+"response": {
+"title": "Nhấn vào token để Sao chép",
+"info": "Token này sẽ chỉ hiển thị một lần. Vui lòng sao chép nó ngay!"
+},
+"modals": {
+"deleteToken": {
+"title": "Xóa Token",
+"description": "Bạn có chắc chắn muốn xóa token này? Hành động này không thể hoàn tác."
+}
+}
+},
+"zerotierCentral": {
+"title": "Zerotier Central",
+"description": "Kết hợp API ZeroTier Central của bạn sẽ cho phép bạn quản lý các mạng central của mình trực tiếp từ ZTNET. Khi tích hợp key, một menu mới sẽ xuất hiện trong thanh bên để tăng cường khả năng truy cập và kiểm soát.<br></br>Bạn có thể lấy key từ cổng thông tin ZeroTier Central. https://my.zerotier.com/account",
+"apiKeyLabel": "Zerotier Central API Key",
+"apiUrlLabel": "Zerotier API Url",
+"apiUrlLabelDescription": "Url của API ZeroTier Central, Mặc định là https://api.zerotier.com/api/v1"
+},
+"accountPreferences": {
+"title": "Tùy chọn Tài khoản",
+"languageLabel": "Ngôn ngữ",
+"fontSize": "Cỡ chữ"
+},
+"application": {
+"title": "Ứng dụng",
+"version": "Phiên bản",
+"developerMode": "chế độ nhà phát triển"
+}
+},
+"network": {
+"annotations": {
+"memberAnotations": "Chú thích thành viên",
+"showMarkerInTable": "Hiển thị đánh dấu trong Bảng",
+"showMarkerInTableDescription": "Điều này sẽ thêm một vòng tròn trước tên thành viên với màu chú thích.<br></br>Bạn vẫn có thể tìm kiếm chú thích nếu bị tắt.",
+"addBackgroundColorInTable": "Thêm màu nền trong bảng",
+"addBackgroundColorInTableDescription": "Điều này sẽ thêm màu nền hàng dựa trên màu chú thích.<br></br>Bạn vẫn có thể tìm kiếm chú thích nếu bị tắt."
+},
+"memberTable": {
+"memberTableTitle": "Bảng Thành viên",
+"deAuthorizationWarningTitle": "Hiển thị cảnh báo khi Hủy ủy quyền thành viên",
+"deAuthorizationWarningLabel": "Hiển thị hộp thoại xác nhận để ngăn chặn việc hủy ủy quyền ngẫu nhiên.",
+"addMemberIdAsNameTitle": "Thêm ID thành viên làm tên khi đăng ký",
+"addMemberIdAsNameLabel": "Khi một thành viên mạng đăng ký, ID thành viên (nodeid) sẽ được thêm làm tên."
+},
+"globalNodeNaming": {
+"title": "Bật đặt tên node toàn cục",
+"description": "Khi được bật, tính năng này sẽ:",
+"bulletPoint1": "Duy trì tên nhất quán cho mỗi node trên tất cả các mạng bạn quản lý.",
+"bulletPoint2": "Cập nhật tên của node trong tất cả các mạng của bạn khi bạn đổi tên nó trong một mạng.",
+"bulletPoint3": "Khi thành viên / node đăng ký, kiểm tra xem thành viên có tồn tại trong các mạng khác của bạn không và sử dụng tên đầu tiên được tìm thấy.",
+"note": "Lưu ý: Tính năng này có ưu tiên hơn ''Thêm ID thành viên làm tên''. Nó chỉ áp dụng cho các mạng mà bạn là tác giả và không ảnh hưởng đến các mạng do người khác hoặc tổ chức quản lý."
+}
+},
+"notification": {
+"devices": "Thiết bị",
+"newDeviceLogin": {
+"title": "Cảnh báo đăng nhập thiết bị mới",
+"description": "Nhận email khi một thiết bị mới đăng nhập vào tài khoản của bạn lần đầu tiên."
+},
+"ipAddressChange": {
+"title": "Cảnh báo thay đổi địa chỉ IP",
+"description": "Nhận email khi một thiết bị đã biết truy cập tài khoản của bạn từ một địa chỉ IP mới."
+}
+}
+},
+"organization": {
+"errors": {
+"getOrgError": "Liên hệ quản trị viên tổ chức để đảm bảo bạn có quyền thích hợp"
+},
+"loading": "Đang tải...",
+"organizationDashboard": {
+"header": "Dashboard Tổ chức"
+},
+"membersSection": {
+"title": "Thành viên",
+"editUser": "Sửa Người dùng",
+"role": "Vai trò"
+},
+"informationSection": {
+"title": "Thông tin",
+"name": "Tên:",
+"created": "Đã tạo:",
+"members": "Thành viên:",
+"pendingInvitations": "Lời mời đang chờ:"
+},
+"networkSection": {
+"title": "Mạng",
+"noNetworksToShow": "Không có mạng nào để hiển thị."
+},
+"leaveOrganization": {
+"confirmationTitle": "Rời Tổ chức?",
+"confirmationMessage": "Bạn có chắc chắn muốn rời khỏi tổ chức?",
+"note": "Lưu ý: Nếu bạn quyết định gia nhập lại tổ chức này trong tương lai, quản trị viên sẽ cần gửi cho bạn một lời mời mới."
+},
+"chatSidebar": {
+"toggleChatLabel": "TN",
+"chatHeader": "Tin nhắn Tổ chức",
+"chatInfo": "Mọi người trong Tổ chức sẽ có thể nhìn thấy tin nhắn của bạn.",
+"messageInputPlaceholder": "Nhập tin nhắn...",
+"noMessages": "Chưa có tin nhắn nào."
+},
+"logFooter": {
+"toggleLogLabel": "LOG",
+"logHeader": "100 Nhật ký Hoạt động Gần nhất",
+"loading": "Đang tải nhật ký..."
+},
+"settings": {
+"invitation": {
+"title": "Mở rộng Đội ngũ: Mời Thành viên Mới",
+"description": "Mời thêm người vào đội ngũ của bạn! Bạn có thể gửi lời mời qua email hoặc tìm và thêm những người đã sử dụng nền tảng. <br></br> Điều này giúp đội ngũ của bạn dễ dàng phát triển và bao gồm nhiều thành viên hơn.",
+"pendingInvitations": {
+"title": "Lời mời đang chờ"
+},
+"inviteByEmail": {
+"title": "Mời qua Email",
+"description": "Người dùng được mời hiện chưa là thành viên của ứng dụng sẽ cần đăng ký thông qua liên kết được cung cấp trong email mời. Liên kết có hiệu lực trong 24 giờ.",
+"emailPlaceholder": "Địa chỉ Email",
+"emailDescription": "Nhập địa chỉ email của người bạn muốn mời",
+"selectRoleDescription": "Chọn vai trò của người dùng"
+},
+"inviteSiteUser": {
+"title": "Mời người dùng trang web",
+"description": "Trước khi bạn có thể thêm người dùng vào tổ chức của mình, điều quan trọng cần lưu ý là họ phải đã được đăng ký trong ứng dụng",
+"inputFields": {
+"searchUser": {
+"title": "Tìm kiếm người dùng bạn muốn thêm",
+"placeholder": "Tìm kiếm Người dùng"
+},
+"userRole": {
+"title": "Chọn vai trò của người dùng"
+}
+}
+}
+},
+"network": {
+"globalNodeNaming": {
+"title": "Bật đặt tên node toàn cục",
+"description": "Khi được bật, tính năng này sẽ:",
+"bulletPoints": "Duy trì tên nhất quán cho mỗi node trên tất cả các mạng trong tổ chức.\\nCập nhật tên của node trong tất cả các mạng khi bạn đổi tên nó trong một mạng.\\nKhi thành viên đăng ký, kiểm tra xem thành viên có tồn tại trong tổ chức của bạn không và sử dụng tên đầu tiên được tìm thấy.",
+"note": "Lưu ý: Điều này chỉ áp dụng cho các mạng trong tổ chức cụ thể này."
+}
+},
+"notifications": {
+"adminNotifications": {
+"title": "Thông báo Admin",
+"description": "Cấu hình khi nào quản trị viên tổ chức nên nhận thông báo về các sự kiện quan trọng. Những thông báo này giúp admin nắm bắt thông tin về các thay đổi và hoạt động trong tổ chức."
+},
+"nodeEvents": {
+"title": "Sự kiện Node",
+"nodeAdded": {
+"title": "Đã thêm Node",
+"description": "Thông báo cho admin khi một node mới tham gia bất kỳ mạng nào trong tổ chức"
+},
+"nodeDeleted": {
+"title": "Node đã ẩn",
+"description": "Thông báo cho admin khi một node bị ẩn khỏi bất kỳ mạng nào trong tổ chức"
+},
+"nodePermanentlyDeleted": {
+"title": "Node đã xóa vĩnh viễn",
+"description": "Thông báo cho admin khi một node bị xóa vĩnh viễn khỏi bất kỳ mạng nào trong tổ chức"
+}
+},
+"userEvents": {
+"title": "Sự kiện Người dùng",
+"userAdded": {
+"title": "Người dùng đã thêm vào Tổ chức",
+"description": "Thông báo cho admin khi một người dùng mới tham gia tổ chức"
+},
+"userRemoved": {
+"title": "Người dùng bị loại khỏi Tổ chức",
+"description": "Thông báo cho admin khi một người dùng rời đi hoặc bị loại khỏi tổ chức"
+},
+"permissionChanged": {
+"title": "Quyền người dùng đã thay đổi",
+"description": "Thông báo cho admin khi vai trò hoặc quyền của một người dùng được sửa đổi trong tổ chức"
+}
+},
+"networkEvents": {
+"title": "Sự kiện Mạng",
+"networkCreated": {
+"title": "Mạng đã tạo",
+"description": "Thông báo cho admin khi một mạng mới được tạo trong tổ chức"
+},
+"networkDeleted": {
+"title": "Mạng đã xóa",
+"description": "Thông báo cho admin khi một mạng bị xóa khỏi tổ chức"
+}
+},
+"emailSettings": {
+"title": "Cài đặt Gửi Email",
+"description": "Cấu hình cách thông báo được gửi đến quản trị viên tổ chức.",
+"enableEmails": {
+"title": "Bật Thông báo Email",
+"description": "Gửi thông báo qua email cho tất cả quản trị viên tổ chức"
+}
+},
+"templates": {
+"editTemplate": "Chỉnh sửa Mẫu Email",
+"availableTags": "Các Thẻ Mẫu có sẵn:",
+"subject": "Chủ đề",
+"subjectPlaceholder": "Nhập chủ đề email...",
+"htmlBody": "Nội dung Email (HTML)",
+"bodyPlaceholder": "Nhập nội dung email...",
+"saveTemplate": "Lưu Mẫu",
+"resetToDefault": "Đặt lại về Mặc định",
+"sendTest": "Gửi Email thử nghiệm",
+"sendingTest": "Đang gửi...",
+"successToastTemplateSaved": "Mẫu đã lưu thành công",
+"successToastTestSent": "Email thử nghiệm đã gửi thành công",
+"errorFields": "Chủ đề và nội dung là bắt buộc",
+"errorSaveFirst": "Vui lòng lưu thay đổi của bạn trước khi gửi email thử nghiệm"
+}
+}
+},
+"webhook": {
+"title": "Webhooks Tổ chức",
+"description": "Trao quyền cho tổ chức của bạn với tích hợp webhook của chúng tôi, cung cấp thông báo thời gian thực cho các sự kiện quan trọng.<br></br>Luôn đi trước với các cập nhật tức thì, được chuyển trực tiếp vào hệ thống của bạn, đảm bảo quy trình làm việc liền mạch và khả năng phản hồi ngay lập tức.",
+"createWebhook": {
+"editWebhookTitle": "Chỉnh sửa Webhook",
+"createWebhookTitle": "Tạo Webhook cho Tổ chức <span>{organization}</span>",
+"webhookName": "Tên Webhook",
+"webhookNameDescription": "Trường này dùng để nhập tên của webhook. Tên được sử dụng để xác định webhook và phải đủ mô tả để phân biệt nó với các webhook khác.",
+"selectWebhookActions": "Chọn hành động webhook",
+"selectWebhookActionsDescription": "Menu thả xuống này cho phép bạn chọn các hành động cụ thể mà webhook của bạn nên thực hiện. Mỗi tùy chọn đại diện cho một loại hành động khác nhau.",
+"webhookUrl": "URL Webhook ( HTTPS )",
+"webhookUrlDescription": "Trường này dùng để nhập URL nơi webhook sẽ gửi dữ liệu. Nó phải là một điểm cuối URL hợp lệ và có thể truy cập để nhận và xử lý dữ liệu webhook đến."
+},
+"listWebhooks": {
+"activeWebhooks": "Webhooks đang hoạt động",
+"description": "Mô tả",
+"url": "URL",
+"lastDelivery": "Lần gửi cuối",
+"events": "Sự kiện"
+}
+}
+},
+"errorPages": {
+"404": {
+"title": "404",
+"heading": "Không tìm thấy trang",
+"description": "Rất tiếc! Trang bạn đang tìm kiếm không tồn tại. Nó có thể đã bị di chuyển hoặc xóa.",
+"goHome": "Về Trang chủ"
+}
+}
+}
+}

@@ -19,22 +19,21 @@ export const WelcomeMessage = () => {
 									<h1 className="mb-2 text-5xl font-bold">
 										<div className="flex items-center space-x-5">
 											<img
-												style={{ width: 50, height: 50 }}
-												alt="ztnet logo"
-												title="ztnet logo"
-												src="/images/ztnet_200x178.png"
+												style={{ width: "auto", height: 100 }}
+												alt="EITEK logo"
+												title="EITEK logo"
+												src="/images/logo.png"
 											/>
-											<span className="zt-color">ZTNET</span>
 										</div>
 									</h1>
-									<Link
+									{/* <Link
 										href="https://ztnet.network/"
 										rel="noopener noreferrer"
 										className="text-sm text-primary/50"
 										target="_blank"
 									>
 										https://ztnet.network
-									</Link>
+									</Link> */}
 								</div>
 							)}
 						</div>

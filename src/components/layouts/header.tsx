@@ -37,14 +37,11 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 					<div className="hidden md:inline-flex">
 						<Link href="/network" className="inline-flex flex-row items-center gap-2">
 							<img
-								style={{ width: 25, height: 25 }}
-								alt="ztnet logo"
-								title="ztnet logo"
-								src="/images/ztnet_200x178.png"
+								style={{ width: "auto", height: 40 }}
+								alt="EITEK logo"
+								title="EITEK logo"
+								src="/images/logo.png"
 							/>
-							<span className="ml-1 text-2xl font-bold uppercase leading-10 text-accent zt-color">
-								{globalOptions?.siteName || "ZTNET"}
-							</span>
 						</Link>
 					</div>
 					<div className="md:pl-12 flex items-center pt-1">

@@ -17,6 +17,7 @@
 }
 .outer-container {
 	min-height: 100dvh;
+	background-color: theme('colors.base-100');
 }
 
 .inner-container {
@@ -72,7 +73,7 @@
 }
 
 .zt-color {
-	color: rgb(255, 180, 65);
+	color: #0066cc;
 }
 
 .fade-in {

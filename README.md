@@ -112,3 +112,4 @@ This project utilizes the **mkworld** tool, written in Go, to generate the custo
 
 Our project, in its entirety, is also licensed under the GNU General Public License v3.0. For a comprehensive understanding of our project's licensing terms, please consult our LICENSE file. -->
 
+npx next dev 

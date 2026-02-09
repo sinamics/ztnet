@@ -31,14 +31,14 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 		<>
 			<Head>
 				<title>{title}</title>
-				<meta name="description" content="ZTNET - Zerotier Controller Web UI" />
+				<meta name="description" content="EITEK - Controller Web UI" />
 				<meta name="robots" content="noindex, nofollow" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
 			<div
 				className={classNames(
-					"rounded-xl sm:border sm:p-12 space-y-5 w-full max-w-md mx-auto shadow-xl",
+					"rounded-xl sm:border sm:p-12 space-y-5 w-full max-w-md mx-auto shadow-xl bg-base-100",
 					{
 						"border-red-500": !!errorMessage,
 						"border-primary/50": !errorMessage,
@@ -96,7 +96,7 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 					) : null}
 
 					<div className="pt-5 text-center text-xs text-gray-400">
-						<span>Copyright © {currentYear} Kodea Solutions</span>
+						<span>Copyright © {currentYear} EITEK</span>
 					</div>
 				</div>
 			</div>

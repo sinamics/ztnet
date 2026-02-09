@@ -100,7 +100,7 @@ const App: AppType<{ session: Session | null }> = ({
 	}
 	return (
 		<main className={inter.className}>
-			<ThemeProvider defaultTheme="system">
+			<ThemeProvider defaultTheme="eitek" enableSystem={false} attribute="data-theme">
 				<NextIntlClientProvider
 					locale={locale}
 					onError={(err) => console.warn(err)}
