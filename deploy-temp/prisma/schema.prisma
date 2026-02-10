@@ -1,0 +1,480 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("MIGRATE_DATABASE_URL")
+}
+
+enum Role {
+  READ_ONLY
+  USER
+  MODERATOR
+  ADMIN
+}
+
+model GlobalOptions {
+  id                    Int     @id @default(autoincrement())
+  // Site
+  siteName              String  @default("ZTNET")
+  // Registration
+  enableRegistration    Boolean @default(true)
+  firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
+
+  // Email configuration
+  smtpHost                           String?
+  smtpPort                           String  @default("587")
+  smtpEmail                          String?
+  smtpFromName                       String? @default("ZTNET")
+  smtpUsername                       String?
+  smtpPassword                       String?
+  smtpUseSSL                         Boolean @default(false)
+  smtpSecure                         Boolean @default(false)
+  smtpRequireTLS                     Boolean @default(false)
+  smtpIgnoreTLS                      Boolean @default(false)
+  // New email configuration fields
+  smtpEncryption                     String  @default("STARTTLS") // "NONE", "SSL", "STARTTLS"
+  smtpUseAuthentication              Boolean @default(true)
+  inviteUserTemplate                 Json?
+  inviteAdminTemplate                Json?
+  inviteOrganizationTemplate         Json?
+  forgotPasswordTemplate             Json?
+  verifyEmailTemplate                Json?
+  notificationTemplate               Json?
+  newDeviceNotificationTemplate      Json?
+  deviceIpChangeNotificationTemplate Json?
+  // Notifications
+  userRegistrationNotification       Boolean @default(false)
+  // Welcome message
+  welcomeMessageEnabled              Boolean @default(false)
+  welcomeMessageTitle                String?
+  welcomeMessageBody                 String?
+  // mkworld
+  customPlanetUsed                   Boolean @default(false)
+  planetId                           Int?    @unique
+  planet                             Planet? @relation(fields: [planetId], references: [id])
+}
+
+// ROOT SERVERS
+model Planet {
+  id            Int            @id @default(autoincrement())
+  plID          BigInt         @default(0)
+  plBirth       BigInt         @default(0)
+  plRecommend   Boolean        @default(false)
+  rootNodes     RootNodes[]
+  globalOptions GlobalOptions?
+}
+
+model RootNodes {
+  id        Int     @id @default(autoincrement())
+  Planet    Planet  @relation(fields: [PlanetId], references: [id], onDelete: Cascade)
+  PlanetId  Int
+  comments  String?
+  identity  String
+  endpoints Json
+}
+
+model network_members {
+  nodeid             Int                     @id @default(autoincrement())
+  id                 String
+  nwid_ref           network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  nwid               String
+  lastSeen           DateTime?
+  authorized         Boolean?                @default(false)
+  physicalAddress    String?
+  online             Boolean?                @default(false)
+  deleted            Boolean?                @default(false)
+  permanentlyDeleted Boolean?                @default(false)
+  name               String?
+  description        String?
+  address            String?                 @default("")
+  creationTime       DateTime
+  notations          NetworkMemberNotation[]
+
+  @@unique([id, nwid])
+}
+
+model network {
+  nwid               String            @id
+  name               String?
+  description        String?
+  creationTime       DateTime?
+  lastModifiedTime   DateTime?
+  flowRule           String?
+  autoAssignIp       Boolean?          @default(true)
+  nw_userid          User?             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId           String?
+  tagsByName         Json?
+  capabilitiesByName Json?
+  // Relationships
+  organizationId     String?
+  organization       Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  networkMembers     network_members[]
+  notations          Notation[]
+  routes             Routes[]
+}
+
+model Routes {
+  id        String  @id @default(cuid())
+  target    String
+  via       String?
+  networkId String
+  notes     String?
+  network   network @relation(fields: [networkId], references: [nwid], onDelete: Cascade)
+}
+
+model Notation {
+  id             Int                     @id @default(autoincrement())
+  name           String
+  color          String?
+  description    String?
+  creationTime   DateTime                @default(now())
+  updatedTime    DateTime                @updatedAt
+  isActive       Boolean                 @default(true)
+  nwid           String
+  network        network                 @relation(fields: [nwid], references: [nwid], onDelete: Cascade)
+  networkMembers NetworkMemberNotation[]
+  icon           String?
+  orderIndex     Int?
+  visibility     String?
+
+  @@unique([name, nwid])
+}
+
+model NetworkMemberNotation {
+  notationId Int
+  nodeid     Int
+  label      Notation        @relation(fields: [notationId], references: [id])
+  member     network_members @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
+
+  @@id([notationId, nodeid])
+}
+
+// Necessary for Next auth
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  refresh_expires_in Int?
+  token_type         String?
+  ext_expires_in     Int?
+  expires_in         Int?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserOptions {
+  id                           Int      @id @default(autoincrement())
+  userId                       String   @unique
+  user                         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  //networks
+  useNotationColorAsBg         Boolean? @default(false)
+  showNotationMarkerInTableRow Boolean? @default(true)
+  //zt central
+  ztCentralApiKey              String?  @default("")
+  ztCentralApiUrl              String?  @default("https://api.zerotier.com/api/v1")
+  // local controller
+  localControllerUrl           String?  @default("http://zerotier:9993")
+  localControllerSecret        String?  @default("")
+  // member table
+  deAuthorizeWarning           Boolean? @default(false)
+  addMemberIdAsName            Boolean? @default(false)
+  renameNodeGlobally           Boolean? @default(false)
+  // notifications
+  newDeviceNotification        Boolean? @default(true)
+  deviceIpChangeNotification   Boolean? @default(true)
+  apiRateLimitNotification     Boolean? @default(true)
+  failedLoginNotification      Boolean? @default(true)
+}
+
+enum AccessLevel {
+  READ_ONLY
+  WRITE
+  ADMINISTRATIVE
+}
+
+model UserGroup {
+  id             Int          @id @default(autoincrement())
+  name           String       @unique
+  description    String?
+  maxNetworks    Int          @default(5)
+  accessLevel    AccessLevel  @default(WRITE)
+  isDefault      Boolean      @default(false)
+  expiresAt      DateTime? // When users in this group should expire, null for no expiration
+  users          User[]
+  userInvitation Invitation[]
+}
+
+model APIToken {
+  id                   String    @id @default(cuid())
+  name                 String
+  token                String    @unique
+  userId               String
+  apiAuthorizationType Json      @default("[\"PERSONAL\"]")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt            DateTime  @default(now())
+  expiresAt            DateTime? // null means it never expires
+  isActive             Boolean   @default(true)
+}
+
+model User {
+  id                     String                 @id @default(cuid())
+  name                   String
+  email                  String                 @unique
+  emailVerified          DateTime?
+  lastLogin              DateTime
+  lastseen               DateTime?
+  online                 Boolean?               @default(false)
+  role                   Role                   @default(USER)
+  image                  String?
+  hash                   String?
+  tempPassword           String?
+  firstTime              Boolean                @default(true)
+  twoFactorEnabled       Boolean                @default(false)
+  twoFactorSecret        String?
+  twoFactorRecoveryCodes String[]               @default([])
+  failedLoginAttempts    Int                    @default(0)
+  lastFailedLoginAttempt DateTime?
+  requestChangePassword  Boolean                @default(false)
+  userGroupId            Int?
+  memberOfOrgs           Organization[]         @relation("MemberRelation") // user can be member of multiple organizations
+  organizationRoles      UserOrganizationRole[]
+  membershipRequests     MembershipRequest[]    @relation("MembershipRequestsForUser")
+  messages               Messages[]
+  lastReadByUsers        LastReadMessage[]
+  ActivityLog            ActivityLog[]
+  expiresAt              DateTime? // null means it never expires
+  isActive               Boolean                @default(true)
+  createdAt              DateTime               @default(now())
+  userGroup              UserGroup?             @relation(fields: [userGroupId], references: [id], onDelete: Restrict)
+  options                UserOptions?
+  accounts               Account[]
+  sessions               Session[]
+  network                network[]
+  apiTokens              APIToken[]
+  webhooks               Webhook[]
+  invitations            Invitation[]           @relation("InvitationsSent")
+  UserDevice             UserDevice[]
+}
+
+model UserDevice {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent      String
+  deviceType     String
+  ipAddress      String?
+  location       String?
+  deviceId       String   @unique
+  browser        String
+  browserVersion String
+  os             String
+  osVersion      String
+  lastActive     DateTime
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([deviceId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Invitation {
+  id            Int                      @id @default(autoincrement())
+  token         String                   @unique
+  used          Boolean                  @default(false)
+  email         String?
+  secret        String?
+  groupId       String?
+  userGroupId   Int?
+  url           String
+  expiresAt     DateTime
+  mailSentAt    DateTime?
+  timesCanUse   Int                      @default(1)
+  timesUsed     Int                      @default(0)
+  invitedById   String
+  createdAt     DateTime                 @default(now())
+  role          Role                     @default(READ_ONLY)
+  require2FA    Boolean                  @default(false)
+  createdBy     User                     @relation(fields: [invitedById], references: [id], onDelete: Cascade, name: "InvitationsSent")
+  userGroup     UserGroup?               @relation(fields: [userGroupId], references: [id], onDelete: Cascade)
+  organizations OrganizationInvitation[]
+}
+
+//
+// ORGANIZATION
+//
+model OrganizationInvitation {
+  id             String       @id @default(cuid())
+  invitationId   Int
+  organizationId String
+  invitation     Invitation   @relation(fields: [invitationId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Organization {
+  id                 String                   @id @default(cuid())
+  createdAt          DateTime                 @default(now())
+  ownerId            String
+  orgName            String
+  description        String?
+  users              User[]                   @relation("MemberRelation")
+  networks           network[]
+  settings           OrganizationSettings?
+  membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
+  isActive           Boolean                  @default(true)
+  require2FA         Boolean                  @default(false)
+  userRoles          UserOrganizationRole[]
+  messages           Messages[]
+  lastReadByUsers    LastReadMessage[]
+  ActivityLog        ActivityLog[]
+  webhooks           Webhook[]
+  invitations        OrganizationInvitation[]
+}
+
+model Webhook {
+  id             String        @id @default(cuid())
+  name           String
+  description    String
+  url            String
+  enabled        Boolean       @default(false)
+  eventTypes     Json
+  secret         String?       @default("")
+  lastDelivery   DateTime?     @default(now())
+  // Relationship with Organization
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String? // Foreign key
+  createdAt      DateTime      @default(now())
+  // Relationship with User
+  User           User?         @relation(fields: [userId], references: [id])
+  userId         String?
+}
+
+model UserOrganizationRole {
+  userId         String
+  organizationId String
+  role           Role
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, organizationId])
+}
+
+model Messages {
+  id              Int               @id @default(autoincrement())
+  content         String
+  createdAt       DateTime          @default(now())
+  userId          String // Reference to the User model
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId  String // Reference to the Organization model
+  organization    Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lastReadByUsers LastReadMessage[]
+}
+
+model LastReadMessage {
+  id             Int    @id @default(autoincrement())
+  lastMessageId  Int // ID of the last read message
+  userId         String
+  organizationId String
+
+  lastMessage  Messages     @relation(fields: [lastMessageId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+}
+
+model OrganizationSettings {
+  id                 Int      @id @default(autoincrement())
+  renameNodeGlobally Boolean? @default(false)
+
+  // Admin notification settings
+  nodeAddedNotification              Boolean? @default(false)
+  nodeDeletedNotification            Boolean? @default(false)
+  nodePermanentlyDeletedNotification Boolean? @default(false)
+  userAddedNotification              Boolean? @default(false)
+  userRemovedNotification            Boolean? @default(false)
+  permissionChangedNotification      Boolean? @default(false)
+  networkCreatedNotification         Boolean? @default(false)
+  networkDeletedNotification         Boolean? @default(false)
+  emailNotificationsEnabled          Boolean? @default(true)
+
+  // Email template overrides for organization notifications
+  nodeAddedTemplate              Json?
+  nodeDeletedTemplate            Json?
+  nodePermanentlyDeletedTemplate Json?
+  userAddedTemplate              Json?
+  userRemovedTemplate            Json?
+  permissionChangedTemplate      Json?
+  networkCreatedTemplate         Json?
+  networkDeletedTemplate         Json?
+
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model MembershipRequest {
+  id             Int          @id @default(autoincrement())
+  userId         String
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id], name: "MembershipRequestsForUser", onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], name: "MembershipRequestsForOrganization", onDelete: Cascade)
+}
+
+model ActivityLog {
+  id             Int           @id @default(autoincrement())
+  action         String
+  createdAt      DateTime      @default(now())
+  performedById  String
+  performedBy    User          @relation(fields: [performedById], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+// To map your data model to the database schema, you need to use the prisma migrate CLI commands:
+// npx prisma migrate dev --name (NAME)
+
+// reset db
+// npx prisma migrate reset
+
+// npx prisma db push --preview-feature
+
+// Deploy
+// npx prisma migrate deploy --preview-feature
+
+// Issues with migration
+// npx prisma migrate resolve --rolled-back 20210112134813_init --preview-feature
+
+// generate local draft
+// npx prisma migrate dev --create-only --preview-feature

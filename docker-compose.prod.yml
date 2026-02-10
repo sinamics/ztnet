@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: ztnet-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_2024}
+      POSTGRES_DB: ztnet
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    # Uncomment for external access:
+    # ports:
+    #   - "5432:5432"
+
+  zerotier:
+    image: zyclonite/zerotier:1.14.2
+    hostname: zerotier
+    container_name: ztnet-zerotier
+    restart: unless-stopped
+    volumes:
+      - zerotier:/var/lib/zerotier-one
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      - app-network
+    ports:
+      - "9993:9993/udp"
+    environment:
+      - ZT_OVERRIDE_LOCAL_CONF=true
+      - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
+
+  ztnet:
+    image: sinamics/ztnet:latest
+    container_name: ztnet-app
+    working_dir: /app
+    volumes:
+      - zerotier:/var/lib/zerotier-one
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      # For localhost only: - "127.0.0.1:3000:3000"
+    environment:
+      # Database
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_2024}
+      POSTGRES_DB: ztnet
+      
+      # NextAuth
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-this-secret-key-in-production}
+      NEXTAUTH_URL_INTERNAL: "http://ztnet:3000"
+      
+      # App
+      NODE_ENV: production
+      
+      # ZeroTier (optional - sử dụng local controller)
+      ZT_ADDR: "http://zerotier:9993"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+      - zerotier
+
+volumes:
+  zerotier:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.255.0/29

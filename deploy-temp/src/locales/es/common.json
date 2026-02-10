@@ -1,0 +1,1262 @@
+{
+	"input": {
+		"enterToSave": "Pulsa Enter para guardar"
+	},
+	"commonMenuTabs": {
+		"settings": "Configuración",
+		"network": "Red",
+		"webhooks": "Webhooks",
+		"invites": "Invitaciones",
+		"notification": "Notificaciones"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Configuración de la Organización",
+		"invites": "Invitaciones",
+		"pendingInvites": "Invitaciones Pendientes",
+		"members": "Miembros",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Webhooks Activos"
+	},
+	"commonSpinners": {
+		"loading": "Cargando...",
+		"Checking": "Comprobando..."
+	},
+	"commonButtons": {
+		"confirm": "Confirmar",
+		"add": "Añadir",
+		"change": "Cambiar",
+		"create": "Crear",
+		"submit": "Enviar",
+		"cancel": "Cancelar",
+		"delete": "Eliminar",
+		"remove": "Eliminar",
+		"update": "Actualizar",
+		"close": "Cerrar",
+		"stash": "Guardar",
+		"yes": "Sí",
+		"imSure": "Estoy seguro",
+		"generate": "Generar",
+		"addNetwork": "Crear una red",
+		"deleteNetwork": "Eliminar red",
+		"moveNetwork": "Mover red",
+		"moveNetworkToOrganization": "Mover a la organización",
+		"leaveOrganization": "Dejar la organización",
+		"inviteUser": "Invitar usuario",
+		"meta": "Meta",
+		"users": "Usuarios",
+		"kickUser": "Expulsar usuario",
+		"deleteOrganization": "Eliminar organización",
+		"userActions": "Acciones del usuario",
+		"addWebhooks": "Añadir Webhooks",
+		"options": "Opciones",
+		"settings": "Configuraciones",
+		"resend": "Reenviar",
+		"enable2fa": "Activar 2FA",
+		"disable2fa": "Desactivar 2FA",
+		"next": "Siguiente",
+		"back": "Atrás",
+		"notification": "Notificaciones",
+		"changeTemplate": "Cambiar Plantilla"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Nombre",
+			"description": "Descripción",
+			"networkId": "ID de Red",
+			"members": "Miembros",
+			"memberActTot": "Nodos Act/Tot",
+			"actions": "Acciones",
+			"role": "Rol",
+			"email": "Correo electrónico",
+			"authorized": "Auth",
+			"id": "ID",
+			"created": "Creado",
+			"expires": "Expira",
+			"networks": "Redes",
+			"lastseen": "Visto",
+			"group": "Grupo",
+			"account": "Cuenta",
+			"ipAssignments": {
+				"header": "IP Administrada / Latencia",
+				"notAssigned": "No Asignado"
+			},
+			"physicalIp": {
+				"header": "IP Física",
+				"unknownValue": "Desconocido"
+			},
+			"conStatus": {
+				"header": "Estado",
+				"toolTip": "No se pudo establecer conexión directa y actualmente se está retransmitiendo a través de servidores zerotier con mayor latencia",
+				"relayed": "RETRANSMITIDO",
+				"directLan": "Conexión LAN directa establecida",
+				"directWan": "Conexión WAN directa establecida",
+				"direct": "DIRECTO{version}",
+				"offline": "desconectado"
+			},
+			"status": "Estado"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Buscar una red",
+			"searchUserPlaceholder": "Buscar un usuario"
+		},
+		"tableFooter": {
+			"show": "Mostrar",
+			"page": "Página",
+			"of": "de"
+		},
+		"cell": {
+			"Options": "Opciones"
+		}
+	},
+	"commonToast": {
+		"updatedSuccessfully": "Actualizado con éxito",
+		"addedSuccessfully": "Agregado con éxito",
+		"deletedSuccessfully": "Eliminado con éxito",
+		"errorOccurred": "Ocurrió un error desconocido",
+		"organizationDeleted": "Organización eliminada con éxito",
+		"sentSuccessfully": "Enviado con éxito",
+		"copyToClipboard": {
+			"title": "copiar al portapapeles",
+			"success": "{element} copiado al portapapeles"
+		}
+	},
+	"sidebar": {
+		"navigation": "Inicio",
+		"dashboard": "Tablero",
+		"networks": "Controlador Local",
+		"ztCentral": "ZT Central",
+		"admin": "Admin",
+		"settings": "Configuraciones",
+		"mail": "Correo",
+		"users": "Usuarios",
+		"notification": "Notificación",
+		"controller": "Controlador",
+		"organization": "Organización",
+		"backuprestore": "Respaldos",
+		"account": "Cuenta",
+		"user-settings": "Ajustes de usuario",
+		"logout": "Cerrar sesión"
+	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN te permite conectar tus dispositivos de manera segura y privada a través de internet, sin importar dónde estés. Disfruta de conexiones rápidas y fiables sin las barreras habituales, manteniendo tus datos seguros y accesibles."
+		},
+		"form": {
+			"name": "Nombre",
+			"namePlaceholder": "Introduce tu nombre",
+			"email": "Correo electrónico",
+			"emailPlaceholder": "correo@ejemplo.com",
+			"password": "Contraseña",
+			"passwordPlaceholder": "Introduce tu contraseña",
+			"confirmPassword": "Confirmar Contraseña",
+			"confirmPasswordPlaceholder": "Confirme su contraseña",
+			"forgotPassword": "¿Olvidaste tu contraseña?",
+			"verify2FA": "Verificar 2FA",
+			"enter2FAcode": "Introduce el código 2FA",
+			"signIn": "Iniciar sesión",
+			"signInWith": "Inicia sesión con {provider}",
+			"signUp": "Regístrate",
+			"invitationCode": "Código de invitación",
+			"invitationCodePlaceholder": "Introduce tu código de invitación",
+			"sendMail": "Enviar correo",
+			"mfaRecoveryCode": "Código de recuperación",
+			"mfaRecoveryCodePlaceholder": "Introduce tu código de recuperación"
+		},
+		"signin": {
+			"signInToAccount": "Inicia sesión en tu cuenta",
+			"or": "O",
+			"dontHaveAccount": "¿No tienes una cuenta?",
+			"getStarted": "¡Comienza ahora!",
+			"havingIssues": "¿Tienes problemas?",
+			"oauthExclusiveButNotConfigured": "El inicio de sesión exclusivo OAuth está habilitado pero OAuth no está configurado. Póngase en contacto con su administrador."
+		},
+		"signup": {
+			"signUpWithCredentials": "Crea una cuenta",
+			"haveAnAccount": "¿Tienes una cuenta?",
+			"login": "¡Inicia sesión!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "¿Olvidaste tu contraseña?",
+			"forgotPasswordMessage": "Te enviaremos un enlace de restablecimiento si la cuenta existe",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Restablecer Contraseña",
+			"forgotPasswordMessage": "Por favor, ingrese su nueva contraseña",
+			"backToLogin": "Volver al Inicio de Sesión"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "Recuperación de 2FA",
+			"mfaRecoveryMessage": "Te enviaremos instrucciones sobre cómo recuperar tu cuenta",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "Recuperación de 2FA",
+			"mfaRecoveryResetMessage": "Por favor, introduce tus credenciales y el código de recuperación",
+			"backToLogin": "Volver al inicio de sesión"
+		},
+		"emailVerification": {
+			"emailVerified": "Correo electrónico verificado",
+			"errorMessage": "Ocurrió un error al verificar tu correo electrónico.",
+			"successMessage": "Tu correo electrónico ha sido verificado exitosamente.",
+			"redirectMessage": "Serás redirigido automáticamente en {seconds} segundos.",
+			"goNowButton": "Ir ahora"
+		},
+		"passwordChangeRequired": {
+			"title": "Cambio de Contraseña Requerido",
+			"description": "Por razones de seguridad, debes cambiar tu contraseña antes de acceder a la aplicación.",
+			"formTitle": "Cambia Tu Contraseña",
+			"submitButton": "Actualizar Contraseña",
+			"successMessage": "¡Contraseña actualizada exitosamente! Redirigiendo...",
+			"updatingTitle": "Actualizando Contraseña",
+			"updatingDescription": "Por favor espera mientras actualizamos tu contraseña y refrescamos tu sesión.",
+			"note": "No puedes acceder a otras partes de la aplicación hasta que cambies tu contraseña."
+		}
+	},
+	"networks": {
+		"loading": "Cargando",
+		"title": "Redes",
+		"description": "Redes VPN",
+		"unlinkedNetworks": {
+			"title": "Hay {amount} red no asignada registrada con el controlador.",
+			"navigate": "Ir al Controlador"
+		},
+		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí.",
+		"networkActionModal": {
+			"modalTitle": "Acciones de red <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Mover red",
+				"description": "Puedes localizar el ID en la URL de la organización.",
+				"warningText": "<strong>Advertencia:</strong> Transferir la red moverá tanto la red como sus miembros a la organización seleccionada. Esta acción es irreversible y no se puede deshacer. Por favor, confirme cuidadosamente la ID de la organización antes de proceder.<br></br>Además, asegúrese de tener permisos de escritura en la organización a la cual está transfiriendo la red."
+			},
+			"deleteNetwork": {
+				"title": "Eliminar red",
+				"description": "Eliminar una red la eliminará permanentemente junto con todos sus datos asociados.",
+				"warningText": "<strong>Advertencia:</strong> Esta acción eliminará irreversiblemente la red y todos los miembros, configuraciones y datos relacionados. Este proceso no se puede deshacer. Asegúrese de haber respaldado cualquier información necesaria antes de proceder con la eliminación."
+			}
+		}
+	},
+	"networkById": {
+		"loading": "Cargando...",
+		"errorSteps": {
+			"step1": "Verifique que el contenedor ZeroTier esté operativo",
+			"step2": "Si hay otras instancias de ZeroTier activas localmente, por favor desactívelas ya que podrían causar conflictos."
+		},
+		"networkId": "ID de red:",
+		"networkName": "Nombre de red:",
+		"addDescription": "Añadir descripción",
+		"descriptionPlaceholder": "Descripción",
+		"networkStart": "Inicio de la red:",
+		"notSet": "no establecido",
+		"networkEnd": "Fin de la red:",
+		"networkCidr": "Cidr de red:",
+		"networkSettings": "Configuraciones de la red",
+		"networkMembers": "Miembros de la red",
+		"noMembersInformation": {
+			"title": "No hay información de miembros",
+			"installZerotier": "Instalar ZeroTier",
+			"joinNetwork": "Unirse a la red"
+		},
+		"networkMembersAlert": {
+			"message": "Únete a este ID de red y el dispositivo se mostrará automáticamente"
+		},
+		"viewStashedMembers": "Ver miembros guardados",
+		"networkActions": "Acciones de red",
+		"deleteNetwork": {
+			"title": "Eliminar red {networkName}",
+			"description": "¿Estás seguro de que quieres eliminar esta red? Esto no se puede deshacer y todos los miembros serán eliminados de esta red",
+			"yesAction": "Sí, eliminar",
+			"noAction": "No, conservarlo"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Tu red es ahora {authType}",
+			"privateCardTitle": "Privado",
+			"privateCardContent": "Cada usuario necesita ser Autorizado por el administrador de la red.",
+			"publicCardTitle": "Público",
+			"publicCardContent": "Todos los usuarios pueden conectarse a esta red sin Autorización",
+			"loading": "Cargando"
+		},
+		"networkIpAssignments": {
+			"header": "Asignaciones de IP",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6",
+				"mtu": "MTU"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 para cada dispositivo)",
+				"plane6Label": "ZeroTier 6PLANE (/80 enrutables para cada dispositivo)",
+				"rfc4193Updated": "rfc4193 actualizado",
+				"plane6Updated": "6plane actualizado"
+			},
+			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} otra(s) red(es) han sido encontradas con la misma subred.",
+					"modal": {
+						"title": "Subred duplicada detectada",
+						"description": "Las siguientes redes tienen la misma subred que la red actual ({name}). Esto puede no ser un problema, pero si conecta ambas redes desde el mismo PC, podría causar conflictos de direcciones IP y problemas de conectividad."
+					}
+				},
+				"please_enter_valid_ip_range": "Por favor, introduzca un rango de IP válido",
+				"ip_range_already_exists": "El rango de IP ya existe",
+				"auto_assign_from_range": "Asignar automáticamente desde el rango",
+				"easy": "Fácil",
+				"advanced": "Avanzado",
+				"delete_ip_assignment": "Eliminar asignación de IP",
+				"range_start": "Inicio del rango",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Fin del rango",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Enviar",
+				"confirmationModal": {
+					"title": "Confirmar cambio de asignación de IP",
+					"description": "¿Estás seguro de que quieres asignar este rango de IP? Esto eliminará todas las rutas administradas para esta red."
+				},
+				"deleteConfirmation": {
+					"title": "Eliminar asignación de IP",
+					"description": "¿Estás seguro de que quieres eliminar esta asignación de IP? Esto eliminará el rango de IP de tu red."
+				},
+				"addConfirmation": {
+					"title": "Añadir asignación de IP",
+					"description": "¿Estás seguro de que quieres añadir este rango de IP? Esto añadirá un nuevo rango de IP a tu red."
+				}
+			},
+			"mtu": {
+				"title": "MTU (Unidad de Transmisión Máxima)",
+				"description": "Esta configuración determina el tamaño máximo del paquete que puede ser transmitido a través de la red. Ajustar el valor de MTU puede impactar en el rendimiento y la eficiencia de la red.",
+				"acceptedValue": "Los valores aceptados están entre 1280 y 10000"
+			}
+		},
+		"networkRoutes": {
+			"table": {
+				"destination": "Destino",
+				"via": "Vía",
+				"nodeName": "Nombre del Nodo",
+				"notes": "Notas"
+			},
+			"managedRoutesTitle": "Rutas Administradas",
+			"noManagedRoutesTitle": "No hay rutas administradas definidas.",
+			"noManagedRoutesDescription1": "Los dispositivos no obtendrán una dirección IP sin una ruta coincidente.",
+			"noManagedRoutesDescription2": "Si no tiene requisitos específicos, pruebe el modo fácil de autoasignación IPv4.",
+			"destinationPlaceholder": "Destino",
+			"viaPlaceholder": "Vía",
+			"notesPlaceholder": "Haga clic para agregar notas",
+			"destinationInputLabel": "Destino",
+			"destinationInputDescription": "Ingrese la dirección de red de destino en notación CIDR",
+			"viaInputLabel": "Vía",
+			"viaInputDescription": "Ingrese la dirección IP vía del siguiente salto. Dejar vacío para dirigir a la LAN local"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Requiere la versión 1.6 de ZeroTier.",
+			"clearDNS": "Borrar DNS",
+			"searchDomain": "Buscar dominio",
+			"serverAddress": "Dirección del servidor",
+			"submit": "Enviar",
+			"servers": "Servidores",
+			"addressAndDomainRequired": "Se requiere dirección y dominio"
+		},
+		"networkMulticast": {
+			"Multicast": "Multicast",
+			"MulticastRecipientLimit": "Límite de receptores Multicast",
+			"Submit": "Enviar",
+			"EnableBroadcast": "Habilitar difusión",
+			"NumberPlaceholder": "Número",
+			"MulticastUpdatedSuccessfully": "Multicast actualizado con éxito"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Buscar cualquier cosa...",
+			"optionModalTitle": "Opciones para miembro",
+			"tableRow": {
+				"updateName": "Haz clic para cambiar el nombre",
+				"updateDescription": "Haz clic para agregar descripción"
+			},
+			"toggles": {
+				"showExtendedView": "Vista extendida",
+				"hideExtendedView": "Vista compacta"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "El nombre del miembro se ha actualizado correctamente"
+			},
+			"unauthorizedRowMessage": "Acceso no autorizado",
+			"tableFooter": {
+				"RowsPerPage": "Filas por página",
+				"Of": "de"
+			},
+			"search": {
+				"placeholder": "Buscar cualquier cosa..."
+			}
+		},
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "Ver miembros almacenados",
+				"deleteAll": "Eliminar Todos los Almacenados ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "¿Eliminar Todos los Miembros Almacenados?",
+				"modalDescription": "Esto eliminará permanentemente todos los {count} miembros almacenados de la base de datos. Permanecerán en el controlador ZeroTier y deben ser agregados manualmente.",
+				"modalWarning": "Advertencia: Esta acción no se puede deshacer. Para volver a agregar estos miembros en el futuro, debe ingresar manualmente sus IDs de miembro."
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Correo",
+			"labelText": "Instrucciones para unirse por correo electrónico",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Invitar",
+			"loadingText": "Cargando...",
+			"successMessage": "¡Éxito! Se ha enviado un correo electrónico de invitación a {email}",
+			"errorMessage": {
+				"unknownError": "Ocurrió un error desconocido"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Agregar miembro manualmente. Se puede usar para deshacer la eliminación de un miembro.",
+			"memberIdInput": "ID del miembro",
+			"placeholder": "Número hexadecimal de 10 dígitos",
+			"submitButton": "Añadir",
+			"error": {
+				"unknown": "Ocurrió un error desconocido"
+			}
+		},
+		"memberOptionModal": {
+			"header": {
+				"created": "Creado"
+			},
+			"loading": {
+				"text": "Cargando..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} ya asignada",
+				"errorNotValidIp": "IP {target} no es una dirección IP válida"
+			},
+			"ipAssignment": {
+				"header": "Asignación de IP",
+				"description": "Agregar o quitar una dirección IP para este miembro."
+			},
+			"memberDescription": {
+				"header": "Descripción",
+				"description": "Agregar una descripción para ayudar a identificar este miembro",
+				"placeholder": "Descripción del miembro..."
+			},
+			"deleteIpAssignment": {
+				"title": "Eliminar asignación de IP"
+			},
+			"addressInput": {
+				"label": "Dirección"
+			},
+			"addButton": {
+				"text": "Añadir"
+			},
+			"allowEthernetBridging": {
+				"header": "Permitir Puente Ethernet",
+				"description": "El puente requiere una configuración adicional en el dispositivo. Consulte el manual y la base de conocimientos para obtener más información. Los dispositivos móviles no pueden ser puentes."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "No Asignar IPs Automáticamente",
+				"description": "Esto desactivará la capacidad de asignar automáticamente direcciones IP a este miembro."
+			},
+			"capabilities": {
+				"header": "Capacidades:"
+			},
+			"tags": {
+				"header": "Etiquetas:"
+			},
+			"anotation": {
+				"header": "Anotación",
+				"description": "Mejore la organización de su miembro añadiendo anotaciones",
+				"placeholder": "Agregar Anotación"
+			}
+		},
+		"networkHelp": {
+			"title": "Ayuda de la red",
+			"networkID": "ID de la red",
+			"networkIDText": "El ID único global de 16 dígitos de la red. Actualmente esto no se puede cambiar.",
+			"networkName": "Nombre de la red",
+			"networkNameText": "Un nombre corto definido por el usuario para esta red que es visible para los miembros. Recomendamos usar algo como un nombre de dominio (por ejemplo, zerotier.com) o una dirección de correo electrónico.",
+			"accessControl": "Control de acceso",
+			"accessControlText": "¿Cómo se controla la membresía? Esto se debe dejar en su configuración predeterminada a menos que desee crear una red totalmente abierta para pruebas, juegos, etc.",
+			"multicastRecipientLimit": "Límite de destinatarios de multidifusión",
+			"multicastRecipientLimitText": "El número máximo de destinatarios que pueden recibir una multidifusión o difusión de Ethernet. Si el número de destinatarios excede este límite, un subconjunto aleatorio recibirá el anuncio. Establecer esto más alto hace que las multidifusiones sean más confiables en redes grandes a expensas del ancho de banda.",
+			"multicastRecipientLimitText2": "Establecer en 0 desactiva la multidifusión, pero tenga en cuenta que solo IPv6 con emulación NDP (modos de direccionamiento RFC4193 o 6PLANE) u otros protocolos solo unidifusión funcionarán sin multidifusión.",
+			"managedRoutes": "Rutas administradas",
+			"managedRoutesText": "Rutas IPv4 que se publicarán a los miembros de la red. Esto se puede usar para crear rutas a otras redes a través de puertas de enlace en una red ZeroTier. Tenga en cuenta que por razones de seguridad, la mayoría de los clientes no utilizarán rutas predeterminadas o rutas que se superpongan con el espacio de direcciones IP públicas a menos que esto sea específicamente permitido por el usuario. Las gamas de IP públicas están marcadas con un icono:",
+			"ipv4AutoAssign": "Asignación automática de IPv4",
+			"ipv4AutoAssignText": "Rango de IPv4 del cual asignar IPs automáticamente. Tenga en cuenta que las IPs solo se asignarán si también caen dentro de una ruta definida. El modo fácil permite a los usuarios elegir un rango de IP y se creará automáticamente una definición de ruta y de grupo.",
+			"dnsPush": "Impulsión de DNS",
+			"dnsPushText1": "Requiere la versión 1.6 o más nueva de ZeroTier.",
+			"dnsPushText2": "Las versiones anteriores de ZeroTier ignorarán estos ajustes.",
+			"dnsPushText3": "En macOS, iOS, Windows y Android, ZeroTier puede agregar automáticamente servidores DNS para un dominio específico. No configura ni aloja un servidor DNS. Debe alojar el suyo propio.",
+			"dnsPushText4": "Si configura zt.example.com como su dominio de búsqueda y 10.147.20.1 como dirección del servidor, entonces su computadora pedirá a 10.147.20.1 que busque direcciones IP para nombres de host que terminen en zt.example.com.",
+			"dnsPushText5": "Esto debe estar habilitado en cada cliente con la opción allowDNS. Hay una casilla de verificación en la interfaz de usuario en los detalles de cada red, cerca de la casilla de verificación Permitir administrado."
+		}
+	},
+	"admin": {
+		"settings": {
+			"application": {
+				"title": "Aplicación",
+				"description": "Personaliza la apariencia y el comportamiento de la aplicación para alinearla mejor con tu marca"
+			},
+			"publicPages": {
+				"sectionTitle": "Páginas Públicas",
+				"description": "Personaliza el texto que se muestra en tus páginas de inicio de sesión y registro para alinearlo mejor con tu marca o proporcionar instrucciones específicas a tus usuarios."
+			}
+		},
+		"mail": {
+			"mailSMTP": "Mail SMTP",
+			"senderSettings": "Configuración del remitente",
+			"smtpServer": "Servidor SMTP",
+			"authentication": "Autenticación",
+			"security": "Seguridad",
+			"emailTemplates": "Plantillas de correo",
+			"smtpHost": "Host SMTP",
+			"smtpPort": "Puerto SMTP",
+			"portInvalid": "El puerto debe estar entre 1 y 65535",
+			"portUncommon": "Puerto poco común. Puertos SMTP comunes: 25, 465, 587, 2525",
+			"senderEmail": "Correo del remitente",
+			"mailPlaceholder": "correo@ejemplo.com",
+			"senderName": "Nombre del remitente",
+			"senderNamePlaceholder": "ZTNET",
+			"encryption": "Cifrado",
+			"encryptionNone": "Ninguno",
+			"encryptionSSL": "SSL/TLS",
+			"encryptionSTARTTLS": "STARTTLS",
+			"encryptionDescription": "Use SSL/TLS en el puerto 465, o STARTTLS en el puerto 25/587",
+			"sendTestEmail": "Enviar correo de prueba",
+			"testEmailSent": "Correo de prueba enviado correctamente",
+			"saveSettings": "Guardar configuración",
+			"settingsSaved": "Configuración guardada correctamente",
+			"unsavedChanges": "Tiene cambios sin guardar",
+			"useAuthentication": "Usar autenticación",
+			"useAuthenticationDescription": "Habilite si su servidor SMTP requiere nombre de usuario y contraseña.",
+			"username": "Nombre de usuario",
+			"password": "Contraseña",
+			"clearPassword": "Eliminar contraseña",
+			"passwordWillBeCleared": "La contraseña se eliminará al guardar",
+			"verifyCertificate": "Verificar certificado SSL",
+			"verifyCertificateDescription": "Desactivar solo para certificados autofirmados",
+			"useSSL": "Usar SSL",
+			"smtpRequireTLS": "Verificar certificado SSL",
+			"smtpRequireTLSDescription": "Exigir certificados SSL/TLS válidos. Desactivar solo si usa certificados autofirmados.",
+			"inviteUserTemplate": "Plantilla de invitación de usuario",
+			"emailVerificationTemplate": "Plantilla de verificación de correo electrónico",
+			"forgotPasswordTemplate": "Plantilla de contraseña olvidada",
+			"notificationTemplate": "Plantilla de notificación",
+			"organizationInviteTemplate": "Plantilla de invitación de organización",
+			"newDeviceNotificationTemplate": "Plantilla de notificación de nuevo dispositivo",
+			"deviceIpChangeNotificationTemplate": "Plantilla de notificación de cambio de IP del dispositivo",
+			"templates": {
+				"availableTags": "Etiquetas disponibles:",
+				"subject": "Asunto",
+				"inputPlaceholderSubject": "Asunto",
+				"htmlBody": "Cuerpo HTML",
+				"textareaPlaceholderBody": "Plantilla de correo",
+				"saveTemplateButton": "Guardar plantilla",
+				"resetButton": "Restablecer",
+				"sendTestMailButton": "Enviar correo de prueba",
+				"sendTestMailButtonLoading": "Trabajando...",
+				"errorFields": "Por favor rellena todos los campos",
+				"successToastMailSent": "Correo enviado",
+				"successToastTemplateSaved": "Plantilla guardada"
+			}
+		},
+		"users": {
+			"authentication": {
+				"header": "Autenticación",
+				"enableUserRegistration": "¿Habilitar el registro de usuarios?",
+				"enableUserRegistrationDescription": "Esto permitirá a los usuarios hacer clic en el botón de Registro en la página de inicio.",
+				"oauthExclusiveLoginEnabled": "El inicio de sesión exclusivo OAuth está habilitado.",
+				"oauthExclusiveLoginDescription": "Los usuarios solo pueden autenticarse mediante OAuth. El formulario de registro está oculto independientemente de la configuración de registro a continuación.",
+				"oauthAllowNewUsers": "Los nuevos usuarios pueden registrarse mediante OAuth.",
+				"oauthExistingUsersOnly": "Solo los usuarios existentes pueden iniciar sesión mediante OAuth.",
+				"generateInvitation": {
+					"header": "Generar enlace de invitación",
+					"description": "Genera enlaces de invitación seguros para permitir que nuevos usuarios se registren en tu instancia de ZTNET.",
+					"secretMessageLabel": "Se le pedirá al usuario que ingrese este mensaje al registrarse (sensible a mayúsculas y minúsculas)",
+					"secretMessagePlaceholder": "Agregar mensaje secreto",
+					"expireTimeLabel": "El enlace de invitación expirará después de este tiempo",
+					"expireTimePlaceholder": "Tiempo de expiración en minutos",
+					"timeUsedLabel": "¿Cuántas veces se puede utilizar este enlace? (Opcional, por defecto 1)",
+					"timeUsedPlaceholder": "Veces que se puede utilizar",
+					"assignGroupLabel": "Asignar usuario a un grupo",
+					"activeInvitationsLabel": "Invitaciones activas",
+					"activeInvitationsDescription": "Haz clic en cualquier tarjeta de invitación para ver detalles, copiar el enlace o eliminarla.",
+					"emptyState": {
+						"noInvitations": "No se encontraron invitaciones activas.",
+						"createInvitation": "Crea un enlace de invitación arriba para comenzar."
+					},
+					"deleteConfirmation": {
+						"title": "Eliminar Invitación",
+						"description": "¿Estás seguro de que deseas eliminar este enlace de invitación? Esta acción no se puede deshacer."
+					},
+					"invitationModal": {
+						"header": "Detalles de la Invitación",
+						"secretLabel": "Secreto:",
+						"expiresLabel": "Estado:",
+						"groupIdLabel": "ID de grupo:",
+						"timesUsedLabel": "Veces usado:",
+						"invitationLinkLabel": "Enlace de invitación:",
+						"clickToCopyLabel": "haz clic para copiar",
+						"linkCopiedToast": "enlace copiado al portapapeles",
+						"deleteButton": "Eliminar"
+					}
+				}
+			},
+			"users": {
+				"sectionTitle": "Usuarios",
+				"description": "Todos los usuarios registrados en la plataforma.",
+				"userOptionModal": {
+					"userGroupLabel": "Grupo de usuarios",
+					"userRoleLabel": "Rol de usuario",
+					"account": {
+						"title": "ZTNet realiza una revisión diaria para encontrar usuarios expirados. Si se encuentra que un usuario ha expirado, todos los pares asociados serán desautorizados y la cuenta del usuario se desactivará.",
+						"userAccountLabel": "Estado de la Cuenta",
+						"userExpireLabel": "Expiración de la Cuenta"
+					},
+					"userActionsLabel": "Acciones del usuario",
+					"typeUserName": "Escribe el nombre del usuario.",
+					"buttons": {
+						"deleteUser": "Eliminar usuario",
+						"cancle": "Cancelar"
+					},
+					"toast": {
+						"deleteUserSuccess": "Usuario eliminado exitosamente",
+						"nameNotEqual": "El nombre de usuario que ingresaste no es el mismo que el usuario."
+					}
+				},
+				"roleDescriptions": {
+					"admin": "Como administrador, este usuario tendrá permisos completos, incluido el acceso al panel de administración.",
+					"user": "Si se establece como Usuario, este usuario tendrá permisos limitados y no podrá acceder al panel de administración."
+				},
+				"changeRoleModal": {
+					"title": "Cambiar rol para {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Rol cambiado exitosamente",
+					"errorOccurred": "Ocurrió un error desconocido"
+				},
+				"createNewUserButton": "Crear Nuevo Usuario",
+				"createUser": {
+					"title": "Crear Nuevo Usuario",
+					"nameLabel": "Nombre",
+					"namePlaceholder": "Ingrese el nombre de usuario",
+					"emailLabel": "Correo Electrónico",
+					"emailPlaceholder": "Ingrese la dirección de correo",
+					"emailDescription": "Se acepta cualquier formato de email. No se requiere verificación de email",
+					"passwordLabel": "Contraseña",
+					"passwordPlaceholder": "Ingrese la contraseña",
+					"generatePasswordButton": "Generar Contraseña",
+					"roleLabel": "Rol",
+					"userGroupLabel": "Grupo de Usuario",
+					"defaultGroupOption": "Seleccionar grupo de usuario (opcional)",
+					"organizationLabel": "Organización",
+					"organizationDescription": "Seleccionar una organización para agregar el usuario",
+					"defaultOrganizationOption": "Ninguna (Usuario Personal)",
+					"organizationRoleLabel": "Rol en la Organización",
+					"organizationRoleDescription": "Rol dentro de la organización seleccionada",
+					"forcePasswordChangeLabel": "Solicitar Cambio de Contraseña en Primer Inicio",
+					"forcePasswordChangeDescription": "Se le pedirá al usuario que cambie la contraseña cuando inicie sesión por primera vez",
+					"createButton": "Crear Usuario",
+					"successMessage": "¡Usuario creado exitosamente! Puedes copiar los detalles a continuación para compartir.",
+					"userAccountCreated": "Cuenta de Usuario Creada:",
+					"userAccountDetails": "Detalles de la Cuenta de Usuario:",
+					"copyInfoButton": "Copiar Información",
+					"doneButton": "Hecho",
+					"toast": {
+						"createUserSuccess": "Usuario creado exitosamente",
+						"copySuccess": "¡Información del usuario copiada al portapapeles!",
+						"copyError": "Error al copiar al portapapeles"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "buscar usuarios",
+					"optionsButton": "Opciones",
+					"optionsModalTitle": "Opciones para usuario",
+					"accountStatus": {
+						"active": "Activo",
+						"disabled": "Deshabilitado"
+					},
+					"headers": {
+						"created": "Creado",
+						"expires": "Expira"
+					},
+					"values": {
+						"never": "Nunca"
+					}
+				}
+			},
+			"groups": {
+				"sectionTitle": "Grupos",
+				"description": "Crea un nuevo grupo de usuarios para organizar mejor a los usuarios de la plataforma. Asignar usuarios a grupos específicos permite un acceso controlado, establecimiento de límites y ajuste de configuraciones según los tipos de usuarios.",
+				"addGroup": {
+					"editGroupTitle": "Editar grupo",
+					"deleteGroupTitle": "Eliminar grupo",
+					"deleteGroupDescription": "¿Estás seguro de que deseas eliminar este grupo? Si se asigna, se eliminará del usuario.",
+					"deleteGroupWithUsersWarning": "Advertencia: Este grupo tiene {count} {userText} asignados.",
+					"deleteGroupWithUsersDescription": "Eliminar este grupo automáticamente quitará todos los usuarios del grupo. Los usuarios en sí no serán eliminados, pero ya no pertenecerán a ningún grupo.",
+					"deleteGroupConfirmation": "Esta acción no se puede deshacer. ¿Estás seguro de que quieres continuar?",
+					"addGroupLabel": "Agregar nuevo grupo",
+					"addGroupButton": "Añadir grupo",
+					"groupNamePlaceholder": "Nombre del grupo",
+					"groupNameDescription": "Introduce un nombre para el nuevo grupo",
+					"networkLimitPlaceholder": "Límite de red",
+					"networkLimitDescription": "Establece el número máximo de redes que pueden ser creadas por usuarios en este grupo",
+					"useAsDefaultPlaceholder": "Usar como predeterminado",
+					"useAsDefaultDescription": "Establecer este grupo como el grupo predeterminado para nuevos usuarios",
+					"expirationDatePlaceholder": "Fecha de Expiración",
+					"expirationDateDescription": "Establece la fecha cuando las cuentas de usuario en este grupo expirarán. La verificación de expiración se ejecuta diariamente a medianoche. Los usuarios asignados a este grupo serán automáticamente desactivados en esta fecha. Déjalo vacío para sin expiración.",
+					"expiredGroupWarning": "Este grupo ha expirado. Los usuarios serán desactivados.",
+					"expiredLabel": "EXPIRADO",
+					"expiresLabel": "Expira"
+				},
+				"existingGroups": {
+					"title": "Grupos Existentes",
+					"description": "Haz clic en cualquier tarjeta de grupo para editar su configuración, o usa el botón eliminar para quitarlo."
+				}
+			}
+		},
+		"notification": {
+			"authentication": "Autenticación",
+			"whenUserRegister": "Cuando un usuario se registre",
+			"allAdminsNotification": "Todos los administradores recibirán notificaciones"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "Redes & Miembros",
+				"totalNetworks": "Total de redes:",
+				"totalMembers": "Total de miembros:",
+				"totalUnlinkedNetworks": "Total de redes no vinculadas:",
+				"unlinkedNetworks": {
+					"title": "Redes no vinculadas",
+					"description": "This section provides a table of all networks that are not currently linked to any user in the ztnet database. These typically originate from custom ZeroTier controllers that have been added by users but are not yet managed within ZTNET. The table gives you the opportunity to assign these unmanaged networks to specific admin users. This can be particularly helpful if a user has added a custom ZeroTier controller that hasn't been managed by ZTNET yet.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Nombre de red",
+						"creationTime": "Hora de creación",
+						"members": "Miembros",
+						"assign": "Asignar"
+					},
+					"assignModal": {
+						"title": "¿Estás seguro de que quieres asignar el usuario {user} a la red {network}?",
+						"description": "Esta acción no puede deshacerse"
+					}
+				}
+			},
+			"management": {
+				"title": "Gestión",
+				"allowManagementFrom": "Permitir gestión desde:",
+				"allowTcpFallbackRelay": "Permitir TCP Fallback Relay:",
+				"listeningOn": "Escuchando en:"
+			},
+			"controllerStatus": {
+				"title": "Estado del controlador",
+				"online": "En línea:",
+				"tcpFallbackActive": "TCP Fallback activo:",
+				"version": "Versión:"
+			},
+			"controllerConfig": {
+				"danger_zone": "ZONA DE PELIGRO",
+				"proceed_with_caution": "<span>Proceda con precaución:</span>",
+				"modification_warning": "Modificar la URL del controlador ZeroTier afecta a todos los usuarios. Aunque esto ofrece flexibilidad para aquellos que quieren un controlador personalizado, ten en cuenta las posibles interrupciones y problemas de compatibilidad. Siempre realiza una copia de seguridad de las configuraciones antes de hacer cambios.",
+				"local_zerotier_url": "URL local de Zerotier",
+				"zerotier_secret": "Secreto de Zerotier",
+				"submit_empty_field_default": "Deje el campo vacío para usar el valor predeterminado.",
+				"isUsingEnvVariablesAlert": "La variable de entorno <span>ZT_ADDR o ZT_SECRET</span> tiene prioridad y anula cualquier cambio de URL realizado a través de la interfaz de usuario. Para actualizar los campos respectivos a través de la interfaz de usuario, primero debe eliminar las variables de entorno ZT_ADDR o ZT_SECRET."
+			},
+			"generatePlanet": {
+				"updatePlanetWarning": "Actualizar el archivo del planeta modificará la estructura central de tu red ZeroTier, impactando rutas, flexibilidad y potencialmente disponibilidad. Procede con precaución, entendiendo las implicaciones.",
+				"customPlanetInUse": "¡El Planeta Personalizado está actualmente en uso!",
+				"customPortIsInUse": "¡NOTA! Puerto personalizado utilizado",
+				"customPortIsInUseDescription": "Necesitas agregar <kbd>ZT_PRIMARY_PORT:puerto</kbd> a las variables de entorno de ZeroTier Docker Compose.",
+				"downloadPlanetInfo": "En caso de que lo necesite, el archivo del planeta está disponible para descargar en la siguiente URL:",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "Generar raíz privada",
+				"generatePrivateRootPlaceholder": "Agregar una raíz privada a tu controlador",
+				"commentDescription": "Añadir un comentario para este planeta (opcionalmente)",
+				"commentPlaceholder": "Ingresar Comentario",
+				"identityDescription": "Identidad (opcionalmente). El valor predeterminado es el contenido de la identidad actual.public",
+				"endpointsDescription": "Introduce la dirección IP externa de tu controlador. Utiliza un formato separado por comas (IP/PUERTO) para múltiples direcciones. Por ejemplo: '84.17.53.155/9993,2a02:6ea0:d405::/9993'. Asegúrate de que estas direcciones sean accesibles globalmente si quieres que los nodos fuera de tu red local se conecten.",
+				"endpointsPlaceholder": "ip externa/9993",
+				"plRecommend": "Auto-Generar IDs",
+				"birthLabel": "Nacimiento (plBirth)",
+				"birthPlaceholder": "Ingresar Fecha de Nacimiento",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Ingresar ID",
+				"buttons": {
+					"editPlanetConfig": "EDITAR PLANETA",
+					"createPlanet": "CREAR PLANETA",
+					"uploadConfig": "SUBIR CONFIGURACIÓN",
+					"updateWorld": "Actualizar Mundo",
+					"downloadPlanetButton": "Descargar Configuración",
+					"restoreOriginalPlanetButton": "Restaurar Planeta Original"
+				},
+				"modal": {
+					"noteTitle": "¡NOTA!",
+					"customPlanetGenerated": "Se ha generado un planeta personalizado.",
+					"restartContainerInstructions": "Necesitará reiniciar el contenedor zerotier para cargar la nueva configuración:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Restaurar Planeta Original",
+					"restoreOriginalPlanetContent": "¿Está seguro de que desea restaurar el archivo del planeta original? Asegúrese de hacer una copia de seguridad de su archivo de planeta actual si desea mantener las claves actuales"
+				}
+			},
+			"yes": "Sí",
+			"no": "No"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "Gestión de Equipo",
+				"description": "Explora la Organización para comenzar a dar forma a la forma en que tu equipo trabaja junto. Asigna roles, invita a nuevos miembros y supervisa los permisos básicos dentro de tu organización. Diseñada para la simplicidad y facilidad de uso, esta característica beta proporciona una base para la colaboración de tu equipo. A medida que continuamos desarrollando y mejorando estos ajustes, te invitamos a proporcionar comentarios para ayudarnos a refinar la experiencia.",
+				"inputFields": {
+					"label": "Añadir Organización",
+					"description": "Crea una nueva organización",
+					"organizationName": {
+						"description": "Nombre de la organización"
+					},
+					"organizationDescription": {
+						"description": "Descripción de la Organización (Opcional)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Eliminar Organización",
+					"description": "¿Estás seguro de que quieres eliminar esta organización?",
+					"description2": "Esta acción eliminará permanentemente la organización junto con todas sus redes, miembros y datos relacionados. Esta acción no se puede deshacer.",
+					"confirmation": "Por favor, confirma que deseas proceder con la eliminación de la organización.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Escribe el nombre de la organización para confirmar"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Nombre de la Organización:",
+				"description": "Descripción:",
+				"numberOfMembers": "Número de Miembros:",
+				"pendingInvitations": "Invitaciones Pendientes:",
+				"activeWebhooks": "Webhooks Activos:"
+			}
+		},
+		"backupRestore": {
+			"title": "Copia de Seguridad y Restauración",
+			"description": "Esta sección te permite crear una copia de seguridad de tu servidor. Puedes elegir incluir la base de datos y/o la configuración de ZeroTier en la copia de seguridad. La copia de seguridad se guardará con el nombre especificado y podrá descargarse inmediatamente después de su creación.",
+			"createBackup": {
+				"sectionTitle": "Crear Copia de Seguridad",
+				"includeDatabase": "Incluir Base de Datos",
+				"includeZerotier": "Incluir Carpeta ZeroTier",
+				"backupName": "Nombre de Copia de Seguridad (opcional)",
+				"backupNamePlaceholder": "Dejar vacío para nombre autogenerado",
+				"createButton": "Crear y Descargar Copia de Seguridad",
+				"creatingButton": "Creando Copia de Seguridad...",
+				"successToast": "Copia de seguridad creada: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Copias de Seguridad Existentes",
+				"noBackups": "No se encontraron copias de seguridad. Crea tu primera copia de seguridad arriba.",
+				"table": {
+					"filename": "Nombre de Archivo",
+					"size": "Tamaño",
+					"created": "Creado",
+					"actions": "Acciones",
+					"download": "Descargar",
+					"restore": "Restaurar",
+					"delete": "Eliminar"
+				},
+				"deleteModal": {
+					"title": "Eliminar Copia de Seguridad",
+					"description": "¿Estás seguro de que quieres eliminar esta copia de seguridad? Esta acción no se puede deshacer."
+				},
+				"restoreModal": {
+					"title": "Restaurar desde Copia de Seguridad",
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
+				},
+				"deleteSuccessToast": "Copia de seguridad eliminada exitosamente"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restaurar desde Archivo",
+				"warning": "La restauración sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!",
+				"restoreDatabase": "Restaurar Base de Datos",
+				"restoreZerotier": "Restaurar Carpeta ZeroTier",
+				"selectFile": "Seleccionar Archivo de Copia de Seguridad",
+				"selectedFile": "Archivo seleccionado: {fileName} ({size})",
+				"restoreButton": "Restaurar desde Archivo",
+				"processingButton": "Procesando...",
+				"restoringButton": "Restaurando...",
+				"uploadSuccessToast": "Copia de seguridad subida exitosamente",
+				"restoreSuccessToast": "Restauración completada exitosamente. Por favor reinicia la aplicación.",
+				"invalidFileModal": {
+					"title": "Archivo Inválido",
+					"description": "Por favor selecciona un archivo .zip de copia de seguridad válido."
+				},
+				"uploadErrorModal": {
+					"title": "Error de Subida",
+					"description": "Error al procesar la subida del archivo. Por favor inténtalo de nuevo."
+				},
+				"restoreModal": {
+					"title": "Restaurar desde Copia de Seguridad",
+					"description": "Esto sobrescribirá tus datos actuales. ¡Asegúrate de crear una copia de seguridad primero!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
+				}
+			},
+			"restoreCompleteModal": {
+				"title": "Restauración Completa",
+				"successMessage": "✅ ¡La restauración de la copia de seguridad se completó exitosamente!",
+				"docker": {
+					"description": "Como estás ejecutando en Docker, por favor reinicia el contenedor ZeroTier para aplicar los cambios:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ Los servicios ZeroTier pueden no estar disponibles temporalmente durante el reinicio."
+				},
+				"host": {
+					"description": "Los servicios ZeroTier se han reiniciado automáticamente.",
+					"info": "ℹ️ Si experimentas algún problema, es posible que necesites reiniciar manualmente la aplicación."
+				},
+				"databaseRestored": "La base de datos ha sido restaurada. Es posible que necesites actualizar la página para ver los datos actualizados.",
+				"gotItButton": "¡Entendido!"
+			}
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Cuenta",
+			"network": "Red",
+			"notification": "Notificación",
+			"user": "Usuario"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Configuración de la Cuenta",
+				"nameLabel": "Nombre",
+				"emailLabel": "Correo Electrónico",
+				"verifiedBadge": "Verificado",
+				"notVerifiedBadge": "No Verificado",
+				"passwordLabel": "Contraseña",
+				"currentPasswordPlaceholder": "Contraseña Actual",
+				"newPasswordPlaceholder": "Nueva Contraseña",
+				"repeatNewPasswordPlaceholder": "Repetir Nueva Contraseña",
+				"role": "Rol",
+				"passwordChangeRequired": {
+					"title": "Cambio de Contraseña Requerido",
+					"description": "Debes cambiar tu contraseña antes de acceder a otras partes de la aplicación. Por favor actualiza tu contraseña en la sección de Seguridad a continuación."
+				}
+			},
+			"totp": {
+				"title": "Autenticación de dos factores",
+				"description": "Esto mejorará la seguridad de las cuentas de usuario al requerir un paso de verificación adicional.",
+				"mfaNote": "Nota: 2FA solo funcionará si inicia sesión con credenciales. OAuth no utilizará este 2FA, incluso si está configurado, ya que es gestionado por el proveedor de OAuth.",
+				"notification": {
+					"title": "Autenticación de dos factores (2FA) no habilitada",
+					"description": "Recomendamos encarecidamente habilitar 2FA para mejorar la seguridad de su cuenta."
+				},
+				"totpActivation": {
+					"title": "Autenticación de dos factores",
+					"steps": {
+						"step1": "Contraseña",
+						"step2": "Escanear código QR",
+						"step3": "Enviar"
+					},
+					"confirmPassword": {
+						"description": "Escriba su contraseña"
+					},
+					"displayQrCode": {
+						"description": "¿Necesita una aplicación de autenticación de dos factores? Descargue una de las siguientes",
+						"IOS": "Dispositivos iOS",
+						"Android": "Dispositivos Android",
+						"Windows": "Dispositivos Windows",
+						"appDescription": "Estas aplicaciones son recomendadas, pero otras aplicaciones de autenticación también funcionarán.",
+						"scanQrDescription": "Escanee este código QR con su aplicación de autenticación.",
+						"manualEntry": "Si no puede escanear el código QR, puede ingresar manualmente el siguiente código:"
+					},
+					"enterTotpCode": {
+						"description": "Verifique su configuración TOTP",
+						"enterCode": "Ingrese el código de su aplicación de autenticación para verificar y habilitar TOTP."
+					}
+				}
+			},
+			"userDevices": {
+				"connectedDevices": "Dispositivos Conectados",
+				"logoutAll": "Cerrar Sesión en Todos",
+				"accessDenied": "Acceso Denegado",
+				"noDevicesFound": "No se encontraron dispositivos.",
+				"activeNow": "Activo Ahora",
+				"currentDevice": "Dispositivo Actual",
+				"logout": "Cerrar Sesión"
+			},
+			"restapi": {
+				"sectionTitle": "Tokens de Acceso a la API",
+				"description": "Los tokens de acceso a la API se utilizan para acceder a la API pública de ZTNET.",
+				"viewToken": {
+					"title": "Información del token",
+					"name": "Nombre",
+					"authorizationType": "Tipo de autorización",
+					"expireAt": "Expira en",
+					"isActive": "Está activo"
+				},
+				"generateToken": {
+					"title": "Token de API Rest",
+					"tokenName": {
+						"label": "Agrega un nombre significativo a tu token",
+						"placeholder": "Mi token genial"
+					},
+					"tokenAuthorizationType": {
+						"label": "Selecciona el tipo de autorización de la API",
+						"placeholder": "Selecciona el tipo de autorización"
+					},
+					"tokenExpireAt": {
+						"label": "Selecciona la fecha de expiración del token",
+						"placeholder": "Selecciona la fecha",
+						"values": {
+							"never": "Nunca",
+							"1day": "1 día",
+							"10day": "10 días",
+							"1month": "1 mes",
+							"1year": "1 año"
+						}
+					}
+				},
+				"buttons": {
+					"submitToken": "Generar Token",
+					"cancle": "Eliminar Token"
+				},
+				"response": {
+					"title": "Haz clic en el token para copiarlo",
+					"info": "Este token solo se mostrará una vez. ¡Cópialo ahora!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Eliminar toke",
+						"description": "¿Estás seguro de que quieres eliminar este token? Esto no se puede deshacer."
+					}
+				}
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Incorporar su API central de ZeroTier le permitirá gestionar sus redes centrales directamente desde ZTNET. Al integrar la clave, aparecerá un nuevo menú en la barra lateral para mejorar la accesibilidad y el control.<br></br>Puede obtener una clave desde el portal central de ZeroTier. https://my.zerotier.com/account",
+				"apiKeyLabel": "Clave de API central de Zerotier",
+				"apiUrlLabel": "URL de la API de Zerotier",
+				"apiUrlLabelDescription": "La URL de la API central de ZeroTier, la predeterminada es https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Preferencias de la cuenta",
+				"languageLabel": "Idioma",
+				"fontSize": "Tamaño de fuente"
+			},
+			"application": {
+				"title": "Aplicación",
+				"version": "Versión",
+				"developerMode": "modo de desarrollador"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Anotaciones de miembro",
+				"showMarkerInTable": "Mostrar marcador en la tabla",
+				"showMarkerInTableDescription": "Esto agregará un círculo antes del nombre del miembro con el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada.",
+				"addBackgroundColorInTable": "Agregar color de fondo en la tabla",
+				"addBackgroundColorInTableDescription": "Esto agregará color de fondo a la fila según el color de la anotación. <br></br> Todavía puedes buscar la anotación si está desactivada."
+			},
+			"memberTable": {
+				"memberTableTitle": "Tabla de Miembros",
+				"deAuthorizationWarningTitle": "Mostrar advertencia al desautorizar a un miembro",
+				"deAuthorizationWarningLabel": "Mostrar un modal de confirmación para evitar desautorizaciones accidentales.",
+				"addMemberIdAsNameTitle": "Agregar el ID del miembro como nombre al registrarse",
+				"addMemberIdAsNameLabel": "Cuando un miembro de la red se registra, el ID del miembro (nodeid) se agregará como nombre."
+			},
+			"globalNodeNaming": {
+				"title": "Habilitar nomenclatura global de nodos",
+				"description": "Cuando se habilita, esta función:",
+				"bulletPoint1": "Mantendrá un nombre consistente para cada nodo en todas las redes que administras.",
+				"bulletPoint2": "Actualizará el nombre del nodo en todas tus redes cuando lo renombres en una red.",
+				"bulletPoint3": "Al registrar un miembro / nodo, verificará si el miembro existe en tus otras redes y usará el primer nombre encontrado.",
+				"note": "Nota: Esta función tiene prioridad sobre \"Agregar ID de miembro como nombre\". Se aplica solo a las redes donde eres el autor y no afecta a las redes administradas por otros o a las organizaciones."
+			}
+		},
+		"notification": {
+			"devices": "Dispositivos",
+			"newDeviceLogin": {
+				"title": "Alerta de inicio de sesión en nuevo dispositivo",
+				"description": "Recibe un correo electrónico cuando un nuevo dispositivo inicia sesión en tu cuenta por primera vez."
+			},
+			"ipAddressChange": {
+				"title": "Alerta de cambio de dirección IP",
+				"description": "Recibe un correo electrónico cuando un dispositivo conocido accede a tu cuenta desde una nueva dirección IP."
+			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Contacta al administrador de la organización para asegurarte de tener los permisos adecuados"
+		},
+		"loading": "Cargando...",
+		"organizationDashboard": {
+			"header": "Panel de Organización"
+		},
+		"membersSection": {
+			"title": "Miembros",
+			"editUser": "Editar Usuario",
+			"role": "Rol"
+		},
+		"informationSection": {
+			"title": "Información",
+			"name": "Nombre:",
+			"created": "Creado:",
+			"members": "Miembros:",
+			"pendingInvitations": "Invitaciones Pendientes:"
+		},
+		"networkSection": {
+			"title": "Redes",
+			"noNetworksToShow": "No hay redes para mostrar."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "¿Abandonar la Organización?",
+			"confirmationMessage": "¿Estás seguro de querer abandonar la organización?",
+			"note": "Nota: Si decides volver a unirte a esta organización en el futuro, un administrador necesitará enviarte una nueva invitación."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Mensajes de la Organización",
+			"chatInfo": "Todos en la Organización podrán ver tu mensaje.",
+			"messageInputPlaceholder": "Escribe un mensaje...",
+			"noMessages": "Aún no hay mensajes."
+		},
+		"logFooter": {
+			"toggleLogLabel": "REG",
+			"logHeader": "Últimos 100 registros de actividad",
+			"loading": "Cargando registros..."
+		},
+		"settings": {
+			"invitation": {
+				"title": "Expansión del equipo: Invitar a nuevos miembros",
+				"description": "¡Invita a más personas a tu equipo! Puedes enviar invitaciones por correo electrónico o encontrar y agregar personas que ya estén utilizando la plataforma. <br></br> Esto facilita el crecimiento de tu equipo e incluir a más miembros.",
+				"pendingInvitations": {
+					"title": "Invitaciones pendientes"
+				},
+				"inviteByEmail": {
+					"title": "Invitar por correo electrónico",
+					"description": "Los usuarios invitados que actualmente no son miembros de la aplicación deberán registrarse a través del enlace proporcionado en el correo electrónico de invitación. El enlace es válido por 24 horas.",
+					"emailPlaceholder": "Dirección de correo electrónico",
+					"emailDescription": "Ingresa la dirección de correo electrónico de la persona que deseas invitar",
+					"selectRoleDescription": "Selecciona el rol del usuario"
+				},
+				"inviteSiteUser": {
+					"title": "Invitar usuarios del sitio",
+					"description": "Antes de poder agregar usuarios a tu organización, es importante tener en cuenta que ya deben estar registrados en la aplicación",
+					"inputFields": {
+						"searchUser": {
+							"title": "Buscar el usuario que deseas agregar",
+							"placeholder": "Buscar usuario"
+						},
+						"userRole": {
+							"title": "Selecciona el rol del usuario"
+						}
+					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Habilitar nomenclatura global de nodos",
+					"description": "Cuando se habilita, esta función:",
+					"bulletPoints": "Mantendrá un nombre consistente para cada nodo en todas las redes de la organización.\nActualizará el nombre del nodo en todas las redes cuando lo renombres en una red.\nAl registrar un miembro, verificará si el miembro existe en tu organización y usará el primer nombre encontrado.",
+					"note": "Nota: Esto se aplica exclusivamente a las redes dentro de esta organización en particular."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Notificaciones de Administrador",
+					"description": "Configura cuándo los administradores de la organización deben recibir notificaciones sobre eventos importantes. Estas notificaciones ayudan a mantener a los administradores informados sobre cambios y actividades dentro de la organización."
+				},
+				"nodeEvents": {
+					"title": "Eventos de Nodo",
+					"nodeAdded": {
+						"title": "Nodo Agregado",
+						"description": "Notificar a los administradores cuando un nuevo nodo se une a cualquier red en la organización"
+					},
+					"nodeDeleted": {
+						"title": "Nodo Eliminado",
+						"description": "Notificar a los administradores cuando un nodo es removido de cualquier red en la organización"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Nodo Eliminado Permanentemente",
+						"description": "Notificar a los administradores cuando un nodo es eliminado permanentemente de cualquier red en la organización"
+					}
+				},
+				"userEvents": {
+					"title": "Eventos de Usuario",
+					"userAdded": {
+						"title": "Usuario Agregado a la Organización",
+						"description": "Notificar a los administradores cuando un nuevo usuario se une a la organización"
+					},
+					"userRemoved": {
+						"title": "Usuario Removido de la Organización",
+						"description": "Notificar a los administradores cuando un usuario deja o es removido de la organización"
+					},
+					"permissionChanged": {
+						"title": "Permisos de Usuario Modificados",
+						"description": "Notificar a los administradores cuando el rol o permisos de un usuario son modificados dentro de la organización"
+					}
+				},
+				"networkEvents": {
+					"title": "Eventos de Red",
+					"networkCreated": {
+						"title": "Red Creada",
+						"description": "Notificar a los administradores cuando una nueva red es creada en la organización"
+					},
+					"networkDeleted": {
+						"title": "Red Eliminada",
+						"description": "Notificar a los administradores cuando una red es eliminada de la organización"
+					}
+				},
+				"emailSettings": {
+					"title": "Configuración de Entrega de Email",
+					"description": "Configura cómo las notificaciones son entregadas a los administradores de la organización.",
+					"enableEmails": {
+						"title": "Habilitar Notificaciones por Email",
+						"description": "Enviar notificaciones por email a todos los administradores de la organización"
+					}
+				},
+				"templates": {
+					"editTemplate": "Editar Plantilla de Email",
+					"availableTags": "Etiquetas de Plantilla Disponibles:",
+					"subject": "Asunto",
+					"subjectPlaceholder": "Ingrese el asunto del email...",
+					"htmlBody": "Cuerpo del Email (HTML)",
+					"bodyPlaceholder": "Ingrese el contenido del cuerpo del email...",
+					"saveTemplate": "Guardar Plantilla",
+					"resetToDefault": "Restablecer a Predeterminado",
+					"sendTest": "Enviar Email de Prueba",
+					"sendingTest": "Enviando...",
+					"successToastTemplateSaved": "Plantilla guardada exitosamente",
+					"successToastTestSent": "Email de prueba enviado exitosamente",
+					"errorFields": "El asunto y el cuerpo son requeridos",
+					"errorSaveFirst": "Por favor guarda tus cambios antes de enviar un email de prueba"
+				}
+			}
+		},
+		"webhook": {
+			"title": "Webhooks de Organización",
+			"description": "Potencia tu organización con nuestra integración de webhook, ofreciendo notificaciones en tiempo real para eventos críticos.<br></br>Mantente adelante con actualizaciones instantáneas, directamente canalizadas a tu sistema, asegurando un flujo de trabajo sin interrupciones y capacidades de respuesta inmediata.",
+			"createWebhook": {
+				"editWebhookTitle": "Editar Webhook",
+				"createWebhookTitle": "Crear Webhook para la Organización <span>{organization}</span>",
+				"webhookName": "Nombre del Webhook",
+				"webhookNameDescription": "Este campo es para ingresar el nombre del webhook. El nombre se utiliza para identificar el webhook y debe ser lo suficientemente descriptivo para distinguirlo de otros webhooks.",
+				"selectWebhookActions": "Seleccionar acciones del webhook",
+				"selectWebhookActionsDescription": "Este menú desplegable te permite elegir las acciones específicas que tu webhook debería realizar. Cada opción representa un tipo diferente de acción.",
+				"webhookUrl": "URL del Webhook ( HTTPS )",
+				"webhookUrlDescription": "Este campo es para ingresar la URL donde el webhook enviará los datos. Debe ser un punto final de URL válido y accesible que pueda recibir y procesar los datos del webhook entrante."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Webhooks Activos",
+				"description": "Descripción",
+				"url": "URL",
+				"lastDelivery": "Última Entrega",
+				"events": "Eventos"
+			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Página no encontrada",
+			"description": "¡Ups! La página que buscas no existe. Puede que haya sido movida o eliminada.",
+			"goHome": "Volver al inicio"
+		}
+	}
+}

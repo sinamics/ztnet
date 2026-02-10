@@ -1,0 +1,1262 @@
+{
+	"input": {
+		"enterToSave": "Hit Enter to save"
+	},
+	"commonMenuTabs": {
+		"settings": "Settings",
+		"network": "Network",
+		"webhooks": "Webhooks",
+		"invites": "Invites",
+		"notification": "Notifications"
+	},
+	"commonMenuTiles": {
+		"organizationSettings": "Organization Settings",
+		"invites": "Invites",
+		"pendingInvites": "Pending Invites",
+		"members": "Members",
+		"webhooks": "Webhooks",
+		"activeWebhooks": "Active Webhooks"
+	},
+	"commonSpinners": {
+		"loading": "Loading...",
+		"Checking": "Checking..."
+	},
+	"commonButtons": {
+		"confirm": "Confirm",
+		"add": "Add",
+		"change": "Change",
+		"create": "Create",
+		"submit": "Submit",
+		"cancel": "Cancel",
+		"delete": "Delete",
+		"remove": "Remove",
+		"update": "Update",
+		"close": "Close",
+		"stash": "Stash",
+		"yes": "Yes",
+		"imSure": "Yes, I'm sure",
+		"generate": "Generate",
+		"addNetwork": "Create a network",
+		"deleteNetwork": "Delete network",
+		"moveNetwork": "Move network",
+		"moveNetworkToOrganization": "Move network to organization",
+		"leaveOrganization": "Leave Organization",
+		"inviteUser": "Invite User",
+		"meta": "Meta",
+		"users": "Users",
+		"kickUser": "Kick User",
+		"deleteOrganization": "Delete Organization",
+		"userActions": "User Actions",
+		"addWebhooks": "Add Webhooks",
+		"options": "Options",
+		"settings": "Settings",
+		"resend": "Resend",
+		"enable2fa": "Enable 2FA",
+		"disable2fa": "Disable 2FA",
+		"next": "Next",
+		"back": "Back",
+		"notification": "Notifications",
+		"changeTemplate": "Change Template"
+	},
+	"commonTable": {
+		"header": {
+			"name": "Name",
+			"description": "Description",
+			"networkId": "Network ID",
+			"members": "Members",
+			"memberActTot": "Nodes Act/Tot",
+			"actions": "Actions",
+			"role": "Role",
+			"email": "Email",
+			"authorized": "Auth",
+			"id": "ID",
+			"created": "Created",
+			"expires": "Expires",
+			"networks": "Networks",
+			"lastseen": "Last Seen",
+			"group": "Group",
+			"account": "Account",
+			"ipAssignments": {
+				"header": "Managed IP / Latency",
+				"notAssigned": "Not Assigned"
+			},
+			"physicalIp": {
+				"header": "Physical IP",
+				"unknownValue": "Unknown"
+			},
+			"conStatus": {
+				"header": "Status",
+				"toolTip": "Could not establish direct connection and is currently being Relayed through zerotier servers with higher latency",
+				"relayed": "RELAYED",
+				"directLan": "Direct LAN connection established",
+				"directWan": "Direct WAN connection established",
+				"direct": "DIRECT{version}",
+				"offline": "offline"
+			},
+			"status": "Status"
+		},
+		"search": {
+			"networkSearchPlaceholder": "Search for a network",
+			"searchUserPlaceholder": "Search for a user"
+		},
+		"tableFooter": {
+			"show": "Show",
+			"page": "Page",
+			"of": "of"
+		},
+		"cell": {
+			"Options": "Options"
+		}
+	},
+	"commonToast": {
+		"updatedSuccessfully": "Updated successfully",
+		"addedSuccessfully": "Added successfully",
+		"deletedSuccessfully": "Deleted successfully",
+		"errorOccurred": "An unknown error occurred",
+		"organizationDeleted": "Organization deleted successfully",
+		"sentSuccessfully": "Sent successfully",
+		"copyToClipboard": {
+			"title": "copy to clipboard",
+			"success": "{element} copied to clipboard"
+		}
+	},
+	"sidebar": {
+		"navigation": "Home",
+		"dashboard": "Dashboard",
+		"networks": "Local Controller",
+		"ztCentral": "ZT Central",
+		"admin": "Admin",
+		"settings": "Settings",
+		"mail": "Mail",
+		"users": "Users",
+		"notification": "Notification",
+		"controller": "ZT Controller",
+		"organization": "Organization",
+		"backuprestore": "Backup & Restore",
+		"account": "Account",
+		"user-settings": "User Settings",
+		"logout": "Logout"
+	},
+	"authPages": {
+		"welcomeMessage": {
+			"slogan": "ZeroTier VPN lets you connect your devices securely and privately across the internet, no matter where you are. Enjoy fast and reliable connections without the usual barriers, keeping your data safe and accessible."
+		},
+		"form": {
+			"name": "Name",
+			"namePlaceholder": "Enter your name",
+			"email": "Email",
+			"emailPlaceholder": "mail@example.com",
+			"password": "Password",
+			"passwordPlaceholder": "Enter your password",
+			"confirmPassword": "Confirm Password",
+			"confirmPasswordPlaceholder": "Confirm your password",
+			"forgotPassword": "Forgot your password?",
+			"verify2FA": "Verify 2FA",
+			"enter2FAcode": "Enter 2FA Code",
+			"signIn": "Sign in",
+			"signInWith": "Sign in with {provider}",
+			"signUp": "Sign up",
+			"invitationCode": "Invitation code",
+			"invitationCodePlaceholder": "Enter your invitation code",
+			"sendMail": "Send Mail",
+			"mfaRecoveryCode": "Recovery Code",
+			"mfaRecoveryCodePlaceholder": "Enter your recovery code"
+		},
+		"signin": {
+			"signInToAccount": "Sign in to your account",
+			"or": "OR",
+			"dontHaveAccount": "Don't have an account?",
+			"getStarted": "Get Started!",
+			"havingIssues": "Having issues?",
+			"oauthExclusiveButNotConfigured": "OAuth exclusive login is enabled but OAuth is not configured. Please contact your administrator."
+		},
+		"signup": {
+			"signUpWithCredentials": "Create an account",
+			"haveAnAccount": "Have an account?",
+			"login": "Login!"
+		},
+		"forgot": {
+			"forgotPasswordTitle": "Forgot Password",
+			"forgotPasswordMessage": "We will send you a reset link if the account exists",
+			"backToLogin": "Back to Login"
+		},
+		"forgotReset": {
+			"forgotPasswordTitle": "Reset Password",
+			"forgotPasswordMessage": "Please enter your new password",
+			"backToLogin": "Back to Login"
+		},
+		"mfaRecovery": {
+			"mfaRecoveryTitle": "2FA Recovery",
+			"mfaRecoveryMessage": "We will send you instructions on how to recover your account",
+			"backToLogin": "Back to Login"
+		},
+		"mfaRecoveryReset": {
+			"mfaRecoveryResetTitle": "2FA Recovery",
+			"mfaRecoveryResetMessage": "Please enter your credentials and Recovery Code",
+			"backToLogin": "Back to Login"
+		},
+		"emailVerification": {
+			"emailVerified": "Email Verified",
+			"errorMessage": "An error occurred while verifying your email.",
+			"successMessage": "Your email has been successfully verified.",
+			"redirectMessage": "You will be redirected automatically in {seconds} seconds.",
+			"goNowButton": "Go Now"
+		},
+		"passwordChangeRequired": {
+			"title": "Password Change Required",
+			"description": "For security reasons, you must change your password before accessing the application.",
+			"formTitle": "Change Your Password",
+			"submitButton": "Update Password",
+			"successMessage": "Password updated successfully! Redirecting...",
+			"updatingTitle": "Updating Password",
+			"updatingDescription": "Please wait while we update your password and refresh your session.",
+			"note": "You cannot access other parts of the application until your password is changed."
+		}
+	},
+	"networks": {
+		"loading": "Loading",
+		"title": "Networks",
+		"description": "VPN Networks",
+		"unlinkedNetworks": {
+			"title": "There is {amount} unassigned network registered with the controller.",
+			"navigate": "Goto Controller"
+		},
+		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
+		"networkActionModal": {
+			"modalTitle": "Options for Network <span>{networkName}</span>",
+			"moveNetwork": {
+				"title": "Move network",
+				"description": "You can locate the ID in the organization URL.",
+				"warningText": "<strong>Warning:</strong> Transferring the network will move both the network and its members to the selected organization. This action is irreversible and cannot be undone. Please confirm the organization ID carefully before proceeding.<br></br>Additionally, ensure you have write permissions to the organization to which you are transferring the network."
+			},
+			"deleteNetwork": {
+				"title": "Delete network",
+				"description": "Deleting a network will permanently remove it along with all its associated data.",
+				"warningText": "<strong>Warning:</strong> This action will irreversibly delete the network and all related members, settings, and data. This process cannot be undone. Please ensure you have backed up any necessary information before proceeding with deletion."
+			}
+		}
+	},
+	"networkById": {
+		"loading": "Loading...",
+		"errorSteps": {
+			"step1": "Verify that the ZeroTier container is operational",
+			"step2": "If other instances of ZeroTier are active locally, please deactivate them as it might cause conflicts."
+		},
+		"networkId": "Network ID:",
+		"networkName": "Network Name:",
+		"addDescription": "Add description",
+		"descriptionPlaceholder": "Description",
+		"networkStart": "Network Start:",
+		"notSet": "not set",
+		"networkEnd": "Network End:",
+		"networkCidr": "Network Cidr:",
+		"networkSettings": "Network Settings",
+		"networkMembers": "Network Members",
+		"noMembersInformation": {
+			"title": "This network has no members, see installation instructions below",
+			"installZerotier": "Install ZeroTier",
+			"joinNetwork": "Join Network"
+		},
+		"networkMembersAlert": {
+			"message": "Join this network ID and the device will automatically be displayed"
+		},
+		"viewStashedMembers": "View stashed members",
+		"networkActions": "Network Actions",
+		"deleteNetwork": {
+			"title": "Delete network {networkName}",
+			"description": "Are you sure you want to delete this network? This cannot be undone and all members will be deleted from this network",
+			"yesAction": "Yes, delete it",
+			"noAction": "No, keep it"
+		},
+		"privatePublicSwitch": {
+			"accessControllMessage": "Your network is now {authType}",
+			"privateCardTitle": "Private",
+			"privateCardContent": "Each user needs to be authorized by the network administrator.",
+			"publicCardTitle": "Public",
+			"publicCardContent": "All users can connect to this network without authorization",
+			"loading": "Loading"
+		},
+		"networkIpAssignments": {
+			"header": "IP Assignment",
+			"tabs": {
+				"ipv4": "IPv4",
+				"ipv6": "IPv6",
+				"mtu": "MTU"
+			},
+			"ipv6": {
+				"rfc4193Label": "ZeroTier RFC4193 (/128 for each device)",
+				"plane6Label": "ZeroTier 6PLANE (/80 routable for each device)",
+				"rfc4193Updated": "rfc4193 updated",
+				"plane6Updated": "6plane updated"
+			},
+			"ipv4": {
+				"duplicateIpNotification": {
+					"title": "{count} other network(s) have been found with the same subnet.",
+					"modal": {
+						"title": "Duplicate subnet detected",
+						"description": "The following networks have the same subnet as the current network ({name}). This may not be an issue, but if you connect both networks from the same PC, it could cause IP address conflicts and connectivity problems."
+					}
+				},
+				"please_enter_valid_ip_range": "Please enter a valid IP range",
+				"ip_range_already_exists": "The IP range already exists",
+				"auto_assign_from_range": "Auto-Assign from Range",
+				"easy": "Easy",
+				"advanced": "Advanced",
+				"delete_ip_assignment": "Delete IP assignment",
+				"range_start": "Range Start",
+				"range_start_placeholder": "192.168.168.1",
+				"range_end": "Range End",
+				"range_end_placeholder": "192.168.168.254",
+				"submit": "Submit",
+				"confirmationModal": {
+					"title": "Confirm IP Assignment Change",
+					"description": "Are you sure you want to assign this IP range? This will delete all managed routes for this network."
+				},
+				"deleteConfirmation": {
+					"title": "Delete IP Assignment",
+					"description": "Are you sure you want to delete this IP assignment? This will remove the IP range from your network."
+				},
+				"addConfirmation": {
+					"title": "Add IP Assignment",
+					"description": "Are you sure you want to add this IP range? This will add a new IP range to your network."
+				}
+			},
+			"mtu": {
+				"title": "MTU (Maximum Transmission Unit)",
+				"description": "This setting determines the largest packet size that can be transmitted through the network. Adjusting the MTU value can impact network performance and efficiency. ",
+				"acceptedValue": "Accepted values are between 1280 and 10000"
+			}
+		},
+		"networkRoutes": {
+			"table": {
+				"destination": "Destination",
+				"via": "Via",
+				"nodeName": "Node Name",
+				"notes": "Notes"
+			},
+			"managedRoutesTitle": "Managed Routes",
+			"noManagedRoutesTitle": "No managed routes defined.",
+			"noManagedRoutesDescription1": "Devices will not get an IP address without a matching route.",
+			"noManagedRoutesDescription2": "If you do not have specific requirements, try the IPv4 Auto-Assign Easy mode.",
+			"destinationPlaceholder": "Destination",
+			"viaPlaceholder": "Via",
+			"notesPlaceholder": "Click to add notes",
+			"destinationInputLabel": "Destination",
+			"destinationInputDescription": "Enter the destination network address in CIDR notation",
+			"viaInputLabel": "Via",
+			"viaInputDescription": "Enter the via IP address of the next hop. Leave empty to target local LAN"
+		},
+		"networkDns": {
+			"DNS": "DNS",
+			"requiresZeroTierVersion": "Requires ZeroTier version 1.6.",
+			"clearDNS": "Clear DNS",
+			"searchDomain": "Search Domain",
+			"serverAddress": "Server Address",
+			"submit": "Submit",
+			"servers": "Servers",
+			"addressAndDomainRequired": "Address and Domain is required"
+		},
+		"networkMulticast": {
+			"Multicast": "Multicast",
+			"MulticastRecipientLimit": "Multicast Recipient Limit",
+			"Submit": "Submit",
+			"EnableBroadcast": "Enable Broadcast",
+			"NumberPlaceholder": "Number",
+			"MulticastUpdatedSuccessfully": "Multicast updated successfully"
+		},
+		"networkMembersTable": {
+			"searchPlaceholder": "Search anything...",
+			"optionModalTitle": "Options for member",
+			"tableRow": {
+				"updateName": "Click to change name",
+				"updateDescription": "Click to add description"
+			},
+			"toggles": {
+				"showExtendedView": "Extended View",
+				"hideExtendedView": "Compact View"
+			},
+			"toastMessages": {
+				"memberNameUpdated": "Member name updated successfully"
+			},
+			"unauthorizedRowMessage": "Unauthorized Access",
+			"tableFooter": {
+				"RowsPerPage": "Rows per page",
+				"Of": "of"
+			},
+			"search": {
+				"placeholder": "Search anything..."
+			}
+		},
+		"deletedNetworkMembersTable": {
+			"buttons": {
+				"viewStashedMembers": "View stashed members",
+				"deleteAll": "Delete All Stashed ({count})"
+			},
+			"bulkDelete": {
+				"modalTitle": "Delete All Stashed Members?",
+				"modalDescription": "This will permanently delete all {count} stashed members from the database. They will remain in ZeroTier controller and must be manually re-added.",
+				"modalWarning": "Warning: This action cannot be undone. To re-add these members in the future, you must manually enter their Member IDs."
+			}
+		},
+		"inviteMemberByMail": {
+			"title": "Mail",
+			"labelText": "E-Mail Join Instructions",
+			"placeholder": "ztnet@example.com",
+			"buttonText": "Invite",
+			"loadingText": "Loading...",
+			"successMessage": "Success! An invitation email has been sent to {email}",
+			"errorMessage": {
+				"unknownError": "An unknown error occurred"
+			}
+		},
+		"addMemberById": {
+			"labelText": "Manually Add Member. Can be used to undelete a member.",
+			"memberIdInput": "Member ID",
+			"placeholder": "10-digit hex number",
+			"submitButton": "Add",
+			"error": {
+				"unknown": "An unknown error occurred"
+			}
+		},
+		"memberOptionModal": {
+			"header": {
+				"created": "Created"
+			},
+			"loading": {
+				"text": "Loading..."
+			},
+			"handleSumbit": {
+				"errorAssigned": "IP {target} already assigned",
+				"errorNotValidIp": "IP {target} is not a valid IP address"
+			},
+			"ipAssignment": {
+				"header": "IP Assignment",
+				"description": "Add or remove an IP address for this member."
+			},
+			"memberDescription": {
+				"header": "Description",
+				"description": "Add a description to help identify this member",
+				"placeholder": "Member description..."
+			},
+			"deleteIpAssignment": {
+				"title": "Delete IP assignment"
+			},
+			"addressInput": {
+				"label": "Address"
+			},
+			"addButton": {
+				"text": "Add"
+			},
+			"allowEthernetBridging": {
+				"header": "Allow Ethernet Bridging",
+				"description": "Bridging requires additional setup on the device. See manual and knowledgebase for more information. Mobile devices cannot be bridges."
+			},
+			"doNotAutoAssignIPs": {
+				"header": "Do Not Auto-Assign IPs",
+				"description": "This will disable the ability to automatically assign IP addresses to this member."
+			},
+			"capabilities": {
+				"header": "Capabilities:"
+			},
+			"tags": {
+				"header": "Tags:"
+			},
+			"anotation": {
+				"header": "Anotation",
+				"description": "Enhance your member organization by adding notations",
+				"placeholder": "Add Notation"
+			}
+		},
+		"networkHelp": {
+			"title": "Network Help",
+			"networkID": "Network ID",
+			"networkIDText": "The network's globally unique 16-digit ID. This cannot currently be changed.",
+			"networkName": "Network Name",
+			"networkNameText": "A user-defined short name for this network that is visible to members. We recommend using something like a domain name (e.g., zerotier.com) or an email address.",
+			"accessControl": "Access Control",
+			"accessControlText": "How is membership controlled? This should be left on its default setting unless you want to create a totally open network for testing, gaming, etc.",
+			"multicastRecipientLimit": "Multicast Recipient Limit",
+			"multicastRecipientLimitText": "The maximum number of recipients that can receive an Ethernet multicast or broadcast. If the number of recipients exceeds this limit, a random subset will receive the announcement. Setting this higher makes multicasts more reliable on large networks at the expense of bandwidth.",
+			"multicastRecipientLimitText2": "Setting to 0 disables multicast, but be aware that only IPv6 with NDP emulation (RFC4193 or 6PLANE addressing modes) or other unicast-only protocols will work without multicast.",
+			"managedRoutes": "Managed Routes",
+			"managedRoutesText": "IPv4 routes to be published to network members. This can be used to create routes to other networks via gateways on a ZeroTier network. Note that for security reasons most clients will not use default routes or routes that overlap with public IP address space unless this is specifically allowed by the user. Public IP ranges are marked with an icon:",
+			"ipv4AutoAssign": "IPv4 Auto-Assign",
+			"ipv4AutoAssignText": "IPv4 range from which to auto-assign IPs. Note that IPs will only be assigned if they also fall within a defined route. Easy mode allows users to pick an IP range and a route and pool definition will automatically be created.",
+			"dnsPush": "DNS Push",
+			"dnsPushText1": "Requires ZeroTier version 1.6 or newer.",
+			"dnsPushText2": "Older versions of ZeroTier will ignore these settings.",
+			"dnsPushText3": "On macOS, iOS, Windows, and Android, ZeroTier can automatically add DNS servers for a specific domain. It does not set up or host a DNS server. You must host your own.",
+			"dnsPushText4": "If you configure zt.example.com as your search domain, and 10.147.20.1 as a server address, then your computer will ask 10.147.20.1 to look up IP addresses for hostnames ending in zt.example.com.",
+			"dnsPushText5": "This must be enabled on each client with the allowDNS option. There is a checkbox in the UI in each network's details, near the Allow Managed checkbox."
+		}
+	},
+	"admin": {
+		"settings": {
+			"application": {
+				"title": "Application",
+				"description": "Customize the application's appearance and behavior to better align with your brand"
+			},
+			"publicPages": {
+				"sectionTitle": "Public Pages",
+				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
+			}
+		},
+		"mail": {
+			"mailSMTP": "Mail SMTP",
+			"senderSettings": "Sender Settings",
+			"smtpServer": "SMTP Server",
+			"authentication": "Authentication",
+			"security": "Security",
+			"emailTemplates": "Email Templates",
+			"smtpHost": "SMTP Host",
+			"smtpPort": "SMTP Port",
+			"portInvalid": "Port must be between 1 and 65535",
+			"portUncommon": "Uncommon port. Common SMTP ports: 25, 465, 587, 2525",
+			"senderEmail": "Sender Email",
+			"mailPlaceholder": "mail@example.com",
+			"senderName": "Sender Name",
+			"senderNamePlaceholder": "ZTNET",
+			"encryption": "Encryption",
+			"encryptionNone": "None",
+			"encryptionSSL": "SSL/TLS",
+			"encryptionSTARTTLS": "STARTTLS",
+			"encryptionDescription": "Use SSL/TLS on port 465, or STARTTLS on port 25/587",
+			"sendTestEmail": "Send Test Email",
+			"testEmailSent": "Test email sent successfully",
+			"saveSettings": "Save Settings",
+			"settingsSaved": "Settings saved successfully",
+			"unsavedChanges": "You have unsaved changes",
+			"useAuthentication": "Use Authentication",
+			"useAuthenticationDescription": "Enable if your SMTP server requires username and password.",
+			"username": "Username",
+			"password": "Password",
+			"clearPassword": "Clear password",
+			"passwordWillBeCleared": "Password will be cleared when you save",
+			"verifyCertificate": "Verify SSL Certificate",
+			"verifyCertificateDescription": "Disable only for self-signed certificates",
+			"useSSL": "Use SSL",
+			"smtpRequireTLS": "Verify SSL Certificate",
+			"smtpRequireTLSDescription": "Enforce valid SSL/TLS certificates. Disable only if using self-signed certificates.",
+			"inviteUserTemplate": "Invite user template",
+			"emailVerificationTemplate": "Email verification template",
+			"forgotPasswordTemplate": "Forgot Password template",
+			"notificationTemplate": "Notification template",
+			"organizationInviteTemplate": "Organization Invite template",
+			"newDeviceNotificationTemplate": "New device notification template",
+			"deviceIpChangeNotificationTemplate": "Device IP change notification template",
+			"templates": {
+				"availableTags": "Available tags:",
+				"subject": "Subject",
+				"inputPlaceholderSubject": "Subject",
+				"htmlBody": "HTML Body",
+				"textareaPlaceholderBody": "Mail Template",
+				"saveTemplateButton": "Save Template",
+				"resetButton": "Reset",
+				"sendTestMailButton": "Send Test Mail",
+				"sendTestMailButtonLoading": "Working...",
+				"errorFields": "Please fill all fields",
+				"successToastMailSent": "Mail sent",
+				"successToastTemplateSaved": "Template saved"
+			}
+		},
+		"users": {
+			"authentication": {
+				"header": "Authentication",
+				"enableUserRegistration": "Enable user registration?",
+				"enableUserRegistrationDescription": "This will allow users to click the Sign-Up button at the landing page.",
+				"oauthExclusiveLoginEnabled": "OAuth Exclusive Login is enabled.",
+				"oauthExclusiveLoginDescription": "Users can only authenticate via OAuth. The signup form is hidden regardless of the registration setting below.",
+				"oauthAllowNewUsers": "New users can register via OAuth.",
+				"oauthExistingUsersOnly": "Only existing users can login via OAuth.",
+				"generateInvitation": {
+					"header": "Generate invitation link",
+					"description": "Generate secure invitation links to allow new users to register for your ZTNET instance.",
+					"secretMessageLabel": "User will be asked to enter this message upon registration (Case sensitive)",
+					"secretMessagePlaceholder": "Add secret message",
+					"expireTimeLabel": "Invitation link will expire after this time",
+					"expireTimePlaceholder": "Expire time in minutes",
+					"timeUsedLabel": "How many times can this link be used? (Optional, default 1)",
+					"timeUsedPlaceholder": "Times can be used",
+					"assignGroupLabel": "Assign user to a group",
+					"activeInvitationsLabel": "Active invitations",
+					"activeInvitationsDescription": "Click on any invitation card to view details, copy the link, or delete it.",
+					"emptyState": {
+						"noInvitations": "No active invitations found.",
+						"createInvitation": "Create an invitation link above to get started."
+					},
+					"deleteConfirmation": {
+						"title": "Delete Invitation",
+						"description": "Are you sure you want to delete this invitation link? This action cannot be undone."
+					},
+					"invitationModal": {
+						"header": "Invitation Details",
+						"secretLabel": "Secret:",
+						"expiresLabel": "Status:",
+						"groupIdLabel": "Assigned to Group:",
+						"timesUsedLabel": "Times used:",
+						"invitationLinkLabel": "Invitation Link:",
+						"clickToCopyLabel": "click to copy",
+						"linkCopiedToast": "link copied to clipboard",
+						"deleteButton": "Delete"
+					}
+				}
+			},
+			"users": {
+				"sectionTitle": "Users",
+				"description": "All registered users on the platform.",
+				"userOptionModal": {
+					"userGroupLabel": "User Group",
+					"userRoleLabel": "User Role",
+					"account": {
+						"title": "ZTNet performs a daily check for expired users. If a user is found to be expired, all associated peers will be de-authorized, and the user's account will be deactivated.",
+						"userAccountLabel": "Account Status",
+						"userExpireLabel": "Account Expiration"
+					},
+					"userActionsLabel": "User Actions",
+					"typeUserName": "Type the name of the user.",
+					"buttons": {
+						"deleteUser": "Delete user",
+						"cancle": "Cancel"
+					},
+					"toast": {
+						"deleteUserSuccess": "User deleted successfully",
+						"nameNotEqual": "The username you entered is not the same as the user."
+					}
+				},
+				"roleDescriptions": {
+					"admin": "As an admin, this user will have full permissions, including access to the admin panel.",
+					"user": "If set to User, this user will have limited permissions and will not be able to access the admin panel."
+				},
+				"changeRoleModal": {
+					"title": "Change role for {name}"
+				},
+				"toastMessages": {
+					"roleChangeSuccess": "Role changed successfully",
+					"errorOccurred": "An unknown error occurred"
+				},
+				"createNewUserButton": "Create New User",
+				"createUser": {
+					"title": "Create New User",
+					"nameLabel": "Name",
+					"namePlaceholder": "Enter user name",
+					"emailLabel": "Email",
+					"emailPlaceholder": "Enter email address",
+					"emailDescription": "Any email format is accepted. Email verification is not required",
+					"passwordLabel": "Password",
+					"passwordPlaceholder": "Enter password",
+					"generatePasswordButton": "Generate Password",
+					"roleLabel": "Role",
+					"userGroupLabel": "User Group",
+					"defaultGroupOption": "Select user group (optional)",
+					"organizationLabel": "Organization",
+					"organizationDescription": "Select an organization to add the user to",
+					"defaultOrganizationOption": "None (Personal User)",
+					"organizationRoleLabel": "Organization Role",
+					"organizationRoleDescription": "Role within the selected organization",
+					"forcePasswordChangeLabel": "Request Password Change on First Login",
+					"forcePasswordChangeDescription": "User will be asked to change password when they first log in",
+					"createButton": "Create User",
+					"successMessage": "User created successfully! You can copy the details below to share.",
+					"userAccountCreated": "User Account Created:",
+					"userAccountDetails": "User Account Details:",
+					"copyInfoButton": "Copy Info",
+					"doneButton": "Done",
+					"toast": {
+						"createUserSuccess": "User created successfully",
+						"copySuccess": "User information copied to clipboard!",
+						"copyError": "Failed to copy to clipboard"
+					}
+				},
+				"table": {
+					"searchPlaceholder": "search users",
+					"optionsButton": "Options",
+					"optionsModalTitle": "Options for user",
+					"accountStatus": {
+						"active": "Active",
+						"disabled": "Disabled"
+					},
+					"headers": {
+						"created": "Created",
+						"expires": "Expires"
+					},
+					"values": {
+						"never": "Never"
+					}
+				}
+			},
+			"groups": {
+				"sectionTitle": "Groups",
+				"description": "Create a new user group to better organize platform users. Assigning users to specific groups allows for controlled access, setting of limits, adjusting settings based on user types, and setting expiration dates for automatic account management.",
+				"addGroup": {
+					"editGroupTitle": "Edit Group",
+					"deleteGroupTitle": "Delete Group",
+					"deleteGroupDescription": "Are you sure you want to delete this group? If assigned, it will be removed from the user.",
+					"deleteGroupWithUsersWarning": "Warning: This group has {count} {userText} assigned to it.",
+					"deleteGroupWithUsersDescription": "Deleting this group will automatically remove all users from the group. The users themselves will not be deleted, but they will no longer belong to any group.",
+					"deleteGroupConfirmation": "This action cannot be undone. Are you sure you want to continue?",
+					"addGroupLabel": "Add new group",
+					"addGroupButton": "Add Group",
+					"groupNamePlaceholder": "Group Name",
+					"groupNameDescription": "Enter a name for the new group",
+					"networkLimitPlaceholder": "Network Limit",
+					"networkLimitDescription": "Set the maximum number of networks that can be created by users in this group",
+					"useAsDefaultPlaceholder": "Use as Default",
+					"useAsDefaultDescription": "Set this group as the default group for new users",
+					"expirationDatePlaceholder": "Expiration Date",
+					"expirationDateDescription": "Set the date when user accounts in this group will expire. Expiration check runs daily at midnight. Users assigned to this group will automatically be deactivated on this date. Leave empty for no expiration.",
+					"expiredGroupWarning": "This group has expired. Users will be deactivated.",
+					"expiredLabel": "EXPIRED",
+					"expiresLabel": "Expires"
+				},
+				"existingGroups": {
+					"title": "Existing Groups",
+					"description": "Click on any group card to edit its settings, or use the delete button to remove it."
+				}
+			}
+		},
+		"notification": {
+			"authentication": "Authentication",
+			"whenUserRegister": "When a user register",
+			"allAdminsNotification": "All Admins will get notifications"
+		},
+		"controller": {
+			"networkMembers": {
+				"title": "Networks & Members",
+				"totalNetworks": "Total Networks:",
+				"totalMembers": "Total Members:",
+				"totalUnlinkedNetworks": "Total Unlinked Networks:",
+				"unlinkedNetworks": {
+					"title": "Unlinked Networks",
+					"description": "This section provides a table of all networks that are not currently linked to any user in the ztnet database. These typically originate from custom ZeroTier controllers that have been added by users but are not yet managed within ZTNET. The table gives you the opportunity to assign these unmanaged networks to specific admin users. This can be particularly helpful if a user has added a custom ZeroTier controller that hasn't been managed by ZTNET yet.",
+					"table": {
+						"nwid": "nwid",
+						"networkName": "Network name",
+						"creationTime": "Creation time",
+						"members": "Members",
+						"assign": "Assign"
+					},
+					"assignModal": {
+						"title": "Are you sure you want to assign user {user} to network {network}?",
+						"description": "This action cannot be undone"
+					}
+				}
+			},
+			"management": {
+				"title": "Management",
+				"allowManagementFrom": "Allow Management From:",
+				"allowTcpFallbackRelay": "Allow TCP Fallback Relay:",
+				"listeningOn": "Listening On:"
+			},
+			"controllerStatus": {
+				"title": "Controller Status",
+				"online": "Online:",
+				"tcpFallbackActive": "TCP Fallback Active:",
+				"version": "Version:"
+			},
+			"controllerConfig": {
+				"danger_zone": "DANGER ZONE",
+				"proceed_with_caution": "<span>Proceed with Caution:</span>",
+				"modification_warning": "Modifying the ZeroTier controller URL affects all users. While this offers flexibility for those wanting a custom controller, be aware of potential disruptions and compatibility issues. Always backup configurations before changes.",
+				"local_zerotier_url": "Local Zerotier URL",
+				"zerotier_secret": "Zerotier Secret",
+				"submit_empty_field_default": "Submit empty field to use the default.",
+				"isUsingEnvVariablesAlert": "The <span>ZT_ADDR or ZT_SECRET</span> environment variable takes precedence and overrides any URL changes made through the UI. To update the respective fields via the UI, you must first remove the ZT_ADDR or ZT_SECRET environment variables."
+			},
+			"generatePlanet": {
+				"updatePlanetWarning": "Updating the planet file will modify the core structure of your ZeroTier network, impacting routes, flexibility, and potentially availability. Proceed with caution, understanding the implications.",
+				"customPlanetInUse": "Custom Planet is currently in use!",
+				"customPortIsInUse": "NOTE! Custom port used",
+				"customPortIsInUseDescription": "You need to add <kbd>ZT_PRIMARY_PORT:port</kbd> to the ZeroTier Docker Compose environment variables.",
+				"downloadPlanetInfo": "Should you need it, the planet file is available for download at the following URL:",
+				"downloadPlanetUrl": "api/planet",
+				"generatePrivateRootLabel": "Generate private root",
+				"generatePrivateRootPlaceholder": "Add a private root to your controller",
+				"commentDescription": "Add a comment for this planet (optionally)",
+				"commentPlaceholder": "Enter Comment",
+				"identityDescription": "Identity (optionally). Default value is the content of current identity.public",
+				"endpointsDescription": "Enter the external IP address of your controller. Use a comma-separated format (IP/PORT) for multiple addresses. For example: '84.17.53.155/9993,2a02:6ea0:d405::/9993'. Ensure these addresses are globally reachable if you want nodes outside your local network to connect.",
+				"endpointsPlaceholder": "external ip/9993",
+				"plRecommend": "Auto-Generate IDs",
+				"birthLabel": "Birth (plBirth)",
+				"birthPlaceholder": "Enter Birth",
+				"idLabel": "ID (plID)",
+				"idPlaceholder": "Enter ID",
+				"buttons": {
+					"editPlanetConfig": "EDIT PLANET CONFIG",
+					"createPlanet": "CREATE PLANET",
+					"uploadConfig": "UPLOAD CONFIG",
+					"updateWorld": "Update World",
+					"downloadPlanetButton": "Download Config",
+					"restoreOriginalPlanetButton": "Restore Original Planet"
+				},
+				"modal": {
+					"noteTitle": "NOTE!",
+					"customPlanetGenerated": "Custom planet has been generated.",
+					"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
+					"restoreOriginalPlanetTitle": "Restore Original Planet",
+					"restoreOriginalPlanetContent": "Are you sure you want to restore the original planet file? Make sure to backup your current planet file if you want to keep the current keys"
+				}
+			},
+			"yes": "Yes",
+			"no": "No"
+		},
+		"organization": {
+			"addOrganization": {
+				"title": "Team Management",
+				"description": "Explore the Organization to begin shaping the way your team works together. Assign roles, invite new members, and oversee basic permissions within your organization. Designed for simplicity and ease of use, this beta feature provides a foundation for your team's collaboration. As we continue to develop and enhance these settings, we invite you to provide feedback to help us refine the experience.",
+				"inputFields": {
+					"label": "Add Organization",
+					"description": "Create a new organization",
+					"organizationName": {
+						"description": "Name of the organization"
+					},
+					"organizationDescription": {
+						"description": "Organization Description (Optional)"
+					}
+				},
+				"deleteOrganizationModal": {
+					"title": "Delete Organization",
+					"description": "Are you sure you want to delete this organization?",
+					"description2": "This action will permanently delete the organization along with all its networks, members, and related data. This action cannot be undone.",
+					"confirmation": "Please confirm that you want to proceed with deleting the organization.",
+					"inputFields": {
+						"organizationName": {
+							"placeholder": "Type the name of the organization to confirm"
+						}
+					}
+				}
+			},
+			"listOrganization": {
+				"organizationName": "Organization Name:",
+				"description": "Description:",
+				"numberOfMembers": "Number of Members:",
+				"pendingInvitations": "Pending Invitations:",
+				"activeWebhooks": "Active Webhooks:"
+			}
+		},
+		"backupRestore": {
+			"title": "Backup & Restore",
+			"description": "This section allows you to create a backup of your server. You can choose to include the database and/or ZeroTier configuration in the backup. The backup will be saved with the specified name and can be downloaded immediately after creation.",
+			"createBackup": {
+				"sectionTitle": "Create Backup",
+				"includeDatabase": "Include Database",
+				"includeZerotier": "Include ZeroTier Folder",
+				"backupName": "Backup Name (optional)",
+				"backupNamePlaceholder": "Leave empty for auto-generated name",
+				"createButton": "Create & Download Backup",
+				"creatingButton": "Creating Backup...",
+				"successToast": "Backup created: {fileName}"
+			},
+			"existingBackups": {
+				"sectionTitle": "Existing Backups",
+				"noBackups": "No backups found. Create your first backup above.",
+				"table": {
+					"filename": "Filename",
+					"size": "Size",
+					"created": "Created",
+					"actions": "Actions",
+					"download": "Download",
+					"restore": "Restore",
+					"delete": "Delete"
+				},
+				"deleteModal": {
+					"title": "Delete Backup",
+					"description": "Are you sure you want to delete this backup? This action cannot be undone."
+				},
+				"restoreModal": {
+					"title": "Restore from Backup",
+					"description": "This will overwrite your current data. Make sure to create a backup first!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
+				},
+				"deleteSuccessToast": "Backup deleted successfully"
+			},
+			"restoreFromFile": {
+				"sectionTitle": "Restore from File",
+				"warning": "Restoring will overwrite your current data. Make sure to create a backup first!",
+				"restoreDatabase": "Restore Database",
+				"restoreZerotier": "Restore ZeroTier Folder",
+				"selectFile": "Select Backup File",
+				"selectedFile": "Selected file: {fileName} ({size})",
+				"restoreButton": "Restore from File",
+				"processingButton": "Processing...",
+				"restoringButton": "Restoring...",
+				"uploadSuccessToast": "Backup uploaded successfully",
+				"restoreSuccessToast": "Restore completed successfully. Please restart the application.",
+				"invalidFileModal": {
+					"title": "Invalid File",
+					"description": "Please select a valid .zip backup file."
+				},
+				"uploadErrorModal": {
+					"title": "Upload Error",
+					"description": "Failed to process file upload. Please try again."
+				},
+				"restoreModal": {
+					"title": "Restore from File",
+					"description": "This will overwrite your current data. Make sure to create a backup first!<br></br>",
+					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
+				}
+			},
+			"restoreCompleteModal": {
+				"title": "Restore Complete",
+				"successMessage": "✅ Backup restoration completed successfully!",
+				"docker": {
+					"description": "Since you're running in Docker, please restart the ZeroTier container to apply the changes:",
+					"command": "sudo docker restart zerotier",
+					"warning": "⚠️ ZeroTier services may be temporarily unavailable during restart."
+				},
+				"host": {
+					"description": "The ZeroTier services have been automatically restarted.",
+					"info": "ℹ️ If you experience any issues, you may need to manually restart the application."
+				},
+				"databaseRestored": "Database has been restored. You may need to refresh the page to see updated data.",
+				"gotItButton": "Got it!"
+			}
+		}
+	},
+	"userSettings": {
+		"tabs": {
+			"account": "Account",
+			"network": "Network",
+			"notification": "Notification",
+			"user": "User"
+		},
+		"account": {
+			"accountSettings": {
+				"title": "Account Settings",
+				"nameLabel": "Name",
+				"emailLabel": "Email",
+				"verifiedBadge": "Verified",
+				"notVerifiedBadge": "Not Verified",
+				"passwordLabel": "Password",
+				"currentPasswordPlaceholder": "Current Password",
+				"newPasswordPlaceholder": "New Password",
+				"repeatNewPasswordPlaceholder": "Repeat New Password",
+				"role": "Role",
+				"passwordChangeRequired": {
+					"title": "Password Change Required",
+					"description": "You must change your password before accessing other parts of the application. Please update your password in the Security section below."
+				}
+			},
+			"totp": {
+				"title": "Two Factor Authentication",
+				"description": "This will enhance the security of user accounts by requiring an additional verification step.",
+				"mfaNote": "Note: 2FA will only work if you sign in with credentials. OAuth will not use this 2FA, even if configured, as it is managed by the OAuth provider.",
+				"notification": {
+					"title": "Two-Factor Authentication (2FA) Not Enabled",
+					"description": "We strongly recommend enabling 2FA to enhance your account security."
+				},
+				"totpActivation": {
+					"title": "Two Factor Authentication",
+					"steps": {
+						"step1": "Password",
+						"step2": "Scan QR code",
+						"step3": "Submit"
+					},
+					"confirmPassword": {
+						"description": "Type in your password"
+					},
+					"displayQrCode": {
+						"description": "Do you need a two-factor authentication app? Download one of the following",
+						"IOS": "IOS-devices",
+						"Android": "Android-devices",
+						"Windows": "Windows-devices",
+						"appDescription": "These apps are recommended, but other authentication apps will also work.",
+						"scanQrDescription": "Scan this QR code with your authenticator app.",
+						"manualEntry": "If you can't scan the QR code, you can manually enter the following:"
+					},
+					"enterTotpCode": {
+						"description": "Verify your TOTP setup",
+						"enterCode": "Enter the code from your authenticator app to verify and enable TOTP."
+					}
+				}
+			},
+			"userDevices": {
+				"connectedDevices": "Connected Devices",
+				"logoutAll": "Logout All",
+				"accessDenied": "Access Denied",
+				"noDevicesFound": "No devices found.",
+				"activeNow": "Active Now",
+				"currentDevice": "Current Device",
+				"logout": "Logout"
+			},
+			"restapi": {
+				"sectionTitle": "API Access Tokens",
+				"description": "This allows you to generate an API token that you can use to authenticate and gain access to our application's API services. With a valid token, you can make requests to the API and interact with the application's features programmatically.",
+				"viewToken": {
+					"title": "Token Information",
+					"name": "Name",
+					"authorizationType": "Authorization Type",
+					"expireAt": "Expire At",
+					"isActive": "Is Active"
+				},
+				"generateToken": {
+					"title": "Rest Api Token",
+					"tokenName": {
+						"label": "Add a meaningful name to your token",
+						"placeholder": "My awesome token"
+					},
+					"tokenAuthorizationType": {
+						"label": "Select API Authorization Type",
+						"placeholder": "Select Auth Type"
+					},
+					"tokenExpireAt": {
+						"label": "Select Token Expiration Date",
+						"placeholder": "Select Date",
+						"values": {
+							"never": "Never",
+							"1day": "1 Day",
+							"10day": "10 Days",
+							"1month": "1 Month",
+							"1year": "1 Year"
+						}
+					}
+				},
+				"buttons": {
+					"submitToken": "Generate Token",
+					"cancle": "Delete Token"
+				},
+				"response": {
+					"title": "Click the token to Copy",
+					"info": "This token will only be shown once. Please copy it now!"
+				},
+				"modals": {
+					"deleteToken": {
+						"title": "Delete Token",
+						"description": "Are you sure you want to delete this token? This cannot be undone."
+					}
+				}
+			},
+			"zerotierCentral": {
+				"title": "Zerotier Central",
+				"description": "Incorporating your ZeroTier Central API will enable you to manage your central networks directly from ZTNET. Upon integrating the key, a new menu will appear in the sidebar for enhanced accessibility and control.<br></br>You can obtain a key from the ZeroTier Central portal. https://my.zerotier.com/account",
+				"apiKeyLabel": "Zerotier Central API Key",
+				"apiUrlLabel": "Zerotier API Url",
+				"apiUrlLabelDescription": "The url of the ZeroTier Central API, Default is https://api.zerotier.com/api/v1"
+			},
+			"accountPreferences": {
+				"title": "Account Preferences",
+				"languageLabel": "Language",
+				"fontSize": "Font Size"
+			},
+			"application": {
+				"title": "Application",
+				"version": "Version",
+				"developerMode": "developer mode"
+			}
+		},
+		"network": {
+			"annotations": {
+				"memberAnotations": "Member Annotations",
+				"showMarkerInTable": "Show marker in Table",
+				"showMarkerInTableDescription": "This will add a circle before the the member name with the anotation color.<br></br>You can still search the anotation if disabled.",
+				"addBackgroundColorInTable": "Add background color in table",
+				"addBackgroundColorInTableDescription": "This will add row background color based on the anotation color.<br></br>You can still search the anotation if disabled."
+			},
+			"memberTable": {
+				"memberTableTitle": "Member Table",
+				"deAuthorizationWarningTitle": "Display warning on member De-Authorization",
+				"deAuthorizationWarningLabel": "Display a confirmation modal to prevent accidental de-authorizations.",
+				"addMemberIdAsNameTitle": "Add the member ID as name uppon registration",
+				"addMemberIdAsNameLabel": "When a network member registers, the member ID (nodeid) will be added as name."
+			},
+			"globalNodeNaming": {
+				"title": "Enable global node naming",
+				"description": "When enabled, this feature will:",
+				"bulletPoint1": "Maintain a consistent name for each node across all networks you manage.",
+				"bulletPoint2": "Update the node's name in all your networks when you rename it in one network.",
+				"bulletPoint3": "Upon member / node registration, check if the member exists in your other networks and use the first name found.",
+				"note": "Note: This feature has priority over \"Add Member ID as Name\". It applies only to networks where you are the author and doesn't affect networks managed by others or organizations."
+			}
+		},
+		"notification": {
+			"devices": "Devices",
+			"newDeviceLogin": {
+				"title": "New device login alert",
+				"description": "Receive an email when a new device signs in to your account for the first time."
+			},
+			"ipAddressChange": {
+				"title": "IP address change alert",
+				"description": "Receive an email when a known device accesses your account from a new IP address."
+			}
+		}
+	},
+	"organization": {
+		"errors": {
+			"getOrgError": "Contact organization admin to make sure you have proper permissions"
+		},
+		"loading": "Loading...",
+		"organizationDashboard": {
+			"header": "Organization Dashboard"
+		},
+		"membersSection": {
+			"title": "Members",
+			"editUser": "Edit User",
+			"role": "Role"
+		},
+		"informationSection": {
+			"title": "Information",
+			"name": "Name:",
+			"created": "Created:",
+			"members": "Members:",
+			"pendingInvitations": "Pending Invitations:"
+		},
+		"networkSection": {
+			"title": "Networks",
+			"noNetworksToShow": "No networks to display."
+		},
+		"leaveOrganization": {
+			"confirmationTitle": "Leave Organization?",
+			"confirmationMessage": "Are you sure you want to leave the organization?",
+			"note": "Note: If you decide to rejoin this organization in the future, an admin will need to send you a new invitation."
+		},
+		"chatSidebar": {
+			"toggleChatLabel": "MSG",
+			"chatHeader": "Organization Messages",
+			"chatInfo": "Everyone in the Organization will be able to see your message.",
+			"messageInputPlaceholder": "Type a message...",
+			"noMessages": "No messages yet."
+		},
+		"logFooter": {
+			"toggleLogLabel": "LOG",
+			"logHeader": "Last 100 Activity Logs",
+			"loading": "Fetching logs..."
+		},
+		"settings": {
+			"invitation": {
+				"title": "Team Expansion: Invite New Members",
+				"description": "Invite more people to your team! You can send invitations by email or find and add people who are already using the platform. <br></br> This makes it easy for your team to grow and include more members.",
+				"pendingInvitations": {
+					"title": "Pending Invitations"
+				},
+				"inviteByEmail": {
+					"title": "Invite by Email",
+					"description": "Invited users who are not currently members of the application will need to register through the provided link in the invitation email. Link is valid for 24 hour.",
+					"emailPlaceholder": "Email Address",
+					"emailDescription": "Enter the email address of the person you want to invite",
+					"selectRoleDescription": "Select the role of the user"
+				},
+				"inviteSiteUser": {
+					"title": "Invite site users",
+					"description": "Before you can add users to your organization, it's important to note that they must already be registered in the application",
+					"inputFields": {
+						"searchUser": {
+							"title": "Search the user you want to add",
+							"placeholder": "Search User"
+						},
+						"userRole": {
+							"title": "Select the role of the user"
+						}
+					}
+				}
+			},
+			"network": {
+				"globalNodeNaming": {
+					"title": "Enable global node naming",
+					"description": "When enabled, this feature will:",
+					"bulletPoints": "Maintain a consistent name for each node across all networks in the organization.\nUpdate the node's name in all networks when you rename it in one network.\nUpon member registration, check if the member exists in your organization and use the first name found.",
+					"note": "Note: This is applicable exclusively to networks within this particular organization."
+				}
+			},
+			"notifications": {
+				"adminNotifications": {
+					"title": "Admin Notifications",
+					"description": "Configure when organization administrators should receive notifications about important events. These notifications help keep admins informed about changes and activities within the organization."
+				},
+				"nodeEvents": {
+					"title": "Node Events",
+					"nodeAdded": {
+						"title": "Node Added",
+						"description": "Notify admins when a new node joins any network in the organization"
+					},
+					"nodeDeleted": {
+						"title": "Node Stashed",
+						"description": "Notify admins when a node is stashed from any network in the organization"
+					},
+					"nodePermanentlyDeleted": {
+						"title": "Node Permanently Deleted",
+						"description": "Notify admins when a node is permanently deleted from any network in the organization"
+					}
+				},
+				"userEvents": {
+					"title": "User Events",
+					"userAdded": {
+						"title": "User Added to Organization",
+						"description": "Notify admins when a new user joins the organization"
+					},
+					"userRemoved": {
+						"title": "User Removed from Organization",
+						"description": "Notify admins when a user leaves or is removed from the organization"
+					},
+					"permissionChanged": {
+						"title": "User Permissions Changed",
+						"description": "Notify admins when a user's role or permissions are modified within the organization"
+					}
+				},
+				"networkEvents": {
+					"title": "Network Events",
+					"networkCreated": {
+						"title": "Network Created",
+						"description": "Notify admins when a new network is created in the organization"
+					},
+					"networkDeleted": {
+						"title": "Network Deleted",
+						"description": "Notify admins when a network is deleted from the organization"
+					}
+				},
+				"emailSettings": {
+					"title": "Email Delivery Settings",
+					"description": "Configure how notifications are delivered to organization administrators.",
+					"enableEmails": {
+						"title": "Enable Email Notifications",
+						"description": "Send notifications via email to all organization administrators"
+					}
+				},
+				"templates": {
+					"editTemplate": "Edit Email Template",
+					"availableTags": "Available Template Tags:",
+					"subject": "Subject",
+					"subjectPlaceholder": "Enter email subject...",
+					"htmlBody": "Email Body (HTML)",
+					"bodyPlaceholder": "Enter email body content...",
+					"saveTemplate": "Save Template",
+					"resetToDefault": "Reset to Default",
+					"sendTest": "Send Test Email",
+					"sendingTest": "Sending...",
+					"successToastTemplateSaved": "Template saved successfully",
+					"successToastTestSent": "Test email sent successfully",
+					"errorFields": "Subject and body are required",
+					"errorSaveFirst": "Please save your changes before sending a test email"
+				}
+			}
+		},
+		"webhook": {
+			"title": "Organization Webhooks",
+			"description": "Empower your organization with our webhook integration, offering real-time notifications for critical events.<br></br>Stay ahead with instant updates, directly piped into your system, ensuring seamless workflow and immediate response capabilities.",
+			"createWebhook": {
+				"editWebhookTitle": "Edit Webhook",
+				"createWebhookTitle": "Create Webhook for Organization <span>{organization}</span>",
+				"webhookName": "Webhook Name",
+				"webhookNameDescription": "This field is for entering the name of the webhook. The name is used to identify the webhook and should be descriptive enough to distinguish it from other webhooks.",
+				"selectWebhookActions": "Select webhook actions",
+				"selectWebhookActionsDescription": "This dropdown menu allows you to choose the specific actions your webhook should perform. Each option represents a different type of action.",
+				"webhookUrl": "Webhook URL ( HTTPS )",
+				"webhookUrlDescription": "This field is for entering the URL where the webhook will send data. It must be a valid and accessible URL endpoint that can receive and process incoming webhook data."
+			},
+			"listWebhooks": {
+				"activeWebhooks": "Active Webhooks",
+				"description": "Description",
+				"url": "URL",
+				"lastDelivery": "Last Delivery",
+				"events": "Events"
+			}
+		}
+	},
+	"errorPages": {
+		"404": {
+			"title": "404",
+			"heading": "Page Not Found",
+			"description": "Oops! The page you're looking for doesn't exist. It might have been moved or deleted.",
+			"goHome": "Go Home"
+		}
+	}
+}
