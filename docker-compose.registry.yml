@@ -1,0 +1,100 @@
+# Docker Compose for VPS Deployment (Registry-based)
+# VPS chỉ pull image từ Docker Hub, không cần source code
+
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: ztnet-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ztnet
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  zerotier:
+    image: zyclonite/zerotier:1.14.2
+    hostname: zerotier
+    container_name: ztnet-zerotier
+    restart: unless-stopped
+    volumes:
+      - zerotier:/var/lib/zerotier-one
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      - app-network
+    ports:
+      - "9993:9993/udp"
+    environment:
+      - ZT_OVERRIDE_LOCAL_CONF=true
+      - ZT_ALLOW_MANAGEMENT_FROM=172.31.255.0/29
+
+  ztnet:
+    # Thay đổi tag này để deploy version khác:
+    # - latest: Build mới nhất từ main branch
+    # - main-abc1234: Build từ commit cụ thể
+    # - v1.0.0: Build từ tag version
+    image: ${DOCKER_IMAGE:-sinamics/ztnet:latest}
+    container_name: ztnet-app
+    working_dir: /app
+    volumes:
+      - zerotier:/var/lib/zerotier-one
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      # Database
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ztnet
+      
+      # NextAuth
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL_INTERNAL: "http://ztnet:3000"
+      
+      # App
+      NODE_ENV: production
+      
+      # ZeroTier (sử dụng local controller)
+      ZT_ADDR: "http://zerotier:9993"
+    networks:
+      - app-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zerotier:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  zerotier:
+    name: ztnet-zerotier-data
+  postgres-data:
+    name: ztnet-postgres-data
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.255.0/29
