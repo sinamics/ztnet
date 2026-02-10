@@ -61,7 +61,7 @@ if (Test-Path $tempDir) {
 New-Item -ItemType Directory -Path $tempDir | Out-Null
 
 # Copy files
-$files = @("docker-compose.custom.yml", "Dockerfile", ".env.production", "package.json", "next.config.mjs", "tailwind.config.cjs", "tsconfig.json")
+$files = @("docker-compose.simple.yml", "Dockerfile.simple", ".env.production", "package.json", "package-lock.json", "next.config.mjs", "tailwind.config.cjs", "tsconfig.json")
 foreach ($file in $files) {
     if (Test-Path $file) {
         Copy-Item $file $tempDir -Force
@@ -101,10 +101,10 @@ if ($dockerCheck -match "NOT_FOUND") {
 }
 
 # Deploy application
-Write-Info "Deploying application..."
-ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.custom.yml down 2>/dev/null || true"
-ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.custom.yml --env-file .env.production build"
-ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.custom.yml --env-file .env.production up -d"
+Write-Info "Deploying ZTNET app only..."
+ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.simple.yml down 2>/dev/null || true"
+ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.simple.yml --env-file .env.production build"
+ssh -p $VpsPort $VpsUser@$VpsHost "cd $DeployPath && docker-compose -f docker-compose.simple.yml --env-file .env.production up -d"
 
 # Wait and check status
 Write-Info "Waiting for services to start..." 

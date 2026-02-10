@@ -1,0 +1,45 @@
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+# Copy package files and prisma schema
+COPY package.json package-lock.json ./
+COPY prisma ./prisma/
+RUN npm ci --omit=dev
+
+# Production image
+FROM node:20-alpine AS runtime
+WORKDIR /app
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy application files
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Copy environment file for build
+COPY .env.production .env
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build the application with environment variables
+RUN DATABASE_URL="postgresql://postgres:postgres123@192.168.1.42:5438/ztnet" \
+    NEXTAUTH_SECRET="your-super-long-secret-key-at-least-32-characters-long-for-production-security" \
+    NEXTAUTH_URL="http://157.245.152.131:3000" \
+    npm run build
+
+# Change ownership
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
+CMD ["dumb-init", "npm", "start"]

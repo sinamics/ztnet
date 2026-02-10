@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ztnet-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.simple
+    container_name: ztnet-app-simple
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - ztnet-network
+
+networks:
+  ztnet-network:
+    driver: bridge
