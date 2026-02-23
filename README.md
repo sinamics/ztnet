@@ -37,6 +37,10 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 
 ### [See Installation Instruction](https://ztnet.network/installation/docker-compose)
 
+## CLI
+
+If you prefer managing ZTNet from the command line, check out [`ztnet-cli`](https://github.com/JKamsker/ztnet-cli).
+
 ## 📷 Images
 View the following images for a visual overview of the ZTNet application:
 <details>
