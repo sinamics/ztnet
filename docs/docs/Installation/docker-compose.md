@@ -174,7 +174,7 @@ Please note that while admins have visibility over registered accounts, they **c
 To update ZTNET, pull the latest image and restart the container.
 
 If you are updating from a earlier version, make sure you set the `NEXTAUTH_URL` environment variable to the canonical URL or IP of your site.
-See Note above for more information about [Innstallation Setup](/installation/docker-compose#setup)
+See Note above for more information about [Installation Setup](/installation/docker-compose#setup)
 ```bash
 docker compose pull
 docker compose up -d
