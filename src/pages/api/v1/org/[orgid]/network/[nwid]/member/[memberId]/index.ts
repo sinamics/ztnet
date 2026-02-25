@@ -163,7 +163,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 						address: memberId,
 						lastSeen: new Date(),
 						creationTime: new Date(),
-						name: databasePayload.name as string || null,
+						name: (databasePayload.name as string) || null,
 						nwid_ref: { connect: { nwid: networkId } },
 					},
 				});
