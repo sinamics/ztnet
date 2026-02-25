@@ -1,5 +1,6 @@
 import { Role, network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { MemberEntity } from "~/types/local/member";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
@@ -108,8 +109,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				organizationId: orgId,
 				minimumRequiredRole: Role.USER,
 			});
-
-			// make sure the member is valid
+			// Verify the network exists and belongs to this organization
 			const network = await prisma.network.findUnique({
 				where: { nwid: networkId, organizationId: orgId },
 				include: {
@@ -119,43 +119,57 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				},
 			});
 
-			if (!network?.networkMembers || network.networkMembers.length === 0) {
-				return res
-					.status(401)
-					.json({ error: "Member or Network not found or access denied." });
+			if (!network) {
+				return res.status(404).json({ error: "Network not found or access denied." });
 			}
+			const dbMember = network.networkMembers?.[0];
 
-			if (Object.keys(databasePayload).length > 0) {
-				// if users click the re-generate icon on IP address
-				await ctx.prisma.network.update({
-					where: {
-						nwid: networkId,
-					},
-					data: {
-						networkMembers: {
-							update: {
-								where: {
-									id_nwid: {
-										id: memberId,
-										nwid: networkId,
+			if (dbMember) {
+				// Member exists in DB, update if there are database fields to update
+				if (Object.keys(databasePayload).length > 0) {
+					await ctx.prisma.network.update({
+						where: {
+							nwid: networkId,
+						},
+						data: {
+							networkMembers: {
+								update: {
+									where: {
+										id_nwid: {
+											id: memberId,
+											nwid: networkId,
+										},
+									},
+									data: {
+										...databasePayload,
 									},
 								},
-								data: {
-									...databasePayload,
+							},
+						},
+						select: {
+							networkMembers: {
+								where: {
+									id: memberId,
 								},
 							},
 						},
-					},
-					select: {
-						networkMembers: {
-							where: {
-								id: memberId,
-							},
-						},
+					});
+				}
+			} else {
+				// Member doesn't exist in DB, create it
+				await ctx.prisma.network_members.create({
+					data: {
+						id: memberId,
+						address: memberId,
+						lastSeen: new Date(),
+						creationTime: new Date(),
+						name: databasePayload.name as string || null,
+						nwid_ref: { connect: { nwid: networkId } },
 					},
 				});
 			}
 
+			// Update the controller (this also creates the member on ZT if it doesn't exist)
 			if (Object.keys(controllerPayload).length > 0) {
 				await ztController.member_update({
 					// @ts-expect-error
@@ -167,14 +181,36 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				});
 			}
 
-			// @ts-expect-error
-			const caller = appRouter.createCaller(ctx);
-			const networkAndMembers = await caller.networkMember.getMemberById({
-				nwid: networkId,
-				id: memberId,
+			// Fetch the latest data from both database and controller
+			const updatedDbMember = await ctx.prisma.network_members.findUnique({
+				where: {
+					id_nwid: {
+						id: memberId,
+						nwid: networkId,
+					},
+				},
 			});
 
-			return res.status(200).json(networkAndMembers);
+			let controllerMember: MemberEntity | null = null;
+			try {
+				controllerMember = await ztController.member_details(
+					// @ts-expect-error
+					ctx,
+					networkId,
+					memberId,
+					false,
+				);
+			} catch {
+				// Member may not exist on controller yet if only DB fields were sent
+			}
+
+			// Merge the database and controller data
+			const mergedMember = {
+				...updatedDbMember,
+				...controllerMember,
+			};
+
+			return res.status(200).json(mergedMember);
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}

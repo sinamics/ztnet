@@ -52,7 +52,8 @@ paths:
   /network/{networkId}/member/{memberId}:
     post:
       summary: Modify a network member
-      description: Modify a network member
+      description: |
+        Modify a network member. This endpoint can also be used to pre-authorize a member that has not yet joined the network by providing their ZeroTier node ID as the `memberId`. If the member does not yet exist in the database, it will be created on the ZeroTier controller and returned in the response.
       parameters:
         - in: path
           name: networkId
