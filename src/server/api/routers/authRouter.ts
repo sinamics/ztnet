@@ -982,6 +982,18 @@ export const authRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Verify the device belongs to the current user before deleting
+			const device = await ctx.prisma.userDevice.findUnique({
+				where: {
+					deviceId: input.deviceId,
+				},
+				select: { userId: true },
+			});
+
+			if (!device || device.userId !== ctx.session.user.id) {
+				throw new Error("Device not found or you do not have permission to delete it.");
+			}
+
 			await ctx.prisma.userDevice.delete({
 				where: {
 					deviceId: input.deviceId,
