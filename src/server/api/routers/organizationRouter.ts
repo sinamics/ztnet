@@ -235,7 +235,12 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.query(async ({ ctx, input }) => {
-			// get all organizations related to the user
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.READ_ONLY,
+			});
+
 			return await ctx.prisma.userOrganizationRole.findUnique({
 				where: {
 					userId_organizationId: {
@@ -952,6 +957,23 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			const isSelfLeave = ctx.session.user.id === input.userId;
+
+			// Self-leave: user must be a member. Kick: caller must be admin.
+			if (isSelfLeave) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					minimumRequiredRole: Role.READ_ONLY,
+				});
+			} else {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: input.organizationId,
+					minimumRequiredRole: Role.ADMIN,
+				});
+			}
+
 			const org = await ctx.prisma.organization.findUnique({
 				where: {
 					id: input.organizationId,
@@ -1477,6 +1499,13 @@ export const organizationRouter = createTRPCRouter({
 		)
 		.mutation(async ({ ctx, input }) => {
 			const { organizationId, invitationId } = input;
+
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
 			const invite = await ctx.prisma.organizationInvitation.deleteMany({
 				where: {
 					organizationId,
