@@ -1667,27 +1667,6 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
-	getOrgWebhooks: protectedProcedure
-		.input(
-			z.object({
-				organizationId: z.string(),
-			}),
-		)
-		.query(async ({ ctx, input }) => {
-			// make sure the user is member of the organization
-			await checkUserOrganizationRole({
-				ctx,
-				organizationId: input.organizationId,
-				minimumRequiredRole: Role.ADMIN,
-			});
-
-			// get all webhooks related to the organization
-			return await ctx.prisma.webhook.findMany({
-				where: {
-					organizationId: input.organizationId,
-				},
-			});
-		}),
 	updateOrganizationSettings: protectedProcedure
 		.input(
 			z.object({
