@@ -8,7 +8,7 @@ import { sendMailWithTemplate } from "~/utils/mail";
 import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
 import type { MemberEntity, CapabilitiesByName } from "~/types/local/member";
 import type { CentralNetwork } from "~/types/central/network";
-import { checkUserOrganizationRole } from "~/utils/role";
+import { checkNetworkAccess } from "~/utils/networkAccess";
 import { type network, type network_members, Role } from "@prisma/client";
 import {
 	HookType,
@@ -355,14 +355,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to update the network
-			if (input.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
 
 			try {
 				// De-authorize all members before deleting the network
@@ -483,6 +477,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -494,14 +491,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const network = await ztController.get_network(ctx, input.nwid, input.central);
 			// prepare update params
 			const updateParams = input.central
@@ -552,6 +541,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -561,14 +553,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			// if central is true, send the request to the central API and return the response
 			const { v4AssignMode } = input.updateParams;
 			// prepare update params
@@ -614,6 +598,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -624,15 +611,6 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 
 			const { note, via } = input.updateParams;
 
@@ -709,6 +687,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			await ctx.prisma.activityLog.create({
 				data: {
 					action: `Changed network ${input.nwid} IP assignment to ${JSON.stringify(
@@ -719,14 +700,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			// generate network params
 			const { ipAssignmentPools, routes, v4AssignMode } = IPv4gen(
 				input.updateParams.routes[0].target,
@@ -777,6 +750,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -787,15 +763,6 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 
 			// Validate the IP ranges
 			for (const ipRange of input.updateParams.ipAssignmentPools) {
@@ -892,6 +859,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -900,15 +870,6 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
-			// Check if the user has permission to update the network
-			if (input.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 
 			const updateParams = input.central
 				? { config: { private: input.updateParams.private } }
@@ -956,6 +917,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -965,14 +929,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -1026,6 +982,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1035,14 +994,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			// if central is true, send the request to the central API and return the response
 			if (input.central) {
 				const updated = await ztController.network_update({
@@ -1112,6 +1063,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1122,15 +1076,6 @@ export const networkRouter = createTRPCRouter({
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 
 			let ztControllerUpdates = {};
 
@@ -1181,6 +1126,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1192,14 +1140,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -1248,6 +1188,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1259,14 +1202,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const updateParams = input.central
 				? { config: { ...input.updateParams } }
 				: { ...input.updateParams };
@@ -1323,6 +1258,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1332,14 +1270,6 @@ export const networkRouter = createTRPCRouter({
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const { flowRoute } = input.updateParams;
 
 			const rules = [];
@@ -1446,6 +1376,9 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
+
 			const DEFAULT_NETWORK_ROUTE_CONFIG = `#
 # This is a default rule set that allows IPv4 and IPv6 traffic but otherwise
 # behaves like a standard Ethernet switch.
@@ -1512,6 +1445,9 @@ accept;`;
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1521,14 +1457,6 @@ accept;`;
 				},
 			});
 
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 			const { nwid, email } = input;
 			try {
 				await sendMailWithTemplate(MailTemplateKey.InviteUser, {
@@ -1558,6 +1486,9 @@ accept;`;
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -1566,15 +1497,6 @@ accept;`;
 					organizationId: input?.organizationId || null, // Use null if organizationId is not provided
 				},
 			});
-
-			// Check if the user has permission to update the network
-			if (input?.organizationId) {
-				await checkUserOrganizationRole({
-					ctx,
-					organizationId: input?.organizationId,
-					minimumRequiredRole: Role.USER,
-				});
-			}
 
 			const notation = await ctx.prisma.notation.upsert({
 				where: {
@@ -1614,6 +1536,9 @@ accept;`;
 			}),
 		)
 		.query(async ({ ctx, input }) => {
+			// Check if the user has permission to access this network
+			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
+
 			return await ctx.prisma.notation.findMany({
 				where: {
 					nwid: input.nwid,

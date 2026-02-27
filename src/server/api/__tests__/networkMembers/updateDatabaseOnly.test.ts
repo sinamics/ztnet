@@ -52,6 +52,15 @@ test("updateDatabaseOnly test", async () => {
 		res: null,
 	});
 
+	// Mock network access check - return network owned by the test user
+	prisma.network.findUnique.mockResolvedValue({
+		authorId: "userid",
+		organizationId: null,
+	} as never);
+
+	// Mock activity log creation
+	prisma.activityLog.create.mockResolvedValue({} as never);
+
 	// @ts-expect-error -- awaiting fix:
 	prisma.network.update.mockResolvedValue(mockOutput);
 

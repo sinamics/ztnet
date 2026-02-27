@@ -782,6 +782,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user is a member of this organization
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.READ_ONLY,
+			});
+
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
 			// Find the latest message in the organization
@@ -1236,6 +1243,13 @@ export const organizationRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// Check if the user has permission to generate invite links for this org
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.organizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
 			const payload = {
 				email: input.email,
 				organizationId: input.organizationId,
@@ -1650,27 +1664,6 @@ export const organizationRouter = createTRPCRouter({
 					description: "",
 					name: input.webhookName,
 					eventTypes: input.hookType,
-				},
-			});
-		}),
-	getOrgWebhooks: protectedProcedure
-		.input(
-			z.object({
-				organizationId: z.string(),
-			}),
-		)
-		.query(async ({ ctx, input }) => {
-			// make sure the user is member of the organization
-			await checkUserOrganizationRole({
-				ctx,
-				organizationId: input.organizationId,
-				minimumRequiredRole: Role.ADMIN,
-			});
-
-			// get all organizations related to the user
-			return await ctx.prisma.webhook.findMany({
-				where: {
-					id: input.organizationId,
 				},
 			});
 		}),
