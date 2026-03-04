@@ -164,4 +164,28 @@ paths:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
-
+    delete:
+      summary: Delete a specific organization network
+      operationId: deleteNetwork
+      parameters:
+        - name: networkId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the network
+        - name: orgid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the organization
+      responses:
+        204:
+          description: Network successfully deleted
+        401:
+          $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        429:
+          $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
+        500:
+          $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'

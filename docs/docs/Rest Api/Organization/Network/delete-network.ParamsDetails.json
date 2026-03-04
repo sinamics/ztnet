@@ -1,0 +1,1 @@
+{"parameters":[{"name":"networkId","in":"path","required":true,"schema":{"type":"string"},"description":"Unique identifier of the network"},{"name":"orgid","in":"path","required":true,"schema":{"type":"string"},"description":"Unique identifier of the organization"}]}
