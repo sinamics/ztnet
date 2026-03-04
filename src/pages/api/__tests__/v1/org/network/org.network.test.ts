@@ -68,7 +68,7 @@ describe("organization network api validation", () => {
 	});
 
 	describe("NetworkById GET tests ", createGenericApiTests(apiNetworkHandler, "GET"));
-	describe("NetworkById PORT tests ", createGenericApiTests(apiNetworkHandler, "POST"));
+	describe("NetworkById POST tests ", createGenericApiTests(apiNetworkHandler, "POST"));
 
 	test("should enforce rate limiting", async () => {
 		for (let i = 0; i < RATE_LIMIT_CONFIG.API_MAX_REQUESTS; i++) {

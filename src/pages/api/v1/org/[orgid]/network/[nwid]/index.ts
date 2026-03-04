@@ -35,6 +35,9 @@ export default async function apiNetworkByIdHandler(
 		case "POST":
 			await POST_network(req, res);
 			break;
+		case "DELETE":
+			await DELETE_network(req, res);
+			break;
 		default:
 			res.status(405).json({ error: "Method Not Allowed" });
 			break;
@@ -170,6 +173,25 @@ export const GET_network = SecuredOrganizationApiRoute(
 			});
 		} catch (cause) {
 			return handleApiErrors(cause, res);
+		}
+	},
+);
+
+export const DELETE_network = SecuredOrganizationApiRoute(
+	{ requiredRole: Role.USER, requireNetworkId: true },
+	async (_req, res, { orgId, networkId, ctx }) => {
+		try {
+			// @ts-expect-error
+			const caller = appRouter.createCaller(ctx);
+
+			await caller.network.deleteNetwork({
+				nwid: networkId,
+				organizationId: orgId,
+			});
+
+			res.status(204).end();
+		} catch (cause) {
+			handleApiErrors(cause, res);
 		}
 	},
 );
