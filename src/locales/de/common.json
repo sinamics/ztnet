@@ -762,7 +762,7 @@
 				"submit_empty_field_default": "Lassen Sie das Feld leer, um die Standardeinstellung zu verwenden.",
 				"isUsingEnvVariablesAlert": "Die Umgebungsvariable <span>ZT_ADDR</span> oder <span>ZT_SECRET</span> hat Vorrang und überschreibt alle über die Benutzeroberfläche vorgenommenen URL-Änderungen. Um die entsprechenden Felder über die Benutzeroberfläche zu aktualisieren, müssen Sie zunächst die Umgebungsvariablen <span>ZT_ADDR</span> oder <span>ZT_SECRET</span> entfernen."
 			},
-			"gene/ratePlanet": {
+			"generatePlanet": {
 				"updatePlanetWarning": "Durch das Aktualisieren der Planet-Datei wird die Kernstruktur Ihres ZeroTier-Netzwerks geändert, was sich auf Routen, Flexibilität und möglicherweise auch auf die Verfügbarkeit auswirkt. Gehen Sie mit Bedacht vor und machen Sie sich die Auswirkungen bewusst.",
 				"customPlanetInUse": "Benutzerdefinierter Planet wird bereits verwendet!",
 				"customPortIsInUse": "Hinweis! Port ist benutzerdefiniert",
