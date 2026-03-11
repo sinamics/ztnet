@@ -7,11 +7,11 @@ export const PostBodySchema = z
 		description: z.string().optional(),
 		authorized: z.boolean().optional(),
 		activeBridge: z.boolean().optional(),
-		capabilities: z.array(z.string()).optional(),
+		capabilities: z.array(z.number()).optional(),
 		ipAssignments: z.array(z.string()).optional(),
 		noAutoAssignIps: z.boolean().optional(),
 		ssoExempt: z.boolean().optional(),
-		tags: z.array(z.string()).optional(),
+		tags: z.array(z.tuple([z.string(), z.string()])).optional(),
 	})
 	.strict();
 
