@@ -68,6 +68,12 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			const updateableFields = {
 				name: { type: "string", destinations: ["database"] },
 				authorized: { type: "boolean", destinations: ["controller"] },
+				activeBridge: { type: "boolean", destinations: ["controller"] },
+				capabilities: { type: "array", destinations: ["controller"] },
+				ipAssignments: { type: "array", destinations: ["controller"] },
+				noAutoAssignIps: { type: "boolean", destinations: ["controller"] },
+				ssoExempt: { type: "boolean", destinations: ["controller"] },
+				tags: { type: "array", destinations: ["controller"] },
 			};
 
 			const databasePayload: Partial<network_members> = {};
