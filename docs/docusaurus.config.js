@@ -46,6 +46,21 @@ const config = {
     locales: ['en'],
   },
   plugins: [
+    function webpackPolyfillPlugin() {
+      return {
+        name: 'webpack-node-polyfills',
+        configureWebpack() {
+          return {
+            resolve: {
+              fallback: {
+                path: require.resolve('path-browserify'),
+                fs: false,
+              },
+            },
+          };
+        },
+      };
+    },
     '@stackql/docusaurus-plugin-structured-data',
     [
       'docusaurus-plugin-openapi-docs',
