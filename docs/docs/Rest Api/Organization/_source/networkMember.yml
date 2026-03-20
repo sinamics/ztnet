@@ -130,32 +130,32 @@ paths:
                 authorized:
                   type: boolean
                   description: Authorization status of the member
-                  activeBridge:
-                    type: boolean
-                    description: Active bridge status
-                  capabilities:
-                    type: integer
-                    description: Capabilities of the member
-                  ipAssignments:
-                    type: array
+                activeBridge:
+                  type: boolean
+                  description: Active bridge status
+                capabilities:
+                  type: integer
+                  description: Capabilities of the member
+                ipAssignments:
+                  type: array
+                  items:
+                    type: string
+                    description: IP assignments of the member
+                noAutoAssignIps:
+                  type: boolean
+                  description: No auto-assign IPs status
+                ssoExempt:
+                  type: boolean
+                  description: SSO exemption status
+                tags:
+                  type: array
+                  items:
+                    type: tuple
                     items:
-                      type: string
-                      description: IP assignments of the member
-                  noAutoAssignIps:
-                    type: boolean
-                    description: No auto-assign IPs status
-                  ssoExempt:
-                    type: boolean
-                    description: SSO exemption status
-                  tags:
-                    type: array
-                    items:
-                      type: tuple
-                      items:
-                        - type: string
-                          description: Tag key
-                        - type: string
-                          description: Tag value
+                      - type: string
+                        description: Tag key
+                      - type: string
+                        description: Tag value
               # required:
               #   - name
               #   - authorized

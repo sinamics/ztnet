@@ -11,7 +11,7 @@ export const PostBodySchema = z
 		ipAssignments: z.array(z.string()).optional(),
 		noAutoAssignIps: z.boolean().optional(),
 		ssoExempt: z.boolean().optional(),
-		tags: z.array(z.tuple([z.string(), z.string()])).optional(),
+		tags: z.array(z.tuple([z.number(), z.number()])).optional(),
 	})
 	.strict();
 
