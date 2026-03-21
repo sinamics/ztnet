@@ -32,7 +32,7 @@ export const postError = function (req: Request, res: Response) {
 	});
 	const mailOptions = {
 		from: '"ztnet installer" <post@ztnet.network>', // sender address
-		to: "post@ztnet.network", // list of receivers
+		to: "noreply@ztnet.network", // list of receivers
 		subject: "ZTNET Installation failed!", // Subject line
 		// text: post_body, // plain text body
 		html: `
