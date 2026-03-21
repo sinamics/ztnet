@@ -6,7 +6,7 @@ export const postError = function (req: Request, res: Response) {
 	const post_body = req.body;
 
 	// Ensure environment variables are set
-	if (!process.env.NODE_MAILER_USER || !process.env.NODE_MAILER_PASSWORD) {
+	if (!process.env.NODE_MAILER_HOST || !process.env.NODE_MAILER_USER || !process.env.NODE_MAILER_PASSWORD) {
 		console.error("NODE_MAILER_USER or NODE_MAILER_PASSWORD is not set.");
 		return;
 	}
@@ -22,7 +22,7 @@ export const postError = function (req: Request, res: Response) {
 	}
 
 	const transporter = nodeMailer.createTransport({
-		host: "smtp.domeneshop.no",
+		host: process.env.NODE_MAILER_HOST,
 		port: 465,
 		secure: true,
 		auth: {
@@ -32,7 +32,7 @@ export const postError = function (req: Request, res: Response) {
 	});
 	const mailOptions = {
 		from: '"ztnet installer" <post@ztnet.network>', // sender address
-		to: "post@ztnet.network", // list of receivers
+		to: "noreply@ztnet.network", // list of receivers
 		subject: "ZTNET Installation failed!", // Subject line
 		// text: post_body, // plain text body
 		html: `
