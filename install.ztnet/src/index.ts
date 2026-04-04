@@ -45,7 +45,7 @@ app.get('/health', getHealthLimiter, getHealth);
 app.get('/beta', getRateLimiter, getBetaInstaller);
 app.get('/', getRateLimiter, getBashInstaller);
 app.post('/post/error', errorRateLimiter, postError);
-app.get('*path', (_, res) => res.download(path.join(__dirname, '..', 'bash/error.sh'), 'error.sh'));
+app.get('*path', getRateLimiter, (_, res) => res.download(path.join(__dirname, '..', 'bash/error.sh'), 'error.sh'));
 
 app.listen(9090, () => {
   console.log('running:: ', process.env.NODE_ENV);
