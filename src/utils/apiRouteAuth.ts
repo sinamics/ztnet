@@ -18,7 +18,7 @@ const ApiRequestSchema = z.object({
 		memberId: z.string().optional(),
 		id: z.string().optional(),
 	}),
-	body: z.any(),
+	body: z.unknown(),
 });
 
 /**

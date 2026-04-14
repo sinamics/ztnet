@@ -11,12 +11,12 @@ export const updateableFieldsMetaSchema = z
 
 // Schema for the context passed to the handler
 export const handlerContextSchema = z.object({
-	body: z.record(z.unknown()),
+	body: z.record(z.string(), z.unknown()),
 	userId: z.string(),
 	networkId: z.string(),
 	memberId: z.string(),
 	ctx: z.object({
-		prisma: z.any(),
+		prisma: z.unknown(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),
@@ -31,7 +31,7 @@ export const deleteHandlerContextSchema = z.object({
 	networkId: z.string(),
 	memberId: z.string(),
 	ctx: z.object({
-		prisma: z.any(),
+		prisma: z.unknown(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),

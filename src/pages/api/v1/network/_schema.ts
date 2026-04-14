@@ -11,7 +11,7 @@ export const createNetworkBodySchema = z
 export const createNetworkContextSchema = z.object({
 	body: createNetworkBodySchema,
 	ctx: z.object({
-		prisma: z.any(),
+		prisma: z.unknown(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),
