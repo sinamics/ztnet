@@ -160,7 +160,11 @@ export function signInCallback(
 		try {
 			// For OAuth providers, look up the user by their stable provider account ID first.
 			// This prevents duplicate accounts when a user renames their email (e.g. Gmail rename).
-			let userExist: (Awaited<ReturnType<typeof prisma.user.findUnique>> & { userGroup?: { expiresAt: Date | null } | null }) | null = null;
+			let userExist:
+				| (Awaited<ReturnType<typeof prisma.user.findUnique>> & {
+						userGroup?: { expiresAt: Date | null } | null;
+				  })
+				| null = null;
 
 			if (account.provider === "oauth" && account.providerAccountId) {
 				const linkedAccount = await prisma.account.findUnique({

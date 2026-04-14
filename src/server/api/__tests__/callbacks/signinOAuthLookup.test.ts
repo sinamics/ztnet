@@ -93,7 +93,11 @@ describe("signInCallback - OAuth providerAccountId lookup", () => {
 			}
 			// For device info lookup
 			if (select?.email) {
-				return Promise.resolve({ email: "new@gmail.com", id: "user-1", firstTime: false });
+				return Promise.resolve({
+					email: "new@gmail.com",
+					id: "user-1",
+					firstTime: false,
+				});
 			}
 			return Promise.resolve(null);
 		});
@@ -145,7 +149,11 @@ describe("signInCallback - OAuth providerAccountId lookup", () => {
 				return Promise.resolve({ ...mockUser });
 			}
 			if (select?.email) {
-				return Promise.resolve({ email: "old@gmail.com", id: "user-1", firstTime: false });
+				return Promise.resolve({
+					email: "old@gmail.com",
+					id: "user-1",
+					firstTime: false,
+				});
 			}
 			return Promise.resolve(null);
 		});
