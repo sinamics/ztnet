@@ -71,7 +71,11 @@ const InviteByMail = ({ organizationId }: Iprops) => {
 				submitHandler={(params) => {
 					return new Promise(() => {
 						return inviteUserByMail({
-							...params,
+							...(params as {
+								organizationId: string;
+								role: "READ_ONLY" | "USER" | "MODERATOR" | "ADMIN";
+								email: string;
+							}),
 							email: (params.email as string)?.trim(),
 						});
 					});

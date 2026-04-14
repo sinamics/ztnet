@@ -34,8 +34,8 @@ export const networkMemberRouter = createTRPCRouter({
 		.input(
 			z.object({
 				central: z.boolean().default(false),
-				id: z.string({ required_error: "No member id provided!" }),
-				nwid: z.string({ required_error: "No network id provided!" }),
+				id: z.string({ error: "No member id provided!" }),
+				nwid: z.string({ error: "No network id provided!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -68,12 +68,12 @@ export const networkMemberRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string().optional(),
 				id: z
-					.string({ required_error: "No member id provided!" })
+					.string({ error: "No member id provided!" })
 					.refine(isValidZeroTierNetworkId, {
 						message:
 							"Invalid ZeroTier network id provided. It should be a 10-digit hexadecimal number.",
 					}),
-				nwid: z.string({ required_error: "No network id provided!" }),
+				nwid: z.string({ error: "No network id provided!" }),
 				central: z.boolean().default(false),
 			}),
 		)
@@ -360,8 +360,8 @@ export const networkMemberRouter = createTRPCRouter({
 	Update: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string({ required_error: "No network id provided!" }),
-				memberId: z.string({ required_error: "No member id provided!" }),
+				nwid: z.string({ error: "No network id provided!" }),
+				memberId: z.string({ error: "No member id provided!" }),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -370,10 +370,10 @@ export const networkMemberRouter = createTRPCRouter({
 					activeBridge: z.boolean().optional(),
 					noAutoAssignIps: z.boolean().optional(),
 					ipAssignments: z
-						.array(z.string({ required_error: "No Ip assignment provided!" }))
+						.array(z.string({ error: "No Ip assignment provided!" }))
 						.optional(),
 					authorized: z
-						.boolean({ required_error: "No boolean value provided!" })
+						.boolean({ error: "No boolean value provided!" })
 						.optional(),
 					capabilities: z.array(z.number()).optional(),
 					tags: z.array(z.tuple([z.number(), z.number()])).optional(),
@@ -643,8 +643,8 @@ export const networkMemberRouter = createTRPCRouter({
 	Tags: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string({ required_error: "No network id provided!" }),
-				memberId: z.string({ required_error: "No member id provided!" }),
+				nwid: z.string({ error: "No network id provided!" }),
+				memberId: z.string({ error: "No member id provided!" }),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 				updateParams: z.object({
@@ -786,8 +786,8 @@ export const networkMemberRouter = createTRPCRouter({
 		.input(
 			z.object({
 				organizationId: z.string().optional(),
-				nwid: z.string({ required_error: "network ID not provided!" }),
-				id: z.string({ required_error: "id not provided!" }),
+				nwid: z.string({ error: "network ID not provided!" }),
+				id: z.string({ error: "id not provided!" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -865,8 +865,8 @@ export const networkMemberRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string().optional(),
 				central: z.boolean().default(false),
-				nwid: z.string({ required_error: "network ID not provided!" }),
-				id: z.string({ required_error: "memberId not provided!" }),
+				nwid: z.string({ error: "network ID not provided!" }),
+				id: z.string({ error: "memberId not provided!" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

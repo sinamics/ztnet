@@ -57,7 +57,7 @@ const AddOrgForm = () => {
 					new Promise((resolve) => {
 						void addOrg(
 							{
-								...params,
+								...(params as { orgName: string; orgDescription?: string }),
 							},
 							{
 								onSuccess: () => {

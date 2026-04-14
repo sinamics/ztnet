@@ -475,7 +475,7 @@ export const authRouter = createTRPCRouter({
 	validateResetPasswordToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -517,7 +517,7 @@ export const authRouter = createTRPCRouter({
 		.input(
 			z.object({
 				email: z
-					.string({ required_error: "Email is required!" })
+					.string({ error: "Email is required!" })
 					.email()
 					.transform((val) => val.trim()),
 			}),
@@ -584,7 +584,7 @@ export const authRouter = createTRPCRouter({
 	changePasswordFromJwt: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 				password: passwordSchema("password does not meet the requirements!"),
 				newPassword: passwordSchema("password does not meet the requirements!"),
 			}),
@@ -700,7 +700,7 @@ export const authRouter = createTRPCRouter({
 	validateEmailVerificationToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {

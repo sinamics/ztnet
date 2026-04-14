@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { PrismaClient } from "@prisma/client";
 
 // Schema for updateable fields
 export const NetworkUpdateSchema = z
@@ -28,7 +29,7 @@ const PostBodySchema = z.record(z.string(), z.unknown());
 export const HandlerContextSchema = z.object({
 	networkId: z.string(),
 	ctx: z.object({
-		prisma: z.unknown(),
+		prisma: z.custom<PrismaClient>(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),

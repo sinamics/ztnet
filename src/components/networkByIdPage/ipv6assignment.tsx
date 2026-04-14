@@ -84,7 +84,10 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 			{
 				updateParams: {
 					ipAssignmentPools: [
-						...(network?.ipAssignmentPools ? network.ipAssignmentPools : []),
+						...((network?.ipAssignmentPools ?? []) as {
+							ipRangeStart: string;
+							ipRangeEnd: string;
+						}[]),
 						{ ipRangeStart: ipRange.rangeStart, ipRangeEnd: ipRange.rangeEnd },
 					],
 				},
@@ -109,7 +112,10 @@ export const Ipv6assignment = ({ central = false, organizationId }: IProp) => {
 
 		advancedIpAssignment({
 			updateParams: {
-				ipAssignmentPools: newIpAssignmentPools,
+				ipAssignmentPools: newIpAssignmentPools as {
+					ipRangeStart: string;
+					ipRangeEnd: string;
+				}[],
 			},
 			organizationId,
 			nwid: query.id as string,
