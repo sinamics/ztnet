@@ -372,9 +372,7 @@ export const networkMemberRouter = createTRPCRouter({
 					ipAssignments: z
 						.array(z.string({ error: "No Ip assignment provided!" }))
 						.optional(),
-					authorized: z
-						.boolean({ error: "No boolean value provided!" })
-						.optional(),
+					authorized: z.boolean({ error: "No boolean value provided!" }).optional(),
 					capabilities: z.array(z.number()).optional(),
 					tags: z.array(z.tuple([z.number(), z.number()])).optional(),
 				}),
