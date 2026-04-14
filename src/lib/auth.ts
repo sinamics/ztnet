@@ -326,6 +326,7 @@ export const auth = betterAuth({
 			enabled:
 				(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING ?? "true").toLowerCase() !==
 				"false",
+			trustedProviders: ["oauth"],
 		},
 	},
 
