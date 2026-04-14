@@ -41,7 +41,7 @@ const OAuthLogin: React.FC<OAuthLoginProps> = ({ oauthEnabled = true }) => {
 			>
 				{loading ? <span className="loading loading-spinner"></span> : null}
 				{t("authPages.form.signInWith", {
-					provider: "Oauth",
+					provider: "OAuth",
 				})}
 			</button>
 		</div>

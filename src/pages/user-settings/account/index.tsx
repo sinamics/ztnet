@@ -1,6 +1,5 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { useSession } from "~/lib/authClient";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
@@ -34,8 +33,6 @@ const Account = () => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
-
-	const { data: session } = useSession();
 
 	const {
 		mutate: userUpdate,
@@ -156,7 +153,7 @@ const Account = () => {
 
 			<MenuSectionDividerWrapper title="SECURITY" className="space-y-5">
 				<InputField
-					isLoading={!session?.user}
+					isLoading={meLoading}
 					label={t("userSettings.account.accountSettings.passwordLabel")}
 					placeholder="******"
 					size="sm"

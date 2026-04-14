@@ -1,8 +1,9 @@
 -- Migration: next-auth -> better-auth (data-preserving)
 -- All operations are DDL renames (instant, no data copy) or safe additions.
--- Wrapped in a transaction so it's all-or-nothing.
+-- Prisma Migrate wraps this in a transaction automatically.
 
-BEGIN;
+-- Ensure gen_random_uuid() is available (built-in on Postgres 13+, needs pgcrypto on older)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- ============================================================
 -- 1. Account table: rename columns, add new ones, drop unused
@@ -102,5 +103,3 @@ WHERE "hash" IS NOT NULL
 AND NOT EXISTS (
   SELECT 1 FROM "Account" WHERE "Account"."userId" = "User"."id" AND "Account"."providerId" = 'credential'
 );
-
-COMMIT;

@@ -10,7 +10,7 @@ import {
 	generateInstanceSecret,
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
-import { parseUA, DEVICE_SALT_COOKIE_NAME, createDeviceCookie } from "~/utils/devices";
+import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -91,7 +91,25 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 		throw new APIError("FORBIDDEN", { message: "account-expired" });
 	}
 
-	// 3. Ensure credential Account record exists (migration from next-auth)
+	// 3. Verify password and track failed attempts
+	const password = (ctx.body as Record<string, unknown>)?.password as string;
+	if (password && user.hash) {
+		const isValid = await compare(password, user.hash);
+		if (!isValid) {
+			await prisma.user.update({
+				where: { id: user.id },
+				data: {
+					failedLoginAttempts: { increment: 1 },
+					lastFailedLoginAttempt: new Date(),
+				},
+			});
+			throw new APIError("UNAUTHORIZED", {
+				message: "Invalid email or password",
+			});
+		}
+	}
+
+	// 4. Ensure credential Account record exists (migration from next-auth)
 	const existingAccount = await prisma.account.findFirst({
 		where: { userId: user.id, providerId: "credential" },
 	});
@@ -106,7 +124,7 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 		});
 	}
 
-	// 4. TOTP 2FA check
+	// 5. TOTP 2FA check
 	if (user.twoFactorEnabled) {
 		const totpCode = ctx.headers?.get("x-totp-code");
 
