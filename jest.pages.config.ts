@@ -16,7 +16,7 @@ const jestConfig: JestConfigWithTsJest = {
     "^.+\\.mjs$": "ts-jest",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "jest-fixed-jsdom",
   modulePathIgnorePatterns: ["<rootDir>/docs/"],
   moduleNameMapper: {
     "^~/(.*)$": "<rootDir>/src/$1",

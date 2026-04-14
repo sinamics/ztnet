@@ -22,6 +22,9 @@ jest.mock("~/lib/authClient", () => ({
 		social: (...args) => mockSignInSocial(...args),
 	},
 }));
+jest.mock("~/server/db", () => ({
+	prisma: {},
+}));
 jest.mock("next/router", () => ({
 	useRouter: jest.fn().mockReturnValue({
 		query: {},
@@ -123,7 +126,7 @@ describe("LoginPage", () => {
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "test@example.com");
 		await userEvent.type(passwordInput, "password123");
@@ -172,7 +175,7 @@ describe("LoginPage", () => {
 		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "test@example.com");
 		await userEvent.click(submitButton);
@@ -210,7 +213,7 @@ describe("LoginPage", () => {
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "invalid@example.com");
 		await userEvent.type(passwordInput, "password");
@@ -229,6 +232,8 @@ describe("LoginPage", () => {
 		}
 
 		// make sure error text is shown
-		expect(screen.getByText(/Code must be exactly 6 digits/i)).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByText(/Code must be exactly 6 digits/i)).toBeInTheDocument();
+		});
 	});
 });

@@ -68,7 +68,7 @@
     "unique-names-generator": "4.7.1",
     "unzipper": "0.12.3",
     "usehooks-ts": "2.9.1",
-    "zod": "3.22.3",
+    "zod": "^4.3.6",
     "zustand": "4.3.6"
   },
   "devDependencies": {
@@ -94,6 +94,7 @@
     "dotenv": "16.0.3",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "30.2.0",
+    "jest-fixed-jsdom": "^0.0.11",
     "jest-mock-extended": "4.0.0",
     "jest-module-name-mapper": "0.1.5",
     "jest-util": "30.2.0",
