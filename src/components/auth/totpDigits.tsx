@@ -26,7 +26,7 @@ export default function TwoFactAuth({
 			setError(null);
 		} catch (err) {
 			if (err instanceof z.ZodError) {
-				const issues = err.issues || err.errors;
+				const issues = err.issues;
 				setError(issues?.[0]?.message || "Invalid code");
 			}
 		}

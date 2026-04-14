@@ -311,7 +311,7 @@ const UserInvitationLink = () => {
 						return new Promise((resolve) => {
 							void generateInvitation(
 								{
-									...params,
+									...(params as { secret: string; expireTime: string }),
 								},
 								{
 									onSuccess: () => {
