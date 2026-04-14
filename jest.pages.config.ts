@@ -29,5 +29,7 @@ const jestConfig: JestConfigWithTsJest = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async () => ({
   ...(await createJestConfig(jestConfig as any)()),
-  transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+  transformIgnorePatterns: [
+    "node_modules/(?!next-intl|better-auth|@better-auth)/",
+  ],
 });

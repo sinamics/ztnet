@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import { GetServerSidePropsContext } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 
 enum ConnectionStatus {
 	Offline = 0,
@@ -59,9 +59,9 @@ jest.mock("../../../utils/api", () => {
 jest.mock("~/components/auth/withAuth", () => ({
 	withAuth: jest.fn().mockImplementation((gssp) => gssp),
 }));
-// Mock the next-auth/react module
-jest.mock("next-auth/react", () => ({
-	getSession: jest.fn(), // Mock getSession as a jest function
+// Mock the authSession module
+jest.mock("~/lib/authSession", () => ({
+	getServerAuthSession: jest.fn(), // Mock getServerAuthSession as a jest function
 }));
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
@@ -80,8 +80,8 @@ describe("NetworkById component", () => {
 			},
 		}));
 
-		// Mock getSession to return a simulated user session
-		(getSession as jest.Mock).mockResolvedValue({
+		// Mock getServerAuthSession to return a simulated user session
+		(getServerAuthSession as jest.Mock).mockResolvedValue({
 			user: {
 				name: "Test User",
 				email: "test@example.com",

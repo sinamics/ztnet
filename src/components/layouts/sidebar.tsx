@@ -1,4 +1,4 @@
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "~/lib/authClient";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -484,7 +484,15 @@ const Sidebar = (): JSX.Element => {
 					<li className="my-px">
 						<a
 							href="#"
-							onClick={() => void signOut({ callbackUrl: "/" })}
+							onClick={() =>
+								void signOut({
+									fetchOptions: {
+										onSuccess: () => {
+											window.location.href = "/auth/login";
+										},
+									},
+								})
+							}
 							className="flex h-10 flex-row items-center rounded-lg px-3 hover:bg-gray-100 hover:text-gray-700"
 						>
 							<span className="flex items-center justify-center text-lg text-red-400">

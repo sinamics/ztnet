@@ -4,7 +4,7 @@ import { test, expect } from "@jest/globals";
 import { type PrismaClient } from "@prisma/client";
 import { type AppRouter, appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
-import { type Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 import { type inferProcedureInput } from "@trpc/server";
 import { type DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { type MemberEntity } from "~/types/local/member";

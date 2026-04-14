@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/authClient";
 import { useTheme } from "next-themes";
 import { useSidebarStore } from "~/utils/store";
 import Link from "next/link";

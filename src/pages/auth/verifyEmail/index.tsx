@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 import { toast } from "react-hot-toast";
 import Head from "next/head";
 import { ErrorCode } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 import { useState, useEffect } from "react";
 
 const VerifyEmail = () => {
@@ -117,7 +117,7 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 	return {
 		props: {
 			auth: session?.user || null,

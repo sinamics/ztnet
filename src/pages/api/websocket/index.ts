@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
 import { Server } from "socket.io";
-import { getAuthOptions } from "~/server/auth";
+import { auth } from "~/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 
 interface SocketIoExtension {
 	socket: {
@@ -13,7 +13,7 @@ interface SocketIoExtension {
 
 export type NextApiResponseWithSocketIo = NextApiResponse & SocketIoExtension;
 const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocketIo) => {
-	const session = await getServerSession(req, res, getAuthOptions(req, res));
+	const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
 	if (!session) {
 		res.status(401).json({ message: "Authorization Error" });
 		return;

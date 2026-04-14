@@ -1,6 +1,6 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/authClient";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";

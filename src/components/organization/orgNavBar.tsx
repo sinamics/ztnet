@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useAsideChatStore, useSocketStore } from "~/utils/store";
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/authClient";
 import { api } from "~/utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";

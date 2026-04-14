@@ -10,9 +10,9 @@ import { PassThrough } from "stream";
 import { execSync } from "child_process";
 import { updateLocalConf } from "~/utils/planet";
 import { ZT_FOLDER } from "~/utils/ztApi";
-import { getServerSession } from "next-auth/next";
 import { WorldConfig } from "~/types/worldConfig";
-import { getAuthOptions } from "~/server/auth";
+import { auth } from "~/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 
 export const config = {
 	api: {
@@ -21,7 +21,7 @@ export const config = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	const session = await getServerSession(req, res, getAuthOptions(req, res));
+	const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
 	if (!session) {
 		res.status(401).json({ message: "Authorization Error" });
 		return;

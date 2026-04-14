@@ -1,6 +1,6 @@
 import { type ReactElement, useState, useEffect, useCallback } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
-import { useSession } from "next-auth/react";
+import { useSession } from "~/lib/authClient";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
@@ -20,7 +20,7 @@ const PasswordChangeRequired = () => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { data: session, update: sessionUpdate } = useSession();
+	const { data: session } = useSession();
 
 	const { mutate: userUpdate } = api.auth.update.useMutation({
 		onError: (error) => {
@@ -31,9 +31,6 @@ const PasswordChangeRequired = () => {
 			if (variables && "newPassword" in variables && variables.newPassword) {
 				handleApiSuccess({ actions: [] });
 				setIsChanging(true);
-
-				// Force session update to refresh requestChangePassword flag
-				await sessionUpdate({ update: {} });
 
 				toast.success(t("authPages.passwordChangeRequired.successMessage"));
 

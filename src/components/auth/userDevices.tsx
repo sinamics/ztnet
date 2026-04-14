@@ -5,7 +5,7 @@ import Monitor from "~/icons/monitor";
 import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "~/lib/authClient";
 import TimeAgo from "react-timeago";
 
 const formatLastActive = (date) => {
@@ -129,7 +129,14 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 								className="btn btn-sm btn-primary"
 								onClick={() => {
 									deleteUserDevice({ deviceId: device.deviceId });
-									isCurrentDevice(device) && signOut().then(() => invalidateUserDevice());
+									isCurrentDevice(device) &&
+										signOut({
+											fetchOptions: {
+												onSuccess: () => {
+													invalidateUserDevice();
+												},
+											},
+										});
 								}}
 							>
 								{t("userSettings.account.userDevices.logout")}

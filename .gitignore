@@ -7,7 +7,7 @@
 /tmp
 # testing
 /coverage
-
+/.claude/skills/
 # database
 /prisma/db.sqlite
 /prisma/db.sqlite-journal

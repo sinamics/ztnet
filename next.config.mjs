@@ -7,6 +7,7 @@
 /** @type {import("next").NextConfig} */
 const config = {
 	reactStrictMode: true,
+	allowedDevOrigins: ["10.0.0.217"],
 	// https://nextjs.org/docs/advanced-features/output-file-tracing
 	output: "standalone",
 	/**
@@ -20,7 +21,6 @@ const config = {
 		// localeDetection: false,
 		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru", "de", "ua"],
 	},
-	trailingSlash: true,
 	async redirects() {
 		return [
 			{

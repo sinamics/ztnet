@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
-import { getAuthOptions } from "~/server/auth";
+import { auth } from "~/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 import { prisma } from "~/server/db";
 
 export default async function handler(
@@ -13,11 +13,9 @@ export default async function handler(
 	}
 
 	try {
-		const session = await getServerSession(
-			request,
-			response,
-			getAuthOptions(request, response),
-		);
+		const session = await auth.api.getSession({
+			headers: fromNodeHeaders(request.headers),
+		});
 		if (!session) {
 			return response.status(401).json({ message: "Not authenticated" });
 		}

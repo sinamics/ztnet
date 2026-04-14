@@ -7,9 +7,9 @@ import Head from "next/head";
 import FormInput from "~/components/auth/formInput";
 import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { useTranslations } from "next-intl";
-import { Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 
 const ForgotPassword = () => {
 	const t = useTranslations();
@@ -162,7 +162,7 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 	if (!session || !("user" in session) || !session.user) {
 		return {
 			props: {

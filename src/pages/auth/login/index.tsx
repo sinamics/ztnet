@@ -1,7 +1,7 @@
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
 import Head from "next/head";
-import { type Session } from "next-auth";
-import { getSession } from "next-auth/react";
+import type { Session } from "~/lib/authTypes";
+import { getServerAuthSession } from "~/lib/authSession";
 import { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
 import OauthLogin from "~/components/auth/oauthLogin";
@@ -113,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 ) => {
 	const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 	const oauthEnabled = !!process.env.OAUTH_ID && !!process.env.OAUTH_SECRET;
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 
 	if (!session || !("user" in session) || !session.user) {
 		return {

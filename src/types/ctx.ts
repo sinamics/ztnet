@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 
 export interface UserContext {
 	session: Session;

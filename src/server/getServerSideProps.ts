@@ -1,10 +1,13 @@
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 import { withAuth } from "~/components/auth/withAuth";
 import { prisma } from "./db";
 import { GetServerSidePropsContext } from "next";
 
 export const getServerSideProps = withAuth(async (context: GetServerSidePropsContext) => {
-	const session = await getSession(context);
+	const session = await getServerAuthSession({
+		req: context.req,
+		res: context.res,
+	});
 	const orgIds = await prisma.organization.findMany({
 		where: {
 			users: {
