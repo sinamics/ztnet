@@ -240,6 +240,10 @@ describe("signInCallback - OAuth providerAccountId lookup", () => {
 	});
 
 	it("should create new user when no linked account and no email match", async () => {
+		// Enable OAuth registration
+		process.env.OAUTH_ALLOW_NEW_USERS = "true";
+		process.env.OAUTH_EXCLUSIVE_LOGIN = "true";
+
 		// No linked account
 		(prisma.account.findUnique as jest.Mock).mockResolvedValue(null);
 
