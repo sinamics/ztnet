@@ -158,12 +158,47 @@ export function signInCallback(
 ) {
 	return async function signIn({ user, account, profile }) {
 		try {
-			let userExist = await prisma.user.findUnique({
-				where: { email: user.email },
-				include: {
-					userGroup: true, // Include user group to check for expiration
-				},
-			});
+			// For OAuth providers, look up the user by their stable provider account ID first.
+			// This prevents duplicate accounts when a user renames their email (e.g. Gmail rename).
+			let userExist: (Awaited<ReturnType<typeof prisma.user.findUnique>> & { userGroup?: { expiresAt: Date | null } | null }) | null = null;
+
+			if (account.provider === "oauth" && account.providerAccountId) {
+				const linkedAccount = await prisma.account.findUnique({
+					where: {
+						provider_providerAccountId: {
+							provider: account.provider,
+							providerAccountId: account.providerAccountId,
+						},
+					},
+					select: { userId: true },
+				});
+
+				if (linkedAccount) {
+					userExist = await prisma.user.findUnique({
+						where: { id: linkedAccount.userId },
+						include: { userGroup: true },
+					});
+
+					// Update the user's email if it changed (e.g. Gmail rename)
+					if (userExist && user.email && userExist.email !== user.email) {
+						await prisma.user.update({
+							where: { id: userExist.id },
+							data: { email: user.email },
+						});
+						userExist.email = user.email;
+					}
+				}
+			}
+
+			// Fall back to email lookup if no linked account was found
+			if (!userExist) {
+				userExist = await prisma.user.findUnique({
+					where: { email: user.email },
+					include: {
+						userGroup: true,
+					},
+				});
+			}
 
 			if (account.provider === "credentials") {
 				if (!userExist) {
