@@ -16,7 +16,7 @@ const jestConfig: JestConfigWithTsJest = {
     "^.+\\.mjs$": "ts-jest",
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  testEnvironment: "jest-environment-jsdom",
+  testEnvironment: "jest-fixed-jsdom",
   modulePathIgnorePatterns: ["<rootDir>/docs/"],
   moduleNameMapper: {
     "^~/(.*)$": "<rootDir>/src/$1",
@@ -29,5 +29,7 @@ const jestConfig: JestConfigWithTsJest = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default async () => ({
   ...(await createJestConfig(jestConfig as any)()),
-  transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+  transformIgnorePatterns: [
+    "node_modules/(?!next-intl|better-auth|@better-auth)/",
+  ],
 });

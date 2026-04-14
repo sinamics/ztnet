@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import handler from "~/pages/api/auth/two-factor/totp/enable";
 import { prisma } from "~/server/db";
-import { getServerSession } from "next-auth";
+import { auth } from "~/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 import { decrypt } from "~/utils/encryption";
 import { authenticator } from "otplib";
 import { ErrorCode } from "~/utils/errorCode";
@@ -15,8 +16,12 @@ jest.mock("~/server/db", () => ({
 	},
 }));
 
-jest.mock("next-auth", () => ({
-	getServerSession: jest.fn(),
+jest.mock("~/lib/auth", () => ({
+	auth: { api: { getSession: jest.fn() } },
+}));
+
+jest.mock("better-auth/node", () => ({
+	fromNodeHeaders: jest.fn(() => new Headers()),
 }));
 
 jest.mock("~/utils/encryption", () => ({
@@ -68,14 +73,14 @@ describe("Enable 2FA Endpoint", () => {
 	});
 
 	it("should return 401 if session is not found", async () => {
-		(getServerSession as jest.Mock).mockResolvedValueOnce(null);
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce(null);
 		await handler(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
 		expect(mockResponse.status).toHaveBeenCalledWith(401);
 		expect(mockResponse.json).toHaveBeenCalledWith({ message: "Not authenticated" });
 	});
 
 	it("should return 500 if session user email is missing", async () => {
-		(getServerSession as jest.Mock).mockResolvedValueOnce({ user: {} });
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({ user: {} });
 		await handler(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
 		expect(mockResponse.status).toHaveBeenCalledWith(500);
 		expect(mockResponse.json).toHaveBeenCalledWith({
@@ -84,7 +89,7 @@ describe("Enable 2FA Endpoint", () => {
 	});
 
 	it("should return 400 if twoFactorEnabled is already true", async () => {
-		(getServerSession as jest.Mock).mockResolvedValueOnce({
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({
 			user: { email: "test@example.com" },
 		});
 		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({
@@ -100,7 +105,7 @@ describe("Enable 2FA Endpoint", () => {
 	});
 
 	it("should return 400 if twoFactorSecret is not set", async () => {
-		(getServerSession as jest.Mock).mockResolvedValueOnce({
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({
 			user: { email: "test@example.com" },
 		});
 		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({
@@ -117,7 +122,7 @@ describe("Enable 2FA Endpoint", () => {
 	});
 
 	it("should return 500 if NEXTAUTH_SECRET is missing", async () => {
-		(getServerSession as jest.Mock).mockResolvedValueOnce({
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({
 			user: { email: "test@example.com" },
 		});
 		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({
@@ -137,7 +142,7 @@ describe("Enable 2FA Endpoint", () => {
 
 	it("should return 400 if TOTP code is incorrect", async () => {
 		process.env.NEXTAUTH_SECRET = "test_secret";
-		(getServerSession as jest.Mock).mockResolvedValueOnce({
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({
 			user: { email: "test@example.com" },
 		});
 		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({
@@ -158,7 +163,7 @@ describe("Enable 2FA Endpoint", () => {
 
 	it("should enable 2FA and return success message", async () => {
 		process.env.NEXTAUTH_SECRET = "test_secret";
-		(getServerSession as jest.Mock).mockResolvedValueOnce({
+		(auth.api.getSession as jest.Mock).mockResolvedValueOnce({
 			user: { email: "test@example.com" },
 		});
 		(prisma.user.findUnique as jest.Mock).mockResolvedValueOnce({

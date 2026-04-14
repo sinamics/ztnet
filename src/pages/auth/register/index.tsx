@@ -1,6 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session } from "next-auth";
-import { getSession } from "next-auth/react";
+import type { Session } from "~/lib/authTypes";
+import { getServerAuthSession } from "~/lib/authSession";
 import Head from "next/head";
 import React, { ReactElement } from "react";
 import { LayoutPublic } from "~/components/layouts/layout";
@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
 
 	const oauthExclusiveLogin = process.env.OAUTH_EXCLUSIVE_LOGIN === "true";
 
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 	// redirect user to login if OAuth exclusive login is enabled and no special invites
 	if (oauthExclusiveLogin && !ztnetInvite && !ztnetOrganizationInvite) {
 		return {

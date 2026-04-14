@@ -2,26 +2,28 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { signIn } from "next-auth/react";
 import LoginPage from "~/pages/auth/login";
 import enTranslation from "~/locales/en/common.json";
 import { api } from "../../../utils/api";
 import { ErrorCode } from "~/utils/errorCode";
-import * as reactHotToast from "react-hot-toast"; // Importing the module for later use
+import * as reactHotToast from "react-hot-toast";
 
-jest.mock("next-auth/react", () => ({
-	signIn: jest.fn(() => Promise.resolve({ ok: true, error: null })),
-	getProviders: jest.fn(() =>
-		Promise.resolve({
-			oauth: {
-				id: "oauth",
-				name: "OAuth",
-				type: "oauth",
-				signinUrl: "https://provider.com/oauth",
-				callbackUrl: "https://yourapp.com/api/auth/callback/oauth",
-			},
-		}),
-	),
+const mockSignInEmail = jest.fn();
+const mockSignInSocial = jest.fn();
+
+jest.mock("~/lib/authClient", () => ({
+	authClient: {
+		signIn: {
+			email: (...args) => mockSignInEmail(...args),
+			social: (...args) => mockSignInSocial(...args),
+		},
+	},
+	signIn: {
+		social: (...args) => mockSignInSocial(...args),
+	},
+}));
+jest.mock("~/server/db", () => ({
+	prisma: {},
 }));
 jest.mock("next/router", () => ({
 	useRouter: jest.fn().mockReturnValue({
@@ -76,19 +78,14 @@ jest.mock("../../../utils/api", () => ({
 		},
 	},
 }));
-// jest.mock("~/server/db", () => ({
-// 	prisma: {
-// 		organization: {
-// 			findMany: jest.fn(),
-// 		},
-// 	},
-// }));
+
 describe("LoginPage", () => {
 	let queryClient: QueryClient;
 
 	beforeEach(() => {
 		queryClient = new QueryClient();
-		(signIn as jest.Mock).mockClear();
+		mockSignInEmail.mockReset();
+		mockSignInSocial.mockReset();
 		jest.clearAllMocks();
 	});
 
@@ -120,44 +117,35 @@ describe("LoginPage", () => {
 	});
 
 	it("handles form submission with valid credentials", async () => {
-		const signInResponse = { ok: true, error: null };
-		(signIn as jest.Mock).mockResolvedValueOnce(signInResponse);
+		mockSignInEmail.mockResolvedValue({
+			data: { user: {}, session: {} },
+			error: null,
+		});
 
 		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "test@example.com");
 		await userEvent.type(passwordInput, "password123");
 		await userEvent.click(submitButton);
 
-		expect(signIn).toHaveBeenCalledWith(
-			"credentials",
-			expect.objectContaining({
-				email: "test@example.com",
-				password: "password123",
-				redirect: false,
-				totpCode: "",
-			}),
-		);
 		await waitFor(() => {
-			expect(signIn).toHaveBeenCalled();
+			expect(mockSignInEmail).toHaveBeenCalledWith(
+				expect.objectContaining({
+					email: "test@example.com",
+					password: "password123",
+				}),
+			);
 		});
-		// // Log the response to verify it
-		// const response = await signIn("credentials", {
-		// 	email: "test@example.com",
-		// 	password: "password123",
-		// 	redirect: false,
-		// 	totpCode: "",
-		// });
-		// console.log(response);
 	});
 
 	it("displays error toast for invalid credentials", async () => {
-		(signIn as jest.Mock).mockResolvedValue({
-			error: ErrorCode.IncorrectUsernamePassword,
+		mockSignInEmail.mockResolvedValue({
+			data: null,
+			error: { message: ErrorCode.IncorrectUsernamePassword },
 		});
 		renderLoginPage();
 
@@ -180,13 +168,14 @@ describe("LoginPage", () => {
 	});
 
 	it("requires password input", async () => {
-		(signIn as jest.Mock).mockResolvedValue({
-			error: ErrorCode.IncorrectUsernamePassword,
+		mockSignInEmail.mockResolvedValue({
+			data: null,
+			error: { message: ErrorCode.IncorrectUsernamePassword },
 		});
 		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "test@example.com");
 		await userEvent.click(submitButton);
@@ -203,24 +192,28 @@ describe("LoginPage", () => {
 
 	it("handles OAuth sign-in", async () => {
 		renderLoginPage();
-		// Wait for the providers to be fetched and the button to be displayed
+		// Wait for the button to be displayed
 		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
 
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(signIn).toHaveBeenCalledWith("oauth", { redirect: false });
+		expect(mockSignInSocial).toHaveBeenCalledWith({
+			provider: "oauth",
+			callbackURL: "/network",
+		});
 	});
 
 	it("Enter 2FA code", async () => {
-		(signIn as jest.Mock).mockResolvedValue({
-			error: ErrorCode.SecondFactorRequired,
+		mockSignInEmail.mockResolvedValue({
+			data: null,
+			error: { message: ErrorCode.SecondFactorRequired },
 		});
 		renderLoginPage();
 
 		const emailInput = screen.getByLabelText(/Email/i);
 		const passwordInput = screen.getByLabelText(/Password/i);
-		const submitButton = screen.getByRole("button", { name: /Sign in/i });
+		const submitButton = screen.getByRole("button", { name: /^Sign in$/i });
 
 		await userEvent.type(emailInput, "invalid@example.com");
 		await userEvent.type(passwordInput, "password");
@@ -239,6 +232,8 @@ describe("LoginPage", () => {
 		}
 
 		// make sure error text is shown
-		expect(screen.getByText(/Code must be exactly 6 digits/i)).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByText(/Code must be exactly 6 digits/i)).toBeInTheDocument();
+		});
 	});
 });

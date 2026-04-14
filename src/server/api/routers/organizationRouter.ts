@@ -824,7 +824,7 @@ export const organizationRouter = createTRPCRouter({
 			});
 		}),
 	getOrgNotifications: protectedProcedure
-		.input(z.object({})) // No input required if fetching for all organizations
+		.input(z.object({ organizationId: z.string().optional() }))
 		.query(async ({ ctx }) => {
 			// Get the current user's ID
 			const userId = ctx.session.user.id;
@@ -1566,8 +1566,8 @@ export const organizationRouter = createTRPCRouter({
 	transferNetworkOwnership: protectedProcedure
 		.input(
 			z.object({
-				organizationId: z.string({ invalid_type_error: "Organization ID is required" }),
-				nwid: z.string({ invalid_type_error: "Network ID is required" }),
+				organizationId: z.string({ error: "Organization ID is required" }),
+				nwid: z.string({ error: "Network ID is required" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

@@ -1,6 +1,6 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session } from "next-auth";
-import { getSession } from "next-auth/react";
+import type { Session } from "~/lib/authTypes";
+import { getServerAuthSession } from "~/lib/authSession";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
 import Link from "next/link";
@@ -54,7 +54,7 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 	if (!session || !("user" in session) || !session.user) {
 		return {
 			props: {

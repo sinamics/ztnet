@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
-import { Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 import { toast } from "react-hot-toast";
 import { type ErrorData, type ZodErrorFieldErrors } from "~/types/errorHandling";
 import Head from "next/head";
@@ -10,7 +10,7 @@ import FormSubmitButtons from "~/components/auth/formSubmitButton";
 import { ErrorCode } from "~/utils/errorCode";
 import { useTranslations } from "next-intl";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 
 const MfaRecoveryReset = () => {
 	const t = useTranslations();
@@ -191,7 +191,7 @@ interface Props {
 export const getServerSideProps: GetServerSideProps<Props> = async (
 	context: GetServerSidePropsContext,
 ) => {
-	const session = await getSession(context);
+	const session = await getServerAuthSession({ req: context.req, res: context.res });
 	if (!session || !("user" in session) || !session.user) {
 		return {
 			props: {

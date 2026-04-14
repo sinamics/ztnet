@@ -214,7 +214,11 @@ const ApiToken = () => {
 					new Promise((resolve) => {
 						void addToken(
 							{
-								...params,
+								...(params as {
+									name: string;
+									daysToExpire: string;
+									apiAuthorizationType: ("PERSONAL" | "ORGANIZATION")[];
+								}),
 							},
 							{
 								onSuccess: (response) => {

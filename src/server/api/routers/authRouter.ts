@@ -357,6 +357,7 @@ export const authRouter = createTRPCRouter({
 				isActive: boolean;
 			}[];
 			UserDevice?: UserDevice[];
+			currentDeviceId?: string;
 		};
 		user.options.localControllerUrlPlaceholder = isRunningInDocker()
 			? "http://zerotier:9993"
@@ -365,6 +366,14 @@ export const authRouter = createTRPCRouter({
 		// Set secret environment status
 		user.options.urlFromEnv = !!process.env.ZT_ADDR;
 		user.options.secretFromEnv = !!process.env.ZT_SECRET;
+
+		// Read current device ID from cookie for device identification
+		const cookieHeader = ctx.req?.headers?.cookie || "";
+		const deviceCookie = cookieHeader
+			.split(";")
+			.find((c) => c.trim().startsWith("next-auth.did-token="));
+		user.currentDeviceId = deviceCookie?.split("=")?.[1]?.trim() || undefined;
+
 		return user;
 	}),
 	update: protectedProcedure
@@ -466,7 +475,7 @@ export const authRouter = createTRPCRouter({
 	validateResetPasswordToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -508,7 +517,7 @@ export const authRouter = createTRPCRouter({
 		.input(
 			z.object({
 				email: z
-					.string({ required_error: "Email is required!" })
+					.string({ error: "Email is required!" })
 					.email()
 					.transform((val) => val.trim()),
 			}),
@@ -575,7 +584,7 @@ export const authRouter = createTRPCRouter({
 	changePasswordFromJwt: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 				password: passwordSchema("password does not meet the requirements!"),
 				newPassword: passwordSchema("password does not meet the requirements!"),
 			}),
@@ -691,7 +700,7 @@ export const authRouter = createTRPCRouter({
 	validateEmailVerificationToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {

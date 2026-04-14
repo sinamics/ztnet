@@ -1,9 +1,13 @@
 import { GetServerSideProps } from "next";
-import { getSession } from "next-auth/react";
+import { getServerAuthSession } from "~/lib/authSession";
 
 export function withAuth(gssp: GetServerSideProps): GetServerSideProps {
 	return async (context) => {
-		const { user } = (await getSession(context)) || {};
+		const session = await getServerAuthSession({
+			req: context.req,
+			res: context.res,
+		});
+		const user = session?.user;
 
 		if (!user) {
 			return {

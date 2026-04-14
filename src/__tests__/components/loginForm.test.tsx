@@ -1,6 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { signIn } from "next-auth/react";
 import { NextIntlClientProvider } from "next-intl";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
@@ -8,8 +7,14 @@ import CredentialsForm from "~/components/auth/credentialsForm";
 import { ErrorCode } from "~/utils/errorCode";
 import enTranslation from "~/locales/en/common.json";
 
-jest.mock("next-auth/react", () => ({
-	signIn: jest.fn(),
+const mockSignInEmail = jest.fn();
+
+jest.mock("~/lib/authClient", () => ({
+	authClient: {
+		signIn: {
+			email: (...args) => mockSignInEmail(...args),
+		},
+	},
 }));
 
 jest.mock("next/router", () => ({
@@ -32,7 +37,7 @@ const renderWithIntl = (ui, { locale = "en", messages = enTranslation } = {}) =>
 
 describe("CredentialsForm", () => {
 	beforeEach(() => {
-		(signIn as jest.Mock).mockReset();
+		mockSignInEmail.mockReset();
 		(useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
 		(toast.error as jest.Mock).mockReset();
 	});
@@ -53,7 +58,7 @@ describe("CredentialsForm", () => {
 	it("submits the form with correct email and password", async () => {
 		renderWithIntl(<CredentialsForm />);
 
-		(signIn as jest.Mock).mockResolvedValue({ ok: true });
+		mockSignInEmail.mockResolvedValue({ data: { user: {}, session: {} }, error: null });
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -63,20 +68,21 @@ describe("CredentialsForm", () => {
 		await userEvent.type(passwordInput, "testpassword");
 		await userEvent.click(submitButton);
 
-		expect(signIn).toHaveBeenCalledWith("credentials", {
-			redirect: false,
-			email: "test@example.com",
-			password: "testpassword",
-			userAgent:
-				"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/26.1.0",
-			totpCode: "",
-		});
+		expect(mockSignInEmail).toHaveBeenCalledWith(
+			expect.objectContaining({
+				email: "test@example.com",
+				password: "testpassword",
+			}),
+		);
 	});
 
 	it("shows TOTP input when second factor is required", async () => {
 		renderWithIntl(<CredentialsForm />);
 
-		(signIn as jest.Mock).mockResolvedValue({ error: ErrorCode.SecondFactorRequired });
+		mockSignInEmail.mockResolvedValue({
+			data: null,
+			error: { message: ErrorCode.SecondFactorRequired },
+		});
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -95,7 +101,10 @@ describe("CredentialsForm", () => {
 		renderWithIntl(<CredentialsForm />);
 
 		const errorMessage = "Invalid credentials";
-		(signIn as jest.Mock).mockResolvedValue({ ok: false, error: errorMessage });
+		mockSignInEmail.mockResolvedValue({
+			data: null,
+			error: { message: errorMessage },
+		});
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -116,7 +125,7 @@ describe("CredentialsForm", () => {
 
 		renderWithIntl(<CredentialsForm />);
 
-		(signIn as jest.Mock).mockResolvedValue({ ok: true });
+		mockSignInEmail.mockResolvedValue({ data: { user: {}, session: {} }, error: null });
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");
@@ -135,7 +144,7 @@ describe("CredentialsForm", () => {
 		renderWithIntl(<CredentialsForm />);
 
 		const errorMessage = "Network error";
-		(signIn as jest.Mock).mockRejectedValue(new Error(errorMessage));
+		mockSignInEmail.mockRejectedValue(new Error(errorMessage));
 
 		const emailInput = screen.getByPlaceholderText("mail@example.com");
 		const passwordInput = screen.getByPlaceholderText("Enter your password");

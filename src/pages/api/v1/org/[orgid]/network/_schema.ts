@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { PrismaClient } from "@prisma/client";
 
 // Schema for the request body when creating a new network
 export const createNetworkBodySchema = z
@@ -12,7 +13,7 @@ export const createNetworkContextSchema = z.object({
 	body: createNetworkBodySchema,
 	orgId: z.string(),
 	ctx: z.object({
-		prisma: z.any(),
+		prisma: z.custom<PrismaClient>(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),

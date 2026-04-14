@@ -349,7 +349,7 @@ export const networkRouter = createTRPCRouter({
 	deleteNetwork: protectedProcedure
 		.input(
 			z.object({
-				nwid: z.string({ invalid_type_error: "Invalid network ID provided" }),
+				nwid: z.string({ error: "Invalid network ID provided" }),
 				central: z.boolean().default(false),
 				organizationId: z.string().optional(),
 			}),

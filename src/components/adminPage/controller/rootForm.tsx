@@ -286,13 +286,22 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					<button
 						onClick={(e) => {
 							e.preventDefault();
-							makeWorld(world, {
-								onSuccess: () => {
-									refetchPlanet();
-
-									if (onClose) onClose();
+							makeWorld(
+								{
+									...world,
+									rootNodes: world.rootNodes.map((node) => ({
+										identity: node.identity || "",
+										endpoints: node.endpoints,
+										comments: node.comments,
+									})),
 								},
-							});
+								{
+									onSuccess: () => {
+										refetchPlanet();
+										if (onClose) onClose();
+									},
+								},
+							);
 						}}
 						className={"btn btn-primary btn-sm"}
 						type="submit"
