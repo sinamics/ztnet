@@ -24,6 +24,7 @@ type CreateContextOptions = {
 	session: Session | null;
 	wss: SocketIOServer;
 	res: NextApiResponse;
+	req: CreateNextContextOptions["req"];
 };
 
 // custom type for the socket server
@@ -53,6 +54,7 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 		wss: opts.wss,
 		prisma,
 		res: opts.res,
+		req: opts.req,
 	};
 };
 
@@ -74,6 +76,7 @@ export const createTRPCContext = async (
 		session,
 		wss,
 		res,
+		req,
 	});
 };
 

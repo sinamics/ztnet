@@ -1,6 +1,5 @@
 import { type ReactElement, useState, useEffect, useCallback } from "react";
 import { type GetServerSideProps, type GetServerSidePropsContext } from "next";
-import { useSession } from "~/lib/authClient";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
@@ -20,7 +19,7 @@ const PasswordChangeRequired = () => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { data: session } = useSession();
+	const { data: me } = api.auth.me.useQuery();
 
 	const { mutate: userUpdate } = api.auth.update.useMutation({
 		onError: (error) => {
@@ -45,18 +44,18 @@ const PasswordChangeRequired = () => {
 	// Prevent navigation away from this page if password change is still required
 	const handleBeforeUnload = useCallback(
 		(e: BeforeUnloadEvent) => {
-			if (session?.user?.requestChangePassword) {
+			if (me?.requestChangePassword) {
 				e.preventDefault();
 				e.returnValue = "";
 			}
 		},
-		[session?.user?.requestChangePassword],
+		[me?.requestChangePassword],
 	);
 
 	// Block navigation attempts
 	useEffect(() => {
 		const handleRouteChange = (url: string) => {
-			if (session?.user?.requestChangePassword && url !== router.asPath) {
+			if (me?.requestChangePassword && url !== router.asPath) {
 				router.events.emit("routeChangeError");
 				throw "Route change aborted. Password change required.";
 			}
@@ -69,7 +68,7 @@ const PasswordChangeRequired = () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			router.events.off("routeChangeStart", handleRouteChange);
 		};
-	}, [session?.user?.requestChangePassword, router, handleBeforeUnload]);
+	}, [me?.requestChangePassword, router, handleBeforeUnload]);
 
 	if (isChanging) {
 		return (

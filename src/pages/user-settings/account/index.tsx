@@ -149,7 +149,7 @@ const Account = () => {
 						<p className="font-medium">
 							{t("userSettings.account.accountSettings.role")}
 						</p>
-						<p className="text-gray-500">{session?.user?.role}</p>
+						<p className="text-gray-500">{me?.role}</p>
 					</div>
 				</div>
 			</MenuSectionDividerWrapper>

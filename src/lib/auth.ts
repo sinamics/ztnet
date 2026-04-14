@@ -34,7 +34,7 @@ function buildGenericOAuthPlugin() {
 					discoveryUrl: process.env.OAUTH_WELLKNOWN || undefined,
 					authorizationUrl: process.env.OAUTH_AUTHORIZATION_URL || undefined,
 					tokenUrl: process.env.OAUTH_ACCESS_TOKEN_URL || undefined,
-					userinfoUrl: process.env.OAUTH_USER_INFO || undefined,
+					userInfoUrl: process.env.OAUTH_USER_INFO || undefined,
 					scopes: (process.env.OAUTH_SCOPE || "openid profile email").split(" "),
 					mapProfileToUser: (profile) => ({
 						name:
@@ -56,7 +56,7 @@ function buildGenericOAuthPlugin() {
 const beforeHook = createAuthMiddleware(async (ctx) => {
 	if (ctx.path !== "/sign-in/email") return;
 
-	const email = ctx.body?.email;
+	const email = (ctx.body as Record<string, unknown>)?.email as string;
 	if (!email) return;
 
 	const user = await prisma.user.findFirst({

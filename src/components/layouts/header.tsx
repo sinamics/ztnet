@@ -1,4 +1,3 @@
-import { useSession } from "~/lib/authClient";
 import { useTheme } from "next-themes";
 import { useSidebarStore } from "~/utils/store";
 import Link from "next/link";
@@ -21,7 +20,7 @@ const Themes = [
 
 const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 	(props, ref) => {
-		const session = useSession();
+		const { data: me } = api.auth.me.useQuery();
 		const { theme, setTheme } = useTheme();
 		const { toggle, open } = useSidebarStore();
 
@@ -96,10 +95,10 @@ const Header = forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
 						</div>
 						<span className="ml-2 flex flex-col justify-center">
 							<span className="truncate font-semibold leading-none tracking-wide">
-								{session.data?.user?.name}
+								{me?.name}
 							</span>
 							<span className="mt-1 w-20 truncate text-xs leading-none text-gray-500">
-								{session.data?.user?.role}
+								{me?.role}
 							</span>
 						</span>
 						{/* </a> */}

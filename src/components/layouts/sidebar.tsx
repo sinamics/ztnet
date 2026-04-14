@@ -1,4 +1,4 @@
-import { signOut, useSession } from "~/lib/authClient";
+import { signOut } from "~/lib/authClient";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +30,6 @@ const Sidebar = (): JSX.Element => {
 	const { open, setOpenState } = useSidebarStore();
 	const { setBulkNewMessages } = useSocketStore();
 	const { hasNewMessages } = useSocketStore();
-	const { data: session } = useSession();
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
@@ -225,7 +224,7 @@ const Sidebar = (): JSX.Element => {
 							})}
 						</>
 					) : null}
-					{session?.user?.role === "ADMIN" ? (
+					{me?.role === "ADMIN" ? (
 						<>
 							<li className="my-px">
 								<span className="my-4 flex px-4 text-sm font-medium uppercase text-primary ">

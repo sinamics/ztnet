@@ -357,6 +357,7 @@ export const authRouter = createTRPCRouter({
 				isActive: boolean;
 			}[];
 			UserDevice?: UserDevice[];
+			currentDeviceId?: string;
 		};
 		user.options.localControllerUrlPlaceholder = isRunningInDocker()
 			? "http://zerotier:9993"
@@ -365,6 +366,14 @@ export const authRouter = createTRPCRouter({
 		// Set secret environment status
 		user.options.urlFromEnv = !!process.env.ZT_ADDR;
 		user.options.secretFromEnv = !!process.env.ZT_SECRET;
+
+		// Read current device ID from cookie for device identification
+		const cookieHeader = ctx.req?.headers?.cookie || "";
+		const deviceCookie = cookieHeader
+			.split(";")
+			.find((c) => c.trim().startsWith("next-auth.did-token="));
+		user.currentDeviceId = deviceCookie?.split("=")?.[1]?.trim() || undefined;
+
 		return user;
 	}),
 	update: protectedProcedure

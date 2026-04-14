@@ -5,7 +5,7 @@ import Monitor from "~/icons/monitor";
 import Tablet from "~/icons/tablet";
 import { api } from "~/utils/api";
 import { useTranslations } from "next-intl";
-import { signOut, useSession } from "~/lib/authClient";
+import { signOut } from "~/lib/authClient";
 import TimeAgo from "react-timeago";
 
 const formatLastActive = (date) => {
@@ -65,8 +65,7 @@ const DeviceIcon = ({ deviceType }: { deviceType: string }) => {
 const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 	const t = useTranslations();
 
-	const { refetch } = api.auth.me.useQuery();
-	const { data: session } = useSession();
+	const { data: me, refetch } = api.auth.me.useQuery();
 	const { mutate: deleteUserDevice, isLoading: deleteLoading } =
 		api.auth.deleteUserDevice.useMutation({
 			onSuccess: () => {
@@ -85,7 +84,7 @@ const ListUserDevices: React.FC<{ devices: UserDevice[] }> = ({ devices }) => {
 		}
 	};
 
-	const currentDeviceId = session?.user?.deviceId;
+	const currentDeviceId = me?.currentDeviceId;
 
 	const isCurrentDevice = (device: UserDevice) => {
 		return device?.deviceId === currentDeviceId;
