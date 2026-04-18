@@ -533,7 +533,10 @@ export const local_network_and_members = async (
 		}
 
 		return {
-			network,
+			network: {
+				...network,
+				nwid: network.id,
+			},
 			members: membersArr,
 		};
 	} catch (error) {
