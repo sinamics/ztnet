@@ -34,6 +34,12 @@ const sidebar: SidebarsConfig = {
           label: "Update a specific organization network",
           className: "api-method post",
         },
+        {
+          type: "doc",
+          id: "Rest Api/Organization/Network/delete-network",
+          label: "Delete a specific organization network",
+          className: "api-method delete",
+        },
       ],
     },
   ],
