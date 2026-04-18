@@ -148,7 +148,7 @@ UpdateNetworkShema:
           via:
             type: string
             nullable: true
-    flowRules:
+    flowRule:
       type: string
       default: "drop not ethertype ipv4 and not ethertype arp and not ethertype ipv6; accept;"
     v4AssignMode:
