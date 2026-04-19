@@ -43,5 +43,4 @@ yarn-error.log*
 zeronsd.sh*
 
 # Claude
-CLAUDE.md
-settings.local.json
+.claude/
