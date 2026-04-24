@@ -1,8 +1,8 @@
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
+import { authClient } from "~/lib/authClient";
 import { Organization, Role, User } from "@prisma/client";
 import FormSubmitButtons from "./formSubmitButton";
 import FormInput from "./formInput";
@@ -86,13 +86,12 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 				// get the first org id
 				const orgId = user?.memberOfOrgs?.[0]?.id;
 				void (async () => {
-					const result = await signIn("credentials", {
-						redirect: false,
-						userAgent: navigator.userAgent,
-						...formData,
+					const { data } = await authClient.signIn.email({
+						email: formData.email,
+						password: formData.password,
 					});
 					setLoading(false);
-					if (!result.error) {
+					if (data) {
 						// if the user is a member of an organization, redirect to the organization
 						if (orgId) return await router.push(`/organization/${orgId}`);
 

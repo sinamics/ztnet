@@ -49,7 +49,7 @@ export const mfaAuthRouter = createTRPCRouter({
 	mfaValidateToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.query(async ({ ctx, input }) => {
@@ -98,7 +98,7 @@ export const mfaAuthRouter = createTRPCRouter({
 		.input(
 			z.object({
 				email: z
-					.string({ required_error: "Email is required!" })
+					.string({ error: "Email is required!" })
 					.email()
 					.transform((val) => val.trim()),
 			}),
@@ -166,10 +166,10 @@ export const mfaAuthRouter = createTRPCRouter({
 	mfaResetValidation: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
-				email: z.string({ required_error: "Email is required!" }),
-				password: z.string({ required_error: "Password is required!" }),
-				recoveryCode: z.string({ required_error: "Recovery code is required!" }),
+				token: z.string({ error: "Token is required!" }),
+				email: z.string({ error: "Email is required!" }),
+				password: z.string({ error: "Password is required!" }),
+				recoveryCode: z.string({ error: "Recovery code is required!" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -272,7 +272,7 @@ export const mfaAuthRouter = createTRPCRouter({
 	validateRecoveryToken: publicProcedure
 		.input(
 			z.object({
-				token: z.string({ required_error: "Token is required!" }),
+				token: z.string({ error: "Token is required!" }),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

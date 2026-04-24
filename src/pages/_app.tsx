@@ -1,6 +1,4 @@
 import { type AppType } from "next/app";
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { useState, type ReactElement, type ReactNode } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
@@ -35,9 +33,9 @@ const fontSizeOptions = {
 	"Extra Large": "text-[1.5rem]",
 };
 
-const App: AppType<{ session: Session | null }> = ({
+const App: AppType<{ session: unknown }> = ({
 	Component,
-	pageProps: { session, messages, ...pageProps },
+	pageProps: { messages, ...pageProps },
 }: AppPropsWithLayout) => {
 	const { asPath, locale, push } = useRouter();
 	const [isClient, setIsClient] = useState(false);
@@ -119,9 +117,7 @@ const App: AppType<{ session: Session | null }> = ({
 							},
 						}}
 					/>
-					<SessionProvider session={session}>
-						{getLayout(<Component {...pageProps} />)}
-					</SessionProvider>
+					{getLayout(<Component {...pageProps} />)}
 				</NextIntlClientProvider>
 			</ThemeProvider>
 		</main>

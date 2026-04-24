@@ -1,8 +1,8 @@
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { api } from "~/utils/api";
 import { useTrpcApiErrorHandler } from "~/hooks/useTrpcApiHandler";
+import { authClient } from "~/lib/authClient";
 import FormInput from "./formInput";
 import FormSubmitButtons from "./formSubmitButton";
 import { useTranslations } from "next-intl";
@@ -45,14 +45,13 @@ const RegisterForm: React.FC = () => {
 		register(formData, {
 			onSuccess: () =>
 				void (async () => {
-					const result = await signIn("credentials", {
-						redirect: false,
-						userAgent: navigator.userAgent,
-						...formData,
+					const { data } = await authClient.signIn.email({
+						email: formData.email,
+						password: formData.password,
 					});
 					setLoading(false);
 
-					if (!result.error) {
+					if (data) {
 						await router.push("/network");
 					}
 				})(),

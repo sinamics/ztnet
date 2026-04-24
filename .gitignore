@@ -7,7 +7,7 @@
 /tmp
 # testing
 /coverage
-
+/.claude/skills/
 # database
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
@@ -43,5 +43,4 @@ yarn-error.log*
 zeronsd.sh*
 
 # Claude
-CLAUDE.md
-settings.local.json
+.claude/

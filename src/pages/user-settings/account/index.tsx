@@ -1,6 +1,5 @@
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
-import { useSession } from "next-auth/react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import InputField from "~/components/elements/inputField";
@@ -35,9 +34,11 @@ const Account = () => {
 
 	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
 
-	const { data: session, update: sessionUpdate } = useSession();
-
-	const { mutate: userUpdate, error: userError } = api.auth.update.useMutation({
+	const {
+		mutate: userUpdate,
+		mutateAsync: userUpdateAsync,
+		error: userError,
+	} = api.auth.update.useMutation({
 		onError: handleApiError,
 		onSuccess: handleApiSuccess({ actions: [] }),
 	});
@@ -87,22 +88,26 @@ const Account = () => {
 			>
 				<InputField
 					label={t("userSettings.account.accountSettings.nameLabel")}
-					isLoading={!session?.user}
+					isLoading={meLoading}
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					fields={[
 						{
 							name: "name",
 							type: "text",
-							placeholder: session?.user?.name,
-							value: session?.user?.name,
+							placeholder: me?.name,
+							value: me?.name,
 						},
 					]}
-					submitHandler={async (params) => await sessionUpdate({ update: { ...params } })}
+					submitHandler={async (params) => {
+						await userUpdateAsync({ ...params });
+						await refetchMe();
+						return true;
+					}}
 				/>
 				<InputField
 					label={t("userSettings.account.accountSettings.emailLabel")}
-					isLoading={!session?.user}
+					isLoading={meLoading}
 					rootFormClassName="space-y-3 w-6/6 sm:w-3/6"
 					size="sm"
 					toolTip={
@@ -126,13 +131,14 @@ const Account = () => {
 						{
 							name: "email",
 							type: "email",
-							placeholder: session?.user?.email,
-							value: session?.user?.email,
+							placeholder: me?.email,
+							value: me?.email,
 						},
 					]}
 					submitHandler={async (params) => {
-						await sessionUpdate({ update: { ...params } });
-						return refetchMe();
+						await userUpdateAsync({ ...params });
+						await refetchMe();
+						return true;
 					}}
 				/>
 				<div className="flex justify-between">
@@ -140,14 +146,14 @@ const Account = () => {
 						<p className="font-medium">
 							{t("userSettings.account.accountSettings.role")}
 						</p>
-						<p className="text-gray-500">{session?.user?.role}</p>
+						<p className="text-gray-500">{me?.role}</p>
 					</div>
 				</div>
 			</MenuSectionDividerWrapper>
 
 			<MenuSectionDividerWrapper title="SECURITY" className="space-y-5">
 				<InputField
-					isLoading={!session?.user}
+					isLoading={meLoading}
 					label={t("userSettings.account.accountSettings.passwordLabel")}
 					placeholder="******"
 					size="sm"

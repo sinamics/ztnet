@@ -1,8 +1,8 @@
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode, getErrorMessage } from "~/utils/errorCode";
+import { authClient } from "~/lib/authClient";
 import Link from "next/link";
 import TOTPInput from "./totpInput";
 import FormSubmitButtons from "./formSubmitButton";
@@ -39,30 +39,35 @@ const CredentialsForm: React.FC = () => {
 		setLoading((prev) => ({ ...prev, credentials: true }));
 
 		try {
-			const response = await signIn("credentials", {
-				redirect: false,
-				totpCode,
-				userAgent: navigator.userAgent,
-				...formData,
+			const { data, error } = await authClient.signIn.email({
+				email: formData.email,
+				password: formData.password,
+				fetchOptions: {
+					headers: {
+						...(totpCode ? { "x-totp-code": totpCode } : {}),
+						"x-user-agent": navigator.userAgent,
+					},
+				},
 			});
 
-			if (response.ok) {
+			if (data) {
 				await router.push("/network");
 				return;
 			}
 
-			switch (response?.error) {
+			const errorMessage = error?.message || "";
+
+			switch (errorMessage) {
 				case ErrorCode.SecondFactorRequired:
 					setShowOTP(true);
 					break;
 				default: {
-					// Check if the error is a known ErrorCode, otherwise use the raw error message
-					const errorMessage = Object.values(ErrorCode).includes(
-						response.error as ErrorCode,
+					const displayMessage = Object.values(ErrorCode).includes(
+						errorMessage as ErrorCode,
 					)
-						? getErrorMessage(response.error as ErrorCode)
-						: response.error;
-					toast.error(errorMessage, { duration: 10000 });
+						? getErrorMessage(errorMessage as ErrorCode)
+						: errorMessage;
+					toast.error(displayMessage, { duration: 10000 });
 					break;
 				}
 			}

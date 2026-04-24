@@ -1,14 +1,13 @@
-import { useSession } from "next-auth/react";
+import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export const usePasswordChangeEnforcement = () => {
-	const { data: session, status } = useSession();
+	const { data: me, isLoading } = api.auth.me.useQuery();
 	const router = useRouter();
 
 	useEffect(() => {
-		// Only run when session is loaded and user is authenticated
-		if (status !== "authenticated" || !session?.user) return;
+		if (isLoading || !me) return;
 
 		// Skip if already on the password change required page
 		if (router.pathname === "/auth/password-change-required") return;
@@ -17,21 +16,20 @@ export const usePasswordChangeEnforcement = () => {
 		if (router.pathname.startsWith("/auth/")) return;
 
 		// Check if user needs to change password
-		if (session.user.requestChangePassword) {
-			// Immediately replace the current route to prevent back navigation
+		if (me.requestChangePassword) {
 			void router.replace("/auth/password-change-required");
 		}
-	}, [session, status, router]);
+	}, [me, isLoading, router]);
 
 	// Block rendering of content if password change is required
 	const shouldBlockContent =
-		status === "authenticated" &&
-		session?.user?.requestChangePassword &&
+		!isLoading &&
+		!!me?.requestChangePassword &&
 		router.pathname !== "/auth/password-change-required";
 
 	return {
 		shouldBlockContent,
-		needsPasswordChange: session?.user?.requestChangePassword || false,
-		isLoading: status === "loading",
+		needsPasswordChange: me?.requestChangePassword || false,
+		isLoading,
 	};
 };

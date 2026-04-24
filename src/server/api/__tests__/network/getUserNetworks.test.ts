@@ -1,6 +1,6 @@
 import { test, expect } from "@jest/globals";
 import { appRouter } from "../../root";
-import { type Session } from "next-auth";
+import type { Session } from "~/lib/authTypes";
 import { PrismaClient } from "@prisma/client";
 import { type PartialDeep } from "type-fest";
 import { MemberCounts } from "~/types/local/member";

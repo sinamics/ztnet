@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { PrismaClient } from "@prisma/client";
 
 // Schema for updateable fields
 export const NetworkUpdateSchema = z
@@ -16,19 +17,19 @@ export const NetworkUpdateSchema = z
 			.optional(),
 		ipAssignmentPools: z.array(z.unknown()).optional(),
 		routes: z.array(z.unknown()).optional(),
-		v4AssignMode: z.record(z.unknown()).optional(),
-		v6AssignMode: z.record(z.unknown()).optional(),
+		v4AssignMode: z.record(z.string(), z.unknown()).optional(),
+		v6AssignMode: z.record(z.string(), z.unknown()).optional(),
 	})
 	.strict();
 
 // Schema for POST request body
-const PostBodySchema = z.record(z.unknown());
+const PostBodySchema = z.record(z.string(), z.unknown());
 
 // Schema for the context passed to the handler
 export const HandlerContextSchema = z.object({
 	networkId: z.string(),
 	ctx: z.object({
-		prisma: z.any(),
+		prisma: z.custom<PrismaClient>(),
 		session: z.object({
 			user: z.object({
 				id: z.string(),

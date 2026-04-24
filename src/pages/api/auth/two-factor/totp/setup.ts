@@ -4,8 +4,8 @@ import qrcode from "qrcode";
 import { prisma } from "~/server/db";
 import { compare } from "bcryptjs";
 import { ErrorCode } from "~/utils/errorCode";
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "~/server/auth";
+import { auth } from "~/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 import {
 	encrypt,
 	generateInstanceSecret,
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		return res.status(405).json({ message: "Method not allowed" });
 	}
 
-	const session = await getServerSession(req, res, getAuthOptions(req, res));
+	const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
 	if (!session) {
 		return res.status(401).json({ error: ErrorCode.InternalServerError });
 	}

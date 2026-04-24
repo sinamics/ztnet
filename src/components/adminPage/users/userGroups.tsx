@@ -120,7 +120,7 @@ const GroupLabel = ({ groups }: GroupLabelProps) => {
 										submitHandler={(params) =>
 											void updateGroup({
 												id: group.id,
-												...params,
+												...(params as { groupName: string; maxNetworks: string }),
 											})
 										}
 									/>
@@ -302,7 +302,7 @@ const UserGroups = () => {
 						new Promise((resolve) => {
 							void addGroup(
 								{
-									...params,
+									...(params as { groupName: string; maxNetworks: string }),
 								},
 								{
 									onSuccess: () => {

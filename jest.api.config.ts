@@ -47,5 +47,7 @@ const createJestConfig = nextJest(nextConfig);
 export default async () => ({
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	...(await createJestConfig(jestConfig as any)()),
-	transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+	transformIgnorePatterns: [
+		"node_modules/(?!next-intl|better-auth|@better-auth)/",
+	],
 });
