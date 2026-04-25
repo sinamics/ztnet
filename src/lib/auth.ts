@@ -59,6 +59,49 @@ export function isOAuthAllowNewUsers(): boolean {
 	return process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
 }
 
+/**
+ * Maps an OAuth provider's profile object into ztnet's user shape. The fallback
+ * chain matters because the documented providers expose different field names:
+ * - GitHub uses `login` for username, `email` may be null on private profiles
+ * - Discord/Authentik use `username`
+ * - Keycloak/Azure AD use `name`
+ * - Profile pictures live under `picture` (OIDC), `avatar_url` (GitHub), or
+ *   `image_url` (some providers).
+ *
+ * Exported for unit testing.
+ */
+export function mapOAuthProfileToUser(profile: Record<string, unknown>): {
+	name: string;
+	email: string | undefined;
+	image: string | undefined;
+} {
+	const email = typeof profile.email === "string" ? (profile.email as string) : undefined;
+	const pickStr = (key: string): string | undefined =>
+		typeof profile[key] === "string" ? (profile[key] as string) : undefined;
+	return {
+		name:
+			pickStr("name") ||
+			pickStr("login") ||
+			pickStr("username") ||
+			email?.split("@")[0] ||
+			"OAuth User",
+		email,
+		image: pickStr("picture") || pickStr("avatar_url") || pickStr("image_url"),
+	};
+}
+
+/**
+ * Splits OAUTH_SCOPE into the array that better-auth's genericOAuth expects.
+ * Defaults to the OIDC trio. Trims whitespace and drops empty tokens so that
+ * `OAUTH_SCOPE="  openid  profile email "` doesn't yield empty strings.
+ *
+ * Exported for unit testing.
+ */
+export function parseOAuthScopes(): string[] {
+	const raw = process.env.OAUTH_SCOPE || "openid profile email";
+	return raw.split(/\s+/).filter(Boolean);
+}
+
 function buildGenericOAuthPlugin() {
 	if (!process.env.OAUTH_ID || !process.env.OAUTH_SECRET) {
 		return [];
@@ -75,7 +118,7 @@ function buildGenericOAuthPlugin() {
 					authorizationUrl: process.env.OAUTH_AUTHORIZATION_URL || undefined,
 					tokenUrl: process.env.OAUTH_ACCESS_TOKEN_URL || undefined,
 					userInfoUrl: process.env.OAUTH_USER_INFO || undefined,
-					scopes: (process.env.OAUTH_SCOPE || "openid profile email").split(" "),
+					scopes: parseOAuthScopes(),
 					// PKCE was enforced under next-auth (`checks: ["state","pkce"]`).
 					// better-auth's genericOAuth plugin defaults pkce to false, so we re-enable it.
 					pkce: true,
@@ -84,26 +127,24 @@ function buildGenericOAuthPlugin() {
 					// would otherwise be told to redirect through better-auth's own
 					// `/oauth2/callback/oauth` path. See `oauthCallbackURL` above.
 					redirectURI: oauthCallbackURL(),
-					mapProfileToUser: (profile) => ({
-						name:
-							profile.name ||
-							profile.login ||
-							profile.username ||
-							profile.email?.split("@")[0] ||
-							"OAuth User",
-						email: profile.email,
-						image: profile.picture || profile.avatar_url || profile.image_url,
-					}),
+					mapProfileToUser: (profile) =>
+						mapOAuthProfileToUser(profile as Record<string, unknown>),
 				},
 			],
 		}),
 	];
 }
 
-// ── Before hook: cooldown + 2FA enforcement for credential sign-in only ──
-// Active/expiry checks live in `databaseHooks.session.create.before` so they cover
-// OAuth sign-in too. Password verification is delegated to better-auth (Account.password).
-const beforeHook = createAuthMiddleware(async (ctx) => {
+/**
+ * The credential sign-in pre-flight: cooldown + failed-attempt tracking +
+ * credential-Account backfill + TOTP. Extracted as a plain async function so
+ * it can be unit-tested directly; the production wiring is the `beforeHook`
+ * createAuthMiddleware below.
+ *
+ * Exported for unit testing.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: better-auth's MiddlewareContext is internal
+export async function runBeforeAuthHook(ctx: any): Promise<void> {
 	// Defense-in-depth: if OAUTH_EXCLUSIVE_LOGIN is on, refuse credential endpoints
 	// even if the UI fails to hide them.
 	if (
@@ -224,6 +265,10 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 			throw new APIError("UNAUTHORIZED", { message: "incorrect-two-factor-code" });
 		}
 	}
+}
+
+const beforeHook = createAuthMiddleware(async (ctx) => {
+	await runBeforeAuthHook(ctx);
 });
 
 function getIpFromHeaders(headers: Headers | null | undefined): string {
