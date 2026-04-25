@@ -1,15 +1,16 @@
 /**
- * Pins down the OAuth config-shape contract for the genericOAuth plugin.
+ * Pins down the OAuth config-shape contract.
  *
  * These are configuration assertions, not behaviour tests — they exist to catch
  * silent regressions on the things that broke in production during the
  * next-auth → better-auth migration:
  *
  *   - PKCE was off by default in `genericOAuth` (next-auth had it on); we re-enable it.
- *   - The default callback URL changed from `/api/auth/callback/oauth` (next-auth)
- *     to `/api/auth/oauth2/callback/oauth` (better-auth). Pinning `redirectURI`
- *     to the legacy path keeps existing IdP registrations working — see also the
- *     Next.js rewrite in `next.config.mjs`.
+ *   - We use `signIn.social` (not `signIn.oauth2`) so the IdP callback URL stays
+ *     at the legacy `/api/auth/callback/oauth` path documented at
+ *     https://ztnet.network/authentication/oauth. The genericOAuth plugin's
+ *     init() injects the provider into `socialProviders` so it still drives
+ *     the flow (PKCE, mapProfileToUser, discoveryUrl, ...).
  *
  * If any of these constants drifts, every self-hosted ztnet install will fail
  * to log in via OAuth.
@@ -20,7 +21,6 @@ import {
 	auth,
 	isOAuthAllowNewUsers,
 	isOAuthExclusiveLogin,
-	legacyOAuthRedirectURI,
 } from "~/lib/auth";
 
 describe("OAuth configuration shape", () => {
@@ -32,28 +32,6 @@ describe("OAuth configuration shape", () => {
 
 	afterAll(() => {
 		process.env = ENV_BACKUP;
-	});
-
-	describe("legacyOAuthRedirectURI()", () => {
-		it("returns the legacy /api/auth/callback/<providerId> path", () => {
-			process.env.NEXTAUTH_URL = "https://ztnet.example.com";
-			expect(legacyOAuthRedirectURI()).toBe(
-				"https://ztnet.example.com/api/auth/callback/oauth",
-			);
-		});
-
-		it("strips a trailing slash from NEXTAUTH_URL so the path is well-formed", () => {
-			process.env.NEXTAUTH_URL = "https://ztnet.example.com/";
-			expect(legacyOAuthRedirectURI()).toBe(
-				"https://ztnet.example.com/api/auth/callback/oauth",
-			);
-		});
-
-		it("returns undefined when NEXTAUTH_URL is missing (test/build env)", () => {
-			// biome-ignore lint/performance/noDelete: must actually unset the env key
-			delete process.env.NEXTAUTH_URL;
-			expect(legacyOAuthRedirectURI()).toBeUndefined();
-		});
 	});
 
 	describe("OAUTH_PROVIDER_ID", () => {

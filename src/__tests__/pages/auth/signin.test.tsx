@@ -190,9 +190,12 @@ describe("LoginPage", () => {
 		});
 	});
 
-	it("handles OAuth sign-in via the genericOAuth plugin (signIn.oauth2)", async () => {
-		// genericOAuth plugin requires `signIn.oauth2({ providerId })`, not
-		// `signIn.social({ provider })`. Calling the wrong method silently 404s.
+	it("handles OAuth sign-in via signIn.social (preserves legacy callback URL)", async () => {
+		// We use `signIn.social` (not `signIn.oauth2`) so the IdP callback URL
+		// stays at `/api/auth/callback/oauth` — the URL documented at
+		// https://ztnet.network/authentication/oauth and registered in every
+		// existing IdP. The genericOAuth plugin still drives the flow because
+		// its init() injects the provider into `socialProviders`.
 		mockSignInSocial.mockResolvedValue({
 			data: { url: "https://idp.example/auth" },
 			error: null,
@@ -206,7 +209,7 @@ describe("LoginPage", () => {
 
 		expect(mockSignInSocial).toHaveBeenCalledWith(
 			expect.objectContaining({
-				providerId: "oauth",
+				provider: "oauth",
 				callbackURL: "/network",
 			}),
 		);
