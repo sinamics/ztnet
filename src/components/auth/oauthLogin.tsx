@@ -17,11 +17,14 @@ const OAuthLogin: React.FC<OAuthLoginProps> = ({ oauthEnabled = true }) => {
 	const oAuthHandler = async () => {
 		setLoading(true);
 		try {
-			// genericOAuth plugin uses `signIn.oauth2`, not `signIn.social`.
-			// `signIn.social` is reserved for the built-in social providers
-			// (google, github, etc.) and would 404 here.
-			const { error } = await authClient.signIn.oauth2({
-				providerId: "oauth",
+			// We deliberately use `signIn.social` (NOT `signIn.oauth2`) so the
+			// callback URL stays `${baseURL}/api/auth/callback/oauth` — the same
+			// path documented at https://ztnet.network/authentication/oauth and
+			// already registered in every existing IdP config. The genericOAuth
+			// plugin injects its provider into `socialProviders` at init time, so
+			// this routes through the plugin (PKCE, mapProfileToUser, etc. all apply).
+			const { error } = await authClient.signIn.social({
+				provider: "oauth",
 				callbackURL: "/network",
 				errorCallbackURL: "/auth/login",
 			});

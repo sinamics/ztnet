@@ -19,19 +19,15 @@ import { randomBytes } from "crypto";
 const MAX_FAILED_ATTEMPTS = 5;
 const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute
 
-// Backwards-compat callback URL.
-// Pre-better-auth ztnet docs (https://ztnet.network/authentication/oauth) instructed
-// users to register `${NEXTAUTH_URL}/api/auth/callback/oauth` with their IdP.
-// better-auth's genericOAuth plugin defaults to `${baseURL}/oauth2/callback/:providerId`,
-// which would break every existing install. We pin redirectURI to the legacy path here
-// and rely on a Next.js rewrite (see next.config.mjs) to forward the legacy path into
-// better-auth's actual callback handler.
+// We expose the generic OAuth provider as id "oauth" — the same id ztnet has
+// always shipped, and the one referenced in `signIn.social({ provider: "oauth" })`.
+// Sticking with `signIn.social` (rather than `signIn.oauth2`) keeps the callback
+// URL at the documented `${NEXTAUTH_URL}/api/auth/callback/oauth`, so existing IdP
+// registrations don't have to be re-pointed when upgrading from next-auth.
+// The genericOAuth plugin still drives the flow — at init time it injects this
+// config into `socialProviders`, so PKCE / mapProfileToUser / discoveryUrl all
+// apply through the `signIn.social` path too.
 export const OAUTH_PROVIDER_ID = "oauth";
-export function legacyOAuthRedirectURI(): string | undefined {
-	const base = process.env.NEXTAUTH_URL;
-	if (!base) return undefined;
-	return `${base.replace(/\/$/, "")}/api/auth/callback/${OAUTH_PROVIDER_ID}`;
-}
 
 export function isOAuthExclusiveLogin(): boolean {
 	return process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
@@ -62,9 +58,6 @@ function buildGenericOAuthPlugin() {
 					// PKCE was enforced under next-auth (`checks: ["state","pkce"]`).
 					// better-auth's genericOAuth plugin defaults pkce to false, so we re-enable it.
 					pkce: true,
-					// Pin redirect URI to the legacy path so existing IdP registrations keep working.
-					// See `legacyOAuthRedirectURI` and the rewrite in `next.config.mjs`.
-					redirectURI: legacyOAuthRedirectURI(),
 					mapProfileToUser: (profile) => ({
 						name:
 							profile.name ||

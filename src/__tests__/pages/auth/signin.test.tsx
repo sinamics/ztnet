@@ -9,17 +9,17 @@ import { ErrorCode } from "~/utils/errorCode";
 import * as reactHotToast from "react-hot-toast";
 
 const mockSignInEmail = jest.fn();
-const mockSignInOAuth2 = jest.fn();
+const mockSignInSocial = jest.fn();
 
 jest.mock("~/lib/authClient", () => ({
 	authClient: {
 		signIn: {
 			email: (...args) => mockSignInEmail(...args),
-			oauth2: (...args) => mockSignInOAuth2(...args),
+			social: (...args) => mockSignInSocial(...args),
 		},
 	},
 	signIn: {
-		oauth2: (...args) => mockSignInOAuth2(...args),
+		social: (...args) => mockSignInSocial(...args),
 	},
 }));
 jest.mock("~/server/db", () => ({
@@ -85,7 +85,7 @@ describe("LoginPage", () => {
 	beforeEach(() => {
 		queryClient = new QueryClient();
 		mockSignInEmail.mockReset();
-		mockSignInOAuth2.mockReset();
+		mockSignInSocial.mockReset();
 		jest.clearAllMocks();
 	});
 
@@ -193,7 +193,7 @@ describe("LoginPage", () => {
 	it("handles OAuth sign-in via the genericOAuth plugin (signIn.oauth2)", async () => {
 		// genericOAuth plugin requires `signIn.oauth2({ providerId })`, not
 		// `signIn.social({ provider })`. Calling the wrong method silently 404s.
-		mockSignInOAuth2.mockResolvedValue({
+		mockSignInSocial.mockResolvedValue({
 			data: { url: "https://idp.example/auth" },
 			error: null,
 		});
@@ -204,7 +204,7 @@ describe("LoginPage", () => {
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(mockSignInOAuth2).toHaveBeenCalledWith(
+		expect(mockSignInSocial).toHaveBeenCalledWith(
 			expect.objectContaining({
 				providerId: "oauth",
 				callbackURL: "/network",
@@ -213,7 +213,7 @@ describe("LoginPage", () => {
 	});
 
 	it("surfaces OAuth errors from the better-auth client", async () => {
-		mockSignInOAuth2.mockResolvedValue({
+		mockSignInSocial.mockResolvedValue({
 			data: null,
 			error: { message: "Provider not found" },
 		});

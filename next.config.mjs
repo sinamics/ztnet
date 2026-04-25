@@ -30,19 +30,5 @@ const config = {
 			},
 		];
 	},
-	async rewrites() {
-		// Legacy OAuth callback URL preserved for backwards compatibility.
-		// Pre-better-auth ztnet docs instructed users to register
-		// `${NEXTAUTH_URL}/api/auth/callback/oauth` with their IdP. better-auth's
-		// genericOAuth plugin serves the callback at `/api/auth/oauth2/callback/:providerId`,
-		// so we forward the legacy path internally. The redirect_uri sent to the IdP is
-		// pinned to the legacy path in `src/lib/auth.ts` (`legacyOAuthRedirectURI`).
-		return [
-			{
-				source: "/api/auth/callback/oauth",
-				destination: "/api/auth/oauth2/callback/oauth",
-			},
-		];
-	},
 };
 export default config;

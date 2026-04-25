@@ -5,12 +5,12 @@ import { toast } from "react-hot-toast";
 import OAuthLogin from "~/components/auth/oauthLogin";
 import enTranslation from "~/locales/en/common.json";
 
-const mockSignInOAuth2 = jest.fn();
+const mockSignInSocial = jest.fn();
 
 jest.mock("~/lib/authClient", () => ({
 	authClient: {
 		signIn: {
-			oauth2: (...args: unknown[]) => mockSignInOAuth2(...args),
+			social: (...args: unknown[]) => mockSignInSocial(...args),
 		},
 	},
 }));
@@ -28,7 +28,7 @@ const renderWithIntl = (ui: React.ReactElement) =>
 
 describe("OAuthLogin", () => {
 	beforeEach(() => {
-		mockSignInOAuth2.mockReset();
+		mockSignInSocial.mockReset();
 		(toast.error as jest.Mock).mockReset();
 	});
 
@@ -37,11 +37,13 @@ describe("OAuthLogin", () => {
 		expect(container.firstChild).toBeNull();
 	});
 
-	it("calls authClient.signIn.oauth2 with providerId 'oauth'", async () => {
-		// Regression guard: under the better-auth migration this MUST be
-		// `signIn.oauth2({ providerId: ... })`. Using `signIn.social({ provider })`
-		// (the next-auth shape) silently 404s the genericOAuth plugin route.
-		mockSignInOAuth2.mockResolvedValue({
+	it("calls authClient.signIn.social with provider 'oauth'", async () => {
+		// Pinned to `signIn.social` (NOT `signIn.oauth2`) so the IdP redirect URI
+		// stays at `${baseURL}/api/auth/callback/oauth` — the URL ztnet has always
+		// shipped in its docs and that users have registered with their IdP.
+		// The genericOAuth plugin's init() injects the provider into
+		// `socialProviders`, so PKCE/mapProfileToUser/discoveryUrl all still apply.
+		mockSignInSocial.mockResolvedValue({
 			data: { url: "https://idp.example/authorize" },
 			error: null,
 		});
@@ -49,36 +51,33 @@ describe("OAuthLogin", () => {
 		renderWithIntl(<OAuthLogin oauthEnabled={true} />);
 		await userEvent.click(screen.getByRole("button"));
 
-		expect(mockSignInOAuth2).toHaveBeenCalledTimes(1);
-		expect(mockSignInOAuth2).toHaveBeenCalledWith(
+		expect(mockSignInSocial).toHaveBeenCalledTimes(1);
+		expect(mockSignInSocial).toHaveBeenCalledWith(
 			expect.objectContaining({
-				providerId: "oauth",
+				provider: "oauth",
 				callbackURL: "/network",
 			}),
 		);
-		expect(mockSignInOAuth2).not.toHaveBeenCalledWith(
-			expect.objectContaining({ provider: expect.anything() }),
-		);
 	});
 
-	it("surfaces an error returned by signIn.oauth2", async () => {
-		mockSignInOAuth2.mockResolvedValue({
+	it("surfaces an error returned by signIn.social", async () => {
+		mockSignInSocial.mockResolvedValue({
 			data: null,
-			error: { message: "Provider config not found" },
+			error: { message: "Provider not found" },
 		});
 
 		renderWithIntl(<OAuthLogin oauthEnabled={true} />);
 		await userEvent.click(screen.getByRole("button"));
 
 		await waitFor(() => {
-			expect(toast.error).toHaveBeenCalledWith("Provider config not found", {
+			expect(toast.error).toHaveBeenCalledWith("Provider not found", {
 				duration: 10000,
 			});
 		});
 	});
 
-	it("falls back to a generic message when signIn.oauth2 throws", async () => {
-		mockSignInOAuth2.mockRejectedValue(new Error("network down"));
+	it("falls back to a generic message when signIn.social throws", async () => {
+		mockSignInSocial.mockRejectedValue(new Error("network down"));
 
 		renderWithIntl(<OAuthLogin oauthEnabled={true} />);
 		await userEvent.click(screen.getByRole("button"));
