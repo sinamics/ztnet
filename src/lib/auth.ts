@@ -21,13 +21,34 @@ const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute
 
 // We expose the generic OAuth provider as id "oauth" — the same id ztnet has
 // always shipped, and the one referenced in `signIn.social({ provider: "oauth" })`.
-// Sticking with `signIn.social` (rather than `signIn.oauth2`) keeps the callback
-// URL at the documented `${NEXTAUTH_URL}/api/auth/callback/oauth`, so existing IdP
-// registrations don't have to be re-pointed when upgrading from next-auth.
-// The genericOAuth plugin still drives the flow — at init time it injects this
-// config into `socialProviders`, so PKCE / mapProfileToUser / discoveryUrl all
-// apply through the `signIn.social` path too.
+// Sticking with `signIn.social` (rather than `signIn.oauth2`) routes through
+// better-auth's `/callback/:id` endpoint, which lives at the documented
+// `${NEXTAUTH_URL}/api/auth/callback/oauth` path — so existing IdP registrations
+// keep working. The genericOAuth plugin still drives the flow: at init time it
+// injects this config into `socialProviders`, so PKCE / mapProfileToUser /
+// discoveryUrl all apply through the `signIn.social` path too.
 export const OAUTH_PROVIDER_ID = "oauth";
+
+/**
+ * Canonical OAuth callback URL.
+ *
+ * IMPORTANT — must match the URL documented at
+ * https://ztnet.network/authentication/oauth and registered with the IdP.
+ *
+ * Without this, the genericOAuth plugin's injected `createAuthorizationURL` falls
+ * back to `${ctx.baseURL}/oauth2/callback/oauth` (verified at
+ * `node_modules/better-auth/dist/plugins/generic-oauth/index.mjs:62`), which
+ * does NOT match the documented redirect URI. Setting `c.redirectURI` makes
+ * core's `createAuthorizationURL` use it for both the authorize-URL `redirect_uri`
+ * parameter and the token-exchange request body
+ * (see `@better-auth/core/dist/oauth2/create-authorization-url.mjs:11` and
+ * `validate-authorization-code.mjs:35` — both pick `options.redirectURI` first).
+ */
+export function oauthCallbackURL(): string | undefined {
+	const base = process.env.NEXTAUTH_URL;
+	if (!base) return undefined;
+	return `${base.replace(/\/$/, "")}/api/auth/callback/${OAUTH_PROVIDER_ID}`;
+}
 
 export function isOAuthExclusiveLogin(): boolean {
 	return process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
@@ -58,6 +79,11 @@ function buildGenericOAuthPlugin() {
 					// PKCE was enforced under next-auth (`checks: ["state","pkce"]`).
 					// better-auth's genericOAuth plugin defaults pkce to false, so we re-enable it.
 					pkce: true,
+					// Pin the redirect URI to the URL ztnet has always documented at
+					// https://ztnet.network/authentication/oauth — `signIn.social`
+					// would otherwise be told to redirect through better-auth's own
+					// `/oauth2/callback/oauth` path. See `oauthCallbackURL` above.
+					redirectURI: oauthCallbackURL(),
 					mapProfileToUser: (profile) => ({
 						name:
 							profile.name ||

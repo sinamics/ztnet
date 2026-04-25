@@ -21,6 +21,7 @@ import {
 	auth,
 	isOAuthAllowNewUsers,
 	isOAuthExclusiveLogin,
+	oauthCallbackURL,
 } from "~/lib/auth";
 
 describe("OAuth configuration shape", () => {
@@ -37,6 +38,31 @@ describe("OAuth configuration shape", () => {
 	describe("OAUTH_PROVIDER_ID", () => {
 		it("matches the legacy provider id `oauth` so existing DB rows + UI translations stay valid", () => {
 			expect(OAUTH_PROVIDER_ID).toBe("oauth");
+		});
+	});
+
+	describe("oauthCallbackURL()", () => {
+		// THIS IS THE CONTRACT WITH USERS. The URL is documented at
+		// https://ztnet.network/authentication/oauth and registered in every
+		// IdP. Drift here = redirect_uri_mismatch errors at every existing install.
+		it("returns the documented callback URL", () => {
+			process.env.NEXTAUTH_URL = "https://ztnet.example.com";
+			expect(oauthCallbackURL()).toBe(
+				"https://ztnet.example.com/api/auth/callback/oauth",
+			);
+		});
+
+		it("strips a trailing slash from NEXTAUTH_URL so the path is well-formed", () => {
+			process.env.NEXTAUTH_URL = "https://ztnet.example.com/";
+			expect(oauthCallbackURL()).toBe(
+				"https://ztnet.example.com/api/auth/callback/oauth",
+			);
+		});
+
+		it("returns undefined when NEXTAUTH_URL is missing (test/build env)", () => {
+			// biome-ignore lint/performance/noDelete: must actually unset the env key
+			delete process.env.NEXTAUTH_URL;
+			expect(oauthCallbackURL()).toBeUndefined();
 		});
 	});
 
