@@ -190,17 +190,45 @@ describe("LoginPage", () => {
 		});
 	});
 
-	it("handles OAuth sign-in", async () => {
+	it("handles OAuth sign-in via signIn.social (preserves legacy callback URL)", async () => {
+		// We use `signIn.social` (not `signIn.oauth2`) so the IdP callback URL
+		// stays at `/api/auth/callback/oauth` — the URL documented at
+		// https://ztnet.network/authentication/oauth and registered in every
+		// existing IdP. The genericOAuth plugin still drives the flow because
+		// its init() injects the provider into `socialProviders`.
+		mockSignInSocial.mockResolvedValue({
+			data: { url: "https://idp.example/auth" },
+			error: null,
+		});
+
 		renderLoginPage();
-		// Wait for the button to be displayed
 		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
 
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(mockSignInSocial).toHaveBeenCalledWith({
-			provider: "oauth",
-			callbackURL: "/network",
+		expect(mockSignInSocial).toHaveBeenCalledWith(
+			expect.objectContaining({
+				provider: "oauth",
+				callbackURL: "/network",
+			}),
+		);
+	});
+
+	it("surfaces OAuth errors from the better-auth client", async () => {
+		mockSignInSocial.mockResolvedValue({
+			data: null,
+			error: { message: "Provider not found" },
+		});
+
+		renderLoginPage();
+		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
+		await userEvent.click(screen.getByRole("button", { name: /Sign in with OAuth/i }));
+
+		await waitFor(() => {
+			expect(reactHotToast.toast.error).toHaveBeenCalledWith("Provider not found", {
+				duration: 10000,
+			});
 		});
 	});
 

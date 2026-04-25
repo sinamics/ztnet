@@ -17,7 +17,7 @@ const jestConfig: JestConfigWithTsJest = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jest-fixed-jsdom",
-  modulePathIgnorePatterns: ["<rootDir>/docs/"],
+  modulePathIgnorePatterns: ["<rootDir>/docs/", "<rootDir>/.claude/"],
   moduleNameMapper: {
     "^~/(.*)$": "<rootDir>/src/$1",
     "^lib/(.*)$": "<rootDir>/common/$1",

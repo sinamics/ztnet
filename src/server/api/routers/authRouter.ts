@@ -25,6 +25,8 @@ import rateLimit from "~/utils/rateLimit";
 import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
 import { mediumPassword, passwordSchema } from "./_schema";
+import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
+import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 
 // Rate limit configuration from environment variables
 // RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
@@ -285,6 +287,10 @@ export const authRouter = createTRPCRouter({
 				},
 			});
 
+			// Mirror the password into the better-auth credential Account row so the
+			// user can immediately sign in via `authClient.signIn.email`.
+			await upsertCredentialAccount(newUser.id, hash);
+
 			// Send admin notification
 			const globalOptions = await ctx.prisma.globalOptions.findFirst({
 				where: {
@@ -367,11 +373,14 @@ export const authRouter = createTRPCRouter({
 		user.options.urlFromEnv = !!process.env.ZT_ADDR;
 		user.options.secretFromEnv = !!process.env.ZT_SECRET;
 
-		// Read current device ID from cookie for device identification
+		// Read current device ID from cookie for device identification.
+		// Cookie name is preserved across the next-auth → better-auth migration on
+		// purpose (see DEVICE_SALT_COOKIE_NAME); this lookup uses the constant so
+		// the path through the codebase stays consistent.
 		const cookieHeader = ctx.req?.headers?.cookie || "";
 		const deviceCookie = cookieHeader
 			.split(";")
-			.find((c) => c.trim().startsWith("next-auth.did-token="));
+			.find((c) => c.trim().startsWith(`${DEVICE_SALT_COOKIE_NAME}=`));
 		user.currentDeviceId = deviceCookie?.split("=")?.[1]?.trim() || undefined;
 
 		return user;
@@ -415,8 +424,12 @@ export const authRouter = createTRPCRouter({
 			}
 
 			if (input.newPassword || input.repeatNewPassword || input.password) {
-				// Check if user is OAuth user (no existing password)
-				const isOAuthUser = user.accounts && !user.hash;
+				// User authenticates exclusively via OAuth when they have no local
+				// password hash. We check `user.hash` directly — the previous form
+				// (`user.accounts && !user.hash`) was always-truthy on the LHS because
+				// `accounts` is an array, so the OAuth path was never gated on whether
+				// the user actually had any OAuth account rows.
+				const isOAuthUser = !user.hash;
 
 				// For setting new password, all fields are required
 				if (
@@ -458,6 +471,8 @@ export const authRouter = createTRPCRouter({
 				}
 			}
 
+			const newHash = input.newPassword ? bcrypt.hashSync(input.newPassword, 10) : null;
+
 			// update user with new values
 			await ctx.prisma.user.update({
 				where: {
@@ -466,11 +481,18 @@ export const authRouter = createTRPCRouter({
 				data: {
 					email: input.email || user.email,
 					name: input.name || user.name,
-					hash: input.newPassword ? bcrypt.hashSync(input.newPassword, 10) : user.hash,
+					hash: newHash ?? user.hash,
 					// Clear the requestChangePassword flag when user changes password
 					requestChangePassword: input.newPassword ? false : user.requestChangePassword,
 				},
 			});
+
+			// Keep the better-auth credential Account row in sync. better-auth
+			// authenticates against `Account.password` (not `User.hash`); without this
+			// the user's next sign-in would silently fail with "invalid credentials".
+			if (newHash) {
+				await upsertCredentialAccount(user.id, newHash);
+			}
 		}),
 	validateResetPasswordToken: publicProcedure
 		.input(
@@ -627,15 +649,24 @@ export const authRouter = createTRPCRouter({
 				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
 				jwt.verify(token, secret);
 
-				// hash password
-				return await ctx.prisma.user.update({
+				const newHash = bcrypt.hashSync(password, 10);
+
+				const updated = await ctx.prisma.user.update({
 					where: {
 						id,
 					},
 					data: {
-						hash: bcrypt.hashSync(password, 10),
+						hash: newHash,
+						// Forced-reset implies the user just remembered/picked a fresh password —
+						// clear the must-change-on-next-login flag if it was set.
+						requestChangePassword: false,
 					},
 				});
+
+				// Mirror into the better-auth credential Account so /sign-in/email succeeds.
+				await upsertCredentialAccount(id, newHash);
+
+				return updated;
 			} catch (error) {
 				console.error(error);
 				throwError("token is not valid, please try again!");

@@ -17,10 +17,22 @@ const OAuthLogin: React.FC<OAuthLoginProps> = ({ oauthEnabled = true }) => {
 	const oAuthHandler = async () => {
 		setLoading(true);
 		try {
-			await authClient.signIn.social({
+			// We deliberately use `signIn.social` (NOT `signIn.oauth2`) so the
+			// callback URL stays `${baseURL}/api/auth/callback/oauth` — the same
+			// path documented at https://ztnet.network/authentication/oauth and
+			// already registered in every existing IdP config. The genericOAuth
+			// plugin injects its provider into `socialProviders` at init time, so
+			// this routes through the plugin (PKCE, mapProfileToUser, etc. all apply).
+			const { error } = await authClient.signIn.social({
 				provider: "oauth",
 				callbackURL: "/network",
+				errorCallbackURL: "/auth/login",
 			});
+			if (error) {
+				toast.error(error.message || "Unexpected error occurred", {
+					duration: 10000,
+				});
+			}
 		} catch (_error) {
 			toast.error("Unexpected error occurred", { duration: 10000 });
 		} finally {
