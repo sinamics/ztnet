@@ -38,7 +38,7 @@ const jestConfig: JestConfigWithTsJest = {
 	...filesConfig,
 	...moduleConfig,
 	...testConfig,
-	modulePathIgnorePatterns: ["<rootDir>/docs/"],
+	modulePathIgnorePatterns: ["<rootDir>/docs/", "<rootDir>/.claude/"],
 };
 
 const createJestConfig = nextJest(nextConfig);

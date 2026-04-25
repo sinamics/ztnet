@@ -9,17 +9,17 @@ import { ErrorCode } from "~/utils/errorCode";
 import * as reactHotToast from "react-hot-toast";
 
 const mockSignInEmail = jest.fn();
-const mockSignInSocial = jest.fn();
+const mockSignInOAuth2 = jest.fn();
 
 jest.mock("~/lib/authClient", () => ({
 	authClient: {
 		signIn: {
 			email: (...args) => mockSignInEmail(...args),
-			social: (...args) => mockSignInSocial(...args),
+			oauth2: (...args) => mockSignInOAuth2(...args),
 		},
 	},
 	signIn: {
-		social: (...args) => mockSignInSocial(...args),
+		oauth2: (...args) => mockSignInOAuth2(...args),
 	},
 }));
 jest.mock("~/server/db", () => ({
@@ -85,7 +85,7 @@ describe("LoginPage", () => {
 	beforeEach(() => {
 		queryClient = new QueryClient();
 		mockSignInEmail.mockReset();
-		mockSignInSocial.mockReset();
+		mockSignInOAuth2.mockReset();
 		jest.clearAllMocks();
 	});
 
@@ -190,17 +190,42 @@ describe("LoginPage", () => {
 		});
 	});
 
-	it("handles OAuth sign-in", async () => {
+	it("handles OAuth sign-in via the genericOAuth plugin (signIn.oauth2)", async () => {
+		// genericOAuth plugin requires `signIn.oauth2({ providerId })`, not
+		// `signIn.social({ provider })`. Calling the wrong method silently 404s.
+		mockSignInOAuth2.mockResolvedValue({
+			data: { url: "https://idp.example/auth" },
+			error: null,
+		});
+
 		renderLoginPage();
-		// Wait for the button to be displayed
 		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
 
 		const oauthButton = screen.getByRole("button", { name: /Sign in with OAuth/i });
 		await userEvent.click(oauthButton);
 
-		expect(mockSignInSocial).toHaveBeenCalledWith({
-			provider: "oauth",
-			callbackURL: "/network",
+		expect(mockSignInOAuth2).toHaveBeenCalledWith(
+			expect.objectContaining({
+				providerId: "oauth",
+				callbackURL: "/network",
+			}),
+		);
+	});
+
+	it("surfaces OAuth errors from the better-auth client", async () => {
+		mockSignInOAuth2.mockResolvedValue({
+			data: null,
+			error: { message: "Provider not found" },
+		});
+
+		renderLoginPage();
+		await waitFor(() => screen.getByRole("button", { name: /Sign in with OAuth/i }));
+		await userEvent.click(screen.getByRole("button", { name: /Sign in with OAuth/i }));
+
+		await waitFor(() => {
+			expect(reactHotToast.toast.error).toHaveBeenCalledWith("Provider not found", {
+				duration: 10000,
+			});
 		});
 	});
 

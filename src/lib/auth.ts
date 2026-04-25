@@ -19,6 +19,29 @@ import { randomBytes } from "crypto";
 const MAX_FAILED_ATTEMPTS = 5;
 const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute
 
+// Backwards-compat callback URL.
+// Pre-better-auth ztnet docs (https://ztnet.network/authentication/oauth) instructed
+// users to register `${NEXTAUTH_URL}/api/auth/callback/oauth` with their IdP.
+// better-auth's genericOAuth plugin defaults to `${baseURL}/oauth2/callback/:providerId`,
+// which would break every existing install. We pin redirectURI to the legacy path here
+// and rely on a Next.js rewrite (see next.config.mjs) to forward the legacy path into
+// better-auth's actual callback handler.
+export const OAUTH_PROVIDER_ID = "oauth";
+export function legacyOAuthRedirectURI(): string | undefined {
+	const base = process.env.NEXTAUTH_URL;
+	if (!base) return undefined;
+	return `${base.replace(/\/$/, "")}/api/auth/callback/${OAUTH_PROVIDER_ID}`;
+}
+
+export function isOAuthExclusiveLogin(): boolean {
+	return process.env.OAUTH_EXCLUSIVE_LOGIN?.toLowerCase() === "true";
+}
+
+export function isOAuthAllowNewUsers(): boolean {
+	// Default true (matches pre-migration behavior in publicRouter/settingsRouter).
+	return process.env.OAUTH_ALLOW_NEW_USERS?.toLowerCase() !== "false";
+}
+
 function buildGenericOAuthPlugin() {
 	if (!process.env.OAUTH_ID || !process.env.OAUTH_SECRET) {
 		return [];
@@ -28,7 +51,7 @@ function buildGenericOAuthPlugin() {
 		genericOAuth({
 			config: [
 				{
-					providerId: "oauth",
+					providerId: OAUTH_PROVIDER_ID,
 					clientId: process.env.OAUTH_ID,
 					clientSecret: process.env.OAUTH_SECRET,
 					discoveryUrl: process.env.OAUTH_WELLKNOWN || undefined,
@@ -36,6 +59,12 @@ function buildGenericOAuthPlugin() {
 					tokenUrl: process.env.OAUTH_ACCESS_TOKEN_URL || undefined,
 					userInfoUrl: process.env.OAUTH_USER_INFO || undefined,
 					scopes: (process.env.OAUTH_SCOPE || "openid profile email").split(" "),
+					// PKCE was enforced under next-auth (`checks: ["state","pkce"]`).
+					// better-auth's genericOAuth plugin defaults pkce to false, so we re-enable it.
+					pkce: true,
+					// Pin redirect URI to the legacy path so existing IdP registrations keep working.
+					// See `legacyOAuthRedirectURI` and the rewrite in `next.config.mjs`.
+					redirectURI: legacyOAuthRedirectURI(),
 					mapProfileToUser: (profile) => ({
 						name:
 							profile.name ||
@@ -52,8 +81,21 @@ function buildGenericOAuthPlugin() {
 	];
 }
 
-// ── Before hook: runs before sign-in to enforce cooldown, expiration, TOTP ──
+// ── Before hook: cooldown + 2FA enforcement for credential sign-in only ──
+// Active/expiry checks live in `databaseHooks.session.create.before` so they cover
+// OAuth sign-in too. Password verification is delegated to better-auth (Account.password).
 const beforeHook = createAuthMiddleware(async (ctx) => {
+	// Defense-in-depth: if OAUTH_EXCLUSIVE_LOGIN is on, refuse credential endpoints
+	// even if the UI fails to hide them.
+	if (
+		isOAuthExclusiveLogin() &&
+		(ctx.path === "/sign-in/email" || ctx.path === "/sign-up/email")
+	) {
+		throw new APIError("FORBIDDEN", {
+			message: "Email/password authentication is disabled. Please use OAuth.",
+		});
+	}
+
 	if (ctx.path !== "/sign-in/email") return;
 
 	const email = (ctx.body as Record<string, unknown>)?.email as string;
@@ -61,12 +103,11 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 
 	const user = await prisma.user.findFirst({
 		where: { email },
-		include: { userGroup: true },
 	});
 
 	if (!user) return; // let better-auth handle "user not found"
 
-	// 1. Cooldown check
+	// 1. Cooldown check (custom, not provided by better-auth)
 	if (user.lastFailedLoginAttempt && user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
 		const timeSinceLastFailed = Date.now() - user.lastFailedLoginAttempt.getTime();
 		if (timeSinceLastFailed < COOLDOWN_PERIOD) {
@@ -76,22 +117,10 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 		}
 	}
 
-	// 2. Account active/expiry checks
-	if (!user.isActive) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
-	}
-	if (user.expiresAt && new Date(user.expiresAt) < new Date()) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
-	}
-	if (
-		user.role !== "ADMIN" &&
-		user.userGroup?.expiresAt &&
-		new Date(user.userGroup.expiresAt) < new Date()
-	) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
-	}
-
-	// 3. Verify password and track failed attempts
+	// 2. Track failed-password attempts (better-auth checks the password but doesn't
+	// persist failure counters). We compare against User.hash here purely to detect
+	// the failure so we can increment the counter; better-auth re-verifies against
+	// Account.password and is the authoritative check.
 	const password = (ctx.body as Record<string, unknown>)?.password as string;
 	if (password && user.hash) {
 		const isValid = await compare(password, user.hash);
@@ -103,13 +132,15 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 					lastFailedLoginAttempt: new Date(),
 				},
 			});
-			throw new APIError("UNAUTHORIZED", {
-				message: "Invalid email or password",
-			});
+			// Don't throw — let better-auth produce its standard "invalid credentials"
+			// error so the response shape is identical to a missing-account error.
+			return;
 		}
 	}
 
-	// 4. Ensure credential Account record exists (migration from next-auth)
+	// 3. Ensure credential Account record exists (one-time backfill for users
+	// migrated from next-auth before the Prisma migration ran). The migration
+	// SQL also does this; this is a safety net for race conditions.
 	const existingAccount = await prisma.account.findFirst({
 		where: { userId: user.id, providerId: "credential" },
 	});
@@ -124,7 +155,7 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 		});
 	}
 
-	// 5. TOTP 2FA check
+	// 4. TOTP 2FA check
 	if (user.twoFactorEnabled) {
 		const totpCode = ctx.headers?.get("x-totp-code");
 
@@ -176,16 +207,45 @@ const beforeHook = createAuthMiddleware(async (ctx) => {
 	}
 });
 
-// ── After hook: runs after sign-in for device tracking, login tracking ──
-const afterHook = createAuthMiddleware(async (ctx) => {
-	if (!ctx.path.startsWith("/sign-in")) return;
+function getIpFromHeaders(headers: Headers | null | undefined): string {
+	if (!headers) return "Unknown";
+	const forwardedFor = headers.get("x-forwarded-for");
+	const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "Unknown";
+	return ip.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/)?.[1] || ip;
+}
 
-	const newSession = ctx.context?.newSession;
-	if (!newSession) return;
+// Runs for every newly-created session (email sign-in AND OAuth callback). This is
+// where we enforce the active/expiry rules and persist device + login bookkeeping.
+// Exported for unit testing — the production wiring is via `databaseHooks.session.create.before`.
+export async function onSessionCreated(
+	userId: string,
+	// biome-ignore lint/suspicious/noExplicitAny: better-auth's GenericEndpointContext
+	ctx: any | null,
+): Promise<void> {
+	const user = await prisma.user.findUnique({
+		where: { id: userId },
+		include: { userGroup: true },
+	});
+	if (!user) {
+		throw new APIError("UNAUTHORIZED", { message: "user-not-found" });
+	}
 
-	const userId = newSession.user.id;
+	// Active/expiry enforcement (covers credential AND OAuth sign-ins).
+	if (!user.isActive) {
+		throw new APIError("FORBIDDEN", { message: "account-expired" });
+	}
+	if (user.expiresAt && new Date(user.expiresAt) < new Date()) {
+		throw new APIError("FORBIDDEN", { message: "account-expired" });
+	}
+	if (
+		user.role !== "ADMIN" &&
+		user.userGroup?.expiresAt &&
+		new Date(user.userGroup.expiresAt) < new Date()
+	) {
+		throw new APIError("FORBIDDEN", { message: "account-expired" });
+	}
 
-	// 1. Reset failed login attempts + update lastLogin
+	// Reset failed login attempts + update lastLogin
 	await prisma.user.update({
 		where: { id: userId },
 		data: {
@@ -196,29 +256,22 @@ const afterHook = createAuthMiddleware(async (ctx) => {
 		},
 	});
 
-	// 2. Device tracking
-	const userAgent =
-		ctx.headers?.get("x-user-agent") || ctx.headers?.get("user-agent") || "";
+	// Device tracking
+	const headers: Headers | null = ctx?.headers ?? null;
+	const userAgent = headers?.get("x-user-agent") || headers?.get("user-agent") || "";
 	if (!userAgent) return;
 
-	const cookieHeader = ctx.headers?.get("cookie") || "";
+	const cookieHeader = headers?.get("cookie") || "";
 	const cookies = parse(cookieHeader);
 	let deviceId = cookies[DEVICE_SALT_COOKIE_NAME];
+	let isNewCookie = false;
 
 	if (!deviceId) {
 		deviceId = randomBytes(16).toString("hex");
-		// Set cookie via the response context if available
-		try {
-			if (ctx.context?.responseHeaders) {
-				const cookieValue = `${DEVICE_SALT_COOKIE_NAME}=${deviceId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 365}`;
-				ctx.context.responseHeaders.append("set-cookie", cookieValue);
-			}
-		} catch (_e) {
-			// Cookie setting may not be available in all contexts
-		}
+		isNewCookie = true;
 	}
 
-	const ipAddress = getIpFromHeaders(ctx.headers);
+	const ipAddress = getIpFromHeaders(headers);
 	const deviceInfo = {
 		...parseUA(userAgent),
 		userAgent,
@@ -228,7 +281,6 @@ const afterHook = createAuthMiddleware(async (ctx) => {
 		lastActive: new Date(),
 	};
 
-	// Upsert device info
 	const existingDevice = await prisma.userDevice.findUnique({
 		where: { deviceId },
 		select: { ipAddress: true },
@@ -244,14 +296,26 @@ const afterHook = createAuthMiddleware(async (ctx) => {
 		create: deviceInfo,
 	});
 
-	// Send device notification email
-	const user = await prisma.user.findUnique({
+	// Persist the device cookie via better-auth's cookie helper. Setting it AFTER
+	// the upsert ensures a row exists before the cookie is observed by /api/auth/me.
+	if (isNewCookie && typeof ctx?.setCookie === "function") {
+		ctx.setCookie(DEVICE_SALT_COOKIE_NAME, deviceId, {
+			httpOnly: true,
+			sameSite: "lax",
+			path: "/",
+			maxAge: 60 * 60 * 24 * 365, // 1 year
+		});
+	}
+
+	// New-device / IP-change email notification (only after the user's first login;
+	// `firstTime=true` is reset above before this query, so re-read).
+	const refreshed = await prisma.user.findUnique({
 		where: { id: userId },
-		select: { email: true, id: true, firstTime: true },
+		select: { email: true, id: true },
 	});
 
 	try {
-		if (user && !user.firstTime) {
+		if (refreshed && !user.firstTime) {
 			const templateKey = !existingDevice
 				? MailTemplateKey.NewDeviceNotification
 				: existingDevice.ipAddress !== ipAddress
@@ -260,10 +324,10 @@ const afterHook = createAuthMiddleware(async (ctx) => {
 
 			if (templateKey) {
 				await sendMailWithTemplate(templateKey, {
-					to: user.email,
-					userId: user.id,
+					to: refreshed.email,
+					userId: refreshed.id,
 					templateData: {
-						toEmail: user.email,
+						toEmail: refreshed.email,
 						accessTime: new Date().toISOString(),
 						ipAddress,
 						browserInfo: userAgent,
@@ -277,13 +341,59 @@ const afterHook = createAuthMiddleware(async (ctx) => {
 			"Failed to send email notification for new device, check your mail settings.",
 		);
 	}
-});
+}
 
-function getIpFromHeaders(headers: Headers | null): string {
-	if (!headers) return "Unknown";
-	const forwardedFor = headers.get("x-forwarded-for");
-	const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : "Unknown";
-	return ip.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/)?.[1] || ip;
+// User-creation hook. Enforces OAUTH_ALLOW_NEW_USERS / global registration toggle
+// when the create is triggered by the OAuth callback flow, and stamps the standard
+// ztnet defaults onto the new row (role, group, firstTime, etc.).
+// Exported for unit testing.
+export async function onUserCreateBefore(
+	user: Record<string, unknown>,
+	// biome-ignore lint/suspicious/noExplicitAny: better-auth's GenericEndpointContext
+	ctx: any | null,
+): Promise<{ data: Record<string, unknown> }> {
+	const path: string | undefined = ctx?.path;
+	const isOAuthFlow =
+		typeof path === "string" &&
+		(path.startsWith("/oauth2/callback/") || path === "/sign-in/oauth2");
+
+	if (isOAuthFlow) {
+		// Honour OAUTH_ALLOW_NEW_USERS — block OAuth account creation when off.
+		if (!isOAuthAllowNewUsers()) {
+			throw new APIError("FORBIDDEN", {
+				message: "registration_disabled",
+			});
+		}
+
+		// Outside of exclusive-OAuth mode, also respect the global registration toggle.
+		if (!isOAuthExclusiveLogin()) {
+			const settings = await prisma.globalOptions.findFirst({
+				where: { id: 1 },
+				select: { enableRegistration: true },
+			});
+			if (!settings?.enableRegistration) {
+				throw new APIError("FORBIDDEN", {
+					message: "registration_disabled",
+				});
+			}
+		}
+	}
+
+	const userCount = await prisma.user.count();
+	const defaultUserGroup = await prisma.userGroup.findFirst({
+		where: { isDefault: true },
+	});
+
+	return {
+		data: {
+			...user,
+			role: userCount === 0 ? "ADMIN" : "USER",
+			lastLogin: new Date(),
+			firstTime: true,
+			isActive: true,
+			userGroupId: defaultUserGroup?.id ?? undefined,
+		},
+	};
 }
 
 export const auth = betterAuth({
@@ -299,8 +409,13 @@ export const auth = betterAuth({
 		expiresIn:
 			Number.parseInt(process.env.NEXTAUTH_SESSION_MAX_AGE, 10) || 30 * 24 * 60 * 60,
 		cookieCache: {
-			enabled: true,
-			maxAge: 5 * 60, // 5 minute cache
+			// Disabled: better-auth's cookie cache returns the cached user object
+			// (including `isActive`, `requestChangePassword`, `role`) without hitting
+			// the DB until `maxAge` elapses. For ztnet we explicitly need an admin
+			// disabling a user (or a cron job expiring an account) to take effect on
+			// the user's NEXT request, not minutes later. The DB hit per request is
+			// cheap and worth the consistency.
+			enabled: false,
 		},
 	},
 
@@ -344,7 +459,7 @@ export const auth = betterAuth({
 			enabled:
 				(process.env.OAUTH_ALLOW_DANGEROUS_EMAIL_LINKING ?? "true").toLowerCase() !==
 				"false",
-			trustedProviders: ["oauth"],
+			trustedProviders: [OAUTH_PROVIDER_ID],
 		},
 	},
 
@@ -352,28 +467,21 @@ export const auth = betterAuth({
 
 	hooks: {
 		before: beforeHook,
-		after: afterHook,
 	},
 
 	databaseHooks: {
 		user: {
 			create: {
-				before: async (user) => {
-					const userCount = await prisma.user.count();
-					const defaultUserGroup = await prisma.userGroup.findFirst({
-						where: { isDefault: true },
-					});
-
-					return {
-						data: {
-							...user,
-							role: userCount === 0 ? "ADMIN" : "USER",
-							lastLogin: new Date(),
-							firstTime: true,
-							isActive: true,
-							userGroupId: defaultUserGroup?.id ?? undefined,
-						},
-					};
+				before: onUserCreateBefore,
+			},
+		},
+		session: {
+			create: {
+				before: async (session, ctx) => {
+					// Fires for every newly-created session (credential + OAuth).
+					// Throws abort the session creation so the user is never logged in
+					// when their account is disabled or expired.
+					await onSessionCreated(session.userId as string, ctx);
 				},
 			},
 		},

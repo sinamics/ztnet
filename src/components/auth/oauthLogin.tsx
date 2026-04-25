@@ -17,10 +17,19 @@ const OAuthLogin: React.FC<OAuthLoginProps> = ({ oauthEnabled = true }) => {
 	const oAuthHandler = async () => {
 		setLoading(true);
 		try {
-			await authClient.signIn.social({
-				provider: "oauth",
+			// genericOAuth plugin uses `signIn.oauth2`, not `signIn.social`.
+			// `signIn.social` is reserved for the built-in social providers
+			// (google, github, etc.) and would 404 here.
+			const { error } = await authClient.signIn.oauth2({
+				providerId: "oauth",
 				callbackURL: "/network",
+				errorCallbackURL: "/auth/login",
 			});
+			if (error) {
+				toast.error(error.message || "Unexpected error occurred", {
+					duration: 10000,
+				});
+			}
 		} catch (_error) {
 			toast.error("Unexpected error occurred", { duration: 10000 });
 		} finally {
