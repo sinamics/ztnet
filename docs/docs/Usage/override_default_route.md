@@ -54,7 +54,7 @@ After completing these steps, you'll be able to route your internet traffic thro
 
 ### Example:
 
-All the above commands has been exectued on the `218 PVE VPN passtrough` node in the picture below.
+All the above commands has been executed on the `218 PVE VPN passtrough` node in the picture below.
 
 Now every member in this network will be able to route their internet traffic through the "218 PVE VPN passtrough" as long as they have selected "Allow default route override" or on mobile "Route all traffic through Zerotier" in their client settings.
 
