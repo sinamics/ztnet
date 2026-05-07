@@ -44,7 +44,7 @@
     "daisyui": "4.12.10",
     "ejs": "^5.0.1",
     "formidable": "3.5.4",
-    "ip-address": "8.1.0",
+    "ip-address": "10.1.1",
     "jose": "^6.2.2",
     "jsonwebtoken": "9.0.3",
     "lru-cache": "10.0.1",
