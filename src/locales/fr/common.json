@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Déplacer le réseau",
 				"description": "Vous pouvez localiser l'ID dans l'URL de l'organisation.",
-				"warningText": "<strong>Avertissement:</strong> Le transfert du réseau déplacera à la fois le réseau et ses membres vers l'organisation sélectionnée. Cette action est irréversible et ne peut être annulée. Veuillez confirmer soigneusement l'identifiant de l'organisation avant de continuer.<br></br>De plus, assurez-vous que vous disposez des autorisations d’écriture sur l’organisation vers laquelle vous transférez le réseau."
+				"warningText": "<strong>Avertissement:</strong> Le transfert du réseau déplacera à la fois le réseau et ses membres vers l'organisation sélectionnée. Cette action est irréversible et ne peut être annulée. Veuillez confirmer soigneusement l'identifiant de l'organisation avant de continuer.<br></br>De plus, assurez-vous que vous disposez des autorisations d’écriture sur l’organisation vers laquelle vous transférez le réseau.",
+				"warningTextOrgToOrg": "<strong>Avertissement:</strong> Le réseau et tous ses membres seront déplacés vers l'organisation sélectionnée. Les membres de l'organisation actuelle perdront l'accès. Vous pourrez déplacer le réseau à nouveau plus tard tant que vous resterez administrateur des deux organisations. Veuillez confirmer soigneusement l'organisation cible avant de continuer."
 			},
 			"deleteNetwork": {
 				"title": "Supprimer le réseau",

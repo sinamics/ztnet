@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Mover red",
 				"description": "Puedes localizar el ID en la URL de la organización.",
-				"warningText": "<strong>Advertencia:</strong> Transferir la red moverá tanto la red como sus miembros a la organización seleccionada. Esta acción es irreversible y no se puede deshacer. Por favor, confirme cuidadosamente la ID de la organización antes de proceder.<br></br>Además, asegúrese de tener permisos de escritura en la organización a la cual está transfiriendo la red."
+				"warningText": "<strong>Advertencia:</strong> Transferir la red moverá tanto la red como sus miembros a la organización seleccionada. Esta acción es irreversible y no se puede deshacer. Por favor, confirme cuidadosamente la ID de la organización antes de proceder.<br></br>Además, asegúrese de tener permisos de escritura en la organización a la cual está transfiriendo la red.",
+				"warningTextOrgToOrg": "<strong>Advertencia:</strong> La red y todos sus miembros se moverán a la organización seleccionada. Los miembros de la organización actual perderán el acceso. Puede mover la red de vuelta más tarde siempre que siga siendo administrador de ambas organizaciones. Por favor, confirme cuidadosamente la organización de destino antes de proceder."
 			},
 			"deleteNetwork": {
 				"title": "Eliminar red",

@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Przenieś sieć",
 				"description": "Identyfikator organizacji można znaleźć w adresie URL.",
-				"warningText": "<strong>Ostrzeżenie:</strong> Czynność ta spowoduje nieodwracalne przeniesienie sieci do organizacji, wszystkich powiązanych członków sieci, ustawień i danych. Tego procesu nie będzie można cofnąć. Przed przystąpieniem do przenoszenia upewnij się, że wykonałeś kopię zapasową wszystkich niezbędnych informacji."
+				"warningText": "<strong>Ostrzeżenie:</strong> Czynność ta spowoduje nieodwracalne przeniesienie sieci do organizacji, wszystkich powiązanych członków sieci, ustawień i danych. Tego procesu nie będzie można cofnąć. Przed przystąpieniem do przenoszenia upewnij się, że wykonałeś kopię zapasową wszystkich niezbędnych informacji.",
+				"warningTextOrgToOrg": "<strong>Ostrzeżenie:</strong> Sieć i wszyscy jej członkowie zostaną przeniesieni do wybranej organizacji. Członkowie obecnej organizacji utracą dostęp. Możesz przenieść sieć z powrotem później, o ile pozostaniesz administratorem obu organizacji. Przed przystąpieniem dokładnie potwierdź docelową organizację."
 			},
 			"deleteNetwork": {
 				"title": "Usuń sieć",

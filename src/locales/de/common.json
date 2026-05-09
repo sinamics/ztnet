@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Netzwerk verschieben",
 				"description": "Sie finden die ID in der URL der Organisation.",
-				"warningText": "<strong>Warnung:</strong> Durch die Übertragung des Netzwerks werden sowohl das Netzwerk als auch seine Mitglieder in die ausgewählte Organisation verschoben. Dieser Vorgang ist irreversibel und kann nicht rückgängig gemacht werden. Bitte überprüfen Sie die Organisations-ID, bevor Sie fortfahren. <br></br>Stellen Sie außerdem sicher, dass Sie über Schreibrechte für die Organisation verfügen, in die Sie das Netzwerk übertragen möchten."
+				"warningText": "<strong>Warnung:</strong> Durch die Übertragung des Netzwerks werden sowohl das Netzwerk als auch seine Mitglieder in die ausgewählte Organisation verschoben. Dieser Vorgang ist irreversibel und kann nicht rückgängig gemacht werden. Bitte überprüfen Sie die Organisations-ID, bevor Sie fortfahren. <br></br>Stellen Sie außerdem sicher, dass Sie über Schreibrechte für die Organisation verfügen, in die Sie das Netzwerk übertragen möchten.",
+				"warningTextOrgToOrg": "<strong>Warnung:</strong> Das Netzwerk und alle seine Mitglieder werden in die ausgewählte Organisation verschoben. Mitglieder der aktuellen Organisation verlieren den Zugriff. Sie können das Netzwerk später zurückverschieben, solange Sie Administrator beider Organisationen bleiben. Bitte überprüfen Sie die Zielorganisation sorgfältig, bevor Sie fortfahren."
 			},
 			"deleteNetwork": {
 				"title": "Netzwerk löschen",

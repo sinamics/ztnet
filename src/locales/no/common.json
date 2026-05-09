@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Flytt nettverk",
 				"description": "Du kan finne ID-en i organisasjonens URL.",
-				"warningText": "<strong>Advarsel:</strong> Overføring av nettverket vil flytte både nettverket og dets medlemmer til den valgte organisasjonen. Denne handlingen er ugjenkallelig og kan ikke angres. Vennligst bekreft organisasjonens ID nøye før du fortsetter.<br></br>I tillegg, sørg for at du har skriverettigheter til organisasjonen du overfører nettverket til."
+				"warningText": "<strong>Advarsel:</strong> Overføring av nettverket vil flytte både nettverket og dets medlemmer til den valgte organisasjonen. Denne handlingen er ugjenkallelig og kan ikke angres. Vennligst bekreft organisasjonens ID nøye før du fortsetter.<br></br>I tillegg, sørg for at du har skriverettigheter til organisasjonen du overfører nettverket til.",
+				"warningTextOrgToOrg": "<strong>Advarsel:</strong> Nettverket og alle dets medlemmer vil bli flyttet til den valgte organisasjonen. Medlemmer av den nåværende organisasjonen vil miste tilgangen. Du kan flytte nettverket tilbake senere så lenge du er administrator i begge organisasjoner. Vennligst bekreft målorganisasjonen nøye før du fortsetter."
 			},
 			"deleteNetwork": {
 				"title": "Slett nettverk",

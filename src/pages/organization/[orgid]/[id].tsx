@@ -26,6 +26,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import HeadSection from "~/components/shared/metaTags";
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
+import { TransferNetworkBetweenOrganizations } from "~/components/networkPage/transferNetworkBetweenOrganizations";
 
 type OrganizationId = {
 	id: string;
@@ -47,6 +48,15 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	useOrganizationWebsocket(orgIds);
 
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const { data: me } = api.auth.me.useQuery();
+	const { data: meOrgRole } = api.org.getOrgUserRoleById.useQuery(
+		{
+			organizationId,
+			userId: me?.id,
+		},
+		{ enabled: !!me?.id && !!organizationId },
+	);
+	const isOrgAdmin = meOrgRole?.role === "ADMIN";
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
@@ -353,7 +363,38 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				Network Actions
 			</div>
 			<div className="w-5/5 mx-auto  py-4 text-sm md:flex-row md:text-base">
-				<div className="flex items-end md:justify-end">
+				<div className="flex flex-col items-end gap-3 md:flex-row md:justify-end">
+					{isOrgAdmin ? (
+						<button
+							onClick={() =>
+								callModal({
+									title: (
+										<p>
+											<span>
+												{t.rich("networks.networkActionModal.modalTitle", {
+													span: (children) => (
+														<span className="text-primary">{children}</span>
+													),
+													networkName: network.nwid,
+												})}
+											</span>
+										</p>
+									),
+									rootStyle: "text-left",
+									content: (
+										<TransferNetworkBetweenOrganizations
+											networkId={network.nwid}
+											sourceOrganizationId={organizationId}
+											onSuccess={() => void router(`/organization/${organizationId}`)}
+										/>
+									),
+								})
+							}
+							className="btn btn-outline btn-wide"
+						>
+							{t("commonButtons.moveNetworkToOrganization")}
+						</button>
+					) : null}
 					<button
 						onClick={() =>
 							callModal({

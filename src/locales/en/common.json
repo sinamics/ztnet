@@ -227,7 +227,8 @@
 			"moveNetwork": {
 				"title": "Move network",
 				"description": "You can locate the ID in the organization URL.",
-				"warningText": "<strong>Warning:</strong> Transferring the network will move both the network and its members to the selected organization. This action is irreversible and cannot be undone. Please confirm the organization ID carefully before proceeding.<br></br>Additionally, ensure you have write permissions to the organization to which you are transferring the network."
+				"warningText": "<strong>Warning:</strong> Transferring the network will move both the network and its members to the selected organization. This action is irreversible and cannot be undone. Please confirm the organization ID carefully before proceeding.<br></br>Additionally, ensure you have write permissions to the organization to which you are transferring the network.",
+				"warningTextOrgToOrg": "<strong>Warning:</strong> The network and all its members will be moved to the selected organization. Members of the current organization will lose access. You can move the network back later as long as you remain an admin of both organizations. Please confirm the target organization carefully before proceeding."
 			},
 			"deleteNetwork": {
 				"title": "Delete network",

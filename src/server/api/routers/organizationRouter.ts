@@ -1593,6 +1593,71 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 		}),
+	transferNetworkBetweenOrganizations: protectedProcedure
+		.input(
+			z.object({
+				sourceOrganizationId: z.string({ error: "Source organization ID is required" }),
+				targetOrganizationId: z.string({ error: "Target organization ID is required" }),
+				nwid: z.string({ error: "Network ID is required" }),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			if (input.sourceOrganizationId === input.targetOrganizationId) {
+				throw new Error("Source and target organizations must differ");
+			}
+
+			// Caller must be ADMIN of the source org (to release the network)
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.sourceOrganizationId,
+				minimumRequiredRole: Role.ADMIN,
+			});
+
+			// Caller must be at least USER in the target org (to receive the network)
+			await checkUserOrganizationRole({
+				ctx,
+				organizationId: input.targetOrganizationId,
+				minimumRequiredRole: Role.USER,
+			});
+
+			// Verify the network actually belongs to the source organization
+			const network = await ctx.prisma.network.findUnique({
+				where: { nwid: input.nwid },
+				select: { organizationId: true },
+			});
+
+			if (!network) {
+				throw new Error("Network not found");
+			}
+			if (network.organizationId !== input.sourceOrganizationId) {
+				throw new Error("Network does not belong to the source organization");
+			}
+
+			// Move the network. authorId is already null on org-owned networks; keep it null
+			// so the prior owner cannot retain access via the legacy authorId path.
+			await ctx.prisma.network.update({
+				where: { nwid: input.nwid },
+				data: { organizationId: input.targetOrganizationId, authorId: null },
+			});
+
+			// Log the action in both organizations so it is auditable from either side
+			await ctx.prisma.activityLog.createMany({
+				data: [
+					{
+						action: `Transferred network ${input.nwid} to organization ${input.targetOrganizationId}`,
+						performedById: ctx.session.user.id,
+						organizationId: input.sourceOrganizationId,
+					},
+					{
+						action: `Received network ${input.nwid} from organization ${input.sourceOrganizationId}`,
+						performedById: ctx.session.user.id,
+						organizationId: input.targetOrganizationId,
+					},
+				],
+			});
+
+			return { success: true };
+		}),
 	deleteOrgWebhooks: protectedProcedure
 		.input(
 			z.object({
