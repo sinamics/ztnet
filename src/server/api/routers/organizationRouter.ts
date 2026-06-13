@@ -36,6 +36,7 @@ import { RoutesEntity } from "~/types/local/network";
 import { MailTemplateKey } from "~/utils/enums";
 import { TRPCError } from "@trpc/server";
 import { MemberCounts } from "~/types/local/member";
+import { UserContext } from "~/types/ctx";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -48,6 +49,74 @@ const invitationRateLimit = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
 	uniqueTokenPerInterval: 1000,
 });
+
+// Tracks in-flight background reconciliations per organization so that opening
+// the org page repeatedly does not pile up overlapping controller syncs.
+const orgReconcileInFlight = new Set<string>();
+
+/**
+ * Background reconciliation of an organization's network members against the
+ * ZeroTier controller.
+ *
+ * `getOrgById` counts members directly from the database for speed. This runs
+ * fire-and-forget (not awaited) to remove members that no longer exist on the
+ * controller (404 responses), which keeps the database from accumulating
+ * orphaned rows without slowing down page load.
+ */
+const reconcileOrgNetworkMembers = async (
+	ctx: UserContext,
+	organizationId: string,
+	networks: { nwid: string; networkMembers: network_members[] }[],
+) => {
+	// Skip if a reconciliation for this org is already running.
+	if (orgReconcileInFlight.has(organizationId)) return;
+	orgReconcileInFlight.add(organizationId);
+
+	try {
+		for (const network of networks) {
+			for (const member of network.networkMembers) {
+				// Skip deleted or permanently deleted members
+				if (member.deleted || member.permanentlyDeleted) {
+					continue;
+				}
+
+				try {
+					await ztController.member_details(ctx, network.nwid, member.id);
+				} catch (error) {
+					// Get status code directly from APIError
+					// biome-ignore lint/suspicious/noExplicitAny: APIError exposes status
+					const statusCode = (error as any).status;
+					if (statusCode === 404) {
+						// Safe to delete - member or network doesn't exist in ZeroTier
+						try {
+							await ctx.prisma.network_members.delete({
+								where: {
+									id_nwid: {
+										id: member.id,
+										nwid: member.nwid,
+									},
+								},
+							});
+							console.error(`Cleaned up orphaned member ${member.id} from database`);
+						} catch (cleanupError) {
+							console.error(
+								`Failed to cleanup orphaned member ${member.id}:`,
+								cleanupError,
+							);
+						}
+					} else {
+						// For any other error, just log and skip
+						console.error(
+							`Skipping member ${member.id} due to error: ${(error as Error).message}`,
+						);
+					}
+				}
+			}
+		}
+	} finally {
+		orgReconcileInFlight.delete(organizationId);
+	}
+};
 
 export const organizationRouter = createTRPCRouter({
 	createOrg: adminRoleProtectedRoute
@@ -388,7 +457,12 @@ export const organizationRouter = createTRPCRouter({
 				})),
 			};
 
-			// Get authorized member and total member counts for each network
+			// Count authorized and total members directly from the database.
+			// This avoids one controller request per member on page load. The previous
+			// implementation called the ZeroTier controller sequentially for every
+			// member, which made this query extremely slow for large organizations.
+			// The `authorized`/`deleted` flags are kept in sync with the controller by
+			// the per-network page (see syncMemberPeersAndStatus).
 			for (const network of organization.networks) {
 				for (const member of network.networkMembers) {
 					// Skip deleted or permanently deleted members
@@ -396,51 +470,28 @@ export const organizationRouter = createTRPCRouter({
 						continue;
 					}
 
-					try {
-						const memberDetails = await ztController.member_details(
-							ctx,
-							network.nwid,
-							member.id,
-						);
-						if (memberDetails.authorized) {
-							network.memberCounts.authorized += 1;
-							organization.memberCounts.authorized += 1;
-						}
-						network.memberCounts.total += 1;
-						organization.memberCounts.total += 1;
-					} catch (error) {
-						// Get status code directly from APIError
-						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-						const statusCode = (error as any).status;
-						if (statusCode === 404) {
-							// Safe to delete - member or network doesn't exist in ZeroTier
-							try {
-								await ctx.prisma.network_members.delete({
-									where: {
-										id_nwid: {
-											id: member.id,
-											nwid: member.nwid,
-										},
-									},
-								});
-								console.error(`Cleaned up orphaned member ${member.id} from database`);
-							} catch (cleanupError) {
-								console.error(
-									`Failed to cleanup orphaned member ${member.id}:`,
-									cleanupError,
-								);
-							}
-						} else {
-							// For any other error, just log and skip
-							console.error(
-								`Skipping member ${member.id} due to error: ${error.message}`,
-							);
-						}
+					if (member.authorized) {
+						network.memberCounts.authorized += 1;
+						organization.memberCounts.authorized += 1;
 					}
+					network.memberCounts.total += 1;
+					organization.memberCounts.total += 1;
 				}
 				network.memberCounts.display = `${network.memberCounts.authorized} (${network.memberCounts.total})`;
 			}
 			organization.memberCounts.display = `${organization.memberCounts.authorized} (${organization.memberCounts.total})`;
+
+			// Fire-and-forget reconciliation against the controller to clean up
+			// members that no longer exist on ZeroTier (404). This intentionally does
+			// not block the response so the page loads from the database immediately.
+			void reconcileOrgNetworkMembers(
+				ctx,
+				input.organizationId,
+				organization.networks,
+			).catch((error) => {
+				console.error("Error reconciling organization network members:", error);
+			});
+
 			return organization;
 		}),
 	createOrgNetwork: protectedProcedure
