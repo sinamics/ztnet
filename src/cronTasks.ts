@@ -3,6 +3,8 @@ import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
 import { syncMemberPeersAndStatus } from "./server/api/services/memberService";
+import { decryptRemoteRootPrivateKey } from "./server/api/services/remoteRootCredentialService";
+import { checkRemoteRootHealth } from "./server/api/services/remoteRootHealthService";
 
 type FakeContext = {
 	session: {
@@ -257,6 +259,73 @@ export const updatePeers = async () => {
 				}
 			} catch (error) {
 				console.error("cron task updatePeers:", error);
+			}
+		},
+		null,
+		true,
+		"America/Los_Angeles",
+	);
+};
+
+export const CheckRemoteRoots = async () => {
+	new cron.CronJob(
+		"*/5 * * * *",
+		async () => {
+			try {
+				const roots = await prisma.remoteRootNode.findMany({
+					where: {
+						enabled: true,
+					},
+					include: {
+						credential: true,
+					},
+				});
+
+				for (const root of roots) {
+					if (!root.credential?.encryptedPrivateKey) continue;
+
+					const result = await checkRemoteRootHealth({
+						connection: {
+							host: root.host,
+							port: root.sshPort,
+							user: root.sshUser,
+							privateKey: decryptRemoteRootPrivateKey(
+								root.credential.encryptedPrivateKey,
+							),
+						},
+						endpointSource: root.endpointSource,
+						domainName: root.domainName,
+						selectedIp: root.selectedIp,
+					});
+
+					await prisma.remoteRootNode.update({
+						where: { id: root.id },
+						data: {
+							status: result.status,
+							identity: result.identity,
+							primaryPort: result.primaryPort,
+							zerotierVersion: result.zerotierVersion,
+							resolvedIps: result.resolvedIps,
+							selectedIp: result.selectedIp,
+							endpointCandidates: result.endpointCandidates,
+							zerotierInstalled: result.zerotierInstalled,
+							serviceStatus: result.serviceStatus,
+							startupStatus: result.startupStatus,
+							sshStatus: result.sshStatus,
+							panelStatus: result.panelStatus,
+							sshLastError: result.sshError,
+							panelLastError: result.panelError,
+							remotePlanetHash: result.remotePlanetHash,
+							remoteOfficialPlanetHash: result.remoteOfficialPlanetHash,
+							lastCheckAt: new Date(),
+							lastPanelCheckAt: new Date(),
+							lastReadAt: new Date(),
+							lastError: result.lastError,
+						},
+					});
+				}
+			} catch (error) {
+				console.error("Error in CheckRemoteRoots cron job:", error);
 			}
 		},
 		null,

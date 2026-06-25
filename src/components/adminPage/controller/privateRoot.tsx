@@ -12,6 +12,14 @@ const PrivateRoot = () => {
 	const [open, setOpen] = useState(false);
 	const callModal = useModalStore((state) => state.callModal);
 	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
+	const { data: globalOptions, refetch: refetchGlobalOptions } =
+		api.admin.getAllOptions.useQuery();
+	const updateGlobalOptions = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: () => {
+			refetchGlobalOptions();
+		},
+		onError: (error) => toast.error(error.message),
+	});
 
 	const closeForm = () => setOpen(false);
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
@@ -171,12 +179,46 @@ const PrivateRoot = () => {
 								))}
 							</div>
 							<div>
-								<p className=" text-sm">
+								<p className="text-sm">
 									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
-									<Link href="/api/planet" className="link text-blue-500">
-										{t("controller.generatePlanet.downloadPlanetUrl")}
-									</Link>
+									{globalOptions?.planetDownloadAuthMode === "REST_API" ? (
+										<code className="rounded bg-base-200 px-1 py-0.5 text-xs">
+											curl -H &quot;x-ztnet-auth: &lt;token&gt;&quot; /api/planet -o
+											planet.custom
+										</code>
+									) : (
+										<Link href="/api/planet" className="link text-blue-500">
+											{t("controller.generatePlanet.downloadPlanetUrl")}
+										</Link>
+									)}
 								</p>
+								<div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+									<span>{t("controller.generatePlanet.downloadAuthMode")}</span>
+									<select
+										className="select select-bordered select-xs"
+										value={globalOptions?.planetDownloadAuthMode || "PUBLIC"}
+										onChange={(event) =>
+											updateGlobalOptions.mutate({
+												planetDownloadAuthMode: event.target.value as
+													| "PUBLIC"
+													| "REST_API",
+											})
+										}
+										disabled={updateGlobalOptions.isLoading}
+									>
+										<option value="PUBLIC">
+											{t("controller.generatePlanet.downloadAuthPublic")}
+										</option>
+										<option value="REST_API">
+											{t("controller.generatePlanet.downloadAuthRestApi")}
+										</option>
+									</select>
+									<span className="text-xs text-warning">
+										{globalOptions?.planetDownloadAuthMode === "REST_API"
+											? t("controller.generatePlanet.downloadAuthRestApiHint")
+											: t("controller.generatePlanet.downloadAuthPublicHint")}
+									</span>
+								</div>
 							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">

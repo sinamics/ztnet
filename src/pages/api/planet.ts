@@ -1,6 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
+import { prisma } from "~/server/db";
+import { AuthorizationType } from "~/types/apiTypes";
+import { decryptAndVerifyToken } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 
 export const config = {
@@ -10,12 +13,29 @@ export const config = {
 };
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-	// download planet file.
-	// The planet.custom is signed by the server, so it can be trusted.
-	// No authentication is required.
-
 	if (req.method === "GET") {
 		try {
+			const options = await prisma.globalOptions.findFirst({
+				where: { id: 1 },
+				select: { planetDownloadAuthMode: true },
+			});
+			if (options?.planetDownloadAuthMode === "REST_API") {
+				const header = req.headers["x-ztnet-auth"];
+				const apiKey = Array.isArray(header) ? header[0] : header;
+				if (!apiKey) {
+					return res.status(401).send("API token is required.");
+				}
+				try {
+					await decryptAndVerifyToken({
+						apiKey,
+						apiAuthorizationType: AuthorizationType.PERSONAL,
+						requireAdmin: true,
+					});
+				} catch {
+					return res.status(401).send("Invalid API token.");
+				}
+			}
+
 			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
 			const filePath = path.join(folderPath, "planet.custom");
 

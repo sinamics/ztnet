@@ -24,6 +24,8 @@ import path from "node:path";
 import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
+import { remoteRootRouter } from "./remoteRootRouter";
+import { normalizePlanetRootNodes } from "../services/remoteRootPlanetService";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -32,6 +34,7 @@ type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
 };
 
 export const adminRouter = createTRPCRouter({
+	remoteRoots: remoteRootRouter,
 	updateUser: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -483,6 +486,7 @@ export const adminRouter = createTRPCRouter({
 				welcomeMessageTitle: z.string().max(50).optional(),
 				welcomeMessageBody: z.string().max(350).optional(),
 				siteName: z.string().max(30).optional(),
+				planetDownloadAuthMode: z.enum(["PUBLIC", "REST_API"]).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1159,11 +1163,13 @@ export const adminRouter = createTRPCRouter({
 				 */
 
 				const config: WorldConfig = {
-					rootNodes: input.rootNodes.map((node) => ({
-						comments: node.comments || "ztnet.network",
-						identity: node.identity,
-						endpoints: node.endpoints,
-					})),
+					rootNodes: normalizePlanetRootNodes(
+						input.rootNodes.map((node) => ({
+							comments: node.comments || "ztnet.network",
+							identity: node.identity,
+							endpoints: node.endpoints,
+						})),
+					),
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
 					plID: input.plID || 0,
@@ -1172,22 +1178,6 @@ export const adminRouter = createTRPCRouter({
 				};
 
 				fs.writeFileSync(`${mkworldDir}/mkworld.config.json`, JSON.stringify(config));
-
-				/*
-				 *
-				 * Update local.conf file with the new port number
-				 *
-				 */
-				// Extract the port numbers from the first endpoint string
-				const portNumbers = input.rootNodes[0].endpoints[0]
-					.split(",")
-					.map((endpoint) => Number.parseInt(endpoint.split("/").pop() || "", 10));
-
-				try {
-					await updateLocalConf(portNumbers);
-				} catch (error) {
-					throwError(error);
-				}
 
 				/*
 				 *

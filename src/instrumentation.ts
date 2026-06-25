@@ -9,5 +9,9 @@ export async function register() {
 		if (cronTasksModule.updatePeers) {
 			cronTasksModule.updatePeers();
 		}
+
+		if (cronTasksModule.CheckRemoteRoots) {
+			cronTasksModule.CheckRemoteRoots();
+		}
 	}
 }

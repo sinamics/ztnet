@@ -4,6 +4,7 @@ import { api } from "~/utils/api";
 import DebugMirror from "~/components/adminPage/controller/debugController";
 import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
 import ZerotierUrl from "~/components/adminPage/controller/zerotierUrl";
+import RemoteRoots from "~/components/adminPage/controller/remoteRoots";
 import { ReactElement } from "react";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
@@ -24,27 +25,32 @@ const Controller = () => {
 		controllerStatus?.config?.settings || {};
 
 	const { online, tcpFallbackActive, version } = controllerStatus || {};
+	const addressClassName =
+		"badge badge-primary inline-flex h-auto min-h-6 max-w-full min-w-0 justify-start whitespace-normal break-all px-2 py-1 text-left leading-snug";
 	return (
-		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
+		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3">
 			{controllerError ? (
-				<div className="alert alert-error">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						className="stroke-current shrink-0 h-6 w-6"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							strokeWidth="2"
-							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-						/>
-					</svg>
-					<span>{controllerError?.message}</span>
+				<div className="space-y-10 xl:w-6/12" data-testid="controller-narrow-layout">
+					<div className="alert alert-error">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="stroke-current shrink-0 h-6 w-6"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth="2"
+								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+							/>
+						</svg>
+						<span>{controllerError?.message}</span>
+					</div>
+					<ZerotierUrl />
 				</div>
 			) : (
-				<>
+				<div className="space-y-10 xl:w-6/12" data-testid="controller-narrow-layout">
 					<MenuSectionDividerWrapper title={t("controller.networkMembers.title")}>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.networkMembers.totalNetworks")}</p>
@@ -62,11 +68,11 @@ const Controller = () => {
 							<div>
 								<p>Assigned Network IP's</p>
 							</div>
-							<div className="col-span-3 xl:col-span-2 ml-auto">
-								<div className="grid grid-cols-2 gap-1">
+							<div className="col-span-3 ml-auto w-full min-w-0 xl:col-span-2">
+								<div className="flex min-w-0 flex-wrap gap-1 xl:justify-end">
 									{assignedIPs?.map((ip, index) => (
 										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-										<p key={index} className="badge badge-primary w-full">
+										<p key={index} className={addressClassName}>
 											{ip}
 										</p>
 									))}
@@ -99,10 +105,10 @@ const Controller = () => {
 						</div>
 						<div className="grid grid-cols-3">
 							<p>{t("controller.management.listeningOn")}</p>
-							<div className="col-span-3 xl:col-span-2 ml-auto">
-								<div className="grid grid-cols-2 gap-1">
+							<div className="col-span-3 ml-auto w-full min-w-0 xl:col-span-2">
+								<div className="flex min-w-0 flex-wrap gap-1 xl:justify-end">
 									{listeningOn?.map((address) => (
-										<span key={address} className="w-full badge badge-primary text-left">
+										<span key={address} className={addressClassName}>
 											{address}
 										</span>
 									))}
@@ -127,9 +133,10 @@ const Controller = () => {
 					<MenuSectionDividerWrapper title="Debug" className="space-y-5">
 						<DebugMirror data={controllerData} title="Controller Status" />
 					</MenuSectionDividerWrapper>
-				</>
+					<ZerotierUrl />
+				</div>
 			)}
-			<ZerotierUrl />
+			<RemoteRoots />
 		</main>
 	);
 };

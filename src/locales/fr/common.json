@@ -787,7 +787,8 @@
 					"uploadConfig": "TÉLÉCHARGER LA CONFIGURATION",
 					"updateWorld": "Mettre à jour le monde",
 					"downloadPlanetButton": "Télécharger la configuration",
-					"restoreOriginalPlanetButton": "Restaurer la planète d'origine"
+					"restoreOriginalPlanetButton": "Restaurer la planète d'origine",
+					"useLocalRoot": "Use local node as root"
 				},
 				"modal": {
 					"noteTitle": "NOTE!",
@@ -795,6 +796,170 @@
 					"restartContainerInstructions": "Vous devrez redémarrer le conteneur Zerotier pour charger la nouvelle configuration :<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Restaurer la planète d'origine",
 					"restoreOriginalPlanetContent": "Etes-vous sûr de vouloir restaurer le fichier planète d'origine ? Assurez-vous de sauvegarder votre fichier planète actuel si vous souhaitez conserver les clés actuelles"
+				},
+				"addRootTitle": "Add Root Server",
+				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly.",
+				"downloadAuthMode": "Planet download access",
+				"downloadAuthPublic": "Public",
+				"downloadAuthRestApi": "REST API token",
+				"downloadAuthPublicHint": "Anyone with the URL can download the planet file.",
+				"downloadAuthRestApiHint": "Requires an admin personal REST API token in x-ztnet-auth."
+			},
+			"remoteRoots": {
+				"title": "Racines Planet distantes",
+				"description": "Gerez les noeuds root ZeroTier distants pour la generation d'un planet personnalise.",
+				"actions": {
+					"appendHealthyRoots": "Ajouter les roots sains au planet",
+					"close": "Close",
+					"saveEndpoint": "Save endpoint"
+				},
+				"form": {
+					"namePlaceholder": "Nom",
+					"hostPlaceholder": "Hote",
+					"sshUserPlaceholder": "Utilisateur SSH",
+					"sshPortPlaceholder": "Port SSH",
+					"endpointSource": {
+						"manualIp": "IP manuelle",
+						"domain": "Domaine"
+					},
+					"addRoot": "Ajouter root",
+					"domainNamePlaceholder": "Nom de domaine",
+					"selectedIpPlaceholder": "IP endpoint selectionnee",
+					"primaryPortPlaceholder": "Port ZT",
+					"selectedIpLabel": "Endpoint IP",
+					"primaryPortLabel": "ZeroTier UDP port",
+					"errors": {
+						"required": "Required",
+						"domainRequired": "Domain is required",
+						"portRange": "Enter a port from 1 to 65535"
+					},
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode",
+					"readRequired": "Read the remote ZeroTier config before editing settings.",
+					"sshFailedReadRequired": "SSH failed. Test SSH and read the remote config again before editing settings.",
+					"zerotierInstallRequired": "Install ZeroTier on the remote root before editing settings.",
+					"configReadAt": "Config source: remote read at {time}.",
+					"configSnapshotHint": "These values come from the latest successful read, not a live stream."
+				},
+				"table": {
+					"name": "Nom",
+					"host": "Hote",
+					"endpoint": "Endpoint",
+					"status": "Statut",
+					"identity": "Identite",
+					"actions": "Actions",
+					"identityNotRead": "Non lu",
+					"empty": "Aucun root planet distant configure.",
+					"lastCheck": "Last check",
+					"endpointNotSelected": "Not selected",
+					"neverChecked": "Never",
+					"emptyTitle": "No remote roots yet",
+					"emptyDescription": "Add a server first, then read its ZeroTier status and use it as a planet root.",
+					"checking": "Checking",
+					"version": "ZeroTier {version}",
+					"installed": "Installed",
+					"portMapping": "Port mapping"
+				},
+				"status": {
+					"ssh": {
+						"UNKNOWN": "SSH unknown",
+						"CHECKING": "SSH checking",
+						"OK": "SSH OK",
+						"FAILED": "SSH failed"
+					},
+					"panel": {
+						"UNKNOWN": "Endpoint unknown",
+						"CHECKING": "Endpoint checking",
+						"OK": "Endpoint OK",
+						"DEGRADED": "Endpoint degraded",
+						"FAILED": "Endpoint failed"
+					},
+					"planet": {
+						"UNKNOWN": "Planet unknown",
+						"MISSING": "Planet missing",
+						"CUSTOM_MATCH": "Custom planet",
+						"CUSTOM_OTHER": "Other custom planet",
+						"OFFICIAL_RESTORED": "Official planet",
+						"OFFICIAL_OR_DEFAULT": "Official or default planet",
+						"OFFICIAL_OR_UNKNOWN": "Official or unknown planet"
+					},
+					"startup": {
+						"UNKNOWN": "Startup unknown",
+						"ENABLED": "Startup enabled",
+						"DISABLED": "Startup disabled",
+						"ERROR": "Startup error"
+					},
+					"service": {
+						"UNKNOWN": "Service unknown",
+						"RUNNING": "Service running",
+						"STOPPED": "Service stopped",
+						"ERROR": "Service error"
+					},
+					"config": {
+						"UNKNOWN": "Unknown"
+					}
+				},
+				"row": {
+					"endpointIpPlaceholder": "IP",
+					"udpPortSuffix": "{port}/udp",
+					"actions": {
+						"test": "Tester SSH et lire",
+						"install": "Installer",
+						"upgrade": "Mettre a jour",
+						"read": "Lire",
+						"check": "Verifier",
+						"dns": "DNS",
+						"delete": "Supprimer",
+						"details": "Details",
+						"connectRead": "Connect & Read",
+						"restart": "Restart Service",
+						"changePort": "Change Port & Restart",
+						"distributePlanet": "Distribute Planet",
+						"restoreOfficial": "Restore Official Planet",
+						"saveConfig": "Save Config & Restart",
+						"addEndpoint": "Add endpoint"
+					}
+				},
+				"toast": {
+					"remoteRootSaved": "Root distant enregistre",
+					"sshSucceeded": "Connexion SSH reussie",
+					"installCompleted": "Commande d'installation terminee",
+					"upgradeCompleted": "Commande de mise a jour terminee",
+					"remoteConfigRead": "Configuration distante lue",
+					"noDnsRecords": "Aucun enregistrement DNS trouve",
+					"noHealthyRoots": "Aucun root distant sain disponible",
+					"customPlanetUpdated": "Planet personnalise mis a jour avec les roots distants",
+					"rootChecked": "Remote root checked",
+					"healthCheckStarted": "Health check started",
+					"restartCompleted": "ZeroTier restarted",
+					"portChanged": "ZeroTier port changed and service restarted",
+					"planetDistributed": "Planet distributed to remote root",
+					"officialPlanetRestored": "Remote root restored to official planet",
+					"configSaved": "ZeroTier configuration saved and service restarted"
+				},
+				"tasks": {
+					"title": "Recent tasks",
+					"noLogs": "No logs captured.",
+					"publicKeyTitle": "Managed SSH public key",
+					"publicKeyDescription": "Add this public key to the remote user's ~/.ssh/authorized_keys before connecting.",
+					"copyPublicKey": "Copy public key",
+					"publicKeyCopied": "Public key copied"
+				},
+				"sections": {
+					"connection": "Connection",
+					"zerotier": "ZeroTier",
+					"endpoint": "Endpoint",
+					"planet": "Planet"
+				},
+				"values": {
+					"yes": "Yes",
+					"no": "No"
 				}
 			},
 			"yes": "Oui",

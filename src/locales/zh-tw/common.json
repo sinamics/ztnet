@@ -769,6 +769,11 @@
 				"customPortIsInUseDescription": "你需要在 ZeroTier Docker Compose 的環境變數中新增 <kbd>ZT_PRIMARY_PORT:埠</kbd>。",
 				"downloadPlanetInfo": "如果您需要，可以從以下網址下載行星(Planet)配置檔：",
 				"downloadPlanetUrl": "api/planet",
+				"downloadAuthMode": "Planet 下載權限",
+				"downloadAuthPublic": "公開",
+				"downloadAuthRestApi": "REST API 令牌",
+				"downloadAuthPublicHint": "知道 URL 的任何人都可以下載 planet 檔案。",
+				"downloadAuthRestApiHint": "需要在 x-ztnet-auth 中提供管理員個人 REST API 令牌。",
 				"generatePrivateRootLabel": "生成私有根",
 				"generatePrivateRootPlaceholder": "為您的控制器新增私有根",
 				"commentDescription": "為此行星(Planet)新增註釋（可選）",
@@ -787,7 +792,8 @@
 					"uploadConfig": "上傳配置",
 					"updateWorld": "更新世界",
 					"downloadPlanetButton": "下載配置",
-					"restoreOriginalPlanetButton": "恢復原始行星(Planet)"
+					"restoreOriginalPlanetButton": "恢復原始行星(Planet)",
+					"useLocalRoot": "Use local node as root"
 				},
 				"modal": {
 					"noteTitle": "注意！",
@@ -795,6 +801,165 @@
 					"restartContainerInstructions": "您需要重新啟動 zerotier 容器以載入新設定：<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "恢復原始行星(Planet)",
 					"restoreOriginalPlanetContent": "您確定要恢復原始行星(Planet)配置檔嗎？如果您想保留當前的密鑰，請確保備份您當前的行星(Planet)配置檔"
+				},
+				"addRootTitle": "Add Root Server",
+				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly."
+			},
+			"remoteRoots": {
+				"title": "遠端 Planet Roots",
+				"description": "管理用於產生自訂 planet 的遠端 ZeroTier root 節點。",
+				"actions": {
+					"appendHealthyRoots": "將健康 root 追加到 planet",
+					"close": "關閉",
+					"saveEndpoint": "儲存端點"
+				},
+				"form": {
+					"namePlaceholder": "名稱",
+					"hostPlaceholder": "主機",
+					"sshUserPlaceholder": "SSH 使用者",
+					"sshPortPlaceholder": "SSH 連接埠",
+					"endpointSource": {
+						"manualIp": "手動 IP",
+						"domain": "網域"
+					},
+					"addRoot": "新增 root",
+					"domainNamePlaceholder": "網域名稱",
+					"selectedIpPlaceholder": "已選取的端點 IP",
+					"primaryPortPlaceholder": "ZT 連接埠",
+					"selectedIpLabel": "端點 IP",
+					"primaryPortLabel": "ZeroTier UDP 連接埠",
+					"secondaryPortLabel": "靜態 Secondary UDP 連接埠（可選）",
+					"allowSecondaryPortLabel": "允許 Secondary/Tertiary 監聽連接埠",
+					"interfacePrefixBlacklistLabel": "網卡前綴黑名單",
+					"bindAddressesLabel": "綁定地址",
+					"allowManagementFromLabel": "允許管理介面來源",
+					"defaultBondingPolicyLabel": "預設鏈路聚合策略",
+					"multithreadedLabel": "啟用多執行緒",
+					"linuxKernelModeLabel": "Linux 核心模式",
+					"readRequired": "請先讀取遠端 ZeroTier 設定，再編輯這些設定。",
+					"sshFailedReadRequired": "SSH 失敗。請重新測試 SSH 並讀取遠端設定後再編輯。",
+					"zerotierInstallRequired": "請先在遠端 root 上安裝 ZeroTier，再編輯這些設定。",
+					"configReadAt": "設定來源：遠端讀取於 {time}。",
+					"configSnapshotHint": "這些值來自最近一次成功讀取，不是即時狀態。",
+					"errors": {
+						"required": "必填",
+						"domainRequired": "請填寫網域",
+						"portRange": "請輸入 1 到 65535 之間的連接埠"
+					}
+				},
+				"table": {
+					"name": "名稱",
+					"host": "主機",
+					"endpoint": "端點",
+					"status": "狀態",
+					"identity": "身分",
+					"actions": "操作",
+					"identityNotRead": "尚未讀取",
+					"empty": "尚未設定遠端 planet root。",
+					"lastCheck": "上次檢查",
+					"endpointNotSelected": "未選取",
+					"neverChecked": "從未檢查",
+					"emptyTitle": "還沒有遠端 root",
+					"emptyDescription": "先新增伺服器，然後讀取 ZeroTier 狀態並將其作為 planet root 使用。",
+					"checking": "檢查中",
+					"version": "ZeroTier {version}",
+					"installed": "已安裝",
+					"portMapping": "連接埠映射"
+				},
+				"status": {
+					"ssh": {
+						"UNKNOWN": "SSH 未知",
+						"CHECKING": "SSH 檢查中",
+						"OK": "SSH 正常",
+						"FAILED": "SSH 失敗"
+					},
+					"panel": {
+						"UNKNOWN": "端點未知",
+						"CHECKING": "端點檢查中",
+						"OK": "端點正常",
+						"DEGRADED": "端點異常",
+						"FAILED": "端點失敗"
+					},
+					"planet": {
+						"UNKNOWN": "Planet 未知",
+						"MISSING": "Planet 缺失",
+						"CUSTOM_MATCH": "自訂 planet",
+						"CUSTOM_OTHER": "其他自訂 planet",
+						"OFFICIAL_RESTORED": "官方 planet",
+						"OFFICIAL_OR_DEFAULT": "官方或預設 planet",
+						"OFFICIAL_OR_UNKNOWN": "官方或未知 planet"
+					},
+					"startup": {
+						"UNKNOWN": "啟動狀態未知",
+						"ENABLED": "已開機啟動",
+						"DISABLED": "未開機啟動",
+						"ERROR": "啟動狀態異常"
+					},
+					"service": {
+						"UNKNOWN": "服務未知",
+						"RUNNING": "服務執行中",
+						"STOPPED": "服務已停止",
+						"ERROR": "服務異常"
+					},
+					"config": {
+						"UNKNOWN": "未知"
+					}
+				},
+				"row": {
+					"endpointIpPlaceholder": "IP",
+					"udpPortSuffix": "{port}/udp",
+					"actions": {
+						"test": "測試 SSH 並讀取",
+						"install": "安裝",
+						"upgrade": "升級",
+						"read": "讀取",
+						"check": "檢查",
+						"dns": "DNS",
+						"delete": "刪除",
+						"details": "詳情",
+						"connectRead": "連線並讀取",
+						"restart": "重新啟動服務",
+						"saveConfig": "儲存設定並重啟",
+						"addEndpoint": "新增端點",
+						"changePort": "修改連接埠並重啟",
+						"distributePlanet": "分發 Planet",
+						"restoreOfficial": "恢復官方 Planet"
+					}
+				},
+				"toast": {
+					"remoteRootSaved": "遠端 root 已儲存",
+					"sshSucceeded": "SSH 連線成功",
+					"installCompleted": "安裝命令已完成",
+					"upgradeCompleted": "升級命令已完成",
+					"remoteConfigRead": "遠端設定已讀取",
+					"noDnsRecords": "找不到 DNS 記錄",
+					"noHealthyRoots": "沒有可用的健康遠端 root",
+					"customPlanetUpdated": "自訂 planet 已追加遠端 root",
+					"rootChecked": "遠端 root 已檢查",
+					"healthCheckStarted": "健康檢查已開始",
+					"restartCompleted": "ZeroTier 已重新啟動",
+					"portChanged": "ZeroTier 連接埠已修改並已重啟服務",
+					"configSaved": "ZeroTier 設定已儲存並已重啟服務",
+					"planetDistributed": "Planet 已分發到遠端 root",
+					"officialPlanetRestored": "遠端 root 已恢復為官方 planet"
+				},
+				"tasks": {
+					"title": "最近任務",
+					"noLogs": "沒有擷取到記錄。",
+					"publicKeyTitle": "託管 SSH 公鑰",
+					"publicKeyDescription": "連線前，請將此公鑰加入遠端使用者的 ~/.ssh/authorized_keys。",
+					"copyPublicKey": "複製公鑰",
+					"publicKeyCopied": "公鑰已複製"
+				},
+				"sections": {
+					"connection": "連線",
+					"zerotier": "ZeroTier",
+					"endpoint": "端點",
+					"planet": "Planet"
+				},
+				"values": {
+					"yes": "是",
+					"no": "否"
 				}
 			},
 			"yes": "是",
