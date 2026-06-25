@@ -26,6 +26,10 @@ import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 import { remoteRootRouter } from "./remoteRootRouter";
 import { normalizePlanetRootNodes } from "../services/remoteRootPlanetService";
+import {
+	readLocalZerotierConfig,
+	saveLocalZerotierConfig,
+} from "../services/localZerotierConfigService";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -409,6 +413,34 @@ export const adminRouter = createTRPCRouter({
 			return throwError(error);
 		}
 	}),
+	getLocalZerotierConfig: adminRoleProtectedRoute.query(() => {
+		try {
+			return readLocalZerotierConfig();
+		} catch (error) {
+			return throwError(error);
+		}
+	}),
+	saveLocalZerotierConfig: adminRoleProtectedRoute
+		.input(
+			z.object({
+				primaryPort: z.number().int().min(1).max(65535),
+				secondaryPort: z.number().int().min(1).max(65535).optional().nullable(),
+				allowSecondaryPort: z.boolean().optional().nullable(),
+				interfacePrefixBlacklist: z.array(z.string()).default([]),
+				bindAddresses: z.array(z.string()).default([]),
+				allowManagementFrom: z.array(z.string()).default([]),
+				defaultBondingPolicy: z.string().optional().nullable(),
+				multithreaded: z.boolean().optional().nullable(),
+				linuxKernelMode: z.boolean().optional().nullable(),
+			}),
+		)
+		.mutation(({ input }) => {
+			try {
+				return saveLocalZerotierConfig(input);
+			} catch (error) {
+				return throwError(error);
+			}
+		}),
 
 	// Set global options
 	getAllOptions: adminRoleProtectedRoute.query(

@@ -25,6 +25,11 @@ jest.mock("~/components/adminPage/controller/remoteRoots", () => ({
 	default: () => <section data-testid="remote-roots" />,
 }));
 
+jest.mock("~/components/adminPage/controller/localZerotierConfig", () => ({
+	__esModule: true,
+	default: () => <button type="button">Configure local ZeroTier</button>,
+}));
+
 jest.mock("~/utils/api", () => ({
 	api: {
 		admin: {
@@ -80,7 +85,11 @@ describe("Controller layout", () => {
 		expect(main).toHaveClass("w-full");
 		expect(main).not.toHaveClass("xl:w-6/12");
 		expect(screen.getByTestId("remote-roots")).toBeInTheDocument();
-		expect(screen.getByTestId("remote-roots").closest('[data-testid="controller-narrow-layout"]')).toBeNull();
+		expect(
+			screen
+				.getByTestId("remote-roots")
+				.closest('[data-testid="controller-narrow-layout"]'),
+		).toBeNull();
 	});
 
 	it("keeps IPv4 address tokens compact while allowing IPv6 to wrap", () => {
@@ -101,5 +110,27 @@ describe("Controller layout", () => {
 			expect(address).toHaveClass("whitespace-normal");
 			expect(address).toHaveClass("text-left");
 		}
+	});
+
+	it("renders local ZeroTier config entry for admins", () => {
+		render(<Controller />);
+
+		expect(
+			screen.getByRole("button", { name: "Configure local ZeroTier" }),
+		).toBeInTheDocument();
+	});
+
+	it("keeps local ZeroTier config entry visible when controller stats fail", () => {
+		mockedApi.admin.getControllerStats.useQuery.mockReturnValue({
+			data: null,
+			error: { message: "local controller unavailable" },
+		});
+
+		render(<Controller />);
+
+		expect(screen.getByText("local controller unavailable")).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Configure local ZeroTier" }),
+		).toBeInTheDocument();
 	});
 });

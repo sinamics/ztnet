@@ -546,10 +546,9 @@ const RemoteRoots = () => {
 		resolveDomain.isLoading;
 
 	return (
-		<section className="w-full space-y-5 rounded-md border border-base-300 p-4">
+		<div className="overflow-x-auto w-full space-y-5">
 			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 				<div>
-					<h3 className="font-semibold">{t("controller.remoteRoots.title")}</h3>
 					<p className="text-sm text-gray-500">
 						{t("controller.remoteRoots.description")}
 					</p>
@@ -675,9 +674,9 @@ const RemoteRoots = () => {
 					</p>
 				</div>
 			) : (
-				<div className="w-full overflow-x-auto">
-					<div className="inline-block w-full align-middle">
-						<div className="w-full overflow-hidden rounded-lg border border-base-300">
+				<div className="overflow-x-auto w-full">
+					<div className="inline-block">
+						<div className="overflow-hidden rounded-lg border w-full">
 							<table className="table table-sm w-full min-w-[920px]">
 								<thead>
 									<tr>
@@ -1280,7 +1279,7 @@ const RemoteRoots = () => {
 					/>
 				</div>
 			) : null}
-		</section>
+		</div>
 	);
 };
 

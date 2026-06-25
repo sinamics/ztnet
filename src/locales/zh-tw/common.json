@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "允許 TCP Fallback Relay：",
 				"listeningOn": "正在監聽："
 			},
+			"localConfig": {
+				"title": "本機 ZeroTier 設定",
+				"description": "管理本機控制器的 ZeroTier local.conf 設定。",
+				"restartHint": "變更會寫入 local.conf。需要重新啟動 ZeroTier 後才會生效，例如：docker restart zerotier。",
+				"readonlyHint": "ZeroTier 目錄不可寫入。儲存前請更新掛載磁碟區或檔案權限。",
+				"configPath": "設定檔：{path}",
+				"actions": {
+					"configure": "設定本機 ZeroTier",
+					"save": "儲存設定"
+				},
+				"toast": {
+					"saved": "本機 ZeroTier 設定已儲存。請重新啟動 ZeroTier 使變更生效。"
+				},
+				"form": {
+					"primaryPortLabel": "主連接埠",
+					"secondaryPortLabel": "靜態 Secondary UDP 連接埠（可選）",
+					"allowSecondaryPortLabel": "允許 Secondary/Tertiary 監聽連接埠",
+					"interfacePrefixBlacklistLabel": "網卡前綴黑名單",
+					"bindAddressesLabel": "綁定地址",
+					"allowManagementFromLabel": "允許管理介面來源",
+					"defaultBondingPolicyLabel": "預設鏈路聚合策略",
+					"multithreadedLabel": "啟用多執行緒",
+					"linuxKernelModeLabel": "Linux 核心模式"
+				}
+			},
 			"controllerStatus": {
 				"title": "控制器狀態",
 				"online": "在線：",

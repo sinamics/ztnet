@@ -194,7 +194,11 @@ describe("RemoteRoots", () => {
 
 		renderRemoteRoots();
 
-		expect(screen.getByText("Remote Planet Roots")).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				"Manage remote ZeroTier root nodes for custom planet generation.",
+			),
+		).toBeInTheDocument();
 	});
 
 	it("renders the remote roots table at full available width", () => {

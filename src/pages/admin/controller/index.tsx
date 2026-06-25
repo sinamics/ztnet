@@ -5,6 +5,7 @@ import DebugMirror from "~/components/adminPage/controller/debugController";
 import { UnlinkedNetwork } from "~/components/adminPage/controller/unlinkedNetworkTable";
 import ZerotierUrl from "~/components/adminPage/controller/zerotierUrl";
 import RemoteRoots from "~/components/adminPage/controller/remoteRoots";
+import LocalZerotierConfig from "~/components/adminPage/controller/localZerotierConfig";
 import { ReactElement } from "react";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
@@ -28,9 +29,12 @@ const Controller = () => {
 	const addressClassName =
 		"badge badge-primary inline-flex h-auto min-h-6 max-w-full min-w-0 justify-start whitespace-normal break-all px-2 py-1 text-left leading-snug";
 	return (
-		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3">
+		<main className="grid grid-cols-1 lg:grid-cols-2 w-full bg-base-100 p-5 sm:p-3 space-y-10">
 			{controllerError ? (
-				<div className="space-y-10 xl:w-6/12" data-testid="controller-narrow-layout">
+				<div
+					className="col-span-2 space-y-10 xl:w-6/12"
+					data-testid="controller-narrow-layout"
+				>
 					<div className="alert alert-error">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -47,10 +51,14 @@ const Controller = () => {
 						</svg>
 						<span>{controllerError?.message}</span>
 					</div>
+					<LocalZerotierConfig />
 					<ZerotierUrl />
 				</div>
 			) : (
-				<div className="space-y-10 xl:w-6/12" data-testid="controller-narrow-layout">
+				<div
+					className="col-span-2 space-y-10 xl:w-6/12"
+					data-testid="controller-narrow-layout"
+				>
 					<MenuSectionDividerWrapper title={t("controller.networkMembers.title")}>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.networkMembers.totalNetworks")}</p>
@@ -116,6 +124,7 @@ const Controller = () => {
 							</div>
 						</div>
 					</MenuSectionDividerWrapper>
+					<LocalZerotierConfig />
 					<MenuSectionDividerWrapper title={t("controller.controllerStatus.title")}>
 						<div className="flex items-center justify-between">
 							<p>{t("controller.controllerStatus.online")}</p>
@@ -136,7 +145,12 @@ const Controller = () => {
 					<ZerotierUrl />
 				</div>
 			)}
-			<RemoteRoots />
+			<MenuSectionDividerWrapper
+				title={t("controller.remoteRoots.title")}
+				className="col-span-2"
+			>
+				<RemoteRoots />
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };

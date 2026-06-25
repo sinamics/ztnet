@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "Дозволити резервну передачу TCP:",
 				"listeningOn": "Слухає на:"
 			},
+			"localConfig": {
+				"title": "Local ZeroTier Config",
+				"description": "Manage the local controller ZeroTier local.conf settings.",
+				"restartHint": "Changes are written to local.conf. Restart ZeroTier for them to take effect, for example: docker restart zerotier.",
+				"readonlyHint": "The ZeroTier folder is not writable. Update the volume or file permissions before saving.",
+				"configPath": "Config file: {path}",
+				"actions": {
+					"configure": "Configure local ZeroTier",
+					"save": "Save config"
+				},
+				"toast": {
+					"saved": "Local ZeroTier config saved. Restart ZeroTier to apply changes."
+				},
+				"form": {
+					"primaryPortLabel": "Primary port",
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode"
+				}
+			},
 			"controllerStatus": {
 				"title": "Статус контролера",
 				"online": "Онлайн:",

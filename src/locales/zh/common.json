@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "允许 TCP Fallback Relay：",
 				"listeningOn": "正在监听："
 			},
+			"localConfig": {
+				"title": "本地 ZeroTier 配置",
+				"description": "管理本地 controller 的 ZeroTier local.conf 设置。",
+				"restartHint": "更改会写入 local.conf。需要重启 ZeroTier 后才会生效，例如：docker restart zerotier。",
+				"readonlyHint": "ZeroTier 目录不可写。保存前请更新挂载卷或文件权限。",
+				"configPath": "配置文件：{path}",
+				"actions": {
+					"configure": "配置本地 ZeroTier",
+					"save": "保存配置"
+				},
+				"toast": {
+					"saved": "本地 ZeroTier 配置已保存。请重启 ZeroTier 使更改生效。"
+				},
+				"form": {
+					"primaryPortLabel": "主端口",
+					"secondaryPortLabel": "静态 Secondary UDP 端口（可选）",
+					"allowSecondaryPortLabel": "允许 Secondary/Tertiary 监听端口",
+					"interfacePrefixBlacklistLabel": "网卡前缀黑名单",
+					"bindAddressesLabel": "绑定地址",
+					"allowManagementFromLabel": "允许管理接口来源",
+					"defaultBondingPolicyLabel": "默认链路聚合策略",
+					"multithreadedLabel": "启用多线程",
+					"linuxKernelModeLabel": "Linux 内核模式"
+				}
+			},
 			"controllerStatus": {
 				"title": "控制器状态",
 				"online": "在线：",

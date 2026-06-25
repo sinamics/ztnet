@@ -136,6 +136,26 @@ const requiredRemoteRootKeys = [
 	"toast.customPlanetUpdated",
 ];
 
+const requiredLocalConfigKeys = [
+	"title",
+	"description",
+	"restartHint",
+	"readonlyHint",
+	"configPath",
+	"actions.configure",
+	"actions.save",
+	"toast.saved",
+	"form.primaryPortLabel",
+	"form.secondaryPortLabel",
+	"form.allowSecondaryPortLabel",
+	"form.interfacePrefixBlacklistLabel",
+	"form.bindAddressesLabel",
+	"form.allowManagementFromLabel",
+	"form.defaultBondingPolicyLabel",
+	"form.multithreadedLabel",
+	"form.linuxKernelModeLabel",
+];
+
 const getNestedValue = (source: unknown, path: string): unknown =>
 	path.split(".").reduce<unknown>((current, segment) => {
 		if (!current || typeof current !== "object") {
@@ -174,6 +194,35 @@ describe("remote root translations", () => {
 			const english = getNestedValue(en, `admin.controller.remoteRoots.${key}`);
 			expect(getNestedValue(zh, `admin.controller.remoteRoots.${key}`)).not.toBe(english);
 			expect(getNestedValue(zhTw, `admin.controller.remoteRoots.${key}`)).not.toBe(
+				english,
+			);
+		}
+	});
+
+	it("defines every local ZeroTier config UI key for all supported locale files", () => {
+		for (const [locale, messages] of Object.entries(localeMessages)) {
+			for (const key of requiredLocalConfigKeys) {
+				const value = getNestedValue(messages, `admin.controller.localConfig.${key}`);
+				if (typeof value !== "string" || value.length === 0) {
+					throw new Error(`${locale} is missing admin.controller.localConfig.${key}`);
+				}
+			}
+		}
+	});
+
+	it("translates key local ZeroTier config labels in Chinese locales instead of reusing English", () => {
+		for (const key of [
+			"title",
+			"actions.configure",
+			"actions.save",
+			"restartHint",
+			"form.primaryPortLabel",
+		]) {
+			const english = getNestedValue(en, `admin.controller.localConfig.${key}`);
+			expect(getNestedValue(zh, `admin.controller.localConfig.${key}`)).not.toBe(
+				english,
+			);
+			expect(getNestedValue(zhTw, `admin.controller.localConfig.${key}`)).not.toBe(
 				english,
 			);
 		}
