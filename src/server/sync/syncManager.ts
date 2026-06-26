@@ -50,6 +50,9 @@ class SyncManager {
 		const existing = this.networks.get(nwid);
 		if (existing) {
 			existing.refCount += 1;
+			// Track the most recent subscriber's context so the loop doesn't stay
+			// pinned to the first viewer's (possibly now-stale) session/credentials.
+			existing.ctx = ctx;
 			return;
 		}
 		this.networks.set(nwid, { refCount: 1, ctx, timer: null, lastHash: "" });
