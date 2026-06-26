@@ -160,8 +160,9 @@ paths:
                         description: Tag value
                 deleted:
                   type: boolean
+                  enum: [false]
                   description: |
-                    Set to `false` to restore a stashed (deleted) member. Only `false` is accepted; use the DELETE method to stash a member.
+                    Set to `false` to restore a stashed (deleted) member. Only `false` is accepted; `deleted: true` returns `400` (use the DELETE method to stash a member).
               # required:
               #   - name
               #   - authorized
