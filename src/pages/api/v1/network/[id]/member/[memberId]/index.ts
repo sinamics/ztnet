@@ -76,11 +76,23 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 			return res.status(400).json({ error: "No data provided for update" });
 		}
 
+		// The `deleted` field is handled explicitly below, not through the generic
+		// updateable-field loop. Sending `deleted: false` restores a stashed member;
+		// `deleted: true` is rejected (use the DELETE method to stash a member).
+		if (validatedInput.deleted === true) {
+			return res.status(400).json({
+				error:
+					"Setting `deleted: true` is not supported. Use the DELETE method to stash a member.",
+			});
+		}
+		const restoreRequested = validatedInput.deleted === false;
+
 		const databasePayload: Partial<network_members> = {};
 		const controllerPayload: Partial<network_members> = {};
 
 		// Iterate over keys in the request body
 		for (const [key, value] of Object.entries(validatedInput)) {
+			if (key === "deleted") continue;
 			try {
 				if (updateableFields[key].destinations.includes("database")) {
 					databasePayload[key] = value;
@@ -105,6 +117,23 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 			});
 
 			const dbMember = network?.networkMembers?.[0];
+
+			// A stashed (deleted) member cannot be modified unless the request
+			// explicitly restores it with `deleted: false`. This prevents the
+			// inconsistent state where a member is authorized on the controller while
+			// still flagged as deleted in the database (see issue #930).
+			if (dbMember?.deleted && !restoreRequested) {
+				return res.status(409).json({
+					error:
+						"Member is deleted. Set `deleted: false` to restore the member before modifying it.",
+				});
+			}
+
+			// Restore the member in the database when requested.
+			if (restoreRequested) {
+				databasePayload.deleted = false;
+				databasePayload.permanentlyDeleted = false;
+			}
 
 			if (dbMember && Object.keys(databasePayload).length > 0) {
 				await ctx.prisma.network.update({

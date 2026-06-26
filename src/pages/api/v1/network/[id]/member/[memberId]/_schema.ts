@@ -7,6 +7,9 @@ export const updateableFieldsMetaSchema = z
 		name: z.string().optional(),
 		description: z.string().optional(),
 		authorized: z.boolean().optional(),
+		// Restore a stashed (deleted) member. Only `false` is accepted; use the
+		// DELETE method to stash a member.
+		deleted: z.boolean().optional(),
 	})
 	.strict();
 
