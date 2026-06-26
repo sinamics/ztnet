@@ -95,6 +95,12 @@ model network_members {
   description        String?
   address            String?                 @default("")
   creationTime       DateTime
+  // Cached controller config (source of truth = controller; reconciled via revision).
+  // Lets the member list render from the DB without an N+1 controller fetch per load.
+  ipAssignments      String[]                @default([])
+  noAutoAssignIps    Boolean                 @default(false)
+  activeBridge       Boolean                 @default(false)
+  revision           Int?
   notations          NetworkMemberNotation[]
 
   @@unique([id, nwid])

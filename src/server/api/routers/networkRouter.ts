@@ -16,7 +16,11 @@ import {
 	type NetworkDeleted,
 } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
-import { fetchZombieMembers, syncMemberPeersAndStatus } from "../services/memberService";
+import {
+	attachLiveStatus,
+	reconcileNetworkMembersOnce,
+	triggerBackgroundReconcile,
+} from "../services/memberService";
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
@@ -120,11 +124,20 @@ export const networkRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			if (input.central) {
-				return await ztController.central_network_and_members(
+				// Keep getNetworkById's shape uniform: meta + counts (members are served
+				// by getNetworkMembers). Central has no DB-backed zombie members.
+				const centralResponse = await ztController.central_network_and_members(
 					ctx,
 					input.nwid,
 					input.central,
 				);
+				const centralMembers = (centralResponse?.members ?? []) as MemberEntity[];
+				return {
+					network: centralResponse?.network,
+					memberCount: centralMembers.length,
+					authorizedMemberCount: centralMembers.filter((m) => m.authorized).length,
+					zombieMembers: [] as network_members[],
+				};
 			}
 
 			try {
@@ -161,98 +174,46 @@ export const networkRouter = createTRPCRouter({
 				}
 
 				/**
-				 * Response from the ztController.local_network_and_members method.
-				 * @type {Promise<any>}
+				 * Network details from the controller (metadata + routes only — members
+				 * are reconciled separately to avoid an N+1 per-member fetch).
 				 */
-				const ztControllerResponse = await ztController
-					.local_network_and_members(ctx, networkFromDatabase.nwid)
+				const controllerNetwork = await ztController
+					.get_network(ctx, networkFromDatabase.nwid)
 					.catch((err: APIError) => {
 						throwError(`${err.message}`);
 					});
 
-				if (!ztControllerResponse) return throwError("Failed to get network details!");
+				if (!controllerNetwork) return throwError("Failed to get network details!");
 
-				/**
-				 * Syncs member peers and status.
-				 */
-				const membersWithStatusAndPeers = await syncMemberPeersAndStatus(
-					ctx,
-					input.nwid,
-					ztControllerResponse.members,
-				).catch((err) => {
-					console.error("Error syncing member peers and status:", err);
-					// Return empty array on sync error to prevent complete failure
-					return [];
+				// Members are served (paginated) by getNetworkMembers. Here we just kick
+				// off a deduped reconcile — awaiting it only on a cold cache so the page's
+				// counts aren't empty on first load — then derive lightweight counts and
+				// the stashed (zombie) list straight from the DB.
+				const cachedCount = await ctx.prisma.network_members.count({
+					where: { nwid: input.nwid },
 				});
+				if (cachedCount === 0) {
+					await reconcileNetworkMembersOnce(ctx, input.nwid).catch((err) => {
+						console.error("Initial reconcile failed:", err);
+					});
+				} else {
+					triggerBackgroundReconcile(ctx, input.nwid);
+				}
 
 				// Generate CIDR options for IP configuration
 				const { cidrOptions } = IPv4gen(null, []);
 
-				/**
-				 * Merging logic to ensure proper member visibility:
-				 * 1. Start with database members (both active and stashed)
-				 * 2. Only add controller members if they don't exist in database
-				 * 3. Filter out stashed members from final result
-				 */
-				const mergedMembersMap = new Map();
-
-				// First, fetch ALL members from database (including deleted/stashed ones)
-				const allDatabaseMembers = await ctx.prisma.network_members.findMany({
-					where: {
-						nwid: input.nwid,
-					},
-				});
-
-				/**
-				 * Get stashed/zombie members directly from database.
-				 * These are members that were previously stashed (deleted: true) but not permanently deleted
-				 */
-				const zombieMembers = allDatabaseMembers.filter(
-					(member) => member.deleted && !member.permanentlyDeleted,
-				);
-
-				// Add all database members to the map (this gives us the authoritative record)
-				for (const member of allDatabaseMembers) {
-					// For database members, merge with controller data if available
-					const controllerMember = membersWithStatusAndPeers.find(
-						(m) => m.id === member.id,
-					);
-					if (controllerMember && !member.deleted) {
-						// Merge database and controller data for active members
-						mergedMembersMap.set(member.id, {
-							...controllerMember,
-							...member, // Database data takes precedence
-						});
-					} else if (!member.deleted) {
-						// Database-only member (manually added), not stashed
-						mergedMembersMap.set(member.id, member);
-					}
-					// Note: Stashed members (deleted: true) are deliberately not added to the map
-				}
-
-				// Pre-fetch permanently deleted members to avoid N+1 queries in the loop
-				const permanentlyDeletedMemberIds = new Set(
-					(
-						await ctx.prisma.network_members.findMany({
-							where: {
-								nwid: input.nwid,
-								permanentlyDeleted: true,
-							},
-							select: { id: true },
-						})
-					).map((member) => member.id),
-				);
-
-				// Then, add controller members that don't exist in database at all
-				// BUT exclude members that were permanently deleted
-				for (const member of membersWithStatusAndPeers) {
-					if (!allDatabaseMembers.some((dbMember) => dbMember.id === member.id)) {
-						// Only add as new member if it was never permanently deleted
-						if (!permanentlyDeletedMemberIds.has(member.id)) {
-							mergedMembersMap.set(member.id, member);
-						}
-					}
-				}
+				const [zombieMembers, memberCount, authorizedMemberCount] = await Promise.all([
+					ctx.prisma.network_members.findMany({
+						where: { nwid: input.nwid, deleted: true, permanentlyDeleted: false },
+					}),
+					ctx.prisma.network_members.count({
+						where: { nwid: input.nwid, deleted: false },
+					}),
+					ctx.prisma.network_members.count({
+						where: { nwid: input.nwid, deleted: false, authorized: true },
+					}),
+				]);
 
 				// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
 				// Only sync if routes actually differ to avoid unnecessary database operations
@@ -260,9 +221,7 @@ export const networkRouter = createTRPCRouter({
 					networkFromDatabase.routes?.map((r) => `${r.target}|${r.via || "null"}`) || [],
 				);
 				const ztRouteKeys = new Set(
-					ztControllerResponse.network.routes?.map(
-						(r) => `${r.target}|${r.via || "null"}`,
-					) || [],
+					controllerNetwork.routes?.map((r) => `${r.target}|${r.via || "null"}`) || [],
 				);
 				const routesAreDifferent =
 					dbRouteKeys.size !== ztRouteKeys.size ||
@@ -272,14 +231,12 @@ export const networkRouter = createTRPCRouter({
 					await syncNetworkRoutes({
 						networkId: input.nwid,
 						networkFromDatabase,
-						ztControllerRoutes: ztControllerResponse.network.routes,
+						ztControllerRoutes: controllerNetwork.routes,
 					});
 				}
 
 				// check if there is other network using same routes and return a notification
-				const targetIPs = ztControllerResponse.network.routes.map(
-					(route) => route.target,
-				);
+				const targetIPs = controllerNetwork.routes.map((route) => route.target);
 				interface DuplicateRoutes {
 					authorId: string;
 					routes: RoutesEntity[];
@@ -323,13 +280,10 @@ export const networkRouter = createTRPCRouter({
 				// Remove duplicates from the list of duplicated IPs
 				const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
 
-				// Convert the map back to an array of merged members
-				const mergedMembers = [...mergedMembersMap.values()];
-
 				// Construct the final response object using the already fetched network data
 				return {
 					network: {
-						...ztControllerResponse?.network,
+						...controllerNetwork,
 						...networkFromDatabase,
 						cidr: cidrOptions,
 						duplicateRoutes: duplicateRoutes.map((network) => ({
@@ -337,7 +291,8 @@ export const networkRouter = createTRPCRouter({
 							duplicatedIPs: uniqueDuplicatedIPs,
 						})),
 					},
-					members: mergedMembers as MemberEntity[],
+					memberCount,
+					authorizedMemberCount,
 					zombieMembers,
 				};
 			} catch (error) {
@@ -345,6 +300,105 @@ export const networkRouter = createTRPCRouter({
 				// Re-throw to maintain API contract
 				throw error;
 			}
+		}),
+	/**
+	 * Paginated, DB-first member list for a network. Serves a page straight from
+	 * the database (fast, scales to thousands of members) enriched with live
+	 * connection status, and triggers a background controller reconcile to keep
+	 * the cache fresh. On a cold cache (no rows yet) it reconciles synchronously
+	 * so the first load isn't empty.
+	 */
+	getNetworkMembers: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+				central: z.boolean().optional().default(false),
+				page: z.number().int().min(0).default(0),
+				// High cap so "list all members" callers (REST collection endpoint,
+				// routes name-resolution) can request the full set in one page.
+				pageSize: z.number().int().min(1).max(100000).default(50),
+				search: z.string().trim().optional(),
+				sortBy: z
+					.enum([
+						"id",
+						"name",
+						"authorized",
+						"online",
+						"physicalAddress",
+						"lastSeen",
+						"creationTime",
+					])
+					.default("id"),
+				sortDir: z.enum(["asc", "desc"]).default("asc"),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
+
+			// Central networks are hosted by ZeroTier; keep the existing fetch and
+			// paginate in memory (the local-controller N+1 is the issue we target).
+			if (input.central) {
+				const response = await ztController.central_network_and_members(
+					ctx,
+					input.nwid,
+					true,
+				);
+				const all = (response?.members ?? []) as MemberEntity[];
+				const start = input.page * input.pageSize;
+				return {
+					members: all.slice(start, start + input.pageSize),
+					totalCount: all.length,
+					authorizedCount: all.filter((m) => m.authorized).length,
+				};
+			}
+
+			// Cold cache: populate synchronously so the first load isn't empty.
+			// Otherwise serve the DB and refresh in the background.
+			const cachedCount = await ctx.prisma.network_members.count({
+				where: { nwid: input.nwid },
+			});
+			if (cachedCount === 0) {
+				await reconcileNetworkMembersOnce(ctx, input.nwid).catch((err) => {
+					console.error("Initial reconcile failed:", err);
+				});
+			} else {
+				triggerBackgroundReconcile(ctx, input.nwid);
+			}
+
+			const search = input.search;
+			const where = {
+				nwid: input.nwid,
+				deleted: false,
+				...(search
+					? {
+							OR: [
+								{ id: { contains: search, mode: "insensitive" as const } },
+								{ name: { contains: search, mode: "insensitive" as const } },
+								{
+									physicalAddress: { contains: search, mode: "insensitive" as const },
+								},
+								{ ipAssignments: { has: search } },
+							],
+						}
+					: {}),
+			};
+
+			const [rows, totalCount, authorizedCount] = await Promise.all([
+				ctx.prisma.network_members.findMany({
+					where,
+					orderBy: { [input.sortBy]: input.sortDir },
+					skip: input.page * input.pageSize,
+					take: input.pageSize,
+					include: { notations: { include: { label: true } } },
+				}),
+				ctx.prisma.network_members.count({ where }),
+				ctx.prisma.network_members.count({
+					where: { nwid: input.nwid, deleted: false, authorized: true },
+				}),
+			]);
+
+			const members = await attachLiveStatus(ctx, rows);
+			return { members, totalCount, authorizedCount };
 		}),
 	deleteNetwork: protectedProcedure
 		.input(

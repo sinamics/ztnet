@@ -5,14 +5,24 @@ import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const TableFooter = ({ table, page }: { table: Table<any>; page: string }) => {
+const TableFooter = ({
+	table,
+	page,
+	totalCount,
+}: {
+	// biome-ignore lint/suspicious/noExplicitAny: generic table
+	table: Table<any>;
+	page: string;
+	// Server-side tables pass the total row count here; client-side tables omit
+	// it and fall back to the (fully-loaded) data length.
+	totalCount?: number;
+}) => {
 	const t = useTranslations("commonTable");
 	const [pageSize, setPageSize] = useState<string | number>(
 		table.getState().pagination.pageSize,
 	);
 
-	const totalMembersCount = table?.options?.data?.length || 0;
+	const totalMembersCount = totalCount ?? table?.options?.data?.length ?? 0;
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {

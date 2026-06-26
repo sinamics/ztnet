@@ -58,7 +58,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
-	const { network, members = [] } = networkById || {};
+	const { network, memberCount = 0 } = networkById || {};
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
 
 	if (errorNetwork) {
@@ -226,7 +226,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				{t("networkById.networkMembers")}
 			</div>
 			<div className="w-5/5 mx-auto w-full  py-4 text-sm md:text-base">
-				{members.length ? (
+				{memberCount ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable
 							nwid={network.nwid}

@@ -70,7 +70,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
-	const { network, members = [] } = networkById || {};
+	const { network, memberCount = 0 } = networkById || {};
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
 	if (errorNetwork) {
 		return (
@@ -232,7 +232,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 				{t("networkById.networkMembers")}
 			</div>
 			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
-				{members.length ? (
+				{memberCount ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable nwid={network.nwid} central={false} />
 					</div>
