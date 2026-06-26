@@ -98,6 +98,8 @@ paths:
       summary: Modify a organization network member
       description: |
         Modify a organization network member. This endpoint can also be used to pre-authorize a member that has not yet joined the network by providing their ZeroTier node ID as the `memberId`. If the member does not yet exist in the database, it will be created on the ZeroTier controller and returned in the response.
+
+        A stashed (deleted) member cannot be modified. Attempting to do so returns `409 Conflict`. To restore a stashed member, send `deleted: false` (optionally together with the other fields you want to update in the same request).
       parameters:
         - in: path
           name: networkId
@@ -156,6 +158,11 @@ paths:
                         description: Tag key
                       - type: string
                         description: Tag value
+                deleted:
+                  type: boolean
+                  enum: [false]
+                  description: |
+                    Set to `false` to restore a stashed (deleted) member. Only `false` is accepted; `deleted: true` returns `400` (use the DELETE method to stash a member).
               # required:
               #   - name
               #   - authorized
@@ -173,6 +180,18 @@ paths:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        409:
+          description: |
+            The member is stashed (deleted) and cannot be modified. Send `deleted: false` to restore it before modifying.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "Member is deleted. Set `deleted: false` to restore the member before modifying it."
         429:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:

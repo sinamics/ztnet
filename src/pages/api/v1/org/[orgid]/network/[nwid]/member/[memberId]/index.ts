@@ -66,7 +66,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			// structure of the updateableFields object:
 
 			const updateableFields = {
-				name: { type: "string", destinations: ["database"] },
+				name: { type: "string", destinations: ["database", "controller"] },
 				authorized: { type: "boolean", destinations: ["controller"] },
 				activeBridge: { type: "boolean", destinations: ["controller"] },
 				capabilities: { type: "array", destinations: ["controller"] },
@@ -76,11 +76,23 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				tags: { type: "array", destinations: ["controller"] },
 			};
 
+			// The `deleted` field is handled explicitly below, not through the generic
+			// updateable-field loop. Sending `deleted: false` restores a stashed
+			// member; `deleted: true` is rejected (use the DELETE method to stash).
+			if (validatedBody.deleted === true) {
+				return res.status(400).json({
+					error:
+						"Setting `deleted: true` is not supported. Use the DELETE method to stash a member.",
+				});
+			}
+			const restoreRequested = validatedBody.deleted === false;
+
 			const databasePayload: Partial<network_members> = {};
 			const controllerPayload: Partial<network_members> = {};
 
 			// Iterate over keys in the request body
 			for (const [key, value] of Object.entries(validatedBody)) {
+				if (key === "deleted") continue;
 				// Check if the key is not in updateableFields
 				if (!(key in updateableFields)) {
 					return res.status(400).json({ error: `Invalid field: ${key}` });
@@ -129,6 +141,23 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				return res.status(404).json({ error: "Network not found or access denied." });
 			}
 			const dbMember = network.networkMembers?.[0];
+
+			// A stashed (deleted) member cannot be modified unless the request
+			// explicitly restores it with `deleted: false`. This prevents the
+			// inconsistent state where a member is authorized on the controller while
+			// still flagged as deleted in the database (see issue #930).
+			if (dbMember?.deleted && !restoreRequested) {
+				return res.status(409).json({
+					error:
+						"Member is deleted. Set `deleted: false` to restore the member before modifying it.",
+				});
+			}
+
+			// Restore the member in the database when requested.
+			if (restoreRequested) {
+				databasePayload.deleted = false;
+				databasePayload.permanentlyDeleted = false;
+			}
 
 			if (dbMember) {
 				// Member exists in DB, update if there are database fields to update

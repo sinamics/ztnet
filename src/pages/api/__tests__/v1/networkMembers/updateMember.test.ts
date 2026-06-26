@@ -134,6 +134,144 @@ describe("Update Network Members", () => {
 		expect(res.status).toHaveBeenCalledWith(200);
 	});
 
+	it("should persist name to the database and controller (issue #929)", async () => {
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId" }],
+		});
+
+		prisma.network_members.findUnique = jest.fn().mockResolvedValue({
+			id: "memberId",
+			name: "New Name",
+		});
+
+		(ztController.member_details as jest.Mock).mockResolvedValue([]);
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { name: "New Name" },
+		} as unknown as NextApiRequest;
+
+		const res = createMockRes();
+
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(200);
+		// name must be written to the database, not only the controller.
+		expect(prisma.network.update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					networkMembers: expect.objectContaining({
+						update: expect.objectContaining({
+							data: expect.objectContaining({ name: "New Name" }),
+						}),
+					}),
+				}),
+			}),
+		);
+		// and still sent to the controller to keep both stores in sync.
+		expect(ztController.member_update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				updateParams: expect.objectContaining({ name: "New Name" }),
+			}),
+		);
+	});
+
+	it("should respond 409 when modifying a stashed (deleted) member", async () => {
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId", deleted: true }],
+		});
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { authorized: true },
+		} as unknown as NextApiRequest;
+
+		const res = createMockRes();
+
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(409);
+		// Controller must not be touched when the request is rejected.
+		expect(ztController.member_update).not.toHaveBeenCalled();
+	});
+
+	it("should restore a stashed member when deleted:false is sent", async () => {
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId", deleted: true }],
+		});
+
+		prisma.network_members.findUnique = jest.fn().mockResolvedValue({
+			id: "memberId",
+			authorized: true,
+			deleted: false,
+		});
+
+		(ztController.member_details as jest.Mock).mockResolvedValue([]);
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { authorized: true, deleted: false },
+		} as unknown as NextApiRequest;
+
+		const res = createMockRes();
+
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(200);
+		// The database update must clear both deletion flags.
+		expect(prisma.network.update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					networkMembers: expect.objectContaining({
+						update: expect.objectContaining({
+							data: expect.objectContaining({
+								deleted: false,
+								permanentlyDeleted: false,
+							}),
+						}),
+					}),
+				}),
+			}),
+		);
+	});
+
+	it("should reject deleted:true with 400", async () => {
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId" }],
+		});
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { deleted: true },
+		} as unknown as NextApiRequest;
+
+		const res = createMockRes();
+
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(400);
+	});
+
 	it("should respond 401 for invalid input", async () => {
 		// Mock the database to return a network
 		prisma.network.findUnique = jest.fn().mockResolvedValue({
