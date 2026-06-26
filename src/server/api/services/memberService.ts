@@ -259,8 +259,12 @@ const addNetworkMember = async (ctx, member: MemberEntity) => {
 
 	let name = null;
 
-	// send webhook if the new member is joining a organization network
-	if (memberOfOrganization) {
+	// send webhook if the new member is joining a organization network.
+	// Guard on organizationId (not just the network row, which always exists): a
+	// personal network has organizationId === null, and the org webhook / org-admin
+	// notification below are meaningless there (and previously logged a warning on
+	// every join).
+	if (memberOfOrganization?.organizationId) {
 		// check if global organization member naming is enabled, and if so find the first available name
 		if (memberOfOrganization.organization?.settings?.renameNodeGlobally) {
 			name = await findExistingMemberName(

@@ -33,12 +33,9 @@ export async function sendOrganizationAdminNotification(
 	data: OrganizationAdminNotificationData,
 ) {
 	try {
-		// Check if organizationId is provided
+		// No organization → nothing to notify (e.g. a personal network). This is a
+		// normal case, so return quietly rather than logging on every event.
 		if (!data.organizationId) {
-			console.warn(
-				"sendOrganizationAdminNotification called with null or undefined organizationId. Event type:",
-				data.eventType,
-			);
 			return;
 		}
 

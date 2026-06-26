@@ -5,6 +5,11 @@ import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
 
 const MIN_COUNT_TO_SHOW_FOOTER = 11;
 
+// "Show all" maps to a single large page (the server's page-size cap) rather than
+// the live row count. Using a fixed value lets the table fetch everything in one
+// query at init — no intermediate small page, no second fetch, no flicker.
+export const ALL_PAGE_SIZE = 100000;
+
 const TableFooter = ({
 	table,
 	page,
@@ -24,19 +29,26 @@ const TableFooter = ({
 
 	const totalMembersCount = totalCount ?? table?.options?.data?.length ?? 0;
 
+	// Resolve a page-size selection to a valid positive integer. "all" maps to a
+	// fixed large page (not the live count) so it never depends on data being
+	// loaded yet — avoiding a 0/1 page size on first paint.
+	const resolvePageSize = (value: string | number): number => {
+		if (value === "all") return ALL_PAGE_SIZE;
+		const n = Number(value);
+		return Number.isInteger(n) && n > 0 ? n : 10;
+	};
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const savedPageSize = getLocalStorageItem(`pageSize-${page}`, null);
 		setPageSize(savedPageSize || 10);
 		if (savedPageSize !== null) {
-			table.setPageSize(
-				savedPageSize === "all" ? totalMembersCount : Number(savedPageSize),
-			);
+			table.setPageSize(resolvePageSize(savedPageSize));
 		}
 	}, [totalMembersCount]);
 
 	const storeLocalState = (pageSize) => {
-		table.setPageSize(pageSize === "all" ? totalMembersCount : Number(pageSize));
+		table.setPageSize(resolvePageSize(pageSize));
 		setPageSize(pageSize);
 		setLocalStorageItem(`pageSize-${page}`, String(pageSize));
 	};
