@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { CellContext } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
-import { api } from "~/utils/api";
 import Input from "~/components/elements/input";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import type { MemberEntity } from "~/types/local/member";
@@ -9,6 +8,7 @@ import type { MemberEntity } from "~/types/local/member";
 interface Props {
 	ctx: CellContext<MemberEntity, unknown>;
 	central: boolean;
+	showNotationMarker: boolean;
 	onSubmit: (value: string, memberId: string) => void;
 	onEditingChange?: (editing: boolean) => void;
 }
@@ -18,7 +18,13 @@ interface Props {
  * optimistically updates the table's local row data. Shows notation colour
  * markers in non-central networks when the user option is enabled.
  */
-export const EditableNameCell = ({ ctx, central, onSubmit, onEditingChange }: Props) => {
+export const EditableNameCell = ({
+	ctx,
+	central,
+	showNotationMarker,
+	onSubmit,
+	onEditingChange,
+}: Props) => {
 	const {
 		getValue,
 		row: { index, original },
@@ -26,8 +32,6 @@ export const EditableNameCell = ({ ctx, central, onSubmit, onEditingChange }: Pr
 		table,
 	} = ctx;
 	const t = useTranslations();
-	const { data: me } = api.auth.me.useQuery();
-	const showNotationMarker = !!me?.options?.showNotationMarkerInTableRow;
 	const initialValue = (getValue() as string) ?? "";
 
 	const inputRef = useRef<HTMLInputElement>(null);

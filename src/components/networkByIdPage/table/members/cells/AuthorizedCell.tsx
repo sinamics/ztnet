@@ -1,8 +1,8 @@
-import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 
 interface Props {
 	checked: boolean;
+	deAuthorizeWarning: boolean;
 	onAuthorize: (authorized: boolean) => void;
 }
 
@@ -10,12 +10,11 @@ interface Props {
  * Authorization checkbox. Owns the de-authorize confirmation flow (so the column
  * factory can stay stable); `onAuthorize` performs the actual mutation.
  */
-export const AuthorizedCell = ({ checked, onAuthorize }: Props) => {
-	const { data: me } = api.auth.me.useQuery();
+export const AuthorizedCell = ({ checked, deAuthorizeWarning, onAuthorize }: Props) => {
 	const callModal = useModalStore((state) => state.callModal);
 
 	const handleChange = (authorized: boolean) => {
-		if (me?.options?.deAuthorizeWarning && !authorized) {
+		if (deAuthorizeWarning && !authorized) {
 			callModal({
 				title: "Warning",
 				description: "Are you sure you want to deauthorize this member?",

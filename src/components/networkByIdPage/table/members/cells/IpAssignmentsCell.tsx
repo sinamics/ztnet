@@ -1,15 +1,14 @@
 import { useTranslations } from "next-intl";
-import { api } from "~/utils/api";
 import { isIPInSubnet } from "~/utils/isIpInsubnet";
 import { toRfc4193Ip, sixPlane } from "~/utils/IPv6";
 import type { MemberEntity } from "~/types/local/member";
-import type { RoutesEntity } from "~/types/local/network";
+import type { NetworkEntity, RoutesEntity } from "~/types/local/network";
 import { CopyableIp, GeneratedIpBadge } from "../components/IpBadge";
 
 interface Props {
 	original: MemberEntity;
 	nwid: string;
-	central: boolean;
+	network: NetworkEntity | undefined;
 	onDeleteIp: (ipAssignments: string[], ip: string, memberId: string) => void;
 }
 
@@ -19,13 +18,8 @@ interface Props {
  * subnet match — with latency, a delete control, and AA/EB flag badges. All IP
  * values truncate within the cell so long IPv6 addresses never overflow.
  */
-export const IpAssignmentsCell = ({ original, nwid, central, onDeleteIp }: Props) => {
+export const IpAssignmentsCell = ({ original, nwid, network, onDeleteIp }: Props) => {
 	const t = useTranslations();
-	const { data: networkById } = api.network.getNetworkById.useQuery(
-		{ nwid, central },
-		{ enabled: !!nwid },
-	);
-	const network = networkById?.network;
 	const { noAutoAssignIps, activeBridge } = original || {};
 	const hasRfc4193 = network?.v6AssignMode?.rfc4193;
 	const has6plane = network?.v6AssignMode?.["6plane"];

@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import { useSkipper } from "~/hooks/useSkipper";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import TableFooter from "~/components/shared/tableFooter";
+import { type NetworkEntity } from "~/types/local/network";
 import { useMemberColumns } from "./useMemberColumns";
 import { useTablePersistence } from "./hooks/useTablePersistence";
 import { MembersToolbar } from "./components/MembersToolbar";
@@ -22,6 +23,11 @@ declare module "@tanstack/react-table" {
 	// biome-ignore lint/correctness/noUnusedVariables: module augmentation
 	interface TableMeta<TData extends RowData> {
 		updateData: (rowIndex: number, columnId: string, value: unknown) => void;
+		// Live data read by cells at render time (so columns stay stable across
+		// refetches and cells avoid per-row query subscriptions).
+		network?: NetworkEntity;
+		deAuthorizeWarning: boolean;
+		showNotationMarker: boolean;
 	}
 }
 
@@ -105,6 +111,9 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 					),
 				);
 			},
+			network: networkById?.network as NetworkEntity | undefined,
+			deAuthorizeWarning: !!me?.options?.deAuthorizeWarning,
+			showNotationMarker: !!me?.options?.showNotationMarkerInTableRow,
 		},
 		onGlobalFilterChange: setGlobalFilter,
 		getFilteredRowModel: getFilteredRowModel(),

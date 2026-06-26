@@ -33,12 +33,13 @@ interface IProp {
 const leftAligned = { meta: { style: { textAlign: "left" as const } } };
 
 /**
- * Builds the members table column definitions. The column array is memoized with
- * a STABLE identity (empty deps): each column's `cell` is a function, and
- * react-table's `flexRender` renders cell functions as component *types* — so a
- * fresh array on every refetch would remount cells and drop focus from the inline
- * editors. Cells that need live network/user data subscribe to it themselves
- * (the queries are cached/deduped), keeping these definitions stable.
+ * Builds the members table column definitions. Memoized on the *props* only —
+ * NOT on query data — because each column's `cell` is a function that
+ * react-table's `flexRender` renders as a component *type*: a fresh array on
+ * every background refetch would remount cells and drop focus from the inline
+ * editors. Live network/user data is read at render time from `table.options.meta`
+ * (a single subscription in the parent), so columns stay stable across refetches
+ * yet rebuild correctly when the network/org/handlers change (e.g. navigation).
  */
 export const useMemberColumns = ({
 	nwid,
@@ -113,9 +114,10 @@ export const useMemberColumns = ({
 				header: () => <span>{c("header.authorized")}</span>,
 				id: "authorized",
 				...COLUMN_SIZING.authorized,
-				cell: ({ getValue, row: { original } }) => (
+				cell: ({ getValue, row: { original }, table }) => (
 					<AuthorizedCell
 						checked={getValue()}
+						deAuthorizeWarning={!!table.options.meta?.deAuthorizeWarning}
 						onAuthorize={(authorized) => doAuthorize(original.id, authorized)}
 					/>
 				),
@@ -129,6 +131,7 @@ export const useMemberColumns = ({
 					<EditableNameCell
 						ctx={ctx}
 						central={central}
+						showNotationMarker={!!ctx.table.options.meta?.showNotationMarker}
 						onEditingChange={onEditingChange}
 						onSubmit={(value, memberId) => update(memberId, { name: value })}
 					/>
@@ -160,11 +163,11 @@ export const useMemberColumns = ({
 				...COLUMN_SIZING.ipAssignments,
 				...leftAligned,
 				sortingFn: sortingIpAddress,
-				cell: ({ row: { original } }) => (
+				cell: ({ row: { original }, table }) => (
 					<IpAssignmentsCell
 						original={original}
 						nwid={nwid}
-						central={central}
+						network={table.options.meta?.network}
 						onDeleteIp={handleDeleteIp}
 					/>
 				),
@@ -204,8 +207,9 @@ export const useMemberColumns = ({
 				),
 			}),
 		],
-		// Build once: keeps cell function identities stable so inline editors don't
-		// remount (and lose focus) when the network/member queries refetch.
-		[],
+		// Depend on props only (never query data): stable across background
+		// refetches — so inline editors keep focus — but rebuilds with correct
+		// closures when the target network/org or handler changes (e.g. navigation).
+		[nwid, central, organizationId, onEditingChange],
 	);
 };
