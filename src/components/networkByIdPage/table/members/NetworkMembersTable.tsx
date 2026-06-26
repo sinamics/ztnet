@@ -10,7 +10,7 @@ import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { getLocalStorageItem } from "~/utils/localstorage";
-import TableFooter from "~/components/shared/tableFooter";
+import TableFooter, { ALL_PAGE_SIZE } from "~/components/shared/tableFooter";
 import { type NetworkEntity } from "~/types/local/network";
 import { useNetworkMembersSocket } from "~/hooks/useNetworkMembersSocket";
 import { useMemberColumns } from "./useMemberColumns";
@@ -58,10 +58,21 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		columnVisibility,
 		setColumnVisibility,
 	} = useTablePersistence();
-	const [pagination, setPagination] = useState<PaginationState>(() => ({
-		pageIndex: 0,
-		pageSize: getLocalStorageItem("pageSize-NetworkMembersTable", 10),
-	}));
+	const [pagination, setPagination] = useState<PaginationState>(() => {
+		// The stored value can be the "all" sentinel or stale junk. Resolve "all" to
+		// the full page up front so the first (and only) query fetches everything —
+		// no 10-row intermediate fetch that flickers before "all" loads.
+		const stored = getLocalStorageItem<string | number>(
+			"pageSize-NetworkMembersTable",
+			10,
+		);
+		if (stored === "all") return { pageIndex: 0, pageSize: ALL_PAGE_SIZE };
+		const n = Number(stored);
+		return {
+			pageIndex: 0,
+			pageSize: Number.isInteger(n) && n > 0 ? n : 10,
+		};
+	});
 
 	// Network metadata (routes/v6 modes) + user options are shared (deduped) with
 	// the page's query; members come from the paginated, DB-first endpoint.
@@ -75,12 +86,23 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 	const sortBy = activeSort && SERVER_SORTABLE.has(activeSort.id) ? activeSort.id : "id";
 	const sortDir = activeSort?.desc ? "desc" : "asc";
 
+	// Hard guard: invalid/NaN pagination must never reach the server (it would 400
+	// the whole query and blank the page). Clamp to valid bounds.
+	const safePageSize =
+		Number.isInteger(pagination.pageSize) && pagination.pageSize > 0
+			? Math.min(pagination.pageSize, 100000)
+			: 10;
+	const safePage =
+		Number.isInteger(pagination.pageIndex) && pagination.pageIndex >= 0
+			? pagination.pageIndex
+			: 0;
+
 	const { data: membersData, isLoading } = api.network.getNetworkMembers.useQuery(
 		{
 			nwid,
 			central,
-			page: pagination.pageIndex,
-			pageSize: pagination.pageSize,
+			page: safePage,
+			pageSize: safePageSize,
 			search: globalFilter || undefined,
 			// biome-ignore lint/suspicious/noExplicitAny: narrowed to the server enum above
 			sortBy: sortBy as any,
@@ -141,7 +163,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		manualPagination: true,
 		manualSorting: true,
 		manualFiltering: true,
-		pageCount: Math.max(1, Math.ceil(totalCount / Math.max(1, pagination.pageSize))),
+		pageCount: Math.max(1, Math.ceil(totalCount / safePageSize)),
 		onPaginationChange: setPagination,
 		onSortingChange: setSorting,
 		onGlobalFilterChange: setGlobalFilter,
