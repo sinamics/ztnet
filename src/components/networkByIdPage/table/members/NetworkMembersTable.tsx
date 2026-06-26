@@ -24,10 +24,11 @@ declare module "@tanstack/react-table" {
 	interface TableMeta<TData extends RowData> {
 		updateData: (rowIndex: number, columnId: string, value: unknown) => void;
 		// Live data read by cells at render time (so columns stay stable across
-		// refetches and cells avoid per-row query subscriptions).
+		// refetches and cells avoid per-row query subscriptions). Optional because
+		// this TableMeta augmentation is global to every table in the app.
 		network?: NetworkEntity;
-		deAuthorizeWarning: boolean;
-		showNotationMarker: boolean;
+		deAuthorizeWarning?: boolean;
+		showNotationMarker?: boolean;
 	}
 }
 
