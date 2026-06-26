@@ -17,7 +17,9 @@ const LocaleRedirect = () => {
 		// Only accept internal, absolute paths to prevent open-redirect / XSS via the
 		// `target` param: reject protocol-relative ("//"), backslash tricks, and any
 		// URL with a scheme (e.g. "javascript:", "https:") — those don't start with "/".
-		const rawTarget = (query.target as string) || "/auth/register";
+		// `query.target` is `string | string[] | undefined`; the typeof check below
+		// narrows it to a real string (and rejects the array case).
+		const rawTarget = query.target;
 		const targetPath =
 			typeof rawTarget === "string" &&
 			rawTarget.startsWith("/") &&
