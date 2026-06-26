@@ -69,7 +69,9 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 		const updateableFields = {
 			name: { type: "string", destinations: ["database", "controller"] },
 			description: { type: "string", destinations: ["database"] },
-			authorized: { type: "boolean", destinations: ["controller"] },
+			// Write-through to the DB cache so the DB-first member list reflects the
+			// change immediately (reconcile is only the eventual backstop).
+			authorized: { type: "boolean", destinations: ["database", "controller"] },
 		};
 
 		if (Object.keys(body).length === 0) {

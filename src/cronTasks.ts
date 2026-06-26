@@ -2,7 +2,7 @@ import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
-import { syncMemberPeersAndStatus } from "./server/api/services/memberService";
+import { reconcileNetworkMembers } from "./server/api/services/memberService";
 
 type FakeContext = {
 	session: {
@@ -170,7 +170,9 @@ export const updatePeers = async () => {
 		// updates every 5 minutes
 
 		// "*/10 * * * * *", // every 10 seconds ( testing )
-		"*/5 * * * *", // every 5min
+		// Backstop only: viewed networks are synced every ~10s by the SyncManager
+		// (Socket.IO subscription-driven). Idle networks reconcile every 10 min here.
+		"*/10 * * * *", // every 10min
 		async () => {
 			try {
 				// fetch all users
@@ -238,19 +240,14 @@ export const updatePeers = async () => {
 								},
 							};
 
-							// get members from the zt controller
-							const ztControllerResponse = await ztController.local_network_and_members(
-								// @ts-expect-error
+							// Reconcile members against the controller (revision-delta +
+							// self-healing). Replaces the old per-member N+1 fetch + write storm,
+							// and serves as the periodic backstop that keeps idle networks' caches
+							// converged with the controller.
+							await reconcileNetworkMembers(
+								// @ts-expect-error fake context for the cron
 								context,
 								network.nwid,
-							);
-							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
-
-							await syncMemberPeersAndStatus(
-								// @ts-expect-error
-								context,
-								network?.nwid,
-								ztControllerResponse.members,
 							);
 						}
 					}

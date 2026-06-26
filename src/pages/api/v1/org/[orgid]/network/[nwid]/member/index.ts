@@ -57,7 +57,13 @@ export const GET_orgNetworkMembers = SecuredOrganizationApiRoute(
 				return res.status(401).json({ error: "Network not found or access denied." });
 			}
 
-			return res.status(200).json(response?.members);
+			// Members are served by the dedicated (DB-first) endpoint; request all.
+			const membersResult = await caller.network.getNetworkMembers({
+				nwid: networkId,
+				pageSize: 100000,
+			});
+
+			return res.status(200).json(membersResult.members);
 		} catch (cause) {
 			return handleApiErrors(cause, res);
 		}

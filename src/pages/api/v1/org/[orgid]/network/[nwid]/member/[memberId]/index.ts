@@ -65,13 +65,17 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			const validatedBody = PostBodySchema.parse(body);
 			// structure of the updateableFields object:
 
+			// Fields that are cached in the DB (authorized/ipAssignments/flags) are
+			// routed to BOTH so the controller change is mirrored into the DB cache
+			// immediately; capabilities/tags/ssoExempt have no DB column and stay
+			// controller-only (reconcile keeps the cache columns honest regardless).
 			const updateableFields = {
 				name: { type: "string", destinations: ["database", "controller"] },
-				authorized: { type: "boolean", destinations: ["controller"] },
-				activeBridge: { type: "boolean", destinations: ["controller"] },
+				authorized: { type: "boolean", destinations: ["database", "controller"] },
+				activeBridge: { type: "boolean", destinations: ["database", "controller"] },
 				capabilities: { type: "array", destinations: ["controller"] },
-				ipAssignments: { type: "array", destinations: ["controller"] },
-				noAutoAssignIps: { type: "boolean", destinations: ["controller"] },
+				ipAssignments: { type: "array", destinations: ["database", "controller"] },
+				noAutoAssignIps: { type: "boolean", destinations: ["database", "controller"] },
 				ssoExempt: { type: "boolean", destinations: ["controller"] },
 				tags: { type: "array", destinations: ["controller"] },
 			};
@@ -191,7 +195,9 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 					});
 				}
 			} else {
-				// Member doesn't exist in DB, create it
+				// Member doesn't exist in DB, create it — seed the cached config fields
+				// (authorized/ipAssignments/flags) from the request so the DB-first list
+				// is correct immediately, not only after the next reconcile.
 				await ctx.prisma.network_members.create({
 					data: {
 						id: memberId,
@@ -199,6 +205,10 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 						lastSeen: new Date(),
 						creationTime: new Date(),
 						name: (databasePayload.name as string) || null,
+						authorized: databasePayload.authorized,
+						ipAssignments: databasePayload.ipAssignments,
+						noAutoAssignIps: databasePayload.noAutoAssignIps,
+						activeBridge: databasePayload.activeBridge,
 						nwid_ref: { connect: { nwid: networkId } },
 					},
 				});

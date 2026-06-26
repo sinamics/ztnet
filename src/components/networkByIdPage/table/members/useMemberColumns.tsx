@@ -7,11 +7,7 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
-import {
-	sortingIpAddress,
-	sortingMemberHex,
-	sortingPhysicalIpAddress,
-} from "~/utils/sorting";
+import { sortingMemberHex, sortingPhysicalIpAddress } from "~/utils/sorting";
 import { COLUMN_SIZING } from "./constants";
 import { AuthorizedCell } from "./cells/AuthorizedCell";
 import { EditableNameCell } from "./cells/EditableNameCell";
@@ -61,12 +57,14 @@ export const useMemberColumns = ({
 	const { mutate: stashUser } = api.networkMember.stash.useMutation({
 		onSuccess: async () => {
 			await utils.network.getNetworkById.invalidate({ nwid, central });
+			await utils.network.getNetworkMembers.invalidate();
 			refetchNetworkById();
 		},
 	});
 	const { mutate: deleteMember } = api.networkMember.delete.useMutation({
 		onSuccess: async () => {
 			await utils.network.getNetworkById.invalidate({ nwid, central });
+			await utils.network.getNetworkMembers.invalidate();
 			refetchNetworkById();
 		},
 	});
@@ -74,6 +72,7 @@ export const useMemberColumns = ({
 		onError: handleApiError,
 		onSuccess: async () => {
 			await utils.network.getNetworkById.invalidate({ nwid, central });
+			await utils.network.getNetworkMembers.invalidate();
 			handleApiSuccess({ actions: [refetchNetworkById] })();
 		},
 	});
@@ -142,6 +141,7 @@ export const useMemberColumns = ({
 				id: "description",
 				...COLUMN_SIZING.description,
 				...leftAligned,
+				enableSorting: false,
 				cell: (ctx) => (
 					<EditableDescriptionCell
 						ctx={ctx}
@@ -162,7 +162,7 @@ export const useMemberColumns = ({
 				id: "ipAssignments",
 				...COLUMN_SIZING.ipAssignments,
 				...leftAligned,
-				sortingFn: sortingIpAddress,
+				enableSorting: false,
 				cell: ({ row: { original }, table }) => (
 					<IpAssignmentsCell
 						original={original}
@@ -187,6 +187,7 @@ export const useMemberColumns = ({
 				header: () => <span>{c("header.conStatus.header")}</span>,
 				id: "conStatus",
 				...COLUMN_SIZING.conStatus,
+				enableSorting: false,
 				cell: ({ row: { original } }) => (
 					<ConnectionStatusCell original={original} central={central} />
 				),
