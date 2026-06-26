@@ -15,6 +15,9 @@ on:
         description: "Release version (e.g. v0.0.2)"
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
