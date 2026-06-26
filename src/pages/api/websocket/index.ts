@@ -34,19 +34,20 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 		});
 		res.socket.server.io = io;
 
-		// Attach the user from the session cookie (best-effort). We do NOT reject the
-		// connection on failure — that would also break the existing org-chat socket.
-		// Access is enforced per-network at subscribe time instead.
+		// Require a valid session for EVERY socket: reject unauthenticated
+		// connections outright (no unauthenticated client may hold a socket at all),
+		// then enforce per-network access again at subscribe time (defense in depth).
 		io.use(async (socket, next) => {
 			try {
 				const s = await auth.api.getSession({
 					headers: fromNodeHeaders(socket.handshake.headers),
 				});
-				if (s) socket.data.userId = s.user.id;
+				if (!s) return next(new Error("unauthorized"));
+				socket.data.userId = s.user.id;
+				next();
 			} catch {
-				// ignore — connection still allowed, subscribe will enforce access
+				next(new Error("unauthorized"));
 			}
-			next();
 		});
 
 		// Subscription-driven live member sync: while a client is viewing a network,
