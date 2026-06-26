@@ -66,7 +66,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			// structure of the updateableFields object:
 
 			const updateableFields = {
-				name: { type: "string", destinations: ["database"] },
+				name: { type: "string", destinations: ["database", "controller"] },
 				authorized: { type: "boolean", destinations: ["controller"] },
 				activeBridge: { type: "boolean", destinations: ["controller"] },
 				capabilities: { type: "array", destinations: ["controller"] },
