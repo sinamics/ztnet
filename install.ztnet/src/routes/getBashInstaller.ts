@@ -21,6 +21,13 @@ export const getBashInstaller = async function (req: Request, res: Response) {
     },
   };
 
+  // Prevent path traversal via req.url: the resolved path must stay inside bash/.
+  const bashRoot = path.resolve(__dirname, '..', '..', 'bash');
+  if (!path.resolve(fileURL).startsWith(bashRoot + path.sep)) {
+    res.download(path.join(bashRoot, 'error.sh'), 'error.sh', options);
+    return;
+  }
+
   //validate that file exists
   fs.access(fileURL, fs.constants.R_OK, (err) => {
     if (err) {
