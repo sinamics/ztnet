@@ -162,21 +162,23 @@ const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
  * without this, other tabs only catch up via the (browser-throttled, ~1/min in
  * background) safety poll. Never fails the mutation if emitting throws.
  */
-const emitNetworkChangeOnMutation = t.middleware(async ({ ctx, type, rawInput, next }) => {
-	const result = await next();
-	if (type === "mutation" && result.ok && ctx.wss) {
-		const input = rawInput as { nwid?: string; networkId?: string } | undefined;
-		const nwid = input?.nwid ?? input?.networkId;
-		if (nwid) {
-			try {
-				ctx.wss.to(networkMembersChannel(nwid)).emit(networkMembersChannel(nwid));
-			} catch {
-				// notification failure must never break the mutation
+const emitNetworkChangeOnMutation = t.middleware(
+	async ({ ctx, type, rawInput, next }) => {
+		const result = await next();
+		if (type === "mutation" && result.ok && ctx.wss) {
+			const input = rawInput as { nwid?: string; networkId?: string } | undefined;
+			const nwid = input?.nwid ?? input?.networkId;
+			if (nwid) {
+				try {
+					ctx.wss.to(networkMembersChannel(nwid)).emit(networkMembersChannel(nwid));
+				} catch {
+					// notification failure must never break the mutation
+				}
 			}
 		}
-	}
-	return result;
-});
+		return result;
+	},
+);
 
 /**
  * Protected (authenticated) procedure
