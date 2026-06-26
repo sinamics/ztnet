@@ -12,6 +12,12 @@ export const getBinary = async function (req: Request, res: Response) {
   if (!arch || !version || !app)
     return res.status(404).send('Need args: ?arch=armhf&app=ztnet&version="0.3.7"\n');
 
+  // Reject path traversal: each arg must be a single, separator-free path segment.
+  const isSafeSegment = (s: unknown): s is string =>
+    typeof s === 'string' && s.length > 0 && s !== '.' && s !== '..' && path.basename(s) === s;
+  if (!isSafeSegment(app) || !isSafeSegment(arch) || !isSafeSegment(version))
+    return res.status(400).send('Invalid arguments\n');
+
   const binPath = path.join(folderPath, app, arch);
 
   let filesArr: any = [];

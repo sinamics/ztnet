@@ -12,6 +12,9 @@ on:
 env:
   LAST_UPDATED: ${{ github.event.head_commit.timestamp }}
   
+permissions:
+  contents: read
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
