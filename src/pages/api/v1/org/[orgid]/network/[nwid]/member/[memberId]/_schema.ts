@@ -13,6 +13,10 @@ export const PostBodySchema = z
 		noAutoAssignIps: z.boolean().optional(),
 		ssoExempt: z.boolean().optional(),
 		tags: z.array(z.tuple([z.number(), z.number()])).optional(),
+		// Restore a stashed (deleted) member with `deleted: false`. A boolean is
+		// parsed here, but `deleted: true` is rejected by the handler with a 400
+		// (use the DELETE method to stash a member).
+		deleted: z.boolean().optional(),
 	})
 	.strict();
 

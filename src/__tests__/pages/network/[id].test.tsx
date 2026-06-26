@@ -66,6 +66,12 @@ jest.mock("~/lib/authSession", () => ({
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
 }));
+// The members table opens a Socket.IO connection for live updates; stub it in tests.
+jest.mock("~/hooks/useNetworkMembersSocket", () => ({
+	__esModule: true,
+	useNetworkMembersSocket: jest.fn(),
+	default: jest.fn(),
+}));
 describe("NetworkById component", () => {
 	beforeAll(() => {
 		process.env.NEXT_PUBLIC_NODE_ENV = "test";
@@ -133,6 +139,16 @@ describe("NetworkById component", () => {
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
+		// The members table reads from the paginated endpoint; feed it the same rows.
+		api.network.getNetworkMembers.useQuery = jest.fn().mockReturnValue({
+			data: {
+				members: useQueryMock().data.members ?? [],
+				totalCount: (useQueryMock().data.members ?? []).length,
+				authorizedCount: 0,
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
 		render(
 			<QueryClientProvider client={queryClient}>
@@ -249,11 +265,22 @@ describe("NetworkById component", () => {
 						conStatus: 0,
 					},
 				],
+				memberCount: 1,
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
+		// The members table reads from the paginated endpoint; feed it the same rows.
+		api.network.getNetworkMembers.useQuery = jest.fn().mockReturnValue({
+			data: {
+				members: useQueryMock().data.members ?? [],
+				totalCount: (useQueryMock().data.members ?? []).length,
+				authorizedCount: 0,
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
 		render(
 			<QueryClientProvider client={queryClient}>
@@ -297,12 +324,23 @@ describe("NetworkById component", () => {
 						conStatus: ConnectionStatus.DirectWAN,
 					},
 				],
+				memberCount: 1,
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 
 		api.network.getNetworkById.useQuery = useQueryMock;
+		// The members table reads from the paginated endpoint; feed it the same rows.
+		api.network.getNetworkMembers.useQuery = jest.fn().mockReturnValue({
+			data: {
+				members: useQueryMock().data.members ?? [],
+				totalCount: (useQueryMock().data.members ?? []).length,
+				authorizedCount: 0,
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
 		render(
 			<QueryClientProvider client={queryClient}>
@@ -338,12 +376,23 @@ describe("NetworkById component", () => {
 						conStatus: ConnectionStatus.Relayed,
 					},
 				],
+				memberCount: 1,
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 
 		api.network.getNetworkById.useQuery = useQueryMock;
+		// The members table reads from the paginated endpoint; feed it the same rows.
+		api.network.getNetworkMembers.useQuery = jest.fn().mockReturnValue({
+			data: {
+				members: useQueryMock().data.members ?? [],
+				totalCount: (useQueryMock().data.members ?? []).length,
+				authorizedCount: 0,
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 
 		render(
 			<QueryClientProvider client={queryClient}>
@@ -379,12 +428,22 @@ describe("NetworkById component", () => {
 						conStatus: ConnectionStatus.Offline,
 					},
 				],
+				memberCount: 1,
 			},
 			isLoading: false,
 			refetch: jest.fn(),
 		});
 
 		api.network.getNetworkById.useQuery = useQueryMock;
+		api.network.getNetworkMembers.useQuery = jest.fn().mockReturnValue({
+			data: {
+				members: useQueryMock().data.members ?? [],
+				totalCount: (useQueryMock().data.members ?? []).length,
+				authorizedCount: 0,
+			},
+			isLoading: false,
+			refetch: jest.fn(),
+		});
 		render(
 			<QueryClientProvider client={queryClient}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>

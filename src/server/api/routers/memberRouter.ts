@@ -560,6 +560,17 @@ export const networkMemberRouter = createTRPCRouter({
 					if (updateParams.description !== undefined) {
 						databaseUpdateData.description = updateParams.description;
 					}
+					// Write-through the cached controller config so the DB-first member
+					// list reflects the change immediately (before the next reconcile).
+					if (payload.ipAssignments !== undefined) {
+						databaseUpdateData.ipAssignments = payload.ipAssignments;
+					}
+					if (payload.noAutoAssignIps !== undefined) {
+						databaseUpdateData.noAutoAssignIps = payload.noAutoAssignIps;
+					}
+					if (payload.activeBridge !== undefined) {
+						databaseUpdateData.activeBridge = payload.activeBridge;
+					}
 
 					// Update database if there are fields to update
 					if (Object.keys(databaseUpdateData).length > 0) {

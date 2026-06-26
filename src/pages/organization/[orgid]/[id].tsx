@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState, type ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
-import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
+import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
@@ -10,7 +10,7 @@ import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CopyIcon from "~/icons/copy";
 import toast from "react-hot-toast";
-import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/table/deletedNetworkMembersTable";
+import { DeletedNetworkMembersTable } from "~/components/networkByIdPage/table/members/DeletedMembersTable";
 import { useModalStore } from "~/utils/store";
 import { NetworkFlowRules } from "~/components/networkByIdPage/networkFlowRules";
 import { NetworkDns } from "~/components/networkByIdPage/networkDns";
@@ -58,7 +58,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		},
 		{ enabled: !!query.id, refetchInterval: 10000 },
 	);
-	const { network, members = [] } = networkById || {};
+	const { network, memberCount = 0 } = networkById || {};
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
 
 	if (errorNetwork) {
@@ -226,7 +226,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				{t("networkById.networkMembers")}
 			</div>
 			<div className="w-5/5 mx-auto w-full  py-4 text-sm md:text-base">
-				{members.length ? (
+				{memberCount ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable
 							nwid={network.nwid}
