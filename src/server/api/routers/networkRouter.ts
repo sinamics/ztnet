@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { IPv4gen, getNetworkClassCIDR } from "~/utils/IPv4gen";
 import * as ztController from "~/utils/ztApi";
 import RuleCompiler from "~/utils/rule-compiler";
+import { sortIP } from "~/utils/sorting";
 import { throwError, type APIError } from "~/server/helpers/errorHandler";
 import { sendMailWithTemplate } from "~/utils/mail";
 import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
@@ -325,6 +326,7 @@ export const networkRouter = createTRPCRouter({
 						"authorized",
 						"online",
 						"physicalAddress",
+						"ipAssignments",
 						"lastSeen",
 						"creationTime",
 					])
@@ -383,14 +385,51 @@ export const networkRouter = createTRPCRouter({
 					: {}),
 			};
 
-			const [rows, totalCount, authorizedCount] = await Promise.all([
-				ctx.prisma.network_members.findMany({
+			const skip = input.page * input.pageSize;
+			const include = { notations: { include: { label: true } } } as const;
+
+			let rows: Awaited<
+				ReturnType<
+					typeof ctx.prisma.network_members.findMany<{ include: typeof include }>
+				>
+			>;
+			if (input.sortBy === "ipAssignments") {
+				// Prisma can't ORDER BY an array column, so sort by the first IP
+				// numerically here, reusing the original `sortIP` logic so the order
+				// matches the pre-refactor table exactly (IPv4/IPv6 aware). IP sort is
+				// user-initiated and only pulls a tiny {id, ipAssignments} projection.
+				const ipKey = (ips: string[] | null | undefined): bigint =>
+					ips?.length ? sortIP(ips[0].split("/")[0]) : BigInt(0);
+				const keyed = await ctx.prisma.network_members.findMany({
+					where,
+					select: { id: true, ipAssignments: true },
+				});
+				keyed.sort((a, b) => {
+					const av = ipKey(a.ipAssignments);
+					const bv = ipKey(b.ipAssignments);
+					const cmp = av < bv ? -1 : av > bv ? 1 : 0;
+					return input.sortDir === "desc" ? -cmp : cmp;
+				});
+				const pageIds = keyed.slice(skip, skip + input.pageSize).map((r) => r.id);
+				const pageRows = await ctx.prisma.network_members.findMany({
+					where: { nwid: input.nwid, id: { in: pageIds } },
+					include,
+				});
+				const byId = new Map(pageRows.map((r) => [r.id, r]));
+				rows = pageIds
+					.map((id) => byId.get(id))
+					.filter((r): r is (typeof pageRows)[number] => Boolean(r));
+			} else {
+				rows = await ctx.prisma.network_members.findMany({
 					where,
 					orderBy: { [input.sortBy]: input.sortDir },
-					skip: input.page * input.pageSize,
+					skip,
 					take: input.pageSize,
-					include: { notations: { include: { label: true } } },
-				}),
+					include,
+				});
+			}
+
+			const [totalCount, authorizedCount] = await Promise.all([
 				ctx.prisma.network_members.count({ where }),
 				ctx.prisma.network_members.count({
 					where: { nwid: input.nwid, deleted: false, authorized: true },

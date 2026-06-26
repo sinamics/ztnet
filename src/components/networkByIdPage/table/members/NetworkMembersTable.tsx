@@ -37,7 +37,13 @@ interface IProp {
 }
 
 // Columns the server can sort on (others are computed/array and disable sorting).
-const SERVER_SORTABLE = new Set(["id", "name", "authorized", "physicalAddress"]);
+const SERVER_SORTABLE = new Set([
+	"id",
+	"name",
+	"authorized",
+	"physicalAddress",
+	"ipAssignments",
+]);
 
 export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
 	const { query } = useRouter();

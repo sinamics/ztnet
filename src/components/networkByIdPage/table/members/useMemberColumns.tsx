@@ -162,7 +162,9 @@ export const useMemberColumns = ({
 				id: "ipAssignments",
 				...COLUMN_SIZING.ipAssignments,
 				...leftAligned,
-				enableSorting: false,
+				// Sorting is handled server-side (by first IP, numerically) since the
+				// table is paginated; see getNetworkMembers + SERVER_SORTABLE.
+				enableSorting: true,
 				cell: ({ row: { original }, table }) => (
 					<IpAssignmentsCell
 						original={original}
