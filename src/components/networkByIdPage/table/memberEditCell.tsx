@@ -333,8 +333,12 @@ const MemberEditCell = ({ nwid, central = false, organizationId }: IProp) => {
 							}
 							title={t("commonToast.copyToClipboard.title")}
 						>
-							<div className="cursor-pointer">
-								<div className="badge badge-ghost rounded-md text-sm">{ip}</div>
+							<div className="cursor-pointer max-w-full">
+								<div className="badge badge-ghost rounded-md text-sm max-w-full">
+									<span className="block truncate" title={ip}>
+										{ip}
+									</span>
+								</div>
 							</div>
 						</CopyToClipboard>
 					) : null;

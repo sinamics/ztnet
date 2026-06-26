@@ -241,8 +241,11 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 									</span>
 								);
 
+							const centralAddress = centralPhysicalAddress.split("/")[0];
 							return (
-								<span className="text-sm">{centralPhysicalAddress.split("/")[0]}</span>
+								<span className="block truncate text-sm" title={centralAddress}>
+									{centralAddress}
+								</span>
 							);
 						}
 						const physicalAddress = getValue();
@@ -253,16 +256,14 @@ export const MemberHeaderColumns = ({ nwid, central = false, organizationId }: I
 								</span>
 							);
 
+						const address = physicalAddress.split("/")[0];
 						return (
-							<div>
-								{isOffline ? (
-									<span className="text-sm text-gray-400/50">
-										{physicalAddress.split("/")[0]}
-									</span>
-								) : (
-									<span className="text-sm">{physicalAddress.split("/")[0]}</span>
-								)}
-							</div>
+							<span
+								className={`block truncate text-sm ${isOffline ? "text-gray-400/50" : ""}`}
+								title={address}
+							>
+								{address}
+							</span>
 						);
 					},
 				},
