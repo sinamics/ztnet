@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
-import { NetworkMembersTable } from "~/components/networkByIdPage/table/networkMembersTable";
+import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
