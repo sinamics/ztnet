@@ -132,6 +132,25 @@ describe("Update Network Members", () => {
 
 		// Assertions
 		expect(res.status).toHaveBeenCalledWith(200);
+		// `authorized` must write through to the DB cache (not only the controller),
+		// so the DB-first member list reflects it immediately.
+		expect(prisma.network.update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({
+					networkMembers: expect.objectContaining({
+						update: expect.objectContaining({
+							data: expect.objectContaining({ authorized: true }),
+						}),
+					}),
+				}),
+			}),
+		);
+		// and still pushed to the controller.
+		expect(ztController.member_update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				updateParams: expect.objectContaining({ authorized: true }),
+			}),
+		);
 	});
 
 	it("should persist name to the database and controller (issue #929)", async () => {

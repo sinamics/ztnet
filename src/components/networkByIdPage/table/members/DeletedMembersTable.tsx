@@ -38,6 +38,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			nwid: nwid as string,
 			central: false,
 		});
+		await utils.network.getNetworkMembers.invalidate();
 		void refetchNetworkById();
 	};
 

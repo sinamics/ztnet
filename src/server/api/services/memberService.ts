@@ -376,3 +376,224 @@ export const fetchZombieMembers = async (
 	const zombieMembers = await Promise.all(getZombieMembersPromises);
 	return zombieMembers.filter(Boolean);
 };
+
+const MEMBER_DETAIL_BATCH_SIZE = 5;
+
+/**
+ * Fetches full member detail from the controller for the given ids, in small
+ * batches (the controller has no bulk member endpoint). Failures are skipped.
+ */
+const fetchMemberDetailsBatched = async (
+	ctx: UserContext,
+	nwid: string,
+	ids: string[],
+): Promise<MemberEntity[]> => {
+	const results: MemberEntity[] = [];
+	for (let i = 0; i < ids.length; i += MEMBER_DETAIL_BATCH_SIZE) {
+		const batch = ids.slice(i, i + MEMBER_DETAIL_BATCH_SIZE);
+		const batchResults = await Promise.all(
+			batch.map((id) =>
+				ztController.member_details(ctx, nwid, id, false).catch((err) => {
+					console.error(`reconcileNetworkMembers: failed to fetch member ${id}:`, err);
+					return null;
+				}),
+			),
+		);
+		for (const r of batchResults) if (r) results.push(r as MemberEntity);
+	}
+	return results;
+};
+
+/**
+ * reconcileNetworkMembers
+ *
+ * Controller-truth, self-healing sync built to scale to large networks. The
+ * ZeroTier controller has no bulk member endpoint, so fetching every member's
+ * detail on every load is the bottleneck. Instead this:
+ *   1. reads the cheap `{ memberId: revision }` map (the authoritative membership),
+ *   2. fetches full detail ONLY for new or revision-changed members and caches
+ *      their config (authorized, ipAssignments, flags, revision) in the DB,
+ *   3. removes DB rows for members the controller no longer has (drift cleanup),
+ *   4. computes live status from a single `peers` call (Map lookup, not O(n²)) and
+ *      writes back only the members whose status actually changed.
+ *
+ * Pass `{ full: true }` to ignore cached revisions and refetch every member
+ * (used by the periodic backstop resync).
+ *
+ * Returns the enriched, active members (DB-cached config + live status).
+ */
+export const reconcileNetworkMembers = async (
+	ctx: UserContext,
+	nwid: string,
+	options: { full?: boolean } = {},
+): Promise<MemberEntity[]> => {
+	// 1. Authoritative membership + revisions from the controller (one cheap call).
+	const revisionMap = (await ztController.network_members(ctx, nwid, false)) as Record<
+		string,
+		number
+	>;
+	const controllerIds = Object.keys(revisionMap);
+
+	// 2. Current DB rows for this network.
+	const dbMembers = await prisma.network_members.findMany({
+		where: { nwid },
+		include: { notations: { include: { label: true } } },
+	});
+	const dbMap = new Map(dbMembers.map((m) => [m.id, m]));
+
+	// 3. Which members need a fresh detail fetch? New, revision-changed, or full
+	//    resync. Stashed / permanently-deleted members stay hidden and are skipped.
+	const idsToFetch = controllerIds.filter((id) => {
+		const db = dbMap.get(id);
+		if (db && (db.deleted || db.permanentlyDeleted)) return false;
+		if (!db) return true;
+		if (options.full) return true;
+		return db.revision == null || db.revision !== revisionMap[id];
+	});
+
+	// 4. Fetch changed details (batched) and cache their config in the DB.
+	const details = await fetchMemberDetailsBatched(ctx, nwid, idsToFetch);
+	for (const detail of details) {
+		const db = dbMap.get(detail.id);
+		if (!db) {
+			// New member: create the row (handles naming + join webhooks/notifications).
+			await addNetworkMember(ctx, detail).catch(console.error);
+		}
+		await prisma.network_members.updateMany({
+			where: { nwid, id: detail.id },
+			data: {
+				authorized: !!detail.authorized,
+				ipAssignments: Array.isArray(detail.ipAssignments) ? detail.ipAssignments : [],
+				noAutoAssignIps: !!detail.noAutoAssignIps,
+				activeBridge: !!detail.activeBridge,
+				address: detail.address ?? detail.id,
+				revision: revisionMap[detail.id] ?? null,
+				// Smart name preservation (#719): adopt the controller name only when the
+				// DB has none — never clobber a user-set name.
+				...(!db?.name?.trim() && detail.name?.trim() ? { name: detail.name } : {}),
+			},
+		});
+	}
+
+	// 5. Drift cleanup: active DB members the controller no longer knows about.
+	const controllerIdSet = new Set(controllerIds);
+	const orphanIds = dbMembers
+		.filter((m) => !controllerIdSet.has(m.id) && !m.deleted && !m.permanentlyDeleted)
+		.map((m) => m.id);
+	if (orphanIds.length > 0) {
+		await prisma.network_members.deleteMany({ where: { nwid, id: { in: orphanIds } } });
+	}
+
+	// 6. Live status from a single peers call (Map lookup instead of O(n²) filter).
+	const controllerPeers = await ztController.peers(ctx);
+	const peersByAddress = new Map<string, Peers>();
+	for (const peer of controllerPeers) {
+		peersByAddress.set(peer.address, peer as unknown as Peers);
+	}
+
+	// 7. Build the active member list from the reconciled DB rows + live status,
+	//    writing back only members whose status actually changed.
+	const activeDbMembers = await prisma.network_members.findMany({
+		where: { nwid, id: { in: controllerIds }, deleted: false },
+		include: { notations: { include: { label: true } } },
+	});
+
+	const statusWrites: Promise<unknown>[] = [];
+	const enriched = activeDbMembers.map((db) => {
+		const peers = peersByAddress.get(db.address || "") ?? ({} as Peers);
+		const activePreferredPath = findActivePreferredPeerPath(peers);
+		const member = {
+			...db,
+			peers,
+			physicalAddress: activePreferredPath?.address ?? db.physicalAddress,
+		} as unknown as MemberEntity;
+
+		member.conStatus = determineConnectionStatus(member);
+		const online = Object.keys(peers).length > 0 && member.conStatus !== 0;
+
+		// diff-skip: offline-and-unchanged members are never rewritten.
+		if (online || db.online !== online) {
+			const data: Partial<network_members> = { online };
+			if (online) {
+				data.lastSeen = new Date();
+				if (member.physicalAddress) data.physicalAddress = member.physicalAddress;
+			}
+			statusWrites.push(
+				prisma.network_members.updateMany({ where: { nwid, id: db.id }, data }),
+			);
+		}
+		return member;
+	});
+
+	await Promise.all(statusWrites);
+	return enriched;
+};
+
+/**
+ * attachLiveStatus
+ *
+ * Read-only enrichment: given DB member rows, attaches live peers + connection
+ * status from a single controller `peers` call (no DB writes). Used by the
+ * paginated read path so it can serve a page from the DB while still reflecting
+ * up-to-the-moment online/Direct/Relayed status. Persisting that status is the
+ * job of the background reconcile.
+ */
+export const attachLiveStatus = async (
+	ctx: UserContext,
+	members: network_members[],
+): Promise<MemberEntity[]> => {
+	const controllerPeers = await ztController.peers(ctx).catch(() => []);
+	const peersByAddress = new Map<string, Peers>();
+	for (const peer of controllerPeers) {
+		peersByAddress.set(peer.address, peer as unknown as Peers);
+	}
+	return members.map((db) => {
+		const peers = peersByAddress.get(db.address || "") ?? ({} as Peers);
+		const activePreferredPath = findActivePreferredPeerPath(peers);
+		const member = {
+			...db,
+			peers,
+			physicalAddress: activePreferredPath?.address ?? db.physicalAddress,
+		} as unknown as MemberEntity;
+		member.conStatus = determineConnectionStatus(member);
+		return member;
+	});
+};
+
+// In-flight guard: keyed by network id, dedupes concurrent reconciles (the 10s
+// poll, several open tabs, or getNetworkById + getNetworkMembers on the same
+// page load) so they share a single controller sync instead of stacking.
+const inFlightReconciles = new Map<string, Promise<MemberEntity[]>>();
+
+/**
+ * Reconcile a network's members, but only ONE reconcile per network runs at a
+ * time — concurrent callers share the in-flight promise. Awaitable; used by the
+ * cold-start (empty cache) read paths that must block until populated.
+ */
+export const reconcileNetworkMembersOnce = (
+	ctx: UserContext,
+	nwid: string,
+	options: { full?: boolean } = {},
+): Promise<MemberEntity[]> => {
+	const existing = inFlightReconciles.get(nwid);
+	if (existing) return existing;
+	const run = reconcileNetworkMembers(ctx, nwid, options).finally(() => {
+		inFlightReconciles.delete(nwid);
+	});
+	inFlightReconciles.set(nwid, run);
+	return run;
+};
+
+/**
+ * Fire-and-forget reconcile (deduped via reconcileNetworkMembersOnce). Returns
+ * immediately; never throws into the caller. Used by warm read paths.
+ */
+export const triggerBackgroundReconcile = (
+	ctx: UserContext,
+	nwid: string,
+	options: { full?: boolean } = {},
+): void => {
+	void reconcileNetworkMembersOnce(ctx, nwid, options).catch((err) => {
+		console.error(`Background reconcile failed for network ${nwid}:`, err);
+	});
+};

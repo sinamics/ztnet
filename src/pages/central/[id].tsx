@@ -73,7 +73,7 @@ const CentralNetworkById = ({ orgIds }) => {
 		);
 	}
 
-	const { network, members = [] } = networkById || {};
+	const { network, memberCount = 0 } = networkById || {};
 
 	if (errorNetwork) {
 		return (
@@ -201,7 +201,7 @@ const CentralNetworkById = ({ orgIds }) => {
 				{t("networkById.networkMembers")}
 			</div>
 			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
-				{members?.length ? (
+				{memberCount ? (
 					<div className="membersTable-wrapper">
 						<NetworkMembersTable nwid={network.id} central={true} />
 					</div>

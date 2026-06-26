@@ -2,7 +2,7 @@ import * as cron from "cron";
 import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
-import { syncMemberPeersAndStatus } from "./server/api/services/memberService";
+import { reconcileNetworkMembers } from "./server/api/services/memberService";
 
 type FakeContext = {
 	session: {
@@ -238,19 +238,14 @@ export const updatePeers = async () => {
 								},
 							};
 
-							// get members from the zt controller
-							const ztControllerResponse = await ztController.local_network_and_members(
-								// @ts-expect-error
+							// Reconcile members against the controller (revision-delta +
+							// self-healing). Replaces the old per-member N+1 fetch + write storm,
+							// and serves as the periodic backstop that keeps idle networks' caches
+							// converged with the controller.
+							await reconcileNetworkMembers(
+								// @ts-expect-error fake context for the cron
 								context,
 								network.nwid,
-							);
-							if (!ztControllerResponse || !("members" in ztControllerResponse)) return;
-
-							await syncMemberPeersAndStatus(
-								// @ts-expect-error
-								context,
-								network?.nwid,
-								ztControllerResponse.members,
 							);
 						}
 					}
