@@ -66,6 +66,12 @@ jest.mock("~/lib/authSession", () => ({
 jest.mock("next/router", () => ({
 	useRouter: jest.fn(),
 }));
+// The members table opens a Socket.IO connection for live updates; stub it in tests.
+jest.mock("~/hooks/useNetworkMembersSocket", () => ({
+	__esModule: true,
+	useNetworkMembersSocket: jest.fn(),
+	default: jest.fn(),
+}));
 describe("NetworkById component", () => {
 	beforeAll(() => {
 		process.env.NEXT_PUBLIC_NODE_ENV = "test";

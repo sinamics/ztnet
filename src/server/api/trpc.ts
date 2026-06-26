@@ -16,9 +16,10 @@
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import type { Session } from "~/lib/authTypes";
-import { Socket as SocketIOServer } from "socket.io-client";
+import type { Server as SocketIOServer } from "socket.io";
 import { getServerAuthSession } from "~/lib/authSession";
 import { prisma } from "~/server/db";
+import { networkMembersChannel } from "~/utils/socketChannels";
 
 type CreateContextOptions = {
 	session: Session | null;
@@ -156,6 +157,28 @@ const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
 	return next();
 });
 /**
+ * After any successful mutation carrying a network id, push a live "changed"
+ * event to that network's Socket.IO room so every open tab refetches at once —
+ * without this, other tabs only catch up via the (browser-throttled, ~1/min in
+ * background) safety poll. Never fails the mutation if emitting throws.
+ */
+const emitNetworkChangeOnMutation = t.middleware(async ({ ctx, type, rawInput, next }) => {
+	const result = await next();
+	if (type === "mutation" && result.ok && ctx.wss) {
+		const input = rawInput as { nwid?: string; networkId?: string } | undefined;
+		const nwid = input?.nwid ?? input?.networkId;
+		if (nwid) {
+			try {
+				ctx.wss.to(networkMembersChannel(nwid)).emit(networkMembersChannel(nwid));
+			} catch {
+				// notification failure must never break the mutation
+			}
+		}
+	}
+	return result;
+});
+
+/**
  * Protected (authenticated) procedure
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
@@ -163,7 +186,9 @@ const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const protectedProcedure = t.procedure
+	.use(enforceUserIsAuthed)
+	.use(emitNetworkChangeOnMutation);
 
 /**
  * Admin Role Protected (authenticated and ADMIN role) procedure

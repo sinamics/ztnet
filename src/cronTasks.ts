@@ -170,7 +170,9 @@ export const updatePeers = async () => {
 		// updates every 5 minutes
 
 		// "*/10 * * * * *", // every 10 seconds ( testing )
-		"*/5 * * * *", // every 5min
+		// Backstop only: viewed networks are synced every ~10s by the SyncManager
+		// (Socket.IO subscription-driven). Idle networks reconcile every 10 min here.
+		"*/10 * * * *", // every 10min
 		async () => {
 			try {
 				// fetch all users

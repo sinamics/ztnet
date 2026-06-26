@@ -12,6 +12,7 @@ import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { getLocalStorageItem } from "~/utils/localstorage";
 import TableFooter from "~/components/shared/tableFooter";
 import { type NetworkEntity } from "~/types/local/network";
+import { useNetworkMembersSocket } from "~/hooks/useNetworkMembersSocket";
 import { useMemberColumns } from "./useMemberColumns";
 import { useTablePersistence } from "./hooks/useTablePersistence";
 import { MembersToolbar } from "./components/MembersToolbar";
@@ -40,6 +41,8 @@ const SERVER_SORTABLE = new Set(["id", "name", "authorized", "physicalAddress"])
 
 export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
 	const { query } = useRouter();
+	// Live updates: server pushes a "changed" event over Socket.IO and we refetch.
+	useNetworkMembersSocket(nwid, central);
 	const [globalFilter, setGlobalFilter] = useState("");
 	const {
 		sorting,
@@ -77,7 +80,9 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 			sortBy: sortBy as any,
 			sortDir,
 		},
-		{ enabled: !!query.id, refetchInterval: 10000 },
+		// Socket.IO drives live updates; this slow poll is just a safety net for a
+		// dropped socket.
+		{ enabled: !!query.id, refetchInterval: 60000 },
 	);
 
 	const totalCount = membersData?.totalCount ?? 0;
