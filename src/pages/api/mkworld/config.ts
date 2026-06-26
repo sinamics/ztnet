@@ -214,10 +214,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 											}
 										});
 
-									pass.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
+									pass.pipe(
+										fs.createWriteStream(path.join(mkworldDir, path.basename(fileName))),
+									);
 								} else {
 									// Extract other files to the target directory
-									entry.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
+									entry.pipe(
+										fs.createWriteStream(path.join(mkworldDir, path.basename(fileName))),
+									);
 								}
 							} else {
 								entry.autodrain();
