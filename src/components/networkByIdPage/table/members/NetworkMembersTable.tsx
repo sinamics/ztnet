@@ -48,7 +48,11 @@ const SERVER_SORTABLE = new Set([
 export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
 	const { query } = useRouter();
 	// Live updates: server pushes a "changed" event over Socket.IO and we refetch.
-	useNetworkMembersSocket(nwid, central);
+	// When the socket is connected we only need a slow safety poll; when it isn't
+	// (e.g. behind a proxy that doesn't forward WebSockets), poll faster so the
+	// table still stays reasonably fresh. Central has no socket → keep it slow.
+	const socketConnected = useNetworkMembersSocket(nwid, central);
+	const refetchInterval = central || socketConnected ? 60000 : 20000;
 	const [globalFilter, setGlobalFilter] = useState("");
 	const {
 		sorting,
@@ -110,7 +114,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		},
 		// Socket.IO drives live updates; this slow poll is just a safety net for a
 		// dropped socket.
-		{ enabled: !!query.id, refetchInterval: 60000 },
+		{ enabled: !!query.id, refetchInterval },
 	);
 
 	const totalCount = membersData?.totalCount ?? 0;
