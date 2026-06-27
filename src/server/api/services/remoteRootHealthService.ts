@@ -94,7 +94,10 @@ export async function checkRemoteRootHealth(
 	try {
 		await runRemoteRootCommand(input.connection, REMOTE_ROOT_COMMANDS.test);
 		const config = await readRemoteRootConfig(input.connection);
-		const configuredSelectedIps = normalizeSelectedIps(input.selectedIps, input.selectedIp);
+		const configuredSelectedIps = normalizeSelectedIps(
+			input.selectedIps,
+			input.selectedIp,
+		);
 
 		if (!config.identity) {
 			return {
@@ -157,8 +160,8 @@ export async function checkRemoteRootHealth(
 				: compact([
 						pickDefaultEndpoint(endpointCandidates, ["PUBLIC_IP", "DNS", "SSH_HOST"]),
 					]);
-			const drift = selectedIps.find((selectedIp) =>
-				detectDnsDrift({ selectedIp, resolvedIps }).drifted,
+			const drift = selectedIps.find(
+				(selectedIp) => detectDnsDrift({ selectedIp, resolvedIps }).drifted,
 			);
 			const panelSummary = drift
 				? {
@@ -221,7 +224,9 @@ export async function checkRemoteRootHealth(
 
 		return {
 			status:
-				selectedIps.length && config.serviceStatus === "RUNNING" && panelSummary.panelStatus === "OK"
+				selectedIps.length &&
+				config.serviceStatus === "RUNNING" &&
+				panelSummary.panelStatus === "OK"
 					? "HEALTHY"
 					: "DEGRADED",
 			sshStatus: "OK",
@@ -338,7 +343,9 @@ async function checkSelectedPanelEndpoints({
 		return { panelStatus: "OK", panelError: null };
 	}
 	const error = failures
-		.map(({ selectedIp, result }) => `${selectedIp}: ${result.error || "Endpoint failed."}`)
+		.map(
+			({ selectedIp, result }) => `${selectedIp}: ${result.error || "Endpoint failed."}`,
+		)
 		.join("; ");
 	return {
 		panelStatus: failures.length === results.length ? "FAILED" : "DEGRADED",

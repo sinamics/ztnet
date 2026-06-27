@@ -209,7 +209,5 @@ function canWriteZtFolder(ztFolder: string): boolean {
 }
 
 function defaultZtFolder(): string {
-	return os.platform() === "freebsd"
-		? "/var/db/zerotier-one"
-		: "/var/lib/zerotier-one";
+	return os.platform() === "freebsd" ? "/var/db/zerotier-one" : "/var/lib/zerotier-one";
 }

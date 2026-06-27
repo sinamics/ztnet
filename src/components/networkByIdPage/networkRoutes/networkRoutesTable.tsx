@@ -90,7 +90,15 @@ export const NetworkRoutesTable = React.memo(
 					enabled: !!query.id,
 				},
 			);
-		const { network, members } = networkById || {};
+		const { network } = networkById || {};
+
+		// Members (for route node-name resolution) come from the dedicated DB-first
+		// endpoint now; request all in one page.
+		const { data: membersData } = api.network.getNetworkMembers.useQuery(
+			{ nwid: query.id as string, central, pageSize: 100000 },
+			{ enabled: !!query.id },
+		);
+		const members = membersData?.members ?? [];
 
 		const { mutate: updateManageRoutes, isLoading: isUpdating } =
 			api.network.managedRoutes.useMutation({

@@ -104,6 +104,16 @@ export const OrganizationNetworkTable = ({ tableData = [] }) => {
 			}),
 			columnHelper.accessor("memberCounts", {
 				header: () => <span>{t("commonTable.header.memberActTot")}</span>,
+				// The accessor value is an object, so default sorting can't order it.
+				// Sort by the numeric member count (total, then authorized as tiebreaker).
+				sortingFn: (rowA, rowB) => {
+					const a = rowA.original.memberCounts;
+					const b = rowB.original.memberCounts;
+					return (
+						(a?.total ?? 0) - (b?.total ?? 0) ||
+						(a?.authorized ?? 0) - (b?.authorized ?? 0)
+					);
+				},
 				cell: (info) => {
 					const data = info.getValue();
 					return <NetworkTableMemberCount count={data.display} />;

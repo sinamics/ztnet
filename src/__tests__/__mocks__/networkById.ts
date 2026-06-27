@@ -132,6 +132,13 @@ jest.mock("../../utils/api", () => ({
 					refetch: jest.fn(),
 				}),
 			},
+			getNetworkMembers: {
+				useQuery: () => ({
+					data: { members: [], totalCount: 0, authorizedCount: 0 },
+					isLoading: false,
+					refetch: jest.fn(),
+				}),
+			},
 			updateNetwork: {
 				useMutation: () => ({
 					mutate: jest.fn(),

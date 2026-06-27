@@ -195,9 +195,7 @@ describe("RemoteRoots", () => {
 		renderRemoteRoots();
 
 		expect(
-			screen.getByText(
-				"Manage remote ZeroTier root nodes for custom planet generation.",
-			),
+			screen.getByText("Manage remote ZeroTier root nodes for custom planet generation."),
 		).toBeInTheDocument();
 	});
 
@@ -503,7 +501,9 @@ describe("RemoteRoots", () => {
 		fireEvent.change(within(dialog).getByLabelText("ZeroTier UDP port"), {
 			target: { value: "10001" },
 		});
-		fireEvent.click(within(dialog).getByRole("button", { name: "Save Config & Restart" }));
+		fireEvent.click(
+			within(dialog).getByRole("button", { name: "Save Config & Restart" }),
+		);
 		expect(saveConfigMutation.mutate).toHaveBeenCalledWith({
 			nodeId: "root_1",
 			primaryPort: 10001,
@@ -542,7 +542,9 @@ describe("RemoteRoots", () => {
 		const dialog = screen.getByRole("dialog", { name: "Tokyo Root" });
 
 		expect(
-			within(dialog).getByText("Read the remote ZeroTier config before editing settings."),
+			within(dialog).getByText(
+				"Read the remote ZeroTier config before editing settings.",
+			),
 		).toBeInTheDocument();
 		expect(within(dialog).getByLabelText("ZeroTier UDP port")).toBeDisabled();
 		expect(within(dialog).getByLabelText("Endpoint IP")).toBeDisabled();
@@ -550,7 +552,9 @@ describe("RemoteRoots", () => {
 			within(dialog).getByRole("button", { name: "Save Config & Restart" }),
 		).toBeDisabled();
 		expect(within(dialog).getByRole("button", { name: "Save endpoint" })).toBeDisabled();
-		expect(within(dialog).getByRole("button", { name: "Distribute Planet" })).toBeDisabled();
+		expect(
+			within(dialog).getByRole("button", { name: "Distribute Planet" }),
+		).toBeDisabled();
 		expect(within(dialog).getByRole("button", { name: "Test SSH & Read" })).toBeEnabled();
 		expect(within(dialog).getByRole("button", { name: "Read" })).toBeEnabled();
 		expect(within(dialog).getByRole("button", { name: "Install" })).toBeEnabled();

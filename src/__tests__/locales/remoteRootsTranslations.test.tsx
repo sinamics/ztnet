@@ -219,9 +219,7 @@ describe("remote root translations", () => {
 			"form.primaryPortLabel",
 		]) {
 			const english = getNestedValue(en, `admin.controller.localConfig.${key}`);
-			expect(getNestedValue(zh, `admin.controller.localConfig.${key}`)).not.toBe(
-				english,
-			);
+			expect(getNestedValue(zh, `admin.controller.localConfig.${key}`)).not.toBe(english);
 			expect(getNestedValue(zhTw, `admin.controller.localConfig.${key}`)).not.toBe(
 				english,
 			);

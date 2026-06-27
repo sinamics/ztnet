@@ -279,9 +279,7 @@ export default function LocalZerotierConfig() {
 							</span>
 							<input
 								className="input input-bordered input-sm"
-								aria-label={t(
-									"controller.localConfig.form.defaultBondingPolicyLabel",
-								)}
+								aria-label={t("controller.localConfig.form.defaultBondingPolicyLabel")}
 								value={draft.defaultBondingPolicy}
 								disabled={isLoading || Boolean(error)}
 								onChange={(event) =>

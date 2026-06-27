@@ -5,6 +5,9 @@ on:
     paths-ignore:
       - "docs/**"
 
+permissions:
+  contents: read
+
 jobs:
   web_lint_test_build:
     name: Web - Lint - Format - Test - Build

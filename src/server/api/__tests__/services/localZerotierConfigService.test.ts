@@ -92,9 +92,7 @@ describe("localZerotierConfigService", () => {
 			{ ztFolder },
 		);
 
-		const saved = JSON.parse(
-			fs.readFileSync(path.join(ztFolder, "local.conf"), "utf8"),
-		);
+		const saved = JSON.parse(fs.readFileSync(path.join(ztFolder, "local.conf"), "utf8"));
 		expect(saved.extraTopLevel).toBe(true);
 		expect(saved.settings.unknownSetting).toBe("keep-me");
 		expect(saved.settings.primaryPort).toBe(10001);

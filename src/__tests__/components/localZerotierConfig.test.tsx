@@ -90,7 +90,9 @@ describe("LocalZerotierConfig", () => {
 		renderComponent();
 		fireEvent.click(screen.getByRole("button", { name: /configure local zerotier/i }));
 
-		expect(screen.getByText("Could not parse zerotier-one/local.conf.")).toBeInTheDocument();
+		expect(
+			screen.getByText("Could not parse zerotier-one/local.conf."),
+		).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /save config/i })).toBeDisabled();
 	});
 

@@ -364,7 +364,9 @@ const RemoteRoots = () => {
 		});
 		setConfigDraft({
 			primaryPort: selectedRootPrimaryPort,
-			secondaryPort: selectedRoot?.secondaryPort ? String(selectedRoot.secondaryPort) : "",
+			secondaryPort: selectedRoot?.secondaryPort
+				? String(selectedRoot.secondaryPort)
+				: "",
 			allowSecondaryPort: Boolean(selectedRoot?.allowSecondaryPort),
 			portMappingEnabled:
 				typeof selectedRoot?.portMappingEnabled === "boolean"
@@ -377,7 +379,12 @@ const RemoteRoots = () => {
 			multithreaded: Boolean(selectedRoot?.multithreaded),
 			linuxKernelMode: Boolean(selectedRoot?.linuxKernelMode),
 		});
-	}, [selectedRootEndpointId, selectedRootSelectedIps, selectedRootPrimaryPort, selectedRoot]);
+	}, [
+		selectedRootEndpointId,
+		selectedRootSelectedIps,
+		selectedRootPrimaryPort,
+		selectedRoot,
+	]);
 
 	const setFormField = <Field extends keyof RemoteRootForm>(
 		field: Field,
@@ -695,9 +702,7 @@ const RemoteRoots = () => {
 											<td>
 												{root.sshUser}@{root.host}:{root.sshPort}
 												{root.domainName ? (
-													<div className="text-xs text-gray-500">
-														{root.domainName}
-													</div>
+													<div className="text-xs text-gray-500">{root.domainName}</div>
 												) : null}
 											</td>
 											<td>
@@ -980,7 +985,9 @@ const RemoteRoots = () => {
 											type="button"
 											className="btn btn-sm"
 											onClick={() => restartZerotier.mutate({ nodeId: selectedRoot.id })}
-											disabled={restartZerotier.isLoading || !selectedRoot.zerotierInstalled}
+											disabled={
+												restartZerotier.isLoading || !selectedRoot.zerotierInstalled
+											}
 										>
 											{restartZerotier.isLoading ? (
 												<span className="loading loading-spinner loading-xs" />
@@ -1033,7 +1040,9 @@ const RemoteRoots = () => {
 											<input
 												className="input input-sm input-bordered"
 												aria-label={t("controller.remoteRoots.form.selectedIpLabel")}
-												placeholder={t("controller.remoteRoots.form.selectedIpPlaceholder")}
+												placeholder={t(
+													"controller.remoteRoots.form.selectedIpPlaceholder",
+												)}
 												value={endpointDraft.manualIp}
 												disabled={!canEditRemoteConfig}
 												onChange={(event) =>

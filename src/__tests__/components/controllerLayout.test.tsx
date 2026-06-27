@@ -54,10 +54,7 @@ describe("Controller layout", () => {
 			data: {
 				networkCount: 1,
 				totalMembers: 2,
-				assignedIPs: [
-					"10.147.17.10",
-					"fd00:1234:5678:90ab:cdef:1111:2222:3333",
-				],
+				assignedIPs: ["10.147.17.10", "fd00:1234:5678:90ab:cdef:1111:2222:3333"],
 				controllerStatus: {
 					online: true,
 					tcpFallbackActive: false,

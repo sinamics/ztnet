@@ -65,22 +65,38 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			const validatedBody = PostBodySchema.parse(body);
 			// structure of the updateableFields object:
 
+			// Fields that are cached in the DB (authorized/ipAssignments/flags) are
+			// routed to BOTH so the controller change is mirrored into the DB cache
+			// immediately; capabilities/tags/ssoExempt have no DB column and stay
+			// controller-only (reconcile keeps the cache columns honest regardless).
 			const updateableFields = {
-				name: { type: "string", destinations: ["database"] },
-				authorized: { type: "boolean", destinations: ["controller"] },
-				activeBridge: { type: "boolean", destinations: ["controller"] },
+				name: { type: "string", destinations: ["database", "controller"] },
+				authorized: { type: "boolean", destinations: ["database", "controller"] },
+				activeBridge: { type: "boolean", destinations: ["database", "controller"] },
 				capabilities: { type: "array", destinations: ["controller"] },
-				ipAssignments: { type: "array", destinations: ["controller"] },
-				noAutoAssignIps: { type: "boolean", destinations: ["controller"] },
+				ipAssignments: { type: "array", destinations: ["database", "controller"] },
+				noAutoAssignIps: { type: "boolean", destinations: ["database", "controller"] },
 				ssoExempt: { type: "boolean", destinations: ["controller"] },
 				tags: { type: "array", destinations: ["controller"] },
 			};
+
+			// The `deleted` field is handled explicitly below, not through the generic
+			// updateable-field loop. Sending `deleted: false` restores a stashed
+			// member; `deleted: true` is rejected (use the DELETE method to stash).
+			if (validatedBody.deleted === true) {
+				return res.status(400).json({
+					error:
+						"Setting `deleted: true` is not supported. Use the DELETE method to stash a member.",
+				});
+			}
+			const restoreRequested = validatedBody.deleted === false;
 
 			const databasePayload: Partial<network_members> = {};
 			const controllerPayload: Partial<network_members> = {};
 
 			// Iterate over keys in the request body
 			for (const [key, value] of Object.entries(validatedBody)) {
+				if (key === "deleted") continue;
 				// Check if the key is not in updateableFields
 				if (!(key in updateableFields)) {
 					return res.status(400).json({ error: `Invalid field: ${key}` });
@@ -130,6 +146,23 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			}
 			const dbMember = network.networkMembers?.[0];
 
+			// A stashed (deleted) member cannot be modified unless the request
+			// explicitly restores it with `deleted: false`. This prevents the
+			// inconsistent state where a member is authorized on the controller while
+			// still flagged as deleted in the database (see issue #930).
+			if (dbMember?.deleted && !restoreRequested) {
+				return res.status(409).json({
+					error:
+						"Member is deleted. Set `deleted: false` to restore the member before modifying it.",
+				});
+			}
+
+			// Restore the member in the database when requested.
+			if (restoreRequested) {
+				databasePayload.deleted = false;
+				databasePayload.permanentlyDeleted = false;
+			}
+
 			if (dbMember) {
 				// Member exists in DB, update if there are database fields to update
 				if (Object.keys(databasePayload).length > 0) {
@@ -162,7 +195,9 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 					});
 				}
 			} else {
-				// Member doesn't exist in DB, create it
+				// Member doesn't exist in DB, create it — seed the cached config fields
+				// (authorized/ipAssignments/flags) from the request so the DB-first list
+				// is correct immediately, not only after the next reconcile.
 				await ctx.prisma.network_members.create({
 					data: {
 						id: memberId,
@@ -170,6 +205,10 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 						lastSeen: new Date(),
 						creationTime: new Date(),
 						name: (databasePayload.name as string) || null,
+						authorized: databasePayload.authorized,
+						ipAssignments: databasePayload.ipAssignments,
+						noAutoAssignIps: databasePayload.noAutoAssignIps,
+						activeBridge: databasePayload.activeBridge,
 						nwid_ref: { connect: { nwid: networkId } },
 					},
 				});

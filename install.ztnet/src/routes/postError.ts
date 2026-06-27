@@ -1,6 +1,15 @@
 import { Request, Response } from "express";
 import nodeMailer from "nodemailer";
 
+// Escape user-supplied content before embedding it in the HTML email body (XSS).
+const escapeHtml = (value: string): string =>
+	value
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
+
 //fetch uavcast versions
 export const postError = function (req: Request, res: Response) {
 	const post_body = req.body;
@@ -38,7 +47,7 @@ export const postError = function (req: Request, res: Response) {
 		html: `
         <p>Something went wrong during the ztnet installation!</p><br>
         <b>Error message:</b><br>
-        <pre>${JSON.stringify(post_body, null, 2)}</pre>
+        <pre>${escapeHtml(JSON.stringify(post_body, null, 2))}</pre>
         `,
 	};
 	try {

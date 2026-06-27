@@ -75,7 +75,11 @@ export function normalizeSelectedIps(
 	legacySelectedIp?: string | null,
 ): string[] {
 	const listValues = Array.isArray(selectedIps) ? selectedIps : [];
-	const values = listValues.length ? listValues : legacySelectedIp ? [legacySelectedIp] : [];
+	const values = listValues.length
+		? listValues
+		: legacySelectedIp
+			? [legacySelectedIp]
+			: [];
 	return Array.from(
 		new Set(
 			values

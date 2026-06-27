@@ -78,8 +78,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			const planetPath = `${ZT_FOLDER}/planet`;
 			const backupDir = `${ZT_FOLDER}/planet_backup`;
 
+			const uploadDir = "/tmp";
 			const form = formidable({
-				uploadDir: "/tmp",
+				uploadDir,
 				keepExtensions: true,
 			});
 
@@ -96,6 +97,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 					return resolve();
 				}
 
+				// formidable stores the upload inside uploadDir; ensure the resolved
+				// path stays within it before reading, so a manipulated filepath can't
+				// be used to read arbitrary files on disk.
+				const resolvedUploadPath = path.resolve(uploadedFilePath);
+				if (!resolvedUploadPath.startsWith(path.resolve(uploadDir) + path.sep)) {
+					res.status(400).json({ error: "Invalid upload path." });
+					return resolve();
+				}
+
 				try {
 					await fsPromises.mkdir(mkworldDir, { recursive: true });
 
@@ -103,7 +113,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 					const optionalFiles = ["current.c25519", "previous.c25519", "planet.custom"];
 					const foundFiles = [];
 
-					fs.createReadStream(uploadedFilePath)
+					fs.createReadStream(resolvedUploadPath)
 						.pipe(unzipper.Parse())
 						.on("entry", (entry) => {
 							const fileName = entry.path;
@@ -195,10 +205,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 											}
 										});
 
-									pass.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
+									pass.pipe(
+										fs.createWriteStream(path.join(mkworldDir, path.basename(fileName))),
+									);
 								} else {
 									// Extract other files to the target directory
-									entry.pipe(fs.createWriteStream(path.join(mkworldDir, fileName)));
+									entry.pipe(
+										fs.createWriteStream(path.join(mkworldDir, path.basename(fileName))),
+									);
 								}
 							} else {
 								entry.autodrain();

@@ -42,6 +42,8 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const [ipAssignments, seIpAssignments] = useState<string[]>([]);
 
 	const { query } = useRouter();
+	const utils = api.useUtils();
+	const refetchMembersTable = () => void utils.network.getNetworkMembers.invalidate();
 
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
@@ -73,20 +75,17 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		);
 
 	useEffect(() => {
-		// Check if members is an array and the first member has an 'id' property
-		if (Array.isArray(networkById?.members) && networkById.members[0]?.id) {
-			const member = (networkById.members as MemberEntity[]).find(
-				(member) => member.id === memberId,
-			);
-
-			seIpAssignments(member?.ipAssignments || []);
-		}
-	}, [networkById?.members, memberId]);
+		// IP assignments come from the per-member detail query (controller-live),
+		// not from the network member list.
+		seIpAssignments(memberById?.ipAssignments || []);
+	}, [memberById?.ipAssignments]);
 
 	const { mutate: updateMember, isLoading: updateMemberLoading } =
 		api.networkMember.Update.useMutation({
 			onError: handleApiError,
-			onSuccess: handleApiSuccess({ actions: [refetchNetworkById, refetchMemberById] }),
+			onSuccess: handleApiSuccess({
+				actions: [refetchNetworkById, refetchMemberById, refetchMembersTable],
+			}),
 		});
 
 	// const stashMember = (id: string) => {

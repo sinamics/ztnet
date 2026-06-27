@@ -162,9 +162,7 @@ export function parseRemoteRootConfig(output: string): RemoteRootConfig {
 			if (isValidPort(settings.primaryPort)) {
 				primaryPort = settings.primaryPort;
 			}
-			secondaryPort = isValidPort(settings.secondaryPort)
-				? settings.secondaryPort
-				: null;
+			secondaryPort = isValidPort(settings.secondaryPort) ? settings.secondaryPort : null;
 			allowSecondaryPort =
 				typeof settings.allowSecondaryPort === "boolean"
 					? settings.allowSecondaryPort

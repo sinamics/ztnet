@@ -39,6 +39,7 @@ export const AddMemberById = ({ central = false, organizationId }: IProp) => {
 				nwid: query.id as string,
 				central,
 			});
+			await utils.network.getNetworkMembers.invalidate();
 			handleApiSuccess({ actions: [refecthNetworkById] })();
 		},
 		onError: handleApiError,

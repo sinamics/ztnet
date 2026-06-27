@@ -65,10 +65,7 @@ function normalizeSelectedIps(input: {
 }) {
 	const selectedIps = Array.from(
 		new Set(
-			[
-				...(input.selectedIps || []),
-				...(input.selectedIp ? [input.selectedIp] : []),
-			]
+			[...(input.selectedIps || []), ...(input.selectedIp ? [input.selectedIp] : [])]
 				.map((item) => item.trim())
 				.filter(Boolean),
 		),
@@ -440,7 +437,10 @@ export const remoteRootRouter = createTRPCRouter({
 					"SUCCESS",
 					[
 						result.stderr,
-						...taskReadLogs("ZeroTier configuration saved and service restarted.", updated),
+						...taskReadLogs(
+							"ZeroTier configuration saved and service restarted.",
+							updated,
+						),
 					].filter(Boolean),
 				);
 				return updated;
