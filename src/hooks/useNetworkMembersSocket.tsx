@@ -36,10 +36,14 @@ export const useNetworkMembersSocket = (nwid: string, central = false): boolean 
 			// (re)subscribe on every (re)connect, and track connection state so the
 			// table can speed up its safety poll while the socket is down.
 			socket.on("connect", () => {
+				if (cancelled) return;
 				setIsConnected(true);
 				subscribe();
 			});
-			socket.on("disconnect", () => setIsConnected(false));
+			socket.on("disconnect", () => {
+				if (cancelled) return;
+				setIsConnected(false);
+			});
 			socket.on(channel, () => {
 				void utils.network.getNetworkMembers.invalidate();
 				void utils.network.getNetworkById.invalidate();
@@ -52,6 +56,8 @@ export const useNetworkMembersSocket = (nwid: string, central = false): boolean 
 			if (socket) {
 				socket.emit("unsubscribe:network", { nwid });
 				socket.off(channel);
+				socket.off("connect");
+				socket.off("disconnect");
 				socket.disconnect();
 			}
 		};
