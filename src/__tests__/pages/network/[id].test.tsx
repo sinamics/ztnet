@@ -70,6 +70,9 @@ jest.mock("next/router", () => ({
 jest.mock("~/hooks/useNetworkMembersSocket", () => ({
 	__esModule: true,
 	useNetworkMembersSocket: jest.fn(),
+	// Shared socket-state store: return "not connected" via the selector.
+	useNetworkSocketStore: (selector: (s: { connected: boolean }) => unknown) =>
+		selector({ connected: false }),
 	default: jest.fn(),
 }));
 describe("NetworkById component", () => {

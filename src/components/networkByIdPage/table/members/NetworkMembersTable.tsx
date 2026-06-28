@@ -12,7 +12,10 @@ import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { getLocalStorageItem } from "~/utils/localstorage";
 import TableFooter, { ALL_PAGE_SIZE } from "~/components/shared/tableFooter";
 import { type NetworkEntity } from "~/types/local/network";
-import { useNetworkMembersSocket } from "~/hooks/useNetworkMembersSocket";
+import {
+	useNetworkMembersSocket,
+	useNetworkSocketStore,
+} from "~/hooks/useNetworkMembersSocket";
 import { useMemberColumns } from "./useMemberColumns";
 import { useTablePersistence } from "./hooks/useTablePersistence";
 import { MembersToolbar } from "./components/MembersToolbar";
@@ -51,7 +54,8 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 	// When the socket is connected we only need a slow safety poll; when it isn't
 	// (e.g. behind a proxy that doesn't forward WebSockets), poll faster so the
 	// table still stays reasonably fresh. Central has no socket → keep it slow.
-	const socketConnected = useNetworkMembersSocket(nwid, central);
+	useNetworkMembersSocket(nwid, central);
+	const socketConnected = useNetworkSocketStore((s) => s.connected);
 	const refetchInterval = central || socketConnected ? 60000 : 20000;
 	const [globalFilter, setGlobalFilter] = useState("");
 	const {

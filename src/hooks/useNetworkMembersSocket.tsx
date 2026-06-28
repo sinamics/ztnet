@@ -1,26 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { create } from "zustand";
 import { io } from "socket.io-client";
 import { api } from "~/utils/api";
 import { networkMembersChannel } from "~/utils/socketChannels";
 
 /**
- * Subscribes to live member updates for a network over Socket.IO. While mounted,
- * the server reconciles this network every ~10s and pushes a "changed" event when
- * something actually changed; we then refetch the (DB-first) member list. On
- * unmount we unsubscribe so the server can stop the loop when no one is viewing.
+ * Shared connection state for the per-network live socket. One socket is opened
+ * (by the member table via useNetworkMembersSocket); the page and the table both
+ * read `connected` from here to drive an adaptive refetch fallback — slow while
+ * the socket is delivering live pushes, faster when it isn't (e.g. behind a proxy
+ * that doesn't forward WebSockets).
+ */
+interface NetworkSocketState {
+	connected: boolean;
+	setConnected: (connected: boolean) => void;
+}
+
+export const useNetworkSocketStore = create<NetworkSocketState>((set) => ({
+	connected: false,
+	setConnected: (connected) => set({ connected }),
+}));
+
+/**
+ * Opens a single Socket.IO connection for the given network, subscribes for live
+ * "changed" pushes, and invalidates the network + member queries when they
+ * arrive — so the WebSocket is the primary data path. Publishes live connection
+ * state to {@link useNetworkSocketStore} so consumers can fall back to polling
+ * only while the socket is down. Central networks have no local sync worker, so
+ * no socket is opened.
  *
  * Uses a dedicated (forceNew) socket so it never interferes with the org-chat
- * socket. Central networks are not handled by the local sync worker.
- *
- * Returns whether the live socket is currently connected, so the caller can fall
- * back to a faster safety poll only when live updates aren't flowing.
+ * socket. On unmount it unsubscribes so the server can stop the loop.
  */
-export const useNetworkMembersSocket = (nwid: string, central = false): boolean => {
+export const useNetworkMembersSocket = (nwid: string, central = false): void => {
 	const utils = api.useUtils();
-	const [isConnected, setIsConnected] = useState(false);
+	const setConnected = useNetworkSocketStore((s) => s.setConnected);
 
 	useEffect(() => {
-		if (!nwid || central) return;
+		// No live socket for central networks (or before the id is known): reflect
+		// "not connected" so consumers use the fallback poll.
+		if (!nwid || central) {
+			setConnected(false);
+			return;
+		}
 
 		let cancelled = false;
 		let socket: ReturnType<typeof io> | null = null;
@@ -33,16 +55,15 @@ export const useNetworkMembersSocket = (nwid: string, central = false): boolean 
 
 			socket = io({ forceNew: true });
 			const subscribe = () => socket?.emit("subscribe:network", { nwid });
-			// (re)subscribe on every (re)connect, and track connection state so the
-			// table can speed up its safety poll while the socket is down.
 			socket.on("connect", () => {
 				if (cancelled) return;
-				setIsConnected(true);
+				setConnected(true);
+				// (re)subscribe on every (re)connect.
 				subscribe();
 			});
 			socket.on("disconnect", () => {
 				if (cancelled) return;
-				setIsConnected(false);
+				setConnected(false);
 			});
 			socket.on(channel, () => {
 				void utils.network.getNetworkMembers.invalidate();
@@ -52,7 +73,7 @@ export const useNetworkMembersSocket = (nwid: string, central = false): boolean 
 
 		return () => {
 			cancelled = true;
-			setIsConnected(false);
+			setConnected(false);
 			if (socket) {
 				socket.emit("unsubscribe:network", { nwid });
 				socket.off(channel);
@@ -61,9 +82,7 @@ export const useNetworkMembersSocket = (nwid: string, central = false): boolean 
 				socket.disconnect();
 			}
 		};
-	}, [nwid, central, utils]);
-
-	return isConnected;
+	}, [nwid, central, utils, setConnected]);
 };
 
 export default useNetworkMembersSocket;
