@@ -299,21 +299,27 @@ export const authRouter = createTRPCRouter({
 			});
 
 			if (globalOptions?.userRegistrationNotification) {
-				const adminUsers = await ctx.prisma.user.findMany({
-					where: {
-						role: "ADMIN",
-					},
-				});
-
-				for (const adminUser of adminUsers) {
-					await sendMailWithTemplate(MailTemplateKey.Notification, {
-						to: adminUser.email,
-						userId: adminUser.id,
-						templateData: {
-							toName: adminUser.name,
-							notificationMessage: `A new user with the name ${name} and email ${email} has just registered!`,
+				// A failed admin-notification email (e.g. misconfigured SMTP or a
+				// secret mismatch) must never break the user's registration.
+				try {
+					const adminUsers = await ctx.prisma.user.findMany({
+						where: {
+							role: "ADMIN",
 						},
 					});
+
+					for (const adminUser of adminUsers) {
+						await sendMailWithTemplate(MailTemplateKey.Notification, {
+							to: adminUser.email,
+							userId: adminUser.id,
+							templateData: {
+								toName: adminUser.name,
+								notificationMessage: `A new user with the name ${name} and email ${email} has just registered!`,
+							},
+						});
+					}
+				} catch (e) {
+					console.error("Failed to send new-user registration notification:", e);
 				}
 			}
 			// add log if hasValidOrganizationToken is true
