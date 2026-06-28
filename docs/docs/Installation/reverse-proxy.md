@@ -8,7 +8,11 @@ sidebar_position: 5
 
 # Reverse Proxy
 
-ZTNET pushes live updates (member status, network changes) to the browser over a **WebSocket** (Socket.IO, served on `/socket.io/`). Behind a reverse proxy, that connection only works if the proxy forwards the **WebSocket upgrade**. If it doesn't, the UI still works but falls back to a slower 60‑second refresh.
+:::info Applies from v0.8.0
+Live updates over WebSocket were introduced in **v0.8.0**. On earlier versions this page doesn't apply.
+:::
+
+ZTNET pushes live updates (member status, network changes) to the browser over a **WebSocket** (Socket.IO, served on `/socket.io/`). Behind a reverse proxy, that connection only works if the proxy forwards the **WebSocket upgrade**. If it doesn't, the UI still works but falls back to periodic polling (~20s) instead of instant updates.
 
 ## Verify
 
