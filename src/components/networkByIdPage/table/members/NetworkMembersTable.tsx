@@ -12,7 +12,10 @@ import { convertRGBtoRGBA } from "~/utils/randomColor";
 import { getLocalStorageItem } from "~/utils/localstorage";
 import TableFooter, { ALL_PAGE_SIZE } from "~/components/shared/tableFooter";
 import { type NetworkEntity } from "~/types/local/network";
-import { useNetworkMembersSocket } from "~/hooks/useNetworkMembersSocket";
+import {
+	useNetworkMembersSocket,
+	useNetworkSocketStore,
+} from "~/hooks/useNetworkMembersSocket";
 import { useMemberColumns } from "./useMemberColumns";
 import { useTablePersistence } from "./hooks/useTablePersistence";
 import { MembersToolbar } from "./components/MembersToolbar";
@@ -48,7 +51,12 @@ const SERVER_SORTABLE = new Set([
 export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
 	const { query } = useRouter();
 	// Live updates: server pushes a "changed" event over Socket.IO and we refetch.
+	// When the socket is connected we only need a slow safety poll; when it isn't
+	// (e.g. behind a proxy that doesn't forward WebSockets), poll faster so the
+	// table still stays reasonably fresh. Central has no socket → keep it slow.
 	useNetworkMembersSocket(nwid, central);
+	const socketConnected = useNetworkSocketStore((s) => s.connected);
+	const refetchInterval = central || socketConnected ? 60000 : 20000;
 	const [globalFilter, setGlobalFilter] = useState("");
 	const {
 		sorting,
@@ -110,7 +118,7 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 		},
 		// Socket.IO drives live updates; this slow poll is just a safety net for a
 		// dropped socket.
-		{ enabled: !!query.id, refetchInterval: 60000 },
+		{ enabled: !!query.id, refetchInterval },
 	);
 
 	const totalCount = membersData?.totalCount ?? 0;

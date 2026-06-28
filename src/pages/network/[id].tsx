@@ -3,6 +3,7 @@ import { useState, type ReactElement } from "react";
 import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
+import { useNetworkSocketStore } from "~/hooks/useNetworkMembersSocket";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
@@ -57,6 +58,9 @@ const NetworkById = ({ orgIds }: IProps) => {
 	const { query, push: router } = useRouter();
 
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	// Live socket state (published by the member table's socket) drives the
+	// fallback poll rate below.
+	const socketConnected = useNetworkSocketStore((s) => s.connected);
 
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
@@ -68,7 +72,9 @@ const NetworkById = ({ orgIds }: IProps) => {
 			nwid: query.id as string,
 			central: false,
 		},
-		{ enabled: !!query.id, refetchInterval: 10000 },
+		// The WebSocket is the primary update path (it invalidates this query on
+		// change); poll only as a fallback — slow while connected, faster when not.
+		{ enabled: !!query.id, refetchInterval: socketConnected ? 60000 : 20000 },
 	);
 	const { network, memberCount = 0 } = networkById || {};
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
