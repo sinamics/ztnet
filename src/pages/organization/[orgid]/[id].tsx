@@ -3,6 +3,7 @@ import { useState, type ReactElement } from "react";
 import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
 import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
+import { useNetworkSocketStore } from "~/hooks/useNetworkMembersSocket";
 import { api } from "~/utils/api";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
@@ -47,6 +48,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	useOrganizationWebsocket(orgIds);
 
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
+	const socketConnected = useNetworkSocketStore((s) => s.connected);
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
@@ -56,7 +58,9 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		{
 			nwid: query.id as string,
 		},
-		{ enabled: !!query.id, refetchInterval: 10000 },
+		// WebSocket is the primary update path; poll only as a fallback — slow while
+		// connected, faster when not.
+		{ enabled: !!query.id, refetchInterval: socketConnected ? 60000 : 20000 },
 	);
 	const { network, memberCount = 0 } = networkById || {};
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
