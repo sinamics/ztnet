@@ -61,7 +61,7 @@ const readCommand = [
 	"echo __ZTNET_IDENTITY__",
 	"sudo cat /var/lib/zerotier-one/identity.public 2>/dev/null || cat /var/lib/zerotier-one/identity.public 2>/dev/null || true",
 	"echo __ZTNET_INFO__",
-	"zerotier-cli info 2>/dev/null || true",
+	"sudo zerotier-cli info 2>/dev/null || zerotier-cli info 2>/dev/null || true",
 	"echo __ZTNET_LOCAL_CONF__",
 	"sudo cat /var/lib/zerotier-one/local.conf 2>/dev/null || cat /var/lib/zerotier-one/local.conf 2>/dev/null || true",
 	"echo __ZTNET_PORT__",
@@ -84,10 +84,10 @@ export const REMOTE_ROOT_COMMANDS = {
 	upgrade:
 		"if command -v apt-get >/dev/null 2>&1; then sudo apt-get update && sudo apt-get install -y zerotier-one; elif command -v yum >/dev/null 2>&1; then sudo yum install -y zerotier-one; elif command -v dnf >/dev/null 2>&1; then sudo dnf install -y zerotier-one; else zerotier-cli -v; fi",
 	enableService:
-		"(sudo systemctl enable --now zerotier-one || sudo service zerotier-one start || true) && zerotier-cli info",
+		"(sudo systemctl enable --now zerotier-one || sudo service zerotier-one start || true) && (sudo zerotier-cli info || zerotier-cli info || true)",
 	readConfig: readCommand,
 	restartService:
-		"(sudo systemctl restart zerotier-one || sudo service zerotier-one restart) && sleep 2 && zerotier-cli info",
+		"(sudo systemctl restart zerotier-one || sudo service zerotier-one restart) && sleep 2 && (sudo zerotier-cli info || zerotier-cli info || true)",
 };
 
 export async function runRemoteRootCommand(
