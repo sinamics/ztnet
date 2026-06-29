@@ -115,7 +115,9 @@ export const NetworkRoutesTable = React.memo(
 		const deleteRoute = useCallback(
 			(route: RoutesEntity) => {
 				const _routes = [...((network?.routes as RoutesEntity[]) || [])];
-				const newRouteArr = _routes.filter((r) => r.target !== route.target);
+				const newRouteArr = _routes.filter(
+					(r) => !(r.target === route.target && (r.via ?? null) === (route.via ?? null)),
+				);
 
 				updateManageRoutes({
 					updateParams: { routes: [...newRouteArr] },

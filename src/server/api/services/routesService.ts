@@ -45,6 +45,19 @@ export const syncNetworkRoutes = async ({
 		const routesToUpdate: RoutesEntity[] = [];
 		const routesToDelete: string[] = [];
 
+		// Self-heal: collapse duplicate DB rows that share the same logical key.
+		// The controller never holds duplicates, so any extra DB row with a key we
+		// already kept is stale and must be deleted (keep the first occurrence).
+		const seenKeys = new Set<string>();
+		for (const route of dbRoutes) {
+			const key = getRouteKey(route);
+			if (seenKeys.has(key)) {
+				if (route.id) routesToDelete.push(route.id);
+			} else {
+				seenKeys.add(key);
+			}
+		}
+
 		// Find routes to create or update
 		for (const [key, ztRoute] of newRouteMap) {
 			const existingRoute = existingRouteMap.get(key);
@@ -92,6 +105,7 @@ export const syncNetworkRoutes = async ({
 						target: route.target,
 						via: route.via || null,
 					})),
+					skipDuplicates: true,
 				});
 			}
 
