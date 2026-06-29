@@ -249,6 +249,8 @@ model Routes {
   networkId String
   notes     String?
   network   network @relation(fields: [networkId], references: [nwid], onDelete: Cascade)
+
+  @@unique([networkId, target, via])
 }
 
 model Notation {

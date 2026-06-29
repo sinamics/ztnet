@@ -224,16 +224,27 @@ export const networkRouter = createTRPCRouter({
 				const ztRouteKeys = new Set(
 					controllerNetwork.routes?.map((r) => `${r.target}|${r.via || "null"}`) || [],
 				);
+				// A smaller key-set than the raw row count means duplicate rows exist in
+				// the DB; those must be reconciled away even if the deduped sets match.
+				const dbHasDuplicateRoutes =
+					(networkFromDatabase.routes?.length || 0) !== dbRouteKeys.size;
 				const routesAreDifferent =
+					dbHasDuplicateRoutes ||
 					dbRouteKeys.size !== ztRouteKeys.size ||
 					![...dbRouteKeys].every((key) => ztRouteKeys.has(key));
 
 				if (routesAreDifferent) {
-					await syncNetworkRoutes({
+					const syncedNetwork = await syncNetworkRoutes({
 						networkId: input.nwid,
 						networkFromDatabase,
 						ztControllerRoutes: controllerNetwork.routes,
 					});
+					// Reflect the synced routes in the response so the UI is correct on
+					// this same request instead of only after a manual refresh.
+					if (syncedNetwork?.routes) {
+						networkFromDatabase.routes =
+							syncedNetwork.routes as typeof networkFromDatabase.routes;
+					}
 				}
 
 				// check if there is other network using same routes and return a notification
