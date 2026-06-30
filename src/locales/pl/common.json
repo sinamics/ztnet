@@ -834,7 +834,7 @@
 				"title": "Zdalne Planet Roots",
 				"description": "Zarzadzaj zdalnymi wezlami root ZeroTier do generowania niestandardowego planet.",
 				"actions": {
-					"appendHealthyRoots": "Dodaj zdrowe rooty do planet",
+					"appendHealthyRoots": "Zamień listę rootów planet",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Polecenie aktualizacji zakonczone",
 					"remoteConfigRead": "Odczytano zdalna konfiguracje",
 					"noDnsRecords": "Nie znaleziono rekordow DNS",
-					"noHealthyRoots": "Brak dostepnych zdrowych zdalnych rootow",
+					"noHealthyRoots": "Brak dostępnych zdalnych rootów",
 					"missingEndpoints": "Wybierz co najmniej jeden adres IP punktu końcowego dla: {names}",
 					"customPlanetUpdated": "Niestandardowy planet zaktualizowany o zdalne rooty",
 					"rootChecked": "Remote root checked",

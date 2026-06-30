@@ -834,7 +834,7 @@
 				"title": "Planet Roots remotos",
 				"description": "Administra nodos root ZeroTier remotos para generar un planet personalizado.",
 				"actions": {
-					"appendHealthyRoots": "Anadir roots saludables al planet",
+					"appendHealthyRoots": "Reemplazar lista de roots del planet",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Comando de actualizacion completado",
 					"remoteConfigRead": "Configuracion remota leida",
 					"noDnsRecords": "No se encontraron registros DNS",
-					"noHealthyRoots": "No hay roots remotos saludables disponibles",
+					"noHealthyRoots": "No hay roots remotos disponibles",
 					"missingEndpoints": "Selecciona al menos una IP de endpoint para: {names}",
 					"customPlanetUpdated": "Planet personalizado actualizado con roots remotos",
 					"rootChecked": "Remote root checked",

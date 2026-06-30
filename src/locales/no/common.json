@@ -834,7 +834,7 @@
 				"title": "Eksterne Planet Roots",
 				"description": "Administrer eksterne ZeroTier root-noder for generering av egendefinert planet.",
 				"actions": {
-					"appendHealthyRoots": "Legg til friske roots i planet",
+					"appendHealthyRoots": "Erstatt planet-root-listen",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Oppgraderingskommando fullfort",
 					"remoteConfigRead": "Ekstern konfigurasjon lest",
 					"noDnsRecords": "Ingen DNS-poster funnet",
-					"noHealthyRoots": "Ingen friske eksterne roots er tilgjengelige",
+					"noHealthyRoots": "Ingen eksterne roots er tilgjengelige",
 					"missingEndpoints": "Velg minst én endepunkt-IP for: {names}",
 					"customPlanetUpdated": "Egendefinert planet oppdatert med eksterne roots",
 					"rootChecked": "Remote root checked",

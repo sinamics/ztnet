@@ -834,7 +834,7 @@
 				"title": "远程 Planet Roots",
 				"description": "管理用于生成自定义 planet 的远程 ZeroTier root 节点。",
 				"actions": {
-					"appendHealthyRoots": "将健康 root 追加到 planet",
+					"appendHealthyRoots": "替换 planet root 列表",
 					"close": "关闭",
 					"saveEndpoint": "保存端点"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "升级命令已完成",
 					"remoteConfigRead": "远程配置已读取",
 					"noDnsRecords": "未找到 DNS 记录",
-					"noHealthyRoots": "没有可用的健康远程 root",
+					"noHealthyRoots": "没有可用的远程 root",
 					"missingEndpoints": "请为以下节点至少选择一个端点 IP：{names}",
 					"customPlanetUpdated": "自定义 planet 已追加远程 root",
 					"rootChecked": "远程 root 已检查",

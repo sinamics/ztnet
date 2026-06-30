@@ -834,7 +834,7 @@
 				"title": "Remote Planet Roots",
 				"description": "Verwalten Sie entfernte ZeroTier-root-Knoten fur die Generierung eines benutzerdefinierten planet.",
 				"actions": {
-					"appendHealthyRoots": "Gesunde roots zum planet hinzufugen",
+					"appendHealthyRoots": "Planet-Root-Liste ersetzen",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Aktualisierungsbefehl abgeschlossen",
 					"remoteConfigRead": "Entfernte Konfiguration gelesen",
 					"noDnsRecords": "Keine DNS-Eintrage gefunden",
-					"noHealthyRoots": "Keine gesunden entfernten roots verfugbar",
+					"noHealthyRoots": "Keine entfernten Roots verfügbar",
 					"missingEndpoints": "Wähle mindestens eine Endpunkt-IP für: {names}",
 					"customPlanetUpdated": "Benutzerdefinierter planet mit entfernten roots aktualisiert",
 					"rootChecked": "Remote root checked",

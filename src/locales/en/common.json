@@ -834,7 +834,7 @@
 				"title": "Remote Planet Roots",
 				"description": "Manage remote ZeroTier root nodes for custom planet generation.",
 				"actions": {
-					"appendHealthyRoots": "Append healthy roots to planet",
+					"appendHealthyRoots": "Replace planet root list",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -983,7 +983,7 @@
 					"planetDistributed": "Planet distributed to remote root",
 					"officialPlanetRestored": "Remote root restored to official planet",
 					"noDnsRecords": "No DNS records found",
-					"noHealthyRoots": "No healthy remote roots are available",
+					"noHealthyRoots": "No remote roots are available",
 					"missingEndpoints": "Select at least one endpoint IP for: {names}",
 					"customPlanetUpdated": "Custom planet updated with remote roots"
 				}

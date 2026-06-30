@@ -834,7 +834,7 @@
 				"title": "Віддалені Planet Roots",
 				"description": "Керуйте віддаленими root-вузлами ZeroTier для створення користувацького planet.",
 				"actions": {
-					"appendHealthyRoots": "Додати справні roots до planet",
+					"appendHealthyRoots": "Замінити список roots у planet",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Команду оновлення виконано",
 					"remoteConfigRead": "Віддалену конфігурацію прочитано",
 					"noDnsRecords": "DNS-записи не знайдено",
-					"noHealthyRoots": "Немає доступних справних віддалених roots",
+					"noHealthyRoots": "Немає доступних віддалених roots",
 					"missingEndpoints": "Виберіть принаймні одну IP-адресу кінцевої точки для: {names}",
 					"customPlanetUpdated": "Користувацький planet оновлено віддаленими roots",
 					"rootChecked": "Remote root checked",

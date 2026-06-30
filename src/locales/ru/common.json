@@ -834,7 +834,7 @@
 				"title": "Удаленные Planet Roots",
 				"description": "Управляйте удаленными root-узлами ZeroTier для генерации пользовательского planet.",
 				"actions": {
-					"appendHealthyRoots": "Добавить исправные roots в planet",
+					"appendHealthyRoots": "Заменить список roots в planet",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Команда обновления выполнена",
 					"remoteConfigRead": "Удаленная конфигурация прочитана",
 					"noDnsRecords": "DNS-записи не найдены",
-					"noHealthyRoots": "Нет доступных исправных удаленных roots",
+					"noHealthyRoots": "Нет доступных удалённых roots",
 					"missingEndpoints": "Выберите хотя бы один IP-адрес конечной точки для: {names}",
 					"customPlanetUpdated": "Пользовательский planet обновлен удаленными roots",
 					"rootChecked": "Remote root checked",

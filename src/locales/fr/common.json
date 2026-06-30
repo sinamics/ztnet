@@ -834,7 +834,7 @@
 				"title": "Racines Planet distantes",
 				"description": "Gerez les noeuds root ZeroTier distants pour la generation d'un planet personnalise.",
 				"actions": {
-					"appendHealthyRoots": "Ajouter les roots sains au planet",
+					"appendHealthyRoots": "Remplacer la liste des roots du planet",
 					"close": "Close",
 					"saveEndpoint": "Save endpoint"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "Commande de mise a jour terminee",
 					"remoteConfigRead": "Configuration distante lue",
 					"noDnsRecords": "Aucun enregistrement DNS trouve",
-					"noHealthyRoots": "Aucun root distant sain disponible",
+					"noHealthyRoots": "Aucun root distant disponible",
 					"missingEndpoints": "Sélectionnez au moins une IP de point de terminaison pour : {names}",
 					"customPlanetUpdated": "Planet personnalise mis a jour avec les roots distants",
 					"rootChecked": "Remote root checked",

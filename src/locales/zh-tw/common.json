@@ -834,7 +834,7 @@
 				"title": "遠端 Planet Roots",
 				"description": "管理用於產生自訂 planet 的遠端 ZeroTier root 節點。",
 				"actions": {
-					"appendHealthyRoots": "將健康 root 追加到 planet",
+					"appendHealthyRoots": "替換 planet root 列表",
 					"close": "關閉",
 					"saveEndpoint": "儲存端點"
 				},
@@ -958,7 +958,7 @@
 					"upgradeCompleted": "升級命令已完成",
 					"remoteConfigRead": "遠端設定已讀取",
 					"noDnsRecords": "找不到 DNS 記錄",
-					"noHealthyRoots": "沒有可用的健康遠端 root",
+					"noHealthyRoots": "沒有可用的遠端 root",
 					"missingEndpoints": "請為以下節點至少選擇一個端點 IP：{names}",
 					"customPlanetUpdated": "自訂 planet 已追加遠端 root",
 					"rootChecked": "遠端 root 已檢查",
