@@ -226,7 +226,12 @@ export const remoteRootRouter = createTRPCRouter({
 		.query(async ({ ctx, input }) => {
 			return await ctx.prisma.remoteRootNode.findUnique({
 				where: { id: input.id },
-				include: { credential: true, tasks: { orderBy: { createdAt: "desc" } } },
+				include: {
+					credential: {
+						select: { id: true, publicKey: true, createdAt: true },
+					},
+					tasks: { orderBy: { createdAt: "desc" } },
+				},
 			});
 		}),
 
