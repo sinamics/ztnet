@@ -959,6 +959,7 @@
 					"remoteConfigRead": "远程配置已读取",
 					"noDnsRecords": "未找到 DNS 记录",
 					"noHealthyRoots": "没有可用的健康远程 root",
+					"missingEndpoints": "请为以下节点至少选择一个端点 IP：{names}",
 					"customPlanetUpdated": "自定义 planet 已追加远程 root",
 					"rootChecked": "远程 root 已检查",
 					"healthCheckStarted": "健康检查已开始",

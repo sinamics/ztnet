@@ -984,6 +984,7 @@
 					"officialPlanetRestored": "Remote root restored to official planet",
 					"noDnsRecords": "No DNS records found",
 					"noHealthyRoots": "No healthy remote roots are available",
+					"missingEndpoints": "Select at least one endpoint IP for: {names}",
 					"customPlanetUpdated": "Custom planet updated with remote roots"
 				}
 			},

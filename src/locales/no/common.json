@@ -959,6 +959,7 @@
 					"remoteConfigRead": "Ekstern konfigurasjon lest",
 					"noDnsRecords": "Ingen DNS-poster funnet",
 					"noHealthyRoots": "Ingen friske eksterne roots er tilgjengelige",
+					"missingEndpoints": "Velg minst én endepunkt-IP for: {names}",
 					"customPlanetUpdated": "Egendefinert planet oppdatert med eksterne roots",
 					"rootChecked": "Remote root checked",
 					"healthCheckStarted": "Health check started",

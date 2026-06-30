@@ -321,6 +321,21 @@ const RemoteRoots = () => {
 	});
 
 	const appendRemoteRootsToPlanet = async () => {
+		// Pre-check: every enabled root must have at least one selected endpoint IP,
+		// otherwise server-side planet generation throws. Prompt the user to pick
+		// one instead of letting it fail after the save is triggered.
+		const missingEndpoints = roots.filter(
+			(root) => root.enabled && selectedIpsFromRoot(root).length === 0,
+		);
+		if (missingEndpoints.length) {
+			toast.error(
+				t("controller.remoteRoots.toast.missingEndpoints", {
+					names: missingEndpoints.map((root) => root.name).join(", "),
+				}),
+			);
+			return;
+		}
+
 		const entries = await buildEntries.mutateAsync({});
 		if (!entries.length) {
 			toast.error(t("controller.remoteRoots.toast.noHealthyRoots"));

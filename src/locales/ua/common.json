@@ -959,6 +959,7 @@
 					"remoteConfigRead": "Віддалену конфігурацію прочитано",
 					"noDnsRecords": "DNS-записи не знайдено",
 					"noHealthyRoots": "Немає доступних справних віддалених roots",
+					"missingEndpoints": "Виберіть принаймні одну IP-адресу кінцевої точки для: {names}",
 					"customPlanetUpdated": "Користувацький planet оновлено віддаленими roots",
 					"rootChecked": "Remote root checked",
 					"healthCheckStarted": "Health check started",

@@ -959,6 +959,7 @@
 					"remoteConfigRead": "Configuracion remota leida",
 					"noDnsRecords": "No se encontraron registros DNS",
 					"noHealthyRoots": "No hay roots remotos saludables disponibles",
+					"missingEndpoints": "Selecciona al menos una IP de endpoint para: {names}",
 					"customPlanetUpdated": "Planet personalizado actualizado con roots remotos",
 					"rootChecked": "Remote root checked",
 					"healthCheckStarted": "Health check started",

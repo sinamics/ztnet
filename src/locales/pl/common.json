@@ -959,6 +959,7 @@
 					"remoteConfigRead": "Odczytano zdalna konfiguracje",
 					"noDnsRecords": "Nie znaleziono rekordow DNS",
 					"noHealthyRoots": "Brak dostepnych zdrowych zdalnych rootow",
+					"missingEndpoints": "Wybierz co najmniej jeden adres IP punktu końcowego dla: {names}",
 					"customPlanetUpdated": "Niestandardowy planet zaktualizowany o zdalne rooty",
 					"rootChecked": "Remote root checked",
 					"healthCheckStarted": "Health check started",
