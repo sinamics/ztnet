@@ -331,7 +331,9 @@ const RemoteRoots = () => {
 			plRecommend: getPlanet?.plRecommend ?? true,
 			plBirth: Number(getPlanet?.plBirth) || Date.now(),
 			plID: Number(getPlanet?.plID) || Math.floor(Math.random() * 2 ** 32),
-			rootNodes: [...(getPlanet?.rootNodes || []), ...entries],
+			// Replace the existing root list rather than appending, so the planet
+			// always reflects exactly the current set of enabled remote roots.
+			rootNodes: entries,
 		});
 	};
 

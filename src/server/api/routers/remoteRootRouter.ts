@@ -585,11 +585,12 @@ export const remoteRootRouter = createTRPCRouter({
 	buildPlanetRootEntries: adminRoleProtectedRoute
 		.input(z.object({ nodeIds: z.array(z.string()).optional() }))
 		.mutation(async ({ ctx, input }) => {
+			// Health status is intentionally ignored here: the UDP "health" probe is
+			// not a reliable reachability signal, so we include every enabled root.
 			const nodes = await ctx.prisma.remoteRootNode.findMany({
 				where: {
 					id: input.nodeIds?.length ? { in: input.nodeIds } : undefined,
 					enabled: true,
-					status: { in: ["HEALTHY", "DEGRADED"] },
 				},
 			});
 			return nodes.map((node) => buildRemoteRootPlanetEntry(node));
