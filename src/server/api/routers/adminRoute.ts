@@ -7,6 +7,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 import type { ZTControllerNodeStatus } from "~/types/ztController";
 import type { NetworkAndMemberResponse } from "~/types/network";
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import type { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
@@ -522,15 +523,32 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			const data: Record<string, unknown> = { ...input };
+			// When enabling planet download protection, mint a dedicated,
+			// rotatable download token if none exists yet. This is used instead of
+			// a personal API token so it can be embedded in the client installer.
+			if (input.planetDownloadAuthMode === "REST_API") {
+				const current = await ctx.prisma.globalOptions.findFirst({
+					where: { id: 1 },
+					select: { planetDownloadToken: true },
+				});
+				if (!current?.planetDownloadToken) {
+					data.planetDownloadToken = crypto.randomBytes(24).toString("hex");
+				}
+			}
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
 				},
-				data: {
-					...input,
-				},
+				data,
 			});
 		}),
+	rotatePlanetDownloadToken: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
+		return await ctx.prisma.globalOptions.update({
+			where: { id: 1 },
+			data: { planetDownloadToken: crypto.randomBytes(24).toString("hex") },
+		});
+	}),
 	getMailTemplates: adminRoleProtectedRoute
 		.input(
 			z.object({

@@ -826,9 +826,15 @@
 				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly.",
 				"downloadAuthMode": "Planet download access",
 				"downloadAuthPublic": "Public",
-				"downloadAuthRestApi": "REST API token",
+				"downloadAuthRestApi": "Clé d'accès",
 				"downloadAuthPublicHint": "Anyone with the URL can download the planet file.",
-				"downloadAuthRestApiHint": "Requires an admin personal REST API token in x-ztnet-auth."
+				"downloadAuthRestApiHint": "Nécessite la clé de téléchargement dans l'en-tête x-ztnet-auth.",
+				"downloadKeyLabel": "Clé de téléchargement",
+				"downloadKeyCopy": "Copier",
+				"downloadKeyRegenerate": "Régénérer",
+				"downloadKeyCopied": "Clé de téléchargement copiée",
+				"downloadKeyRegenerated": "Clé de téléchargement régénérée",
+				"downloadKeyCopyFailed": "Échec de la copie ; copiez manuellement"
 			},
 			"remoteRoots": {
 				"clientInstall": {

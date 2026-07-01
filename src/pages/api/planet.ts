@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { prisma } from "~/server/db";
-import { AuthorizationType } from "~/types/apiTypes";
-import { decryptAndVerifyToken } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 
 export const config = {
@@ -12,27 +11,29 @@ export const config = {
 	},
 };
 
+// Constant-time compare so the download token can't be guessed by timing.
+function tokensMatch(provided: string, expected: string): boolean {
+	const a = Buffer.from(provided);
+	const b = Buffer.from(expected);
+	if (a.length !== b.length) return false;
+	return crypto.timingSafeEqual(a, b);
+}
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === "GET") {
 		try {
 			const options = await prisma.globalOptions.findFirst({
 				where: { id: 1 },
-				select: { planetDownloadAuthMode: true },
+				select: { planetDownloadAuthMode: true, planetDownloadToken: true },
 			});
 			if (options?.planetDownloadAuthMode === "REST_API") {
 				const header = req.headers["x-ztnet-auth"];
 				const apiKey = Array.isArray(header) ? header[0] : header;
 				if (!apiKey) {
-					return res.status(401).send("API token is required.");
+					return res.status(401).send("Planet download token is required.");
 				}
-				try {
-					await decryptAndVerifyToken({
-						apiKey,
-						apiAuthorizationType: AuthorizationType.PERSONAL,
-						requireAdmin: true,
-					});
-				} catch {
-					return res.status(401).send("Invalid API token.");
+				if (!options.planetDownloadToken || !tokensMatch(apiKey, options.planetDownloadToken)) {
+					return res.status(401).send("Invalid planet download token.");
 				}
 			}
 

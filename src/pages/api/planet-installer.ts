@@ -35,17 +35,17 @@ function getBaseUrl(req: NextApiRequest): string {
 	return `${proto}://${host}`;
 }
 
-function unixScript(planetUrl: string, requiresToken: boolean): string {
+function unixScript(planetUrl: string, downloadToken: string | null): string {
 	return `#!/bin/sh
 # ztnet custom planet installer
 # Mirrors the official ZeroTier installer, then replaces the planet file with
 # this controller's custom planet and restarts the service.
 #
 # Run as root:   curl -fsSL ${planetUrl.replace(/\/api\/planet$/, "/api/planet-installer")} | sudo sh
-${requiresToken ? "# NOTE: planet download is token-protected. Run with: ZTNET_TOKEN=<token> sudo -E sh -c '...'\n" : ""}set -e
+set -e
 
 PLANET_URL="${planetUrl}"
-ZTNET_TOKEN="\${ZTNET_TOKEN:-}"
+ZTNET_TOKEN="${downloadToken ?? ""}"
 
 log() { printf '\\033[0;36m[ztnet]\\033[0m %s\\n' "$1"; }
 err() { printf '\\033[0;31m[ztnet] %s\\033[0m\\n' "$1" >&2; }
@@ -130,14 +130,14 @@ log "Done. Verify with:  zerotier-cli listpeers | grep PLANET"
 `;
 }
 
-function windowsScript(planetUrl: string, requiresToken: boolean): string {
+function windowsScript(planetUrl: string, downloadToken: string | null): string {
 	return `# ztnet custom planet installer (Windows)
 # Run in an elevated PowerShell:
 #   irm ${planetUrl.replace(/\/api\/planet$/, "/api/planet-installer")}?platform=windows | iex
-${requiresToken ? "# NOTE: planet download is token-protected. Set $env:ZTNET_TOKEN before running.\n" : ""}$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 $PlanetUrl = "${planetUrl}"
-$ZtnetToken = $env:ZTNET_TOKEN
+$ZtnetToken = "${downloadToken ?? ""}"
 $ZtDir = Join-Path $env:ProgramData "ZeroTier\\One"
 
 function Log($m) { Write-Host "[ztnet] $m" -ForegroundColor Cyan }
@@ -188,17 +188,19 @@ export default async function handler(
 		return res.status(405).send("Method Not Allowed");
 	}
 
-	let requiresToken = false;
+	let downloadToken: string | null = null;
 	try {
 		const options = await prisma.globalOptions.findFirst({
 			where: { id: 1 },
-			select: { planetDownloadAuthMode: true },
+			select: { planetDownloadAuthMode: true, planetDownloadToken: true },
 		});
-		requiresToken = options?.planetDownloadAuthMode === "REST_API";
+		// Only embed the token when protection is actually enabled.
+		if (options?.planetDownloadAuthMode === "REST_API") {
+			downloadToken = options.planetDownloadToken ?? null;
+		}
 	} catch {
-		// If the lookup fails, default to the public assumption; the script still
-		// supports ZTNET_TOKEN if the user sets it.
-		requiresToken = false;
+		// If the lookup fails, generate a public (unauthenticated) script.
+		downloadToken = null;
 	}
 
 	const planetUrl = `${getBaseUrl(req)}/api/planet`;
@@ -212,8 +214,8 @@ export default async function handler(
 		/powershell|windows/i.test(req.headers["user-agent"] || "");
 
 	const body = isWindows
-		? windowsScript(planetUrl, requiresToken)
-		: unixScript(planetUrl, requiresToken);
+		? windowsScript(planetUrl, downloadToken)
+		: unixScript(planetUrl, downloadToken);
 
 	res.setHeader("Content-Type", "text/plain; charset=utf-8");
 	res.setHeader("Cache-Control", "no-store");

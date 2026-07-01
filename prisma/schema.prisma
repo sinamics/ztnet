@@ -58,6 +58,7 @@ model GlobalOptions {
   // mkworld
   customPlanetUsed                   Boolean @default(false)
   planetDownloadAuthMode             String  @default("PUBLIC")
+  planetDownloadToken                String?
   planetId                           Int?    @unique
   planet                             Planet? @relation(fields: [planetId], references: [id])
 }
