@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows(管理员 PowerShell)",
 					"copy": "复制",
 					"copied": "已复制",
+					"copyFailed": "复制失败,请手动选择并复制",
 					"note": "首次加入需运行一次;之后 planet 更新会自动生效。"
 				},
 				"title": "远程 Planet Roots",

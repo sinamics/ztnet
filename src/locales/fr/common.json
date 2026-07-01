@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell en admin)",
 					"copy": "Copier",
 					"copied": "Copié",
+					"copyFailed": "Échec de la copie ; sélectionnez et copiez manuellement",
 					"note": "La première adhésion nécessite une exécution ; les mises à jour ultérieures du planet sont appliquées automatiquement."
 				},
 				"title": "Racines Planet distantes",

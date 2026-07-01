@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell jako admin)",
 					"copy": "Kopiuj",
 					"copied": "Skopiowano",
+					"copyFailed": "Kopiowanie nie powiodło się — zaznacz i skopiuj ręcznie",
 					"note": "Pierwsze dołączenie wymaga jednorazowego uruchomienia; późniejsze aktualizacje planet są pobierane automatycznie."
 				},
 				"title": "Zdalne Planet Roots",

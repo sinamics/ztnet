@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell als Admin)",
 					"copy": "Kopieren",
 					"copied": "Kopiert",
+					"copyFailed": "Kopieren fehlgeschlagen – bitte manuell markieren und kopieren",
 					"note": "Beim ersten Beitritt einmal ausführen; spätere Planet-Updates werden automatisch übernommen."
 				},
 				"title": "Remote Planet Roots",

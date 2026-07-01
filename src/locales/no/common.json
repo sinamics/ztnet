@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell som admin)",
 					"copy": "Kopier",
 					"copied": "Kopiert",
+					"copyFailed": "Kopiering mislyktes – merk og kopier manuelt",
 					"note": "Første gangs tilkobling må kjøres én gang; senere planet-oppdateringer hentes automatisk."
 				},
 				"title": "Eksterne Planet Roots",

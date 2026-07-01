@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell como admin)",
 					"copy": "Copiar",
 					"copied": "Copiado",
+					"copyFailed": "Error al copiar; selecciona y copia manualmente",
 					"note": "La primera unión requiere ejecutarlo una vez; las actualizaciones posteriores del planet se aplican automáticamente."
 				},
 				"title": "Planet Roots remotos",

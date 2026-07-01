@@ -838,6 +838,7 @@
 					"windowsLabel": "Windows (PowerShell as Admin)",
 					"copy": "Copy",
 					"copied": "Copied",
+					"copyFailed": "Copy failed — select and copy manually",
 					"note": "First-time join must run this once; later planet updates are picked up automatically."
 				},
 				"title": "Remote Planet Roots",

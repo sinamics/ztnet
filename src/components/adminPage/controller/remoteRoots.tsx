@@ -153,6 +153,36 @@ const formatList = (value: unknown): string[] => toArray(value);
 
 const joinList = (value: unknown) => formatList(value).join(", ");
 
+// Robust clipboard copy. navigator.clipboard only exists in a secure context
+// (HTTPS or localhost); when the panel is opened over plain HTTP on a LAN IP it
+// is undefined in every browser, so fall back to a hidden-textarea execCommand.
+const copyTextToClipboard = async (text: string): Promise<boolean> => {
+	try {
+		if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+			await navigator.clipboard.writeText(text);
+			return true;
+		}
+	} catch {
+		// fall through to the legacy path
+	}
+	try {
+		const textarea = document.createElement("textarea");
+		textarea.value = text;
+		textarea.setAttribute("readonly", "");
+		textarea.style.position = "fixed";
+		textarea.style.top = "-1000px";
+		textarea.style.opacity = "0";
+		document.body.appendChild(textarea);
+		textarea.focus();
+		textarea.select();
+		const ok = document.execCommand("copy");
+		document.body.removeChild(textarea);
+		return ok;
+	} catch {
+		return false;
+	}
+};
+
 const selectedIpsFromRoot = (root): string[] => {
 	const selectedIps = toArray(root?.selectedIps);
 	if (selectedIps.length) return selectedIps;
@@ -511,8 +541,11 @@ const RemoteRoots = () => {
 	const unixInstallCmd = `curl -fsSL ${installerOrigin}/api/planet-installer | sudo sh`;
 	const windowsInstallCmd = `irm ${installerOrigin}/api/planet-installer?platform=windows | iex`;
 	const copyInstallCmd = async (text: string) => {
-		await navigator.clipboard?.writeText(text);
-		toast.success(t("controller.remoteRoots.clientInstall.copied"));
+		if (await copyTextToClipboard(text)) {
+			toast.success(t("controller.remoteRoots.clientInstall.copied"));
+		} else {
+			toast.error(t("controller.remoteRoots.clientInstall.copyFailed"));
+		}
 	};
 
 	const statusLabel = (
@@ -522,8 +555,11 @@ const RemoteRoots = () => {
 
 	const copyPublicKey = async () => {
 		if (!credentialText) return;
-		await navigator.clipboard?.writeText(credentialText);
-		toast.success(t("controller.remoteRoots.tasks.publicKeyCopied"));
+		if (await copyTextToClipboard(credentialText)) {
+			toast.success(t("controller.remoteRoots.tasks.publicKeyCopied"));
+		} else {
+			toast.error(t("controller.remoteRoots.clientInstall.copyFailed"));
+		}
 	};
 
 	if (!getPlanet?.id) {
