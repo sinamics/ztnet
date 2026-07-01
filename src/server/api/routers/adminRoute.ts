@@ -1142,6 +1142,16 @@ export const adminRouter = createTRPCRouter({
 			// data.plID  227883110  // reserved world for future
 			// data.plBirth 1567191349589
 			try {
+				// World version (plBirth) must strictly increase, otherwise ZeroTier
+				// clients that already hold this planet will NOT adopt the new one over
+				// the air (they only accept a World with a newer timestamp). Reusing a
+				// stale plBirth silently disables OTA updates.
+				const existingPlanet = await ctx.prisma.planet.findUnique({
+					where: { id: 1 },
+					select: { plBirth: true },
+				});
+				const existingPlBirth = Number(existingPlanet?.plBirth) || 0;
+				const nextPlBirth = Math.max(input.plBirth || 0, existingPlBirth + 1, Date.now());
 				const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
 				const planetPath = `${ZT_FOLDER}/planet`;
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
@@ -1205,7 +1215,7 @@ export const adminRouter = createTRPCRouter({
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
 					plID: input.plID || 0,
-					plBirth: input.plBirth || 0,
+					plBirth: nextPlBirth,
 					plRecommend: input.plRecommend,
 				};
 
@@ -1246,7 +1256,7 @@ export const adminRouter = createTRPCRouter({
 							},
 						},
 						// Data for updating an existing Planet
-						plBirth: input.plBirth || 0,
+						plBirth: nextPlBirth,
 						plID: input.plID || 0,
 						rootNodes: {
 							deleteMany: {},
@@ -1260,7 +1270,7 @@ export const adminRouter = createTRPCRouter({
 							},
 						},
 						// Data for creating a new Planet
-						plBirth: input.plBirth || 0,
+						plBirth: nextPlBirth,
 						plID: input.plID || 0,
 						rootNodes: {
 							create: config.rootNodes,

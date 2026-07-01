@@ -831,6 +831,15 @@
 				"downloadAuthRestApiHint": "Requires an admin personal REST API token in x-ztnet-auth."
 			},
 			"remoteRoots": {
+				"clientInstall": {
+					"title": "Comando de instalación del cliente",
+					"description": "Ejecuta en un cliente para instalar ZeroTier y este planet personalizado en un paso.",
+					"unixLabel": "Linux / macOS / ARM / router",
+					"windowsLabel": "Windows (PowerShell como admin)",
+					"copy": "Copiar",
+					"copied": "Copiado",
+					"note": "La primera unión requiere ejecutarlo una vez; las actualizaciones posteriores del planet se aplican automáticamente."
+				},
 				"title": "Planet Roots remotos",
 				"description": "Administra nodos root ZeroTier remotos para generar un planet personalizado.",
 				"actions": {
@@ -907,9 +916,9 @@
 					},
 					"planet": {
 						"UNKNOWN": "Planet unknown",
-						"MISSING": "Planet missing",
-						"CUSTOM_MATCH": "Custom planet",
-						"CUSTOM_OTHER": "Other custom planet",
+						"MISSING": "Planet no instalado",
+						"CUSTOM_MATCH": "Planet actualizado",
+						"CUSTOM_OTHER": "Planet desactualizado",
 						"OFFICIAL_RESTORED": "Official planet",
 						"OFFICIAL_OR_DEFAULT": "Official or default planet",
 						"OFFICIAL_OR_UNKNOWN": "Official or unknown planet"

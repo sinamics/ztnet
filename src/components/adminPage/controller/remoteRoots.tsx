@@ -73,6 +73,16 @@ const splitStatusClassName = {
 	ERROR: "badge-error",
 };
 
+const planetStatusClassName = {
+	UNKNOWN: "badge-neutral",
+	MISSING: "badge-error",
+	CUSTOM_MATCH: "badge-success",
+	CUSTOM_OTHER: "badge-warning",
+	OFFICIAL_RESTORED: "badge-neutral",
+	OFFICIAL_OR_DEFAULT: "badge-neutral",
+	OFFICIAL_OR_UNKNOWN: "badge-neutral",
+};
+
 const taskClassName = {
 	PENDING: "badge-neutral",
 	RUNNING: "badge-info",
@@ -494,6 +504,17 @@ const RemoteRoots = () => {
 		});
 	};
 
+	const [installerOrigin, setInstallerOrigin] = useState("");
+	useEffect(() => {
+		if (typeof window !== "undefined") setInstallerOrigin(window.location.origin);
+	}, []);
+	const unixInstallCmd = `curl -fsSL ${installerOrigin}/api/planet-installer | sudo sh`;
+	const windowsInstallCmd = `irm ${installerOrigin}/api/planet-installer?platform=windows | iex`;
+	const copyInstallCmd = async (text: string) => {
+		await navigator.clipboard?.writeText(text);
+		toast.success(t("controller.remoteRoots.clientInstall.copied"));
+	};
+
 	const statusLabel = (
 		group: "ssh" | "panel" | "planet" | "startup" | "service",
 		value: unknown,
@@ -588,6 +609,47 @@ const RemoteRoots = () => {
 					) : null}
 					{t("controller.remoteRoots.actions.appendHealthyRoots")}
 				</button>
+			</div>
+
+			<div className="collapse-arrow collapse rounded-md border border-base-300 bg-base-200">
+				<input type="checkbox" defaultChecked />
+				<div className="collapse-title text-sm font-medium">
+					{t("controller.remoteRoots.clientInstall.title")}
+				</div>
+				<div className="collapse-content space-y-3">
+					<p className="text-xs text-gray-500">
+						{t("controller.remoteRoots.clientInstall.description")}
+					</p>
+					{[
+						{
+							label: t("controller.remoteRoots.clientInstall.unixLabel"),
+							cmd: unixInstallCmd,
+						},
+						{
+							label: t("controller.remoteRoots.clientInstall.windowsLabel"),
+							cmd: windowsInstallCmd,
+						},
+					].map(({ label, cmd }) => (
+						<div key={label} className="space-y-1">
+							<span className="text-xs font-semibold">{label}</span>
+							<div className="flex items-center gap-2">
+								<code className="flex-1 overflow-x-auto rounded bg-base-300 px-3 py-2 text-xs">
+									{cmd}
+								</code>
+								<button
+									type="button"
+									className="btn btn-xs"
+									onClick={() => copyInstallCmd(cmd)}
+								>
+									{t("controller.remoteRoots.clientInstall.copy")}
+								</button>
+							</div>
+						</div>
+					))}
+					<p className="text-xs text-gray-500">
+						{t("controller.remoteRoots.clientInstall.note")}
+					</p>
+				</div>
 			</div>
 
 			<form
@@ -751,6 +813,14 @@ const RemoteRoots = () => {
 														className={`badge ${splitStatusClassName[normalizeStatus(root.panelStatus)]}`}
 													>
 														{statusLabel("panel", root.panelStatus)}
+													</span>
+													<span
+														className={`badge ${
+															planetStatusClassName[normalizeStatus(root.planetStatus)] ??
+															"badge-neutral"
+														}`}
+													>
+														{statusLabel("planet", root.planetStatus)}
 													</span>
 													{hasRunningHealthTask(root) ? (
 														<span className="badge badge-info gap-1">
@@ -1146,7 +1216,12 @@ const RemoteRoots = () => {
 									>
 										{statusLabel("panel", selectedRoot.panelStatus)}
 									</span>
-									<span className="badge badge-outline">
+									<span
+										className={`badge ${
+											planetStatusClassName[normalizeStatus(selectedRoot.planetStatus)] ??
+											"badge-neutral"
+										}`}
+									>
 										{statusLabel("planet", selectedRoot.planetStatus)}
 									</span>
 									{hasRunningHealthTask(selectedRoot) ? (

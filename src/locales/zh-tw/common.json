@@ -831,6 +831,15 @@
 				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly."
 			},
 			"remoteRoots": {
+				"clientInstall": {
+					"title": "用戶端安裝指令",
+					"description": "在用戶端一步完成 ZeroTier 安裝並載入此自訂 planet。",
+					"unixLabel": "Linux / macOS / ARM / 軟路由",
+					"windowsLabel": "Windows(管理員 PowerShell)",
+					"copy": "複製",
+					"copied": "已複製",
+					"note": "首次加入需執行一次;之後 planet 更新會自動生效。"
+				},
 				"title": "遠端 Planet Roots",
 				"description": "管理用於產生自訂 planet 的遠端 ZeroTier root 節點。",
 				"actions": {
@@ -907,9 +916,9 @@
 					},
 					"planet": {
 						"UNKNOWN": "Planet 未知",
-						"MISSING": "Planet 缺失",
-						"CUSTOM_MATCH": "自訂 planet",
-						"CUSTOM_OTHER": "其他自訂 planet",
+						"MISSING": "planet 未安裝",
+						"CUSTOM_MATCH": "planet 最新",
+						"CUSTOM_OTHER": "planet 需更新",
 						"OFFICIAL_RESTORED": "官方 planet",
 						"OFFICIAL_OR_DEFAULT": "官方或預設 planet",
 						"OFFICIAL_OR_UNKNOWN": "官方或未知 planet"
