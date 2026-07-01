@@ -17,6 +17,13 @@ import { prisma } from "~/server/db";
  */
 
 function getBaseUrl(req: NextApiRequest): string {
+	// Prefer the configured public URL. The generated commands are meant to be
+	// run on OTHER machines, so the request host (which may be localhost or an
+	// internal IP when an admin opens the panel) is unreliable. Fall back to the
+	// forwarded/request host only when NEXTAUTH_URL is not set.
+	const configured = process.env.NEXTAUTH_URL?.trim().replace(/\/+$/, "");
+	if (configured) return configured;
+
 	const forwardedProto = (req.headers["x-forwarded-proto"] as string | undefined)
 		?.split(",")[0]
 		?.trim();
@@ -157,7 +164,7 @@ $tmp = Join-Path $env:TEMP "ztnet-planet"
 $headers = @{}
 if ($ZtnetToken) { $headers["x-ztnet-auth"] = $ZtnetToken }
 Invoke-WebRequest $PlanetUrl -OutFile $tmp -Headers $headers
-if ((Get-Item $tmp).Length -eq 0) { Write-Error "Downloaded planet is empty. Set \\$env:ZTNET_TOKEN if downloads are token-protected."; return }
+if ((Get-Item $tmp).Length -eq 0) { Write-Error "Downloaded planet is empty. Set \`$env:ZTNET_TOKEN if downloads are token-protected."; return }
 
 # 3) Stop service, back up, replace planet, start service.
 Log "Replacing planet and restarting service..."
