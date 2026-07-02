@@ -43,8 +43,7 @@ Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of y
 - If you are using the HTTPS reverse proxy (Caddy) section below, **NEXTAUTH_URL must use `https://`**
   (e.g. `https://<YOUR-PUBLIC-HOST-NAME>`, no port), matching the scheme your browser actually connects with.
   A scheme mismatch (`http://` vs `https://`) will cause Better Auth to reject login requests with an
-  `Invalid origin` error. You may also need to set `AUTH_TRUST_HOST: "true"` when running behind a
-  reverse proxy that terminates TLS.
+  `Invalid origin` error.
 :::
 
 
