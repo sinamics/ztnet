@@ -40,6 +40,10 @@ Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of y
 **Example:**
 - If your server's IP address is 192.168.1.100, set NEXTAUTH_URL to `http://192.168.1.100:3000`.
 - If you have a domain name, use it in place of the IP address.
+- If you are using the HTTPS reverse proxy (Caddy) section below, **NEXTAUTH_URL must use `https://`**
+  (e.g. `https://<YOUR-PUBLIC-HOST-NAME>`, no port), matching the scheme your browser actually connects with.
+  A scheme mismatch (`http://` vs `https://`) will cause Better Auth to reject login requests with an
+  `Invalid origin` error.
 :::
 
 
