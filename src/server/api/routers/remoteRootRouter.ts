@@ -491,7 +491,6 @@ export const remoteRootRouter = createTRPCRouter({
 					connection,
 					buildDistributePlanetCommand(planetBase64),
 				);
-				const updated = await readAndPersistRemoteRoot(ctx, input.nodeId);
 				await ctx.prisma.remoteRootNode.update({
 					where: { id: input.nodeId },
 					data: { lastPlanetSyncAt: new Date() },
@@ -500,11 +499,24 @@ export const remoteRootRouter = createTRPCRouter({
 					ctx,
 					task.id,
 					"SUCCESS",
-					[result.stderr, ...taskReadLogs("Planet distributed.", updated)].filter(
-						Boolean,
-					),
+					[result.stderr, "Planet distributed. Refreshing status…"].filter(Boolean),
 				);
-				return updated;
+				// Reading the remote config back is a second ~30s SSH round trip.
+				// Doing it inline pushes the request past a reverse proxy's 60s
+				// timeout (504 → HTML → "Unexpected token '<'" on the client, which
+				// then works on retry once the connection is warm). Enqueue it as a
+				// background health check instead: the UI polls the resulting CHECK
+				// task and refreshes planetStatus when it lands.
+				const { task: checkTask } = await enqueueRemoteRootHealthCheck({
+					prisma: ctx.prisma,
+					nodeId: input.nodeId,
+					runTask: (taskInput) =>
+						runRemoteRootHealthCheckTask({
+							...taskInput,
+							classifyPlanetStatus: classifyLocalRemoteRootPlanetStatus,
+						}),
+				});
+				return { nodeId: input.nodeId, taskId: task.id, checkTaskId: checkTask.id };
 			} catch (error) {
 				await finishTask(ctx, task.id, "FAILED", [
 					error instanceof Error ? error.message : "Planet distribution failed.",
