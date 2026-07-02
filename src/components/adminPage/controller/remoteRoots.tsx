@@ -544,7 +544,8 @@ const RemoteRoots = () => {
 	// the copy-paste command so the admin gets a command that actually works;
 	// otherwise the installer responds 401. In PUBLIC mode no key is needed.
 	const installerKey =
-		globalOptions?.planetDownloadAuthMode === "REST_API" && globalOptions?.planetDownloadToken
+		globalOptions?.planetDownloadAuthMode === "REST_API" &&
+		globalOptions?.planetDownloadToken
 			? encodeURIComponent(globalOptions.planetDownloadToken)
 			: "";
 	const unixInstallCmd = `curl -fsSL ${installerOrigin}/api/planet-installer${

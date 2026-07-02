@@ -184,10 +184,7 @@ Log "Done. Verify with:  zerotier-cli listpeers | Select-String PLANET"
 `;
 }
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method !== "GET") {
 		res.setHeader("Allow", "GET");
 		return res.status(405).send("Method Not Allowed");

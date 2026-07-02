@@ -32,7 +32,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				if (!apiKey) {
 					return res.status(401).send("Planet download token is required.");
 				}
-				if (!options.planetDownloadToken || !tokensMatch(apiKey, options.planetDownloadToken)) {
+				if (
+					!options.planetDownloadToken ||
+					!tokensMatch(apiKey, options.planetDownloadToken)
+				) {
 					return res.status(401).send("Invalid planet download token.");
 				}
 			}

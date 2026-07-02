@@ -20,14 +20,13 @@ const PrivateRoot = () => {
 		},
 		onError: (error) => toast.error(error.message),
 	});
-	const rotatePlanetDownloadToken =
-		api.admin.rotatePlanetDownloadToken.useMutation({
-			onSuccess: () => {
-				refetchGlobalOptions();
-				toast.success(t("controller.generatePlanet.downloadKeyRegenerated"));
-			},
-			onError: (error) => toast.error(error.message),
-		});
+	const rotatePlanetDownloadToken = api.admin.rotatePlanetDownloadToken.useMutation({
+		onSuccess: () => {
+			refetchGlobalOptions();
+			toast.success(t("controller.generatePlanet.downloadKeyRegenerated"));
+		},
+		onError: (error) => toast.error(error.message),
+	});
 
 	const copyDownloadKey = async (value: string) => {
 		let ok = false;
@@ -220,8 +219,8 @@ const PrivateRoot = () => {
 									{globalOptions?.planetDownloadAuthMode === "REST_API" ? (
 										<code className="rounded bg-base-200 px-1 py-0.5 text-xs">
 											curl -H &quot;x-ztnet-auth:{" "}
-											{globalOptions?.planetDownloadToken || "<key>"}&quot; /api/planet
-											-o planet.custom
+											{globalOptions?.planetDownloadToken || "<key>"}&quot; /api/planet -o
+											planet.custom
 										</code>
 									) : (
 										<Link href="/api/planet" className="link text-blue-500">
