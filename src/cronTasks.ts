@@ -5,6 +5,7 @@ import * as ztController from "~/utils/ztApi";
 import { reconcileNetworkMembers } from "./server/api/services/memberService";
 import { decryptRemoteRootPrivateKey } from "./server/api/services/remoteRootCredentialService";
 import { checkRemoteRootHealth } from "./server/api/services/remoteRootHealthService";
+import { classifyLocalRemoteRootPlanetStatus } from "./server/api/services/remoteRootLocalPlanetService";
 
 type FakeContext = {
 	session: {
@@ -314,6 +315,10 @@ export const CheckRemoteRoots = async () => {
 							panelLastError: result.panelError,
 							remotePlanetHash: result.remotePlanetHash,
 							remoteOfficialPlanetHash: result.remoteOfficialPlanetHash,
+							planetStatus: classifyLocalRemoteRootPlanetStatus({
+								remotePlanetHash: result.remotePlanetHash,
+								remoteOfficialPlanetHash: result.remoteOfficialPlanetHash,
+							}),
 							lastCheckAt: new Date(),
 							lastPanelCheckAt: new Date(),
 							lastReadAt: new Date(),

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import { isIP } from "node:net";
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
@@ -20,10 +19,8 @@ import {
 	type RemoteRootConfig,
 } from "../services/remoteRootProvisioningService";
 import { buildRemoteRootPlanetEntry } from "../services/remoteRootPlanetService";
-import {
-	classifyRemoteRootPlanetStatus,
-	type RemoteRootRestoreMode,
-} from "../services/remoteRootPlanetStatusService";
+import { type RemoteRootRestoreMode } from "../services/remoteRootPlanetStatusService";
+import { classifyLocalRemoteRootPlanetStatus } from "../services/remoteRootLocalPlanetService";
 import {
 	enqueueRemoteRootHealthCheck,
 	runRemoteRootHealthCheckTask,
@@ -112,32 +109,6 @@ function getLocalPlanetPath(): string {
 	throwError("Custom planet file was not found. Create a custom planet first.");
 }
 
-function sha256File(path: string): string {
-	return crypto.createHash("sha256").update(fs.readFileSync(path)).digest("hex");
-}
-
-function getLocalCustomPlanetHash(): string | null {
-	const localPlanetPath = fs.existsSync(`${ZT_FOLDER}/zt-mkworld/planet.custom`)
-		? `${ZT_FOLDER}/zt-mkworld/planet.custom`
-		: fs.existsSync(`${ZT_FOLDER}/planet`)
-			? `${ZT_FOLDER}/planet`
-			: null;
-	return localPlanetPath ? sha256File(localPlanetPath) : null;
-}
-
-function classifyPlanetStatus(config: {
-	remotePlanetHash: string | null;
-	remoteOfficialPlanetHash: string | null;
-	restoreMode?: RemoteRootRestoreMode | null;
-}): string {
-	return classifyRemoteRootPlanetStatus({
-		remotePlanetHash: config.remotePlanetHash,
-		remoteOfficialPlanetHash: config.remoteOfficialPlanetHash,
-		localCustomPlanetHash: getLocalCustomPlanetHash(),
-		restoreMode: config.restoreMode,
-	});
-}
-
 function nodeUpdateFromConfig(
 	config: RemoteRootConfig,
 	restoreMode?: RemoteRootRestoreMode | null,
@@ -161,7 +132,7 @@ function nodeUpdateFromConfig(
 		endpointCandidates: config.endpointCandidates,
 		remotePlanetHash: config.remotePlanetHash,
 		remoteOfficialPlanetHash: config.remoteOfficialPlanetHash,
-		planetStatus: classifyPlanetStatus({ ...config, restoreMode }),
+		planetStatus: classifyLocalRemoteRootPlanetStatus({ ...config, restoreMode }),
 		lastReadAt: new Date(),
 	};
 }
@@ -497,7 +468,7 @@ export const remoteRootRouter = createTRPCRouter({
 				runTask: (taskInput) =>
 					runRemoteRootHealthCheckTask({
 						...taskInput,
-						classifyPlanetStatus,
+						classifyPlanetStatus: classifyLocalRemoteRootPlanetStatus,
 					}),
 			});
 			return {
