@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import crypto from "crypto";
 import { prisma } from "~/server/db";
 
 /**
@@ -198,9 +199,28 @@ export default async function handler(
 			where: { id: 1 },
 			select: { planetDownloadAuthMode: true, planetDownloadToken: true },
 		});
-		// Only embed the token when protection is actually enabled.
+		// When protection is enabled, require the correct key BEFORE returning a
+		// script — otherwise the embedded key would be handed to anyone who hits
+		// this URL, defeating the point. The caller passes it as ?key=... (or the
+		// x-ztnet-auth header). The same key is then embedded so the script can
+		// download the planet unattended.
 		if (options?.planetDownloadAuthMode === "REST_API") {
-			downloadToken = options.planetDownloadToken ?? null;
+			const header = req.headers["x-ztnet-auth"];
+			const provided =
+				(Array.isArray(req.query.key) ? req.query.key[0] : req.query.key) ||
+				(Array.isArray(header) ? header[0] : header) ||
+				"";
+			const expected = options.planetDownloadToken ?? "";
+			const ok =
+				expected.length > 0 &&
+				provided.length === expected.length &&
+				crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(expected));
+			if (!ok) {
+				return res
+					.status(401)
+					.send("A valid planet download key is required (append ?key=<key>).");
+			}
+			downloadToken = expected;
 		}
 	} catch {
 		// If the lookup fails, generate a public (unauthenticated) script.

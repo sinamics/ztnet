@@ -221,6 +221,7 @@ const RemoteRoots = () => {
 	});
 	const roots = rootsData ?? [];
 	const { data: getPlanet } = api.admin.getPlanet.useQuery();
+	const { data: globalOptions } = api.admin.getAllOptions.useQuery();
 	const selectedRoot = useMemo(
 		() => roots.find((root) => root.id === selectedRootId) || null,
 		[roots, selectedRootId],
@@ -538,8 +539,20 @@ const RemoteRoots = () => {
 	useEffect(() => {
 		if (typeof window !== "undefined") setInstallerOrigin(window.location.origin);
 	}, []);
-	const unixInstallCmd = `curl -fsSL ${installerOrigin}/api/planet-installer | sudo sh`;
-	const windowsInstallCmd = `irm ${installerOrigin}/api/planet-installer?platform=windows | iex`;
+	// When planet download is protected, /api/planet-installer requires the
+	// download key up front (?key=...) before it returns a script. Embed it in
+	// the copy-paste command so the admin gets a command that actually works;
+	// otherwise the installer responds 401. In PUBLIC mode no key is needed.
+	const installerKey =
+		globalOptions?.planetDownloadAuthMode === "REST_API" && globalOptions?.planetDownloadToken
+			? encodeURIComponent(globalOptions.planetDownloadToken)
+			: "";
+	const unixInstallCmd = `curl -fsSL ${installerOrigin}/api/planet-installer${
+		installerKey ? `?key=${installerKey}` : ""
+	} | sudo sh`;
+	const windowsInstallCmd = `irm ${installerOrigin}/api/planet-installer?platform=windows${
+		installerKey ? `&key=${installerKey}` : ""
+	} | iex`;
 	const copyInstallCmd = async (text: string) => {
 		if (await copyTextToClipboard(text)) {
 			toast.success(t("controller.remoteRoots.clientInstall.copied"));
