@@ -42,7 +42,7 @@ function unixScript(planetUrl: string, downloadToken: string | null): string {
 # this controller's custom planet and restarts the service.
 #
 # Run as root:   curl -fsSL ${planetUrl.replace(/\/api\/planet$/, "/api/planet-installer")} | sudo sh
-set -e
+${downloadToken ? "# This installer already includes this controller's planet download key.\n" : ""}set -e
 
 PLANET_URL="${planetUrl}"
 ZTNET_TOKEN="${downloadToken ?? ""}"
@@ -81,7 +81,11 @@ log "Data directory: $ZT_DIR"
 
 # 3) Download the custom planet.
 TMP="$(mktemp 2>/dev/null || echo /tmp/ztnet-planet.$$)"
-log "Downloading custom planet..."
+if [ -n "$ZTNET_TOKEN" ]; then
+  log "Downloading custom planet (with access key)..."
+else
+  log "Downloading custom planet..."
+fi
 if command -v curl >/dev/null 2>&1; then
   if [ -n "$ZTNET_TOKEN" ]; then
     curl -fsSL -H "x-ztnet-auth: $ZTNET_TOKEN" "$PLANET_URL" -o "$TMP"
@@ -134,7 +138,7 @@ function windowsScript(planetUrl: string, downloadToken: string | null): string 
 	return `# ztnet custom planet installer (Windows)
 # Run in an elevated PowerShell:
 #   irm ${planetUrl.replace(/\/api\/planet$/, "/api/planet-installer")}?platform=windows | iex
-$ErrorActionPreference = "Stop"
+${downloadToken ? "# This installer already includes this controller's planet download key.\n" : ""}$ErrorActionPreference = "Stop"
 
 $PlanetUrl = "${planetUrl}"
 $ZtnetToken = "${downloadToken ?? ""}"
@@ -159,7 +163,7 @@ if (-not (Get-Service -Name "ZeroTierOneService" -ErrorAction SilentlyContinue))
 if (-not (Test-Path $ZtDir)) { Write-Error "ZeroTier data directory not found: $ZtDir"; return }
 
 # 2) Download the custom planet.
-Log "Downloading custom planet..."
+if ($ZtnetToken) { Log "Downloading custom planet (with access key)..." } else { Log "Downloading custom planet..." }
 $tmp = Join-Path $env:TEMP "ztnet-planet"
 $headers = @{}
 if ($ZtnetToken) { $headers["x-ztnet-auth"] = $ZtnetToken }
