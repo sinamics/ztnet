@@ -5,11 +5,13 @@ import {
 	flexRender,
 	type HeaderGroup,
 	type Row,
+	type RowData,
 	getSortedRowModel,
 	SortingState,
 } from "@tanstack/react-table";
 import { networkRoutesColumns } from "./collumns";
 import { RoutesEntity } from "~/types/local/network";
+import { MemberEntity } from "~/types/local/member";
 import { api } from "~/utils/api";
 import {
 	useTrpcApiErrorHandler,
@@ -17,6 +19,15 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { useRouter } from "next/router";
 import { useEditableColumn } from "./routesEditCell";
+
+declare module "@tanstack/react-table" {
+	// biome-ignore lint/correctness/noUnusedVariables: module augmentation
+	interface TableMeta<TData extends RowData> {
+		// Live member list read by the Node Name cell at render time, so the column
+		// resolves as soon as the members query loads (no row-model rebuild needed).
+		members?: MemberEntity[];
+	}
+}
 
 interface IProp {
 	central?: boolean;
@@ -29,24 +40,33 @@ interface TableHeaderProps {
 
 interface TableBodyProps {
 	rows: Row<RoutesEntity>[];
+	// Not rendered directly — the Node Name cell reads the member list live from
+	// table `meta`. It's a prop purely so the memo below re-renders when members
+	// load/change; `rows` is memoized on the routes and stays stable across member
+	// refetches, which would otherwise leave Node Name blank until a route edit.
+	members: MemberEntity[];
 }
 
 // Memoized table body component
-const TableBody = React.memo<TableBodyProps>(({ rows }) => {
-	return (
-		<tbody>
-			{rows.map((row) => (
-				<tr key={row.id} className="hover:bg-gray-600/10">
-					{row.getVisibleCells().map((cell) => (
-						<td key={cell.id} className="px-4 text-sm">
-							{flexRender(cell.column.columnDef.cell, cell.getContext())}
-						</td>
-					))}
-				</tr>
-			))}
-		</tbody>
-	);
-});
+const TableBody = React.memo<TableBodyProps>(
+	({ rows }) => {
+		return (
+			<tbody>
+				{rows.map((row) => (
+					<tr key={row.id} className="hover:bg-gray-600/10">
+						{row.getVisibleCells().map((cell) => (
+							<td key={cell.id} className="px-4 text-sm">
+								{flexRender(cell.column.columnDef.cell, cell.getContext())}
+							</td>
+						))}
+					</tr>
+				))}
+			</tbody>
+		);
+	},
+	// Re-render on a new row set OR a changed member list (see `members` above).
+	(prev, next) => prev.rows === next.rows && prev.members === next.members,
+);
 
 TableBody.displayName = "TableBody";
 
@@ -138,13 +158,11 @@ export const NetworkRoutesTable = React.memo(
 		// Memoize the routes data
 		const data = useMemo(() => network?.routes ?? [], [network?.routes]);
 
-		// Memoize columns with a stable reference; rebuild only when its inputs
-		// change. Crucially this includes `members`, so the Node Name column
-		// re-resolves as soon as the member list loads — instead of staying blank
-		// until an unrelated route change forces the row model to recompute.
+		// Stable columns. The Node Name cell reads the member list live from table
+		// `meta` (below), so columns don't need to rebuild when members load.
 		const columns = useMemo(
-			() => networkRoutesColumns(deleteRoute, isUpdating, members),
-			[deleteRoute, isUpdating, members],
+			() => networkRoutesColumns(deleteRoute, isUpdating),
+			[deleteRoute, isUpdating],
 		);
 
 		const table = useReactTable({
@@ -154,6 +172,9 @@ export const NetworkRoutesTable = React.memo(
 			onSortingChange: setSorting,
 			getSortedRowModel: getSortedRowModel(),
 			getCoreRowModel: getCoreRowModel(),
+			// Live member list for the Node Name column; read by the cell at render
+			// time so it refreshes the moment the members query resolves.
+			meta: { members },
 			state: {
 				sorting,
 				columnVisibility: { id: false, nodeName: !central, notes: !central },
@@ -171,7 +192,7 @@ export const NetworkRoutesTable = React.memo(
 					className="table-auto w-full min-w-[600px] border-collapse"
 				>
 					<TableHeader headerGroups={headerGroups} />
-					<TableBody rows={rows} />
+					<TableBody rows={rows} members={members} />
 				</table>
 			</div>
 		);

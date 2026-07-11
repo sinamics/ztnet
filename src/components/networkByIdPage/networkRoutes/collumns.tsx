@@ -1,5 +1,4 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { MemberEntity } from "~/types/local/member";
 import { RoutesEntity } from "~/types/local/network";
 
 const columnHelper = createColumnHelper<RoutesEntity>();
@@ -7,7 +6,6 @@ const columnHelper = createColumnHelper<RoutesEntity>();
 export const networkRoutesColumns = (
 	deleteRoute: (route: RoutesEntity) => void,
 	isUpdating: boolean,
-	members: MemberEntity[],
 ) => [
 	columnHelper.accessor("id", {
 		cell: (info) => info.getValue(),
@@ -23,8 +21,12 @@ export const networkRoutesColumns = (
 		id: "nodeName",
 		header: "Node Name",
 		cell: (info) => {
+			// Read the member list live from table meta at render time, so the Node
+			// Name resolves as soon as the members query loads — without depending on
+			// the row model rebuilding (which only happens when the routes change).
+			const members = info.table.options.meta?.members ?? [];
 			// check if ipAssignments has the via ip and return the node name
-			const node = members?.find((member) =>
+			const node = members.find((member) =>
 				member.ipAssignments?.includes(info.row.original.via),
 			);
 			return node?.name || null;
