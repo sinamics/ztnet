@@ -26,7 +26,7 @@ import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 import { MailTemplateKey } from "~/utils/enums";
-import { syncNetworkRoutes } from "../services/routesService";
+import { syncNetworkRoutesOnce } from "../services/routesService";
 
 const RouteSchema = z.object({
 	target: z
@@ -235,7 +235,7 @@ export const networkRouter = createTRPCRouter({
 					(networkFromDatabase.routes?.length || 0) !== dbRouteKeys.size;
 
 				if (routesAreDifferent || dbHasDuplicateRoutes) {
-					const syncedNetwork = await syncNetworkRoutes({
+					const syncedNetwork = await syncNetworkRoutesOnce({
 						networkId: input.nwid,
 						networkFromDatabase,
 						ztControllerRoutes: controllerNetwork.routes,
