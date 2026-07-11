@@ -107,8 +107,9 @@ export const syncNetworkRoutes = async ({
 		const updatedNetwork = await prisma.$transaction(async (tx) => {
 			// Create new routes. Re-read the current keys inside the transaction so a
 			// route inserted by a prior/concurrent sync (after our snapshot was taken)
-			// is never inserted twice; `skipDuplicates` is the hard backstop via the
-			// (networkId, target, via) unique index.
+			// is never inserted twice. `skipDuplicates` is the hard DB backstop: a
+			// unique index covers routes that have a `via`, and a partial unique index
+			// covers LAN routes (via IS NULL) — together they cover every route.
 			if (routesToCreate.length > 0) {
 				const currentKeys = new Set(
 					(
