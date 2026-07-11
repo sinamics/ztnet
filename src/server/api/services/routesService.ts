@@ -15,11 +15,18 @@ export const syncNetworkRoutes = async ({
 	ztControllerRoutes,
 }: SyncRoutesParams) => {
 	try {
-		const dbRoutes = networkFromDatabase?.routes;
+		const dbRoutesRaw = networkFromDatabase?.routes;
 
-		if (!dbRoutes || Array.isArray(dbRoutes) === false) {
+		if (!dbRoutesRaw || Array.isArray(dbRoutesRaw) === false) {
 			return networkFromDatabase;
 		}
+
+		// Order rows that carry a user note first, so the keep-first de-duplication
+		// below preserves notes (and stays consistent with the first-match lookup in
+		// existingRouteMap).
+		const dbRoutes = [...dbRoutesRaw].sort(
+			(a, b) => Number(!!b.notes?.trim()) - Number(!!a.notes?.trim()),
+		);
 
 		// Create Sets for deduplication
 		const dbRouteKeys = new Set(dbRoutes.map(getRouteKey));
@@ -44,6 +51,20 @@ export const syncNetworkRoutes = async ({
 		const routesToCreate: RoutesEntity[] = [];
 		const routesToUpdate: RoutesEntity[] = [];
 		const routesToDelete: string[] = [];
+
+		// Self-heal: collapse duplicate DB rows that share the same key (target|via).
+		// The controller is the source of truth and never holds duplicates, so any
+		// extra DB row is stale and must be deleted. dbRoutes is ordered note-first
+		// above, so keeping the first occurrence per key preserves any user note.
+		const seenKeys = new Set<string>();
+		for (const route of dbRoutes) {
+			const key = getRouteKey(route);
+			if (seenKeys.has(key)) {
+				if (route.id) routesToDelete.push(route.id);
+			} else {
+				seenKeys.add(key);
+			}
+		}
 
 		// Find routes to create or update
 		for (const [key, ztRoute] of newRouteMap) {
