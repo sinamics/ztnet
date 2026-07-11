@@ -784,7 +784,7 @@ export const authRouter = createTRPCRouter({
 						id: user.id,
 					},
 					data: {
-						emailVerified: new Date().toISOString(),
+						emailVerified: true,
 					},
 				});
 				return { message: "Email verified successfully!" };

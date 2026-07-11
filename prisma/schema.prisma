@@ -252,7 +252,7 @@ model User {
   id                     String                 @id @default(cuid())
   name                   String
   email                  String                 @unique
-  emailVerified          DateTime?
+  emailVerified          Boolean                @default(false)
   lastLogin              DateTime
   lastseen               DateTime?
   online                 Boolean?               @default(false)
