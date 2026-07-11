@@ -105,15 +105,33 @@ export const syncNetworkRoutes = async ({
 
 		// Perform all database operations in a transaction
 		const updatedNetwork = await prisma.$transaction(async (tx) => {
-			// Create new routes
+			// Create new routes. Re-read the current keys inside the transaction so a
+			// route inserted by a prior/concurrent sync (after our snapshot was taken)
+			// is never inserted twice. `skipDuplicates` is the hard DB backstop: a
+			// unique index covers routes that have a `via`, and a partial unique index
+			// covers LAN routes (via IS NULL) — together they cover every route.
 			if (routesToCreate.length > 0) {
-				await tx.routes.createMany({
-					data: routesToCreate.map((route) => ({
-						networkId: networkId,
-						target: route.target,
-						via: route.via || null,
-					})),
-				});
+				const currentKeys = new Set(
+					(
+						await tx.routes.findMany({
+							where: { networkId },
+							select: { target: true, via: true },
+						})
+					).map(getRouteKey),
+				);
+				const freshRoutes = routesToCreate.filter(
+					(r) => !currentKeys.has(getRouteKey(r)),
+				);
+				if (freshRoutes.length > 0) {
+					await tx.routes.createMany({
+						data: freshRoutes.map((route) => ({
+							networkId: networkId,
+							target: route.target,
+							via: route.via || null,
+						})),
+						skipDuplicates: true,
+					});
+				}
 			}
 
 			// Update existing routes
@@ -151,6 +169,26 @@ export const syncNetworkRoutes = async ({
 	} catch (error) {
 		console.error("Error syncing network routes:", error);
 	}
+};
+
+// The frontend fires several getNetworkById calls at once (multiple components,
+// each invalidating + refetching), so route syncs for the same network can run
+// concurrently and each mirror the same controller route — the source of the
+// transient duplicate rows. Serialize them per network: concurrent callers share
+// a single in-flight sync instead of racing. Single-process, same pattern as the
+// member reconcile guard.
+const inFlightRouteSyncs = new Map<string, ReturnType<typeof syncNetworkRoutes>>();
+
+export const syncNetworkRoutesOnce = (
+	params: SyncRoutesParams,
+): ReturnType<typeof syncNetworkRoutes> => {
+	const existing = inFlightRouteSyncs.get(params.networkId);
+	if (existing) return existing;
+	const run = syncNetworkRoutes(params).finally(() => {
+		inFlightRouteSyncs.delete(params.networkId);
+	});
+	inFlightRouteSyncs.set(params.networkId, run);
+	return run;
 };
 
 // Helper function to generate a unique key for a route
