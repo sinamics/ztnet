@@ -409,12 +409,14 @@ export const authRouter = createTRPCRouter({
 					.optional(),
 				password: z.string().optional(),
 				newPassword: passwordSchema("New Password does not meet the requirements!")
-					.transform((val) => val.trim())
+					// passwordSchema is already optional; guard the trim so an omitted
+					// field (e.g. updating only the name) doesn't call .trim() on undefined.
+					.transform((val) => val?.trim())
 					.optional(),
 				repeatNewPassword: passwordSchema(
 					"Repeat NewPassword does not meet the requirements!",
 				)
-					.transform((val) => val.trim())
+					.transform((val) => val?.trim())
 					.optional(),
 				name: z.string().nonempty().max(40).optional(),
 			}),
