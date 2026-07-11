@@ -98,7 +98,9 @@ export const NetworkRoutesTable = React.memo(
 			{ nwid: query.id as string, central, pageSize: 100000 },
 			{ enabled: !!query.id },
 		);
-		const members = membersData?.members ?? [];
+		// Stable reference so the columns memo below only rebuilds when the member
+		// list actually changes (not on every render).
+		const members = useMemo(() => membersData?.members ?? [], [membersData?.members]);
 
 		const { mutate: updateManageRoutes, isLoading: isUpdating } =
 			api.network.managedRoutes.useMutation({
@@ -136,8 +138,14 @@ export const NetworkRoutesTable = React.memo(
 		// Memoize the routes data
 		const data = useMemo(() => network?.routes ?? [], [network?.routes]);
 
-		// Memoize columns
-		const columns = networkRoutesColumns(deleteRoute, isUpdating, members);
+		// Memoize columns with a stable reference; rebuild only when its inputs
+		// change. Crucially this includes `members`, so the Node Name column
+		// re-resolves as soon as the member list loads — instead of staying blank
+		// until an unrelated route change forces the row model to recompute.
+		const columns = useMemo(
+			() => networkRoutesColumns(deleteRoute, isUpdating, members),
+			[deleteRoute, isUpdating, members],
+		);
 
 		const table = useReactTable({
 			data,
