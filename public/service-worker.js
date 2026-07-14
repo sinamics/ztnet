@@ -1,15 +1,25 @@
-const CACHE_NAME = 'my-nextjs-pwa-cache';
+// Minimal service worker: exists so the app stays installable as a PWA
+// (manifest.json + a registered SW with a fetch handler), while staying out of
+// the way of navigations so it can never cache a redirect.
+//
+// Bump CACHE_NAME whenever this file changes so old caches are cleared.
+const CACHE_NAME = 'ztnet-pwa-v2';
+
+// Only cache safe, non-redirecting static assets. NEVER cache "/" — it redirects
+// (e.g. to /auth/login), and returning a cached redirect to a navigation throws:
+// "a redirected response was used for a request whose redirect mode is not follow".
 const urlsToCache = [
-  '/',
   '/manifest.json',
   '/ztnet_300x300.png'
-  // Add other static assets to cache
 ];
+
 self.addEventListener('install', (event) => {
+  // Activate this version immediately, replacing any older broken SW.
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       // Cache each asset individually so one missing/failed request doesn't
-      // reject the whole precache (which surfaces as an uncaught addAll error).
+      // reject the whole precache.
       Promise.all(
         urlsToCache.map((url) =>
           cache.add(url).catch((err) => {
@@ -20,10 +30,38 @@ self.addEventListener('install', (event) => {
     )
   );
 });
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys
+            // Only remove THIS worker's caches: older versions (ztnet-pwa-*) and
+            // the legacy pre-fix name. Leaves any unrelated caches untouched.
+            .filter(
+              (k) =>
+                k !== CACHE_NAME &&
+                (k.startsWith('ztnet-pwa-') || k === 'my-nextjs-pwa-cache')
+            )
+            .map((k) => caches.delete(k))
+        )
+      )
+      .then(() => self.clients.claim())
+  );
+});
+
 self.addEventListener('fetch', (event) => {
+  // Let the browser handle page navigations (and their redirects) directly.
+  // This is the key fix for the "redirected response ... not follow" error.
+  if (event.request.mode === 'navigate') return;
+
+  // Cache-first within THIS worker's own cache only; everything else hits network.
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.match(event.request))
+      .then((cached) => cached || fetch(event.request))
   );
 });
