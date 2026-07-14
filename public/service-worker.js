@@ -36,7 +36,17 @@ self.addEventListener('activate', (event) => {
     caches
       .keys()
       .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+        Promise.all(
+          keys
+            // Only remove THIS worker's caches: older versions (ztnet-pwa-*) and
+            // the legacy pre-fix name. Leaves any unrelated caches untouched.
+            .filter(
+              (k) =>
+                k !== CACHE_NAME &&
+                (k.startsWith('ztnet-pwa-') || k === 'my-nextjs-pwa-cache')
+            )
+            .map((k) => caches.delete(k))
+        )
       )
       .then(() => self.clients.claim())
   );
@@ -47,8 +57,11 @@ self.addEventListener('fetch', (event) => {
   // This is the key fix for the "redirected response ... not follow" error.
   if (event.request.mode === 'navigate') return;
 
-  // Cache-first only for the safe static assets above; everything else hits network.
+  // Cache-first within THIS worker's own cache only; everything else hits network.
   event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.match(event.request))
+      .then((cached) => cached || fetch(event.request))
   );
 });
