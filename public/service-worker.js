@@ -53,15 +53,27 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Let the browser handle page navigations (and their redirects) directly.
-  // This is the key fix for the "redirected response ... not follow" error.
-  if (event.request.mode === 'navigate') return;
+  const req = event.request;
 
-  // Cache-first within THIS worker's own cache only; everything else hits network.
+  // ONLY ever intercept our own precached static assets. Everything else —
+  // navigations (e.g. "/" -> "/network"), API calls, Next.js data, redirects —
+  // is left entirely to the browser, so the SW can never turn a request into a
+  // network error ("Failed to fetch" / "redirected response ... not follow").
+  if (req.method !== 'GET') return;
+  let url;
+  try {
+    url = new URL(req.url);
+  } catch {
+    return;
+  }
+  if (url.origin !== self.location.origin) return;
+  if (!urlsToCache.includes(url.pathname)) return;
+
+  // Cache-first within THIS worker's own cache only.
   event.respondWith(
     caches
       .open(CACHE_NAME)
-      .then((cache) => cache.match(event.request))
-      .then((cached) => cached || fetch(event.request))
+      .then((cache) => cache.match(req))
+      .then((cached) => cached || fetch(req))
   );
 });
