@@ -24,7 +24,7 @@ import { TABLE_MIN_WIDTH } from "./constants";
 declare module "@tanstack/react-table" {
 	// biome-ignore lint/correctness/noUnusedVariables: module augmentation
 	interface TableMeta<TData extends RowData> {
-		updateData: (rowIndex: number, columnId: string, value: unknown) => void;
+		updateData?: (rowIndex: number, columnId: string, value: unknown) => void;
 		// Live data read by cells at render time (so columns stay stable across
 		// refetches and cells avoid per-row query subscriptions).
 		network?: NetworkEntity;

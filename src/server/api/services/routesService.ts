@@ -15,11 +15,18 @@ export const syncNetworkRoutes = async ({
 	ztControllerRoutes,
 }: SyncRoutesParams) => {
 	try {
-		const dbRoutes = networkFromDatabase?.routes;
+		const dbRoutesRaw = networkFromDatabase?.routes;
 
-		if (!dbRoutes || Array.isArray(dbRoutes) === false) {
+		if (!dbRoutesRaw || Array.isArray(dbRoutesRaw) === false) {
 			return networkFromDatabase;
 		}
+
+		// Order rows that carry a user note first, so the keep-first de-duplication
+		// below preserves notes (and stays consistent with the first-match lookup in
+		// existingRouteMap).
+		const dbRoutes = [...dbRoutesRaw].sort(
+			(a, b) => Number(!!b.notes?.trim()) - Number(!!a.notes?.trim()),
+		);
 
 		// Create Sets for deduplication
 		const dbRouteKeys = new Set(dbRoutes.map(getRouteKey));
@@ -45,9 +52,10 @@ export const syncNetworkRoutes = async ({
 		const routesToUpdate: RoutesEntity[] = [];
 		const routesToDelete: string[] = [];
 
-		// Self-heal: collapse duplicate DB rows that share the same logical key.
-		// The controller never holds duplicates, so any extra DB row with a key we
-		// already kept is stale and must be deleted (keep the first occurrence).
+		// Self-heal: collapse duplicate DB rows that share the same key (target|via).
+		// The controller is the source of truth and never holds duplicates, so any
+		// extra DB row is stale and must be deleted. dbRoutes is ordered note-first
+		// above, so keeping the first occurrence per key preserves any user note.
 		const seenKeys = new Set<string>();
 		for (const route of dbRoutes) {
 			const key = getRouteKey(route);
@@ -97,16 +105,33 @@ export const syncNetworkRoutes = async ({
 
 		// Perform all database operations in a transaction
 		const updatedNetwork = await prisma.$transaction(async (tx) => {
-			// Create new routes
+			// Create new routes. Re-read the current keys inside the transaction so a
+			// route inserted by a prior/concurrent sync (after our snapshot was taken)
+			// is never inserted twice. `skipDuplicates` is the hard DB backstop: a
+			// unique index covers routes that have a `via`, and a partial unique index
+			// covers LAN routes (via IS NULL) — together they cover every route.
 			if (routesToCreate.length > 0) {
-				await tx.routes.createMany({
-					data: routesToCreate.map((route) => ({
-						networkId: networkId,
-						target: route.target,
-						via: route.via || null,
-					})),
-					skipDuplicates: true,
-				});
+				const currentKeys = new Set(
+					(
+						await tx.routes.findMany({
+							where: { networkId },
+							select: { target: true, via: true },
+						})
+					).map(getRouteKey),
+				);
+				const freshRoutes = routesToCreate.filter(
+					(r) => !currentKeys.has(getRouteKey(r)),
+				);
+				if (freshRoutes.length > 0) {
+					await tx.routes.createMany({
+						data: freshRoutes.map((route) => ({
+							networkId: networkId,
+							target: route.target,
+							via: route.via || null,
+						})),
+						skipDuplicates: true,
+					});
+				}
 			}
 
 			// Update existing routes
@@ -144,6 +169,26 @@ export const syncNetworkRoutes = async ({
 	} catch (error) {
 		console.error("Error syncing network routes:", error);
 	}
+};
+
+// The frontend fires several getNetworkById calls at once (multiple components,
+// each invalidating + refetching), so route syncs for the same network can run
+// concurrently and each mirror the same controller route — the source of the
+// transient duplicate rows. Serialize them per network: concurrent callers share
+// a single in-flight sync instead of racing. Single-process, same pattern as the
+// member reconcile guard.
+const inFlightRouteSyncs = new Map<string, ReturnType<typeof syncNetworkRoutes>>();
+
+export const syncNetworkRoutesOnce = (
+	params: SyncRoutesParams,
+): ReturnType<typeof syncNetworkRoutes> => {
+	const existing = inFlightRouteSyncs.get(params.networkId);
+	if (existing) return existing;
+	const run = syncNetworkRoutes(params).finally(() => {
+		inFlightRouteSyncs.delete(params.networkId);
+	});
+	inFlightRouteSyncs.set(params.networkId, run);
+	return run;
 };
 
 // Helper function to generate a unique key for a route

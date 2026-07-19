@@ -26,7 +26,7 @@ import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 import { MailTemplateKey } from "~/utils/enums";
-import { syncNetworkRoutes } from "../services/routesService";
+import { syncNetworkRoutesOnce } from "../services/routesService";
 
 const RouteSchema = z.object({
 	target: z
@@ -224,23 +224,24 @@ export const networkRouter = createTRPCRouter({
 				const ztRouteKeys = new Set(
 					controllerNetwork.routes?.map((r) => `${r.target}|${r.via || "null"}`) || [],
 				);
-				// A smaller key-set than the raw row count means duplicate rows exist in
-				// the DB; those must be reconciled away even if the deduped sets match.
-				const dbHasDuplicateRoutes =
-					(networkFromDatabase.routes?.length || 0) !== dbRouteKeys.size;
 				const routesAreDifferent =
-					dbHasDuplicateRoutes ||
 					dbRouteKeys.size !== ztRouteKeys.size ||
 					![...dbRouteKeys].every((key) => ztRouteKeys.has(key));
 
-				if (routesAreDifferent) {
-					const syncedNetwork = await syncNetworkRoutes({
+				// A raw row count higher than the deduped key-set means duplicate rows
+				// exist in the DB; those must be reconciled away even when the deduped
+				// sets match — otherwise duplicates would never self-heal.
+				const dbHasDuplicateRoutes =
+					(networkFromDatabase.routes?.length || 0) !== dbRouteKeys.size;
+
+				if (routesAreDifferent || dbHasDuplicateRoutes) {
+					const syncedNetwork = await syncNetworkRoutesOnce({
 						networkId: input.nwid,
 						networkFromDatabase,
 						ztControllerRoutes: controllerNetwork.routes,
 					});
-					// Reflect the synced routes in the response so the UI is correct on
-					// this same request instead of only after a manual refresh.
+					// Reflect the synced (deduped) routes in the response so the UI is
+					// correct on this same request instead of only after a refresh.
 					if (syncedNetwork?.routes) {
 						networkFromDatabase.routes =
 							syncedNetwork.routes as typeof networkFromDatabase.routes;

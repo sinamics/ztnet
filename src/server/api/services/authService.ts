@@ -67,7 +67,7 @@ export const ValidateMailLink = async (validate: Ivalidate) => {
 				id,
 			},
 			data: {
-				emailVerified: new Date(),
+				emailVerified: true,
 			},
 		});
 	} catch (error) {

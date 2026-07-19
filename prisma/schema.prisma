@@ -251,6 +251,9 @@ model Routes {
   notes     String?
   network   network @relation(fields: [networkId], references: [nwid], onDelete: Cascade)
 
+  // Uniqueness for routes that have a `via`. LAN routes (via = NULL) are covered
+  // by a partial unique index ("Routes_networkId_target_lan_key") created in the
+  // migration — Prisma can't express partial indexes here, so it lives in SQL.
   @@unique([networkId, target, via])
 }
 
@@ -371,7 +374,7 @@ model User {
   id                     String                 @id @default(cuid())
   name                   String
   email                  String                 @unique
-  emailVerified          DateTime?
+  emailVerified          Boolean                @default(false)
   lastLogin              DateTime
   lastseen               DateTime?
   online                 Boolean?               @default(false)
