@@ -19,4 +19,4 @@ USING (
 WHERE r."id" = dupes."id";
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Routes_networkId_target_via_key" ON "Routes"("networkId", "target", "via");
+CREATE UNIQUE INDEX IF NOT EXISTS "Routes_networkId_target_via_key" ON "Routes"("networkId", "target", "via");
