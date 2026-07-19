@@ -44,3 +44,9 @@ zeronsd.sh*
 
 # Claude
 .claude/
+
+# local runtime data (postgres volume, zerotier identity/secrets, planet, etc.)
+/.data/
+
+# IDE
+/.idea/

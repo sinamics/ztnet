@@ -57,6 +57,8 @@ model GlobalOptions {
   welcomeMessageBody                 String?
   // mkworld
   customPlanetUsed                   Boolean @default(false)
+  planetDownloadAuthMode             String  @default("PUBLIC")
+  planetDownloadToken                String?
   planetId                           Int?    @unique
   planet                             Planet? @relation(fields: [planetId], references: [id])
 }
@@ -78,6 +80,121 @@ model RootNodes {
   comments  String?
   identity  String
   endpoints Json
+}
+
+enum RemoteRootStatus {
+  UNKNOWN
+  HEALTHY
+  DEGRADED
+  OFFLINE
+  ERROR
+}
+
+enum RemoteRootEndpointSource {
+  MANUAL_IP
+  DOMAIN
+}
+
+enum RemoteRootCredentialAuthType {
+  MANAGED_KEY
+}
+
+enum RemoteRootTaskType {
+  CHECK
+  INSTALL_ZEROTIER
+  UPGRADE_ZEROTIER
+  READ_CONFIG
+  GENERATE_PLANET_ENTRY
+  RESTART_ZEROTIER
+  CHANGE_PORT
+  SAVE_CONFIG
+  DISTRIBUTE_PLANET
+  RESTORE_OFFICIAL_PLANET
+}
+
+enum RemoteRootTaskStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+model RemoteRootNode {
+  id              String                   @id @default(cuid())
+  name            String
+  host            String
+  sshPort         Int                      @default(22)
+  sshUser         String                   @default("root")
+  status          RemoteRootStatus         @default(UNKNOWN)
+  zerotierVersion String?
+  zerotierInstalled Boolean                 @default(false)
+  serviceStatus   String                   @default("UNKNOWN")
+  startupStatus   String                   @default("UNKNOWN")
+  sshStatus       String                   @default("UNKNOWN")
+  panelStatus     String                   @default("UNKNOWN")
+  sshLastError    String?
+  panelLastError  String?
+  identity        String?
+  primaryPort     Int                      @default(9993)
+  secondaryPort   Int?
+  allowSecondaryPort Boolean?
+  portMappingEnabled Boolean?
+  interfacePrefixBlacklist Json?            @default("[]")
+  bindAddresses   Json?                    @default("[]")
+  allowManagementFrom Json?                 @default("[]")
+  defaultBondingPolicy String?
+  multithreaded   Boolean?
+  linuxKernelMode Boolean?
+  identityMode    String                   @default("REMOTE")
+  endpointSource  RemoteRootEndpointSource @default(MANUAL_IP)
+  domainName      String?
+  selectedIp      String?
+  selectedIps     Json?                    @default("[]")
+  resolvedIps     Json?                    @default("[]")
+  endpointCandidates Json?                  @default("[]")
+  remotePlanetHash String?
+  remoteOfficialPlanetHash String?
+  planetStatus    String                   @default("UNKNOWN")
+  lastReadAt      DateTime?
+  lastPlanetSyncAt DateTime?
+  lastCheckAt     DateTime?
+  lastPanelCheckAt DateTime?
+  lastError       String?
+  enabled         Boolean                  @default(true)
+  credential      RemoteRootCredential?
+  tasks           RemoteRootTask[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  @@index([enabled])
+  @@index([status])
+}
+
+model RemoteRootCredential {
+  id                  String                       @id @default(cuid())
+  nodeId              String                       @unique
+  node                RemoteRootNode               @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  authType            RemoteRootCredentialAuthType @default(MANAGED_KEY)
+  encryptedPrivateKey String                       @db.Text
+  publicKey           String                       @db.Text
+  createdAt           DateTime                     @default(now())
+  updatedAt           DateTime                     @updatedAt
+}
+
+model RemoteRootTask {
+  id         String               @id @default(cuid())
+  nodeId     String
+  node       RemoteRootNode       @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  type       RemoteRootTaskType
+  status     RemoteRootTaskStatus @default(PENDING)
+  logs       Json?                @default("[]")
+  startedAt  DateTime?
+  finishedAt DateTime?
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  @@index([nodeId, createdAt])
+  @@index([status])
 }
 
 model network_members {

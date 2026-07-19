@@ -60,7 +60,7 @@ WHERE r.id = dupes.id;
 
 -- 3a. Uniqueness for routes that have a `via` (gateway routes). A plain unique
 --     index treats NULL as distinct, so it covers only non-NULL vias.
-CREATE UNIQUE INDEX "Routes_networkId_target_via_key" ON "Routes"("networkId", "target", "via");
+CREATE UNIQUE INDEX IF NOT EXISTS "Routes_networkId_target_via_key" ON "Routes"("networkId", "target", "via");
 
 -- 3b. Uniqueness for LAN routes (`via IS NULL`), which the index above cannot
 --     cover. A partial unique index closes that gap at the DB layer.

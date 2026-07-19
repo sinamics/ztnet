@@ -26,6 +26,7 @@ interface RootNodesArrayProps {
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 		index: number,
 	) => void;
+	handleUseLocalRoot: () => void;
 }
 
 const RootNodesArray: React.FC<RootNodesArrayProps> = ({
@@ -33,6 +34,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 	handleEndpointArrayChange,
 	handleAddClick,
 	handleRemoveClick,
+	handleUseLocalRoot,
 }) => {
 	const t = useTranslations("admin");
 	const b = useTranslations("commonButtons");
@@ -62,7 +64,7 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 							</div>
 						))}
 					</div>
-					{i > 0 ? (
+					{rootNodes.length > 1 ? (
 						<div className="pt-7">
 							<button
 								type="button"
@@ -76,14 +78,26 @@ const RootNodesArray: React.FC<RootNodesArrayProps> = ({
 				</div>
 			))}
 			<div>
-				<p className="font-medium">Add Root Server</p>
+				<p className="font-medium">{t("controller.generatePlanet.addRootTitle")}</p>
 				<p className="text-sm text-gray-500">
-					Expand your network by adding an additional root server. Click here to register
-					a new server to your system.
+					{t("controller.generatePlanet.addRootDescription")}
 				</p>
-				<button type="button" onClick={handleAddClick} className="btn btn-sm btn-outline">
-					+
-				</button>
+				<div className="mt-3 flex flex-wrap gap-2">
+					<button
+						type="button"
+						onClick={handleAddClick}
+						className="btn btn-sm btn-outline"
+					>
+						+
+					</button>
+					<button
+						type="button"
+						onClick={handleUseLocalRoot}
+						className="btn btn-sm btn-outline"
+					>
+						{t("controller.generatePlanet.buttons.useLocalRoot")}
+					</button>
+				</div>
 			</div>
 		</div>
 	);
@@ -113,14 +127,16 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 			// Use existing data from getOptions.rootNodes if available
 			const rootNodesData =
 				getPlanet?.rootNodes.length > 0
-					? getPlanet?.rootNodes
-					: [
-							{
-								endpoints: [`${getIdentity?.ip}/9993`],
-								identity: getIdentity?.identity || "",
-								comments: "",
-							},
-						];
+					? getPlanet.rootNodes
+					: prev.rootNodes.length
+						? prev.rootNodes
+						: [
+								{
+									endpoints: [],
+									comments: "",
+									identity: "",
+								},
+							];
 
 			return {
 				...prev, // Spread the previous state
@@ -133,7 +149,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 				rootNodes: rootNodesData, // Set the rootNodes
 			};
 		});
-	}, [getPlanet, getIdentity]);
+	}, [getPlanet]);
 
 	const { mutate: makeWorld } = api.admin.makeWorld.useMutation({
 		onSuccess: () => {
@@ -222,7 +238,20 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 		roots.splice(index, 1);
 		setWorld((prev) => ({
 			...prev,
-			rootNodes: [...roots],
+			rootNodes: roots.length ? roots : [{ endpoints: [], identity: "", comments: "" }],
+		}));
+	};
+	const handleUseLocalRoot = () => {
+		setWorld((prev) => ({
+			...prev,
+			rootNodes: [
+				...prev.rootNodes,
+				{
+					endpoints: getIdentity?.ip ? [`${getIdentity.ip}/9993`] : [],
+					identity: getIdentity?.identity || "",
+					comments: "local-root",
+				},
+			],
 		}));
 	};
 	return (
@@ -280,6 +309,7 @@ const RootForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 					handleEndpointArrayChange={handleEndpointArrayChange}
 					handleAddClick={handleAddClick}
 					handleRemoveClick={handleRemoveClick}
+					handleUseLocalRoot={handleUseLocalRoot}
 				/>
 
 				<div className="pt-10">

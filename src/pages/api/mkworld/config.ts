@@ -8,11 +8,11 @@ import { prisma } from "~/server/db";
 import unzipper from "unzipper";
 import { PassThrough } from "stream";
 import { execSync } from "child_process";
-import { updateLocalConf } from "~/utils/planet";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { WorldConfig } from "~/types/worldConfig";
 import { auth } from "~/lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
+import { normalizePlanetRootNodes } from "~/server/api/services/remoteRootPlanetService";
 
 export const config = {
 	api: {
@@ -144,11 +144,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 												 *
 												 */
 												const config: WorldConfig = {
-													rootNodes: parsedContent?.rootNodes.map((node) => ({
-														comments: node.comments || "ztnet.network",
-														identity: node.identity,
-														endpoints: node.endpoints,
-													})),
+													rootNodes: normalizePlanetRootNodes(
+														parsedContent?.rootNodes.map((node) => ({
+															comments: node.comments || "ztnet.network",
+															identity: node.identity,
+															endpoints: node.endpoints,
+														})) || [],
+													),
 													signing: ["previous.c25519", "current.c25519"],
 													output: "planet.custom",
 													plID: parsedContent?.plID || 0,
@@ -193,27 +195,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 														},
 													},
 												});
-
-												/*
-												 *
-												 * Update local.conf file with the new port number
-												 *
-												 */
-
-												// Extract the port number from the endpoint string
-												const portNumbers = parsedContent?.rootNodes[0].endpoints[0]
-													.split(",")
-													.map((endpoint) =>
-														parseInt(endpoint.split("/").pop() || "", 10),
-													);
-
-												try {
-													await updateLocalConf(portNumbers);
-												} catch (_error) {
-													res.status(400).json({
-														error: "Error parsing mkworld.config.json",
-													});
-												}
 
 												prisma.$disconnect();
 											} catch (e) {

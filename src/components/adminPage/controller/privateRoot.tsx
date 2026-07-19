@@ -12,6 +12,49 @@ const PrivateRoot = () => {
 	const [open, setOpen] = useState(false);
 	const callModal = useModalStore((state) => state.callModal);
 	const { data: getPlanet, refetch: refetchPlanet } = api.admin.getPlanet.useQuery();
+	const { data: globalOptions, refetch: refetchGlobalOptions } =
+		api.admin.getAllOptions.useQuery();
+	const updateGlobalOptions = api.admin.updateGlobalOptions.useMutation({
+		onSuccess: () => {
+			refetchGlobalOptions();
+		},
+		onError: (error) => toast.error(error.message),
+	});
+	const rotatePlanetDownloadToken = api.admin.rotatePlanetDownloadToken.useMutation({
+		onSuccess: () => {
+			refetchGlobalOptions();
+			toast.success(t("controller.generatePlanet.downloadKeyRegenerated"));
+		},
+		onError: (error) => toast.error(error.message),
+	});
+
+	const copyDownloadKey = async (value: string) => {
+		let ok = false;
+		try {
+			if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+				await navigator.clipboard.writeText(value);
+				ok = true;
+			}
+		} catch {
+			ok = false;
+		}
+		if (!ok) {
+			try {
+				const ta = document.createElement("textarea");
+				ta.value = value;
+				ta.style.position = "fixed";
+				ta.style.opacity = "0";
+				document.body.appendChild(ta);
+				ta.select();
+				ok = document.execCommand("copy");
+				document.body.removeChild(ta);
+			} catch {
+				ok = false;
+			}
+		}
+		if (ok) toast.success(t("controller.generatePlanet.downloadKeyCopied"));
+		else toast.error(t("controller.generatePlanet.downloadKeyCopyFailed"));
+	};
 
 	const closeForm = () => setOpen(false);
 	const { mutate: resetWorld } = api.admin.resetWorld.useMutation({
@@ -171,12 +214,73 @@ const PrivateRoot = () => {
 								))}
 							</div>
 							<div>
-								<p className=" text-sm">
+								<p className="text-sm">
 									{t("controller.generatePlanet.downloadPlanetInfo")}{" "}
-									<Link href="/api/planet" className="link text-blue-500">
-										{t("controller.generatePlanet.downloadPlanetUrl")}
-									</Link>
+									{globalOptions?.planetDownloadAuthMode === "REST_API" ? (
+										<code className="rounded bg-base-200 px-1 py-0.5 text-xs">
+											curl -H &quot;x-ztnet-auth:{" "}
+											{globalOptions?.planetDownloadToken || "<key>"}&quot; /api/planet -o
+											planet.custom
+										</code>
+									) : (
+										<Link href="/api/planet" className="link text-blue-500">
+											{t("controller.generatePlanet.downloadPlanetUrl")}
+										</Link>
+									)}
 								</p>
+								<div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+									<span>{t("controller.generatePlanet.downloadAuthMode")}</span>
+									<select
+										className="select select-bordered select-xs"
+										value={globalOptions?.planetDownloadAuthMode || "PUBLIC"}
+										onChange={(event) =>
+											updateGlobalOptions.mutate({
+												planetDownloadAuthMode: event.target.value as
+													| "PUBLIC"
+													| "REST_API",
+											})
+										}
+										disabled={updateGlobalOptions.isLoading}
+									>
+										<option value="PUBLIC">
+											{t("controller.generatePlanet.downloadAuthPublic")}
+										</option>
+										<option value="REST_API">
+											{t("controller.generatePlanet.downloadAuthRestApi")}
+										</option>
+									</select>
+									<span className="text-xs text-warning">
+										{globalOptions?.planetDownloadAuthMode === "REST_API"
+											? t("controller.generatePlanet.downloadAuthRestApiHint")
+											: t("controller.generatePlanet.downloadAuthPublicHint")}
+									</span>
+								</div>
+								{globalOptions?.planetDownloadAuthMode === "REST_API" ? (
+									<div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+										<span>{t("controller.generatePlanet.downloadKeyLabel")}</span>
+										<code className="max-w-xs overflow-x-auto rounded bg-base-200 px-2 py-1 text-xs">
+											{globalOptions?.planetDownloadToken || "-"}
+										</code>
+										<button
+											type="button"
+											className="btn btn-xs"
+											onClick={() =>
+												copyDownloadKey(globalOptions?.planetDownloadToken || "")
+											}
+											disabled={!globalOptions?.planetDownloadToken}
+										>
+											{t("controller.generatePlanet.downloadKeyCopy")}
+										</button>
+										<button
+											type="button"
+											className="btn btn-xs btn-outline"
+											onClick={() => rotatePlanetDownloadToken.mutate()}
+											disabled={rotatePlanetDownloadToken.isLoading}
+										>
+											{t("controller.generatePlanet.downloadKeyRegenerate")}
+										</button>
+									</div>
+								) : null}
 							</div>
 							<div className="flex justify-between">
 								<div className="flex gap-3">

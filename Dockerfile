@@ -65,7 +65,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt update && apt install -y curl sudo postgresql-client openssh-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Update npm to latest version to suppress update notices
 RUN npm install -g npm@latest
 # need to install these package for seeding the database
