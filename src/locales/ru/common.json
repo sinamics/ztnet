@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "Разрешить резервную передачу TCP:",
 				"listeningOn": "Слушает на:"
 			},
+			"localConfig": {
+				"title": "Local ZeroTier Config",
+				"description": "Manage the local controller ZeroTier local.conf settings.",
+				"restartHint": "Changes are written to local.conf. Restart ZeroTier for them to take effect, for example: docker restart zerotier.",
+				"readonlyHint": "The ZeroTier folder is not writable. Update the volume or file permissions before saving.",
+				"configPath": "Config file: {path}",
+				"actions": {
+					"configure": "Configure local ZeroTier",
+					"save": "Save config"
+				},
+				"toast": {
+					"saved": "Local ZeroTier config saved. Restart ZeroTier to apply changes."
+				},
+				"form": {
+					"primaryPortLabel": "Primary port",
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode"
+				}
+			},
 			"controllerStatus": {
 				"title": "Статус контроллера",
 				"online": "Онлайн:",
@@ -787,7 +812,8 @@
 					"uploadConfig": "ЗАГРУЗИТЬ КОНФИГ",
 					"updateWorld": "Обновить World",
 					"downloadPlanetButton": "Скачать конфиг",
-					"restoreOriginalPlanetButton": "Восстановить оригинальный Planet"
+					"restoreOriginalPlanetButton": "Восстановить оригинальный Planet",
+					"useLocalRoot": "Use local node as root"
 				},
 				"modal": {
 					"noteTitle": "ВНИМАНИЕ!",
@@ -795,6 +821,187 @@
 					"restartContainerInstructions": "Вам нужно перезапустить контейнер zerotier, чтобы загрузить новую конфигурацию:<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Восстановить оригинальный Planet",
 					"restoreOriginalPlanetContent": "Вы уверены, что хотите восстановить оригинальный файл planet? Убедитесь, что вы сделали резервную копию текущего файла planet, если хотите сохранить текущие ключи"
+				},
+				"addRootTitle": "Add Root Server",
+				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly.",
+				"downloadAuthMode": "Planet download access",
+				"downloadAuthPublic": "Public",
+				"downloadAuthRestApi": "Ключ доступа",
+				"downloadAuthPublicHint": "Anyone with the URL can download the planet file.",
+				"downloadAuthRestApiHint": "Требует ключ загрузки в заголовке x-ztnet-auth.",
+				"downloadKeyLabel": "Ключ загрузки",
+				"downloadKeyCopy": "Копировать",
+				"downloadKeyRegenerate": "Заново",
+				"downloadKeyCopied": "Ключ загрузки скопирован",
+				"downloadKeyRegenerated": "Ключ загрузки перегенерирован",
+				"downloadKeyCopyFailed": "Не удалось скопировать — скопируйте вручную"
+			},
+			"remoteRoots": {
+				"clientInstall": {
+					"title": "Команда установки клиента",
+					"description": "Выполните на клиенте, чтобы установить ZeroTier и этот кастомный planet за один шаг.",
+					"unixLabel": "Linux / macOS / ARM / роутер",
+					"windowsLabel": "Windows (PowerShell от админа)",
+					"copy": "Копировать",
+					"copied": "Скопировано",
+					"copyFailed": "Не удалось скопировать — выделите и скопируйте вручную",
+					"note": "Первое подключение требует однократного запуска; последующие обновления planet применяются автоматически."
+				},
+				"title": "Удаленные Planet Roots",
+				"description": "Управляйте удаленными root-узлами ZeroTier для генерации пользовательского planet.",
+				"actions": {
+					"appendHealthyRoots": "Заменить список roots в planet",
+					"close": "Close",
+					"saveEndpoint": "Save endpoint"
+				},
+				"form": {
+					"namePlaceholder": "Имя",
+					"hostPlaceholder": "Хост",
+					"sshUserPlaceholder": "Пользователь SSH",
+					"sshPortPlaceholder": "Порт SSH",
+					"endpointSource": {
+						"manualIp": "IP вручную",
+						"domain": "Домен"
+					},
+					"addRoot": "Добавить root",
+					"domainNamePlaceholder": "Имя домена",
+					"selectedIpPlaceholder": "Выбранный endpoint IP",
+					"primaryPortPlaceholder": "Порт ZT",
+					"selectedIpLabel": "Endpoint IP",
+					"primaryPortLabel": "ZeroTier UDP port",
+					"errors": {
+						"required": "Required",
+						"domainRequired": "Domain is required",
+						"portRange": "Enter a port from 1 to 65535"
+					},
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode",
+					"readRequired": "Read the remote ZeroTier config before editing settings.",
+					"sshFailedReadRequired": "SSH failed. Test SSH and read the remote config again before editing settings.",
+					"zerotierInstallRequired": "Install ZeroTier on the remote root before editing settings.",
+					"configReadAt": "Config source: remote read at {time}.",
+					"configSnapshotHint": "These values come from the latest successful read, not a live stream."
+				},
+				"table": {
+					"name": "Имя",
+					"host": "Хост",
+					"endpoint": "Endpoint",
+					"status": "Статус",
+					"identity": "Identity",
+					"actions": "Действия",
+					"identityNotRead": "Не прочитано",
+					"empty": "Удаленные planet roots не настроены.",
+					"lastCheck": "Last check",
+					"endpointNotSelected": "Not selected",
+					"neverChecked": "Never",
+					"emptyTitle": "No remote roots yet",
+					"emptyDescription": "Add a server first, then read its ZeroTier status and use it as a planet root.",
+					"checking": "Checking",
+					"version": "ZeroTier {version}",
+					"installed": "Installed",
+					"portMapping": "Port mapping"
+				},
+				"status": {
+					"ssh": {
+						"UNKNOWN": "SSH unknown",
+						"CHECKING": "SSH checking",
+						"OK": "SSH OK",
+						"FAILED": "SSH failed"
+					},
+					"panel": {
+						"UNKNOWN": "Endpoint unknown",
+						"CHECKING": "Endpoint checking",
+						"OK": "Endpoint OK",
+						"DEGRADED": "Endpoint degraded",
+						"FAILED": "Endpoint failed"
+					},
+					"planet": {
+						"UNKNOWN": "Planet unknown",
+						"MISSING": "Planet не установлен",
+						"CUSTOM_MATCH": "Planet актуален",
+						"CUSTOM_OTHER": "Planet устарел",
+						"OFFICIAL_RESTORED": "Official planet",
+						"OFFICIAL_OR_DEFAULT": "Official or default planet",
+						"OFFICIAL_OR_UNKNOWN": "Official or unknown planet"
+					},
+					"startup": {
+						"UNKNOWN": "Startup unknown",
+						"ENABLED": "Startup enabled",
+						"DISABLED": "Startup disabled",
+						"ERROR": "Startup error"
+					},
+					"service": {
+						"UNKNOWN": "Service unknown",
+						"RUNNING": "Service running",
+						"STOPPED": "Service stopped",
+						"ERROR": "Service error"
+					},
+					"config": {
+						"UNKNOWN": "Unknown"
+					}
+				},
+				"row": {
+					"endpointIpPlaceholder": "IP",
+					"udpPortSuffix": "{port}/udp",
+					"actions": {
+						"test": "Проверить SSH и прочитать",
+						"install": "Установить",
+						"upgrade": "Обновить",
+						"read": "Читать",
+						"check": "Проверить",
+						"dns": "DNS",
+						"delete": "Удалить",
+						"details": "Details",
+						"connectRead": "Connect & Read",
+						"restart": "Restart Service",
+						"changePort": "Change Port & Restart",
+						"distributePlanet": "Distribute Planet",
+						"restoreOfficial": "Restore Official Planet",
+						"saveConfig": "Save Config & Restart",
+						"addEndpoint": "Add endpoint"
+					}
+				},
+				"toast": {
+					"remoteRootSaved": "Удаленный root сохранен",
+					"sshSucceeded": "SSH-подключение успешно",
+					"installCompleted": "Команда установки выполнена",
+					"upgradeCompleted": "Команда обновления выполнена",
+					"remoteConfigRead": "Удаленная конфигурация прочитана",
+					"noDnsRecords": "DNS-записи не найдены",
+					"noHealthyRoots": "Нет доступных удалённых roots",
+					"missingEndpoints": "Выберите хотя бы один IP-адрес конечной точки для: {names}",
+					"customPlanetUpdated": "Пользовательский planet обновлен удаленными roots",
+					"rootChecked": "Remote root checked",
+					"healthCheckStarted": "Health check started",
+					"restartCompleted": "ZeroTier restarted",
+					"portChanged": "ZeroTier port changed and service restarted",
+					"planetDistributed": "Planet distributed to remote root",
+					"officialPlanetRestored": "Remote root restored to official planet",
+					"configSaved": "ZeroTier configuration saved and service restarted"
+				},
+				"tasks": {
+					"title": "Recent tasks",
+					"noLogs": "No logs captured.",
+					"publicKeyTitle": "Managed SSH public key",
+					"publicKeyDescription": "Add this public key to the remote user's ~/.ssh/authorized_keys before connecting.",
+					"copyPublicKey": "Copy public key",
+					"publicKeyCopied": "Public key copied"
+				},
+				"sections": {
+					"connection": "Connection",
+					"zerotier": "ZeroTier",
+					"endpoint": "Endpoint",
+					"planet": "Planet"
+				},
+				"values": {
+					"yes": "Yes",
+					"no": "No"
 				}
 			},
 			"yes": "Да",

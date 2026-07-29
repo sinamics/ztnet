@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "Tillat TCP Fallback Relay:",
 				"listeningOn": "Lytter på:"
 			},
+			"localConfig": {
+				"title": "Local ZeroTier Config",
+				"description": "Manage the local controller ZeroTier local.conf settings.",
+				"restartHint": "Changes are written to local.conf. Restart ZeroTier for them to take effect, for example: docker restart zerotier.",
+				"readonlyHint": "The ZeroTier folder is not writable. Update the volume or file permissions before saving.",
+				"configPath": "Config file: {path}",
+				"actions": {
+					"configure": "Configure local ZeroTier",
+					"save": "Save config"
+				},
+				"toast": {
+					"saved": "Local ZeroTier config saved. Restart ZeroTier to apply changes."
+				},
+				"form": {
+					"primaryPortLabel": "Primary port",
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode"
+				}
+			},
 			"controllerStatus": {
 				"title": "Kontrollerstatus",
 				"online": "Online:",
@@ -787,7 +812,8 @@
 					"uploadConfig": "LAST OPP KONFIG",
 					"updateWorld": "Oppdater Planet",
 					"downloadPlanetButton": "Last ned Konfigurasjon",
-					"restoreOriginalPlanetButton": "Gjenopprett Original Planet"
+					"restoreOriginalPlanetButton": "Gjenopprett Original Planet",
+					"useLocalRoot": "Use local node as root"
 				},
 				"modal": {
 					"noteTitle": "MERK!",
@@ -795,6 +821,187 @@
 					"restartContainerInstructions": "Du må starte zerotier-containeren på nytt for å laste inn den nye konfigurasjonen:<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Gjenopprett Opprinnelig Planet",
 					"restoreOriginalPlanetContent": "Er du sikker på at du vil gjenopprette den opprinnelige planetfilen? Pass på å ta en sikkerhetskopi av din nåværende planetfil hvis du vil beholde de nåværende nøklene"
+				},
+				"addRootTitle": "Add Root Server",
+				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly.",
+				"downloadAuthMode": "Planet download access",
+				"downloadAuthPublic": "Public",
+				"downloadAuthRestApi": "Tilgangsnøkkel",
+				"downloadAuthPublicHint": "Anyone with the URL can download the planet file.",
+				"downloadAuthRestApiHint": "Krever nedlastingsnøkkelen i x-ztnet-auth-headeren.",
+				"downloadKeyLabel": "Nedlastingsnøkkel",
+				"downloadKeyCopy": "Kopier",
+				"downloadKeyRegenerate": "Regenerer",
+				"downloadKeyCopied": "Nedlastingsnøkkel kopiert",
+				"downloadKeyRegenerated": "Nedlastingsnøkkel regenerert",
+				"downloadKeyCopyFailed": "Kopiering mislyktes – kopier manuelt"
+			},
+			"remoteRoots": {
+				"clientInstall": {
+					"title": "Klient-installeringskommando",
+					"description": "Kjør på en klient for å installere ZeroTier og denne egendefinerte planeten i ett steg.",
+					"unixLabel": "Linux / macOS / ARM / ruter",
+					"windowsLabel": "Windows (PowerShell som admin)",
+					"copy": "Kopier",
+					"copied": "Kopiert",
+					"copyFailed": "Kopiering mislyktes – merk og kopier manuelt",
+					"note": "Første gangs tilkobling må kjøres én gang; senere planet-oppdateringer hentes automatisk."
+				},
+				"title": "Eksterne Planet Roots",
+				"description": "Administrer eksterne ZeroTier root-noder for generering av egendefinert planet.",
+				"actions": {
+					"appendHealthyRoots": "Erstatt planet-root-listen",
+					"close": "Close",
+					"saveEndpoint": "Save endpoint"
+				},
+				"form": {
+					"namePlaceholder": "Navn",
+					"hostPlaceholder": "Vert",
+					"sshUserPlaceholder": "SSH-bruker",
+					"sshPortPlaceholder": "SSH-port",
+					"endpointSource": {
+						"manualIp": "Manuell IP",
+						"domain": "Domene"
+					},
+					"addRoot": "Legg til root",
+					"domainNamePlaceholder": "Domenenavn",
+					"selectedIpPlaceholder": "Valgt endpoint-IP",
+					"primaryPortPlaceholder": "ZT-port",
+					"selectedIpLabel": "Endpoint IP",
+					"primaryPortLabel": "ZeroTier UDP port",
+					"errors": {
+						"required": "Required",
+						"domainRequired": "Domain is required",
+						"portRange": "Enter a port from 1 to 65535"
+					},
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode",
+					"readRequired": "Read the remote ZeroTier config before editing settings.",
+					"sshFailedReadRequired": "SSH failed. Test SSH and read the remote config again before editing settings.",
+					"zerotierInstallRequired": "Install ZeroTier on the remote root before editing settings.",
+					"configReadAt": "Config source: remote read at {time}.",
+					"configSnapshotHint": "These values come from the latest successful read, not a live stream."
+				},
+				"table": {
+					"name": "Navn",
+					"host": "Vert",
+					"endpoint": "Endpoint",
+					"status": "Status",
+					"identity": "Identitet",
+					"actions": "Handlinger",
+					"identityNotRead": "Ikke lest",
+					"empty": "Ingen eksterne planet roots er konfigurert.",
+					"lastCheck": "Last check",
+					"endpointNotSelected": "Not selected",
+					"neverChecked": "Never",
+					"emptyTitle": "No remote roots yet",
+					"emptyDescription": "Add a server first, then read its ZeroTier status and use it as a planet root.",
+					"checking": "Checking",
+					"version": "ZeroTier {version}",
+					"installed": "Installed",
+					"portMapping": "Port mapping"
+				},
+				"status": {
+					"ssh": {
+						"UNKNOWN": "SSH unknown",
+						"CHECKING": "SSH checking",
+						"OK": "SSH OK",
+						"FAILED": "SSH failed"
+					},
+					"panel": {
+						"UNKNOWN": "Endpoint unknown",
+						"CHECKING": "Endpoint checking",
+						"OK": "Endpoint OK",
+						"DEGRADED": "Endpoint degraded",
+						"FAILED": "Endpoint failed"
+					},
+					"planet": {
+						"UNKNOWN": "Planet unknown",
+						"MISSING": "Planet ikke installert",
+						"CUSTOM_MATCH": "Planet oppdatert",
+						"CUSTOM_OTHER": "Planet utdatert",
+						"OFFICIAL_RESTORED": "Official planet",
+						"OFFICIAL_OR_DEFAULT": "Official or default planet",
+						"OFFICIAL_OR_UNKNOWN": "Official or unknown planet"
+					},
+					"startup": {
+						"UNKNOWN": "Startup unknown",
+						"ENABLED": "Startup enabled",
+						"DISABLED": "Startup disabled",
+						"ERROR": "Startup error"
+					},
+					"service": {
+						"UNKNOWN": "Service unknown",
+						"RUNNING": "Service running",
+						"STOPPED": "Service stopped",
+						"ERROR": "Service error"
+					},
+					"config": {
+						"UNKNOWN": "Unknown"
+					}
+				},
+				"row": {
+					"endpointIpPlaceholder": "IP",
+					"udpPortSuffix": "{port}/udp",
+					"actions": {
+						"test": "Test SSH og les",
+						"install": "Installer",
+						"upgrade": "Oppgrader",
+						"read": "Les",
+						"check": "Sjekk",
+						"dns": "DNS",
+						"delete": "Slett",
+						"details": "Details",
+						"connectRead": "Connect & Read",
+						"restart": "Restart Service",
+						"changePort": "Change Port & Restart",
+						"distributePlanet": "Distribute Planet",
+						"restoreOfficial": "Restore Official Planet",
+						"saveConfig": "Save Config & Restart",
+						"addEndpoint": "Add endpoint"
+					}
+				},
+				"toast": {
+					"remoteRootSaved": "Ekstern root lagret",
+					"sshSucceeded": "SSH-tilkobling lyktes",
+					"installCompleted": "Installasjonskommando fullfort",
+					"upgradeCompleted": "Oppgraderingskommando fullfort",
+					"remoteConfigRead": "Ekstern konfigurasjon lest",
+					"noDnsRecords": "Ingen DNS-poster funnet",
+					"noHealthyRoots": "Ingen eksterne roots er tilgjengelige",
+					"missingEndpoints": "Velg minst én endepunkt-IP for: {names}",
+					"customPlanetUpdated": "Egendefinert planet oppdatert med eksterne roots",
+					"rootChecked": "Remote root checked",
+					"healthCheckStarted": "Health check started",
+					"restartCompleted": "ZeroTier restarted",
+					"portChanged": "ZeroTier port changed and service restarted",
+					"planetDistributed": "Planet distributed to remote root",
+					"officialPlanetRestored": "Remote root restored to official planet",
+					"configSaved": "ZeroTier configuration saved and service restarted"
+				},
+				"tasks": {
+					"title": "Recent tasks",
+					"noLogs": "No logs captured.",
+					"publicKeyTitle": "Managed SSH public key",
+					"publicKeyDescription": "Add this public key to the remote user's ~/.ssh/authorized_keys before connecting.",
+					"copyPublicKey": "Copy public key",
+					"publicKeyCopied": "Public key copied"
+				},
+				"sections": {
+					"connection": "Connection",
+					"zerotier": "ZeroTier",
+					"endpoint": "Endpoint",
+					"planet": "Planet"
+				},
+				"values": {
+					"yes": "Yes",
+					"no": "No"
 				}
 			},
 			"yes": "Ja",

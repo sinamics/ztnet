@@ -747,6 +747,31 @@
 				"allowTcpFallbackRelay": "Allow TCP Fallback Relay:",
 				"listeningOn": "Listening On:"
 			},
+			"localConfig": {
+				"title": "Local ZeroTier Config",
+				"description": "Manage the local controller ZeroTier local.conf settings.",
+				"restartHint": "Changes are written to local.conf. Restart ZeroTier for them to take effect, for example: docker restart zerotier.",
+				"readonlyHint": "The ZeroTier folder is not writable. Update the volume or file permissions before saving.",
+				"configPath": "Config file: {path}",
+				"actions": {
+					"configure": "Configure local ZeroTier",
+					"save": "Save config"
+				},
+				"toast": {
+					"saved": "Local ZeroTier config saved. Restart ZeroTier to apply changes."
+				},
+				"form": {
+					"primaryPortLabel": "Primary port",
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode"
+				}
+			},
 			"controllerStatus": {
 				"title": "Controller Status",
 				"online": "Online:",
@@ -769,6 +794,17 @@
 				"customPortIsInUseDescription": "You need to add <kbd>ZT_PRIMARY_PORT:port</kbd> to the ZeroTier Docker Compose environment variables.",
 				"downloadPlanetInfo": "Should you need it, the planet file is available for download at the following URL:",
 				"downloadPlanetUrl": "api/planet",
+				"downloadAuthMode": "Planet download access",
+				"downloadAuthPublic": "Public",
+				"downloadAuthRestApi": "Access key",
+				"downloadAuthPublicHint": "Anyone with the URL can download the planet file.",
+				"downloadAuthRestApiHint": "Requires the download key in the x-ztnet-auth header.",
+				"downloadKeyLabel": "Download key",
+				"downloadKeyCopy": "Copy",
+				"downloadKeyRegenerate": "Regenerate",
+				"downloadKeyCopied": "Download key copied",
+				"downloadKeyRegenerated": "Download key regenerated",
+				"downloadKeyCopyFailed": "Copy failed — select and copy manually",
 				"generatePrivateRootLabel": "Generate private root",
 				"generatePrivateRootPlaceholder": "Add a private root to your controller",
 				"commentDescription": "Add a comment for this planet (optionally)",
@@ -781,13 +817,16 @@
 				"birthPlaceholder": "Enter Birth",
 				"idLabel": "ID (plID)",
 				"idPlaceholder": "Enter ID",
+				"addRootTitle": "Add Root Server",
+				"addRootDescription": "Add one or more root servers. The local node is optional and can be added explicitly.",
 				"buttons": {
 					"editPlanetConfig": "EDIT PLANET CONFIG",
 					"createPlanet": "CREATE PLANET",
 					"uploadConfig": "UPLOAD CONFIG",
 					"updateWorld": "Update World",
 					"downloadPlanetButton": "Download Config",
-					"restoreOriginalPlanetButton": "Restore Original Planet"
+					"restoreOriginalPlanetButton": "Restore Original Planet",
+					"useLocalRoot": "Use local node as root"
 				},
 				"modal": {
 					"noteTitle": "NOTE!",
@@ -795,6 +834,174 @@
 					"restartContainerInstructions": "You will need to restart zerotier container to load the new configuration:<br></br><br></br><span>docker restart zerotier</span>",
 					"restoreOriginalPlanetTitle": "Restore Original Planet",
 					"restoreOriginalPlanetContent": "Are you sure you want to restore the original planet file? Make sure to backup your current planet file if you want to keep the current keys"
+				}
+			},
+			"remoteRoots": {
+				"clientInstall": {
+					"title": "Client install command",
+					"description": "Run on a client to install ZeroTier and this custom planet in one step.",
+					"unixLabel": "Linux / macOS / ARM / soft-router",
+					"windowsLabel": "Windows (PowerShell as Admin)",
+					"copy": "Copy",
+					"copied": "Copied",
+					"copyFailed": "Copy failed — select and copy manually",
+					"note": "First-time join must run this once; later planet updates are picked up automatically."
+				},
+				"title": "Remote Planet Roots",
+				"description": "Manage remote ZeroTier root nodes for custom planet generation.",
+				"actions": {
+					"appendHealthyRoots": "Replace planet root list",
+					"close": "Close",
+					"saveEndpoint": "Save endpoint"
+				},
+				"sections": {
+					"connection": "Connection",
+					"zerotier": "ZeroTier",
+					"endpoint": "Endpoint",
+					"planet": "Planet"
+				},
+				"values": {
+					"yes": "Yes",
+					"no": "No"
+				},
+				"form": {
+					"namePlaceholder": "Name",
+					"hostPlaceholder": "Host",
+					"sshUserPlaceholder": "SSH user",
+					"sshPortPlaceholder": "SSH port",
+					"endpointSource": {
+						"manualIp": "Manual IP",
+						"domain": "Domain"
+					},
+					"addRoot": "Add root",
+					"domainNamePlaceholder": "Domain name",
+					"selectedIpPlaceholder": "Selected endpoint IP",
+					"primaryPortPlaceholder": "ZT port",
+					"selectedIpLabel": "Endpoint IP",
+					"primaryPortLabel": "ZeroTier UDP port",
+					"secondaryPortLabel": "Static secondary UDP port (optional)",
+					"allowSecondaryPortLabel": "Allow secondary/tertiary listen ports",
+					"interfacePrefixBlacklistLabel": "Interface prefix blacklist",
+					"bindAddressesLabel": "Bind addresses",
+					"allowManagementFromLabel": "Allow management from",
+					"defaultBondingPolicyLabel": "Default bonding policy",
+					"multithreadedLabel": "Multithreaded",
+					"linuxKernelModeLabel": "Linux kernel mode",
+					"readRequired": "Read the remote ZeroTier config before editing settings.",
+					"sshFailedReadRequired": "SSH failed. Test SSH and read the remote config again before editing settings.",
+					"zerotierInstallRequired": "Install ZeroTier on the remote root before editing settings.",
+					"configReadAt": "Config source: remote read at {time}.",
+					"configSnapshotHint": "These values come from the latest successful read, not a live stream.",
+					"errors": {
+						"required": "Required",
+						"domainRequired": "Domain is required",
+						"portRange": "Enter a port from 1 to 65535"
+					}
+				},
+				"table": {
+					"name": "Name",
+					"host": "Host",
+					"endpoint": "Endpoint",
+					"status": "Status",
+					"identity": "Identity",
+					"actions": "Actions",
+					"lastCheck": "Last check",
+					"endpointNotSelected": "Not selected",
+					"installed": "Installed",
+					"portMapping": "Port mapping",
+					"identityNotRead": "Not read",
+					"empty": "No remote planet roots configured.",
+					"neverChecked": "Never",
+					"emptyTitle": "No remote roots yet",
+					"emptyDescription": "Add a server first, then read its ZeroTier status and use it as a planet root.",
+					"checking": "Checking",
+					"version": "ZeroTier {version}"
+				},
+				"status": {
+					"ssh": {
+						"UNKNOWN": "SSH unknown",
+						"CHECKING": "SSH checking",
+						"OK": "SSH OK",
+						"FAILED": "SSH failed"
+					},
+					"panel": {
+						"UNKNOWN": "Endpoint unknown",
+						"CHECKING": "Endpoint checking",
+						"OK": "Endpoint OK",
+						"DEGRADED": "Endpoint degraded",
+						"FAILED": "Endpoint failed"
+					},
+					"planet": {
+						"UNKNOWN": "Planet unknown",
+						"MISSING": "Planet not installed",
+						"CUSTOM_MATCH": "Planet up to date",
+						"CUSTOM_OTHER": "Planet outdated",
+						"OFFICIAL_RESTORED": "Official planet",
+						"OFFICIAL_OR_DEFAULT": "Official or default planet",
+						"OFFICIAL_OR_UNKNOWN": "Official or unknown planet"
+					},
+					"startup": {
+						"UNKNOWN": "Startup unknown",
+						"ENABLED": "Startup enabled",
+						"DISABLED": "Startup disabled",
+						"ERROR": "Startup error"
+					},
+					"service": {
+						"UNKNOWN": "Service unknown",
+						"RUNNING": "Service running",
+						"STOPPED": "Service stopped",
+						"ERROR": "Service error"
+					},
+					"config": {
+						"UNKNOWN": "Unknown"
+					}
+				},
+				"row": {
+					"endpointIpPlaceholder": "IP",
+					"udpPortSuffix": "{port}/udp",
+					"actions": {
+						"details": "Details",
+						"connectRead": "Connect & Read",
+						"test": "Test SSH & Read",
+						"install": "Install",
+						"upgrade": "Upgrade",
+						"restart": "Restart Service",
+						"saveConfig": "Save Config & Restart",
+						"addEndpoint": "Add endpoint",
+						"changePort": "Change Port & Restart",
+						"distributePlanet": "Distribute Planet",
+						"restoreOfficial": "Restore Official Planet",
+						"read": "Read",
+						"check": "Check root",
+						"dns": "DNS",
+						"delete": "Delete"
+					}
+				},
+				"tasks": {
+					"title": "Recent tasks",
+					"noLogs": "No logs captured.",
+					"publicKeyTitle": "Managed SSH public key",
+					"publicKeyDescription": "Add this public key to the remote user's ~/.ssh/authorized_keys before connecting.",
+					"copyPublicKey": "Copy public key",
+					"publicKeyCopied": "Public key copied"
+				},
+				"toast": {
+					"remoteRootSaved": "Remote root saved",
+					"sshSucceeded": "SSH connection succeeded",
+					"installCompleted": "Install command completed",
+					"upgradeCompleted": "Upgrade command completed",
+					"remoteConfigRead": "Remote config read",
+					"rootChecked": "Remote root checked",
+					"healthCheckStarted": "Health check started",
+					"restartCompleted": "ZeroTier restarted",
+					"portChanged": "ZeroTier port changed and service restarted",
+					"configSaved": "ZeroTier configuration saved and service restarted",
+					"planetDistributed": "Planet distributed to remote root",
+					"officialPlanetRestored": "Remote root restored to official planet",
+					"noDnsRecords": "No DNS records found",
+					"noHealthyRoots": "No remote roots are available",
+					"missingEndpoints": "Select at least one endpoint IP for: {names}",
+					"customPlanetUpdated": "Custom planet updated with remote roots"
 				}
 			},
 			"yes": "Yes",

@@ -7,6 +7,7 @@ import { throwError } from "~/server/helpers/errorHandler";
 import type { ZTControllerNodeStatus } from "~/types/ztController";
 import type { NetworkAndMemberResponse } from "~/types/network";
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import type { WorldConfig } from "~/types/worldConfig";
 import axios from "axios";
@@ -24,6 +25,12 @@ import path from "node:path";
 import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
+import { remoteRootRouter } from "./remoteRootRouter";
+import { normalizePlanetRootNodes } from "../services/remoteRootPlanetService";
+import {
+	readLocalZerotierConfig,
+	saveLocalZerotierConfig,
+} from "../services/localZerotierConfigService";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -32,6 +39,7 @@ type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
 };
 
 export const adminRouter = createTRPCRouter({
+	remoteRoots: remoteRootRouter,
 	updateUser: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -406,6 +414,34 @@ export const adminRouter = createTRPCRouter({
 			return throwError(error);
 		}
 	}),
+	getLocalZerotierConfig: adminRoleProtectedRoute.query(() => {
+		try {
+			return readLocalZerotierConfig();
+		} catch (error) {
+			return throwError(error);
+		}
+	}),
+	saveLocalZerotierConfig: adminRoleProtectedRoute
+		.input(
+			z.object({
+				primaryPort: z.number().int().min(1).max(65535),
+				secondaryPort: z.number().int().min(1).max(65535).optional().nullable(),
+				allowSecondaryPort: z.boolean().optional().nullable(),
+				interfacePrefixBlacklist: z.array(z.string()).default([]),
+				bindAddresses: z.array(z.string()).default([]),
+				allowManagementFrom: z.array(z.string()).default([]),
+				defaultBondingPolicy: z.string().optional().nullable(),
+				multithreaded: z.boolean().optional().nullable(),
+				linuxKernelMode: z.boolean().optional().nullable(),
+			}),
+		)
+		.mutation(({ input }) => {
+			try {
+				return saveLocalZerotierConfig(input);
+			} catch (error) {
+				return throwError(error);
+			}
+		}),
 
 	// Set global options
 	getAllOptions: adminRoleProtectedRoute.query(
@@ -483,18 +519,36 @@ export const adminRouter = createTRPCRouter({
 				welcomeMessageTitle: z.string().max(50).optional(),
 				welcomeMessageBody: z.string().max(350).optional(),
 				siteName: z.string().max(30).optional(),
+				planetDownloadAuthMode: z.enum(["PUBLIC", "REST_API"]).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			const data: Record<string, unknown> = { ...input };
+			// When enabling planet download protection, mint a dedicated,
+			// rotatable download token if none exists yet. This is used instead of
+			// a personal API token so it can be embedded in the client installer.
+			if (input.planetDownloadAuthMode === "REST_API") {
+				const current = await ctx.prisma.globalOptions.findFirst({
+					where: { id: 1 },
+					select: { planetDownloadToken: true },
+				});
+				if (!current?.planetDownloadToken) {
+					data.planetDownloadToken = crypto.randomBytes(24).toString("hex");
+				}
+			}
 			return await ctx.prisma.globalOptions.update({
 				where: {
 					id: 1,
 				},
-				data: {
-					...input,
-				},
+				data,
 			});
 		}),
+	rotatePlanetDownloadToken: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
+		return await ctx.prisma.globalOptions.update({
+			where: { id: 1 },
+			data: { planetDownloadToken: crypto.randomBytes(24).toString("hex") },
+		});
+	}),
 	getMailTemplates: adminRoleProtectedRoute
 		.input(
 			z.object({
@@ -1106,6 +1160,16 @@ export const adminRouter = createTRPCRouter({
 			// data.plID  227883110  // reserved world for future
 			// data.plBirth 1567191349589
 			try {
+				// World version (plBirth) must strictly increase, otherwise ZeroTier
+				// clients that already hold this planet will NOT adopt the new one over
+				// the air (they only accept a World with a newer timestamp). Reusing a
+				// stale plBirth silently disables OTA updates.
+				const existingPlanet = await ctx.prisma.planet.findUnique({
+					where: { id: 1 },
+					select: { plBirth: true },
+				});
+				const existingPlBirth = Number(existingPlanet?.plBirth) || 0;
+				const nextPlBirth = Math.max(input.plBirth || 0, existingPlBirth + 1, Date.now());
 				const mkworldDir = `${ZT_FOLDER}/zt-mkworld`;
 				const planetPath = `${ZT_FOLDER}/planet`;
 				const backupDir = `${ZT_FOLDER}/planet_backup`;
@@ -1159,35 +1223,21 @@ export const adminRouter = createTRPCRouter({
 				 */
 
 				const config: WorldConfig = {
-					rootNodes: input.rootNodes.map((node) => ({
-						comments: node.comments || "ztnet.network",
-						identity: node.identity,
-						endpoints: node.endpoints,
-					})),
+					rootNodes: normalizePlanetRootNodes(
+						input.rootNodes.map((node) => ({
+							comments: node.comments || "ztnet.network",
+							identity: node.identity,
+							endpoints: node.endpoints,
+						})),
+					),
 					signing: ["previous.c25519", "current.c25519"],
 					output: "planet.custom",
 					plID: input.plID || 0,
-					plBirth: input.plBirth || 0,
+					plBirth: nextPlBirth,
 					plRecommend: input.plRecommend,
 				};
 
 				fs.writeFileSync(`${mkworldDir}/mkworld.config.json`, JSON.stringify(config));
-
-				/*
-				 *
-				 * Update local.conf file with the new port number
-				 *
-				 */
-				// Extract the port numbers from the first endpoint string
-				const portNumbers = input.rootNodes[0].endpoints[0]
-					.split(",")
-					.map((endpoint) => Number.parseInt(endpoint.split("/").pop() || "", 10));
-
-				try {
-					await updateLocalConf(portNumbers);
-				} catch (error) {
-					throwError(error);
-				}
 
 				/*
 				 *
@@ -1224,7 +1274,7 @@ export const adminRouter = createTRPCRouter({
 							},
 						},
 						// Data for updating an existing Planet
-						plBirth: input.plBirth || 0,
+						plBirth: nextPlBirth,
 						plID: input.plID || 0,
 						rootNodes: {
 							deleteMany: {},
@@ -1238,7 +1288,7 @@ export const adminRouter = createTRPCRouter({
 							},
 						},
 						// Data for creating a new Planet
-						plBirth: input.plBirth || 0,
+						plBirth: nextPlBirth,
 						plID: input.plID || 0,
 						rootNodes: {
 							create: config.rootNodes,
