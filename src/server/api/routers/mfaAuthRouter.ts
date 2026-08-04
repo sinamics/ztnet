@@ -14,6 +14,7 @@ import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
 import { normalizeEmail } from "~/utils/email";
+import { emailSchema } from "./_schema";
 
 // Rate limit configuration from environment variables
 const RATE_LIMIT_WINDOW_MS =
@@ -101,10 +102,7 @@ export const mfaAuthRouter = createTRPCRouter({
 	mfaResetLink: publicProcedure
 		.input(
 			z.object({
-				email: z
-					.string({ error: "Email is required!" })
-					.email()
-					.transform(normalizeEmail),
+				email: emailSchema(undefined, "Email is required!"),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

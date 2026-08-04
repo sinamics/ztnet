@@ -28,6 +28,7 @@ import {
 } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { normalizeEmail } from "~/utils/email";
+import { emailSchema } from "./_schema";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
@@ -1306,7 +1307,7 @@ export const organizationRouter = createTRPCRouter({
 				// the Invitation row and embedded in the token, where it is later
 				// compared against a registration email, so a non-address is never
 				// usable here.
-				email: z.string().email().transform(normalizeEmail),
+				email: emailSchema(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1432,7 +1433,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string().email().transform(normalizeEmail),
+				email: emailSchema(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

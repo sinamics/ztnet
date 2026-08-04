@@ -24,7 +24,7 @@ import path from "node:path";
 import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
-import { normalizeEmail } from "~/utils/email";
+import { emailSchema } from "./_schema";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -112,7 +112,7 @@ export const adminRouter = createTRPCRouter({
 		.input(
 			z.object({
 				name: z.string().min(1, "Name is required"),
-				email: z.string().email("Valid email is required").transform(normalizeEmail),
+				email: emailSchema("Valid email is required"),
 				password: z.string().min(6, "Password must be at least 6 characters"),
 				role: z.nativeEnum(Role).default(Role.READ_ONLY),
 				userGroupId: z.number().optional(),

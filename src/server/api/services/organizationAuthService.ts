@@ -32,6 +32,16 @@ export async function validateOrganizationToken(
 
 		const decryptedOrganizationToken: Invitation = JSON.parse(decryptedTokenString);
 
+		// The payload is JSON parsed from the token and `Invitation.email` is
+		// nullable in the schema, so the type annotation above guarantees nothing
+		// at runtime. Reject before normalizing rather than throwing a TypeError.
+		if (typeof decryptedOrganizationToken?.email !== "string") {
+			throw new TRPCError({
+				code: "BAD_REQUEST",
+				message: "Invalid token data!",
+			});
+		}
+
 		// Verify token is not expired by checking the expiry against the current time
 		if (new Date(decryptedOrganizationToken.expiresAt) < new Date()) {
 			throw new TRPCError({
