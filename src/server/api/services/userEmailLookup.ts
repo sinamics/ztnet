@@ -34,10 +34,41 @@ export async function findUserIdsByEmail(
  * Whether an account already exists for this address, ignoring case. Used by
  * the registration and invite paths so a row still stored with uppercase
  * characters is not shadowed by a second account for the same address.
+ *
+ * Existence only, so which row matched does not matter.
  */
 export async function emailIsTaken(
 	prisma: PrismaClient,
 	email: string,
 ): Promise<boolean> {
 	return (await findUserIdsByEmail(prisma, email, 1)).length > 0;
+}
+
+/**
+ * Resolve the single account for an address, or null when there isn't exactly
+ * one.
+ *
+ * `User.email` is UNIQUE but case sensitive, so `Bob@x.com` and `bob@x.com`
+ * can both exist. A `LIMIT 1` lookup would then return an arbitrary row —
+ * Postgres gives no ordering guarantee without an ORDER BY — and the callers
+ * here mint password-reset and MFA-reset tokens or add accounts to
+ * organizations. Picking the wrong one is worse than refusing.
+ *
+ * So ambiguity fails closed, matching the credential sign-in hook, which also
+ * declines to guess. Callers surface it as their normal "not found" result;
+ * the warning names the ids an admin has to merge.
+ */
+export async function findUniqueUserIdByEmail(
+	prisma: PrismaClient,
+	email: string,
+): Promise<string | null> {
+	const ids = await findUserIdsByEmail(prisma, email, 2);
+	if (ids.length === 1) return ids[0];
+	if (ids.length > 1) {
+		// Ids, not the address: callers pass user-supplied input here.
+		console.warn(
+			`Multiple accounts differ only by email casing (ids: ${ids.join(", ")}). Refusing to resolve one; merge or delete the duplicate User rows.`,
+		);
+	}
+	return null;
 }

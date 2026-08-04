@@ -28,7 +28,10 @@ import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
 import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
-import { emailIsTaken, findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
+import {
+	emailIsTaken,
+	findUniqueUserIdByEmail,
+} from "~/server/api/services/userEmailLookup";
 
 // Rate limit configuration from environment variables
 // RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
@@ -177,10 +180,10 @@ export const authRouter = createTRPCRouter({
 			// Case insensitive: accounts registered before emails were normalized
 			// may still be stored with uppercase characters, and an exact match
 			// would let a second account be created for the same address.
-			const registerUser = await emailIsTaken(ctx.prisma, email);
+			const emailTaken = await emailIsTaken(ctx.prisma, email);
 
 			// validate
-			if (registerUser) {
+			if (emailTaken) {
 				// eslint-disable-next-line no-throw-literal
 				// throw new AuthenticationError(`email "${email}" already taken`);
 				throw new TRPCError({
@@ -574,7 +577,7 @@ export const authRouter = createTRPCRouter({
 			// Case insensitive so accounts still stored with uppercase characters
 			// can recover. The token below carries `user.email` as stored, which is
 			// what the reset step matches on.
-			const [userId] = await findUserIdsByEmail(ctx.prisma, email, 1);
+			const userId = await findUniqueUserIdByEmail(ctx.prisma, email);
 			const user = userId
 				? await ctx.prisma.user.findUnique({ where: { id: userId } })
 				: null;

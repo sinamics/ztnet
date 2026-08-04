@@ -16,7 +16,11 @@
  * These tests pin the SQL shape, so switching back to `mode: "insensitive"`
  * fails here rather than silently in production.
  */
-import { findUserIdsByEmail, emailIsTaken } from "~/server/api/services/userEmailLookup";
+import {
+	findUserIdsByEmail,
+	emailIsTaken,
+	findUniqueUserIdByEmail,
+} from "~/server/api/services/userEmailLookup";
 
 type QueryRawMock = jest.Mock & { lastSql?: string; lastValues?: unknown[] };
 
@@ -99,5 +103,61 @@ describe("emailIsTaken", () => {
 		const prisma = makePrisma([]);
 		await emailIsTaken(prisma, "a@b.com");
 		expect(prisma.$queryRaw.lastValues).toContain(1);
+	});
+});
+
+/**
+ * `User.email` is UNIQUE but case sensitive, so `Bob@x.com` and `bob@x.com`
+ * can coexist. A `LIMIT 1` lookup returns an arbitrary one of them — Postgres
+ * guarantees no ordering without an ORDER BY. The callers mint password-reset
+ * and MFA-reset tokens and add accounts to organizations, so resolving the
+ * wrong row is worse than resolving nothing.
+ */
+describe("findUniqueUserIdByEmail", () => {
+	let warn: jest.SpyInstance;
+
+	beforeEach(() => {
+		warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		warn.mockRestore();
+	});
+
+	it("resolves the id when exactly one account matches", async () => {
+		await expect(
+			findUniqueUserIdByEmail(makePrisma([{ id: "u1" }]), "a@b.com"),
+		).resolves.toBe("u1");
+	});
+
+	it("returns null when nothing matches", async () => {
+		await expect(findUniqueUserIdByEmail(makePrisma([]), "a@b.com")).resolves.toBeNull();
+	});
+
+	it("refuses to guess when two accounts differ only by casing", async () => {
+		await expect(
+			findUniqueUserIdByEmail(makePrisma([{ id: "u1" }, { id: "u2" }]), "a@b.com"),
+		).resolves.toBeNull();
+	});
+
+	it("reads two rows so ambiguity is detectable at all", async () => {
+		// With LIMIT 1 the second row is invisible and the caller silently
+		// proceeds with an arbitrary account.
+		const prisma = makePrisma([{ id: "u1" }]);
+		await findUniqueUserIdByEmail(prisma, "a@b.com");
+		expect(prisma.$queryRaw.lastValues).toContain(2);
+	});
+
+	it("names the conflicting ids so an admin can merge them", async () => {
+		await findUniqueUserIdByEmail(makePrisma([{ id: "u1" }, { id: "u2" }]), "a@b.com");
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining("u1, u2"));
+	});
+
+	it("never logs the submitted address, which is user-supplied input", async () => {
+		await findUniqueUserIdByEmail(
+			makePrisma([{ id: "u1" }, { id: "u2" }]),
+			"secret@example.com",
+		);
+		expect(warn).not.toHaveBeenCalledWith(expect.stringContaining("secret@example.com"));
 	});
 });

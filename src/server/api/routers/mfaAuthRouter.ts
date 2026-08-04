@@ -15,7 +15,7 @@ import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
 import { normalizeEmail } from "~/utils/email";
 import { emailSchema } from "./_schema";
-import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
+import { findUniqueUserIdByEmail } from "~/server/api/services/userEmailLookup";
 
 // Rate limit configuration from environment variables
 const RATE_LIMIT_WINDOW_MS =
@@ -128,7 +128,7 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// Case insensitive so accounts still stored with uppercase characters
 			// can recover. The token below carries `user.email` as stored.
-			const [userId] = await findUserIdsByEmail(ctx.prisma, email, 1);
+			const userId = await findUniqueUserIdByEmail(ctx.prisma, email);
 			const user = userId
 				? await ctx.prisma.user.findUnique({ where: { id: userId } })
 				: null;
