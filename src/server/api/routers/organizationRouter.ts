@@ -29,6 +29,7 @@ import {
 import { checkUserOrganizationRole } from "~/utils/role";
 import { normalizeEmail } from "~/utils/email";
 import { emailSchema } from "./_schema";
+import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
@@ -1223,11 +1224,14 @@ export const organizationRouter = createTRPCRouter({
 				// Case insensitive: an account still stored with uppercase characters
 				// must be recognized as existing, otherwise the invitee is treated as
 				// a new user and never added to the organization.
-				const doesUserExist = await ctx.prisma.user.findFirst({
-					where: {
-						email: { equals: normalizeEmail(tokenPayload.email), mode: "insensitive" },
-					},
-				});
+				const [existingUserId] = await findUserIdsByEmail(
+					ctx.prisma,
+					tokenPayload.email,
+					1,
+				);
+				const doesUserExist = existingUserId
+					? await ctx.prisma.user.findUnique({ where: { id: existingUserId } })
+					: null;
 
 				// if ctx user and the user has a valid invite add him.
 				if (doesUserExist) {
@@ -1461,11 +1465,10 @@ export const organizationRouter = createTRPCRouter({
 			// check if the user already exists. Case insensitive so an account still
 			// stored with uppercase characters is not re-invited to an organization
 			// it already belongs to.
-			const doesUserExist = await ctx.prisma.user.findFirst({
-				where: {
-					email: { equals: email, mode: "insensitive" },
-				},
-			});
+			const [existingUserId] = await findUserIdsByEmail(ctx.prisma, email, 1);
+			const doesUserExist = existingUserId
+				? await ctx.prisma.user.findUnique({ where: { id: existingUserId } })
+				: null;
 
 			if (doesUserExist) {
 				// make sure the user does not exist in the organization

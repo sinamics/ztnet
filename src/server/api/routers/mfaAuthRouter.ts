@@ -15,6 +15,7 @@ import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
 import { normalizeEmail } from "~/utils/email";
 import { emailSchema } from "./_schema";
+import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
 
 // Rate limit configuration from environment variables
 const RATE_LIMIT_WINDOW_MS =
@@ -82,14 +83,15 @@ export const mfaAuthRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						// `id` is the identity; the email is a binding check. Case
-						// insensitive so a token issued before the row's casing was
-						// normalized still resolves.
-						email: { equals: decoded.email, mode: "insensitive" as const },
 					},
 				});
 
-				if (!user) return { error: ErrorCode.InvalidToken };
+				// `id` is the identity; the email in the token is a binding check, so
+				// a token stops working once the account's address changes. Compared
+				// normalized rather than in SQL: a LIKE-based match would treat `%`
+				// and `_` in the value as wildcards.
+				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
+					return { error: ErrorCode.InvalidToken };
 
 				// make sure user has MFA enabled
 				if (!user.twoFactorEnabled) return { error: ErrorCode.InvalidToken };
@@ -126,11 +128,10 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			// Case insensitive so accounts still stored with uppercase characters
 			// can recover. The token below carries `user.email` as stored.
-			const user = await ctx.prisma.user.findFirst({
-				where: {
-					email: { equals: email, mode: "insensitive" },
-				},
-			});
+			const [userId] = await findUserIdsByEmail(ctx.prisma, email, 1);
+			const user = userId
+				? await ctx.prisma.user.findUnique({ where: { id: userId } })
+				: null;
 
 			if (!user) return "Mail sent if email exist!";
 
@@ -303,14 +304,12 @@ export const mfaAuthRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						// `id` is the identity; the email is a binding check. Case
-						// insensitive so a token issued before the row's casing was
-						// normalized still resolves.
-						email: { equals: decoded.email, mode: "insensitive" as const },
 					},
 				});
 
-				if (!user) throwError(ErrorCode.InvalidToken);
+				// The email in the token is a binding check; see mfaValidateToken.
+				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
+					throwError(ErrorCode.InvalidToken);
 
 				// make sure user has MFA enabled
 				if (!user.twoFactorEnabled)

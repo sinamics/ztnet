@@ -25,6 +25,7 @@ import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 import { emailSchema } from "./_schema";
+import { emailIsTaken } from "~/server/api/services/userEmailLookup";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -138,9 +139,7 @@ export const adminRouter = createTRPCRouter({
 			// Check if user with this email already exists. Case insensitive, so a
 			// legacy row still stored with uppercase characters is not shadowed by
 			// a second account for the same address.
-			const existingUser = await ctx.prisma.user.findFirst({
-				where: { email: { equals: email, mode: "insensitive" } },
-			});
+			const existingUser = await emailIsTaken(ctx.prisma, email);
 
 			if (existingUser) {
 				throwError("User with this email already exists");

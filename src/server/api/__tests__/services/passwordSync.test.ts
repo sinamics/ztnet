@@ -59,6 +59,10 @@ const session: PartialDeep<Session> = {
 
 function makePrismaMock(user: Record<string, unknown>): PrismaClient {
 	const prismaMock = new PrismaClient();
+	// The registration path checks for an existing address via a raw
+	// `lower(email) = lower($1)` query (see userEmailLookup). Default to "no
+	// match" so registration proceeds.
+	prismaMock.$queryRaw = jest.fn().mockResolvedValue([]) as never;
 	prismaMock.user.findFirst = jest.fn().mockResolvedValue(user) as never;
 	prismaMock.user.findUnique = jest.fn().mockResolvedValue(user) as never;
 	prismaMock.user.update = jest.fn().mockResolvedValue(user) as never;

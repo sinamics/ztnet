@@ -12,6 +12,7 @@ import {
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
+import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -145,11 +146,11 @@ function buildGenericOAuthPlugin() {
 /**
  * Whether any User row still holds a non-lowercase email, cached per process.
  *
- * The recovery lookup below has to be case insensitive, and Prisma compiles
- * `mode: "insensitive"` to `ILIKE`, which cannot use the unique index on
- * User.email — measured at ~14x the cost of the indexed lookup on 20k rows
- * (13.97ms vs 0.98ms, a sequential scan). Running that on every unknown-email
- * sign-in would put a full table scan on a brute-force hot path.
+ * The recovery lookup below has to be case insensitive, which means
+ * `lower(email) = lower($1)` and therefore a sequential scan — the unique index
+ * on User.email cannot serve it. Measured at ~14x the indexed lookup on 20k
+ * rows. Running that on every unknown-email sign-in would put a full table scan
+ * on a brute-force hot path.
  *
  * `false` is a permanent answer: every write path normalizes, so once the
  * table is clean no new mixed-case row can appear. Instances that never had
@@ -224,19 +225,19 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 	// insensitively and normalize it in place, so better-auth's lookup later in
 	// this same request succeeds.
 	if (!user && (await hasLegacyMixedCaseEmails())) {
-		// `take: 2` so we can tell "exactly one match" from "ambiguous". If two
+		// `limit: 2` so we can tell "exactly one match" from "ambiguous". If two
 		// accounts differ only by case there is no safe way to pick one, so we
 		// leave both alone and let better-auth produce its standard error.
-		const legacyMatches =
-			(await prisma.user.findMany({
-				where: { email: { equals: normalizedEmail, mode: "insensitive" } },
-				take: 2,
-			})) ?? [];
+		//
+		// This is the one place that WRITES based on a case-insensitive match,
+		// using an address that has not been validated yet, which is why the
+		// lookup must not be a LIKE. See findUserIdsByEmail.
+		const legacyIds = (await findUserIdsByEmail(prisma, normalizedEmail, 2)) ?? [];
 
-		if (legacyMatches.length === 1) {
+		if (legacyIds.length === 1) {
 			try {
 				user = await prisma.user.update({
-					where: { id: legacyMatches[0].id },
+					where: { id: legacyIds[0] },
 					data: { email: normalizedEmail },
 				});
 				// One fewer legacy row. Re-probe on the next miss so the table
@@ -247,9 +248,12 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 				// normalized a different row to this address first.
 				console.error("Failed to normalize legacy email casing:", e);
 			}
-		} else if (legacyMatches.length > 1) {
+		} else if (legacyIds.length > 1) {
+			// Log the ids, not the address. This runs on unvalidated request-body
+			// input, so echoing it back into the log is both PII and a newline
+			// injection vector.
 			console.warn(
-				`Multiple accounts exist for ${normalizedEmail} differing only by email casing. Sign-in cannot resolve them; merge or delete the duplicate User rows.`,
+				`Multiple accounts differ only by email casing (ids: ${legacyIds.join(", ")}). Sign-in cannot resolve them; merge or delete the duplicate User rows.`,
 			);
 		}
 
@@ -260,7 +264,7 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 		// and 2FA checks below for that account. With zero matches there is
 		// nothing to race against, so an unknown address costs no extra query on
 		// what is a brute-force hot path.
-		if (!user && legacyMatches.length > 0) {
+		if (!user && legacyIds.length > 0) {
 			user = await prisma.user.findFirst({ where: { email: normalizedEmail } });
 		}
 	}
