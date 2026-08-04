@@ -31,26 +31,26 @@ function makePrisma(rows: { id: string }[]) {
 }
 
 describe("findUserIdsByEmail", () => {
-	it("uses lower() equality, never LIKE/ILIKE", () => {
+	it("uses lower() equality, never LIKE/ILIKE", async () => {
 		const prisma = makePrisma([]);
-		findUserIdsByEmail(prisma, "user@example.com");
+		await findUserIdsByEmail(prisma, "user@example.com");
 
 		const sql: string = prisma.$queryRaw.lastSql;
 		expect(sql.toUpperCase()).not.toContain("LIKE");
 		expect(sql.toLowerCase()).toContain('lower("email") = lower(');
 	});
 
-	it("passes the address as a bound parameter, not inlined into the SQL", () => {
+	it("passes the address as a bound parameter, not inlined into the SQL", async () => {
 		const prisma = makePrisma([]);
-		findUserIdsByEmail(prisma, "user@example.com");
+		await findUserIdsByEmail(prisma, "user@example.com");
 
 		expect(prisma.$queryRaw.lastSql).not.toContain("user@example.com");
 		expect(prisma.$queryRaw.lastValues).toContain("user@example.com");
 	});
 
-	it("normalizes the address before querying", () => {
+	it("normalizes the address before querying", async () => {
 		const prisma = makePrisma([]);
-		findUserIdsByEmail(prisma, "  User@Example.COM  ");
+		await findUserIdsByEmail(prisma, "  User@Example.COM  ");
 
 		expect(prisma.$queryRaw.lastValues[0]).toBe("user@example.com");
 	});
@@ -59,9 +59,9 @@ describe("findUserIdsByEmail", () => {
 		["%@example.com", "% wildcard spanning a whole domain"],
 		["vict_m@example.com", "_ wildcard, which zod's .email() accepts"],
 		["%", "bare wildcard"],
-	])("passes %s through as a literal (%s)", (payload) => {
+	])("passes %s through as a literal (%s)", async (payload) => {
 		const prisma = makePrisma([]);
-		findUserIdsByEmail(prisma, payload);
+		await findUserIdsByEmail(prisma, payload);
 
 		// The payload reaches the DB as a value compared with `=`, so Postgres
 		// gives it no pattern meaning.
@@ -69,9 +69,9 @@ describe("findUserIdsByEmail", () => {
 		expect(prisma.$queryRaw.lastSql.toUpperCase()).not.toContain("LIKE");
 	});
 
-	it("caps the rows read so an ambiguous match cannot scan the table", () => {
+	it("caps the rows read so an ambiguous match cannot scan the table", async () => {
 		const prisma = makePrisma([]);
-		findUserIdsByEmail(prisma, "user@example.com", 2);
+		await findUserIdsByEmail(prisma, "user@example.com", 2);
 
 		expect(prisma.$queryRaw.lastSql.toUpperCase()).toContain("LIMIT");
 		expect(prisma.$queryRaw.lastValues).toContain(2);
@@ -95,9 +95,9 @@ describe("emailIsTaken", () => {
 		await expect(emailIsTaken(makePrisma([]), "a@b.com")).resolves.toBe(false);
 	});
 
-	it("stops at one row, since existence is all it needs", () => {
+	it("stops at one row, since existence is all it needs", async () => {
 		const prisma = makePrisma([]);
-		emailIsTaken(prisma, "a@b.com");
+		await emailIsTaken(prisma, "a@b.com");
 		expect(prisma.$queryRaw.lastValues).toContain(1);
 	});
 });

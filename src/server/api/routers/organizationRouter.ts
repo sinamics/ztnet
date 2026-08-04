@@ -27,7 +27,6 @@ import {
 	Webhook,
 } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
-import { normalizeEmail } from "~/utils/email";
 import { emailSchema } from "./_schema";
 import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
