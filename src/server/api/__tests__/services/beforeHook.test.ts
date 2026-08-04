@@ -322,6 +322,49 @@ describe("legacy mixed-case email normalization (#964)", () => {
 		expect(prisma.account.create).not.toHaveBeenCalled();
 	});
 
+	it("still runs the security checks when a concurrent request wins the rewrite", async () => {
+		// The rewrite loses a race to another request that normalized a different
+		// row to the same address. better-auth will authenticate that row, so
+		// skipping cooldown / 2FA / backfill here would be a bypass.
+		(prisma.user.findFirst as jest.Mock)
+			.mockResolvedValueOnce(null) // first lookup, before the race is lost
+			.mockResolvedValueOnce({ ...normalizedUser, twoFactorEnabled: true }); // re-resolve
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([legacyUser]);
+		(prisma.user.update as jest.Mock).mockRejectedValueOnce(
+			new Error("unique constraint"),
+		);
+		(compare as jest.Mock).mockResolvedValue(true);
+
+		await expect(
+			runBeforeAuthHook(
+				makeCtx({ email: "John@Example.com", password: "right", totpCode: null }),
+			),
+		).rejects.toThrow(/second-factor-required/);
+	});
+
+	it("re-resolves the account when a concurrent request normalized it first", async () => {
+		// No legacy row is left to rewrite, but the account now exists under the
+		// normalized address and must still go through the checks below.
+		(prisma.user.findFirst as jest.Mock)
+			.mockResolvedValueOnce(null)
+			.mockResolvedValueOnce(normalizedUser);
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+		(compare as jest.Mock).mockResolvedValue(true);
+		(prisma.account.findFirst as jest.Mock).mockResolvedValue(null);
+
+		await runBeforeAuthHook(makeCtx({ email: "John@Example.com", password: "right" }));
+
+		expect(prisma.user.update).not.toHaveBeenCalled();
+		expect(prisma.account.create).toHaveBeenCalledWith({
+			data: {
+				userId: "u1",
+				accountId: "u1",
+				providerId: "credential",
+				password: "$2a$10$existing",
+			},
+		});
+	});
+
 	it.each([
 		["a number", 12345],
 		["an object", { toString: () => "x" }],

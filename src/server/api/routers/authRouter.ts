@@ -537,7 +537,10 @@ export const authRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						email: decoded.email,
+						// `id` is the identity; the email is a binding check. Case
+						// insensitive so a token issued before the row's casing was
+						// normalized still resolves.
+						email: { equals: decoded.email, mode: "insensitive" as const },
 					},
 				});
 
@@ -774,7 +777,10 @@ export const authRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						email: decoded.email,
+						// `id` is the identity; the email is a binding check. Case
+						// insensitive so a token issued before the row's casing was
+						// normalized still resolves.
+						email: { equals: decoded.email, mode: "insensitive" as const },
 					},
 				});
 

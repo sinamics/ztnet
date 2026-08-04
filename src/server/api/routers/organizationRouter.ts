@@ -1219,9 +1219,12 @@ export const organizationRouter = createTRPCRouter({
 				}
 
 				// Check if the user already exists, then add him to the organization
+				// Case insensitive: an account still stored with uppercase characters
+				// must be recognized as existing, otherwise the invitee is treated as
+				// a new user and never added to the organization.
 				const doesUserExist = await ctx.prisma.user.findFirst({
 					where: {
-						email: normalizeEmail(tokenPayload.email),
+						email: { equals: normalizeEmail(tokenPayload.email), mode: "insensitive" },
 					},
 				});
 
@@ -1454,10 +1457,12 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			// check if the user already exists
+			// check if the user already exists. Case insensitive so an account still
+			// stored with uppercase characters is not re-invited to an organization
+			// it already belongs to.
 			const doesUserExist = await ctx.prisma.user.findFirst({
 				where: {
-					email: email,
+					email: { equals: email, mode: "insensitive" },
 				},
 			});
 

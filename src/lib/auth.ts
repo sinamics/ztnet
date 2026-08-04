@@ -203,16 +203,22 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 					data: { email: normalizedEmail },
 				});
 			} catch (e) {
-				// Unique violation from a concurrent request that normalized a
-				// different row to the same address. Not fatal: fall through and
-				// let better-auth decide.
+				// Typically a unique violation from a concurrent request that
+				// normalized a different row to this address first.
 				console.error("Failed to normalize legacy email casing:", e);
-				return;
 			}
 		} else if (legacyMatches.length > 1) {
 			console.warn(
 				`Multiple accounts exist for ${normalizedEmail} differing only by email casing. Sign-in cannot resolve them; merge or delete the duplicate User rows.`,
 			);
+		}
+
+		// Re-resolve before giving up. A concurrent request may have normalized a
+		// row to this address while we were working, and better-auth would then
+		// authenticate it. Returning early on a stale miss would skip the
+		// cooldown, credential backfill and 2FA checks below for that account.
+		if (!user) {
+			user = await prisma.user.findFirst({ where: { email: normalizedEmail } });
 		}
 	}
 
