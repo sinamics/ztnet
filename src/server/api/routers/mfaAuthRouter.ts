@@ -13,6 +13,7 @@ import rateLimit from "~/utils/rateLimit";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
+import { normalizeEmail } from "~/utils/email";
 
 // Rate limit configuration from environment variables
 const RATE_LIMIT_WINDOW_MS =
@@ -100,7 +101,7 @@ export const mfaAuthRouter = createTRPCRouter({
 				email: z
 					.string({ error: "Email is required!" })
 					.email()
-					.transform((val) => val.trim()),
+					.transform(normalizeEmail),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -124,7 +125,7 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			const user = await ctx.prisma.user.findFirst({
 				where: {
-					email: email.toLowerCase(),
+					email,
 				},
 			});
 
@@ -192,7 +193,7 @@ export const mfaAuthRouter = createTRPCRouter({
 				const secret = generateInstanceSecret(TOTP_MFA_TOKEN_SECRET);
 				const decoded = jwt.verify(token, secret) as { id: string; email: string };
 
-				if (decoded.email !== email) {
+				if (normalizeEmail(decoded.email) !== normalizeEmail(email)) {
 					throw new TRPCError({
 						code: "UNAUTHORIZED",
 						message: "Something went wrong, please try again",

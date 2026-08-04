@@ -11,6 +11,7 @@ import {
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
+import { normalizeEmail } from "~/utils/email";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -75,7 +76,12 @@ export function mapOAuthProfileToUser(profile: Record<string, unknown>): {
 	email: string | undefined;
 	image: string | undefined;
 } {
-	const email = typeof profile.email === "string" ? (profile.email as string) : undefined;
+	// Normalized so an IdP that returns a mixed-case address doesn't create a user
+	// row that credential sign-in (which lowercases before lookup) can never find.
+	const email =
+		typeof profile.email === "string"
+			? normalizeEmail(profile.email as string)
+			: undefined;
 	const pickStr = (key: string): string | undefined =>
 		typeof profile[key] === "string" ? (profile[key] as string) : undefined;
 	return {
@@ -161,8 +167,11 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 	const email = (ctx.body as Record<string, unknown>)?.email as string;
 	if (!email) return;
 
+	// Must match how better-auth resolves the account further down the chain,
+	// otherwise the cooldown / 2FA / credential-backfill steps below run against
+	// a user that better-auth itself will fail to find.
 	const user = await prisma.user.findFirst({
-		where: { email },
+		where: { email: normalizeEmail(email) },
 	});
 
 	if (!user) return; // let better-auth handle "user not found"

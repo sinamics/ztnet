@@ -27,6 +27,7 @@ import { MailTemplateKey } from "~/utils/enums";
 import { mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
 import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
+import { normalizeEmail } from "~/utils/email";
 
 // Rate limit configuration from environment variables
 // RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
@@ -59,10 +60,7 @@ export const authRouter = createTRPCRouter({
 	register: publicProcedure
 		.input(
 			z.object({
-				email: z
-					.string()
-					.email()
-					.transform((val) => val.trim()),
+				email: z.string().email().transform(normalizeEmail),
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3, "Name must contain at least 3 character(s)").max(40),
 				expiresAt: z.string().optional(),
@@ -402,11 +400,7 @@ export const authRouter = createTRPCRouter({
 	update: protectedProcedure
 		.input(
 			z.object({
-				email: z
-					.string()
-					.email()
-					.transform((val) => val.trim())
-					.optional(),
+				email: z.string().email().transform(normalizeEmail).optional(),
 				password: z.string().optional(),
 				newPassword: passwordSchema("New Password does not meet the requirements!")
 					// passwordSchema is already optional; guard the trim so an omitted
@@ -557,7 +551,7 @@ export const authRouter = createTRPCRouter({
 				email: z
 					.string({ error: "Email is required!" })
 					.email()
-					.transform((val) => val.trim()),
+					.transform(normalizeEmail),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -578,7 +572,7 @@ export const authRouter = createTRPCRouter({
 
 			const user = await ctx.prisma.user.findFirst({
 				where: {
-					email: email.toLowerCase(),
+					email,
 				},
 			});
 

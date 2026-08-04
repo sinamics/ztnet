@@ -189,6 +189,19 @@ describe("failed-password bookkeeping", () => {
 		).resolves.toBeUndefined();
 		expect(prisma.user.update).not.toHaveBeenCalled();
 	});
+
+	it("looks the user up by the lowercased email, matching better-auth", async () => {
+		// better-auth's internalAdapter.findUserByEmail lowercases before querying.
+		// If this hook queried the raw input it would resolve a different (or no)
+		// user than the one better-auth then authenticates against.
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+
+		await runBeforeAuthHook(makeCtx({ email: " John@Example.COM ", password: "x" }));
+
+		expect(prisma.user.findFirst).toHaveBeenCalledWith({
+			where: { email: "john@example.com" },
+		});
+	});
 });
 
 describe("credential Account backfill", () => {

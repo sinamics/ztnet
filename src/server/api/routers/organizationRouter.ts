@@ -27,6 +27,7 @@ import {
 	Webhook,
 } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
+import { normalizeEmail } from "~/utils/email";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
@@ -1213,7 +1214,7 @@ export const organizationRouter = createTRPCRouter({
 				// Check if the user already exists, then add him to the organization
 				const doesUserExist = await ctx.prisma.user.findFirst({
 					where: {
-						email: tokenPayload.email,
+						email: normalizeEmail(tokenPayload.email),
 					},
 				});
 
@@ -1291,7 +1292,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string(),
+				email: z.string().transform(normalizeEmail),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1417,7 +1418,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string().email(),
+				email: z.string().email().transform(normalizeEmail),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {

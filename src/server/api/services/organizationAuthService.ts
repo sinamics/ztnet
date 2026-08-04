@@ -6,6 +6,7 @@ import {
 	decrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
+import { normalizeEmail } from "~/utils/email";
 
 const prisma = new PrismaClient();
 
@@ -58,7 +59,9 @@ export async function validateOrganizationToken(
 			});
 		}
 
-		if (inputEmail !== decryptedOrganizationToken.email) {
+		// Compare normalized, the invite may predate email normalization while the
+		// registration input is now always lowercased.
+		if (normalizeEmail(inputEmail) !== normalizeEmail(decryptedOrganizationToken.email)) {
 			throw new TRPCError({
 				code: "BAD_REQUEST",
 				message: "Invalid token data!",
