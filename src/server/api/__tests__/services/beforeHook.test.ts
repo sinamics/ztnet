@@ -325,6 +325,30 @@ describe("legacy mixed-case email normalization (#964)", () => {
 		expect(prisma.account.create).not.toHaveBeenCalled();
 	});
 
+	it("logs the failure without echoing the submitted address or the raw error", async () => {
+		// This path runs on unvalidated request-body input. A raw error dump is
+		// one library change away from carrying the submitted value into the log.
+		const error = Object.assign(
+			new Error("Unique constraint failed on Secret@Example.com"),
+			{ name: "PrismaClientKnownRequestError", code: "P2002" },
+		);
+		const spy = jest.spyOn(console, "error").mockImplementation(() => {});
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+		(findUserIdsByEmail as jest.Mock).mockResolvedValue(["u1"]);
+		(prisma.user.update as jest.Mock).mockRejectedValueOnce(error);
+
+		await runBeforeAuthHook(makeCtx({ email: "Secret@Example.com", password: "right" }));
+
+		const logged = spy.mock.calls.flat().map(String).join(" ");
+		expect(logged).not.toContain("Secret@Example.com");
+		expect(logged).not.toContain("secret@example.com");
+		expect(spy).not.toHaveBeenCalledWith(expect.anything(), error);
+		// Still triageable: error class, code and the affected row.
+		expect(logged).toContain("P2002");
+		expect(logged).toContain("u1");
+		spy.mockRestore();
+	});
+
 	it("still runs the security checks when a concurrent request wins the rewrite", async () => {
 		// The rewrite loses a race to another request that normalized a different
 		// row to the same address. better-auth will authenticate that row, so

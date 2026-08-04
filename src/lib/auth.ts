@@ -244,9 +244,18 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 				// flipping clean permanently retires the sequential scan.
 				resetLegacyEmailProbeCache();
 			} catch (e) {
-				// Typically a unique violation from a concurrent request that
-				// normalized a different row to this address first.
-				console.error("Failed to normalize legacy email casing:", e);
+				// Typically a unique violation (P2002) from a concurrent request
+				// that normalized a different row to this address first.
+				//
+				// Error class and the target id only, never the error object. This
+				// runs on unvalidated request-body input, and while Prisma's
+				// constraint errors report column names rather than values today,
+				// a raw dump is one library change away from echoing the submitted
+				// address into the log. The code plus the id identifies the case.
+				const { name, code } = (e ?? {}) as { name?: string; code?: string };
+				console.error(
+					`Failed to normalize legacy email casing for user ${legacyIds[0]} (${name ?? "unknown error"}${code ? ` ${code}` : ""})`,
+				);
 			}
 		} else if (legacyIds.length > 1) {
 			// Log the ids, not the address. This runs on unvalidated request-body
