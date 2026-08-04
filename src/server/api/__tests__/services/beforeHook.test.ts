@@ -74,7 +74,9 @@ afterAll(() => {
 
 function makeCtx(overrides: {
 	path?: string;
-	email?: string;
+	// `unknown` on purpose: this hook runs before better-auth validates the body,
+	// so it has to survive whatever a client sends.
+	email?: unknown;
 	password?: string;
 	totpCode?: string | null;
 }) {
@@ -319,6 +321,27 @@ describe("legacy mixed-case email normalization (#964)", () => {
 		).resolves.toBeUndefined();
 		expect(prisma.account.create).not.toHaveBeenCalled();
 	});
+
+	it.each([
+		["a number", 12345],
+		["an object", { toString: () => "x" }],
+		["an array", ["a@b.com"]],
+		["null", null],
+		["whitespace only", "   "],
+	])(
+		"returns quietly instead of throwing when the email is %s",
+		async (_label, value) => {
+			// This hook runs before better-auth's own zod validation, so a malformed
+			// body must not become a 500.
+			(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+			(prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+
+			await expect(
+				runBeforeAuthHook(makeCtx({ email: value, password: "x" })),
+			).resolves.toBeUndefined();
+			expect(prisma.user.update).not.toHaveBeenCalled();
+		},
+	);
 
 	it("still enforces 2FA after normalizing a legacy row", async () => {
 		// The rewrite must not become a way to skip the second factor.

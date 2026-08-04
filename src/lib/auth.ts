@@ -78,10 +78,11 @@ export function mapOAuthProfileToUser(profile: Record<string, unknown>): {
 } {
 	// Normalized so an IdP that returns a mixed-case address doesn't create a user
 	// row that credential sign-in (which lowercases before lookup) can never find.
-	const email =
-		typeof profile.email === "string"
-			? normalizeEmail(profile.email as string)
-			: undefined;
+	// A whitespace-only value normalizes to "", which is treated as no email at
+	// all rather than written to the User row.
+	const normalized =
+		typeof profile.email === "string" ? normalizeEmail(profile.email) : undefined;
+	const email = normalized || undefined;
 	const pickStr = (key: string): string | undefined =>
 		typeof profile[key] === "string" ? (profile[key] as string) : undefined;
 	return {
@@ -164,13 +165,17 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 
 	if (ctx.path !== "/sign-in/email") return;
 
-	const email = (ctx.body as Record<string, unknown>)?.email as string;
-	if (!email) return;
+	// Unvalidated request body: better-auth only runs its own zod check inside the
+	// endpoint, which is after this hook. A non-string here must not turn a
+	// malformed request into a 500.
+	const email = (ctx.body as Record<string, unknown>)?.email;
+	if (typeof email !== "string") return;
 
 	// Must match how better-auth resolves the account further down the chain,
 	// otherwise the cooldown / 2FA / credential-backfill steps below run against
 	// a user that better-auth itself will fail to find.
 	const normalizedEmail = normalizeEmail(email);
+	if (!normalizedEmail) return;
 	let user = await prisma.user.findFirst({
 		where: { email: normalizedEmail },
 	});

@@ -1194,6 +1194,13 @@ export const organizationRouter = createTRPCRouter({
 				const decryptedToken = decrypt(input.token, secret) as string;
 				const tokenPayload = JSON.parse(decryptedToken);
 
+				// The payload is JSON parsed from the token, so its shape is not
+				// guaranteed. Fail with the same generic message as every other
+				// invalid-invitation path rather than throwing from normalizeEmail.
+				if (typeof tokenPayload?.email !== "string") {
+					throw new Error("An error occurred while processing the invitation link.");
+				}
+
 				// make sure the invitation exist
 				const invitation = await ctx.prisma.invitation.findFirst({
 					where: {
@@ -1292,7 +1299,11 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string().transform(normalizeEmail),
+				// `.email()` matches inviteUserByMail below. The value is stored on
+				// the Invitation row and embedded in the token, where it is later
+				// compared against a registration email, so a non-address is never
+				// usable here.
+				email: z.string().email().transform(normalizeEmail),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
