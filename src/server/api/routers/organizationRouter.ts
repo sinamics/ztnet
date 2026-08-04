@@ -30,6 +30,7 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
+import { assertPublicHttpsUrl } from "~/utils/ssrfGuard";
 import { nameGeneratorConfig } from "../services/networkService";
 import rateLimit from "~/utils/rateLimit";
 import { RoutesEntity } from "~/types/local/network";
@@ -1685,23 +1686,48 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			// Validate the URL to be HTTPS
-			if (!input.webhookUrl.startsWith("https://")) {
-				// throw error
-				console.error("Webhook URL is not HTTPS");
-				return throwError(`Webhook URL needs to be HTTPS: ${input.webhookUrl}`);
+			// Validate the URL to be HTTPS and not point at an internal address
+			try {
+				assertPublicHttpsUrl(input.webhookUrl);
+			} catch (error) {
+				return throwError(error.message);
 			}
 
 			if (input.hookType.length === 0) {
 				// throw error
 				return throwError("Webhook needs to have at least one action type");
 			}
+
+			// update an existing webhook, but only one that belongs to this organization
+			if (input.webhookId) {
+				const existingWebhook = await ctx.prisma.webhook.findFirst({
+					where: {
+						id: input.webhookId,
+						organizationId: input.organizationId,
+					},
+					select: { id: true },
+				});
+
+				if (!existingWebhook) {
+					return throwError("Webhook not found in this organization");
+				}
+
+				return await ctx.prisma.webhook.update({
+					where: {
+						id: existingWebhook.id,
+					},
+					data: {
+						url: input.webhookUrl,
+						description: "",
+						name: input.webhookName,
+						eventTypes: input.hookType,
+					},
+				});
+			}
+
 			// create webhook
-			return await ctx.prisma.webhook.upsert({
-				where: {
-					id: input.webhookId,
-				},
-				create: {
+			return await ctx.prisma.webhook.create({
+				data: {
 					url: input.webhookUrl,
 					description: "",
 					name: input.webhookName,
@@ -1709,12 +1735,6 @@ export const organizationRouter = createTRPCRouter({
 					organization: {
 						connect: { id: input.organizationId },
 					},
-				},
-				update: {
-					url: input.webhookUrl,
-					description: "",
-					name: input.webhookName,
-					eventTypes: input.hookType,
 				},
 			});
 		}),
