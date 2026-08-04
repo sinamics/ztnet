@@ -123,9 +123,11 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			if (!email) throwError("Email is required!");
 
+			// Case insensitive so accounts still stored with uppercase characters
+			// can recover. The token below carries `user.email` as stored.
 			const user = await ctx.prisma.user.findFirst({
 				where: {
-					email,
+					email: { equals: email, mode: "insensitive" },
 				},
 			});
 

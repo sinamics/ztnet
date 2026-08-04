@@ -135,9 +135,11 @@ export const adminRouter = createTRPCRouter({
 				organizationRole,
 			} = input;
 
-			// Check if user with this email already exists
-			const existingUser = await ctx.prisma.user.findUnique({
-				where: { email },
+			// Check if user with this email already exists. Case insensitive, so a
+			// legacy row still stored with uppercase characters is not shadowed by
+			// a second account for the same address.
+			const existingUser = await ctx.prisma.user.findFirst({
+				where: { email: { equals: email, mode: "insensitive" } },
 			});
 
 			if (existingUser) {

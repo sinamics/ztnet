@@ -170,9 +170,46 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 	// Must match how better-auth resolves the account further down the chain,
 	// otherwise the cooldown / 2FA / credential-backfill steps below run against
 	// a user that better-auth itself will fail to find.
-	const user = await prisma.user.findFirst({
-		where: { email: normalizeEmail(email) },
+	const normalizedEmail = normalizeEmail(email);
+	let user = await prisma.user.findFirst({
+		where: { email: normalizedEmail },
 	});
+
+	// Accounts created before emails were normalized may be stored with
+	// uppercase characters. better-auth lowercases the address before its own
+	// lookup and Postgres equality is case sensitive, so those rows are
+	// unreachable and sign-in fails with "User not found". Find the row case
+	// insensitively and normalize it in place, so better-auth's lookup later in
+	// this same request succeeds.
+	if (!user) {
+		// `take: 2` so we can tell "exactly one match" from "ambiguous". If two
+		// accounts differ only by case there is no safe way to pick one, so we
+		// leave both alone and let better-auth produce its standard error.
+		const legacyMatches =
+			(await prisma.user.findMany({
+				where: { email: { equals: normalizedEmail, mode: "insensitive" } },
+				take: 2,
+			})) ?? [];
+
+		if (legacyMatches.length === 1) {
+			try {
+				user = await prisma.user.update({
+					where: { id: legacyMatches[0].id },
+					data: { email: normalizedEmail },
+				});
+			} catch (e) {
+				// Unique violation from a concurrent request that normalized a
+				// different row to the same address. Not fatal: fall through and
+				// let better-auth decide.
+				console.error("Failed to normalize legacy email casing:", e);
+				return;
+			}
+		} else if (legacyMatches.length > 1) {
+			console.warn(
+				`Multiple accounts exist for ${normalizedEmail} differing only by email casing. Sign-in cannot resolve them; merge or delete the duplicate User rows.`,
+			);
+		}
+	}
 
 	if (!user) return; // let better-auth handle "user not found"
 

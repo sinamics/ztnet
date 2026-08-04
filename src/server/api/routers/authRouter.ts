@@ -173,9 +173,12 @@ export const authRouter = createTRPCRouter({
 
 			// Fecth from database
 			// const user = await client.query(`SELECT * FROM users WHERE email = $1 FETCH FIRST ROW ONLY`, [email]);
+			// Case insensitive: accounts registered before emails were normalized
+			// may still be stored with uppercase characters, and an exact match
+			// would let a second account be created for the same address.
 			const registerUser = await ctx.prisma.user.findFirst({
 				where: {
-					email: email,
+					email: { equals: email, mode: "insensitive" },
 				},
 			});
 
@@ -570,9 +573,12 @@ export const authRouter = createTRPCRouter({
 			}
 			if (!email) throwError("Email is required!");
 
+			// Case insensitive so accounts still stored with uppercase characters
+			// can recover. The token below carries `user.email` as stored, which is
+			// what the reset step matches on.
 			const user = await ctx.prisma.user.findFirst({
 				where: {
-					email,
+					email: { equals: email, mode: "insensitive" },
 				},
 			});
 
