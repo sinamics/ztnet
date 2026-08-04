@@ -14,11 +14,12 @@
  *
  * Bypassing any of these is a security regression, so each path has an explicit test.
  */
-import { runBeforeAuthHook } from "~/lib/auth";
+import { runBeforeAuthHook, resetLegacyEmailProbeCache } from "~/lib/auth";
 import { prisma } from "~/server/db";
 
 jest.mock("~/server/db", () => ({
 	prisma: {
+		$queryRaw: jest.fn(),
 		user: {
 			findFirst: jest.fn(),
 			findMany: jest.fn(),
@@ -57,6 +58,10 @@ const ENV_BACKUP = Object.fromEntries(ENV_KEYS.map((k) => [k, process.env[k]]));
 
 beforeEach(() => {
 	jest.clearAllMocks();
+	resetLegacyEmailProbeCache();
+	// Default: the instance still has legacy mixed-case rows, so the recovery
+	// path is reachable. Tests that care about the clean case override this.
+	(prisma.$queryRaw as jest.Mock).mockResolvedValue([1]);
 	// biome-ignore lint/performance/noDelete: must actually unset the env key
 	delete process.env.OAUTH_EXCLUSIVE_LOGIN;
 	process.env.NEXTAUTH_SECRET = "test_secret";
@@ -342,13 +347,17 @@ describe("legacy mixed-case email normalization (#964)", () => {
 		).rejects.toThrow(/second-factor-required/);
 	});
 
-	it("re-resolves the account when a concurrent request normalized it first", async () => {
-		// No legacy row is left to rewrite, but the account now exists under the
-		// normalized address and must still go through the checks below.
+	it("re-resolves the account when a concurrent request normalized one of the matches", async () => {
+		// Ambiguous pair, so nothing is rewritten here, but a concurrent request
+		// may have normalized one of them. That row is what better-auth will
+		// authenticate, so it must still go through the checks below.
 		(prisma.user.findFirst as jest.Mock)
 			.mockResolvedValueOnce(null)
 			.mockResolvedValueOnce(normalizedUser);
-		(prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([
+			legacyUser,
+			{ ...legacyUser, id: "u2", email: "JOHN@example.com" },
+		]);
 		(compare as jest.Mock).mockResolvedValue(true);
 		(prisma.account.findFirst as jest.Mock).mockResolvedValue(null);
 
@@ -363,6 +372,21 @@ describe("legacy mixed-case email normalization (#964)", () => {
 				password: "$2a$10$existing",
 			},
 		});
+	});
+
+	it("costs no extra query when the address matches nothing (brute-force hot path)", async () => {
+		// Unknown addresses are the bulk of credential-stuffing traffic. With zero
+		// case-insensitive matches there is nothing to race against, so the
+		// re-resolve must not run.
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+
+		await expect(
+			runBeforeAuthHook(makeCtx({ email: "ghost@example.com", password: "x" })),
+		).resolves.toBeUndefined();
+
+		expect(prisma.user.findFirst).toHaveBeenCalledTimes(1);
+		expect(prisma.user.findMany).toHaveBeenCalledTimes(1);
 	});
 
 	it.each([
@@ -403,6 +427,65 @@ describe("legacy mixed-case email normalization (#964)", () => {
 				makeCtx({ email: "John@Example.com", password: "right", totpCode: null }),
 			),
 		).rejects.toThrow(/second-factor-required/);
+	});
+});
+
+/**
+ * Prisma compiles `mode: "insensitive"` to ILIKE, which cannot use the unique
+ * index on User.email — a sequential scan, measured at ~14x the indexed lookup
+ * on 20k rows. It must not run on every sign-in, only on instances that
+ * actually still hold mixed-case rows.
+ */
+describe("legacy email probe gating", () => {
+	it("skips the sequential scan entirely on a clean instance", async () => {
+		(prisma.$queryRaw as jest.Mock).mockResolvedValue([]); // no legacy rows
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+
+		await runBeforeAuthHook(makeCtx({ email: "ghost@example.com", password: "x" }));
+
+		expect(prisma.user.findMany).not.toHaveBeenCalled();
+	});
+
+	it("probes once per process, not once per sign-in", async () => {
+		(prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+
+		await runBeforeAuthHook(makeCtx({ email: "a@example.com", password: "x" }));
+		await runBeforeAuthHook(makeCtx({ email: "b@example.com", password: "x" }));
+		await runBeforeAuthHook(makeCtx({ email: "c@example.com", password: "x" }));
+
+		expect(prisma.$queryRaw).toHaveBeenCalledTimes(1);
+	});
+
+	it("re-probes after a rewrite so a drained instance stops scanning", async () => {
+		(prisma.$queryRaw as jest.Mock).mockResolvedValue([1]);
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([
+			{ id: "u1", email: "John@Example.com", hash: null, twoFactorEnabled: false },
+		]);
+		(prisma.user.update as jest.Mock).mockResolvedValue({
+			id: "u1",
+			email: "john@example.com",
+			hash: null,
+			twoFactorEnabled: false,
+		});
+
+		await runBeforeAuthHook(makeCtx({ email: "John@Example.com", password: "x" }));
+		// The rewrite invalidated the cache, so the next miss probes again.
+		await runBeforeAuthHook(makeCtx({ email: "other@example.com", password: "x" }));
+
+		expect(prisma.$queryRaw).toHaveBeenCalledTimes(2);
+	});
+
+	it("fails open and keeps the recovery path when the probe errors", async () => {
+		// Locking legacy users out because a probe failed would defeat the point.
+		(prisma.$queryRaw as jest.Mock).mockRejectedValueOnce(new Error("db down"));
+		(prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+		(prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+
+		await runBeforeAuthHook(makeCtx({ email: "ghost@example.com", password: "x" }));
+
+		expect(prisma.user.findMany).toHaveBeenCalled();
 	});
 });
 
