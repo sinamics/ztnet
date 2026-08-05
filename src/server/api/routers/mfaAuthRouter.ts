@@ -15,7 +15,6 @@ import bcrypt from "bcryptjs";
 import { MailTemplateKey } from "~/utils/enums";
 import { normalizeEmail } from "~/utils/email";
 import { emailSchema } from "./_schema";
-import { findUniqueUserIdByEmail } from "~/server/api/services/userEmailLookup";
 
 // Rate limit configuration from environment variables
 const RATE_LIMIT_WINDOW_MS =
@@ -86,10 +85,8 @@ export const mfaAuthRouter = createTRPCRouter({
 					},
 				});
 
-				// `id` is the identity; the email in the token is a binding check, so
-				// a token stops working once the account's address changes. Compared
-				// normalized rather than in SQL: a LIKE-based match would treat `%`
-				// and `_` in the value as wildcards.
+				// `id` is the identity; the email is a binding check, compared
+				// normalized so a token issued before the migration still resolves.
 				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
 					return { error: ErrorCode.InvalidToken };
 
@@ -126,12 +123,11 @@ export const mfaAuthRouter = createTRPCRouter({
 
 			if (!email) throwError("Email is required!");
 
-			// Case insensitive so accounts still stored with uppercase characters
-			// can recover. The token below carries `user.email` as stored.
-			const userId = await findUniqueUserIdByEmail(ctx.prisma, email);
-			const user = userId
-				? await ctx.prisma.user.findUnique({ where: { id: userId } })
-				: null;
+			const user = await ctx.prisma.user.findFirst({
+				where: {
+					email,
+				},
+			});
 
 			if (!user) return "Mail sent if email exist!";
 

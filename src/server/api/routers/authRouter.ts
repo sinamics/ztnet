@@ -28,10 +28,6 @@ import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
 import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
-import {
-	emailIsTaken,
-	findUniqueUserIdByEmail,
-} from "~/server/api/services/userEmailLookup";
 
 // Rate limit configuration from environment variables
 // RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
@@ -177,13 +173,14 @@ export const authRouter = createTRPCRouter({
 
 			// Fecth from database
 			// const user = await client.query(`SELECT * FROM users WHERE email = $1 FETCH FIRST ROW ONLY`, [email]);
-			// Case insensitive: accounts registered before emails were normalized
-			// may still be stored with uppercase characters, and an exact match
-			// would let a second account be created for the same address.
-			const emailTaken = await emailIsTaken(ctx.prisma, email);
+			const registerUser = await ctx.prisma.user.findFirst({
+				where: {
+					email,
+				},
+			});
 
 			// validate
-			if (emailTaken) {
+			if (registerUser) {
 				// eslint-disable-next-line no-throw-literal
 				// throw new AuthenticationError(`email "${email}" already taken`);
 				throw new TRPCError({
@@ -540,10 +537,8 @@ export const authRouter = createTRPCRouter({
 					},
 				});
 
-				// `id` is the identity; the email in the token is a binding check, so
-				// a token stops working once the account's address changes. Compared
-				// normalized rather than in SQL: a LIKE-based match would treat `%`
-				// and `_` in the value as wildcards.
+				// `id` is the identity; the email is a binding check, compared
+				// normalized so a token issued before the migration still resolves.
 				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
 					return { error: ErrorCode.InvalidToken };
 
@@ -574,13 +569,11 @@ export const authRouter = createTRPCRouter({
 			}
 			if (!email) throwError("Email is required!");
 
-			// Case insensitive so accounts still stored with uppercase characters
-			// can recover. The token below carries `user.email` as stored, which is
-			// what the reset step matches on.
-			const userId = await findUniqueUserIdByEmail(ctx.prisma, email);
-			const user = userId
-				? await ctx.prisma.user.findUnique({ where: { id: userId } })
-				: null;
+			const user = await ctx.prisma.user.findFirst({
+				where: {
+					email,
+				},
+			});
 
 			if (!user) return "Mail sent if email exist!";
 

@@ -12,7 +12,6 @@ import {
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
-import { findUserIdsByEmail } from "~/server/api/services/userEmailLookup";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -77,10 +76,9 @@ export function mapOAuthProfileToUser(profile: Record<string, unknown>): {
 	email: string | undefined;
 	image: string | undefined;
 } {
-	// Normalized so an IdP that returns a mixed-case address doesn't create a user
-	// row that credential sign-in (which lowercases before lookup) can never find.
-	// A whitespace-only value normalizes to "", which is treated as no email at
-	// all rather than written to the User row.
+	// Normalized so an IdP returning a mixed-case address can't create a row that
+	// credential sign-in (which lowercases before lookup) would never find. A
+	// whitespace-only value becomes "", treated as no email at all.
 	const normalized =
 		typeof profile.email === "string" ? normalizeEmail(profile.email) : undefined;
 	const email = normalized || undefined;
@@ -144,43 +142,6 @@ function buildGenericOAuthPlugin() {
 }
 
 /**
- * Whether any User row still holds a non-lowercase email, cached per process.
- *
- * The recovery lookup below has to be case insensitive, which means
- * `lower(email) = lower($1)` and therefore a sequential scan — the unique index
- * on User.email cannot serve it. Measured at ~14x the indexed lookup on 20k
- * rows. Running that on every unknown-email sign-in would put a full table scan
- * on a brute-force hot path.
- *
- * `false` is a permanent answer: every write path normalizes, so once the
- * table is clean no new mixed-case row can appear. Instances that never had
- * the problem pay one probe per process and nothing after that.
- *
- * Exported for unit testing.
- */
-let legacyMixedCaseEmails: boolean | null = null;
-
-export function resetLegacyEmailProbeCache(): void {
-	legacyMixedCaseEmails = null;
-}
-
-async function hasLegacyMixedCaseEmails(): Promise<boolean> {
-	if (legacyMixedCaseEmails !== null) return legacyMixedCaseEmails;
-	try {
-		const rows = await prisma.$queryRaw<
-			unknown[]
-		>`SELECT 1 FROM "User" WHERE "email" <> lower("email") LIMIT 1`;
-		legacyMixedCaseEmails = rows.length > 0;
-	} catch (e) {
-		// Fail open: keep the recovery path available rather than locking out the
-		// users this whole mechanism exists for.
-		console.error("Failed to probe for legacy email casing:", e);
-		legacyMixedCaseEmails = true;
-	}
-	return legacyMixedCaseEmails;
-}
-
-/**
  * The credential sign-in pre-flight: cooldown + failed-attempt tracking +
  * credential-Account backfill + TOTP. Extracted as a plain async function so
  * it can be unit-tested directly; the production wiring is the `beforeHook`
@@ -203,80 +164,20 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 
 	if (ctx.path !== "/sign-in/email") return;
 
-	// Unvalidated request body: better-auth only runs its own zod check inside the
-	// endpoint, which is after this hook. A non-string here must not turn a
-	// malformed request into a 500.
-	const email = (ctx.body as Record<string, unknown>)?.email;
-	if (typeof email !== "string") return;
+	// Unvalidated body: better-auth runs its own zod check inside the endpoint,
+	// which is after this hook, so a non-string must not become a 500 here.
+	const rawEmail = (ctx.body as Record<string, unknown>)?.email;
+	if (typeof rawEmail !== "string") return;
 
-	// Must match how better-auth resolves the account further down the chain,
-	// otherwise the cooldown / 2FA / credential-backfill steps below run against
-	// a user that better-auth itself will fail to find.
-	const normalizedEmail = normalizeEmail(email);
-	if (!normalizedEmail) return;
-	let user = await prisma.user.findFirst({
-		where: { email: normalizedEmail },
+	// Lowercased to match better-auth's own lookup further down the chain
+	// (`internalAdapter.findUserByEmail` lowercases). Querying the raw input would
+	// resolve a different user than the one better-auth authenticates.
+	const email = normalizeEmail(rawEmail);
+	if (!email) return;
+
+	const user = await prisma.user.findFirst({
+		where: { email },
 	});
-
-	// Accounts created before emails were normalized may be stored with
-	// uppercase characters. better-auth lowercases the address before its own
-	// lookup and Postgres equality is case sensitive, so those rows are
-	// unreachable and sign-in fails with "User not found". Find the row case
-	// insensitively and normalize it in place, so better-auth's lookup later in
-	// this same request succeeds.
-	if (!user && (await hasLegacyMixedCaseEmails())) {
-		// `limit: 2` so we can tell "exactly one match" from "ambiguous". If two
-		// accounts differ only by case there is no safe way to pick one, so we
-		// leave both alone and let better-auth produce its standard error.
-		//
-		// This is the one place that WRITES based on a case-insensitive match,
-		// using an address that has not been validated yet, which is why the
-		// lookup must not be a LIKE. See findUserIdsByEmail.
-		const legacyIds = (await findUserIdsByEmail(prisma, normalizedEmail, 2)) ?? [];
-
-		if (legacyIds.length === 1) {
-			try {
-				user = await prisma.user.update({
-					where: { id: legacyIds[0] },
-					data: { email: normalizedEmail },
-				});
-				// One fewer legacy row. Re-probe on the next miss so the table
-				// flipping clean permanently retires the sequential scan.
-				resetLegacyEmailProbeCache();
-			} catch (e) {
-				// Typically a unique violation (P2002) from a concurrent request
-				// that normalized a different row to this address first.
-				//
-				// Error class and the target id only, never the error object. This
-				// runs on unvalidated request-body input, and while Prisma's
-				// constraint errors report column names rather than values today,
-				// a raw dump is one library change away from echoing the submitted
-				// address into the log. The code plus the id identifies the case.
-				const { name, code } = (e ?? {}) as { name?: string; code?: string };
-				console.error(
-					`Failed to normalize legacy email casing for user ${legacyIds[0]} (${name ?? "unknown error"}${code ? ` ${code}` : ""})`,
-				);
-			}
-		} else if (legacyIds.length > 1) {
-			// Log the ids, not the address. This runs on unvalidated request-body
-			// input, so echoing it back into the log is both PII and a newline
-			// injection vector.
-			console.warn(
-				`Multiple accounts differ only by email casing (ids: ${legacyIds.join(", ")}). Sign-in cannot resolve them; merge or delete the duplicate User rows.`,
-			);
-		}
-
-		// Re-resolve before giving up, but only when there was actually a row to
-		// rewrite. A concurrent request may have normalized one of these rows
-		// while we were working, and better-auth would then authenticate it;
-		// giving up on a stale miss would skip the cooldown, credential backfill
-		// and 2FA checks below for that account. With zero matches there is
-		// nothing to race against, so an unknown address costs no extra query on
-		// what is a brute-force hot path.
-		if (!user && legacyIds.length > 0) {
-			user = await prisma.user.findFirst({ where: { email: normalizedEmail } });
-		}
-	}
 
 	if (!user) return; // let better-auth handle "user not found"
 

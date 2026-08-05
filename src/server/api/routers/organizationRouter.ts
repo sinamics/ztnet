@@ -28,7 +28,7 @@ import {
 } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
 import { emailSchema } from "./_schema";
-import { findUniqueUserIdByEmail } from "~/server/api/services/userEmailLookup";
+import { normalizeEmail } from "~/utils/email";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
@@ -1195,9 +1195,8 @@ export const organizationRouter = createTRPCRouter({
 				const decryptedToken = decrypt(input.token, secret) as string;
 				const tokenPayload = JSON.parse(decryptedToken);
 
-				// The payload is JSON parsed from the token, so its shape is not
-				// guaranteed. Fail with the same generic message as every other
-				// invalid-invitation path rather than throwing from normalizeEmail.
+				// JSON parsed from the token, so the shape is not guaranteed. Fail
+				// with the same generic message as every other invalid-invitation path.
 				if (typeof tokenPayload?.email !== "string") {
 					throw new Error("An error occurred while processing the invitation link.");
 				}
@@ -1220,16 +1219,11 @@ export const organizationRouter = createTRPCRouter({
 				}
 
 				// Check if the user already exists, then add him to the organization
-				// Case insensitive: an account still stored with uppercase characters
-				// must be recognized as existing, otherwise the invitee is treated as
-				// a new user and never added to the organization.
-				const existingUserId = await findUniqueUserIdByEmail(
-					ctx.prisma,
-					tokenPayload.email,
-				);
-				const doesUserExist = existingUserId
-					? await ctx.prisma.user.findUnique({ where: { id: existingUserId } })
-					: null;
+				const doesUserExist = await ctx.prisma.user.findFirst({
+					where: {
+						email: normalizeEmail(tokenPayload.email),
+					},
+				});
 
 				// if ctx user and the user has a valid invite add him.
 				if (doesUserExist) {
@@ -1460,13 +1454,12 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			// check if the user already exists. Case insensitive so an account still
-			// stored with uppercase characters is not re-invited to an organization
-			// it already belongs to.
-			const existingUserId = await findUniqueUserIdByEmail(ctx.prisma, email);
-			const doesUserExist = existingUserId
-				? await ctx.prisma.user.findUnique({ where: { id: existingUserId } })
-				: null;
+			// check if the user already exists
+			const doesUserExist = await ctx.prisma.user.findFirst({
+				where: {
+					email,
+				},
+			});
 
 			if (doesUserExist) {
 				// make sure the user does not exist in the organization
