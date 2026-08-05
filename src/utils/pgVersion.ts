@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -31,8 +31,21 @@ export function parseServerMajor(serverVersionNum: string): number | null {
  */
 export function detectServerMajor(conn: PgConnection): number | null {
 	try {
-		const output = execSync(
-			`psql -h ${conn.host} -p ${conn.port} -U ${conn.username} -d ${conn.database} -tAc "SHOW server_version_num"`,
+		const output = execFileSync(
+			"psql",
+			[
+				"-h",
+				conn.host,
+				"-p",
+				conn.port,
+				"-U",
+				conn.username,
+				"-d",
+				conn.database,
+				"-w",
+				"-tAc",
+				"SHOW server_version_num",
+			],
 			{ env: conn.env, stdio: ["pipe", "pipe", "pipe"], timeout: 15000 },
 		);
 		return parseServerMajor(output.toString());
