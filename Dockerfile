@@ -65,7 +65,16 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN apt update && apt install -y curl sudo postgresql-client && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# Install PostgreSQL client tools for every supported server major version from
+# the official apt.postgresql.org repo, so the built-in backup feature can pick
+# a pg_dump that matches the connected server (see issue #957).
+RUN apt update && apt install -y curl sudo ca-certificates && \
+    install -d /usr/share/postgresql-common/pgdg && \
+    curl --fail -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo "$VERSION_CODENAME")-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    apt update && \
+    apt install -y postgresql-client-15 postgresql-client-16 postgresql-client-17 postgresql-client-18 && \
+    apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Update npm to latest version to suppress update notices
 RUN npm install -g npm@latest
 # need to install these package for seeding the database

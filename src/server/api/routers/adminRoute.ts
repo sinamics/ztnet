@@ -17,6 +17,7 @@ import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
+import { detectServerMajor, resolvePgDumpPath } from "~/utils/pgVersion";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 import type { InvitationLinkType } from "~/types/invitation";
 import { MailTemplateKey } from "~/utils/enums";
@@ -1361,7 +1362,18 @@ export const adminRouter = createTRPCRouter({
 								PGPASSWORD: password,
 							};
 
-							const dumpCommand = `pg_dump -h ${host} -p ${port} -U ${username} -d ${database} --verbose --clean --if-exists`;
+							// Use the bundled pg_dump that matches the server's major version,
+							// since pg_dump refuses to dump servers newer than itself.
+							const serverMajor = detectServerMajor({
+								host,
+								port,
+								username,
+								database,
+								env,
+							});
+							const pgDumpBinary = resolvePgDumpPath(serverMajor);
+
+							const dumpCommand = `${pgDumpBinary} -h ${host} -p ${port} -U ${username} -d ${database} --verbose --clean --if-exists`;
 
 							execSync(`${dumpCommand} > "${dumpPath}"`, {
 								env,
