@@ -71,6 +71,24 @@ describe("mapOAuthProfileToUser", () => {
 		expect(mapOAuthProfileToUser({})).toMatchObject({ name: "OAuth User" });
 	});
 
+	it("normalizes the email so credential sign-in can resolve the row it creates", () => {
+		// better-auth lowercases before every lookup, so a mixed-case row would be
+		// unreachable — see #964.
+		expect(
+			mapOAuthProfileToUser({ name: "x", email: " Alice@Example.COM " }),
+		).toMatchObject({ email: "alice@example.com" });
+	});
+
+	it("treats a whitespace-only email as no email rather than writing an empty string", () => {
+		const mapped = mapOAuthProfileToUser({ name: "x", email: "   " });
+		expect(mapped.email).toBeUndefined();
+		expect(mapped.name).toBe("x");
+	});
+
+	it("treats a non-string email as no email", () => {
+		expect(mapOAuthProfileToUser({ name: "x", email: 42 }).email).toBeUndefined();
+	});
+
 	it("prefers `picture` (OIDC) over `avatar_url` (GitHub) over `image_url`", () => {
 		expect(
 			mapOAuthProfileToUser({

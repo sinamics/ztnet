@@ -27,6 +27,8 @@ import {
 	Webhook,
 } from "@prisma/client";
 import { checkUserOrganizationRole } from "~/utils/role";
+import { emailSchema } from "./_schema";
+import { normalizeEmail } from "~/utils/email";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
 import { throwError } from "~/server/helpers/errorHandler";
 import { sendWebhook } from "~/utils/webhook";
@@ -1193,6 +1195,12 @@ export const organizationRouter = createTRPCRouter({
 				const decryptedToken = decrypt(input.token, secret) as string;
 				const tokenPayload = JSON.parse(decryptedToken);
 
+				// JSON parsed from the token, so the shape is not guaranteed. Fail
+				// with the same generic message as every other invalid-invitation path.
+				if (typeof tokenPayload?.email !== "string") {
+					throw new Error("An error occurred while processing the invitation link.");
+				}
+
 				// make sure the invitation exist
 				const invitation = await ctx.prisma.invitation.findFirst({
 					where: {
@@ -1213,7 +1221,7 @@ export const organizationRouter = createTRPCRouter({
 				// Check if the user already exists, then add him to the organization
 				const doesUserExist = await ctx.prisma.user.findFirst({
 					where: {
-						email: tokenPayload.email,
+						email: normalizeEmail(tokenPayload.email),
 					},
 				});
 
@@ -1291,7 +1299,11 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string(),
+				// `.email()` matches inviteUserByMail below. The value is stored on
+				// the Invitation row and embedded in the token, where it is later
+				// compared against a registration email, so a non-address is never
+				// usable here.
+				email: emailSchema(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1417,7 +1429,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				role: z.nativeEnum(Role),
-				email: z.string().email(),
+				email: emailSchema(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1445,7 +1457,7 @@ export const organizationRouter = createTRPCRouter({
 			// check if the user already exists
 			const doesUserExist = await ctx.prisma.user.findFirst({
 				where: {
-					email: email,
+					email,
 				},
 			});
 

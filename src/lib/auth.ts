@@ -11,6 +11,7 @@ import {
 	TOTP_MFA_TOKEN_SECRET,
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
+import { normalizeEmail } from "~/utils/email";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -75,7 +76,12 @@ export function mapOAuthProfileToUser(profile: Record<string, unknown>): {
 	email: string | undefined;
 	image: string | undefined;
 } {
-	const email = typeof profile.email === "string" ? (profile.email as string) : undefined;
+	// Normalized so an IdP returning a mixed-case address can't create a row that
+	// credential sign-in (which lowercases before lookup) would never find. A
+	// whitespace-only value becomes "", treated as no email at all.
+	const normalized =
+		typeof profile.email === "string" ? normalizeEmail(profile.email) : undefined;
+	const email = normalized || undefined;
 	const pickStr = (key: string): string | undefined =>
 		typeof profile[key] === "string" ? (profile[key] as string) : undefined;
 	return {
@@ -158,7 +164,15 @@ export async function runBeforeAuthHook(ctx: any): Promise<void> {
 
 	if (ctx.path !== "/sign-in/email") return;
 
-	const email = (ctx.body as Record<string, unknown>)?.email as string;
+	// Unvalidated body: better-auth runs its own zod check inside the endpoint,
+	// which is after this hook, so a non-string must not become a 500 here.
+	const rawEmail = (ctx.body as Record<string, unknown>)?.email;
+	if (typeof rawEmail !== "string") return;
+
+	// Lowercased to match better-auth's own lookup further down the chain
+	// (`internalAdapter.findUserByEmail` lowercases). Querying the raw input would
+	// resolve a different user than the one better-auth authenticates.
+	const email = normalizeEmail(rawEmail);
 	if (!email) return;
 
 	const user = await prisma.user.findFirst({

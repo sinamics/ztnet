@@ -24,9 +24,10 @@ import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
 import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
-import { mediumPassword, passwordSchema } from "./_schema";
+import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
 import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
+import { normalizeEmail } from "~/utils/email";
 
 // Rate limit configuration from environment variables
 // RATE_LIMIT_WINDOW: Time window in minutes (default: 10 minutes)
@@ -59,10 +60,7 @@ export const authRouter = createTRPCRouter({
 	register: publicProcedure
 		.input(
 			z.object({
-				email: z
-					.string()
-					.email()
-					.transform((val) => val.trim()),
+				email: emailSchema(),
 				password: passwordSchema("password does not meet the requirements!"),
 				name: z.string().min(3, "Name must contain at least 3 character(s)").max(40),
 				expiresAt: z.string().optional(),
@@ -177,7 +175,7 @@ export const authRouter = createTRPCRouter({
 			// const user = await client.query(`SELECT * FROM users WHERE email = $1 FETCH FIRST ROW ONLY`, [email]);
 			const registerUser = await ctx.prisma.user.findFirst({
 				where: {
-					email: email,
+					email,
 				},
 			});
 
@@ -402,11 +400,7 @@ export const authRouter = createTRPCRouter({
 	update: protectedProcedure
 		.input(
 			z.object({
-				email: z
-					.string()
-					.email()
-					.transform((val) => val.trim())
-					.optional(),
+				email: emailSchema().optional(),
 				password: z.string().optional(),
 				newPassword: passwordSchema("New Password does not meet the requirements!")
 					// passwordSchema is already optional; guard the trim so an omitted
@@ -540,11 +534,13 @@ export const authRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						email: decoded.email,
 					},
 				});
 
-				if (!user) return { error: ErrorCode.InvalidToken };
+				// `id` is the identity; the email is a binding check, compared
+				// normalized so a token issued before the migration still resolves.
+				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
+					return { error: ErrorCode.InvalidToken };
 
 				return { email: user.email };
 			} catch (_error) {
@@ -554,10 +550,7 @@ export const authRouter = createTRPCRouter({
 	passwordResetLink: publicProcedure
 		.input(
 			z.object({
-				email: z
-					.string({ error: "Email is required!" })
-					.email()
-					.transform((val) => val.trim()),
+				email: emailSchema(undefined, "Email is required!"),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -578,7 +571,7 @@ export const authRouter = createTRPCRouter({
 
 			const user = await ctx.prisma.user.findFirst({
 				where: {
-					email: email.toLowerCase(),
+					email,
 				},
 			});
 
@@ -774,11 +767,16 @@ export const authRouter = createTRPCRouter({
 				const user = await ctx.prisma.user.findFirst({
 					where: {
 						id: decoded.id,
-						email: decoded.email,
 					},
 				});
 
-				if (!user || user.emailVerified) return { error: ErrorCode.InvalidToken };
+				// The email in the token is a binding check; see validateResetToken.
+				if (
+					!user ||
+					user.emailVerified ||
+					normalizeEmail(user.email) !== normalizeEmail(decoded.email)
+				)
+					return { error: ErrorCode.InvalidToken };
 
 				// set emailVerified to true
 				await ctx.prisma.user.update({
