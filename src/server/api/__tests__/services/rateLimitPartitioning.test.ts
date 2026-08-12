@@ -61,11 +61,13 @@ describe("rateLimit partitioning (GHSA-5p34-fh6h-7892)", () => {
 		// Drain from a single source IP until it is cut off, rather than
 		// hardcoding the limit, so the test does not depend on env config.
 		let attackerCalls = 0;
-		while ((await callReset("203.0.113.66", `junk${attackerCalls}@example.com`)) === "allowed") {
+		while (
+			(await callReset("203.0.113.66", `junk${attackerCalls}@example.com`)) === "allowed"
+		) {
 			attackerCalls++;
 			if (attackerCalls > 200) throw new Error("limiter never engaged");
 		}
-		console.log(`attacker was cut off after ${attackerCalls} accepted calls`);
+		console.info(`attacker was cut off after ${attackerCalls} accepted calls`);
 
 		// Three unrelated, never-seen clients on completely different IPs.
 		const outcomes = [];
@@ -73,7 +75,7 @@ describe("rateLimit partitioning (GHSA-5p34-fh6h-7892)", () => {
 			outcomes.push(await callReset(ip, "real.user@example.com"));
 		}
 
-		console.log("victim outcomes:", outcomes);
+		console.info("victim outcomes:", outcomes);
 		expect(outcomes).toEqual([
 			"TOO_MANY_REQUESTS",
 			"TOO_MANY_REQUESTS",
@@ -99,7 +101,7 @@ describe("rateLimit partitioning (GHSA-5p34-fh6h-7892)", () => {
 			victimCode = (e as { code?: string }).code ?? "unknown";
 		}
 
-		console.log("mfa victim outcome:", victimCode);
+		console.info("mfa victim outcome:", victimCode);
 		expect(victimCode).toBe("TOO_MANY_REQUESTS");
 	});
 });
