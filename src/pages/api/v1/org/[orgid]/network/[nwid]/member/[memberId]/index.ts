@@ -4,6 +4,7 @@ import type { MemberEntity } from "~/types/local/member";
 import { appRouter } from "~/server/api/root";
 import {
 	cacheControllerMember,
+	preferredMemberName,
 	serializeMemberRow,
 } from "~/server/api/services/memberService";
 import { prisma } from "~/server/db";
@@ -263,6 +264,7 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			const mergedMember = {
 				...serializeMemberRow(updatedDbMember),
 				...controllerMember,
+				name: preferredMemberName(updatedDbMember?.name, controllerMember?.name),
 			};
 
 			return res.status(200).json(mergedMember);

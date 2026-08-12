@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { appRouter } from "~/server/api/root";
 import {
 	cacheControllerMember,
+	preferredMemberName,
 	serializeMemberRow,
 } from "~/server/api/services/memberService";
 import { prisma } from "~/server/db";
@@ -209,6 +210,7 @@ const POST_updateNetworkMember = SecuredPrivateApiRoute(
 			const mergedMember = {
 				...serializeMemberRow(updatedDbMember),
 				...controllerMember,
+				name: preferredMemberName(updatedDbMember?.name, controllerMember?.name),
 			};
 
 			return res.status(200).json(mergedMember);

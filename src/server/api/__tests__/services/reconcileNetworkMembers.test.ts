@@ -193,6 +193,22 @@ describe("reconcileNetworkMembers — revision-delta sync", () => {
 		expect(result[0]).not.toHaveProperty("controllerConfig");
 	});
 
+	test("falls back to the controller name when the DB has none (migration)", async () => {
+		// Install migrated from a controller-stored-names setup: the DB row has no
+		// name yet, but the cached controller object does. The empty DB value must
+		// not mask it (#719).
+		ztMock.network_members.mockResolvedValue({ A: 1 });
+		dbMock.findMany
+			.mockResolvedValueOnce([dbRow("A")])
+			.mockResolvedValueOnce([
+				dbRow("A", { name: null, controllerConfig: { name: "controller-name" } }),
+			]);
+
+		const result = await reconcileNetworkMembers(ctx, nwid);
+
+		expect(result[0].name).toBe("controller-name");
+	});
+
 	test("backfills rows missing the cached controller object", async () => {
 		// Version already cached, revision unchanged — only the raw object is missing.
 		ztMock.network_members.mockResolvedValue({ A: 1 });

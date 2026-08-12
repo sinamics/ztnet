@@ -574,10 +574,12 @@ export const attachLiveStatus = async (
  */
 const buildServedMember = (db: network_members, peers: Peers): MemberEntity => {
 	const { controllerConfig, ...dbFields } = db;
+	const cached = (controllerConfig ?? {}) as Partial<MemberEntity>;
 	const activePreferredPath = findActivePreferredPeerPath(peers);
 	const member = {
-		...((controllerConfig as object) ?? {}),
+		...cached,
 		...dbFields,
+		name: preferredMemberName(dbFields.name, cached.name),
 		peers,
 		physicalAddress: activePreferredPath?.address ?? db.physicalAddress,
 	} as unknown as MemberEntity;
@@ -618,6 +620,21 @@ export const cacheControllerMember = async (
 		where: { nwid, id: detail.id },
 		data: controllerCacheFields(detail),
 	});
+};
+
+/**
+ * Name preservation (#719): a user-set DB name always wins; the controller's
+ * copy (possibly empty or stale) is only a fallback. The fallback covers
+ * installs migrating from a setup where names were stored on the controller
+ * by another UI, before the reconcile's name adoption has imported them.
+ */
+export const preferredMemberName = (
+	dbName: string | null | undefined,
+	controllerName: string | null | undefined,
+): string | null => {
+	if (dbName?.trim()) return dbName;
+	if (controllerName?.trim()) return controllerName;
+	return null;
 };
 
 /**
