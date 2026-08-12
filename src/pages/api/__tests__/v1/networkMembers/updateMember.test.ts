@@ -200,6 +200,60 @@ describe("Update Network Members", () => {
 		);
 	});
 
+	it("should write the refetched controller member into the DB cache (#983/#984)", async () => {
+		prisma.network.findUnique = jest.fn().mockResolvedValue({
+			nwid: "test_nw_id",
+			nwname: "credent_second",
+			authorId: "userId",
+			networkMembers: [{ id: "memberId" }],
+		});
+		prisma.network_members.findUnique = jest.fn().mockResolvedValue({
+			id: "memberId",
+			authorized: true,
+			controllerConfig: { objtype: "member" },
+		});
+		prisma.network_members.updateMany = jest.fn().mockResolvedValue({ count: 1 });
+
+		(ztController.member_details as jest.Mock).mockResolvedValue({
+			id: "memberId",
+			objtype: "member",
+			vMajor: 1,
+			vMinor: 14,
+			vRev: 2,
+			vProto: 12,
+		});
+
+		const req = {
+			method: "POST",
+			headers: { "x-ztnet-auth": "validApiKey" },
+			query: { id: "networkId", memberId: "memberId" },
+			body: { authorized: true },
+		} as unknown as NextApiRequest;
+		const res = createMockRes();
+
+		await apiNetworkUpdateMembersHandler(req, res);
+
+		expect(res.status).toHaveBeenCalledWith(200);
+		// Write-through: the fresh controller object is persisted to the cache so
+		// the DB-first member list reflects this update immediately.
+		expect(prisma.network_members.updateMany).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: { nwid: "networkId", id: "memberId" },
+				data: expect.objectContaining({
+					vMajor: 1,
+					vMinor: 14,
+					vRev: 2,
+					vProto: 12,
+					controllerConfig: expect.objectContaining({ objtype: "member" }),
+				}),
+			}),
+		);
+		// The internal cache column never leaks into the response.
+		const responseBody = (res.json as jest.Mock).mock.calls[0][0];
+		expect(responseBody.controllerConfig).toBeUndefined();
+		expect(responseBody.objtype).toBe("member");
+	});
+
 	it("should respond 409 when modifying a stashed (deleted) member", async () => {
 		prisma.network.findUnique = jest.fn().mockResolvedValue({
 			nwid: "test_nw_id",

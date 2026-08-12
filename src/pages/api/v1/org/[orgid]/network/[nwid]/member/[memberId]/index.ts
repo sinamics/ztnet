@@ -2,6 +2,10 @@ import { Role, network_members } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { MemberEntity } from "~/types/local/member";
 import { appRouter } from "~/server/api/root";
+import {
+	cacheControllerMember,
+	serializeMemberRow,
+} from "~/server/api/services/memberService";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
@@ -249,9 +253,15 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 				// Member may not exist on controller yet if only DB fields were sent
 			}
 
+			// Write-through: persist the refetched controller object so DB-first
+			// list reads reflect this update immediately (#983/#984).
+			if (controllerMember?.id) {
+				await cacheControllerMember(networkId, controllerMember);
+			}
+
 			// Merge the database and controller data
 			const mergedMember = {
-				...updatedDbMember,
+				...serializeMemberRow(updatedDbMember),
 				...controllerMember,
 			};
 

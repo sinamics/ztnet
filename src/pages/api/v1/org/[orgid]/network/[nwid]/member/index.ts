@@ -58,9 +58,12 @@ export const GET_orgNetworkMembers = SecuredOrganizationApiRoute(
 			}
 
 			// Members are served by the dedicated (DB-first) endpoint; request all.
+			// sync: the documented REST contract is the controller's member state,
+			// so reconcile (revision-delta, O(changed)) before serving.
 			const membersResult = await caller.network.getNetworkMembers({
 				nwid: networkId,
 				pageSize: 100000,
+				sync: true,
 			});
 
 			return res.status(200).json(membersResult.members);

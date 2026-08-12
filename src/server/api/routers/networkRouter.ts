@@ -330,6 +330,12 @@ export const networkRouter = createTRPCRouter({
 				// High cap so "list all members" callers (REST collection endpoint,
 				// routes name-resolution) can request the full set in one page.
 				pageSize: z.number().int().min(1).max(100000).default(50),
+				// sync: run the revision-delta reconcile BEFORE serving instead of in
+				// the background, so the response is controller-accurate at request
+				// time (unchanged members cost nothing). Used by the REST API, whose
+				// documented contract is the controller's member state; the UI keeps
+				// the background refresh for snappier page loads.
+				sync: z.boolean().optional().default(false),
 				search: z.string().trim().optional(),
 				sortBy: z
 					.enum([
@@ -367,13 +373,15 @@ export const networkRouter = createTRPCRouter({
 			}
 
 			// Cold cache: populate synchronously so the first load isn't empty.
-			// Otherwise serve the DB and refresh in the background.
+			// Otherwise serve the DB and refresh in the background — unless the
+			// caller asked for a synchronous reconcile (REST). A failed reconcile
+			// degrades to serving the cache rather than failing the request.
 			const cachedCount = await ctx.prisma.network_members.count({
 				where: { nwid: input.nwid },
 			});
-			if (cachedCount === 0) {
+			if (cachedCount === 0 || input.sync) {
 				await reconcileNetworkMembersOnce(ctx, input.nwid).catch((err) => {
-					console.error("Initial reconcile failed:", err);
+					console.error("Synchronous reconcile failed:", err);
 				});
 			} else {
 				triggerBackgroundReconcile(ctx, input.nwid);

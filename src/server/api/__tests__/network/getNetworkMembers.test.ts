@@ -75,6 +75,22 @@ describe("network.getNetworkMembers", () => {
 		expect(args.where).toMatchObject({ nwid: "nw1", deleted: false });
 	});
 
+	test("sync: true reconciles synchronously before serving (REST contract)", async () => {
+		const ctx = makeCtx();
+		ctx.prisma.network_members.count
+			.mockResolvedValueOnce(5) // cachedCount → warm
+			.mockResolvedValueOnce(5)
+			.mockResolvedValueOnce(3);
+		ctx.prisma.network_members.findMany.mockResolvedValue([]);
+
+		const caller = appRouter.createCaller(ctx);
+		await caller.network.getNetworkMembers({ nwid: "nw1", sync: true });
+
+		// Even on a warm cache, sync callers get a controller-accurate read.
+		expect(svc.reconcileNetworkMembersOnce).toHaveBeenCalledWith(ctx, "nw1");
+		expect(svc.triggerBackgroundReconcile).not.toHaveBeenCalled();
+	});
+
 	test("cold cache reconciles synchronously before serving", async () => {
 		const ctx = makeCtx();
 		ctx.prisma.network_members.count

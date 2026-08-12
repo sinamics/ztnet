@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { serializeMemberRow } from "~/server/api/services/memberService";
 import { prisma } from "~/server/db";
 import { SecuredPrivateApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
@@ -59,7 +60,7 @@ const GET_networkMembers = SecuredPrivateApiRoute(
 						},
 					});
 
-					return { ...dbMember, ...member };
+					return { ...serializeMemberRow(dbMember), ...member };
 				}),
 			);
 

@@ -109,6 +109,11 @@ model network_members {
   vMinor             Int?
   vRev               Int?
   vProto             Int?
+  // Raw controller member object, cached at reconcile. Serves the documented
+  // long-tail REST fields that have no dedicated column (objtype, identity,
+  // tags, capabilities, ssoExempt, lastAuthorizedTime, ..., #983). NULL =
+  // never fetched (triggers a one-time reconcile backfill).
+  controllerConfig   Json?
   notations          NetworkMemberNotation[]
 
   @@unique([id, nwid])
