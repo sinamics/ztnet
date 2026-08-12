@@ -452,6 +452,9 @@ export const reconcileNetworkMembers = async (
 		if (db && (db.deleted || db.permanentlyDeleted)) return false;
 		if (!db) return true;
 		if (options.full) return true;
+		// vMajor NULL = row predates the version cache (#984); backfill it once.
+		// (The controller stores -1 for "unknown", so this never re-triggers.)
+		if (db.vMajor == null) return true;
 		return db.revision == null || db.revision !== revisionMap[id];
 	});
 
@@ -472,6 +475,11 @@ export const reconcileNetworkMembers = async (
 				activeBridge: !!detail.activeBridge,
 				address: detail.address ?? detail.id,
 				revision: revisionMap[detail.id] ?? null,
+				// Last known client version (documented API fields, #984).
+				vMajor: detail.vMajor ?? -1,
+				vMinor: detail.vMinor ?? -1,
+				vRev: detail.vRev ?? -1,
+				vProto: detail.vProto ?? -1,
 				// Smart name preservation (#719): adopt the controller name only when the
 				// DB has none — never clobber a user-set name.
 				...(!db?.name?.trim() && detail.name?.trim() ? { name: detail.name } : {}),
@@ -513,6 +521,7 @@ export const reconcileNetworkMembers = async (
 		} as unknown as MemberEntity;
 
 		member.conStatus = determineConnectionStatus(member);
+		applyMemberVersion(member, peers);
 		const online = Object.keys(peers).length > 0 && member.conStatus !== 0;
 
 		// diff-skip: offline-and-unchanged members are never rewritten.
@@ -521,6 +530,16 @@ export const reconcileNetworkMembers = async (
 			if (online) {
 				data.lastSeen = new Date();
 				if (member.physicalAddress) data.physicalAddress = member.physicalAddress;
+				// The controller does not bump a member's revision when its client
+				// version changes, so the revision-gated detail fetch above can't keep
+				// the cached version fresh. Persist the live peer version while online;
+				// offline members keep the last known value (#984). The peer object
+				// carries no protocol version, so vProto stays detail-sourced.
+				if (typeof peers.versionMajor === "number" && peers.versionMajor !== -1) {
+					data.vMajor = peers.versionMajor;
+					data.vMinor = peers.versionMinor;
+					data.vRev = peers.versionRev;
+				}
 			}
 			statusWrites.push(
 				prisma.network_members.updateMany({ where: { nwid, id: db.id }, data }),
@@ -560,8 +579,27 @@ export const attachLiveStatus = async (
 			physicalAddress: activePreferredPath?.address ?? db.physicalAddress,
 		} as unknown as MemberEntity;
 		member.conStatus = determineConnectionStatus(member);
+		applyMemberVersion(member, peers);
 		return member;
 	});
+};
+
+/**
+ * Version semantics for a served member (#984): a DB NULL (row not yet
+ * backfilled) surfaces as the controller's -1 "unknown", and while the member
+ * is online the live peer version wins over the cached one. In-memory only —
+ * persisting the version is the reconcile's job.
+ */
+const applyMemberVersion = (member: MemberEntity, peers: Peers): void => {
+	member.vMajor ??= -1;
+	member.vMinor ??= -1;
+	member.vRev ??= -1;
+	member.vProto ??= -1;
+	if (typeof peers.versionMajor === "number" && peers.versionMajor !== -1) {
+		member.vMajor = peers.versionMajor;
+		member.vMinor = peers.versionMinor;
+		member.vRev = peers.versionRev;
+	}
 };
 
 // In-flight guard: keyed by network id, dedupes concurrent reconciles (the 10s

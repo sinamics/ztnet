@@ -101,6 +101,14 @@ model network_members {
   noAutoAssignIps    Boolean                 @default(false)
   activeBridge       Boolean                 @default(false)
   revision           Int?
+  // Last known client version, cached so the REST member list keeps returning
+  // vMajor/vMinor/vProto/vRev (#984) even while the node is offline. Refreshed
+  // from live peer data when online. NULL = never fetched (triggers a one-time
+  // reconcile backfill); -1 = controller reports unknown.
+  vMajor             Int?
+  vMinor             Int?
+  vRev               Int?
+  vProto             Int?
   notations          NetworkMemberNotation[]
 
   @@unique([id, nwid])
