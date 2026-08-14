@@ -95,11 +95,11 @@ View the following images for a visual overview of the ZTNet application:
 </summary>
 </details>
 
-<a href="https://star-history.com/#sinamics/ztnet&Date">
+<a href="https://star-history.dera.page/#sinamics/ztnet&Date">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sinamics/ztnet&type=Date" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=sinamics/ztnet&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=sinamics/ztnet&type=Date" />
+   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=sinamics/ztnet&type=Date" />
  </picture>
 </a>
 
