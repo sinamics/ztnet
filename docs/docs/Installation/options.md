@@ -129,8 +129,8 @@ For more information on NEXTAUTH environment variables, see [NEXTAUTH Environmen
   - Default: Value of `NEXTAUTH_URL`.
 
 - `NEXTAUTH_SECRET`
-  - Description: Secret key for NEXTAUTH, used for security.
-  - Default: `"random_secret"` (change to a random string for enhanced security).
+  - Description: Signs sessions and tokens and encrypts stored secrets such as two factor keys, API tokens and the SMTP password. It must be a unique random value for each install, for example the output of `openssl rand -hex 32`. Keep it stable. Changing it on an existing install signs every user out and invalidates two factor authentication and API tokens.
+  - Default: none, required.
 
 - `NEXTAUTH_SESSION_MAX_AGE`
   - Description: Duration (in seconds) before the user is logged out due to inactivity.

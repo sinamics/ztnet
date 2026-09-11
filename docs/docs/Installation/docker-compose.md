@@ -46,6 +46,15 @@ Change the **NEXTAUTH_URL** environment variable to the canonical URL or IP of y
   `Invalid origin` error.
 :::
 
+:::warning IMPORTANT
+
+**NEXTAUTH_SECRET** must be a unique random value for your install. It signs logins and tokens, so a value copied from an example would let others forge them.
+Create it once in a `.env` file next to `docker-compose.yml`. Docker Compose reads that file automatically and refuses to start without it.
+```bash
+echo "NEXTAUTH_SECRET=$(openssl rand -hex 32)" >> .env
+```
+:::
+
 
 ```yml title="Create a docker-compose.yml file and populate it as follows:"
 services:
@@ -99,7 +108,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000" # !! Important !! Set the NEXTAUTH_URL environment variable to the canonical URL or IP of your site with port 3000
-      NEXTAUTH_SECRET: "random_secret"
+      # !! Important !! NEXTAUTH_SECRET must be a unique random value. Create it once in a .env file next to this file:
+      #   echo "NEXTAUTH_SECRET=$(openssl rand -hex 32)" >> .env
+      # Updating an existing install? Keep the secret you already use, see https://ztnet.network/installation/docker-compose
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:?Set NEXTAUTH_SECRET in a .env file next to docker-compose.yml, see https://ztnet.network/installation/docker-compose}"
       NEXTAUTH_URL_INTERNAL: "http://ztnet:3000" # Internal NextAuth URL for 'ztnet' container on port 3000. Do not change unless modifying container name.
     networks:
       - app-network
@@ -160,6 +172,8 @@ To change the `NEXTAUTH_URL` in docker-compose.yml, you can use this command tha
 sed -i "s|http://localhost:3000|http://$(hostname -I | cut -d' ' -f1):3000|" docker-compose.yml
 ```
 
+Before the first start, create the `.env` file with your `NEXTAUTH_SECRET` as described in [Setup](#setup).
+
 To launch ZTNET, execute the following command in your `docker-compose.yml` directory:
 ```bash
 docker compose up -d
@@ -183,6 +197,9 @@ See Note above for more information about [Installation Setup](/installation/doc
 docker compose pull
 docker compose up -d
 ```
+
+Keep your existing `NEXTAUTH_SECRET` when updating. Changing it signs every user out and invalidates two factor authentication and API tokens.
+If you replace your `docker-compose.yml` with the current version and your install used the old example value, add `NEXTAUTH_SECRET=random_secret` to `.env` so it keeps working. Moving to a unique secret is still recommended once you can accept users signing in again and setting up two factor authentication and API tokens again.
 
 ## Application Logs
 To view the ZTNET server logs:
