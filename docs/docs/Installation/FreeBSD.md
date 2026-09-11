@@ -82,8 +82,9 @@ setenv PRISMA_QUERY_ENGINE_LIBRARY /root/prisma-engines/target/release/libquery_
     DATABASE_URL=postgresql://postgres:postgres@localhost:5432/ztnet?schema=public
     ZT_ADDR=http://127.0.0.1:9993
     NEXTAUTH_URL="http://ZTNET_Controller_Web_UI_IP_ADDRESS:3000"
-    NEXTAUTH_SECRET="random_secret"
+    NEXTAUTH_SECRET=""
     ```
+    `NEXTAUTH_SECRET` is required and must be a unique random value. Generate one with `openssl rand -hex 32` and paste it between the quotes.
 
 6. Set environment variables and populate the database:
     ```bash

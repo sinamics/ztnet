@@ -142,6 +142,31 @@ function buildGenericOAuthPlugin() {
 }
 
 /**
+ * Better Auth mounts its whole built in route set under /api/auth, including
+ * routes ztnet never calls: sign-up, verify-email, update-user, change-email,
+ * delete-user and more. Some of them skip ztnet's own registration and account
+ * rules, and some trust a token signed only with NEXTAUTH_SECRET, so an install
+ * running a known secret could be signed into as any user. Only the routes the
+ * ztnet UI and OAuth flow use are reachable over HTTP. Server side `auth.api`
+ * calls carry no request and are not affected.
+ *
+ * Exported for unit testing.
+ */
+export const ALLOWED_AUTH_HTTP_PATHS: ReadonlySet<string> = new Set([
+	"/sign-in/email",
+	"/sign-in/social",
+	"/callback/:id",
+	"/get-session",
+	"/sign-out",
+	// genericOAuth plugin routes, kept for IdP registrations that still point at them.
+	"/sign-in/oauth2",
+	"/oauth2/callback/:providerId",
+	// Error page and health check Better Auth may redirect to or expose.
+	"/error",
+	"/ok",
+]);
+
+/**
  * The credential sign-in pre-flight: cooldown + failed-attempt tracking +
  * credential-Account backfill + TOTP. Extracted as a plain async function so
  * it can be unit-tested directly; the production wiring is the `beforeHook`
@@ -151,6 +176,11 @@ function buildGenericOAuthPlugin() {
  */
 // biome-ignore lint/suspicious/noExplicitAny: better-auth's MiddlewareContext is internal
 export async function runBeforeAuthHook(ctx: any): Promise<void> {
+	// Refuse every Better Auth HTTP route ztnet does not use. See ALLOWED_AUTH_HTTP_PATHS.
+	if (ctx.request && !ALLOWED_AUTH_HTTP_PATHS.has(ctx.path)) {
+		throw new APIError("NOT_FOUND");
+	}
+
 	// Defense-in-depth: if OAUTH_EXCLUSIVE_LOGIN is on, refuse credential endpoints
 	// even if the UI fails to hide them.
 	if (
@@ -510,25 +540,40 @@ export const auth = betterAuth({
 	},
 
 	user: {
+		// None of these are user editable. Without `input: false` Better Auth accepts
+		// them from request bodies on its sign-up and update-user routes, which let
+		// any signed in user set their own role. ztnet writes them through Prisma
+		// and the databaseHooks below, which are not affected by this flag.
 		additionalFields: {
-			lastLogin: { type: "date", required: false },
-			lastseen: { type: "date", required: false },
-			online: { type: "boolean", required: false, defaultValue: false },
-			role: { type: "string", defaultValue: "USER", required: false },
-			hash: { type: "string", required: false },
-			tempPassword: { type: "string", required: false },
-			firstTime: { type: "boolean", required: false, defaultValue: true },
-			twoFactorEnabled: { type: "boolean", required: false, defaultValue: false },
-			twoFactorSecret: { type: "string", required: false },
-			failedLoginAttempts: { type: "number", required: false, defaultValue: 0 },
+			lastLogin: { type: "date", required: false, input: false },
+			lastseen: { type: "date", required: false, input: false },
+			online: { type: "boolean", required: false, defaultValue: false, input: false },
+			role: { type: "string", defaultValue: "USER", required: false, input: false },
+			hash: { type: "string", required: false, input: false },
+			tempPassword: { type: "string", required: false, input: false },
+			firstTime: { type: "boolean", required: false, defaultValue: true, input: false },
+			twoFactorEnabled: {
+				type: "boolean",
+				required: false,
+				defaultValue: false,
+				input: false,
+			},
+			twoFactorSecret: { type: "string", required: false, input: false },
+			failedLoginAttempts: {
+				type: "number",
+				required: false,
+				defaultValue: 0,
+				input: false,
+			},
 			requestChangePassword: {
 				type: "boolean",
 				required: false,
 				defaultValue: false,
+				input: false,
 			},
-			userGroupId: { type: "number", required: false },
-			expiresAt: { type: "date", required: false },
-			isActive: { type: "boolean", required: false, defaultValue: true },
+			userGroupId: { type: "number", required: false, input: false },
+			expiresAt: { type: "date", required: false, input: false },
+			isActive: { type: "boolean", required: false, defaultValue: true, input: false },
 		},
 	},
 

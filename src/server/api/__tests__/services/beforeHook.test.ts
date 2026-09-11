@@ -14,7 +14,7 @@
  *
  * Bypassing any of these is a security regression, so each path has an explicit test.
  */
-import { runBeforeAuthHook } from "~/lib/auth";
+import { ALLOWED_AUTH_HTTP_PATHS, runBeforeAuthHook } from "~/lib/auth";
 import { prisma } from "~/server/db";
 
 jest.mock("~/server/db", () => ({
@@ -383,5 +383,43 @@ describe("TOTP 2FA enforcement", () => {
 				}),
 			),
 		).rejects.toThrow(/Internal server error/);
+	});
+});
+
+describe("Better Auth HTTP route allowlist", () => {
+	// Better Auth only sets `request` for calls that arrived over HTTP.
+	const httpCtx = (path: string) => ({
+		...makeCtx({ path }),
+		request: new Request(`http://localhost:3000/api/auth${path}`),
+	});
+
+	it.each([
+		"/verify-email",
+		"/update-user",
+		"/sign-up/email",
+		"/change-email",
+		"/change-password",
+		"/delete-user",
+		"/request-password-reset",
+		"/reset-password",
+		"/send-verification-email",
+		"/link-social",
+		"/list-sessions",
+		"/revoke-sessions",
+	])("refuses %s over HTTP", async (path) => {
+		await expect(runBeforeAuthHook(httpCtx(path))).rejects.toMatchObject({
+			status: "NOT_FOUND",
+		});
+		expect(prisma.user.findFirst).not.toHaveBeenCalled();
+	});
+
+	it.each([...ALLOWED_AUTH_HTTP_PATHS])("lets %s through over HTTP", async (path) => {
+		await expect(runBeforeAuthHook(httpCtx(path))).resolves.toBeUndefined();
+	});
+
+	it("does not restrict server side auth.api calls, which carry no request", async () => {
+		await expect(
+			runBeforeAuthHook(makeCtx({ path: "/update-user" })),
+		).resolves.toBeUndefined();
 	});
 });

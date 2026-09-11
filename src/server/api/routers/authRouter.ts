@@ -13,7 +13,6 @@ import { sendMailWithTemplate } from "~/utils/mail";
 import * as ztController from "~/utils/ztApi";
 import {
 	API_TOKEN_SECRET,
-	PASSWORD_RESET_SECRET,
 	VERIFY_EMAIL_SECRET,
 	encrypt,
 	generateInstanceSecret,
@@ -26,6 +25,12 @@ import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
 import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
+import {
+	consumePasswordResetToken,
+	createPasswordResetToken,
+	resolvePasswordResetToken,
+	revokePasswordResetTokens,
+} from "~/server/api/services/passwordResetService";
 import { DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
 
@@ -514,9 +519,6 @@ export const authRouter = createTRPCRouter({
 			const { token } = input;
 			if (!token) return { error: ErrorCode.InvalidToken };
 			try {
-				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
-				const decoded = jwt.verify(token, secret) as { id: string; email: string };
-
 				// add rate limit
 				try {
 					await limiter.check(
@@ -531,18 +533,11 @@ export const authRouter = createTRPCRouter({
 					});
 				}
 
-				const user = await ctx.prisma.user.findFirst({
-					where: {
-						id: decoded.id,
-					},
-				});
+				// Read only: the token is consumed by changePasswordFromJwt.
+				const resolved = await resolvePasswordResetToken(ctx.prisma, token);
+				if (!resolved) return { error: ErrorCode.InvalidToken };
 
-				// `id` is the identity; the email is a binding check, compared
-				// normalized so a token issued before the migration still resolves.
-				if (!user || normalizeEmail(user.email) !== normalizeEmail(decoded.email))
-					return { error: ErrorCode.InvalidToken };
-
-				return { email: user.email };
+				return { email: resolved.user.email };
 			} catch (_error) {
 				return { error: ErrorCode.InvalidToken };
 			}
@@ -577,19 +572,10 @@ export const authRouter = createTRPCRouter({
 
 			if (!user) return "Mail sent if email exist!";
 
-			const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
-			const validationToken = jwt.sign(
-				{
-					id: user.id,
-					email: user.email,
-				},
-				secret,
-				{
-					expiresIn: "15m",
-				},
-			);
+			// Database backed and single use, see passwordResetService.
+			const resetToken = await createPasswordResetToken(ctx.prisma, user);
 
-			const resetLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${validationToken}`;
+			const resetLink = `${process.env.NEXTAUTH_URL}/auth/forgotPassword/reset?token=${resetToken}`;
 			// Send email
 			try {
 				await sendMailWithTemplate(MailTemplateKey.ForgotPassword, {
@@ -612,6 +598,7 @@ export const authRouter = createTRPCRouter({
 			return { message: "If the email exists, a reset link has been sent." };
 		}),
 
+	// The name is kept for the frontend; the token is no longer a JWT.
 	changePasswordFromJwt: publicProcedure
 		.input(
 			z.object({
@@ -640,29 +627,16 @@ export const authRouter = createTRPCRouter({
 			if (password !== newPassword) throwError("Passwords does not match!");
 
 			try {
-				interface IJwt {
-					id: string;
-					token: string;
+				const user = await consumePasswordResetToken(ctx.prisma, token);
+				if (!user) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid reset token" });
 				}
-				const { id } = jwt.decode(token) as IJwt;
-
-				if (!id) throwError("This link is not valid!");
-
-				const user = await ctx.prisma.user.findFirst({
-					where: {
-						id,
-					},
-				});
-
-				if (!user) throwError("Something went wrong!");
-				const secret = generateInstanceSecret(PASSWORD_RESET_SECRET);
-				jwt.verify(token, secret);
 
 				const newHash = bcrypt.hashSync(password, 10);
 
 				const updated = await ctx.prisma.user.update({
 					where: {
-						id,
+						id: user.id,
 					},
 					data: {
 						hash: newHash,
@@ -673,7 +647,10 @@ export const authRouter = createTRPCRouter({
 				});
 
 				// Mirror into the better-auth credential Account so /sign-in/email succeeds.
-				await upsertCredentialAccount(id, newHash);
+				await upsertCredentialAccount(user.id, newHash);
+
+				// Any other link still sitting in the user's inbox must stop working too.
+				await revokePasswordResetTokens(ctx.prisma, user.id);
 
 				return updated;
 			} catch (error) {

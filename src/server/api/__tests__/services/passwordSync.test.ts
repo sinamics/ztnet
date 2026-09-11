@@ -27,7 +27,6 @@ jest.mock("~/utils/encryption", () => ({
 	encrypt: jest.fn(() => "encrypted"),
 	generateInstanceSecret: jest.fn(() => "secret"),
 	API_TOKEN_SECRET: "API_TOKEN_SECRET",
-	PASSWORD_RESET_SECRET: "PASSWORD_RESET_SECRET",
 	VERIFY_EMAIL_SECRET: "VERIFY_EMAIL_SECRET",
 	TOTP_MFA_TOKEN_SECRET: "TOTP_MFA_TOKEN_SECRET",
 }));
@@ -117,10 +116,6 @@ describe("auth router password mutations sync Account.password", () => {
 	});
 
 	test("auth.changePasswordFromJwt writes the new hash to Account.password", async () => {
-		// Build a valid token signed by the same secret the router will verify with.
-		const jwt = await import("jsonwebtoken");
-		const token = jwt.sign({ id: "user_1" }, "secret");
-
 		const oldHash = bcrypt.hashSync("OldPass123!", 10);
 		const prisma = makePrismaMock({
 			id: "user_1",
@@ -128,6 +123,15 @@ describe("auth router password mutations sync Account.password", () => {
 			name: "Test",
 			hash: oldHash,
 		});
+		// A live reset row for user_1; see passwordReset.test.ts for the token lifecycle.
+		prisma.verification.findFirst = jest.fn().mockResolvedValue({
+			id: "v1",
+			identifier: "ztnet-reset-password:hash",
+			value: "user_1:test@example.com",
+			expiresAt: new Date(Date.now() + 60_000),
+		}) as never;
+		prisma.verification.deleteMany = jest.fn().mockResolvedValue({ count: 1 }) as never;
+		const token = "reset-token";
 
 		const caller = appRouter.createCaller({
 			session: null,

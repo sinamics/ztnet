@@ -49,7 +49,10 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ztnet
       NEXTAUTH_URL: "http://localhost:3000" # !! Important !! Set the NEXTAUTH_URL environment variable to the canonical URL or IP of your site with port 3000
-      NEXTAUTH_SECRET: "random_secret"
+      # !! Important !! NEXTAUTH_SECRET must be a unique random value. Create it once in a .env file next to this file:
+      #   echo "NEXTAUTH_SECRET=$(openssl rand -hex 32)" >> .env
+      # Updating an existing install? Keep the secret you already use, see https://ztnet.network/installation/docker-compose
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:?Set NEXTAUTH_SECRET in a .env file next to docker-compose.yml, see https://ztnet.network/installation/docker-compose}"
       NEXTAUTH_URL_INTERNAL: "http://ztnet:3000" # Internal NextAuth URL for 'ztnet' container on port 3000. Do not change unless modifying container name.
     networks:
       - app-network
