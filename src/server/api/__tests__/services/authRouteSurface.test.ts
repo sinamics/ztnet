@@ -74,6 +74,18 @@ describe("Better Auth route surface", () => {
 		).toBe(404);
 	});
 
+	it("lets real OAuth callback URLs through", async () => {
+		// Better Auth hands hooks the route template (/callback/:id), not the
+		// concrete URL. If that ever changes, the documented callback would start
+		// returning 404 and OAuth login would break, so exercise the real URLs.
+		for (const path of ["/callback/oauth", "/oauth2/callback/oauth"]) {
+			const res = await call(`${path}?code=test-code&state=test-state`);
+			expect({ path, status: res.status }).not.toEqual({ path, status: 404 });
+		}
+		// A concrete URL of a dynamic route that is not allowlisted stays blocked.
+		expect((await call("/reset-password/some-token")).status).toBe(404);
+	});
+
 	it("still serves allowlisted routes", async () => {
 		expect((await call("/ok")).status).toBe(200);
 	});
