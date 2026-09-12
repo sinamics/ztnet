@@ -12,6 +12,7 @@ import {
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
+import { isRunningInDocker } from "~/utils/docker";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -504,6 +505,26 @@ export async function onUserCreateBefore(
 	};
 }
 
+// Keep Better Auth-created users consistent with users created through
+// ztnet's regular registration flow, which creates UserOptions eagerly.
+export async function onUserCreateAfter(
+	user: Record<string, unknown>,
+): Promise<void> {
+	if (typeof user.id !== "string" || !user.id) {
+		throw new Error("Cannot create UserOptions: user ID is missing");
+	}
+
+	const localControllerUrl = isRunningInDocker()
+		? "http://zerotier:9993"
+		: "http://127.0.0.1:9993";
+
+	await prisma.userOptions.upsert({
+		where: { userId: user.id },
+		update: {},
+		create: { userId: user.id, localControllerUrl },
+	});
+}
+
 export const auth = betterAuth({
 	database: prismaAdapter(prisma, {
 		provider: "postgresql",
@@ -596,6 +617,7 @@ export const auth = betterAuth({
 		user: {
 			create: {
 				before: onUserCreateBefore,
+				after: onUserCreateAfter,
 			},
 		},
 		session: {

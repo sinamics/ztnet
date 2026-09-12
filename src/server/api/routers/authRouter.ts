@@ -382,9 +382,24 @@ export const authRouter = createTRPCRouter({
 			UserDevice?: UserDevice[];
 			currentDeviceId?: string;
 		};
-		user.options.localControllerUrlPlaceholder = isRunningInDocker()
+		const localControllerUrl = isRunningInDocker()
 			? "http://zerotier:9993"
 			: "http://127.0.0.1:9993";
+
+		// OAuth users created before UserOptions was added to the Better Auth
+		// creation hook may not have an options row. Backfill it on first access.
+		if (!user.options) {
+			user.options = await ctx.prisma.userOptions.upsert({
+				where: { userId: user.id },
+				update: {},
+				create: {
+					userId: user.id,
+					localControllerUrl,
+				},
+			});
+		}
+
+		user.options.localControllerUrlPlaceholder = localControllerUrl;
 
 		// Set secret environment status
 		user.options.urlFromEnv = !!process.env.ZT_ADDR;
