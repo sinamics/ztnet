@@ -85,7 +85,28 @@ describe("onUserCreateBefore", () => {
 	});
 
 	describe("OAuth flow gating", () => {
-		const oauthCtx = { path: "/oauth2/callback/oauth" };
+		// Better Auth hands hooks the route template of the endpoint that created
+		// the user. `signIn.social` lands on core's `/callback/:id`.
+		const oauthCtx = { path: "/callback/:id" };
+
+		it.each(["/callback/:id", "/callback/oauth", "/sign-in/social"])(
+			"treats %s as an OAuth flow",
+			async (path) => {
+				process.env.OAUTH_ALLOW_NEW_USERS = "false";
+				await expect(onUserCreateBefore(baseUser, { path })).rejects.toThrow(
+					/registration_disabled/,
+				);
+			},
+		);
+
+		it("does not apply OAuth gating to credential sign-up", async () => {
+			process.env.OAUTH_ALLOW_NEW_USERS = "false";
+			(prisma.user.count as jest.Mock).mockResolvedValue(3);
+			(prisma.userGroup.findFirst as jest.Mock).mockResolvedValue(null);
+			await expect(
+				onUserCreateBefore(baseUser, { path: "/sign-up/email" }),
+			).resolves.toMatchObject({ data: expect.any(Object) });
+		});
 
 		it("blocks new OAuth users when OAUTH_ALLOW_NEW_USERS=false", async () => {
 			process.env.OAUTH_ALLOW_NEW_USERS = "false";
@@ -205,14 +226,14 @@ describe("onSessionCreated", () => {
 
 	it("rejects OAuth sign-in when isActive=false (the regression #4)", async () => {
 		// Pre-fix, the after-hook only fired on `/sign-in/*` paths so the OAuth
-		// callback (`/oauth2/callback/:providerId`) skipped this check entirely
-		// and disabled users could log in with OAuth. This test pins the fix down.
+		// callback (`/callback/:id`) skipped this check entirely and disabled
+		// users could log in with OAuth. This test pins the fix down.
 		(prisma.user.findUnique as jest.Mock).mockResolvedValue({
 			...ACTIVE_USER,
 			isActive: false,
 		});
 		const ctx = makeCtx();
-		ctx.path = "/oauth2/callback/oauth";
+		ctx.path = "/callback/:id";
 		await expect(onSessionCreated("u1", ctx)).rejects.toThrow(/account-expired/);
 	});
 

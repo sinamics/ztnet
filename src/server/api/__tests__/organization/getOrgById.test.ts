@@ -14,7 +14,6 @@ jest.mock("~/utils/ztApi", () => ({
 
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
-	update: { name: "test" },
 	user: {
 		id: "userid",
 		name: "Bernt Christian",
@@ -48,6 +47,7 @@ const createCaller = (prismaMock: PrismaClient) =>
 		wss: null,
 		prisma: prismaMock,
 		res: null,
+		req: null,
 	});
 
 describe("organization getOrgById member counts", () => {
