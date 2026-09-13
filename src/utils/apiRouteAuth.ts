@@ -18,7 +18,9 @@ const ApiRequestSchema = z.object({
 		memberId: z.string().optional(),
 		id: z.string().optional(),
 	}),
-	body: z.unknown(),
+	// GET requests and the API tests carry no body. zod >= 4.6 treats a bare
+	// z.unknown() key as required, so mark it optional explicitly.
+	body: z.unknown().optional(),
 });
 
 /**

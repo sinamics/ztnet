@@ -116,7 +116,7 @@ describe("genericOAuth plugin: required config shape", () => {
 		expect(getGenericOAuthConfig()?.providerId).toBe("oauth");
 	});
 
-	it("enables PKCE (next-auth had `checks: ['state','pkce']`; better-auth's default is OFF)", () => {
+	it("enables PKCE explicitly (next-auth had `checks: ['state','pkce']`; better-auth's default was OFF before 1.7)", () => {
 		expect(getGenericOAuthConfig()?.pkce).toBe(true);
 	});
 
