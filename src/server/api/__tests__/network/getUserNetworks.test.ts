@@ -7,7 +7,6 @@ import { MemberCounts } from "~/types/local/member";
 
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
-	update: { name: "test" },
 	user: {
 		id: "userid",
 		name: "Bernt Christian",
@@ -74,6 +73,7 @@ test("getUserNetworks", async () => {
 		wss: null,
 		prisma: prismaMock,
 		res: null,
+		req: null,
 	});
 
 	const result = await caller.network.getUserNetworks({

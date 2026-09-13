@@ -7,7 +7,6 @@ import { TRPCError } from "@trpc/server";
 const prisma = new PrismaClient();
 const mockSession: PartialDeep<Session> = {
 	expires: new Date().toISOString(),
-	update: { name: "test" },
 	user: {
 		id: "userid",
 		name: "Bernt Christian",
@@ -28,6 +27,7 @@ it("should throw an error if the user is not the author of the network", async (
 		wss: null,
 		prisma: prisma,
 		res: null,
+		req: null,
 	});
 	try {
 		await caller.network.getNetworkById({ nwid: "test_nw_id" });

@@ -50,6 +50,7 @@ test("updateDatabaseOnly test", async () => {
 		prisma: prisma,
 		wss: null,
 		res: null,
+		req: null,
 	});
 
 	// Mock network access check - return network owned by the test user
