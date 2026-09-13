@@ -1,4 +1,8 @@
-import nodemailer, { type TransportOptions } from "nodemailer";
+import nodemailer, {
+	type SendMailOptions,
+	type TransportOptions,
+	type Transporter,
+} from "nodemailer";
 import { throwError } from "~/server/helpers/errorHandler";
 import { SMTP_SECRET, decrypt, generateInstanceSecret } from "./encryption";
 import { prisma } from "~/server/db";
@@ -400,8 +404,8 @@ export function getReadableSmtpError(error: Error): string {
 }
 
 async function sendEmail(
-	transporter: nodemailer.Transporter<unknown>,
-	mailOptions: nodemailer.SendMailOptions,
+	transporter: Transporter<unknown>,
+	mailOptions: SendMailOptions,
 ) {
 	try {
 		const info = (await transporter.sendMail(mailOptions)) as SendMailResult;

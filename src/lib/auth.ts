@@ -22,12 +22,11 @@ const COOLDOWN_PERIOD = 1 * 60 * 1000; // 1 minute
 
 // We expose the generic OAuth provider as id "oauth" — the same id ztnet has
 // always shipped, and the one referenced in `signIn.social({ provider: "oauth" })`.
-// Sticking with `signIn.social` (rather than `signIn.oauth2`) routes through
-// better-auth's `/callback/:id` endpoint, which lives at the documented
-// `${NEXTAUTH_URL}/api/auth/callback/oauth` path — so existing IdP registrations
-// keep working. The genericOAuth plugin still drives the flow: at init time it
-// injects this config into `socialProviders`, so PKCE / mapProfileToUser /
-// discoveryUrl all apply through the `signIn.social` path too.
+// Since better-auth 1.7 the genericOAuth plugin registers its providers as
+// first-class social providers and mounts no routes of its own: the flow runs
+// through core's `/sign-in/social` and `/callback/:id`, so the callback lives at
+// the documented `${NEXTAUTH_URL}/api/auth/callback/oauth` path and existing IdP
+// registrations keep working. PKCE / mapProfileToUser / discoveryUrl all apply.
 export const OAUTH_PROVIDER_ID = "oauth";
 
 /**
@@ -36,14 +35,11 @@ export const OAUTH_PROVIDER_ID = "oauth";
  * IMPORTANT — must match the URL documented at
  * https://ztnet.network/authentication/oauth and registered with the IdP.
  *
- * Without this, the genericOAuth plugin's injected `createAuthorizationURL` falls
- * back to `${ctx.baseURL}/oauth2/callback/oauth` (verified at
- * `node_modules/better-auth/dist/plugins/generic-oauth/index.mjs:62`), which
- * does NOT match the documented redirect URI. Setting `c.redirectURI` makes
- * core's `createAuthorizationURL` use it for both the authorize-URL `redirect_uri`
- * parameter and the token-exchange request body
- * (see `@better-auth/core/dist/oauth2/create-authorization-url.mjs:11` and
- * `validate-authorization-code.mjs:35` — both pick `options.redirectURI` first).
+ * Pinned explicitly so the redirect URI never depends on how better-auth derives
+ * it (older releases defaulted the generic plugin to `/oauth2/callback/oauth`).
+ * `c.redirectURI` is what core's `createAuthorizationURL` and
+ * `validateAuthorizationCode` pick first, so it is used for both the authorize-URL
+ * `redirect_uri` parameter and the token-exchange request body.
  */
 export function oauthCallbackURL(): string | undefined {
 	const base = process.env.NEXTAUTH_URL;
@@ -126,12 +122,11 @@ function buildGenericOAuthPlugin() {
 					userInfoUrl: process.env.OAUTH_USER_INFO || undefined,
 					scopes: parseOAuthScopes(),
 					// PKCE was enforced under next-auth (`checks: ["state","pkce"]`).
-					// better-auth's genericOAuth plugin defaults pkce to false, so we re-enable it.
+					// Kept explicit so the contract does not depend on better-auth's
+					// default (off before 1.7, on since).
 					pkce: true,
 					// Pin the redirect URI to the URL ztnet has always documented at
-					// https://ztnet.network/authentication/oauth — `signIn.social`
-					// would otherwise be told to redirect through better-auth's own
-					// `/oauth2/callback/oauth` path. See `oauthCallbackURL` above.
+					// https://ztnet.network/authentication/oauth. See `oauthCallbackURL`.
 					redirectURI: oauthCallbackURL(),
 					mapProfileToUser: (profile) =>
 						mapOAuthProfileToUser(profile as Record<string, unknown>),
@@ -158,10 +153,9 @@ export const ALLOWED_AUTH_HTTP_PATHS: ReadonlySet<string> = new Set([
 	"/callback/:id",
 	"/get-session",
 	"/sign-out",
-	// genericOAuth plugin routes, kept for IdP registrations that still point at them.
-	"/sign-in/oauth2",
-	"/oauth2/callback/:providerId",
 	// Error page and health check Better Auth may redirect to or expose.
+	// Note: better-auth 1.7 dropped the generic plugin's own `/sign-in/oauth2` and
+	// `/oauth2/callback/:providerId` routes; only `/callback/oauth` exists now.
 	"/error",
 	"/ok",
 ]);
@@ -340,17 +334,26 @@ export async function onSessionCreated(
 
 	// Active/expiry enforcement (covers credential AND OAuth sign-ins).
 	if (!user.isActive) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
+		throw new APIError("FORBIDDEN", {
+			code: "account-expired",
+			message: "account-expired",
+		});
 	}
 	if (user.expiresAt && new Date(user.expiresAt) < new Date()) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
+		throw new APIError("FORBIDDEN", {
+			code: "account-expired",
+			message: "account-expired",
+		});
 	}
 	if (
 		user.role !== "ADMIN" &&
 		user.userGroup?.expiresAt &&
 		new Date(user.userGroup.expiresAt) < new Date()
 	) {
-		throw new APIError("FORBIDDEN", { message: "account-expired" });
+		throw new APIError("FORBIDDEN", {
+			code: "account-expired",
+			message: "account-expired",
+		});
 	}
 
 	// Reset failed login attempts + update lastLogin
@@ -451,6 +454,10 @@ export async function onSessionCreated(
 	}
 }
 
+// The `code` on the FORBIDDEN errors below matters for OAuth: better-auth's
+// callback route only redirects to the login page (with `?error=<code>`) when
+// the thrown APIError carries a code; without it the browser gets a raw JSON 403.
+// The codes are the ErrorCode values the login page already renders.
 // User-creation hook. Enforces OAUTH_ALLOW_NEW_USERS / global registration toggle
 // when the create is triggered by the OAuth callback flow, and stamps the standard
 // ztnet defaults onto the new row (role, group, firstTime, etc.).
@@ -460,15 +467,19 @@ export async function onUserCreateBefore(
 	// biome-ignore lint/suspicious/noExplicitAny: better-auth's GenericEndpointContext
 	ctx: any | null,
 ): Promise<{ data: Record<string, unknown> }> {
+	// Better Auth hands hooks the route template (`/callback/:id`), but accept the
+	// concrete URL too. `/sign-in/social` is included because that endpoint can
+	// create the user directly when an IdP id_token is posted to it.
 	const path: string | undefined = ctx?.path;
 	const isOAuthFlow =
 		typeof path === "string" &&
-		(path.startsWith("/oauth2/callback/") || path === "/sign-in/oauth2");
+		(path.startsWith("/callback/") || path === "/sign-in/social");
 
 	if (isOAuthFlow) {
 		// Honour OAUTH_ALLOW_NEW_USERS — block OAuth account creation when off.
 		if (!isOAuthAllowNewUsers()) {
 			throw new APIError("FORBIDDEN", {
+				code: "registration_disabled",
 				message: "registration_disabled",
 			});
 		}
@@ -481,6 +492,7 @@ export async function onUserCreateBefore(
 			});
 			if (!settings?.enableRegistration) {
 				throw new APIError("FORBIDDEN", {
+					code: "registration_disabled",
 					message: "registration_disabled",
 				});
 			}

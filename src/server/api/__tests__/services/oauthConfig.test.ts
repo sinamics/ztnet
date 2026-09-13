@@ -5,12 +5,13 @@
  * silent regressions on the things that broke in production during the
  * next-auth → better-auth migration:
  *
- *   - PKCE was off by default in `genericOAuth` (next-auth had it on); we re-enable it.
- *   - We use `signIn.social` (not `signIn.oauth2`) so the IdP callback URL stays
- *     at the legacy `/api/auth/callback/oauth` path documented at
- *     https://ztnet.network/authentication/oauth. The genericOAuth plugin's
- *     init() injects the provider into `socialProviders` so it still drives
- *     the flow (PKCE, mapProfileToUser, discoveryUrl, ...).
+ *   - PKCE was off by default in `genericOAuth` before better-auth 1.7 (next-auth
+ *     had it on); we keep it explicitly enabled.
+ *   - We use `signIn.social` so the IdP callback URL stays at the legacy
+ *     `/api/auth/callback/oauth` path documented at
+ *     https://ztnet.network/authentication/oauth. The genericOAuth plugin
+ *     registers the provider as a social provider, so it still drives the flow
+ *     (PKCE, mapProfileToUser, discoveryUrl, ...).
  *
  * If any of these constants drifts, every self-hosted ztnet install will fail
  * to log in via OAuth.
