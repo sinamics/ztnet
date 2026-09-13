@@ -519,9 +519,7 @@ export async function onUserCreateBefore(
 
 // Keep Better Auth-created users consistent with users created through
 // ztnet's regular registration flow, which creates UserOptions eagerly.
-export async function onUserCreateAfter(
-	user: Record<string, unknown>,
-): Promise<void> {
+export async function onUserCreateAfter(user: Record<string, unknown>): Promise<void> {
 	if (typeof user.id !== "string" || !user.id) {
 		throw new Error("Cannot create UserOptions: user ID is missing");
 	}
