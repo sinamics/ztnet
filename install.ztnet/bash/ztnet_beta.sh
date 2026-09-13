@@ -956,8 +956,11 @@ setup_zerotier(){
       # noble) have no directory, and a plain curl saved the 404 page as the .deb
       # (issue #1001). The package only depends on adduser, libstdc++6 and
       # openssl, so the newest build ZeroTier has installs fine on later releases.
+      # Only a real 404 selects the fallback; transport errors and other status
+      # codes are left to the download below, which then fails visibly.
       ZT_RELEASE_URL="https://download.zerotier.com/RELEASES/$ZEROTIER_VERSION/dist/debian"
-      if ! curl -fsSI "$ZT_RELEASE_URL/$DISTRO_CODENAME/$ZT_PACKAGE" >/dev/null 2>&1; then
+      ZT_PROBE_STATUS=$(curl -sSI -o /dev/null -w '%{http_code}' "$ZT_RELEASE_URL/$DISTRO_CODENAME/$ZT_PACKAGE" 2>/dev/null)
+      if [ "$ZT_PROBE_STATUS" = "404" ]; then
           if [ "$(lsb_release -is 2>/dev/null)" = "Ubuntu" ]; then
               ZT_FALLBACK_CODENAME="noble"
           else
