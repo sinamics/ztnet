@@ -951,8 +951,27 @@ setup_zerotier(){
               ;;
       esac
       
-      # Download and install specific version from correct URL
-      $STD curl -o "$TEMP_INSTALL_DIR/$ZT_PACKAGE" "https://download.zerotier.com/RELEASES/$ZEROTIER_VERSION/dist/debian/$DISTRO_CODENAME/$ZT_PACKAGE"
+      # ZeroTier only builds $ZEROTIER_VERSION for the codenames that existed at
+      # release time. Newer releases (Debian 13 "trixie" and later, Ubuntu after
+      # noble) have no directory, and a plain curl saved the 404 page as the .deb
+      # (issue #1001). The package only depends on adduser, libstdc++6 and
+      # openssl, so the newest build ZeroTier has installs fine on later releases.
+      # Only a real 404 selects the fallback; transport errors and other status
+      # codes are left to the download below, which then fails visibly.
+      ZT_RELEASE_URL="https://download.zerotier.com/RELEASES/$ZEROTIER_VERSION/dist/debian"
+      ZT_PROBE_STATUS=$(curl -sSI -o /dev/null -w '%{http_code}' "$ZT_RELEASE_URL/$DISTRO_CODENAME/$ZT_PACKAGE" 2>/dev/null)
+      if [ "$ZT_PROBE_STATUS" = "404" ]; then
+          if [ "$(lsb_release -is 2>/dev/null)" = "Ubuntu" ]; then
+              ZT_FALLBACK_CODENAME="noble"
+          else
+              ZT_FALLBACK_CODENAME="bookworm"
+          fi
+          print_status "ZeroTier $ZEROTIER_VERSION has no build for '$DISTRO_CODENAME', using the $ZT_FALLBACK_CODENAME package instead."
+          DISTRO_CODENAME="$ZT_FALLBACK_CODENAME"
+      fi
+
+      # -f makes curl fail on a missing package instead of writing an HTML error page to disk.
+      $STD curl -fsSL -o "$TEMP_INSTALL_DIR/$ZT_PACKAGE" "$ZT_RELEASE_URL/$DISTRO_CODENAME/$ZT_PACKAGE"
       $STD sudo dpkg -i "$TEMP_INSTALL_DIR/$ZT_PACKAGE"
       $STD sudo apt-get install -f -y  # Fix any dependency issues
       
