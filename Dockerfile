@@ -76,10 +76,11 @@ RUN apt update && apt install -y curl sudo ca-certificates && \
     apt install -y postgresql-client-15 postgresql-client-16 postgresql-client-17 postgresql-client-18 && \
     apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 # Update npm to latest version to suppress update notices
-RUN npm install -g npm@latest
 # need to install these package for seeding the database
-RUN npm install @prisma/client@6.16.3 @paralleldrive/cuid2
-RUN npm install -g prisma@6.16.3 ts-node
+RUN npm install -g npm@latest \
+    && npm install @prisma/client@6.16.3 @paralleldrive/cuid2 \
+    && npm install -g prisma@6.16.3 ts-node \
+    && rm -rf /root/.npm
 RUN mkdir -p /var/lib/zerotier-one && chown -R nextjs:nodejs /var/lib/zerotier-one && chmod -R 777 /var/lib/zerotier-one
 
 COPY --from=builder /app/next.config.mjs ./
