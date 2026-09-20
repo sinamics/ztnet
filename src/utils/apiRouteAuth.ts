@@ -108,6 +108,21 @@ export const SecuredOrganizationApiRoute = (
 				minimumRequiredRole: mergedOptions.requiredRole,
 			});
 
+			// `orgId` and `networkId` are read independently from the URL, and a role
+			// in `orgId` says nothing about `networkId`. Confirm the network belongs
+			// to the organization before handing it to the handler, mirroring the
+			// ownership check SecuredPrivateApiRoute does for personal networks.
+			if (mergedOptions.requireNetworkId) {
+				const networkInOrg = await prisma.network.findFirst({
+					where: { nwid: networkId, organizationId: orgId },
+					select: { nwid: true },
+				});
+
+				if (!networkInOrg) {
+					return res.status(401).json({ error: "Network not found or access denied." });
+				}
+			}
+
 			await handler(req, res, {
 				body,
 				userId: decryptedData.userId,
