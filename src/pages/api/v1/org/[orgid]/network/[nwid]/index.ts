@@ -151,10 +151,12 @@ export const POST_network = SecuredOrganizationApiRoute(
 
 export const GET_network = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
-	async (_req, res, { networkId, ctx }) => {
+	async (_req, res, { networkId, orgId, ctx }) => {
 		try {
-			const network = await prisma.network.findUnique({
-				where: { nwid: networkId },
+			// Scoped by organizationId as well as nwid so the lookup is correct on
+			// its own, independent of the check the wrapper already performs.
+			const network = await prisma.network.findFirst({
+				where: { nwid: networkId, organizationId: orgId },
 				select: { description: true },
 			});
 
