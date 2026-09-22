@@ -33,7 +33,6 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 				<title>{title}</title>
 				<meta name="description" content="ZTNET - Zerotier Controller Web UI" />
 				<meta name="robots" content="noindex, nofollow" />
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 
 			<div

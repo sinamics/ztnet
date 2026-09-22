@@ -18,7 +18,6 @@ const ForgotPassword = () => {
 		<div>
 			<Head>
 				<title>{title}</title>
-				<link rel="icon" href="/favicon.ico" />
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 
