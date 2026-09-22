@@ -233,6 +233,8 @@ describe("sendWebhook to private network targets", () => {
 			["mapped loopback", "::ffff:7f00:1"],
 			["cloud metadata", "169.254.169.254"],
 			["mapped cloud metadata", "::ffff:a9fe:a9fe"],
+			["alibaba cloud metadata", "100.100.100.200"],
+			["mapped alibaba cloud metadata", "::ffff:6464:64c8"],
 			["unspecified", "0.0.0.0"],
 			["IPv6 loopback", "::1"],
 			["link local IPv6", "fe80::1"],
@@ -256,6 +258,8 @@ describe("sendWebhook to private network targets", () => {
 			"https://[::ffff:7f00:1]:9993/",
 			"https://169.254.169.254/latest/meta-data/",
 			"https://[::ffff:a9fe:a9fe]/latest/meta-data/",
+			"https://100.100.100.200/latest/meta-data/",
+			"https://[::ffff:100.100.100.200]/latest/meta-data/",
 			"https://localhost:9993/",
 			"https://[::1]:9993/",
 		])("still refuses reserved literal %s", async (url) => {

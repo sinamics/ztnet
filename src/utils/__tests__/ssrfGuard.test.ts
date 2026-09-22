@@ -20,6 +20,9 @@ const RESERVED_IPS = [
 	"127.0.0.1",
 	"127.1.2.3",
 	"169.254.169.254", // cloud metadata
+	"100.100.100.200", // alibaba cloud metadata, inside the CGNAT range
+	"::ffff:100.100.100.200",
+	"::ffff:6464:64c8", // same, hex spelling
 	"0.0.0.0",
 	"255.255.255.255",
 	"224.0.0.1",
@@ -50,8 +53,10 @@ const PRIVATE_IPS = [
 	"172.16.0.1",
 	"172.31.255.255",
 	"192.168.1.10",
-	"100.100.100.200", // alibaba metadata, inside CGNAT range
-	"100.64.0.1",
+	"100.64.0.1", // CGNAT, tailscale
+	"100.100.100.199", // CGNAT neighbour of the alibaba metadata host
+	"100.100.100.201",
+	"100.127.255.255",
 	"fd00::1",
 	"fc00::1",
 	"::ffff:192.168.1.20", // IPv4 mapped private, dotted spelling
@@ -182,6 +187,9 @@ describe("assertPublicHttpsUrl", () => {
 		"https://[0:0:0:0:0:ffff:7f00:1]:9993/",
 		"https://[::ffff:169.254.169.254]/",
 		"https://[::ffff:a9fe:a9fe]/",
+		"https://100.100.100.200/latest/meta-data/",
+		"https://[::ffff:100.100.100.200]/latest/meta-data/",
+		"https://[::ffff:6464:64c8]/latest/meta-data/",
 		"https://[::7f00:1]/",
 		"https://[64:ff9b::7f00:1]/",
 		"https://[2002:7f00:1::1]/",
@@ -191,7 +199,7 @@ describe("assertPublicHttpsUrl", () => {
 		"https://192.168.1.5/hook",
 		"https://10.0.0.5:8443/hook",
 		"https://172.18.0.3:5678/hook",
-		"https://100.100.100.200/",
+		"https://100.64.0.1/",
 		"https://[fd00::1]/hook",
 		"https://[::ffff:192.168.1.20]/hook",
 		"https://[::ffff:c0a8:114]/hook",
@@ -390,6 +398,8 @@ describe("resolvePublicTarget", () => {
 			"https://[::ffff:7f00:1]:9993/",
 			"https://169.254.169.254/",
 			"https://[::ffff:a9fe:a9fe]/",
+			"https://100.100.100.200/",
+			"https://[::ffff:6464:64c8]/",
 			"https://localhost/",
 		])("still rejects reserved literal %s", async (url) => {
 			await expect(resolvePublicTarget(url)).rejects.toThrow(BlockedUrlError);
