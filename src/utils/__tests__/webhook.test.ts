@@ -8,6 +8,7 @@
 import http from "node:http";
 import { AddressInfo } from "node:net";
 import { prisma } from "~/server/db";
+import { ALLOW_PRIVATE_TARGETS_ENV } from "~/utils/ssrfGuard";
 import { sendWebhook } from "~/utils/webhook";
 
 jest.mock("~/server/db", () => ({
@@ -84,6 +85,56 @@ describe("sendWebhook", () => {
 
 		expect(console.error).toHaveBeenCalledWith(
 			expect.stringContaining("private or reserved address"),
+		);
+	});
+
+	// The URL parser rewrites [::ffff:127.0.0.1] to the hex spelling
+	// [::ffff:7f00:1], and the kernel routes both to the IPv4 loopback listener,
+	// so this is a real path to the internal service if the guard misses it.
+	it.each([
+		"[::ffff:127.0.0.1]",
+		"[::ffff:7f00:1]",
+		"[::FFFF:7F00:1]",
+		"[0:0:0:0:0:ffff:7f00:1]",
+		"[::7f00:1]",
+	])("does not deliver to the IPv4 mapped loopback literal %s", async (host) => {
+		givenWebhook(`https://${host}:${internalPort}/`);
+
+		await sendWebhook({
+			hookType: "NETWORK_CREATED",
+			organizationId: "org1",
+		} as never);
+		await flush();
+
+		expect(internalHits).toEqual([]);
+		expect(console.error).toHaveBeenCalledWith(
+			expect.stringContaining("private or reserved address"),
+		);
+	});
+
+	describe(`with ${ALLOW_PRIVATE_TARGETS_ENV}=true`, () => {
+		beforeEach(() => {
+			process.env[ALLOW_PRIVATE_TARGETS_ENV] = "true";
+		});
+
+		afterEach(() => {
+			delete process.env[ALLOW_PRIVATE_TARGETS_ENV];
+		});
+
+		it.each(["127.0.0.1", "[::ffff:127.0.0.1]", "[::ffff:7f00:1]", "localhost"])(
+			"still does not deliver to loopback %s",
+			async (host) => {
+				givenWebhook(`https://${host}:${internalPort}/`);
+
+				await sendWebhook({
+					hookType: "NETWORK_CREATED",
+					organizationId: "org1",
+				} as never);
+				await flush();
+
+				expect(internalHits).toEqual([]);
+				expect(console.error).toHaveBeenCalledTimes(1);
+			},
 		);
 	});
 

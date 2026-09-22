@@ -44,8 +44,11 @@ export default async function apiNetworkByIdHandler(
 	}
 }
 
+// Updating network configuration is a write, so it needs the same role floor
+// as creating or deleting a network and as updating a member. READ_ONLY keys
+// may only use GET.
 export const POST_network = SecuredOrganizationApiRoute(
-	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
+	{ requiredRole: Role.USER, requireNetworkId: true },
 	async (_req, res, context) => {
 		try {
 			const validatedContext = HandlerContextSchema.parse(context);
