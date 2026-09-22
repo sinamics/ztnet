@@ -128,6 +128,7 @@ paths:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
     post:
       summary: Update a specific organization network
+      description: Requires the USER role or higher in the organization. READ_ONLY members can only read the network.
       operationId: updateNetworkInfo
       parameters:
         - name: networkId

@@ -14,6 +14,10 @@ Webhooks in ZTNET empower your organization with real-time event notifications. 
 - **Webhook Actions**: Choose the [events](#network-events) that should trigger notifications. Multiple selections are allowed.
 - **Endpoint URL (HTTPS)**: This is the receiver URL where ZTNET will send event data. It must be a publicly accessible HTTPS URL to ensure security.
 
+:::info Receivers on a private network
+By default ZTNET refuses to deliver webhooks to private or reserved addresses, including hosts on your LAN and services in the same Docker Compose project. If your receiver lives on a private network, set the environment variable `WEBHOOK_ALLOW_PRIVATE_TARGETS=true`. See [Environment options](/installation/options#webhook-configuration) for what it allows and what stays blocked.
+:::
+
 
 ## Data Structure
 
