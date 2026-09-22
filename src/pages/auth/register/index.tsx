@@ -25,7 +25,6 @@ const Register = () => {
 				<title>{title}</title>
 				<meta name="description" content="ZTNET User Registration" />
 				<meta name="robots" content="noindex, nofollow" />
-				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<div className="rounded-xl sm:border border-primary/50 sm:p-12 space-y-5 w-full shadow-xl">
 				<h3 className="text-xl font-semibold">

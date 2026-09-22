@@ -69,7 +69,6 @@ const VerifyEmail = () => {
 		<div>
 			<Head>
 				<title>{title}</title>
-				<link rel="icon" href="/favicon.ico" />
 				<meta name="robots" content="noindex, nofollow" />
 			</Head>
 			<div className="z-10 flex h-screen w-screen items-center justify-center">
