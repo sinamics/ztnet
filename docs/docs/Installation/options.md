@@ -170,9 +170,9 @@ These settings control rate limiting for all REST API endpoints under `/api/v1/*
 
 ## Webhook Configuration
 
-Organization webhooks are delivered over HTTPS only. Before every delivery ZTNET resolves the receiver and refuses addresses that are not publicly routable, so a webhook URL cannot be used to reach the ZeroTier controller, a cloud metadata endpoint or other services next to ZTNET.
+Organization webhooks are delivered over HTTPS only. Before every delivery ZTNET resolves the receiver and checks the address. By default every address that is not publicly routable is refused, so a webhook URL cannot be used to reach the ZeroTier controller, a cloud metadata endpoint or other services next to ZTNET. The option below relaxes this for private networks, while reserved addresses stay blocked.
 
 - `WEBHOOK_ALLOW_PRIVATE_TARGETS`
-  - Description: Set to `true` to also deliver webhooks to receivers on private networks: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` and IPv6 `fc00::/7`. Use this when the receiver is a service on your LAN, in the same Docker Compose project, or on a ZeroTier or Tailscale address. Loopback, link local (including cloud metadata at `169.254.169.254`), multicast and other reserved addresses stay blocked, and the URL must still use HTTPS with a valid certificate. Applies at delivery time, so a restart is enough to change it.
+  - Description: Set to `true` to also deliver webhooks to receivers on private networks: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `100.64.0.0/10` and IPv6 `fc00::/7`. Use this when the receiver is a service on your LAN, in the same Docker Compose project, or on a ZeroTier or Tailscale address. Loopback, link local, cloud metadata endpoints (`169.254.169.254` and `100.100.100.200`), multicast and other reserved addresses stay blocked, and the URL must still use HTTPS with a valid certificate. Applies at delivery time, so a restart is enough to change it.
   - Default: `false`.
 

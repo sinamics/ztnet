@@ -33,6 +33,7 @@ const RESERVED_IPV4_CIDRS = [
 	"0.0.0.0/8", // this network
 	"127.0.0.0/8", // loopback
 	"169.254.0.0/16", // link local, also aws/gcp/azure metadata
+	"100.100.100.200/32", // alibaba cloud metadata, carved out of the CGNAT range below
 	"192.0.0.0/24", // IETF protocol assignments
 	"192.0.2.0/24", // TEST-NET-1
 	"192.88.99.0/24", // 6to4 relay anycast
@@ -48,7 +49,7 @@ const PRIVATE_IPV4_CIDRS = [
 	"10.0.0.0/8", // private
 	"172.16.0.0/12", // private, docker default bridge networks
 	"192.168.0.0/16", // private
-	"100.64.0.0/10", // carrier grade NAT, tailscale, also alibaba metadata
+	"100.64.0.0/10", // carrier grade NAT, tailscale, zerotier (metadata host above stays reserved)
 ];
 
 // IPv6 ranges that are never a valid outbound target
