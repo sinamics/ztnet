@@ -1028,7 +1028,7 @@
 			},
 			"zerotierCentral": {
 				"title": "ZeroTier Central",
-				"description": "Integrando la chiave API di ZeroTier Central è possibile gestire le reti di Central direttamente da ZTNET. Dopo l'inserimento della chiave, nella barra laterale compare un nuovo menu per un accesso e un controllo più immediati.<br></br>La chiave si ottiene dal portale ZeroTier Central. https://my.zerotier.com/account",
+				"description": "Inserendo la chiave API di ZeroTier Central è possibile gestire le reti Central direttamente da ZTNET. Dopo il salvataggio della chiave, nella barra laterale compare un nuovo menu per accedere alle reti e controllarle più rapidamente.<br></br>La chiave si ottiene dal portale ZeroTier Central. https://my.zerotier.com/account",
 				"apiKeyLabel": "Chiave API di ZeroTier Central",
 				"apiUrlLabel": "URL dell'API ZeroTier",
 				"apiUrlLabelDescription": "URL dell'API di ZeroTier Central. Il valore predefinito è https://api.zerotier.com/api/v1"
