@@ -27,6 +27,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 		return;
 	}
 
+	// The world signing keys and the planet file are admin only, same as the
+	// admin.getPlanet / admin.resetWorld procedures.
+	if (session.user?.role !== "ADMIN") {
+		res.status(403).json({ message: "Forbidden" });
+		return;
+	}
+
 	if (req.method === "GET") {
 		try {
 			const folderPath = path.resolve(`${ZT_FOLDER}/zt-mkworld`);
@@ -107,11 +114,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 				}
 
 				try {
-					await fsPromises.mkdir(mkworldDir, { recursive: true });
-
 					const requiredFiles = ["mkworld.config.json"];
 					const optionalFiles = ["current.c25519", "previous.c25519", "planet.custom"];
 					const foundFiles = [];
+
+					// Check the archive listing before extracting, so an incomplete
+					// zip can't overwrite the keys or planet file on disk.
+					const directory = await unzipper.Open.file(resolvedUploadPath);
+					const archiveFiles = directory.files.map((file) => file.path);
+					const missingFiles = requiredFiles.filter(
+						(file) => !archiveFiles.includes(file),
+					);
+					if (missingFiles.length > 0) {
+						console.error("Missing required files in the zip:", missingFiles);
+						res.status(400).json({
+							error: "Missing required files in the zip.",
+							files: missingFiles,
+						});
+						return resolve();
+					}
+
+					await fsPromises.mkdir(mkworldDir, { recursive: true });
 
 					fs.createReadStream(resolvedUploadPath)
 						.pipe(unzipper.Parse())
