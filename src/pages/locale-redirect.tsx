@@ -35,7 +35,7 @@ const LocaleRedirect = () => {
 		const userLanguage = navigator.language || navigator.languages?.[0] || "en";
 
 		// Map browser language codes to your supported locales
-		const supportedLocales = ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru"];
+		const supportedLocales = ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru", "it"];
 		const defaultLocale = "en";
 
 		// Language variant mappings for common browser language codes
@@ -78,6 +78,10 @@ const LocaleRedirect = () => {
 			"en-au": "en", // English (Australia)
 			"en-nz": "en", // English (New Zealand)
 			"en-za": "en", // English (South Africa)
+
+			// Italian variants
+			"it-it": "it", // Italian (Italy)
+			"it-ch": "it", // Italian (Switzerland)
 
 			// Polish variants
 			"pl-pl": "pl", // Polish (Poland)
