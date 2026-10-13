@@ -204,6 +204,31 @@ describe("cached Central credentials", () => {
 		expect(urlUsed()).toBe("https://central.example.com/api/v1/network");
 	});
 
+	it("are not put back by a read that was already running when they were saved", async () => {
+		const ctx = newCtx();
+		// a request starts and reads the row from before the save, slowly
+		let finishOldRead: (row: unknown) => void;
+		findUser.mockReturnValueOnce(
+			new Promise((resolve) => {
+				finishOldRead = resolve;
+			}),
+		);
+		const inFlight = ztApi.get_controller_networks(ctx, true);
+
+		// meanwhile the user saves new credentials
+		ztApi.clearCentralCredentialsCache(ctx.session.user.id);
+		findUser.mockResolvedValue({
+			options: { ztCentralApiKey: "new-key", ztCentralApiUrl: null },
+		});
+
+		// the old read finishes after the save
+		finishOldRead({ options: { ztCentralApiKey: "old-key", ztCentralApiUrl: null } });
+		await inFlight;
+
+		await ztApi.get_controller_networks(ctx, true);
+		expect(keyUsed()).toBe("token new-key");
+	});
+
 	it("are dropped for that user only", async () => {
 		const [alice, bob] = [newCtx(), newCtx()];
 		findUser.mockResolvedValue({

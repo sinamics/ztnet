@@ -72,9 +72,14 @@ const credentialsCache = new Map<
 
 const CACHE_TTL = 60000; // 60 seconds
 
+// Counts every invalidation. A read that started before one must not be
+// cached when it finishes: it may carry the values from before the change.
+let credentialsCacheEpoch = 0;
+
 /** Call after a user's Central key or URL changed, so the next request uses the new values. */
 export const clearCentralCredentialsCache = (userId: string) => {
 	credentialsCache.delete(userId);
+	credentialsCacheEpoch++;
 };
 
 const getApiCredentials = async (
@@ -92,6 +97,7 @@ const getApiCredentials = async (
 		return cached.credentials;
 	}
 
+	const epoch = credentialsCacheEpoch;
 	const userWithOptions = await prisma.user.findFirst({
 		where: {
 			id: userId,
@@ -110,6 +116,10 @@ const getApiCredentials = async (
 		ztCentralApiKey: null,
 		ztCentralApiUrl: null,
 	};
+
+	// Credentials were saved while this read was in flight, so it may be the
+	// old row. Use it for this request, but leave caching to the next one.
+	if (epoch !== credentialsCacheEpoch) return credentials;
 
 	// Store in cache
 	credentialsCache.set(userId, { credentials, timestamp: now });
