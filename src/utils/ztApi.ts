@@ -540,29 +540,6 @@ export const local_network_and_members = async (
 		throw new APIError(error, error as AxiosError);
 	}
 };
-// Network details plus the member count, without fetching each member.
-// The member list endpoint returns every member id in one request.
-export const local_network_and_member_count = async (
-	ctx: UserContext,
-	nwid: string,
-): Promise<{ network: NetworkEntity; memberCount: number }> => {
-	const { headers, localControllerUrl } = await getOptions(ctx, false);
-
-	try {
-		const network = await getData<NetworkEntity>(
-			`${localControllerUrl}/controller/network/${nwid}`,
-			headers,
-		);
-		const members = await network_members(ctx, nwid, false);
-
-		return {
-			network,
-			memberCount: Object.keys(members ?? {}).length,
-		};
-	} catch (error) {
-		throw new APIError(error, error as AxiosError);
-	}
-};
 // Get network details
 // https://docs.zerotier.com/service/v1/#operation/getNetwork
 
