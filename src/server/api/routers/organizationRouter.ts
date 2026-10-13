@@ -40,6 +40,7 @@ import { MailTemplateKey } from "~/utils/enums";
 import { TRPCError } from "@trpc/server";
 import { MemberCounts } from "~/types/local/member";
 import { UserContext } from "~/types/ctx";
+import { ORG_MEMBER_FIELDS, USER_SECRET_FIELDS } from "~/server/api/userFields";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -155,6 +156,7 @@ export const organizationRouter = createTRPCRouter({
 				// Optionally, return the updated user with memberOfOrgs included
 				return await prisma.user.findUnique({
 					where: { id: ctx.session.user.id },
+					omit: USER_SECRET_FIELDS,
 					include: {
 						memberOfOrgs: true,
 					},
@@ -270,7 +272,7 @@ export const organizationRouter = createTRPCRouter({
 			},
 			include: {
 				userRoles: true,
-				users: true,
+				users: { select: ORG_MEMBER_FIELDS },
 				invitations: {
 					include: {
 						invitation: true,
@@ -408,7 +410,7 @@ export const organizationRouter = createTRPCRouter({
 
 			interface OrganizationWithCounts extends Organization {
 				userRoles: UserOrganizationRole[];
-				users: User[];
+				users: Pick<User, keyof typeof ORG_MEMBER_FIELDS>[];
 				webhooks: Webhook[];
 				invitations: Invitation[];
 				memberCounts: MemberCounts;
@@ -424,7 +426,8 @@ export const organizationRouter = createTRPCRouter({
 				},
 				include: {
 					userRoles: true,
-					users: true,
+					// every member can call this, so only what members may see of each other
+					users: { select: ORG_MEMBER_FIELDS },
 					webhooks: true,
 					invitations: true,
 					networks: {
@@ -977,7 +980,7 @@ export const organizationRouter = createTRPCRouter({
 					},
 				},
 				include: {
-					users: true, // Assuming you want to return the updated list of users
+					users: { select: ORG_MEMBER_FIELDS },
 				},
 			});
 
@@ -1223,6 +1226,7 @@ export const organizationRouter = createTRPCRouter({
 					where: {
 						email: normalizeEmail(tokenPayload.email),
 					},
+					select: { id: true, name: true },
 				});
 
 				// if ctx user and the user has a valid invite add him.
@@ -1257,9 +1261,6 @@ export const organizationRouter = createTRPCRouter({
 								},
 							},
 						},
-						include: {
-							users: true,
-						},
 					});
 
 					// delete the invitation
@@ -1283,8 +1284,9 @@ export const organizationRouter = createTRPCRouter({
 						},
 					});
 
+					// This procedure is public: anyone holding the invitation link gets
+					// this response, so it carries nothing about the invited account.
 					return {
-						user: doesUserExist,
 						organizationId: tokenPayload.organizationId,
 					};
 				}

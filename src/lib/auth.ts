@@ -12,7 +12,6 @@ import {
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
-import { isRunningInDocker } from "~/utils/docker";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -524,14 +523,10 @@ export async function onUserCreateAfter(user: Record<string, unknown>): Promise<
 		throw new Error("Cannot create UserOptions: user ID is missing");
 	}
 
-	const localControllerUrl = isRunningInDocker()
-		? "http://zerotier:9993"
-		: "http://127.0.0.1:9993";
-
 	await prisma.userOptions.upsert({
 		where: { userId: user.id },
 		update: {},
-		create: { userId: user.id, localControllerUrl },
+		create: { userId: user.id },
 	});
 }
 
@@ -580,8 +575,10 @@ export const auth = betterAuth({
 			lastseen: { type: "date", required: false, input: false },
 			online: { type: "boolean", required: false, defaultValue: false, input: false },
 			role: { type: "string", defaultValue: "USER", required: false, input: false },
-			hash: { type: "string", required: false, input: false },
-			tempPassword: { type: "string", required: false, input: false },
+			// `returned: false` keeps these out of every response that carries the
+			// user: sign in, get-session and the session handed to pages as props.
+			hash: { type: "string", required: false, input: false, returned: false },
+			tempPassword: { type: "string", required: false, input: false, returned: false },
 			firstTime: { type: "boolean", required: false, defaultValue: true, input: false },
 			twoFactorEnabled: {
 				type: "boolean",
@@ -589,7 +586,12 @@ export const auth = betterAuth({
 				defaultValue: false,
 				input: false,
 			},
-			twoFactorSecret: { type: "string", required: false, input: false },
+			twoFactorSecret: {
+				type: "string",
+				required: false,
+				input: false,
+				returned: false,
+			},
 			failedLoginAttempts: {
 				type: "number",
 				required: false,

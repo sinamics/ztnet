@@ -61,6 +61,15 @@ model GlobalOptions {
   planet                             Planet? @relation(fields: [planetId], references: [id])
 }
 
+// Instance wide connection to the local ZeroTier controller. Kept out of
+// GlobalOptions because several queries return that row as a whole.
+model ControllerOptions {
+  id                    Int     @id @default(1)
+  localControllerUrl    String?
+  // encrypted at rest, see controllerOptionsService
+  localControllerSecret String?
+}
+
 // ROOT SERVERS
 model Planet {
   id            Int            @id @default(autoincrement())
@@ -222,7 +231,9 @@ model UserOptions {
   //zt central
   ztCentralApiKey              String?  @default("")
   ztCentralApiUrl              String?  @default("https://api.zerotier.com/api/v1")
-  // local controller
+  // local controller. Deprecated and no longer read: the controller is an
+  // instance setting (ControllerOptions). Kept for one release so a downgrade
+  // still finds its columns, then dropped.
   localControllerUrl           String?  @default("http://zerotier:9993")
   localControllerSecret        String?  @default("")
   // member table

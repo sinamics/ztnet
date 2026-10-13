@@ -17,7 +17,6 @@ import {
 	encrypt,
 	generateInstanceSecret,
 } from "~/utils/encryption";
-import { isRunningInDocker } from "~/utils/docker";
 import { Invitation, User, UserDevice, UserOptions } from "@prisma/client";
 import { validateOrganizationToken } from "../services/organizationAuthService";
 import rateLimit from "~/utils/rateLimit";
@@ -25,6 +24,9 @@ import { ErrorCode } from "~/utils/errorCode";
 import { MailTemplateKey } from "~/utils/enums";
 import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
+import { LEGACY_CONTROLLER_FIELDS } from "~/server/api/services/controllerOptionsService";
+import { normalizeCentralApiUrl, resolveCentralApiTarget } from "~/utils/centralApiUrl";
+import { USER_SECRET_FIELDS, type UserSecretField } from "~/server/api/userFields";
 import {
 	consumePasswordResetToken,
 	createPasswordResetToken,
@@ -268,11 +270,7 @@ export const authRouter = createTRPCRouter({
 							}
 						: undefined,
 					options: {
-						create: {
-							localControllerUrl: isRunningInDocker()
-								? "http://zerotier:9993"
-								: "http://127.0.0.1:9993",
-						},
+						create: {},
 					},
 				},
 				select: {
@@ -361,17 +359,14 @@ export const authRouter = createTRPCRouter({
 			where: {
 				id: ctx.session.user.id,
 			},
+			omit: USER_SECRET_FIELDS,
 			include: {
-				options: true,
+				options: { omit: LEGACY_CONTROLLER_FIELDS },
 				memberOfOrgs: true,
 				UserDevice: true,
 			},
-		})) as User & {
-			options?: UserOptions & {
-				urlFromEnv?: boolean;
-				secretFromEnv?: boolean;
-				localControllerUrlPlaceholder?: string;
-			};
+		})) as Omit<User, UserSecretField> & {
+			options?: Omit<UserOptions, keyof typeof LEGACY_CONTROLLER_FIELDS>;
 			memberOfOrgs?: {
 				id: string;
 				ownerId: string;
@@ -382,28 +377,16 @@ export const authRouter = createTRPCRouter({
 			UserDevice?: UserDevice[];
 			currentDeviceId?: string;
 		};
-		const localControllerUrl = isRunningInDocker()
-			? "http://zerotier:9993"
-			: "http://127.0.0.1:9993";
-
 		// OAuth users created before UserOptions was added to the Better Auth
 		// creation hook may not have an options row. Backfill it on first access.
 		if (!user.options) {
 			user.options = await ctx.prisma.userOptions.upsert({
 				where: { userId: user.id },
 				update: {},
-				create: {
-					userId: user.id,
-					localControllerUrl,
-				},
+				create: { userId: user.id },
+				omit: LEGACY_CONTROLLER_FIELDS,
 			});
 		}
-
-		user.options.localControllerUrlPlaceholder = localControllerUrl;
-
-		// Set secret environment status
-		user.options.urlFromEnv = !!process.env.ZT_ADDR;
-		user.options.secretFromEnv = !!process.env.ZT_SECRET;
 
 		// Read current device ID from cookie for device identification.
 		// Cookie name is preserved across the next-auth → better-auth migration on
@@ -659,6 +642,7 @@ export const authRouter = createTRPCRouter({
 						// clear the must-change-on-next-login flag if it was set.
 						requestChangePassword: false,
 					},
+					omit: USER_SECRET_FIELDS,
 				});
 
 				// Mirror into the better-auth credential Account so /sign-in/email succeeds.
@@ -821,16 +805,30 @@ export const authRouter = createTRPCRouter({
 						},
 					},
 				},
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	setZtApi: protectedProcedure
 		.input(
 			z.object({
 				ztCentralApiKey: z.string().optional(),
-				ztCentralApiUrl: z.string().optional(),
+				ztCentralApiUrl: z.string().max(2048).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
+			// The server calls this URL and returns the response to the user, so
+			// it has to be a public https endpoint. An empty value resets it to
+			// the default. The same check runs again on every request.
+			let ztCentralApiUrl: string | null | undefined;
+			if (input.ztCentralApiUrl !== undefined) {
+				try {
+					ztCentralApiUrl = normalizeCentralApiUrl(input.ztCentralApiUrl);
+					if (ztCentralApiUrl) await resolveCentralApiTarget(ztCentralApiUrl);
+				} catch (error) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+				}
+			}
+
 			// we use upsert in case the user has no options yet
 			const updated = await ctx.prisma.user.update({
 				where: {
@@ -841,17 +839,18 @@ export const authRouter = createTRPCRouter({
 						upsert: {
 							create: {
 								ztCentralApiKey: input.ztCentralApiKey,
-								ztCentralApiUrl: input.ztCentralApiUrl,
+								ztCentralApiUrl,
 							},
 							update: {
 								ztCentralApiKey: input.ztCentralApiKey,
-								ztCentralApiUrl: input.ztCentralApiUrl,
+								ztCentralApiUrl,
 							},
 						},
 					},
 				},
+				omit: USER_SECRET_FIELDS,
 				include: {
-					options: true,
+					options: { omit: LEGACY_CONTROLLER_FIELDS },
 				},
 			});
 
@@ -867,51 +866,6 @@ export const authRouter = createTRPCRouter({
 					});
 				}
 			}
-
-			return updated;
-		}),
-	setLocalZt: protectedProcedure
-		.input(
-			z.object({
-				localControllerUrl: z.string().optional(),
-				localControllerSecret: z.string().optional(),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			if (input?.localControllerUrl && process.env.ZT_ADDR) {
-				throw new TRPCError({
-					code: "BAD_REQUEST",
-					message: "Remove the ZT_ADDR environment variable to use this feature!",
-				});
-			}
-
-			const defaultLocalZtUrl = isRunningInDocker()
-				? "http://zerotier:9993"
-				: "http://127.0.0.1:9993";
-
-			// we use upsert in case the user has no options yet
-			const updated = await ctx.prisma.user.update({
-				where: {
-					id: ctx.session.user.id,
-				},
-				data: {
-					options: {
-						upsert: {
-							create: {
-								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
-								localControllerSecret: input.localControllerSecret,
-							},
-							update: {
-								localControllerUrl: input.localControllerUrl || defaultLocalZtUrl,
-								localControllerSecret: input.localControllerSecret,
-							},
-						},
-					},
-				},
-				include: {
-					options: true,
-				},
-			});
 
 			return updated;
 		}),

@@ -1,5 +1,6 @@
 import { createTRPCRouter, adminRoleProtectedRoute } from "~/server/api/trpc";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import * as ztController from "~/utils/ztApi";
 import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
 import { type GlobalOptions, Role } from "@prisma/client";
@@ -25,6 +26,13 @@ import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 import { emailSchema } from "./_schema";
+import { USER_SECRET_FIELDS } from "~/server/api/userFields";
+import {
+	getDefaultLocalControllerUrl,
+	getStoredControllerOptions,
+	normalizeLocalControllerUrl,
+	saveControllerOptions,
+} from "~/server/api/services/controllerOptionsService";
 
 type WithError<T> = T & { error?: boolean; message?: string };
 type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
@@ -65,6 +73,7 @@ export const adminRouter = createTRPCRouter({
 				data: {
 					...input.params,
 				},
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	deleteUser: adminRoleProtectedRoute
@@ -176,11 +185,7 @@ export const adminRouter = createTRPCRouter({
 					requestChangePassword,
 					lastLogin: new Date().toISOString(),
 					options: {
-						create: {
-							localControllerUrl: isRunningInDocker()
-								? "http://zerotier:9993"
-								: "http://127.0.0.1:9993",
-						},
+						create: {},
 					},
 				},
 				select: {
@@ -374,6 +379,65 @@ export const adminRouter = createTRPCRouter({
 				},
 			});
 		}),
+	/**
+	 * Connection settings for the local ZeroTier controller. The stored secret
+	 * is never returned, only whether one is set.
+	 */
+	getControllerOptions: adminRoleProtectedRoute.query(async () => {
+		const stored = await getStoredControllerOptions();
+
+		return {
+			localControllerUrl: stored.url,
+			defaultLocalControllerUrl: getDefaultLocalControllerUrl(),
+			hasLocalControllerSecret: Boolean(stored.secret),
+			urlFromEnv: Boolean(process.env.ZT_ADDR),
+			secretFromEnv: Boolean(process.env.ZT_SECRET),
+		};
+	}),
+	/**
+	 * Sets the controller every user and background job talks to. Only the
+	 * fields that are sent are changed, an empty value resets that field.
+	 */
+	setControllerOptions: adminRoleProtectedRoute
+		.input(
+			z.object({
+				localControllerUrl: z.string().max(2048).optional(),
+				localControllerSecret: z.string().max(512).optional(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			if (input.localControllerUrl !== undefined && process.env.ZT_ADDR) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Remove the ZT_ADDR environment variable to use this feature!",
+				});
+			}
+			if (input.localControllerSecret !== undefined && process.env.ZT_SECRET) {
+				throw new TRPCError({
+					code: "BAD_REQUEST",
+					message: "Remove the ZT_SECRET environment variable to use this feature!",
+				});
+			}
+
+			let url: string | null | undefined;
+			if (input.localControllerUrl !== undefined) {
+				try {
+					url = normalizeLocalControllerUrl(input.localControllerUrl);
+				} catch (error) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: error.message });
+				}
+			}
+
+			await saveControllerOptions({
+				url,
+				secret:
+					input.localControllerSecret !== undefined
+						? input.localControllerSecret.trim() || null
+						: undefined,
+			});
+
+			return { success: true };
+		}),
 	getControllerStats: adminRoleProtectedRoute.query(async ({ ctx }) => {
 		try {
 			const isCentral = false;
@@ -473,6 +537,7 @@ export const adminRouter = createTRPCRouter({
 					id,
 				},
 				data: updateData,
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	updateGlobalOptions: adminRoleProtectedRoute
@@ -960,6 +1025,7 @@ export const adminRouter = createTRPCRouter({
 							userGroupId: null, // Remove the user's association with a userGroup
 							expiresAt: null, // Remove expiration when removing from group
 						},
+						omit: USER_SECRET_FIELDS,
 					});
 				}
 
@@ -994,6 +1060,7 @@ export const adminRouter = createTRPCRouter({
 						userGroupId: Number.parseInt(input.userGroupId), // Link the user to the userGroup
 						expiresAt, // Set expiration based on group settings
 					},
+					omit: USER_SECRET_FIELDS,
 				});
 			} catch (err: unknown) {
 				if (err instanceof Error) {

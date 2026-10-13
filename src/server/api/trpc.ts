@@ -20,6 +20,7 @@ import type { Server as SocketIOServer } from "socket.io";
 import { getServerAuthSession } from "~/lib/authSession";
 import { prisma } from "~/server/db";
 import { networkMembersChannel } from "~/utils/socketChannels";
+import { withoutUserSecrets } from "~/server/api/userFields";
 
 type CreateContextOptions = {
 	session: Session | null;
@@ -156,7 +157,28 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+/**
+ * Backstop for every procedure: a user's password hash and two factor secrets
+ * never leave the server. Queries are expected to leave those columns out
+ * (see USER_SECRET_FIELDS); if one slips through, it is removed here and
+ * logged, so a missed `omit` shows up as an error in the log and not as a leak.
+ */
+const stripUserSecrets = t.middleware(async ({ path, next }) => {
+	const result = await next();
+	if (!result.ok) return result;
+
+	const data = withoutUserSecrets(result.data);
+	if (data === result.data) return result;
+
+	console.error(
+		`tRPC ${path} tried to return secret user fields. They were removed, but the query should omit them.`,
+	);
+	return { ...result, data };
+});
+
+const baseProcedure = t.procedure.use(stripUserSecrets);
+
+export const publicProcedure = baseProcedure;
 
 /** Reusable middleware that enforces users are logged in before running the procedure. */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
@@ -219,7 +241,7 @@ const emitNetworkChangeOnMutation = t.middleware(
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure
+export const protectedProcedure = baseProcedure
 	.use(enforceUserIsAuthed)
 	.use(emitNetworkChangeOnMutation);
 
@@ -229,4 +251,4 @@ export const protectedProcedure = t.procedure
  * If you want a query or mutation to ONLY be accessible to users with the ADMIN role, use this.
  * It verifies the session is valid and guarantees `ctx.session.user` is not null and has the ADMIN role.
  */
-export const adminRoleProtectedRoute = t.procedure.use(enforceUserIsAdmin);
+export const adminRoleProtectedRoute = baseProcedure.use(enforceUserIsAdmin);

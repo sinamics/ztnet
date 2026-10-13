@@ -20,8 +20,6 @@ export async function seedUserOptions() {
 					showNotationMarkerInTableRow: true,
 					ztCentralApiKey: "",
 					ztCentralApiUrl: "https://api.zerotier.com/api/v1",
-					localControllerUrl: "http://zerotier:9993",
-					localControllerSecret: "",
 				},
 			});
 		}
