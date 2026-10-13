@@ -233,7 +233,8 @@ model UserOptions {
   ztCentralApiUrl              String?  @default("https://api.zerotier.com/api/v1")
   // local controller. Deprecated and no longer read: the controller is an
   // instance setting (ControllerOptions). Kept for one release so a downgrade
-  // still finds its columns, then dropped.
+  // still finds its columns, then dropped. The secret is blanked by a
+  // migration, only the URL survives a downgrade.
   localControllerUrl           String?  @default("http://zerotier:9993")
   localControllerSecret        String?  @default("")
   // member table

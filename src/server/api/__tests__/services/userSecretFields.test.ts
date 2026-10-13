@@ -14,6 +14,7 @@ jest.mock("~/utils/mail", () => ({
 jest.mock("~/utils/ztApi", () => ({
 	ZT_FOLDER: "/var/lib/zerotier-one",
 	ping_api: jest.fn(),
+	clearCentralCredentialsCache: jest.fn(),
 }));
 jest.mock("~/utils/organizationNotifications", () => ({
 	sendOrganizationAdminNotification: jest.fn(),

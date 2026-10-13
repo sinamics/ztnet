@@ -16,6 +16,7 @@ jest.mock("~/utils/mail", () => ({
 jest.mock("~/utils/ztApi", () => ({
 	ZT_FOLDER: "/var/lib/zerotier-one",
 	ping_api: jest.fn(),
+	clearCentralCredentialsCache: jest.fn(),
 }));
 jest.mock("~/server/db", () => ({
 	prisma: {
@@ -32,6 +33,7 @@ import * as ztApi from "~/utils/ztApi";
 const mockedLookup = lookup as jest.MockedFunction<typeof lookup>;
 const updateUser = prisma.user.update as jest.Mock;
 const pingApi = ztApi.ping_api as jest.Mock;
+const clearCache = ztApi.clearCentralCredentialsCache as jest.Mock;
 
 const caller = appRouter.createCaller({
 	session: { user: { id: "regular-user", role: "USER" } } as unknown as Session,
@@ -49,6 +51,7 @@ beforeEach(() => {
 		.mockResolvedValue([{ address: "203.0.114.10", family: 4 }] as never);
 	updateUser.mockReset().mockResolvedValue({ id: "regular-user", options: {} });
 	pingApi.mockReset().mockResolvedValue({});
+	clearCache.mockReset();
 });
 
 describe("auth.setZtApi", () => {
@@ -102,6 +105,32 @@ describe("auth.setZtApi", () => {
 
 		expect(storedOptions().ztCentralApiUrl).toBeNull();
 		expect(mockedLookup).not.toHaveBeenCalled();
+	});
+
+	it("drops the cached credentials before it checks the new ones", async () => {
+		updateUser.mockResolvedValue({
+			id: "regular-user",
+			options: { ztCentralApiKey: "new-key" },
+		});
+
+		await caller.auth.setZtApi({
+			ztCentralApiKey: "new-key",
+			ztCentralApiUrl: "https://central.example.com/api/v1",
+		});
+
+		expect(clearCache).toHaveBeenCalledWith("regular-user");
+		expect(pingApi).toHaveBeenCalledTimes(1);
+		// the check must not run against the values from before the save
+		expect(clearCache.mock.invocationCallOrder[0]).toBeLessThan(
+			pingApi.mock.invocationCallOrder[0],
+		);
+	});
+
+	it("drops them when nothing needs checking as well", async () => {
+		await caller.auth.setZtApi({ ztCentralApiUrl: "" });
+
+		expect(clearCache).toHaveBeenCalledWith("regular-user");
+		expect(pingApi).not.toHaveBeenCalled();
 	});
 
 	it("leaves the URL alone when only the key is saved", async () => {

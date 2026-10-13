@@ -72,6 +72,11 @@ const credentialsCache = new Map<
 
 const CACHE_TTL = 60000; // 60 seconds
 
+/** Call after a user's Central key or URL changed, so the next request uses the new values. */
+export const clearCentralCredentialsCache = (userId: string) => {
+	credentialsCache.delete(userId);
+};
+
 const getApiCredentials = async (
 	ctx: UserContext,
 ): Promise<{
@@ -134,6 +139,7 @@ interface ApiRequest {
 	};
 	httpsAgent?: Agent;
 	maxRedirects?: number;
+	proxy?: false;
 }
 
 interface GetOptionsResponse {
@@ -152,7 +158,9 @@ const getOptions = async (
 
 		// The URL is user supplied. It has to resolve to a public address, the
 		// connection is pinned to that address, and redirects are not followed
-		// since they could lead somewhere that was never checked.
+		// since they could lead somewhere that was never checked. Proxies from
+		// the environment are not used either: axios would hand the hostname to
+		// the proxy to resolve and drop the pinned agent.
 		const target = await resolveCentralApiTarget(ztCentralApiUrl);
 		return {
 			ztCentralApiUrl: target.url,
@@ -164,6 +172,7 @@ const getOptions = async (
 				},
 				httpsAgent: pinnedHttpsAgent(target.pinned),
 				maxRedirects: 0,
+				proxy: false,
 			},
 		};
 	}

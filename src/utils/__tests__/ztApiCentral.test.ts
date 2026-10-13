@@ -130,7 +130,7 @@ describe("ZeroTier Central requests", () => {
 	});
 
 	it.each(centralCalls)(
-		"%s is pinned to the checked address and follows no redirect",
+		"%s is pinned to the checked address, follows no redirect and uses no proxy",
 		async (_name, call) => {
 			storedCentralUrl("https://central.example.com/api/v1/");
 
@@ -140,6 +140,8 @@ describe("ZeroTier Central requests", () => {
 			for (const [url, config] of requests()) {
 				expect(url).toMatch(/^https:\/\/central\.example\.com\/api\/v1\//);
 				expect(config.maxRedirects).toBe(0);
+				// with a proxy from the environment axios would drop the pinned agent
+				expect(config.proxy).toBe(false);
 				expect(config.httpsAgent).toBeInstanceOf(Agent);
 
 				// the agent answers with the address that was checked
@@ -173,6 +175,55 @@ describe("ZeroTier Central requests", () => {
 	});
 });
 
+describe("cached Central credentials", () => {
+	const keyUsed = () => requests().at(-1)[1].headers.Authorization;
+	const urlUsed = () => requests().at(-1)[0];
+
+	it("are reused for a short while, so a save has to drop them", async () => {
+		const ctx = newCtx();
+		findUser.mockResolvedValue({
+			options: { ztCentralApiKey: "old-key", ztCentralApiUrl: null },
+		});
+		await ztApi.get_controller_networks(ctx, true);
+
+		// the user saves a new key and URL
+		findUser.mockResolvedValue({
+			options: {
+				ztCentralApiKey: "new-key",
+				ztCentralApiUrl: "https://central.example.com/api/v1",
+			},
+		});
+
+		await ztApi.get_controller_networks(ctx, true);
+		expect(keyUsed()).toBe("token old-key");
+
+		ztApi.clearCentralCredentialsCache(ctx.session.user.id);
+
+		await ztApi.get_controller_networks(ctx, true);
+		expect(keyUsed()).toBe("token new-key");
+		expect(urlUsed()).toBe("https://central.example.com/api/v1/network");
+	});
+
+	it("are dropped for that user only", async () => {
+		const [alice, bob] = [newCtx(), newCtx()];
+		findUser.mockResolvedValue({
+			options: { ztCentralApiKey: "old-key", ztCentralApiUrl: null },
+		});
+		await ztApi.get_controller_networks(alice, true);
+		await ztApi.get_controller_networks(bob, true);
+		findUser.mockResolvedValue({
+			options: { ztCentralApiKey: "new-key", ztCentralApiUrl: null },
+		});
+
+		ztApi.clearCentralCredentialsCache(alice.session.user.id);
+
+		await ztApi.get_controller_networks(alice, true);
+		expect(keyUsed()).toBe("token new-key");
+		await ztApi.get_controller_networks(bob, true);
+		expect(keyUsed()).toBe("token old-key");
+	});
+});
+
 describe("local controller requests", () => {
 	it("are not pinned or DNS checked, the controller is an admin setting", async () => {
 		await ztApi.get_controller_networks(newCtx());
@@ -181,6 +232,7 @@ describe("local controller requests", () => {
 		expect(url).toBe("http://zerotier:9993/controller/network");
 		expect(config.httpsAgent).toBeUndefined();
 		expect(config.maxRedirects).toBeUndefined();
+		expect(config.proxy).toBeUndefined();
 		expect(mockedLookup).not.toHaveBeenCalled();
 	});
 });
