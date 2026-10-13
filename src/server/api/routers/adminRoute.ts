@@ -5,7 +5,6 @@ import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
 import { type GlobalOptions, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import type { ZTControllerNodeStatus } from "~/types/ztController";
-import type { NetworkAndMemberResponse } from "~/types/network";
 import { execFileSync, execSync } from "node:child_process";
 import fs from "node:fs";
 import type { WorldConfig } from "~/types/worldConfig";
@@ -383,11 +382,11 @@ export const adminRouter = createTRPCRouter({
 			let totalMembers = 0;
 			const assignedIPs = new Set<string>();
 			for (const network of networks) {
-				const networkDetails = await ztController.local_network_and_members(
+				const networkDetails = await ztController.local_network_and_membercount(
 					ctx,
 					network as string,
 				);
-				totalMembers += networkDetails?.members.length;
+				totalMembers += networkDetails.memberCount;
 
 				// @ts-expect-error
 				const usedIp = getNetworkClassCIDR(networkDetails?.network?.ipAssignmentPools);
@@ -639,12 +638,12 @@ export const adminRouter = createTRPCRouter({
 	 *
 	 * It then compares these lists to find networks that exist in the controller but not in the database.
 	 *
-	 * For each of these unlinked networks, it fetches detailed network information from the controller.
+	 * For each of these unlinked networks, it fetches the network details and member count from the controller.
 	 *
 	 * @access restricted to admins
 	 * @param {Object} ctx - context object that carries important information like database instance
 	 * @param {Object} input - input object that contains possible query parameters or payload
-	 * @returns {Promise<NetworkAndMemberResponse[]>} - an array of unlinked network details
+	 * @returns an array of unlinked network details with their member count
 	 */
 	unlinkedNetwork: adminRoleProtectedRoute
 		.input(
@@ -670,12 +669,11 @@ export const adminRouter = createTRPCRouter({
 				if (unlinkedNetworks.length === 0) return [];
 
 				if (input.getDetails) {
-					const unlinkArr: NetworkAndMemberResponse[] = await Promise.all(
+					return await Promise.all(
 						unlinkedNetworks.map((unlinked) =>
-							ztController.local_network_and_members(ctx, unlinked),
+							ztController.local_network_and_membercount(ctx, unlinked),
 						),
 					);
-					return unlinkArr;
 				}
 
 				return unlinkedNetworks;
