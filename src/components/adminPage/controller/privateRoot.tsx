@@ -178,8 +178,8 @@ const PrivateRoot = () => {
 									</Link>
 								</p>
 							</div>
-							<div className="flex justify-between">
-								<div className="flex gap-3">
+							<div className="flex flex-wrap justify-between gap-3">
+								<div className="flex flex-wrap gap-3">
 									<button
 										onClick={() => downloadPlanet()}
 										className="btn join-item bg-primary btn-sm"
