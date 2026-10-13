@@ -46,7 +46,7 @@ jest.mock("../../../utils/api", () => ({
 			registrationAllowed: {
 				useQuery: jest.fn().mockReturnValue({
 					data: { enableRegistration: true, oauthExclusiveLogin: false },
-					isLoading: false,
+					isPending: false,
 				}),
 			},
 		},
@@ -54,14 +54,14 @@ jest.mock("../../../utils/api", () => ({
 			getAllOptions: {
 				useQuery: () => ({
 					data: {},
-					isLoading: false,
+					isPending: false,
 					refetch: jest.fn(),
 				}),
 			},
 			getPublicOptions: {
 				useQuery: () => ({
 					data: {},
-					isLoading: false,
+					isPending: false,
 					refetch: jest.fn(),
 				}),
 			},
@@ -102,7 +102,7 @@ describe("LoginPage", () => {
 	it("renders login form correctly", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: null,
-			isLoading: true,
+			isPending: true,
 			refetch: jest.fn(),
 		});
 		api.public.getWelcomeMessage.useQuery = useQueryMock;

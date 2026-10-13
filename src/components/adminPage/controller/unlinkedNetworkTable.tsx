@@ -43,7 +43,7 @@ export const UnlinkedNetwork = () => {
 	const {
 		data: unlinkedNetworks,
 		refetch: refetchNetworks,
-		isLoading: loadingNetworks,
+		isPending: loadingNetworks,
 	} = api.admin.unlinkedNetwork.useQuery({
 		getDetails: true,
 	});

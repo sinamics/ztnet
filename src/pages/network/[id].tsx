@@ -64,7 +64,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 	const { mutate: deleteNetwork } = api.network.deleteNetwork.useMutation();
 	const {
 		data: networkById,
-		isLoading: loadingNetwork,
+		isPending: loadingNetwork,
 		error: errorNetwork,
 	} = api.network.getNetworkById.useQuery(
 		{

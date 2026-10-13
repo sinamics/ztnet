@@ -8,7 +8,7 @@ interface FormInputProps {
 	onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	placeholder: string;
 	disabled?: boolean;
-	icon?: ReactElement;
+	icon?: ReactElement<{ className?: string }>;
 }
 
 const FormInput: React.FC<FormInputProps> = ({

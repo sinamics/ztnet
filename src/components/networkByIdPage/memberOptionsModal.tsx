@@ -80,7 +80,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		seIpAssignments(memberById?.ipAssignments || []);
 	}, [memberById?.ipAssignments]);
 
-	const { mutate: updateMember, isLoading: updateMemberLoading } =
+	const { mutate: updateMember, isPending: updateMemberLoading } =
 		api.networkMember.Update.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({
@@ -152,7 +152,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 		);
 	};
 
-	const CapabilityCheckboxes: React.FC<CapabilitiesByName> = (caps) => {
+	const CapabilityCheckboxes = (caps: CapabilitiesByName): React.JSX.Element => {
 		const handleCheckboxChange = (
 			e: React.ChangeEvent<HTMLInputElement>,
 			capId: number,
@@ -249,7 +249,11 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 				<div className="flex items-center justify-between mb-4 pb-2 border-b border-base-200">
 					<div className="flex items-center space-x-2 text-xs text-base-content/70">
 						<p>{t("networkById.memberOptionModal.header.created")}</p>
-						<TimeAgo date={createdDate} formatter={formatTime} title={createdDate} />
+						<TimeAgo
+							date={createdDate}
+							formatter={formatTime}
+							title={createdDate.toString()}
+						/>
 					</div>
 				</div>
 

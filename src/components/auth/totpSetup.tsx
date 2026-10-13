@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { type JSX, useState } from "react";
 import { toast } from "react-hot-toast";
 import { ErrorCode } from "~/utils/errorCode";
 import { useModalStore } from "~/utils/store";

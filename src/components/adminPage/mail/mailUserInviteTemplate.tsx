@@ -29,7 +29,7 @@ const MailUserInviteTemplate = () => {
 	const {
 		data: mailTemplates,
 		refetch: refetchMailTemplates,
-		isLoading: loadingTemplates,
+		isPending: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
 		template: MailTemplateKey.InviteUser,
 	});
@@ -47,7 +47,7 @@ const MailUserInviteTemplate = () => {
 			[e.target.name]: modifiedValue,
 		});
 	};
-	const { mutate: sendTestMail, isLoading: sendingMailLoading } =
+	const { mutate: sendTestMail, isPending: sendingMailLoading } =
 		api.admin.sendTestMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

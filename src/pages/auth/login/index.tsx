@@ -20,7 +20,7 @@ const Login = ({ oauthExclusiveLogin, oauthEnabled }) => {
 	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
 	const title = `${globalOptions?.siteName} - Sign In`;
 
-	const { data: options, isLoading: loadingRegistration } =
+	const { data: options, isPending: loadingRegistration } =
 		api.public.registrationAllowed.useQuery();
 	const router = useRouter();
 	const { query } = router;

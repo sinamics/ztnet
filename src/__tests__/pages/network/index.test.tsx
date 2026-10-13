@@ -19,14 +19,14 @@ jest.mock("../../../utils/api", () => ({
 			getAllOptions: {
 				useQuery: () => ({
 					data: {},
-					isLoading: false,
+					isPending: false,
 					refetch: jest.fn(),
 				}),
 			},
 			getPublicOptions: {
 				useQuery: () => ({
 					data: {},
-					isLoading: false,
+					isPending: false,
 					refetch: jest.fn(),
 				}),
 			},
@@ -67,7 +67,7 @@ describe("Networks page", () => {
 		}));
 		(api.admin.unlinkedNetwork.useQuery as jest.Mock).mockReturnValue({
 			data: [1, 2],
-			isLoading: true,
+			isPending: true,
 			refetch: jest.fn(),
 		});
 	});
@@ -75,7 +75,7 @@ describe("Networks page", () => {
 	it("displays loading when fetching networks", () => {
 		(api.network.getUserNetworks.useQuery as jest.Mock).mockReturnValue({
 			data: undefined,
-			isLoading: true,
+			isPending: true,
 			refetch: jest.fn(),
 		});
 
@@ -91,7 +91,7 @@ describe("Networks page", () => {
 	it("displays notification if there is unlinked networks on the controller", async () => {
 		(api.network.getUserNetworks.useQuery as jest.Mock).mockReturnValue({
 			data: [],
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -115,7 +115,7 @@ describe("Networks page", () => {
 				{ nwid: "1", name: "Network 1" },
 				{ nwid: "2", name: "Network 2" },
 			],
-			isLoading: false,
+			isPending: false,
 			refetch: mockRefetch,
 		});
 

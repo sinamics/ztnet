@@ -53,7 +53,7 @@ describe("<NetworkMulticast />", () => {
 					enableBroadcast: false,
 				},
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -103,7 +103,7 @@ describe("<NetworkMulticast />", () => {
 					enableBroadcast: false,
 				},
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 

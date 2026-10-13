@@ -52,7 +52,7 @@ describe("<NetworkDns />", () => {
 					},
 				},
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 

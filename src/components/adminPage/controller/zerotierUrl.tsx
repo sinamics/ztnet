@@ -15,7 +15,7 @@ const ZerotierUrl = () => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refetchStats } = api.admin.getControllerStats.useQuery();
-	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
+	const { data: me, refetch: refetchMe, isPending: meLoading } = api.auth.me.useQuery();
 
 	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
 		onSuccess: handleApiSuccess({

@@ -103,8 +103,9 @@ export default function TwoFactAuth({
 						data-testid="totp-input-digit"
 						name="totp"
 						pattern="\d*"
-						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-						ref={(el) => (inputRefs.current[index] = el)}
+						ref={(el) => {
+							inputRefs.current[index] = el;
+						}}
 						className="input input-bordered input-sm w-10 text-center"
 						type="text"
 						inputMode="numeric"

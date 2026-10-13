@@ -76,7 +76,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 				id: "creationTime",
 				cell: (info) => {
 					const creationDate = new Date(info.getValue());
-					return <TimeAgo date={creationDate} title={creationDate} />;
+					return <TimeAgo date={creationDate} title={creationDate.toString()} />;
 				},
 			}),
 			columnHelper.display({

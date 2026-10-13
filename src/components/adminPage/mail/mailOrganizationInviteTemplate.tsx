@@ -34,7 +34,7 @@ const OrganizationInviteTemplate = () => {
 	const {
 		data: mailTemplates,
 		refetch: refetchMailTemplates,
-		isLoading: loadingTemplates,
+		isPending: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
 		template: MailTemplateKey.InviteOrganization,
 	});
@@ -49,7 +49,7 @@ const OrganizationInviteTemplate = () => {
 		});
 	};
 
-	const { mutate: sendTestMail, isLoading: sendingMailLoading } =
+	const { mutate: sendTestMail, isPending: sendingMailLoading } =
 		api.admin.sendTestMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

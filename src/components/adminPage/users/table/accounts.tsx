@@ -48,7 +48,7 @@ export const Accounts = () => {
 	const [globalFilter, setGlobalFilter] = useState("");
 	const callModal = useModalStore((state) => state.callModal);
 	const [sorting, setSorting] = useState<SortingState>(initialSortingState);
-	const { data: users, isLoading: loadingUsers } = api.admin.getUsers.useQuery({
+	const { data: users, isPending: loadingUsers } = api.admin.getUsers.useQuery({
 		isAdmin: false,
 	});
 

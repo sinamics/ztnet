@@ -1,7 +1,7 @@
 import { signOut } from "~/lib/authClient";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { type JSX, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useSidebarStore, useSocketStore } from "~/utils/store";
 import { api } from "~/utils/api";
@@ -33,7 +33,7 @@ const Sidebar = (): JSX.Element => {
 	const { data: me } = api.auth.me.useQuery();
 	const t = useTranslations("sidebar");
 	const isBelowMd = useIsBelowMd();
-	const sidebarRef = useRef<HTMLDivElement>();
+	const sidebarRef = useRef<HTMLDivElement>(null);
 	const router = useRouter();
 	const orgId = router.query.orgid as string;
 

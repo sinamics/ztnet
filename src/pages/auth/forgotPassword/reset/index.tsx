@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
@@ -19,24 +19,21 @@ const ForgotPassword = () => {
 
 	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
 
-	const { mutate: resetPassword, isLoading } =
+	const { mutate: resetPassword, isPending: isLoading } =
 		api.auth.changePasswordFromJwt.useMutation();
-	const { data: tokenData, isLoading: validateTokenLoading } =
-		api.auth.validateResetPasswordToken.useQuery(
-			{
-				token: token as string,
-			},
-			{
-				onSuccess: (response) => {
-					if (response?.error) {
-						router.push("/auth/login");
-					}
-				},
-				onError: () => {
-					router.push("/auth/login");
-				},
-			},
-		);
+	const {
+		data: tokenData,
+		isPending: validateTokenLoading,
+		isError: validateTokenError,
+	} = api.auth.validateResetPasswordToken.useQuery({
+		token: token as string,
+	});
+
+	useEffect(() => {
+		if (tokenData?.error || validateTokenError) {
+			router.push("/auth/login");
+		}
+	}, [tokenData, validateTokenError, router.push]);
 
 	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

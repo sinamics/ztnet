@@ -26,14 +26,14 @@ const UserOptionsModal = ({ userId }: Iprops) => {
 
 	const closeModal = useModalStore((state) => state.closeModal);
 
-	const { data: user, isLoading: loadingUser } = api.admin.getUser.useQuery({
+	const { data: user, isPending: loadingUser } = api.admin.getUser.useQuery({
 		userId: userId,
 	});
 	const { refetch: refetchUsers } = api.admin.getUsers.useQuery({
 		isAdmin: false,
 	});
 
-	const { mutate: deleteUser, isLoading: userDeleteLoading } =
+	const { mutate: deleteUser, isPending: userDeleteLoading } =
 		api.admin.deleteUser.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

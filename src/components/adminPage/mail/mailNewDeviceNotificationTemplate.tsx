@@ -34,7 +34,7 @@ const NewDeviceNotificationTemplate = () => {
 	const {
 		data: mailTemplates,
 		refetch: refetchMailTemplates,
-		isLoading: loadingTemplates,
+		isPending: loadingTemplates,
 	} = api.admin.getMailTemplates.useQuery({
 		template: MailTemplateKey.NewDeviceNotification,
 	});
@@ -49,7 +49,7 @@ const NewDeviceNotificationTemplate = () => {
 		});
 	};
 
-	const { mutate: sendTestMail, isLoading: sendingMailLoading } =
+	const { mutate: sendTestMail, isPending: sendingMailLoading } =
 		api.admin.sendTestMail.useMutation({
 			onError: handleApiError,
 			onSuccess: handleApiSuccess({

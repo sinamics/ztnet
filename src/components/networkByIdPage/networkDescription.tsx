@@ -81,7 +81,7 @@ const NetworkDescription = ({ central = false, organizationId }: IProp) => {
 
 	const {
 		data: networkById,
-		isLoading: loadingNetwork,
+		isPending: loadingNetwork,
 		error: errorNetwork,
 		refetch: refetchNetwork,
 	} = api.network.getNetworkById.useQuery({

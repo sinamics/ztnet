@@ -5,7 +5,7 @@ import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
 import { ErrorData } from "~/types/errorHandling";
 import { useRouter } from "next/router";
-import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
+import { LayoutOrganizationAuthenticated, type TUser } from "~/components/layouts/layout";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import HeadSection from "~/components/shared/metaTags";
 import InputField from "~/components/elements/inputField";
@@ -39,7 +39,7 @@ const OrganizationSettings = ({ user }) => {
 			enabled: !!organizationId,
 		},
 	);
-	const { mutate: updateOrg, isLoading: loadingUpdate } = api.org.updateMeta.useMutation({
+	const { mutate: updateOrg, isPending: loadingUpdate } = api.org.updateMeta.useMutation({
 		onSuccess: () => {
 			toast.success("Organization updated successfully");
 			refecthAllOrg();
@@ -179,7 +179,7 @@ const OrganizationSettings = ({ user }) => {
 	);
 };
 
-OrganizationSettings.getLayout = function getLayout(page: ReactElement) {
+OrganizationSettings.getLayout = function getLayout(page: ReactElement<TUser>) {
 	return (
 		<LayoutOrganizationAuthenticated props={page?.props}>
 			{page}

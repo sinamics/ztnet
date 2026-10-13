@@ -32,7 +32,7 @@ const Account = () => {
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
-	const { data: me, refetch: refetchMe, isLoading: meLoading } = api.auth.me.useQuery();
+	const { data: me, refetch: refetchMe, isPending: meLoading } = api.auth.me.useQuery();
 
 	const {
 		mutate: userUpdate,
@@ -47,7 +47,7 @@ const Account = () => {
 		onError: handleApiError,
 	});
 
-	const { mutate: sendVerificationEmail, isLoading: sendMailLoading } =
+	const { mutate: sendVerificationEmail, isPending: sendMailLoading } =
 		api.auth.sendVerificationEmail.useMutation({
 			onError: handleApiError,
 			onSuccess: () => {

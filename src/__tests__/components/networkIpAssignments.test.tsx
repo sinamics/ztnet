@@ -43,7 +43,7 @@ describe("<NetworkIpAssignment />", () => {
 	it("should display loading state initially", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: null,
-			isLoading: true,
+			isPending: true,
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
 
@@ -71,7 +71,7 @@ describe("<NetworkIpAssignment />", () => {
 
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: mockData,
-			isLoading: false,
+			isPending: false,
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
 
@@ -104,7 +104,7 @@ describe("<NetworkIpAssignment />", () => {
 
 		api.network.getNetworkById.useQuery = jest.fn().mockReturnValue({
 			data: mockData,
-			isLoading: false,
+			isPending: false,
 		});
 
 		api.network.enableIpv4AutoAssign.useMutation = jest.fn().mockReturnValue({
@@ -147,7 +147,7 @@ describe("<NetworkIpAssignment />", () => {
 
 		api.network.getNetworkById.useQuery = jest.fn().mockReturnValue({
 			data: mockData,
-			isLoading: false,
+			isPending: false,
 		});
 
 		api.network.easyIpAssignment.useMutation = jest.fn().mockReturnValue({
@@ -183,7 +183,7 @@ describe("<NetworkIpAssignment />", () => {
 
 		api.network.getNetworkById.useQuery = jest.fn().mockReturnValue({
 			data: mockData,
-			isLoading: false,
+			isPending: false,
 		});
 
 		api.network.advancedIpAssignment.useMutation = jest.fn().mockReturnValue({

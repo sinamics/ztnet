@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { useRouter } from "next/router";
-import { LayoutAdminAuthenticated } from "~/components/layouts/layout";
+import { LayoutAdminAuthenticated, type TUser } from "~/components/layouts/layout";
 import Users from "./users";
 import Controller from "./controller";
 import Mail from "./mail";
@@ -90,7 +90,7 @@ const AdminSettings = ({ orgIds }) => {
 	);
 };
 
-AdminSettings.getLayout = function getLayout(page: ReactElement) {
+AdminSettings.getLayout = function getLayout(page: ReactElement<TUser>) {
 	return <LayoutAdminAuthenticated props={page?.props}>{page}</LayoutAdminAuthenticated>;
 };
 export { getServerSideProps };

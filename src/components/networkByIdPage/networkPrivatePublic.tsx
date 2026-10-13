@@ -51,13 +51,14 @@ export const NetworkPrivatePublic = ({ central = false, organizationId }: IProp)
 
 	const { query } = useRouter();
 	const client = useQueryClient();
-	const { data: networkByIdQuery, isLoading } = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central,
-		},
-		{ enabled: !!query.id },
-	);
+	const { data: networkByIdQuery, isPending: isLoading } =
+		api.network.getNetworkById.useQuery(
+			{
+				nwid: query.id as string,
+				central,
+			},
+			{ enabled: !!query.id },
+		);
 	const { mutate: privatePublicNetwork } = api.network.privatePublicNetwork.useMutation({
 		onError: handleApiError,
 	});

@@ -35,7 +35,7 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 	const { query } = useRouter();
 	const {
 		data: networkById,
-		isLoading,
+		isPending: isLoading,
 		refetch: refecthNetworkById,
 	} = api.network.getNetworkById.useQuery({
 		nwid: query.id as string,

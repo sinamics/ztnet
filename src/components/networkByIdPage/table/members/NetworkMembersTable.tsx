@@ -105,21 +105,22 @@ export const NetworkMembersTable = ({ nwid, central = false, organizationId }: I
 			? pagination.pageIndex
 			: 0;
 
-	const { data: membersData, isLoading } = api.network.getNetworkMembers.useQuery(
-		{
-			nwid,
-			central,
-			page: safePage,
-			pageSize: safePageSize,
-			search: globalFilter || undefined,
-			// biome-ignore lint/suspicious/noExplicitAny: narrowed to the server enum above
-			sortBy: sortBy as any,
-			sortDir,
-		},
-		// Socket.IO drives live updates; this slow poll is just a safety net for a
-		// dropped socket.
-		{ enabled: !!query.id, refetchInterval },
-	);
+	const { data: membersData, isPending: isLoading } =
+		api.network.getNetworkMembers.useQuery(
+			{
+				nwid,
+				central,
+				page: safePage,
+				pageSize: safePageSize,
+				search: globalFilter || undefined,
+				// biome-ignore lint/suspicious/noExplicitAny: narrowed to the server enum above
+				sortBy: sortBy as any,
+				sortDir,
+			},
+			// Socket.IO drives live updates; this slow poll is just a safety net for a
+			// dropped socket.
+			{ enabled: !!query.id, refetchInterval },
+		);
 
 	const totalCount = membersData?.totalCount ?? 0;
 	const memoizedMembers = useMemo(

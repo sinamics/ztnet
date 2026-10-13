@@ -42,7 +42,7 @@ const OrganizationById = ({ user, orgIds }) => {
 	const {
 		data: orgData,
 		refetch: refecthOrg,
-		isLoading: orgLoading,
+		isPending: orgLoading,
 		error: getOrgError,
 	} = api.org.getOrgById.useQuery({
 		organizationId,

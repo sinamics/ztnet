@@ -66,7 +66,7 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (
-	opts: CreateNextContextOptions & SocketServerCtx,
+	opts: Pick<CreateNextContextOptions, "req" | "res"> & SocketServerCtx,
 ) => {
 	const { req, res } = opts;
 	const wss = res.socket.server.io;
@@ -88,12 +88,17 @@ export const createTRPCContext = async (
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-import { initTRPC, TRPCError } from "@trpc/server";
+import {
+	initTRPC,
+	TRPCError,
+	type TRPCDefaultErrorShape,
+	type TRPCRootObject,
+} from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { NextApiResponse } from "next";
 
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const trpc = initTRPC.context<typeof createTRPCContext>().create({
 	transformer: superjson,
 	errorFormatter({ shape, error }) {
 		return {
@@ -105,6 +110,30 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 		};
 	},
 });
+
+/**
+ * tRPC infers the transformer and error shape with `undefined extends ...` checks,
+ * which always match while this project compiles without strictNullChecks. That
+ * would type every output as plain JSON (Date as string) and drop `zodError`, so
+ * the root types are stated explicitly here.
+ */
+type RootTypes = (typeof trpc)["_config"]["$types"];
+type ErrorShape = TRPCDefaultErrorShape & {
+	data: TRPCDefaultErrorShape["data"] & {
+		zodError: ReturnType<ZodError["flatten"]> | null;
+	};
+};
+const t = trpc as unknown as TRPCRootObject<
+	RootTypes["ctx"],
+	RootTypes["meta"],
+	{ transformer: typeof superjson },
+	{
+		ctx: RootTypes["ctx"];
+		meta: RootTypes["meta"];
+		errorShape: ErrorShape;
+		transformer: true;
+	}
+>;
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -163,10 +192,12 @@ const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
  * background) safety poll. Never fails the mutation if emitting throws.
  */
 const emitNetworkChangeOnMutation = t.middleware(
-	async ({ ctx, type, rawInput, next }) => {
+	async ({ ctx, type, getRawInput, next }) => {
 		const result = await next();
 		if (type === "mutation" && result.ok && ctx.wss) {
-			const input = rawInput as { nwid?: string; networkId?: string } | undefined;
+			const input = (await getRawInput()) as
+				| { nwid?: string; networkId?: string }
+				| undefined;
 			const nwid = input?.nwid ?? input?.networkId;
 			if (nwid) {
 				try {

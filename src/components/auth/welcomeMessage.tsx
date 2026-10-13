@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 
 export const WelcomeMessage = () => {
 	const t = useTranslations();
-	const { data: options, isLoading } = api.public.getWelcomeMessage.useQuery();
+	const { data: options, isPending: isLoading } = api.public.getWelcomeMessage.useQuery();
 
 	return (
 		<div className="z-10 sm:max-w-2xl md:p-10 xl:max-w-4xl">
