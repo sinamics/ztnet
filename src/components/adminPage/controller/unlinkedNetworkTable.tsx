@@ -12,7 +12,6 @@ import {
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
-import type { User } from "@prisma/client";
 import TimeAgo from "react-timeago";
 import type { NetworkEntity } from "~/types/local/network";
 import { getLocalStorageItem, setLocalStorageItem } from "~/utils/localstorage";
@@ -23,7 +22,7 @@ import {
 
 interface UnlinkedNetworkTableProps {
 	network: NetworkEntity;
-	members: User[];
+	memberCount: number;
 	role: string;
 }
 
@@ -95,18 +94,14 @@ export const UnlinkedNetwork = () => {
 					return <TimeAgo date={creationTime} />;
 				},
 			}),
-			columnHelper.accessor("members", {
+			columnHelper.accessor("memberCount", {
 				header: () => (
 					<span>
 						{t("controller.networkMembers.unlinkedNetworks.table.members").toUpperCase()}
 					</span>
 				),
 				id: "members",
-				cell: ({ getValue }) => {
-					const members = getValue();
-
-					return members.length;
-				},
+				cell: ({ getValue }) => getValue(),
 			}),
 			columnHelper.accessor("role", {
 				header: () => (
