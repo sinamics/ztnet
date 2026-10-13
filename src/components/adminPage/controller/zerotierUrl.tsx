@@ -15,11 +15,15 @@ const ZerotierUrl = () => {
 	const handleApiSuccess = useTrpcApiSuccessHandler();
 
 	const { refetch: refetchStats } = api.admin.getControllerStats.useQuery();
-	const { data: me, refetch: refetchMe, isPending: meLoading } = api.auth.me.useQuery();
+	const {
+		data: controllerOptions,
+		refetch: refetchControllerOptions,
+		isPending: controllerOptionsLoading,
+	} = api.admin.getControllerOptions.useQuery();
 
-	const { mutate: setZtOptions } = api.auth.setLocalZt.useMutation({
+	const { mutate: setControllerOptions } = api.admin.setControllerOptions.useMutation({
 		onSuccess: handleApiSuccess({
-			actions: [refetchMe, refetchStats],
+			actions: [refetchControllerOptions, refetchStats],
 		}),
 		onError: handleApiError,
 	});
@@ -29,12 +33,12 @@ const ZerotierUrl = () => {
 			<div className="divider mt-0 p-0 text-error"></div>
 
 			<div className="space-y-5">
-				<p className="text-sm text-gray-500">
+				<div className="text-sm text-gray-500">
 					{t.rich("controller.controllerConfig.proceed_with_caution", {
 						span: (content) => <span className="text-error">{content} </span>,
 					})}
 					{t("controller.controllerConfig.modification_warning")}
-					{me?.options.urlFromEnv || me?.options.secretFromEnv ? (
+					{controllerOptions?.urlFromEnv || controllerOptions?.secretFromEnv ? (
 						<div className="alert alert-warning my-5">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -55,56 +59,55 @@ const ZerotierUrl = () => {
 								})}
 							</span>
 						</div>
-					) : (
-						"nope"
-					)}
-				</p>
+					) : null}
+				</div>
 
 				<InputField
-					isLoading={meLoading}
+					isLoading={controllerOptionsLoading}
 					label={t("controller.controllerConfig.local_zerotier_url")}
 					description={t("controller.controllerConfig.submit_empty_field_default")}
 					size="sm"
 					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
-					disabled={me?.options.urlFromEnv}
+					disabled={controllerOptions?.urlFromEnv}
 					fields={[
 						{
 							name: "localControllerUrl",
 							type: "text",
-							placeholder: me?.options?.localControllerUrl,
-							value: me?.options?.localControllerUrl,
+							placeholder:
+								controllerOptions?.localControllerUrl ??
+								controllerOptions?.defaultLocalControllerUrl,
+							value: controllerOptions?.localControllerUrl ?? "",
 						},
 					]}
 					submitHandler={(params) =>
 						new Promise((resolve) => {
-							setZtOptions({
-								localControllerSecret: me?.options?.localControllerSecret,
-								...params,
+							setControllerOptions({
+								localControllerUrl: params.localControllerUrl as string,
 							});
 							resolve(true);
 						})
 					}
 				/>
 				<InputField
-					isLoading={meLoading}
+					isLoading={controllerOptionsLoading}
 					label={t("controller.controllerConfig.zerotier_secret")}
 					description={t("controller.controllerConfig.submit_empty_field_default")}
 					rootFormClassName="space-y-3 pt-2 w-6/6 sm:w-3/6"
 					size="sm"
-					disabled={me?.options.secretFromEnv}
+					disabled={controllerOptions?.secretFromEnv}
 					fields={[
 						{
+							// the stored secret is never sent to the browser
 							name: "localControllerSecret",
-							type: "text",
-							placeholder: me?.options?.localControllerSecret || "********",
-							value: me?.options?.localControllerSecret || "",
+							type: "password",
+							placeholder: controllerOptions?.hasLocalControllerSecret ? "********" : "",
+							value: "",
 						},
 					]}
 					submitHandler={(params) =>
 						new Promise((resolve) => {
-							setZtOptions({
-								localControllerUrl: me?.options?.localControllerUrl,
-								...params,
+							setControllerOptions({
+								localControllerSecret: params.localControllerSecret as string,
 							});
 							resolve(true);
 						})

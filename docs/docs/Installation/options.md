@@ -43,6 +43,8 @@ Configure the application using the following environment variables:
   - Default: `3000`.	
   
 ### ZeroTier Controller Configuration
+The controller is one setting for the whole instance: every user, organization and background job talks to the same controller. An admin can also set the address and secret under **Admin → ZT Controller**. The environment variables below take precedence over what is saved there, and lock the matching field in the UI.
+
 - `ZT_ADDR`
   - Description: ZeroTier controller address. Use these settings if you wish to configure a custom ZeroTier controller instead of the default one.
   - Default: `http://zerotier:9993` for Docker environment, and `http://127.0.0.1:9993` for standalone.

@@ -3,7 +3,8 @@ import { isIP } from "node:net";
 import { Address4, Address6 } from "ip-address";
 
 /**
- * Guard for outbound requests to user supplied URLs (webhooks).
+ * Guard for outbound requests to user supplied URLs (webhooks, the ZeroTier
+ * Central API URL).
  *
  * ztnet usually runs in a privileged network position: it sits next to the
  * ZeroTier controller API and, in cloud deployments, next to the instance
@@ -27,6 +28,26 @@ export const ALLOW_PRIVATE_TARGETS_ENV = "WEBHOOK_ALLOW_PRIVATE_TARGETS";
 /** Read at call time, not module load, so a container restart is enough to change it. */
 export const allowsPrivateTargets = (): boolean =>
 	process.env[ALLOW_PRIVATE_TARGETS_ENV]?.trim().toLowerCase() === "true";
+
+/**
+ * What a guarded URL is used for. Reserved addresses are refused for every
+ * policy; the policy decides how errors name the URL and whether private
+ * network addresses are acceptable.
+ */
+export interface TargetPolicy {
+	/** how error messages name the URL */
+	label: string;
+	/** evaluated per check, so it can follow configuration */
+	allowPrivate: () => boolean;
+	/** how to unblock a private target, appended to the error when there is a way */
+	privateTargetHint?: string;
+}
+
+export const WEBHOOK_TARGET_POLICY: TargetPolicy = {
+	label: "Webhook URL",
+	allowPrivate: allowsPrivateTargets,
+	privateTargetHint: `Set ${ALLOW_PRIVATE_TARGETS_ENV}=true to deliver webhooks to private networks.`,
+};
 
 // IPv4 ranges that are never a valid outbound target
 const RESERVED_IPV4_CIDRS = [
@@ -136,29 +157,45 @@ export const classifyIpAddress = (ip: string): AddressClass => {
 };
 
 /**
- * True if the address is not a valid outbound target under the current
- * configuration: reserved addresses always, private addresses unless
- * `WEBHOOK_ALLOW_PRIVATE_TARGETS=true`.
+ * True if the address is not a valid outbound target under the given policy:
+ * reserved addresses always, private addresses unless the policy allows them
+ * (for webhooks: `WEBHOOK_ALLOW_PRIVATE_TARGETS=true`).
  */
-export const isBlockedIpAddress = (ip: string): boolean => {
+export const isBlockedIpAddress = (
+	ip: string,
+	policy: TargetPolicy = WEBHOOK_TARGET_POLICY,
+): boolean => {
 	const addressClass = classifyIpAddress(ip);
 	if (addressClass === "reserved") return true;
-	if (addressClass === "private") return !allowsPrivateTargets();
+	if (addressClass === "private") return !policy.allowPrivate();
 	return false;
 };
 
-const blockedAddressMessage = (rawUrl: string, addressClass: AddressClass) =>
+const withHint = (message: string, policy: TargetPolicy) =>
+	policy.privateTargetHint ? `${message}. ${policy.privateTargetHint}` : message;
+
+const blockedAddressMessage = (
+	rawUrl: string,
+	addressClass: AddressClass,
+	policy: TargetPolicy,
+) =>
 	addressClass === "private"
-		? `Webhook URL points at a private network address and is not allowed: ${rawUrl}. Set ${ALLOW_PRIVATE_TARGETS_ENV}=true to deliver webhooks to private networks.`
-		: `Webhook URL points at a private or reserved address and is not allowed: ${rawUrl}`;
+		? withHint(
+				`${policy.label} points at a private network address and is not allowed: ${rawUrl}`,
+				policy,
+			)
+		: `${policy.label} points at a private or reserved address and is not allowed: ${rawUrl}`;
 
 /**
  * Synchronous checks that do not need DNS: valid https URL, and not an
- * obviously local target. Used when a webhook is saved so the admin gets
- * immediate feedback. This is not the security boundary on its own, the
- * delivery time check in `resolvePublicTarget` is.
+ * obviously local target. Used when a URL is saved so the person typing it
+ * gets immediate feedback. This is not the security boundary on its own, the
+ * request time check in `resolvePublicTarget` is.
  */
-export const assertPublicHttpsUrl = (rawUrl: string): URL => {
+export const assertPublicHttpsUrl = (
+	rawUrl: string,
+	policy: TargetPolicy = WEBHOOK_TARGET_POLICY,
+): URL => {
 	let url: URL;
 
 	try {
@@ -168,23 +205,25 @@ export const assertPublicHttpsUrl = (rawUrl: string): URL => {
 	}
 
 	if (url.protocol !== "https:") {
-		throw new BlockedUrlError(`Webhook URL needs to be HTTPS: ${rawUrl}`);
+		throw new BlockedUrlError(`${policy.label} needs to be HTTPS: ${rawUrl}`);
 	}
 
 	const hostname = stripBrackets(url.hostname);
 	if (!hostname) {
-		throw new BlockedUrlError(`Webhook URL is missing a hostname: ${rawUrl}`);
+		throw new BlockedUrlError(`${policy.label} is missing a hostname: ${rawUrl}`);
 	}
 
 	const lowercased = hostname.toLowerCase();
 	if (LOCAL_HOSTNAMES.has(lowercased) || lowercased.endsWith(".localhost")) {
 		throw new BlockedUrlError(
-			`Webhook URL points at a local address and is not allowed: ${rawUrl}`,
+			`${policy.label} points at a local address and is not allowed: ${rawUrl}`,
 		);
 	}
 
-	if (isIP(hostname) && isBlockedIpAddress(hostname)) {
-		throw new BlockedUrlError(blockedAddressMessage(rawUrl, classifyIpAddress(hostname)));
+	if (isIP(hostname) && isBlockedIpAddress(hostname, policy)) {
+		throw new BlockedUrlError(
+			blockedAddressMessage(rawUrl, classifyIpAddress(hostname), policy),
+		);
 	}
 
 	return url;
@@ -205,8 +244,11 @@ export interface PinnedTarget {
  * second DNS lookup could return a different (internal) answer than the one we
  * validated here.
  */
-export const resolvePublicTarget = async (rawUrl: string): Promise<PinnedTarget> => {
-	const url = assertPublicHttpsUrl(rawUrl);
+export const resolvePublicTarget = async (
+	rawUrl: string,
+	policy: TargetPolicy = WEBHOOK_TARGET_POLICY,
+): Promise<PinnedTarget> => {
+	const url = assertPublicHttpsUrl(rawUrl, policy);
 	const hostname = stripBrackets(url.hostname);
 
 	if (isIP(hostname)) {
@@ -214,17 +256,20 @@ export const resolvePublicTarget = async (rawUrl: string): Promise<PinnedTarget>
 	}
 
 	const resolved = await lookup(hostname, { all: true });
-	const allowed = resolved.find((entry) => !isBlockedIpAddress(entry.address));
+	const allowed = resolved.find((entry) => !isBlockedIpAddress(entry.address, policy));
 
 	if (!allowed) {
-		// Tell the admin how to unblock a LAN receiver, but only when that is what
-		// they hit. A name that resolves to loopback or metadata stays blocked.
+		// Say how to unblock a LAN receiver, but only when that is what was hit and
+		// the policy has a way. A name that resolves to loopback or metadata stays blocked.
 		const onlyPrivate =
 			resolved.length > 0 &&
 			resolved.every((entry) => classifyIpAddress(entry.address) === "private");
 		throw new BlockedUrlError(
 			onlyPrivate
-				? `Refusing to connect to ${hostname}, it resolves to a private network address. Set ${ALLOW_PRIVATE_TARGETS_ENV}=true to deliver webhooks to private networks.`
+				? withHint(
+						`Refusing to connect to ${hostname}, it resolves to a private network address`,
+						policy,
+					)
 				: `Refusing to connect to ${hostname}, it resolves to a private or reserved address`,
 		);
 	}

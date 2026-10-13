@@ -12,7 +12,6 @@ import {
 } from "~/utils/encryption";
 import { parseUA, DEVICE_SALT_COOKIE_NAME } from "~/utils/devices";
 import { normalizeEmail } from "~/utils/email";
-import { isRunningInDocker } from "~/utils/docker";
 import { sendMailWithTemplate } from "~/utils/mail";
 import { MailTemplateKey } from "~/utils/enums";
 import { parse } from "cookie";
@@ -524,14 +523,10 @@ export async function onUserCreateAfter(user: Record<string, unknown>): Promise<
 		throw new Error("Cannot create UserOptions: user ID is missing");
 	}
 
-	const localControllerUrl = isRunningInDocker()
-		? "http://zerotier:9993"
-		: "http://127.0.0.1:9993";
-
 	await prisma.userOptions.upsert({
 		where: { userId: user.id },
 		update: {},
-		create: { userId: user.id, localControllerUrl },
+		create: { userId: user.id },
 	});
 }
 
