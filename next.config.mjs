@@ -19,7 +19,7 @@ const config = {
 	i18n: {
 		defaultLocale: "en",
 		// localeDetection: false,
-		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru", "de", "ua"],
+		locales: ["en", "fr", "no", "pl", "zh-tw", "zh", "es", "ru", "de", "ua", "it"],
 	},
 	async redirects() {
 		return [
