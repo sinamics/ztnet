@@ -575,8 +575,10 @@ export const auth = betterAuth({
 			lastseen: { type: "date", required: false, input: false },
 			online: { type: "boolean", required: false, defaultValue: false, input: false },
 			role: { type: "string", defaultValue: "USER", required: false, input: false },
-			hash: { type: "string", required: false, input: false },
-			tempPassword: { type: "string", required: false, input: false },
+			// `returned: false` keeps these out of every response that carries the
+			// user: sign in, get-session and the session handed to pages as props.
+			hash: { type: "string", required: false, input: false, returned: false },
+			tempPassword: { type: "string", required: false, input: false, returned: false },
 			firstTime: { type: "boolean", required: false, defaultValue: true, input: false },
 			twoFactorEnabled: {
 				type: "boolean",
@@ -584,7 +586,12 @@ export const auth = betterAuth({
 				defaultValue: false,
 				input: false,
 			},
-			twoFactorSecret: { type: "string", required: false, input: false },
+			twoFactorSecret: {
+				type: "string",
+				required: false,
+				input: false,
+				returned: false,
+			},
 			failedLoginAttempts: {
 				type: "number",
 				required: false,

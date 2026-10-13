@@ -26,6 +26,7 @@ import { emailSchema, mediumPassword, passwordSchema } from "./_schema";
 import { upsertCredentialAccount } from "~/server/api/services/credentialAccountService";
 import { LEGACY_CONTROLLER_FIELDS } from "~/server/api/services/controllerOptionsService";
 import { normalizeCentralApiUrl, resolveCentralApiTarget } from "~/utils/centralApiUrl";
+import { USER_SECRET_FIELDS, type UserSecretField } from "~/server/api/userFields";
 import {
 	consumePasswordResetToken,
 	createPasswordResetToken,
@@ -358,12 +359,13 @@ export const authRouter = createTRPCRouter({
 			where: {
 				id: ctx.session.user.id,
 			},
+			omit: USER_SECRET_FIELDS,
 			include: {
 				options: { omit: LEGACY_CONTROLLER_FIELDS },
 				memberOfOrgs: true,
 				UserDevice: true,
 			},
-		})) as User & {
+		})) as Omit<User, UserSecretField> & {
 			options?: Omit<UserOptions, keyof typeof LEGACY_CONTROLLER_FIELDS>;
 			memberOfOrgs?: {
 				id: string;
@@ -640,6 +642,7 @@ export const authRouter = createTRPCRouter({
 						// clear the must-change-on-next-login flag if it was set.
 						requestChangePassword: false,
 					},
+					omit: USER_SECRET_FIELDS,
 				});
 
 				// Mirror into the better-auth credential Account so /sign-in/email succeeds.
@@ -802,6 +805,7 @@ export const authRouter = createTRPCRouter({
 						},
 					},
 				},
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	setZtApi: protectedProcedure
@@ -844,6 +848,7 @@ export const authRouter = createTRPCRouter({
 						},
 					},
 				},
+				omit: USER_SECRET_FIELDS,
 				include: {
 					options: { omit: LEGACY_CONTROLLER_FIELDS },
 				},

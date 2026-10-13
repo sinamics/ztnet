@@ -26,6 +26,7 @@ import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
 import { emailSchema } from "./_schema";
+import { USER_SECRET_FIELDS } from "~/server/api/userFields";
 import {
 	getDefaultLocalControllerUrl,
 	getStoredControllerOptions,
@@ -72,6 +73,7 @@ export const adminRouter = createTRPCRouter({
 				data: {
 					...input.params,
 				},
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	deleteUser: adminRoleProtectedRoute
@@ -535,6 +537,7 @@ export const adminRouter = createTRPCRouter({
 					id,
 				},
 				data: updateData,
+				omit: USER_SECRET_FIELDS,
 			});
 		}),
 	updateGlobalOptions: adminRoleProtectedRoute
@@ -1022,6 +1025,7 @@ export const adminRouter = createTRPCRouter({
 							userGroupId: null, // Remove the user's association with a userGroup
 							expiresAt: null, // Remove expiration when removing from group
 						},
+						omit: USER_SECRET_FIELDS,
 					});
 				}
 
@@ -1056,6 +1060,7 @@ export const adminRouter = createTRPCRouter({
 						userGroupId: Number.parseInt(input.userGroupId), // Link the user to the userGroup
 						expiresAt, // Set expiration based on group settings
 					},
+					omit: USER_SECRET_FIELDS,
 				});
 			} catch (err: unknown) {
 				if (err instanceof Error) {
