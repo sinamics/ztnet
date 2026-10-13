@@ -854,6 +854,10 @@ export const authRouter = createTRPCRouter({
 				},
 			});
 
+			// Central credentials are cached per user for a minute. Without this the
+			// check below, and the user's next requests, would still use the old ones.
+			ztController.clearCentralCredentialsCache(ctx.session.user.id);
+
 			if (updated.options?.ztCentralApiKey) {
 				try {
 					await ztController.ping_api({ ctx });
