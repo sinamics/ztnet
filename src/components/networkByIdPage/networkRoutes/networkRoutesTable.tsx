@@ -122,7 +122,7 @@ export const NetworkRoutesTable = React.memo(
 		// list actually changes (not on every render).
 		const members = useMemo(() => membersData?.members ?? [], [membersData?.members]);
 
-		const { mutate: updateManageRoutes, isLoading: isUpdating } =
+		const { mutate: updateManageRoutes, isPending: isUpdating } =
 			api.network.managedRoutes.useMutation({
 				onError: handleApiError,
 				onSuccess: async () => {

@@ -53,7 +53,7 @@ const InviteCard = ({ invite, organizationId }) => {
 		organizationId,
 	});
 
-	const { mutate: resendInvite, isLoading: resendLoading } =
+	const { mutate: resendInvite, isPending: resendLoading } =
 		api.org.resendInvite.useMutation({
 			onSuccess: () => {
 				refetchInvites();

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import type { Session } from "~/lib/authTypes";
@@ -19,34 +19,39 @@ const MfaRecoveryReset = () => {
 	const [state, setState] = useState({ email: "", password: "", recoveryCode: "" });
 
 	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
-	const { mutate: resetMfa, isLoading } = api.mfaAuth.mfaResetValidation.useMutation();
+	const { mutate: resetMfa, isPending: isLoading } =
+		api.mfaAuth.mfaResetValidation.useMutation();
 
-	const { data: tokenData, isLoading: validateTokenLoading } =
-		api.mfaAuth.mfaValidateToken.useQuery(
-			{
-				token: token as string,
-			},
-			{
-				enabled: !!token,
-				onSuccess: (response) => {
-					if (response?.error) {
-						switch (response.error) {
-							case ErrorCode.InvalidToken:
-								void router.push("/auth/login");
-								break;
-							case ErrorCode.TooManyRequests:
-								toast.error("Too many requests, please try again later");
-								break;
-							default:
-								toast.error(response.error);
-						}
-					}
-				},
-				onError: (error) => {
-					toast.error(error.message);
-				},
-			},
-		);
+	const {
+		data: tokenData,
+		isPending: validateTokenLoading,
+		error: validateTokenError,
+	} = api.mfaAuth.mfaValidateToken.useQuery(
+		{
+			token: token as string,
+		},
+		{
+			enabled: !!token,
+		},
+	);
+
+	useEffect(() => {
+		if (!tokenData?.error) return;
+		switch (tokenData.error) {
+			case ErrorCode.InvalidToken:
+				void router.push("/auth/login");
+				break;
+			case ErrorCode.TooManyRequests:
+				toast.error("Too many requests, please try again later");
+				break;
+			default:
+				toast.error(tokenData.error);
+		}
+	}, [tokenData, router.push]);
+
+	useEffect(() => {
+		if (validateTokenError) toast.error(validateTokenError.message);
+	}, [validateTokenError]);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

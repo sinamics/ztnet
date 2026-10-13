@@ -35,14 +35,14 @@ jest.mock("../../../utils/api", () => {
 				getAllOptions: {
 					useQuery: () => ({
 						data: {},
-						isLoading: false,
+						isPending: false,
 						refetch: jest.fn(),
 					}),
 				},
 				getPublicOptions: {
 					useQuery: () => ({
 						data: {},
-						isLoading: false,
+						isPending: false,
 						refetch: jest.fn(),
 					}),
 				},
@@ -100,7 +100,7 @@ describe("NetworkById component", () => {
 	it("renders loading element when data is being fetched", async () => {
 		const useQueryMock = jest.fn().mockReturnValue({
 			data: null,
-			isLoading: true,
+			isPending: true,
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
@@ -138,7 +138,7 @@ describe("NetworkById component", () => {
 				},
 				members: [],
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
@@ -149,7 +149,7 @@ describe("NetworkById component", () => {
 				totalCount: (useQueryMock().data.members ?? []).length,
 				authorizedCount: 0,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -270,7 +270,7 @@ describe("NetworkById component", () => {
 				],
 				memberCount: 1,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 		api.network.getNetworkById.useQuery = useQueryMock;
@@ -281,7 +281,7 @@ describe("NetworkById component", () => {
 				totalCount: (useQueryMock().data.members ?? []).length,
 				authorizedCount: 0,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -329,7 +329,7 @@ describe("NetworkById component", () => {
 				],
 				memberCount: 1,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -341,7 +341,7 @@ describe("NetworkById component", () => {
 				totalCount: (useQueryMock().data.members ?? []).length,
 				authorizedCount: 0,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -381,7 +381,7 @@ describe("NetworkById component", () => {
 				],
 				memberCount: 1,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -393,7 +393,7 @@ describe("NetworkById component", () => {
 				totalCount: (useQueryMock().data.members ?? []).length,
 				authorizedCount: 0,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -433,7 +433,7 @@ describe("NetworkById component", () => {
 				],
 				memberCount: 1,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 
@@ -444,7 +444,7 @@ describe("NetworkById component", () => {
 				totalCount: (useQueryMock().data.members ?? []).length,
 				authorizedCount: 0,
 			},
-			isLoading: false,
+			isPending: false,
 			refetch: jest.fn(),
 		});
 		render(

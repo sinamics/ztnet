@@ -26,7 +26,7 @@ const OrganizationNotification = () => {
 	const {
 		data: settings,
 		refetch: refetchSettings,
-		isLoading: loadingSettings,
+		isPending: loadingSettings,
 	} = api.org.getOrganizationSettings.useQuery({
 		organizationId,
 	});

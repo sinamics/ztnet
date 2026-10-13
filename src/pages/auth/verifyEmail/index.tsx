@@ -18,32 +18,36 @@ const VerifyEmail = () => {
 	const { data: globalOptions } = api.settings.getPublicOptions.useQuery();
 	const title = `${globalOptions?.siteName} - VerifyEmail`;
 
-	const { data: tokenData, isLoading: validateTokenLoading } =
-		api.auth.validateEmailVerificationToken.useQuery(
-			{
-				token: token as string,
-			},
-			{
-				enabled: !!token,
-				onSuccess: (response) => {
-					if (response?.error) {
-						switch (response.error) {
-							case ErrorCode.InvalidToken:
-								void router.push("/auth/login");
-								break;
-							case ErrorCode.TooManyRequests:
-								toast.error("Too many requests, please try again later");
-								break;
-							default:
-								toast.error(response.error);
-						}
-					}
-				},
-				onError: (error) => {
-					toast.error(error.message);
-				},
-			},
-		);
+	const {
+		data: tokenData,
+		isPending: validateTokenLoading,
+		error: validateTokenError,
+	} = api.auth.validateEmailVerificationToken.useQuery(
+		{
+			token: token as string,
+		},
+		{
+			enabled: !!token,
+		},
+	);
+
+	useEffect(() => {
+		if (!tokenData?.error) return;
+		switch (tokenData.error) {
+			case ErrorCode.InvalidToken:
+				void router.push("/auth/login");
+				break;
+			case ErrorCode.TooManyRequests:
+				toast.error("Too many requests, please try again later");
+				break;
+			default:
+				toast.error(tokenData.error);
+		}
+	}, [tokenData, router.push]);
+
+	useEffect(() => {
+		if (validateTokenError) toast.error(validateTokenError.message);
+	}, [validateTokenError]);
 
 	useEffect(() => {
 		if (!validateTokenLoading && tokenData && !tokenData.error) {

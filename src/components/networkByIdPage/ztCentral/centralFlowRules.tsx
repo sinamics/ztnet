@@ -31,7 +31,7 @@ export const CentralFlowRules = ({ central = true }: IProp) => {
 	// Local state to store changes to the flow route
 	const {
 		data: networkById,
-		isLoading: loadingNetwork,
+		isPending: loadingNetwork,
 		error: errorNetwork,
 		refetch: refetchNetworkById,
 	} = api.network.getNetworkById.useQuery({

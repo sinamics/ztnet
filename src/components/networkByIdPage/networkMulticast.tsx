@@ -27,7 +27,7 @@ export const NetworkMulticast = ({ central = false, organizationId }: IProp) => 
 	const { query } = useRouter();
 	const {
 		data: networkByIdQuery,
-		isLoading: loadingNetwork,
+		isPending: loadingNetwork,
 		refetch: refetchNetwork,
 	} = api.network.getNetworkById.useQuery(
 		{

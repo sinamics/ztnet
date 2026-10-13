@@ -40,7 +40,7 @@ export const ConnectionStatusCell = ({ original, central }: Props) => {
 		>
 			<span>{c("header.conStatus.offline")}</span>
 			<span>
-				<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen} />
+				<TimeAgo date={lastSeen} formatter={formatTime} title={lastSeen.toString()} />
 			</span>
 		</span>
 	);

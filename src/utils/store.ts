@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { type Socket, io } from "socket.io-client";

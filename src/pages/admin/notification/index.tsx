@@ -17,7 +17,7 @@ const Notification = () => {
 	const {
 		data: options,
 		refetch: refetchOptions,
-		isLoading: loadingOptions,
+		isPending: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
 
 	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation({

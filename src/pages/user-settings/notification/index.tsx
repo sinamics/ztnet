@@ -17,7 +17,7 @@ const UserSettingsNotification = () => {
 	const {
 		data: me,
 		refetch: refetchMe,
-		isLoading: loadingOptions,
+		isPending: loadingOptions,
 	} = api.auth.me.useQuery();
 
 	const { mutate: setUserSettings } = api.auth.updateUserOptions.useMutation({

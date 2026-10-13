@@ -30,7 +30,7 @@ export const Ipv4Assignment = ({ central = false, organizationId }: IProp) => {
 	const [ipTabs, setIptabs] = useState({ easy: true, advanced: false });
 	const {
 		data: networkByIdQuery,
-		isLoading,
+		isPending: isLoading,
 		refetch: refecthNetworkById,
 	} = api.network.getNetworkById.useQuery(
 		{

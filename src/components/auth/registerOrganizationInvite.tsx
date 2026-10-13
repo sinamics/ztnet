@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "~/utils/api";
 import { toast } from "react-hot-toast";
 import { authClient } from "~/lib/authClient";
@@ -51,8 +51,9 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 	// Prevalidate the user invite
 	// check if the user is a member of the application then add him to the organization
 	const {
+		data: preValidateData,
 		error: preValidateError,
-		isLoading: preValidateLoading,
+		isPending: preValidateLoading,
 		status,
 	} = api.org.preValidateUserInvite.useQuery(
 		{
@@ -60,14 +61,15 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 		},
 		{
 			retry: false,
-			onSuccess: (data) => {
-				if ("organizationId" in data) {
-					// redirect to login / organization page
-					router.push(`/organization/${data.organizationId}`);
-				}
-			},
 		},
 	);
+
+	useEffect(() => {
+		if (preValidateData && "organizationId" in preValidateData) {
+			// redirect to login / organization page
+			router.push(`/organization/${preValidateData.organizationId}`);
+		}
+	}, [preValidateData, router.push]);
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
@@ -108,7 +110,7 @@ const RegisterOrganizationInviteForm: React.FC<Iprops> = ({
 	};
 
 	// add loading progress bar to center of page, vertially and horizontally
-	if (status === "loading" || preValidateLoading) {
+	if (status === "pending" || preValidateLoading) {
 		return (
 			<div className="flex flex-col items-center justify-center">
 				<h1 className="text-center text-2xl font-semibold">

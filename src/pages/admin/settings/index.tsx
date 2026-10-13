@@ -16,7 +16,7 @@ const Settings = () => {
 
 	const {
 		data: options,
-		isLoading: loadingOptions,
+		isPending: loadingOptions,
 		refetch: refetchOptions,
 	} = api.admin.getAllOptions.useQuery();
 	const { refetch: refetcUserhOptions } = api.settings.getAllOptions.useQuery();

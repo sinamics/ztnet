@@ -22,13 +22,6 @@ export const api = createTRPCNext<AppRouter>({
 	config() {
 		return {
 			/**
-			 * Transformer used for data de-serialization from the server.
-			 *
-			 * @see https://trpc.io/docs/data-transformers
-			 */
-			transformer: superjson,
-
-			/**
 			 * Links used to determine request flow from client to server.
 			 *
 			 * @see https://trpc.io/docs/links
@@ -40,11 +33,18 @@ export const api = createTRPCNext<AppRouter>({
 						(opts.direction === "down" && opts.result instanceof Error),
 				}),
 				httpBatchLink({
+					/**
+					 * Transformer used for data de-serialization from the server.
+					 *
+					 * @see https://trpc.io/docs/data-transformers
+					 */
+					transformer: superjson,
 					url: `${getBaseUrl()}/api/trpc`,
 				}),
 			],
 		};
 	},
+	transformer: superjson,
 	/**
 	 * Whether tRPC should await queries when server rendering pages.
 	 *

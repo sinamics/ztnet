@@ -1,6 +1,6 @@
 import React, { type ReactElement } from "react";
 import { useRouter } from "next/router";
-import { LayoutOrganizationAuthenticated } from "~/components/layouts/layout";
+import { LayoutOrganizationAuthenticated, type TUser } from "~/components/layouts/layout";
 import { useTranslations } from "next-intl";
 import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
@@ -94,7 +94,7 @@ const OrganizationAdminSettings = ({ orgIds, user }) => {
 	);
 };
 
-OrganizationAdminSettings.getLayout = function getLayout(page: ReactElement) {
+OrganizationAdminSettings.getLayout = function getLayout(page: ReactElement<TUser>) {
 	return (
 		<LayoutOrganizationAuthenticated props={page?.props}>
 			{page}

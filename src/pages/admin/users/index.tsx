@@ -19,10 +19,10 @@ const Users = () => {
 	const {
 		data: options,
 		refetch: refetchOptions,
-		isLoading: loadingOptions,
+		isPending: loadingOptions,
 	} = api.admin.getAllOptions.useQuery();
 
-	const { data: adminSettings, isLoading: loadingAdminSettings } =
+	const { data: adminSettings, isPending: loadingAdminSettings } =
 		api.settings.getAdminOptions.useQuery();
 
 	const { mutate: setRegistration } = api.admin.updateGlobalOptions.useMutation({

@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { type JSX, type ReactNode } from "react";
 import FourOhFour from "~/pages/404";
 import Header from "./header";
 import Sidebar from "./sidebar";
@@ -14,7 +14,7 @@ import useDynamicViewportHeight from "~/hooks/useDynamicViewportHeight";
 import { WelcomeMessage } from "../auth/welcomeMessage";
 import { usePasswordChangeEnforcement } from "~/hooks/usePasswordChangeEnforcement";
 
-type TUser = {
+export type TUser = {
 	user: User;
 };
 interface Props {

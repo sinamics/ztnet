@@ -42,7 +42,7 @@ const CreateUserModal = () => {
 		isAdmin: false,
 	});
 
-	const { mutate: createUser, isLoading: isCreating } = api.admin.createUser.useMutation({
+	const { mutate: createUser, isPending: isCreating } = api.admin.createUser.useMutation({
 		onError: handleApiError,
 		onSuccess: () => {
 			// Refetch users and show success message

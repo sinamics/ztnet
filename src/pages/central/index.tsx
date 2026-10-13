@@ -34,7 +34,7 @@ const CentralNetworks: NextPageWithLayout = ({ orgIds }: IProps) => {
 
 	const {
 		data: centralNetworks,
-		isLoading,
+		isPending: isLoading,
 		refetch,
 	} = api.network.getUserNetworks.useQuery({
 		central: true,

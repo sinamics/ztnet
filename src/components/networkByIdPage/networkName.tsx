@@ -60,7 +60,7 @@ const NetworkName = ({ central = false, organizationId }: IProp) => {
 	const { query } = useRouter();
 	const {
 		data: networkById,
-		isLoading: loadingNetwork,
+		isPending: loadingNetwork,
 		error: errorNetwork,
 		refetch: refetchNetworkById,
 	} = api.network.getNetworkById.useQuery({
