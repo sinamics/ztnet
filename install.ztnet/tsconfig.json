@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2018",
     "allowJs": true,
-    "module": "commonjs",
+    "module": "nodenext",
     "lib": [
       "dom",
       "es6",
@@ -11,7 +11,8 @@
     ],
     "sourceMap": true,
     "outDir": "./dist",
-    "moduleResolution": "node",
+    "rootDir": "./src",
+    "moduleResolution": "nodenext",
     "removeComments": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -26,7 +27,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
     "typeRoots": [
       "./node_modules/@types"
     ],

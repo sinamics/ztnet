@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 import http from 'http';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
@@ -11,7 +11,7 @@ import { getHealth } from './routes/health';
 
 const errorRateLimiter = rateLimit({
   windowMs: 60 * 15 * 1000, // 15 minutes
-  max: 2, // Limit each IP to 2 requests per `window` (here, per 15 minutes)
+  limit: 2, // Limit each IP to 2 requests per `window` (here, per 15 minutes)
   message: 'Too many error reports submitted, please try again after an hour\n',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -19,7 +19,7 @@ const errorRateLimiter = rateLimit({
 
 const getRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
-  max: 1500, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  limit: 1500, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   message: "echo 'Too many installation requests, please try again after an hour\n'",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
@@ -27,7 +27,7 @@ const getRateLimiter = rateLimit({
 
 const getHealthLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
-  max: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  limit: 200, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   message: "echo 'Too many health requests, please try again after an hour\n'",
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
