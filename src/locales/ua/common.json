@@ -49,6 +49,9 @@
 		"userActions": "Дії користувача",
 		"addWebhooks": "Додати вебхуки",
 		"options": "Опції",
+		"notes": "Нотатки",
+		"credentials": "Облікові дані",
+		"save": "Зберегти",
 		"settings": "Налаштування",
 		"resend": "Надіслати знову",
 		"enable2fa": "Увімкнути 2FA",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Пошук...",
 			"optionModalTitle": "Опції для учасника",
+			"notesModalTitle": "Нотатки про учасника",
+			"notesPlaceholder": "Додайте нотатки про цього учасника (відомості про пристрій, розташування, контакти...)",
+			"notesReadOnly": "У вас є доступ до цих нотаток лише для читання.",
+			"notesNoAccess": "У вас немає доступу до нотаток про учасників.",
+			"credentialsSoon": "Незабаром",
 			"tableRow": {
 				"updateName": "Натисніть, щоб змінити ім'я",
 				"updateDescription": "Натисніть, щоб додати опис"

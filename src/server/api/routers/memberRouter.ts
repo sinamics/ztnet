@@ -25,6 +25,27 @@ const isValidZeroTierNetworkId = (id: string) => {
 	return hexRegex.test(id);
 };
 
+const hasNetworkRole = async (
+	ctx: Parameters<typeof checkNetworkAccess>[0],
+	nwid: string,
+	role: Role,
+) => {
+	try {
+		await checkNetworkAccess(ctx, nwid, role);
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+// Minimum roles for member notes: READ_ONLY users cannot see them, USER and up
+// can read, and only MEMBER_NOTES_EDIT_ROLE and up can edit. Kept as constants so
+// they can later become instance/organization settings. On personal networks
+// checkNetworkAccess only admits the network's author, whatever these values are.
+export const MEMBER_NOTES_VIEW_ROLE: Role = Role.USER;
+export const MEMBER_NOTES_EDIT_ROLE: Role = Role.ADMIN;
+export const MEMBER_NOTES_MAX_LENGTH = 10000;
+
 export const networkMemberRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const networks = await ctx.prisma.network.findMany({
@@ -1026,6 +1047,79 @@ export const networkMemberRouter = createTRPCRouter({
 				// add error messge that webhook failed
 				throwError(error.message);
 			}
+		}),
+	getNotedMemberIds: protectedProcedure
+		.input(z.object({ nwid: z.string() }))
+		.query(async ({ ctx, input }) => {
+			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
+
+			if (!(await hasNetworkRole(ctx, input.nwid, MEMBER_NOTES_VIEW_ROLE))) {
+				return { memberIds: [] as string[], canView: false };
+			}
+
+			// Only ids are returned, so the table can show an indicator without
+			// shipping note bodies with every member list.
+			const rows = await ctx.prisma.networkMemberNote.findMany({
+				where: { member: { nwid: input.nwid } },
+				select: { member: { select: { id: true } } },
+			});
+			return { memberIds: rows.map((row) => row.member.id), canView: true };
+		}),
+	getMemberNotes: protectedProcedure
+		.input(z.object({ nwid: z.string(), memberId: z.string() }))
+		.query(async ({ ctx, input }) => {
+			await checkNetworkAccess(ctx, input.nwid, MEMBER_NOTES_VIEW_ROLE);
+
+			const note = await ctx.prisma.networkMemberNote.findFirst({
+				where: { member: { nwid: input.nwid, id: input.memberId } },
+				select: { notes: true, updatedAt: true },
+			});
+			const canEdit = await hasNetworkRole(ctx, input.nwid, MEMBER_NOTES_EDIT_ROLE);
+
+			return { notes: note?.notes ?? "", updatedAt: note?.updatedAt ?? null, canEdit };
+		}),
+	updateMemberNotes: protectedProcedure
+		.input(
+			z.object({
+				nwid: z.string(),
+				memberId: z.string(),
+				notes: z.string().max(MEMBER_NOTES_MAX_LENGTH),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			await checkNetworkAccess(ctx, input.nwid, MEMBER_NOTES_EDIT_ROLE);
+
+			const member = await ctx.prisma.network_members.findUnique({
+				where: { id_nwid: { id: input.memberId, nwid: input.nwid } },
+				select: { nodeid: true, nwid_ref: { select: { organizationId: true } } },
+			});
+			if (!member) {
+				return throwError("Member not found!", "NOT_FOUND");
+			}
+
+			const notes = input.notes.trim();
+			if (notes) {
+				await ctx.prisma.networkMemberNote.upsert({
+					where: { nodeid: member.nodeid },
+					create: { nodeid: member.nodeid, notes, updatedById: ctx.session.user.id },
+					update: { notes, updatedById: ctx.session.user.id },
+				});
+			} else {
+				await ctx.prisma.networkMemberNote.deleteMany({
+					where: { nodeid: member.nodeid },
+				});
+			}
+
+			// The note text itself is never written to the activity log.
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `${notes ? "Updated" : "Cleared"} notes of member ${input.memberId} in network ${input.nwid}`,
+					performedById: ctx.session.user.id,
+					organizationId: member.nwid_ref.organizationId,
+				},
+			});
+
+			return { hasNotes: !!notes };
 		}),
 	getMemberAnotations: protectedProcedure
 		.input(

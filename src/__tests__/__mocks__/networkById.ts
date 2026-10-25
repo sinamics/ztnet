@@ -47,6 +47,9 @@ jest.mock("../../utils/api", () => ({
 			},
 		},
 		networkMember: {
+			getNotedMemberIds: {
+				useQuery: () => ({ data: { memberIds: [], canView: true } }),
+			},
 			getNetworkMemberById: {
 				useQuery: () => ({
 					data: {},
