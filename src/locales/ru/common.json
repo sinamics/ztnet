@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Просмотреть скрытых участников",
+				"viewBlockedMembers": "Просмотреть окончательно удалённых участников",
 				"deleteAll": "Удалить Всех Скрытых ({count})"
 			},
 			"bulkDelete": {

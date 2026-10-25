@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Переглянути прихованих учасників",
+				"viewBlockedMembers": "Переглянути остаточно видалених учасників",
 				"deleteAll": "Видалити всіх прихованих ({count})"
 			},
 			"bulkDelete": {

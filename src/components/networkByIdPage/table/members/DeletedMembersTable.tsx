@@ -18,9 +18,11 @@ import { type network_members } from "@prisma/client";
 interface IProps {
 	nwid: string;
 	organizationId?: string;
+	// Show permanently deleted (blocked) members instead of stashed ones.
+	blocked?: boolean;
 }
 
-export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => {
+export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IProps) => {
 	const { query } = useRouter();
 	const t = useTranslations("networkById");
 	const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: true }]);
@@ -82,7 +84,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			columnHelper.display({
 				header: () => <span>Conn Status</span>,
 				id: "conStatus",
-				cell: () => <span>stashed</span>,
+				cell: () => <span>{blocked ? "deleted" : "stashed"}</span>,
 			}),
 			columnHelper.display({
 				header: () => <span>Action</span>,
@@ -91,39 +93,54 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 					row: {
 						original: { nwid, id },
 					},
-				}) => (
-					<span className="space-x-5">
-						<button
-							onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
-							className="btn btn-primary btn-xs"
-						>
-							Re-Activate
-						</button>
+				}) =>
+					blocked ? (
 						<button
 							onClick={() =>
-								callModal({
-									title: <p>Force delete {id}?</p>,
-									description: (
-										<p>
-											By performing this action, the member will be removed from the
-											database. To re-add the user in the future, you must manually enter
-											their Member ID.
-										</p>
-									),
-									yesAction: () => {
-										void deleteMember(
-											{ organizationId, nwid, id },
-											{ onSuccess: () => void refetchNetworkById() },
-										);
-									},
+								updateUser({
+									nwid,
+									id,
+									organizationId,
+									updateParams: { deleted: false, permanentlyDeleted: false },
 								})
 							}
-							className="bg-red-800 btn btn-xs hover:bg-red-500"
+							className="btn btn-primary btn-xs"
 						>
-							Force Delete
+							Unblock
 						</button>
-					</span>
-				),
+					) : (
+						<span className="space-x-5">
+							<button
+								onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
+								className="btn btn-primary btn-xs"
+							>
+								Re-Activate
+							</button>
+							<button
+								onClick={() =>
+									callModal({
+										title: <p>Force delete {id}?</p>,
+										description: (
+											<p>
+												By performing this action, the member will be removed from the
+												database. To re-add the user in the future, you must manually
+												enter their Member ID.
+											</p>
+										),
+										yesAction: () => {
+											void deleteMember(
+												{ organizationId, nwid, id },
+												{ onSuccess: () => void refetchNetworkById() },
+											);
+										},
+									})
+								}
+								className="bg-red-800 btn btn-xs hover:bg-red-500"
+							>
+								Force Delete
+							</button>
+						</span>
+					),
 			}),
 		],
 		[],
@@ -131,8 +148,9 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 
 	const [data, setData] = useState<network_members[]>([]);
 	useEffect(() => {
-		setData((networkById?.zombieMembers as network_members[]) || []);
-	}, [networkById?.zombieMembers]);
+		const members = blocked ? networkById?.blockedMembers : networkById?.zombieMembers;
+		setData((members as network_members[]) || []);
+	}, [blocked, networkById?.zombieMembers, networkById?.blockedMembers]);
 
 	const table = useReactTable<network_members>({
 		data,
@@ -145,7 +163,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 
 	return (
 		<div className="pt-2">
-			{data && data.length > 0 && (
+			{!blocked && data && data.length > 0 && (
 				<div className="mb-4 flex justify-end">
 					<button
 						onClick={() =>

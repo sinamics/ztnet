@@ -40,8 +40,10 @@ test("updateDatabaseOnly test", async () => {
 	const input: Input = {
 		nwid: "1234id",
 		id: "12234",
+		// Unblock: both flags must reach Prisma (zod strips unknown keys).
 		updateParams: {
 			deleted: false,
+			permanentlyDeleted: false,
 		},
 	};
 

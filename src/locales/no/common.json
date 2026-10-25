@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Se lagrede medlemmer",
+				"viewBlockedMembers": "Se permanent slettede medlemmer",
 				"deleteAll": "Slett Alle Lagrede ({count})"
 			},
 			"bulkDelete": {
