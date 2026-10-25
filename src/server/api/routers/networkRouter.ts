@@ -138,6 +138,7 @@ export const networkRouter = createTRPCRouter({
 					memberCount: centralMembers.length,
 					authorizedMemberCount: centralMembers.filter((m) => m.authorized).length,
 					zombieMembers: [] as network_members[],
+					blockedMembers: [] as network_members[],
 				};
 			}
 
@@ -204,17 +205,22 @@ export const networkRouter = createTRPCRouter({
 				// Generate CIDR options for IP configuration
 				const { cidrOptions } = IPv4gen(null, []);
 
-				const [zombieMembers, memberCount, authorizedMemberCount] = await Promise.all([
-					ctx.prisma.network_members.findMany({
-						where: { nwid: input.nwid, deleted: true, permanentlyDeleted: false },
-					}),
-					ctx.prisma.network_members.count({
-						where: { nwid: input.nwid, deleted: false },
-					}),
-					ctx.prisma.network_members.count({
-						where: { nwid: input.nwid, deleted: false, authorized: true },
-					}),
-				]);
+				const [zombieMembers, blockedMembers, memberCount, authorizedMemberCount] =
+					await Promise.all([
+						ctx.prisma.network_members.findMany({
+							where: { nwid: input.nwid, deleted: true, permanentlyDeleted: false },
+						}),
+						// Permanently deleted members stay in the DB so they don't reappear as new nodes.
+						ctx.prisma.network_members.findMany({
+							where: { nwid: input.nwid, permanentlyDeleted: true },
+						}),
+						ctx.prisma.network_members.count({
+							where: { nwid: input.nwid, deleted: false },
+						}),
+						ctx.prisma.network_members.count({
+							where: { nwid: input.nwid, deleted: false, authorized: true },
+						}),
+					]);
 
 				// if the networkFromDatabase.routes is not equal to the ztControllerResponse.routes, update the networkFromDatabase.routes
 				// Only sync if routes actually differ to avoid unnecessary database operations
@@ -307,6 +313,7 @@ export const networkRouter = createTRPCRouter({
 					memberCount,
 					authorizedMemberCount,
 					zombieMembers,
+					blockedMembers,
 				};
 			} catch (error) {
 				console.error("Error in getNetworkById:", error);

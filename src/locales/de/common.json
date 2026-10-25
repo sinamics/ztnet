@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Versteckte Mitglieder anzeigen",
+				"viewBlockedMembers": "Endgültig gelöschte Mitglieder anzeigen",
 				"deleteAll": "Alle Versteckten löschen ({count})"
 			},
 			"bulkDelete": {

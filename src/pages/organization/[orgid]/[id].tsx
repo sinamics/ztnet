@@ -39,6 +39,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	const t = useTranslations();
 	const [state, setState] = useState({
 		viewZombieTable: false,
+		viewBlockedTable: false,
 		isDebug: false,
 	});
 	const callModal = useModalStore((state) => state.callModal);
@@ -346,6 +347,34 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 						</>
 					) : null}
 				</div>
+			</div>
+			<div className="w-5/5 mx-auto w-full py-4 text-sm md:text-base">
+				{networkById?.blockedMembers?.length > 0 ? (
+					<>
+						<button
+							onClick={() =>
+								setState({
+									...state,
+									viewBlockedTable: !state.viewBlockedTable,
+								})
+							}
+							className="btn btn-wide"
+						>
+							{t("networkById.deletedNetworkMembersTable.buttons.viewBlockedMembers")} (
+							{networkById?.blockedMembers?.length})
+						</button>
+
+						{state.viewBlockedTable ? (
+							<div className="membersTable-wrapper text-center">
+								<DeletedNetworkMembersTable
+									nwid={network.nwid}
+									organizationId={organizationId}
+									blocked
+								/>
+							</div>
+						) : null}
+					</>
+				) : null}
 			</div>
 			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkFlowRules organizationId={organizationId} />

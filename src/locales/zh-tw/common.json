@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "顯示隱藏的成員",
+				"viewBlockedMembers": "顯示永久刪除的成員",
 				"deleteAll": "刪除所有隱藏的 ({count})"
 			},
 			"bulkDelete": {

@@ -390,6 +390,7 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "View stashed members",
+				"viewBlockedMembers": "View permanently deleted members",
 				"deleteAll": "Delete All Stashed ({count})"
 			},
 			"bulkDelete": {

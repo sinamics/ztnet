@@ -734,6 +734,7 @@ export const networkMemberRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					deleted: z.boolean().optional(),
+					permanentlyDeleted: z.boolean().optional(),
 					description: z.string().optional(),
 				}),
 			}),
