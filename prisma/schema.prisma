@@ -124,6 +124,10 @@ model network_members {
   // never fetched (triggers a one-time reconcile backfill).
   controllerConfig   Json?
   notations          NetworkMemberNotation[]
+  // Free-text notes live in their own table (not a column here) because the
+  // served member object spreads the whole DB row; a column would leak notes to
+  // every member list, REST response and webhook.
+  note               NetworkMemberNote?
 
   @@unique([id, nwid])
 }
@@ -187,6 +191,14 @@ model NetworkMemberNotation {
   member     network_members @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
 
   @@id([notationId, nodeid])
+}
+
+model NetworkMemberNote {
+  nodeid      Int             @id
+  notes       String          @db.Text
+  updatedAt   DateTime        @updatedAt
+  updatedById String?
+  member      network_members @relation(fields: [nodeid], references: [nodeid], onDelete: Cascade)
 }
 
 model Account {

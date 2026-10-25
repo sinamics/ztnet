@@ -49,6 +49,9 @@
 		"userActions": "Azioni utente",
 		"addWebhooks": "Aggiungi webhook",
 		"options": "Opzioni",
+		"notes": "Note",
+		"credentials": "Credenziali",
+		"save": "Salva",
 		"settings": "Impostazioni",
 		"resend": "Reinvia",
 		"enable2fa": "Attiva 2FA",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Cerca...",
 			"optionModalTitle": "Opzioni del membro",
+			"notesModalTitle": "Note per il membro",
+			"notesPlaceholder": "Aggiungi note su questo membro (dettagli del dispositivo, posizione, contatti...)",
+			"notesReadOnly": "Hai accesso in sola lettura a queste note.",
+			"notesNoAccess": "Non hai accesso alle note dei membri.",
+			"credentialsSoon": "Prossimamente",
 			"tableRow": {
 				"updateName": "Fare clic per cambiare il nome",
 				"updateDescription": "Fare clic per aggiungere una descrizione"

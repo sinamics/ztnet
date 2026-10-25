@@ -49,6 +49,9 @@
 		"userActions": "Brukerhandlinger",
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
+		"notes": "Notes",
+		"credentials": "Credentials",
+		"save": "Save",
 		"settings": "Innstillinger",
 		"resend": "Send på nytt",
 		"enable2fa": "Aktiver 2FA",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Søk etter noe...",
 			"optionModalTitle": "Alternativer for medlem",
+			"notesModalTitle": "Notes for member",
+			"notesPlaceholder": "Add notes about this member (device details, location, contacts...)",
+			"notesReadOnly": "You have read-only access to these notes.",
+			"notesNoAccess": "Du har ikke tilgang til medlemsnotater.",
+			"credentialsSoon": "Coming soon",
 			"tableRow": {
 				"updateName": "Klikk for å endre navn",
 				"updateDescription": "Klikk for å legge til beskrivelse"

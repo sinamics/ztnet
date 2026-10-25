@@ -49,6 +49,9 @@
 		"userActions": "用户操作",
 		"addWebhooks": "添加 Webhooks",
 		"options": "选项",
+		"notes": "Notes",
+		"credentials": "Credentials",
+		"save": "Save",
 		"settings": "设置",
 		"resend": "重新发送",
 		"enable2fa": "启用双重认证",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "搜索任何东西...",
 			"optionModalTitle": "成员选项",
+			"notesModalTitle": "Notes for member",
+			"notesPlaceholder": "Add notes about this member (device details, location, contacts...)",
+			"notesReadOnly": "You have read-only access to these notes.",
+			"notesNoAccess": "您无权访问成员备注。",
+			"credentialsSoon": "Coming soon",
 			"tableRow": {
 				"updateName": "点击更改名称",
 				"updateDescription": "点击添加描述"

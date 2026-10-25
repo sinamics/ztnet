@@ -49,6 +49,9 @@
 		"userActions": "使用者操作",
 		"addWebhooks": "新增 Webhooks",
 		"options": "選項",
+		"notes": "Notes",
+		"credentials": "Credentials",
+		"save": "Save",
 		"settings": "設定",
 		"resend": "重新發送",
 		"enable2fa": "啟用雙重認證",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "搜尋任何東西...",
 			"optionModalTitle": "成員選項",
+			"notesModalTitle": "Notes for member",
+			"notesPlaceholder": "Add notes about this member (device details, location, contacts...)",
+			"notesReadOnly": "You have read-only access to these notes.",
+			"notesNoAccess": "您無權存取成員備註。",
+			"credentialsSoon": "Coming soon",
 			"tableRow": {
 				"updateName": "點擊修改名稱",
 				"updateDescription": "點擊新增描述"

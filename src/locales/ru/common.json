@@ -49,6 +49,9 @@
 		"userActions": "Действия пользователя",
 		"addWebhooks": "Добавить вебхуки",
 		"options": "Опции",
+		"notes": "Notes",
+		"credentials": "Credentials",
+		"save": "Save",
 		"settings": "Настройки",
 		"resend": "Отправить снова",
 		"enable2fa": "Включить 2FA",
@@ -367,6 +370,11 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Поиск...",
 			"optionModalTitle": "Опции для участника",
+			"notesModalTitle": "Notes for member",
+			"notesPlaceholder": "Add notes about this member (device details, location, contacts...)",
+			"notesReadOnly": "You have read-only access to these notes.",
+			"notesNoAccess": "У вас нет доступа к заметкам об участниках.",
+			"credentialsSoon": "Coming soon",
 			"tableRow": {
 				"updateName": "Нажмите, чтобы изменить имя",
 				"updateDescription": "Нажмите, чтобы добавить описание"
