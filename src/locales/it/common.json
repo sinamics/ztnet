@@ -32,7 +32,7 @@
 		"remove": "Rimuovi",
 		"update": "Aggiorna",
 		"close": "Chiudi",
-		"stash": "Metti da parte",
+		"stash": "Archivia",
 		"yes": "Sì",
 		"imSure": "Sì, confermo",
 		"generate": "Genera",
@@ -263,7 +263,7 @@
 		"networkMembersAlert": {
 			"message": "Unendosi a questo ID di rete, il dispositivo verrà mostrato automaticamente"
 		},
-		"viewStashedMembers": "Mostra membri messi da parte",
+		"viewStashedMembers": "Mostra membri archiviati",
 		"networkActions": "Azioni sulla rete",
 		"deleteNetwork": {
 			"title": "Elimina rete {networkName}",
@@ -397,12 +397,12 @@
 		},
 		"deletedNetworkMembersTable": {
 			"buttons": {
-				"viewStashedMembers": "Mostra membri messi da parte",
-				"deleteAll": "Elimina tutti i membri messi da parte ({count})"
+				"viewStashedMembers": "Mostra membri archiviati",
+				"deleteAll": "Elimina tutti i membri archiviati ({count})"
 			},
 			"bulkDelete": {
-				"modalTitle": "Eliminare tutti i membri messi da parte?",
-				"modalDescription": "Tutti i {count} membri messi da parte verranno eliminati definitivamente dal database. Resteranno nel controller ZeroTier e dovranno essere riaggiunti manualmente.",
+				"modalTitle": "Eliminare tutti i membri archiviati?",
+				"modalDescription": "Tutti i {count} membri archiviati verranno eliminati definitivamente dal database. Resteranno nel controller ZeroTier e dovranno essere riaggiunti manualmente.",
 				"modalWarning": "Attenzione: l'azione non può essere annullata. Per riaggiungere questi membri in futuro, sarà necessario inserire manualmente i relativi ID membro."
 			}
 		},
@@ -1177,8 +1177,8 @@
 						"description": "Notifica agli amministratori quando un nuovo nodo entra in una qualsiasi rete dell'organizzazione"
 					},
 					"nodeDeleted": {
-						"title": "Nodo messo da parte",
-						"description": "Notifica agli amministratori quando un nodo viene messo da parte in una qualsiasi rete dell'organizzazione"
+						"title": "Nodo archiviato",
+						"description": "Notifica agli amministratori quando un nodo viene archiviato in una qualsiasi rete dell'organizzazione"
 					},
 					"nodePermanentlyDeleted": {
 						"title": "Nodo eliminato definitivamente",
