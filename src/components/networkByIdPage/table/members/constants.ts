@@ -38,5 +38,5 @@ export const COLUMN_SIZING: Record<string, { minSize: number; maxSize: number }>
 	ipAssignments: { minSize: 180, maxSize: 420 },
 	physicalAddress: { minSize: 120, maxSize: 360 },
 	conStatus: { minSize: 96, maxSize: 170 },
-	action: { minSize: 120, maxSize: 170 },
+	action: { minSize: 120, maxSize: 190 },
 };
