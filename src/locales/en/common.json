@@ -222,6 +222,7 @@
 			"navigate": "Goto Controller"
 		},
 		"noNetworksMessage": "No networks have been created yet. Start by creating one and it will appear here.",
+		"personalNetworksDisabled": "Personal networks are disabled by the administrator. Create networks in an organization.",
 		"networkActionModal": {
 			"modalTitle": "Options for Network <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Application",
-				"description": "Customize the application's appearance and behavior to better align with your brand"
+				"description": "Customize the application's appearance and behavior to better align with your brand",
+				"enablePersonalNetworks": "Enable personal networks",
+				"enablePersonalNetworksDescription": "Allow users to create networks outside an organization. Existing personal networks keep working when this is off."
 			},
 			"publicPages": {
 				"sectionTitle": "Public Pages",

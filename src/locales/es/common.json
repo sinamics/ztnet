@@ -222,6 +222,7 @@
 			"navigate": "Ir al Controlador"
 		},
 		"noNetworksMessage": "No se han creado redes todavía. Comienza creando una y aparecerá aquí.",
+		"personalNetworksDisabled": "El administrador ha deshabilitado las redes personales. Crea redes en una organización.",
 		"networkActionModal": {
 			"modalTitle": "Acciones de red <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Aplicación",
-				"description": "Personaliza la apariencia y el comportamiento de la aplicación para alinearla mejor con tu marca"
+				"description": "Personaliza la apariencia y el comportamiento de la aplicación para alinearla mejor con tu marca",
+				"enablePersonalNetworks": "Habilitar redes personales",
+				"enablePersonalNetworksDescription": "Permitir a los usuarios crear redes fuera de una organización. Las redes personales existentes siguen funcionando cuando esto está desactivado."
 			},
 			"publicPages": {
 				"sectionTitle": "Páginas Públicas",

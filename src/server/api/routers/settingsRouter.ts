@@ -10,6 +10,7 @@ export const settingsRouter = createTRPCRouter({
 			},
 			select: {
 				siteName: true,
+				enablePersonalNetworks: true,
 			},
 		});
 	}),
