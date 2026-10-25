@@ -222,6 +222,7 @@
 			"navigate": "前往控制器"
 		},
 		"noNetworksMessage": "尚未建立任何網路。首先建立一個，它將出現在這裡。",
+		"personalNetworksDisabled": "管理員已停用個人網路。請在組織中建立網路。",
 		"networkActionModal": {
 			"modalTitle": "網路操作 <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "應用程式",
-				"description": "自訂應用程式的外觀和行為，以更好地符合您的品牌"
+				"description": "自訂應用程式的外觀和行為，以更好地符合您的品牌",
+				"enablePersonalNetworks": "啟用個人網路",
+				"enablePersonalNetworksDescription": "允許使用者在組織之外建立網路。關閉後，現有的個人網路仍可繼續使用。"
 			},
 			"publicPages": {
 				"sectionTitle": "公開頁面",

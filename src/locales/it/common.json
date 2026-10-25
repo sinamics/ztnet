@@ -222,6 +222,7 @@
 			"navigate": "Vai al controller"
 		},
 		"noNetworksMessage": "Nessuna rete creata finora. Crearne una per vederla comparire qui.",
+		"personalNetworksDisabled": "Le reti personali sono disabilitate dall'amministratore. Crea le reti in un'organizzazione.",
 		"networkActionModal": {
 			"modalTitle": "Opzioni per la rete <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Applicazione",
-				"description": "Personalizzazione di aspetto e comportamento dell'applicazione per adattarli al proprio marchio"
+				"description": "Personalizzazione di aspetto e comportamento dell'applicazione per adattarli al proprio marchio",
+				"enablePersonalNetworks": "Abilita reti personali",
+				"enablePersonalNetworksDescription": "Consenti agli utenti di creare reti al di fuori di un'organizzazione. Le reti personali esistenti continuano a funzionare quando questa opzione è disattivata."
 			},
 			"publicPages": {
 				"sectionTitle": "Pagine pubbliche",

@@ -222,6 +222,7 @@
 			"navigate": "Aller au Contrôleur"
 		},
 		"noNetworksMessage": "Aucun réseau n'a encore été créé. Commencez par en créer un et il apparaîtra ici.",
+		"personalNetworksDisabled": "Les réseaux personnels sont désactivés par l'administrateur. Créez des réseaux dans une organisation.",
 		"networkActionModal": {
 			"modalTitle": "Options pour le réseau <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Application",
-				"description": "Personnalisez l'apparence et le comportement de l'application pour mieux correspondre à votre marque"
+				"description": "Personnalisez l'apparence et le comportement de l'application pour mieux correspondre à votre marque",
+				"enablePersonalNetworks": "Activer les réseaux personnels",
+				"enablePersonalNetworksDescription": "Autoriser les utilisateurs à créer des réseaux en dehors d'une organisation. Les réseaux personnels existants continuent de fonctionner lorsque cette option est désactivée."
 			},
 			"publicPages": {
 				"sectionTitle": "Pages publiques",
