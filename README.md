@@ -37,6 +37,10 @@ With a rich palette of features, and an intuitive user interface, ZTNET embodies
 
 ### [See Installation Instruction](https://ztnet.network/installation/docker-compose)
 
+## ☁️ One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/ZTNET/)
+
 ## 📷 Images
 View the following images for a visual overview of the ZTNet application:
 <details>
