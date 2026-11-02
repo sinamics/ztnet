@@ -97,16 +97,11 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 					blocked ? (
 						<button
 							onClick={() =>
-								updateUser({
-									nwid,
-									id,
-									organizationId,
-									updateParams: { deleted: false, permanentlyDeleted: false },
-								})
+								updateUser({ nwid, id, organizationId, updateParams: { deleted: false } })
 							}
 							className="btn btn-primary btn-xs"
 						>
-							Unblock
+							Re-Activate
 						</button>
 					) : (
 						<span className="space-x-5">
@@ -122,9 +117,9 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 										title: <p>Force delete {id}?</p>,
 										description: (
 											<p>
-												By performing this action, the member will be removed from the
-												database. To re-add the user in the future, you must manually
-												enter their Member ID.
+												By performing this action, the member will be hidden and will not
+												reappear as a new join request. You can re-activate it later from
+												the permanently deleted members list.
 											</p>
 										),
 										yesAction: () => {

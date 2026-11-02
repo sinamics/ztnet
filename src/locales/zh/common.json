@@ -395,8 +395,8 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "删除所有隐藏的成员？",
-				"modalDescription": "这将永久删除数据库中的所有{count}个隐藏成员。它们将保留在ZeroTier控制器中，必须手动重新添加。",
-				"modalWarning": "警告：此操作无法撤销。要在将来重新添加这些成员，您必须手动输入他们的成员ID。"
+				"modalDescription": "这将永久删除所有{count}个隐藏成员。它们会保留在ZeroTier控制器中，但会被隐藏，不会再以新的加入请求出现。",
+				"modalWarning": "您之后可以从永久删除的成员列表中重新激活它们。"
 			}
 		},
 		"inviteMemberByMail": {

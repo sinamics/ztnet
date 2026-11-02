@@ -734,7 +734,6 @@ export const networkMemberRouter = createTRPCRouter({
 				organizationId: z.string().optional(),
 				updateParams: z.object({
 					deleted: z.boolean().optional(),
-					permanentlyDeleted: z.boolean().optional(),
 					description: z.string().optional(),
 				}),
 			}),
@@ -769,6 +768,10 @@ export const networkMemberRouter = createTRPCRouter({
 							},
 							data: {
 								...input.updateParams,
+								// Restoring clears both flags, like the REST API does.
+								...(input.updateParams.deleted === false
+									? { permanentlyDeleted: false }
+									: {}),
 							},
 						},
 					},

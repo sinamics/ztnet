@@ -16,7 +16,7 @@ type TestTypes = {
 	networkMembers: MemberEntity[];
 };
 
-test("updateDatabaseOnly test", async () => {
+const setup = () => {
 	// const prismaMock = new PrismaClient();
 	const mock = mockDeep<PrismaClient>();
 	const prisma: DeepMockProxy<PrismaClient> =
@@ -40,10 +40,8 @@ test("updateDatabaseOnly test", async () => {
 	const input: Input = {
 		nwid: "1234id",
 		id: "12234",
-		// Unblock: both flags must reach Prisma (zod strips unknown keys).
 		updateParams: {
 			deleted: false,
-			permanentlyDeleted: false,
 		},
 	};
 
@@ -67,36 +65,60 @@ test("updateDatabaseOnly test", async () => {
 	// @ts-expect-error -- awaiting fix:
 	prisma.network.update.mockResolvedValue(mockOutput);
 
+	return { prisma, caller, input, mockOutput };
+};
+
+const expectedUpdate = (input: { nwid: string; id: string }, data: object) => ({
+	where: {
+		nwid: input.nwid,
+	},
+	data: {
+		networkMembers: {
+			update: {
+				where: {
+					id_nwid: {
+						id: input.id,
+						nwid: input.nwid,
+					},
+				},
+				data,
+			},
+		},
+	},
+	include: {
+		networkMembers: {
+			where: {
+				id: input.id,
+			},
+		},
+	},
+});
+
+test("updateDatabaseOnly restore clears both deleted flags", async () => {
+	const { prisma, caller, input, mockOutput } = setup();
+
 	const result = await caller.networkMember.UpdateDatabaseOnly(input);
 
 	// eslint-disable-next-line @typescript-eslint/unbound-method
-	expect(prisma.network.update).toHaveBeenCalledWith({
-		where: {
-			nwid: input.nwid,
-		},
-		data: {
-			networkMembers: {
-				update: {
-					where: {
-						id_nwid: {
-							id: input.id,
-							nwid: input.nwid,
-						},
-					},
-					data: {
-						...input.updateParams,
-					},
-				},
-			},
-		},
-		include: {
-			networkMembers: {
-				where: {
-					id: input.id,
-				},
-			},
-		},
+	expect(prisma.network.update).toHaveBeenCalledWith(
+		expectedUpdate(input, { deleted: false, permanentlyDeleted: false }),
+	);
+	expect(result).toEqual({ member: mockOutput.networkMembers[0] });
+});
+
+test("updateDatabaseOnly ignores permanentlyDeleted from the client", async () => {
+	const { prisma, caller, input } = setup();
+
+	await caller.networkMember.UpdateDatabaseOnly({
+		...input,
+		updateParams: {
+			deleted: true,
+			permanentlyDeleted: true,
+		} as typeof input.updateParams,
 	});
 
-	expect(result).toEqual({ member: mockOutput.networkMembers[0] });
+	// eslint-disable-next-line @typescript-eslint/unbound-method
+	expect(prisma.network.update).toHaveBeenCalledWith(
+		expectedUpdate(input, { deleted: true }),
+	);
 });

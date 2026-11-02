@@ -395,8 +395,8 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "Supprimer Tous les Membres Cachés ?",
-				"modalDescription": "Cela supprimera définitivement tous les {count} membres cachés de la base de données. Ils resteront dans le contrôleur ZeroTier et devront être rajoutés manuellement.",
-				"modalWarning": "Avertissement : Cette action ne peut pas être annulée. Pour rajouter ces membres à l'avenir, vous devez saisir manuellement leurs IDs de membre."
+				"modalDescription": "Cela supprimera définitivement les {count} membres cachés. Ils resteront dans le contrôleur ZeroTier, mais seront masqués et ne réapparaîtront pas comme nouvelles demandes d'adhésion.",
+				"modalWarning": "Vous pourrez les réactiver plus tard depuis la liste des membres supprimés définitivement."
 			}
 		},
 		"inviteMemberByMail": {

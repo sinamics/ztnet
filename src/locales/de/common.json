@@ -395,8 +395,8 @@
 			},
 			"bulkDelete": {
 				"modalTitle": "Alle versteckten Mitglieder löschen?",
-				"modalDescription": "Dadurch werden alle {count} versteckten Mitglieder dauerhaft aus der Datenbank gelöscht. Sie bleiben im ZeroTier-Controller erhalten und müssen manuell erneut hinzugefügt werden.",
-				"modalWarning": "Warnung: Dieser Vorgang kann nicht rückgängig gemacht werden. Um diese Mitglieder später wieder hinzuzufügen, müssen Sie ihre Mitgliedsnummern manuell eingeben."
+				"modalDescription": "Dadurch werden alle {count} versteckten Mitglieder endgültig gelöscht. Sie bleiben im ZeroTier-Controller erhalten, werden aber ausgeblendet und erscheinen nicht erneut als neue Beitrittsanfragen.",
+				"modalWarning": "Sie können sie später über die Liste der endgültig gelöschten Mitglieder reaktivieren."
 			}
 		},
 		"inviteMemberByMail": {
