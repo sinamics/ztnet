@@ -222,6 +222,7 @@
 			"navigate": "Przejdź do ustawień kontrolera"
 		},
 		"noNetworksMessage": "Nie utworzono jeszcze żadnych sieci. Utwórz nową sieć, a pojawi się ona właśnie tutaj...",
+		"personalNetworksDisabled": "Sieci osobiste zostały wyłączone przez administratora. Twórz sieci w organizacji.",
 		"networkActionModal": {
 			"modalTitle": "Opcje dla sieci <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Aplikacja",
-				"description": "Dostosuj wygląd i zachowanie aplikacji, aby lepiej pasowała do Twojej marki"
+				"description": "Dostosuj wygląd i zachowanie aplikacji, aby lepiej pasowała do Twojej marki",
+				"enablePersonalNetworks": "Włącz sieci osobiste",
+				"enablePersonalNetworksDescription": "Pozwól użytkownikom tworzyć sieci poza organizacją. Istniejące sieci osobiste nadal działają, gdy ta opcja jest wyłączona."
 			},
 			"publicPages": {
 				"sectionTitle": "Strony startowe",
