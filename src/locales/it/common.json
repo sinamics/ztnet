@@ -391,12 +391,13 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Mostra membri messi da parte",
+				"viewPermanentlyDeletedMembers": "Mostra membri eliminati definitivamente",
 				"deleteAll": "Elimina tutti i membri messi da parte ({count})"
 			},
 			"bulkDelete": {
 				"modalTitle": "Eliminare tutti i membri messi da parte?",
-				"modalDescription": "Tutti i {count} membri messi da parte verranno eliminati definitivamente dal database. Resteranno nel controller ZeroTier e dovranno essere riaggiunti manualmente.",
-				"modalWarning": "Attenzione: l'azione non può essere annullata. Per riaggiungere questi membri in futuro, sarà necessario inserire manualmente i relativi ID membro."
+				"modalDescription": "Tutti i {count} membri messi da parte verranno eliminati definitivamente. Resteranno nel controller ZeroTier, ma saranno nascosti e non riappariranno come nuove richieste di accesso.",
+				"modalWarning": "Potrai riattivarli in seguito dall'elenco dei membri eliminati definitivamente."
 			}
 		},
 		"inviteMemberByMail": {

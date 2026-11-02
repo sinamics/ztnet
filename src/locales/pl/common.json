@@ -391,12 +391,13 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "Pokaż ukrytych",
+				"viewPermanentlyDeletedMembers": "Pokaż trwale usuniętych",
 				"deleteAll": "Usuń Wszystkich Ukrytych ({count})"
 			},
 			"bulkDelete": {
 				"modalTitle": "Usunąć wszystkich ukrytych członków?",
-				"modalDescription": "Operacja trwale usunie wszystkich {count} ukrytych członków z bazy danych. Pozostaną oni w kontrolerze ZeroTier i należy ich ponownie dodać ręcznie.",
-				"modalWarning": "Ostrzeżenie: Ta akcja nie może być cofnięta. Aby ponownie dodać tych członków w przyszłości, musisz ręcznie wprowadzić ich identyfikatory członków."
+				"modalDescription": "Operacja trwale usunie wszystkich {count} ukrytych członków. Pozostaną oni w kontrolerze ZeroTier, ale zostaną ukryci i nie pojawią się ponownie jako nowe prośby o dołączenie.",
+				"modalWarning": "Możesz ich później ponownie aktywować z listy trwale usuniętych członków."
 			}
 		},
 		"inviteMemberByMail": {
