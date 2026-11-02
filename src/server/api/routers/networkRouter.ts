@@ -19,9 +19,12 @@ import {
 import { sendWebhook } from "~/utils/webhook";
 import {
 	attachLiveStatus,
+	fetchPeersByAddress,
 	reconcileNetworkMembersOnce,
 	triggerBackgroundReconcile,
 } from "../services/memberService";
+import { determineConnectionStatus } from "../utils/memberUtils";
+import { compareMemberStatus } from "~/utils/memberStatus";
 import { isValidCIDR, isValidDns, isValidIP } from "../utils/ipUtils";
 import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
@@ -347,6 +350,7 @@ export const networkRouter = createTRPCRouter({
 						"ipAssignments",
 						"lastSeen",
 						"creationTime",
+						"conStatus",
 					])
 					.default("id"),
 				sortDir: z.enum(["asc", "desc"]).default("asc"),
@@ -364,9 +368,14 @@ export const networkRouter = createTRPCRouter({
 					true,
 				);
 				const all = (response?.members ?? []) as MemberEntity[];
+				const direction = input.sortDir === "desc" ? -1 : 1;
+				const ordered =
+					input.sortBy === "conStatus"
+						? [...all].sort((a, b) => direction * compareMemberStatus(a, b, true))
+						: all;
 				const start = input.page * input.pageSize;
 				return {
-					members: all.slice(start, start + input.pageSize),
+					members: ordered.slice(start, start + input.pageSize),
 					totalCount: all.length,
 					authorizedCount: all.filter((m) => m.authorized).length,
 				};
@@ -413,32 +422,62 @@ export const networkRouter = createTRPCRouter({
 					typeof ctx.prisma.network_members.findMany<{ include: typeof include }>
 				>
 			>;
-			if (input.sortBy === "ipAssignments") {
-				// Prisma can't ORDER BY an array column, so sort by the first IP
-				// numerically here, reusing the original `sortIP` logic so the order
-				// matches the pre-refactor table exactly (IPv4/IPv6 aware). IP sort is
-				// user-initiated and only pulls a tiny {id, ipAssignments} projection.
-				const ipKey = (ips: string[] | null | undefined): bigint =>
-					ips?.length ? sortIP(ips[0].split("/")[0]) : BigInt(0);
-				const keyed = await ctx.prisma.network_members.findMany({
-					where,
-					select: { id: true, ipAssignments: true },
-				});
-				keyed.sort((a, b) => {
-					const av = ipKey(a.ipAssignments);
-					const bv = ipKey(b.ipAssignments);
-					const cmp = av < bv ? -1 : av > bv ? 1 : 0;
-					return input.sortDir === "desc" ? -cmp : cmp;
-				});
-				const pageIds = keyed.slice(skip, skip + input.pageSize).map((r) => r.id);
+			const direction = input.sortDir === "desc" ? -1 : 1;
+			// For orders SQL can't express: the caller sorts a small projection of
+			// every matching member, and only the requested page is loaded in full.
+			const loadPageInOrder = async (orderedIds: string[]) => {
+				const pageIds = orderedIds.slice(skip, skip + input.pageSize);
 				const pageRows = await ctx.prisma.network_members.findMany({
 					where: { nwid: input.nwid, id: { in: pageIds } },
 					include,
 				});
 				const byId = new Map(pageRows.map((r) => [r.id, r]));
-				rows = pageIds
+				return pageIds
 					.map((id) => byId.get(id))
 					.filter((r): r is (typeof pageRows)[number] => Boolean(r));
+			};
+			// Fetched once when sorting by status, so the order and the served
+			// status come from the same controller snapshot.
+			let peersByAddress: Awaited<ReturnType<typeof fetchPeersByAddress>> | undefined;
+
+			if (input.sortBy === "ipAssignments") {
+				// Prisma can't ORDER BY an array column, so sort by the first IP
+				// numerically here, reusing the original `sortIP` logic so the order
+				// matches the pre-refactor table exactly (IPv4/IPv6 aware).
+				const ipKey = (ips: string[] | null | undefined): bigint =>
+					ips?.length ? sortIP(ips[0].split("/")[0]) : BigInt(0);
+				const keyed = await ctx.prisma.network_members.findMany({
+					where,
+					select: { id: true, ipAssignments: true },
+					orderBy: { id: "asc" },
+				});
+				keyed.sort((a, b) => {
+					const av = ipKey(a.ipAssignments);
+					const bv = ipKey(b.ipAssignments);
+					return direction * (av < bv ? -1 : av > bv ? 1 : 0);
+				});
+				rows = await loadPageInOrder(keyed.map((r) => r.id));
+			} else if (input.sortBy === "conStatus") {
+				// Status is live peer data with no DB column, so rank every member
+				// with the same status logic the table displays. Ties keep id order
+				// (stable sort), so pages never overlap.
+				peersByAddress = await fetchPeersByAddress(ctx);
+				const keyed = await ctx.prisma.network_members.findMany({
+					where,
+					select: { id: true, nwid: true, address: true, lastSeen: true },
+					orderBy: { id: "asc" },
+				});
+				const ranked = keyed.map((m) => ({
+					id: m.id,
+					lastSeen: m.lastSeen,
+					conStatus: determineConnectionStatus({
+						id: m.id,
+						nwid: m.nwid,
+						peers: peersByAddress?.get(m.address || "") ?? {},
+					} as MemberEntity),
+				})) as MemberEntity[];
+				ranked.sort((a, b) => direction * compareMemberStatus(a, b, false));
+				rows = await loadPageInOrder(ranked.map((r) => r.id));
 			} else {
 				rows = await ctx.prisma.network_members.findMany({
 					where,
@@ -456,7 +495,7 @@ export const networkRouter = createTRPCRouter({
 				}),
 			]);
 
-			const members = await attachLiveStatus(ctx, rows);
+			const members = await attachLiveStatus(ctx, rows, peersByAddress);
 			return { members, totalCount, authorizedCount };
 		}),
 	deleteNetwork: protectedProcedure
