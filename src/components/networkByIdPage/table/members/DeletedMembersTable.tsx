@@ -18,11 +18,15 @@ import { type network_members } from "@prisma/client";
 interface IProps {
 	nwid: string;
 	organizationId?: string;
-	// Show permanently deleted (blocked) members instead of stashed ones.
-	blocked?: boolean;
+	// Show permanently deleted members instead of stashed ones.
+	permanentlyDeleted?: boolean;
 }
 
-export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IProps) => {
+export const DeletedNetworkMembersTable = ({
+	nwid,
+	organizationId,
+	permanentlyDeleted,
+}: IProps) => {
 	const { query } = useRouter();
 	const t = useTranslations("networkById");
 	const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: true }]);
@@ -84,7 +88,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 			columnHelper.display({
 				header: () => <span>Conn Status</span>,
 				id: "conStatus",
-				cell: () => <span>{blocked ? "deleted" : "stashed"}</span>,
+				cell: () => <span>{permanentlyDeleted ? "deleted" : "stashed"}</span>,
 			}),
 			columnHelper.display({
 				header: () => <span>Action</span>,
@@ -94,7 +98,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 						original: { nwid, id },
 					},
 				}) =>
-					blocked ? (
+					permanentlyDeleted ? (
 						<button
 							onClick={() =>
 								updateUser({ nwid, id, organizationId, updateParams: { deleted: false } })
@@ -143,9 +147,15 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 
 	const [data, setData] = useState<network_members[]>([]);
 	useEffect(() => {
-		const members = blocked ? networkById?.blockedMembers : networkById?.zombieMembers;
+		const members = permanentlyDeleted
+			? networkById?.permanentlyDeletedMembers
+			: networkById?.zombieMembers;
 		setData((members as network_members[]) || []);
-	}, [blocked, networkById?.zombieMembers, networkById?.blockedMembers]);
+	}, [
+		permanentlyDeleted,
+		networkById?.zombieMembers,
+		networkById?.permanentlyDeletedMembers,
+	]);
 
 	const table = useReactTable<network_members>({
 		data,
@@ -158,7 +168,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId, blocked }: IP
 
 	return (
 		<div className="pt-2">
-			{!blocked && data && data.length > 0 && (
+			{!permanentlyDeleted && data && data.length > 0 && (
 				<div className="mb-4 flex justify-end">
 					<button
 						onClick={() =>

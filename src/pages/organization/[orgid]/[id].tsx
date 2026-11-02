@@ -39,7 +39,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 	const t = useTranslations();
 	const [state, setState] = useState({
 		viewZombieTable: false,
-		viewBlockedTable: false,
+		viewPermanentlyDeletedTable: false,
 		isDebug: false,
 	});
 	const callModal = useModalStore((state) => state.callModal);
@@ -349,27 +349,29 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 			<div className="w-5/5 mx-auto w-full py-4 text-sm md:text-base">
-				{networkById?.blockedMembers?.length > 0 ? (
+				{networkById?.permanentlyDeletedMembers?.length > 0 ? (
 					<>
 						<button
 							onClick={() =>
 								setState({
 									...state,
-									viewBlockedTable: !state.viewBlockedTable,
+									viewPermanentlyDeletedTable: !state.viewPermanentlyDeletedTable,
 								})
 							}
 							className="btn btn-wide"
 						>
-							{t("networkById.deletedNetworkMembersTable.buttons.viewBlockedMembers")} (
-							{networkById?.blockedMembers?.length})
+							{t(
+								"networkById.deletedNetworkMembersTable.buttons.viewPermanentlyDeletedMembers",
+							)}{" "}
+							({networkById?.permanentlyDeletedMembers?.length})
 						</button>
 
-						{state.viewBlockedTable ? (
+						{state.viewPermanentlyDeletedTable ? (
 							<div className="membersTable-wrapper text-center">
 								<DeletedNetworkMembersTable
 									nwid={network.nwid}
 									organizationId={organizationId}
-									blocked
+									permanentlyDeleted
 								/>
 							</div>
 						) : null}

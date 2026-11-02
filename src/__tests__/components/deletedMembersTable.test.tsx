@@ -30,7 +30,7 @@ describe("<DeletedNetworkMembersTable />", () => {
 	const deleteMember = jest.fn();
 	const bulkDeleteStashed = jest.fn();
 
-	const renderTable = (props: { blocked?: boolean }) =>
+	const renderTable = (props: { permanentlyDeleted?: boolean }) =>
 		render(
 			<QueryClientProvider client={new QueryClient()}>
 				<NextIntlClientProvider locale="en" messages={enTranslation}>
@@ -51,7 +51,7 @@ describe("<DeletedNetworkMembersTable />", () => {
 		api.network.getNetworkById.useQuery = jest.fn().mockReturnValue({
 			data: {
 				zombieMembers: [member("stashed01", "Stashed node")],
-				blockedMembers: [member("deleted01", "Deleted node")],
+				permanentlyDeletedMembers: [member("deleted01", "Deleted node")],
 			},
 			refetch: jest.fn(),
 		});
@@ -68,7 +68,7 @@ describe("<DeletedNetworkMembersTable />", () => {
 	});
 
 	it("lists permanently deleted members and re-activates with deleted: false only", () => {
-		renderTable({ blocked: true });
+		renderTable({ permanentlyDeleted: true });
 
 		expect(screen.getByText("deleted01")).toBeInTheDocument();
 		expect(screen.queryByText("stashed01")).not.toBeInTheDocument();

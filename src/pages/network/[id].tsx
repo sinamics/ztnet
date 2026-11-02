@@ -48,7 +48,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 	const [state, setState] = useState({
 		viewZombieTable: false,
-		viewBlockedTable: false,
+		viewPermanentlyDeletedTable: false,
 		isDebug: false,
 	});
 
@@ -349,24 +349,26 @@ const NetworkById = ({ orgIds }: IProps) => {
 				</div>
 			</div>
 			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
-				{networkById?.blockedMembers?.length > 0 ? (
+				{networkById?.permanentlyDeletedMembers?.length > 0 ? (
 					<>
 						<button
 							onClick={() =>
 								setState({
 									...state,
-									viewBlockedTable: !state.viewBlockedTable,
+									viewPermanentlyDeletedTable: !state.viewPermanentlyDeletedTable,
 								})
 							}
 							className="btn btn-wide"
 						>
-							{t("networkById.deletedNetworkMembersTable.buttons.viewBlockedMembers")} (
-							{networkById?.blockedMembers?.length})
+							{t(
+								"networkById.deletedNetworkMembersTable.buttons.viewPermanentlyDeletedMembers",
+							)}{" "}
+							({networkById?.permanentlyDeletedMembers?.length})
 						</button>
 
-						{state.viewBlockedTable ? (
+						{state.viewPermanentlyDeletedTable ? (
 							<div className="membersTable-wrapper text-center">
-								<DeletedNetworkMembersTable nwid={network.nwid} blocked />
+								<DeletedNetworkMembersTable nwid={network.nwid} permanentlyDeleted />
 							</div>
 						) : null}
 					</>
