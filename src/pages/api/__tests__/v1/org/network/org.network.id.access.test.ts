@@ -223,6 +223,39 @@ describe("organization network access scoping", () => {
 			},
 		);
 
+		describe.each([
+			["routes", { routes: [{ target: "10.1.0.0/24" }] }],
+			["dns", { dns: { domain: "orga.internal", servers: ["10.1.0.1"] } }],
+		])("%s updates", (_field, body) => {
+			const buildFieldRequest = () =>
+				({
+					...buildRequest(ORG_A, NETWORK_IN_ORG_A, "POST"),
+					body,
+				}) as unknown as NextApiRequest;
+
+			it.each(["USER", "MODERATOR"])("rejects POST from a %s member", async (role) => {
+				setCallerRole(role);
+				const res = buildResponse();
+
+				await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
+
+				expect(res.status).not.toHaveBeenCalledWith(200);
+				expect(ztController.network_update).not.toHaveBeenCalled();
+			});
+
+			it("accepts POST from an ADMIN member", async () => {
+				setCallerRole("ADMIN");
+				const res = buildResponse();
+
+				await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
+
+				expect(res.status).toHaveBeenCalledWith(200);
+				expect(ztController.network_update).toHaveBeenCalledWith(
+					expect.objectContaining({ updateParams: body }),
+				);
+			});
+		});
+
 		it("still lets a READ_ONLY member read the network", async () => {
 			setCallerRole("READ_ONLY");
 			const res = buildResponse();

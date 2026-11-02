@@ -711,8 +711,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Only organization admins may change routes; other roles can view them
+			await checkNetworkAccess(ctx, input.nwid, Role.ADMIN);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -800,8 +800,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Replaces the network routes, so it needs the same role as managedRoutes
+			await checkNetworkAccess(ctx, input.nwid, Role.ADMIN);
 
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -863,8 +863,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Adds routes for the pools, so it needs the same role as managedRoutes
+			await checkNetworkAccess(ctx, input.nwid, Role.ADMIN);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -1176,8 +1176,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Only organization admins may change DNS; other roles can view it
+			await checkNetworkAccess(ctx, input.nwid, Role.ADMIN);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({

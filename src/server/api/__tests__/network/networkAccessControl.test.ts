@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Session } from "~/lib/authTypes";
 import { appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
+import * as ztController from "~/utils/ztApi";
 
 // Mock ztController to prevent actual ZeroTier API calls
 jest.mock("~/utils/ztApi", () => ({
@@ -282,6 +283,68 @@ describe("checkNetworkAccess - helper behavior via endpoints", () => {
 					updateParams: { name: "new-name" },
 				}),
 			).resolves.toBeDefined();
+		});
+	});
+
+	describe("Organization network - routes and DNS are admin only", () => {
+		const callRoutesOrDns = {
+			managedRoutes: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.managedRoutes({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { routes: [{ target: "10.1.0.0/24", via: null }] },
+				}),
+			easyIpAssignment: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.easyIpAssignment({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { routes: [{ target: "10.1.0.0/24", via: null }] },
+				}),
+			advancedIpAssignment: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.advancedIpAssignment({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: {
+						ipAssignmentPools: [{ ipRangeStart: "10.1.0.1", ipRangeEnd: "10.1.0.254" }],
+					},
+				}),
+			dns: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.dns({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { dns: { domain: "org.internal", servers: ["10.1.0.1"] } },
+				}),
+		};
+
+		describe.each(Object.entries(callRoutesOrDns))("%s", (_name, call) => {
+			it.each(["READ_ONLY", "USER", "MODERATOR"])("rejects org %s", async (role) => {
+				mockOrgNetwork("owner-user-id", "org-1");
+				mockOrgRole(role);
+				prisma.activityLog.create = jest.fn().mockResolvedValue({});
+
+				await expect(call(createCaller(orgMemberSession))).rejects.toThrow(
+					"required permission",
+				);
+				expect(prisma.activityLog.create).not.toHaveBeenCalled();
+				expect(ztController.network_update).not.toHaveBeenCalled();
+			});
+
+			it("allows org ADMIN", async () => {
+				mockOrgNetwork("owner-user-id", "org-1");
+				mockOrgRole("ADMIN");
+				prisma.activityLog.create = jest.fn().mockResolvedValue({});
+
+				await expect(call(createCaller(orgMemberSession))).resolves.toBeDefined();
+				expect(ztController.network_update).toHaveBeenCalledTimes(1);
+			});
+
+			it("still allows the owner of a personal network", async () => {
+				mockPersonalNetwork("owner-user-id");
+				prisma.activityLog.create = jest.fn().mockResolvedValue({});
+
+				await expect(call(createCaller(ownerSession))).resolves.toBeDefined();
+				expect(ztController.network_update).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 

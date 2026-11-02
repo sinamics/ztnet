@@ -5,6 +5,7 @@ import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
+import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
 import { HandlerContextSchema, NetworkUpdateSchema } from "./_schema";
 
@@ -56,6 +57,15 @@ export const POST_network = SecuredOrganizationApiRoute(
 
 			// Validate the body against the NetworkUpdateSchema
 			const validatedBody = NetworkUpdateSchema.parse(body);
+
+			// Routes and DNS match the tRPC managedRoutes and dns procedures: admin only
+			if ("routes" in validatedBody || "dns" in validatedBody) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: context.orgId,
+					minimumRequiredRole: Role.ADMIN,
+				});
+			}
 
 			const updateableFields = {
 				name: { type: "string", destinations: ["controller", "database"] },
