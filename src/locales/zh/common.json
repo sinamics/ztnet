@@ -222,6 +222,7 @@
 			"navigate": "前往控制器"
 		},
 		"noNetworksMessage": "尚未创建任何网络。首先创建一个，它将出现在这里。",
+		"personalNetworksDisabled": "管理员已禁用个人网络。请在组织中创建网络。",
 		"networkActionModal": {
 			"modalTitle": "网络操作 <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "应用",
-				"description": "自定义应用的外观和行为，以更好地匹配您的品牌"
+				"description": "自定义应用的外观和行为，以更好地匹配您的品牌",
+				"enablePersonalNetworks": "启用个人网络",
+				"enablePersonalNetworksDescription": "允许用户在组织之外创建网络。关闭后，现有的个人网络仍可继续使用。"
 			},
 			"publicPages": {
 				"sectionTitle": "公共页面",

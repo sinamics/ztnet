@@ -222,6 +222,7 @@
 			"navigate": "Gehe zu Controller"
 		},
 		"noNetworksMessage": "Keine Netzwerke vorhanden. Neue Netzwerke werden hier angezeigt.",
+		"personalNetworksDisabled": "Persönliche Netzwerke wurden vom Administrator deaktiviert. Erstellen Sie Netzwerke in einer Organisation.",
 		"networkActionModal": {
 			"modalTitle": "Optionen für Netzwerk <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Applikation",
-				"description": "Passen Sie das Erscheinungsbild und Verhalten der Anwendung an, um sie besser an Ihre Bedürfnisse anzupassen"
+				"description": "Passen Sie das Erscheinungsbild und Verhalten der Anwendung an, um sie besser an Ihre Bedürfnisse anzupassen",
+				"enablePersonalNetworks": "Persönliche Netzwerke aktivieren",
+				"enablePersonalNetworksDescription": "Benutzern erlauben, Netzwerke außerhalb einer Organisation zu erstellen. Bestehende persönliche Netzwerke funktionieren weiter, wenn dies deaktiviert ist."
 			},
 			"publicPages": {
 				"sectionTitle": "Öffentliche Seiten",

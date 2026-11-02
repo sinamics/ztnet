@@ -222,6 +222,7 @@
 			"navigate": "Gå til Kontroller"
 		},
 		"noNetworksMessage": "Ingen nettverk er opprettet ennå. Start ved å opprette en, og den vil dukke opp her.",
+		"personalNetworksDisabled": "Personlige nettverk er deaktivert av administratoren. Opprett nettverk i en organisasjon.",
 		"networkActionModal": {
 			"modalTitle": "Aksjon for Nettverk <span>{networkName}</span>",
 			"moveNetwork": {
@@ -494,7 +495,9 @@
 		"settings": {
 			"application": {
 				"title": "Applikasjon",
-				"description": "Tilpass applikasjonens utseende og oppførsel for å bedre tilpasse den til merkevaren din"
+				"description": "Tilpass applikasjonens utseende og oppførsel for å bedre tilpasse den til merkevaren din",
+				"enablePersonalNetworks": "Aktiver personlige nettverk",
+				"enablePersonalNetworksDescription": "La brukere opprette nettverk utenfor en organisasjon. Eksisterende personlige nettverk fortsetter å fungere når dette er av."
 			},
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
