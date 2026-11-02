@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import TimeAgo from "react-timeago";
 import type { MemberEntity } from "~/types/local/member";
+import { isCentralMemberOnline } from "~/utils/memberStatus";
 import { ConnectionStatus } from "../constants";
 
 interface Props {
@@ -46,8 +47,7 @@ export const ConnectionStatusCell = ({ original, central }: Props) => {
 	);
 
 	if (central) {
-		const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
-		if (lastSeen.getTime() >= fiveMinutesAgo) {
+		if (isCentralMemberOnline(original)) {
 			return (
 				<span style={cursorStyle} className="text-success text-sm" title="User is online">
 					ONLINE
