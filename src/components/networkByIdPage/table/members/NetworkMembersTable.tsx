@@ -46,6 +46,7 @@ const SERVER_SORTABLE = new Set([
 	"authorized",
 	"physicalAddress",
 	"ipAssignments",
+	"conStatus",
 ]);
 
 export const NetworkMembersTable = ({ nwid, central = false, organizationId }: IProp) => {
