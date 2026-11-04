@@ -18,6 +18,7 @@ import {
 } from "~/types/webhooks";
 import { sendWebhook } from "~/utils/webhook";
 import { throwError } from "~/server/helpers/errorHandler";
+import { MEMBER_NOTES_MAX_LENGTH } from "~/utils/memberNotes";
 import { isValidIP } from "../utils/ipUtils";
 
 const isValidZeroTierNetworkId = (id: string) => {
@@ -45,7 +46,6 @@ const hasNetworkRole = async (
 // checkNetworkAccess only admits the network's author, whatever these values are.
 export const MEMBER_NOTES_VIEW_ROLE: Role = Role.USER;
 export const MEMBER_NOTES_EDIT_ROLE: Role = Role.USER;
-export const MEMBER_NOTES_MAX_LENGTH = 10000;
 
 export const networkMemberRouter = createTRPCRouter({
 	getAll: protectedProcedure.query(async ({ ctx }) => {

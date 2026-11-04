@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { api } from "~/utils/api";
 import { useModalStore } from "~/utils/store";
+import { MEMBER_NOTES_MAX_LENGTH } from "~/utils/memberNotes";
 import {
 	useTrpcApiErrorHandler,
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
-
-// Keep in sync with MEMBER_NOTES_MAX_LENGTH in memberRouter.ts (the server
-// enforces it; this only drives the counter and the textarea limit).
-const MAX_LENGTH = 10000;
 
 interface Props {
 	nwid: string;
@@ -17,8 +14,8 @@ interface Props {
 }
 
 /**
- * Free-text notes for a single network member. Anyone with access to the network
- * can read them; only roles allowed by the server (`canEdit`) can change them.
+ * Free-text notes for a single network member. READ_ONLY users cannot see them;
+ * USER and above can read and edit them (the server decides via `canEdit`).
  */
 export const MemberNotesModal = ({ nwid, memberId }: Props) => {
 	const t = useTranslations();
@@ -57,14 +54,14 @@ export const MemberNotesModal = ({ nwid, memberId }: Props) => {
 				className="textarea textarea-bordered min-h-48 w-full"
 				placeholder={t("networkById.networkMembersTable.notesPlaceholder")}
 				value={notes}
-				maxLength={MAX_LENGTH}
+				maxLength={MEMBER_NOTES_MAX_LENGTH}
 				disabled={isLoading || !canEdit}
 				onChange={(e) => setNotes(e.target.value)}
 			/>
 			<div className="flex flex-wrap items-center justify-between gap-2">
 				<span className="text-xs opacity-60">
 					{canEdit
-						? `${notes.length} / ${MAX_LENGTH}`
+						? `${notes.length} / ${MEMBER_NOTES_MAX_LENGTH}`
 						: t("networkById.networkMembersTable.notesReadOnly")}
 				</span>
 				<div className="flex gap-2">
