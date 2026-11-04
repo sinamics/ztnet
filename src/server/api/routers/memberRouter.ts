@@ -39,11 +39,12 @@ const hasNetworkRole = async (
 };
 
 // Minimum roles for member notes: READ_ONLY users cannot see them, USER and up
-// can read, and only MEMBER_NOTES_EDIT_ROLE and up can edit. Kept as constants so
-// they can later become instance/organization settings. On personal networks
+// can read and edit, like every other member action (a USER can already delete
+// the member, and its note with it). Kept as constants so they can later become
+// instance/organization settings. On personal networks
 // checkNetworkAccess only admits the network's author, whatever these values are.
 export const MEMBER_NOTES_VIEW_ROLE: Role = Role.USER;
-export const MEMBER_NOTES_EDIT_ROLE: Role = Role.ADMIN;
+export const MEMBER_NOTES_EDIT_ROLE: Role = Role.USER;
 export const MEMBER_NOTES_MAX_LENGTH = 10000;
 
 export const networkMemberRouter = createTRPCRouter({

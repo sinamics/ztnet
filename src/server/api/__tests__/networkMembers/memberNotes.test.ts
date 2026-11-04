@@ -135,7 +135,7 @@ describe("member notes", () => {
 		expect(prisma.networkMemberNote.findFirst).not.toHaveBeenCalled();
 	});
 
-	test("USER can read notes but not edit them", async () => {
+	test("USER can read and edit notes", async () => {
 		asOrgRole("USER");
 		prisma.networkMemberNote.findFirst.mockResolvedValue({
 			notes: "rack 3",
@@ -146,7 +146,11 @@ describe("member notes", () => {
 			nwid: NWID,
 			memberId: MEMBER,
 		});
-		expect(result).toMatchObject({ notes: "rack 3", canEdit: false });
+		expect(result).toMatchObject({ notes: "rack 3", canEdit: true });
+	});
+
+	test("READ_ONLY users cannot edit notes", async () => {
+		asOrgRole("READ_ONLY");
 
 		await expect(
 			makeCaller().networkMember.updateMemberNotes({
@@ -156,16 +160,5 @@ describe("member notes", () => {
 			}),
 		).rejects.toThrow();
 		expect(prisma.networkMemberNote.upsert).not.toHaveBeenCalled();
-	});
-
-	test("ADMIN can read and edit notes", async () => {
-		asOrgRole("ADMIN");
-		prisma.networkMemberNote.findFirst.mockResolvedValue(null as never);
-
-		const result = await makeCaller().networkMember.getMemberNotes({
-			nwid: NWID,
-			memberId: MEMBER,
-		});
-		expect(result).toMatchObject({ notes: "", canEdit: true });
 	});
 });
