@@ -50,7 +50,6 @@
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
 		"notes": "Notes",
-		"credentials": "Identifiants",
 		"save": "Enregistrer",
 		"settings": "Paramètres",
 		"resend": "Renvoyer",
@@ -375,7 +374,6 @@
 			"notesPlaceholder": "Ajoutez des notes sur ce membre (détails de l'appareil, emplacement, contacts...)",
 			"notesReadOnly": "Vous disposez d'un accès en lecture seule à ces notes.",
 			"notesNoAccess": "Vous n'avez pas accès aux notes des membres.",
-			"credentialsSoon": "Bientôt disponible",
 			"tableRow": {
 				"updateName": "Cliquez pour changer de nom",
 				"updateDescription": "Cliquez pour ajouter une description"

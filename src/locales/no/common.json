@@ -50,7 +50,6 @@
 		"addWebhooks": "Legg til Webhooks",
 		"options": "Alternativer",
 		"notes": "Notater",
-		"credentials": "Påloggingsinformasjon",
 		"save": "Lagre",
 		"settings": "Innstillinger",
 		"resend": "Send på nytt",
@@ -375,7 +374,6 @@
 			"notesPlaceholder": "Legg til notater om dette medlemmet (enhetsdetaljer, plassering, kontakter ...)",
 			"notesReadOnly": "Du har kun lesetilgang til disse notatene.",
 			"notesNoAccess": "Du har ikke tilgang til medlemsnotater.",
-			"credentialsSoon": "Kommer snart",
 			"tableRow": {
 				"updateName": "Klikk for å endre navn",
 				"updateDescription": "Klikk for å legge til beskrivelse"

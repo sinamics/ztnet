@@ -6,9 +6,6 @@ import { MemberNotesModal } from "~/components/networkByIdPage/memberNotesModal"
 import { api } from "~/utils/api";
 import type { MemberEntity } from "~/types/local/member";
 
-// Placeholder for the optional credentials feature (#1028); hidden until implemented.
-const SHOW_CREDENTIALS = false;
-
 interface Props {
 	original: MemberEntity;
 	central: boolean;
@@ -118,15 +115,6 @@ export const ActionsCell = ({
 							<span className="ml-1 inline-block h-2 w-2 rounded-full bg-primary" />
 						) : null}
 					</button>
-					{SHOW_CREDENTIALS ? (
-						<button
-							disabled
-							title={t("networkById.networkMembersTable.credentialsSoon")}
-							className="btn btn-outline btn-xs rounded-sm"
-						>
-							{b("credentials")}
-						</button>
-					) : null}
 				</>
 			)}
 		</div>
