@@ -32,9 +32,11 @@ model GlobalOptions {
 
   // Member status log (opt in). The sampler in cronTasks reads these on every
   // run, so a change takes effect without a restart.
-  memberStatusLogEnabled        Boolean @default(false)
-  memberStatusLogRetentionDays  Int     @default(30)
-  memberStatusLogSampleInterval Int     @default(60) // seconds
+  memberStatusLogEnabled           Boolean @default(false)
+  memberStatusLogRetentionDays     Int     @default(30)
+  memberStatusLogSampleInterval    Int     @default(60) // seconds
+  // Also store Direct <-> Relay changes. Off: only changes to or from Offline.
+  memberStatusLogConnectionChanges Boolean @default(false)
 
   // Email configuration
   smtpHost                           String?
@@ -163,10 +165,14 @@ model MemberStatusEvent {
 // next sample is compared against. Cleared when the log is disabled and on
 // startup, so a gap in sampling never turns into a made up transition.
 model MemberStatusState {
-  address         String                 @id
+  address         String                  @id
   status          MemberConnectionStatus
   physicalAddress String?
-  updatedAt       DateTime               @updatedAt
+  // A different status that was seen in one sample and becomes an event only
+  // if the next sample shows it too. pendingSince is that first sighting.
+  pendingStatus   MemberConnectionStatus?
+  pendingSince    DateTime?
+  updatedAt       DateTime                @updatedAt
 }
 
 model network {

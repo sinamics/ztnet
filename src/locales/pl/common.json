@@ -527,7 +527,8 @@
 			"range": "{from} do {to} z {total}",
 			"page": "Strona {page} z {pages}",
 			"previous": "Poprzednia",
-			"next": "Następna"
+			"next": "Następna",
+			"pageOnly": "Strona {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} sekund",
 					"invalid": "Interwał odczytu musi być liczbą całkowitą od {min} do {max} sekund."
 				},
+				"connectionChanges": {
+					"label": "Rejestruj zmiany między Bezpośrednie i Relay",
+					"description": "Domyślnie wyłączone. Gdy jest wyłączone, zapisywane są tylko zmiany na Offline lub z Offline, dzięki czemu dziennik pozostaje mały. Włącz, aby rejestrować także przejścia członka między połączeniem bezpośrednim a przekazywanym."
+				},
 				"limits": {
 					"title": "Co dziennik może pokazać, a czego nie",
 					"sampled": "Status jest odczytywany z kontrolera w podanym wyżej interwale. Pokazuje połączenie samego kontrolera z członkiem, a nie połączenia między członkami.",
-					"shortDrops": "Przerwa, która zaczyna się i kończy między dwoma odczytami, nie jest rejestrowana.",
+					"shortDrops": "Zmiana jest zapisywana, gdy pokażą ją dwa odczyty z rzędu. Przerwa krótsza niż dwa odczyty nie jest rejestrowana, podobnie jak pojedyncza pusta odpowiedź restartującego się kontrolera.",
 					"lateOffline": "Status Offline jest zgłaszany z opóźnieniem. Kontroler trzyma członka na liście peerów jeszcze przez kilka minut po jego zniknięciu, więc zdarzenie jest późniejsze niż faktyczna przerwa.",
-					"relay": "Relay to szacunek oparty na danych z kontrolera, więc zmiany między Bezpośrednie i Relay mogą być niestabilne. Domyślnie są ukryte.",
+					"relay": "Relay to szacunek oparty na danych z kontrolera, więc zmiany między Bezpośrednie i Relay mogą być niestabilne. Są zapisywane tylko wtedy, gdy powyższy przełącznik jest włączony.",
 					"localOnly": "Obsługiwane są tylko sieci na lokalnym kontrolerze. Sieci ZeroTier Central nie mają danych o statusie."
 				},
 				"instanceLog": {

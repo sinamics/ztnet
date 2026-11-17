@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import EditableField from "~/components/elements/inputField";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
+import { useEventPaging } from "~/components/memberStatusLog/useEventPaging";
 import {
 	type MemberStatus,
 	StatusEventFilters,
@@ -40,10 +41,18 @@ const parseWholeNumber = (value: unknown, { min, max }: { min: number; max: numb
 export const InstanceMemberStatusLog = () => {
 	const { data: options } = api.admin.getAllOptions.useQuery();
 	if (options?.memberStatusLogEnabled !== true) return null;
-	return <InstanceStatusLogTable />;
+	return (
+		<InstanceStatusLogTable
+			showConnectionChanges={options.memberStatusLogConnectionChanges === true}
+		/>
+	);
 };
 
-const InstanceStatusLogTable = () => {
+const InstanceStatusLogTable = ({
+	showConnectionChanges,
+}: {
+	showConnectionChanges: boolean;
+}) => {
 	const t = useTranslations("memberStatusLog");
 	const a = useTranslations("admin.settings.memberStatusLog");
 	const callModal = useModalStore((state) => state.callModal);
@@ -53,7 +62,7 @@ const InstanceStatusLogTable = () => {
 	const [addressSearch, setAddressSearch] = useState("");
 	const [status, setStatus] = useState<MemberStatus | "">("");
 	const [includeConnectionChanges, setIncludeConnectionChanges] = useState(false);
-	const [page, setPage] = useState(0);
+	const paging = useEventPaging();
 
 	const { data: networks } = api.admin.getMemberStatusLogNetworks.useQuery();
 	const { data, isPending, refetch } = api.admin.getMemberStatusLog.useQuery(
@@ -61,8 +70,8 @@ const InstanceStatusLogTable = () => {
 			nwid: nwid || undefined,
 			addressSearch: addressSearch || undefined,
 			status: status || undefined,
-			includeConnectionChanges,
-			page,
+			includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
+			cursor: paging.cursor,
 			pageSize: PAGE_SIZE,
 		},
 		{ refetchInterval: 30000, placeholderData: (previous) => previous },
@@ -70,7 +79,7 @@ const InstanceStatusLogTable = () => {
 	const { mutate: clearLog } = api.admin.clearMemberStatusLog.useMutation({
 		onSuccess: ({ deleted }) => {
 			toast.success(a("cleared", { count: deleted }));
-			setPage(0);
+			paging.reset();
 			void refetch();
 		},
 		onError: handleApiError,
@@ -80,7 +89,7 @@ const InstanceStatusLogTable = () => {
 		<T,>(setter: (value: T) => void) =>
 		(value: T) => {
 			setter(value);
-			setPage(0);
+			paging.reset();
 		};
 
 	return (
@@ -113,6 +122,7 @@ const InstanceStatusLogTable = () => {
 				onStatusChange={withPageReset(setStatus)}
 				includeConnectionChanges={includeConnectionChanges}
 				onIncludeConnectionChangesChange={withPageReset(setIncludeConnectionChanges)}
+				showConnectionChanges={showConnectionChanges}
 			>
 				<label className="form-control">
 					<span className="label-text text-xs text-gray-500">{t("filters.network")}</span>
@@ -146,9 +156,12 @@ const InstanceStatusLogTable = () => {
 			<StatusEventTable
 				events={data?.events ?? []}
 				total={data?.total ?? 0}
-				page={data?.page ?? page}
+				totalIsCapped={data?.totalIsCapped}
+				page={paging.page}
 				pageSize={data?.pageSize ?? PAGE_SIZE}
-				onPageChange={setPage}
+				hasNextPage={!!data?.nextCursor}
+				onNextPage={() => paging.next(data?.nextCursor)}
+				onPreviousPage={paging.previous}
 				isLoading={isPending}
 				filtered={!!nwid || !!addressSearch || !!status}
 				renderMember={(event) => {
@@ -286,6 +299,19 @@ const MemberStatusLogSettings = () => {
 						t("interval.invalid", LIMITS.sampleInterval),
 					)}
 				/>
+				<div className="flex items-center justify-between gap-4">
+					<label htmlFor="memberStatusLogConnectionChanges">
+						<p className="font-medium">{t("connectionChanges.label")}</p>
+						<p className="text-sm text-gray-500">{t("connectionChanges.description")}</p>
+					</label>
+					<input
+						id="memberStatusLogConnectionChanges"
+						type="checkbox"
+						checked={options?.memberStatusLogConnectionChanges === true}
+						className="checkbox-primary checkbox checkbox-sm"
+						onChange={(e) => updateSettings({ logConnectionChanges: e.target.checked })}
+					/>
+				</div>
 				<div className="rounded-lg border border-base-300 bg-base-200/50 p-4 text-sm">
 					<p className="font-medium">{t("limits.title")}</p>
 					<ul className="mt-2 list-disc space-y-1 pl-5 text-gray-500">

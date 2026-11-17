@@ -34,6 +34,8 @@ interface FiltersProps {
 	onStatusChange: (status: MemberStatus | "") => void;
 	includeConnectionChanges: boolean;
 	onIncludeConnectionChangesChange: (include: boolean) => void;
+	/** False while the admin has Direct/Relay logging off: the filter is hidden. */
+	showConnectionChanges: boolean;
 	/** Extra filters, rendered before the shared ones. */
 	children?: ReactNode;
 }
@@ -44,6 +46,7 @@ export const StatusEventFilters = ({
 	onStatusChange,
 	includeConnectionChanges,
 	onIncludeConnectionChangesChange,
+	showConnectionChanges,
 	children,
 }: FiltersProps) => {
 	const t = useTranslations("memberStatusLog");
@@ -64,25 +67,33 @@ export const StatusEventFilters = ({
 					<option value="RELAY">{t("status.RELAY")}</option>
 				</select>
 			</label>
-			<label className="flex cursor-pointer items-center gap-2 pb-1">
-				<input
-					type="checkbox"
-					className="checkbox checkbox-primary checkbox-sm"
-					checked={includeConnectionChanges}
-					onChange={(e) => onIncludeConnectionChangesChange(e.target.checked)}
-				/>
-				<span className="text-sm">{t("filters.includeConnectionChanges")}</span>
-			</label>
+			{showConnectionChanges ? (
+				<label className="flex cursor-pointer items-center gap-2 pb-1">
+					<input
+						type="checkbox"
+						className="checkbox checkbox-primary checkbox-sm"
+						checked={includeConnectionChanges}
+						onChange={(e) => onIncludeConnectionChangesChange(e.target.checked)}
+					/>
+					<span className="text-sm">{t("filters.includeConnectionChanges")}</span>
+				</label>
+			) : null}
 		</div>
 	);
 };
 
 interface TableProps {
 	events: StatusEvent[];
+	/** Matching events, counted up to a cap. */
 	total: number;
+	/** True when there are more than `total`. */
+	totalIsCapped?: boolean;
+	/** Zero based index of the page that is shown. */
 	page: number;
 	pageSize: number;
-	onPageChange: (page: number) => void;
+	hasNextPage: boolean;
+	onNextPage: () => void;
+	onPreviousPage: () => void;
 	isLoading?: boolean;
 	/** True when a filter is active, picks the right empty message. */
 	filtered?: boolean;
@@ -95,16 +106,22 @@ interface TableProps {
 export const StatusEventTable = ({
 	events,
 	total,
+	totalIsCapped,
 	page,
 	pageSize,
-	onPageChange,
+	hasNextPage,
+	onNextPage,
+	onPreviousPage,
 	isLoading,
 	filtered,
 	hideMember,
 	renderMember,
 }: TableProps) => {
 	const t = useTranslations("memberStatusLog");
-	const pageCount = Math.max(1, Math.ceil(total / pageSize));
+	// The server pages by cursor and only counts up to a cap, so the number of
+	// pages is known only for a log that fits under it.
+	const pageCount = totalIsCapped ? null : Math.max(1, Math.ceil(total / pageSize));
+	const from = page * pageSize + 1;
 
 	if (isLoading) {
 		return (
@@ -177,27 +194,36 @@ export const StatusEventTable = ({
 			<div className="flex items-center justify-between gap-4 text-xs text-base-content/70">
 				<span>
 					{t("pagination.range", {
-						from: page * pageSize + 1,
-						to: Math.min(total, (page + 1) * pageSize),
-						total,
+						from,
+						to: from + events.length - 1,
+						total: totalIsCapped
+							? `${total}+`
+							: String(Math.max(total, from + events.length - 1)),
 					})}
 				</span>
-				{pageCount > 1 ? (
+				{page > 0 || hasNextPage ? (
 					<div className="flex items-center gap-2">
 						<button
 							type="button"
 							className="btn btn-primary btn-outline btn-xs"
-							onClick={() => onPageChange(page - 1)}
+							onClick={onPreviousPage}
 							disabled={page <= 0}
 						>
 							{t("pagination.previous")}
 						</button>
-						<span>{t("pagination.page", { page: page + 1, pages: pageCount })}</span>
+						<span>
+							{pageCount
+								? t("pagination.page", {
+										page: page + 1,
+										pages: Math.max(pageCount, page + 1),
+									})
+								: t("pagination.pageOnly", { page: page + 1 })}
+						</span>
 						<button
 							type="button"
 							className="btn btn-primary btn-outline btn-xs"
-							onClick={() => onPageChange(page + 1)}
-							disabled={page + 1 >= pageCount}
+							onClick={onNextPage}
+							disabled={!hasNextPage}
 						>
 							{t("pagination.next")}
 						</button>

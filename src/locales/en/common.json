@@ -527,7 +527,8 @@
 			"range": "{from} to {to} of {total}",
 			"page": "Page {page} of {pages}",
 			"previous": "Previous",
-			"next": "Next"
+			"next": "Next",
+			"pageOnly": "Page {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} seconds",
 					"invalid": "Sample interval must be a whole number between {min} and {max} seconds."
 				},
+				"connectionChanges": {
+					"label": "Log Direct/Relay changes",
+					"description": "Off by default. While off, only changes to or from Offline are stored, which keeps the log small. Turn it on to also record when a member switches between a direct and a relayed connection."
+				},
 				"limits": {
 					"title": "What the log can and cannot tell",
 					"sampled": "Status is sampled from the controller on the interval above. It shows the controller's own link to a member, not the links between members.",
-					"shortDrops": "A drop that starts and ends between two samples is not recorded.",
+					"shortDrops": "A change is stored once two samples in a row show it. A drop shorter than two samples is not recorded, and neither is a single empty answer from a restarting controller.",
 					"lateOffline": "Offline is reported late. The controller keeps a member in its peer list for several minutes after it disappeared, so an Offline event is later than the actual drop.",
-					"relay": "Relay is a best guess based on what the controller reports, so Direct/Relay changes can be noisy. They are hidden by default.",
+					"relay": "Relay is a best guess based on what the controller reports, so Direct/Relay changes can be noisy. They are only stored while the switch above is on.",
 					"localOnly": "Only networks on the local controller are covered. ZeroTier Central networks have no status data."
 				},
 				"instanceLog": {

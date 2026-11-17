@@ -1762,7 +1762,7 @@ accept;`;
 				address: input.memberId,
 				status: input.status,
 				includeConnectionChanges: input.includeConnectionChanges,
-				page: input.page,
+				cursor: input.cursor,
 				pageSize: input.pageSize,
 			});
 			return { enabled: true, ...result, members };

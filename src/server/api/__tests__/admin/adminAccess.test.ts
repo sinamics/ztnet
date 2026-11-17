@@ -210,19 +210,22 @@ describe("what a regular user can read", () => {
 			siteName: "ZTNET",
 			enablePersonalNetworks: true,
 			memberStatusLogEnabled: false,
+			memberStatusLogConnectionChanges: false,
 		});
 
 		await expect(callerAs("USER").settings.getAllOptions()).resolves.toEqual({
 			siteName: "ZTNET",
 			enablePersonalNetworks: true,
 			memberStatusLogEnabled: false,
+			memberStatusLogConnectionChanges: false,
 		});
-		// The pages need to know whether to show the member status log. Its
-		// retention and interval stay admin only.
+		// The pages need to know whether to show the member status log and its
+		// Direct/Relay filter. Retention and interval stay admin only.
 		expect(findGlobalOptions.mock.calls[0][0].select).toEqual({
 			siteName: true,
 			enablePersonalNetworks: true,
 			memberStatusLogEnabled: true,
+			memberStatusLogConnectionChanges: true,
 		});
 	});
 });

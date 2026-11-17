@@ -527,7 +527,8 @@
 			"range": "{from} à {to} sur {total}",
 			"page": "Page {page} sur {pages}",
 			"previous": "Précédent",
-			"next": "Suivant"
+			"next": "Suivant",
+			"pageOnly": "Page {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} secondes",
 					"invalid": "L'intervalle de relevé doit être un nombre entier compris entre {min} et {max} secondes."
 				},
+				"connectionChanges": {
+					"label": "Journaliser les changements entre Direct et Relais",
+					"description": "Désactivé par défaut. Tant qu'il est désactivé, seuls les changements depuis ou vers Hors ligne sont enregistrés, ce qui garde le journal léger. Activez-le pour enregistrer aussi les passages d'un membre entre connexion directe et relayée."
+				},
 				"limits": {
 					"title": "Ce que le journal peut dire ou non",
 					"sampled": "L'état est relevé auprès du contrôleur selon l'intervalle ci-dessus. Il reflète le lien du contrôleur avec un membre, pas les liens entre les membres.",
-					"shortDrops": "Une coupure qui commence et se termine entre deux relevés n'est pas enregistrée.",
+					"shortDrops": "Un changement est enregistré lorsque deux relevés consécutifs le montrent. Une coupure plus courte que deux relevés n'est pas enregistrée, pas plus qu'une réponse vide isolée d'un contrôleur en cours de redémarrage.",
 					"lateOffline": "L'état Hors ligne est signalé avec retard. Le contrôleur garde un membre dans sa liste de pairs plusieurs minutes après sa disparition, l'événement est donc postérieur à la coupure réelle.",
-					"relay": "Relais est une estimation fondée sur ce que rapporte le contrôleur, les changements entre Direct et Relais peuvent donc être bruités. Ils sont masqués par défaut.",
+					"relay": "Relais est une estimation fondée sur ce que rapporte le contrôleur, les changements entre Direct et Relais peuvent donc être bruités. Ils ne sont enregistrés que lorsque l'option ci-dessus est activée.",
 					"localOnly": "Seuls les réseaux du contrôleur local sont couverts. Les réseaux ZeroTier Central n'ont pas de données d'état."
 				},
 				"instanceLog": {

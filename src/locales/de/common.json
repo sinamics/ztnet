@@ -527,7 +527,8 @@
 			"range": "{from} bis {to} von {total}",
 			"page": "Seite {page} von {pages}",
 			"previous": "Zurück",
-			"next": "Weiter"
+			"next": "Weiter",
+			"pageOnly": "Seite {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} Sekunden",
 					"invalid": "Das Abfrageintervall muss eine ganze Zahl zwischen {min} und {max} Sekunden sein."
 				},
+				"connectionChanges": {
+					"label": "Wechsel zwischen Direkt und Relay protokollieren",
+					"description": "Standardmäßig aus. Solange es aus ist, werden nur Änderungen von oder zu Offline gespeichert, was das Protokoll klein hält. Einschalten, um auch aufzuzeichnen, wenn ein Mitglied zwischen direkter und weitergeleiteter Verbindung wechselt."
+				},
 				"limits": {
 					"title": "Was das Protokoll aussagt und was nicht",
 					"sampled": "Der Status wird im obigen Intervall vom Controller abgefragt. Er zeigt die Verbindung des Controllers zu einem Mitglied, nicht die Verbindungen der Mitglieder untereinander.",
-					"shortDrops": "Eine Unterbrechung, die zwischen zwei Abfragen beginnt und endet, wird nicht erfasst.",
+					"shortDrops": "Eine Änderung wird gespeichert, sobald zwei Abfragen in Folge sie zeigen. Eine Unterbrechung, die kürzer als zwei Abfragen ist, wird nicht erfasst, ebenso wenig eine einzelne leere Antwort eines neu startenden Controllers.",
 					"lateOffline": "Offline wird verzögert gemeldet. Der Controller behält ein Mitglied noch mehrere Minuten nach dessen Verschwinden in seiner Peer-Liste, ein Offline-Ereignis liegt daher später als der tatsächliche Ausfall.",
-					"relay": "Relay ist eine Schätzung anhand der Angaben des Controllers, Wechsel zwischen Direkt und Relay können daher unruhig sein. Sie sind standardmäßig ausgeblendet.",
+					"relay": "Relay ist eine Schätzung anhand der Angaben des Controllers, Wechsel zwischen Direkt und Relay können daher unruhig sein. Sie werden nur gespeichert, solange der Schalter oben eingeschaltet ist.",
 					"localOnly": "Nur Netzwerke auf dem lokalen Controller werden erfasst. Für ZeroTier Central Netzwerke gibt es keine Statusdaten."
 				},
 				"instanceLog": {

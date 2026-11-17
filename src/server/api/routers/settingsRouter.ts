@@ -12,6 +12,7 @@ export const settingsRouter = createTRPCRouter({
 				siteName: true,
 				enablePersonalNetworks: true,
 				memberStatusLogEnabled: true,
+				memberStatusLogConnectionChanges: true,
 			},
 		});
 	}),

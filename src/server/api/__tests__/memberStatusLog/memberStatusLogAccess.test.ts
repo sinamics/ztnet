@@ -47,6 +47,7 @@ const mockEnabled = (enabled: boolean) => {
 		memberStatusLogEnabled: enabled,
 		memberStatusLogRetentionDays: 30,
 		memberStatusLogSampleInterval: 60,
+		memberStatusLogConnectionChanges: false,
 	});
 };
 const mockPersonalNetwork = (authorId: string) => {
@@ -72,6 +73,7 @@ beforeEach(() => {
 	db.$queryRaw = jest.fn((sql) =>
 		Promise.resolve(sql.sql.includes("COUNT(*)") ? [{ total: 1 }] : [event]),
 	);
+	db.$executeRaw = jest.fn().mockResolvedValue(0);
 	db.network_members.findMany = jest
 		.fn()
 		.mockResolvedValue([{ id: "aaaaaaaaaa", name: "laptop" }]);
@@ -172,8 +174,9 @@ describe("network.getMemberStatusEvents", () => {
 		expect(result).toEqual({
 			enabled: false,
 			events: [],
+			nextCursor: null,
 			total: 0,
-			page: 0,
+			totalIsCapped: false,
 			pageSize: 25,
 			members: [],
 		});
@@ -265,6 +268,23 @@ describe("admin member status log procedures", () => {
 		).rejects.toMatchObject({ code: "BAD_REQUEST" });
 	});
 
+	test("switching Direct/Relay logging starts from a fresh baseline", async () => {
+		mockUserRole("ADMIN");
+		db.globalOptions.update = jest.fn().mockResolvedValue({});
+		db.memberStatusState.deleteMany = jest.fn().mockResolvedValue({ count: 2 });
+
+		await callerAs("admin", "ADMIN").admin.updateMemberStatusLogSettings({
+			logConnectionChanges: true,
+		});
+
+		expect(db.globalOptions.update).toHaveBeenCalledWith(
+			expect.objectContaining({
+				data: expect.objectContaining({ memberStatusLogConnectionChanges: true }),
+			}),
+		);
+		expect(db.memberStatusState.deleteMany).toHaveBeenCalledWith({});
+	});
+
 	test("disabling forgets the baseline, a new retention prunes right away", async () => {
 		mockUserRole("ADMIN");
 		db.globalOptions.update = jest.fn().mockResolvedValue({
@@ -288,13 +308,15 @@ describe("admin member status log procedures", () => {
 					memberStatusLogEnabled: false,
 					memberStatusLogRetentionDays: 7,
 					memberStatusLogSampleInterval: undefined,
+					memberStatusLogConnectionChanges: undefined,
 				},
 			}),
 		);
 		expect(db.memberStatusState.deleteMany).toHaveBeenCalledWith({});
-		expect(db.memberStatusEvent.deleteMany).toHaveBeenCalledWith({
-			where: { createdAt: { lt: expect.any(Date) } },
-		});
+		expect(db.$executeRaw).toHaveBeenCalledTimes(1);
+		expect(db.$executeRaw.mock.calls[0][0].sql).toContain(
+			'DELETE FROM "MemberStatusEvent"',
+		);
 		expect(wake).toHaveBeenCalledTimes(1);
 		samplerState().wake = undefined;
 	});

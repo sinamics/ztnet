@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { api } from "~/utils/api";
+import { useEventPaging } from "./useEventPaging";
 import {
 	type MemberStatus,
 	StatusEventFilters,
@@ -23,18 +24,20 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 	const [member, setMember] = useState("");
 	const [status, setStatus] = useState<MemberStatus | "">("");
 	const [includeConnectionChanges, setIncludeConnectionChanges] = useState(false);
-	const [page, setPage] = useState(0);
+	const paging = useEventPaging();
 
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const enabled = globalOptions?.memberStatusLogEnabled === true;
+	// The Direct/Relay filter only makes sense while those changes are logged.
+	const showConnectionChanges = globalOptions?.memberStatusLogConnectionChanges === true;
 
 	const { data, isPending } = api.network.getMemberStatusEvents.useQuery(
 		{
 			nwid,
 			memberId: memberId || member || undefined,
 			status: status || undefined,
-			includeConnectionChanges,
-			page,
+			includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
+			cursor: paging.cursor,
 			pageSize,
 		},
 		{
@@ -51,7 +54,7 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 		<T,>(setter: (value: T) => void) =>
 		(value: T) => {
 			setter(value);
-			setPage(0);
+			paging.reset();
 		};
 
 	return (
@@ -64,6 +67,7 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 				onStatusChange={withPageReset(setStatus)}
 				includeConnectionChanges={includeConnectionChanges}
 				onIncludeConnectionChangesChange={withPageReset(setIncludeConnectionChanges)}
+				showConnectionChanges={showConnectionChanges}
 			>
 				{memberId ? null : (
 					<label className="form-control">
@@ -89,9 +93,12 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 			<StatusEventTable
 				events={data?.events ?? []}
 				total={data?.total ?? 0}
-				page={data?.page ?? page}
+				totalIsCapped={data?.totalIsCapped}
+				page={paging.page}
 				pageSize={data?.pageSize ?? pageSize}
-				onPageChange={setPage}
+				hasNextPage={!!data?.nextCursor}
+				onNextPage={() => paging.next(data?.nextCursor)}
+				onPreviousPage={paging.previous}
 				isLoading={isPending}
 				filtered={!!member || !!status}
 				hideMember={!!memberId}

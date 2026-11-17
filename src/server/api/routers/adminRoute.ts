@@ -2175,6 +2175,7 @@ export const adminRouter = createTRPCRouter({
 		.input(
 			z.object({
 				enabled: z.boolean().optional(),
+				logConnectionChanges: z.boolean().optional(),
 				retentionDays: z
 					.number()
 					.int()
@@ -2196,17 +2197,23 @@ export const adminRouter = createTRPCRouter({
 					memberStatusLogEnabled: input.enabled,
 					memberStatusLogRetentionDays: input.retentionDays,
 					memberStatusLogSampleInterval: input.sampleInterval,
+					memberStatusLogConnectionChanges: input.logConnectionChanges,
 				},
 				select: {
 					memberStatusLogEnabled: true,
 					memberStatusLogRetentionDays: true,
 					memberStatusLogSampleInterval: true,
+					memberStatusLogConnectionChanges: true,
 				},
 			});
 
 			// Off means no baseline: the next time the log is enabled it starts
 			// from scratch instead of comparing against a stale status.
-			if (input.enabled === false) await resetMemberStatusBaseline();
+			// The same goes for switching Direct/Relay logging: the stored statuses
+			// were kept under the other rule and cannot be compared across it.
+			if (input.enabled === false || input.logConnectionChanges !== undefined) {
+				await resetMemberStatusBaseline();
+			}
 			// A shorter retention applies now, not at the next nightly prune.
 			if (input.retentionDays !== undefined) {
 				await pruneMemberStatusEvents(new Date(), input.retentionDays);
@@ -2233,7 +2240,7 @@ export const adminRouter = createTRPCRouter({
 				addressSearch: input.addressSearch?.trim() || undefined,
 				status: input.status,
 				includeConnectionChanges: input.includeConnectionChanges,
-				page: input.page,
+				cursor: input.cursor,
 				pageSize: input.pageSize,
 			});
 

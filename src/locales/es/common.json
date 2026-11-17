@@ -527,7 +527,8 @@
 			"range": "{from} a {to} de {total}",
 			"page": "Página {page} de {pages}",
 			"previous": "Anterior",
-			"next": "Siguiente"
+			"next": "Siguiente",
+			"pageOnly": "Página {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} segundos",
 					"invalid": "El intervalo de muestreo debe ser un número entero entre {min} y {max} segundos."
 				},
+				"connectionChanges": {
+					"label": "Registrar cambios entre Directo y Relay",
+					"description": "Desactivado por defecto. Mientras esté desactivado solo se guardan los cambios desde o hacia Desconectado, lo que mantiene el registro pequeño. Actívalo para registrar también cuándo un miembro cambia entre conexión directa y retransmitida."
+				},
 				"limits": {
 					"title": "Lo que el registro puede y no puede decir",
 					"sampled": "El estado se muestrea desde el controlador con el intervalo indicado. Refleja el enlace del propio controlador con un miembro, no los enlaces entre miembros.",
-					"shortDrops": "Una caída que empieza y termina entre dos muestras no se registra.",
+					"shortDrops": "Un cambio se guarda cuando dos muestras seguidas lo confirman. Una caída más corta que dos muestras no se registra, ni tampoco una única respuesta vacía de un controlador que se está reiniciando.",
 					"lateOffline": "El estado Desconectado se registra con retraso. El controlador mantiene a un miembro en su lista de pares varios minutos después de que desaparezca, por lo que el evento es posterior a la caída real.",
-					"relay": "Relay es una estimación basada en lo que informa el controlador, por lo que los cambios entre Directo y Relay pueden generar ruido. Están ocultos por defecto.",
+					"relay": "Relay es una estimación basada en lo que informa el controlador, por lo que los cambios entre Directo y Relay pueden generar ruido. Solo se guardan mientras el interruptor de arriba está activado.",
 					"localOnly": "Solo se cubren las redes del controlador local. Las redes de ZeroTier Central no tienen datos de estado."
 				},
 				"instanceLog": {

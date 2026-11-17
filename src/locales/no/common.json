@@ -527,7 +527,8 @@
 			"range": "{from} til {to} av {total}",
 			"page": "Side {page} av {pages}",
 			"previous": "Forrige",
-			"next": "Neste"
+			"next": "Neste",
+			"pageOnly": "Side {page}"
 		}
 	},
 	"admin": {
@@ -561,12 +562,16 @@
 					"value": "{seconds} sekunder",
 					"invalid": "Måleintervall må være et heltall mellom {min} og {max} sekunder."
 				},
+				"connectionChanges": {
+					"label": "Logg endringer mellom Direkte og Relé",
+					"description": "Av som standard. Når den er av, lagres bare endringer til eller fra Frakoblet, noe som holder loggen liten. Slå den på for også å registrere når et medlem bytter mellom direkte og videresendt forbindelse."
+				},
 				"limits": {
 					"title": "Hva loggen kan og ikke kan fortelle",
 					"sampled": "Status måles fra kontrolleren med intervallet over. Den viser kontrollerens egen forbindelse til et medlem, ikke forbindelsene mellom medlemmene.",
-					"shortDrops": "Et brudd som starter og slutter mellom to målinger blir ikke registrert.",
+					"shortDrops": "En endring lagres når to målinger på rad viser den. Et brudd som er kortere enn to målinger blir ikke registrert, og heller ikke ett enkelt tomt svar fra en kontroller som starter på nytt.",
 					"lateOffline": "Frakoblet rapporteres sent. Kontrolleren beholder et medlem i listen sin i flere minutter etter at det forsvant, så en Frakoblet hendelse kommer senere enn selve bruddet.",
-					"relay": "Relé er et anslag basert på det kontrolleren rapporterer, så endringer mellom Direkte og Relé kan gi støy. De er skjult som standard.",
+					"relay": "Relé er et anslag basert på det kontrolleren rapporterer, så endringer mellom Direkte og Relé kan gi støy. De lagres bare mens bryteren over er på.",
 					"localOnly": "Bare nettverk på den lokale kontrolleren dekkes. ZeroTier Central nettverk har ingen statusdata."
 				},
 				"instanceLog": {
