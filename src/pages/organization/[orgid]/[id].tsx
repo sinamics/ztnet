@@ -5,6 +5,7 @@ import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networ
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
 import { useNetworkSocketStore } from "~/hooks/useNetworkMembersSocket";
 import { api } from "~/utils/api";
+import { networkByIdInput } from "~/utils/networkQueryInput";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
 import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
@@ -56,9 +57,7 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		isPending: loadingNetwork,
 		error: errorNetwork,
 	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-		},
+		networkByIdInput(query.id as string),
 		// WebSocket is the primary update path; poll only as a fallback — slow while
 		// connected, faster when not.
 		{ enabled: !!query.id, refetchInterval: socketConnected ? 60000 : 20000 },

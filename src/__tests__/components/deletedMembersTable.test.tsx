@@ -94,6 +94,19 @@ describe("<DeletedNetworkMembersTable />", () => {
 		expect(screen.queryByText("deleted01")).not.toBeInTheDocument();
 		expect(screen.getByText(/Delete All Stashed \(1\)/)).toBeInTheDocument();
 
+		// The stashed Re-Activate keeps the organization for the activity log and webhook.
+		fireEvent.click(screen.getByRole("button", { name: "Re-Activate" }));
+		expect(updateUser).toHaveBeenCalledWith({
+			nwid: "nwid-1",
+			id: "stashed01",
+			organizationId: "org-1",
+			updateParams: { deleted: false },
+		});
+		expect(api.network.getNetworkById.useQuery).toHaveBeenCalledWith(
+			{ nwid: "nwid-1", central: false },
+			expect.anything(),
+		);
+
 		fireEvent.click(screen.getByRole("button", { name: "Force Delete" }));
 		expect(mockCallModal).toHaveBeenCalledTimes(1);
 		const { description } = mockCallModal.mock.calls[0][0];
