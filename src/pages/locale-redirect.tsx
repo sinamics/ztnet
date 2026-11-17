@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { safeInternalPath } from "~/utils/redirect";
 
 const LocaleRedirect = () => {
 	const router = useRouter();
@@ -14,19 +15,8 @@ const LocaleRedirect = () => {
 		const { query } = router;
 
 		// Get the target path from query parameter, default to '/auth/register'.
-		// Only accept internal, absolute paths to prevent open-redirect / XSS via the
-		// `target` param: reject protocol-relative ("//"), backslash tricks, and any
-		// URL with a scheme (e.g. "javascript:", "https:") — those don't start with "/".
-		// `query.target` is `string | string[] | undefined`; the typeof check below
-		// narrows it to a real string (and rejects the array case).
-		const rawTarget = query.target;
-		const targetPath =
-			typeof rawTarget === "string" &&
-			rawTarget.startsWith("/") &&
-			!rawTarget.startsWith("//") &&
-			!rawTarget.startsWith("/\\")
-				? rawTarget
-				: "/auth/register";
+		// Only same-origin absolute paths are accepted, see safeInternalPath.
+		const targetPath = safeInternalPath(query.target, "/auth/register");
 
 		// Remove the target parameter from the query to avoid passing it along
 		const { target, ...restQuery } = query;
@@ -112,8 +102,11 @@ const LocaleRedirect = () => {
 			}
 		}
 
-		// Build the redirect URL with the preferred locale
-		const searchParams = new URLSearchParams();
+		// Build the redirect URL with the preferred locale. The target may carry its
+		// own query string and hash, so merge the remaining parameters into it.
+		const [pathAndSearch, hash] = targetPath.split("#", 2);
+		const [pathname, search] = pathAndSearch.split("?", 2);
+		const searchParams = new URLSearchParams(search);
 
 		// Add all remaining query parameters
 		for (const [key, value] of Object.entries(restQuery)) {
@@ -123,13 +116,10 @@ const LocaleRedirect = () => {
 		}
 
 		const queryString = searchParams.toString();
-		let redirectPath: string;
-
-		if (preferredLocale === defaultLocale) {
-			redirectPath = `${targetPath}${queryString ? `?${queryString}` : ""}`;
-		} else {
-			redirectPath = `/${preferredLocale}${targetPath}${queryString ? `?${queryString}` : ""}`;
-		}
+		const localePrefix = preferredLocale === defaultLocale ? "" : `/${preferredLocale}`;
+		const redirectPath = `${localePrefix}${pathname}${queryString ? `?${queryString}` : ""}${
+			hash ? `#${hash}` : ""
+		}`;
 
 		// Redirect to the localized version
 		router.replace(redirectPath);
