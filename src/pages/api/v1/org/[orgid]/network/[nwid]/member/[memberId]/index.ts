@@ -167,9 +167,20 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 			}
 
 			// Organization member cap: refuse to authorize one more member once the
-			// network is full. Re-saving an already authorized member passes.
-			if (controllerPayload.authorized === true) {
-				await enforceQuota(() => assertOrgMemberCap(ctx.prisma, networkId, memberId));
+			// network is full. Re-saving an already authorized member passes. A
+			// restore counts too when it leaves the member authorized, which is the
+			// case for a stashed row that still carries `authorized: true` unless
+			// the same request deauthorizes it.
+			const restoresAuthorized =
+				restoreRequested &&
+				controllerPayload.authorized === undefined &&
+				dbMember?.authorized === true;
+			if (controllerPayload.authorized === true || restoresAuthorized) {
+				await enforceQuota(() =>
+					assertOrgMemberCap(ctx.prisma, networkId, memberId, {
+						restoring: restoreRequested,
+					}),
+				);
 			}
 
 			// Restore the member in the database when requested.

@@ -851,6 +851,7 @@
 				"maxMembersDescription": "Maksimalt antall autoriserte medlemmer per nettverk",
 				"overLimitNotice": "Dagens bruk er over en grense. Ingenting fjernes, men ingenting nytt kan legges til før bruken er under grensen.",
 				"publicNetworksWarning": "Disse nettverkene er offentlige, så medlemsgrensen håndheves ikke på dem: {networks}. Et offentlig nettverk autoriserer alle enheter som blir med. Bytt dem til private for å bruke grensen.",
+				"publicCheckFailed": "Kontrolleren svarte ikke for disse nettverkene, så det er ukjent om de er offentlige: {networks}. Last siden på nytt for å sjekke igjen.",
 				"noOrganizations": "Ingen organisasjoner ennå."
 			}
 		},

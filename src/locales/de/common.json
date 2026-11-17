@@ -851,6 +851,7 @@
 				"maxMembersDescription": "Maximale Anzahl autorisierter Mitglieder pro Netzwerk",
 				"overLimitNotice": "Die aktuelle Nutzung liegt über einem Limit. Es wird nichts entfernt, aber es kann nichts Neues hinzugefügt werden, bis die Nutzung unter dem Limit liegt.",
 				"publicNetworksWarning": "Diese Netzwerke sind öffentlich, daher wird das Mitgliederlimit dort nicht durchgesetzt: {networks}. Ein öffentliches Netzwerk autorisiert jedes Gerät, das beitritt. Stellen Sie sie auf privat um, damit das Limit gilt.",
+				"publicCheckFailed": "Der Controller hat für diese Netzwerke nicht geantwortet, daher ist unbekannt, ob sie öffentlich sind: {networks}. Laden Sie die Seite neu, um es erneut zu prüfen.",
 				"noOrganizations": "Noch keine Organisationen."
 			}
 		},

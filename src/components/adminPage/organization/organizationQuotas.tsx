@@ -69,6 +69,13 @@ const OrganizationQuotaCard = ({ org }: { org: OrganizationQuota }) => {
 					</span>
 				</div>
 			) : null}
+			{org.uncheckedNetworks.length > 0 ? (
+				<p data-testid="org-quota-unchecked" className="text-sm text-warning">
+					{t("publicCheckFailed", {
+						networks: org.uncheckedNetworks.map((nw) => nw.name || nw.nwid).join(", "),
+					})}
+				</p>
+			) : null}
 			<InputField
 				label={t("editLabel")}
 				description={t("editDescription")}

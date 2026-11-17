@@ -27,6 +27,7 @@ Only instance administrators can change the quotas. Organization owners and orga
 
 - **Networks**: creating a network in the organization is refused, in the UI and through `POST /api/v1/org/:orgid/network`. Transferring a personal network into the organization is refused as well. The organization page shows the usage, for example `2/5 networks`, and disables the add network button at the limit.
 - **Authorized members**: authorizing one more member on a full network is refused, in the UI and through `POST /api/v1/org/:orgid/network/:nwid/member/:memberId`. Members that are already authorized can still be renamed, edited and deauthorized. The network page shows the usage, for example `3/5 authorized members`.
+- **Stashed members**: a stashed member has to be restored before it can be authorized. Restoring a member that is still flagged as authorized is refused on a full network, and a member that is still authorized cannot be stashed without being deauthorized, so stashing never frees a slot for a device the controller keeps authorized.
 - A refused request returns HTTP `403` with a message that asks the user to contact the instance administrator.
 
 Lowering a quota below the current usage removes nothing. No network is deleted and no member is deauthorized. The organization simply cannot add anything new until its usage is below the limit again.
@@ -38,7 +39,7 @@ A public network authorizes every device that joins, without ZTNET being involve
 - its networks cannot be switched to public, and
 - a public personal network cannot be transferred into it. A personal network with more authorized members than the limit cannot be transferred either.
 
-If an organization already has public networks when a member limit is set, those networks are left unchanged. The admin page shows a warning that names them. Switch them to private to make the limit apply.
+If an organization already has public networks when a member limit is set, those networks are left unchanged. The admin page shows a warning that names them. Switch them to private to make the limit apply. If the controller does not answer for a network, the admin page says so instead of leaving the network out silently.
 
 ## Limits of the member quota
 

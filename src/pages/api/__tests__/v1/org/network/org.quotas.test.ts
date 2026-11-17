@@ -196,6 +196,46 @@ describe("REST: organization member cap", () => {
 		const res = await authorize({ authorized: false });
 		expect(res.status).toHaveBeenCalledWith(200);
 	});
+
+	const stashedAuthorized = {
+		id: MEMBER,
+		authorized: true,
+		deleted: true,
+		permanentlyDeleted: false,
+	};
+
+	it("answers 403 when a restore alone would bring an authorized member into a full network", async () => {
+		setupDatabase({
+			maxMembersPerNetwork: 3,
+			authorizedCount: 3,
+			member: stashedAuthorized,
+		});
+		const res = await authorize({ deleted: false });
+		expect(res.status).toHaveBeenCalledWith(403);
+		expect(res.json).toHaveBeenCalledWith(contactAdmin);
+		expect(db.network.update).not.toHaveBeenCalled();
+	});
+
+	it("restores into a full network when the same request deauthorizes", async () => {
+		setupDatabase({
+			maxMembersPerNetwork: 3,
+			authorizedCount: 3,
+			member: stashedAuthorized,
+		});
+		const res = await authorize({ deleted: false, authorized: false });
+		expect(res.status).toHaveBeenCalledWith(200);
+		expect(db.network.update).toHaveBeenCalledTimes(1);
+	});
+
+	it("restores and authorizes in one request while there is room", async () => {
+		setupDatabase({
+			maxMembersPerNetwork: 3,
+			authorizedCount: 2,
+			member: { ...stashedAuthorized, authorized: false },
+		});
+		const res = await authorize({ deleted: false, authorized: true });
+		expect(res.status).toHaveBeenCalledWith(200);
+	});
 });
 
 describe("REST: public switch under a member cap", () => {
@@ -215,6 +255,16 @@ describe("REST: public switch under a member cap", () => {
 			error: expect.stringContaining("cannot be made public"),
 		});
 		expect(ztController.network_update).not.toHaveBeenCalled();
+	});
+
+	it("refuses before any other field of the request is applied", async () => {
+		setupDatabase({ maxMembersPerNetwork: 5 });
+		const res = await update({ flowRule: "accept;", private: false });
+		expect(res.status).toHaveBeenCalledWith(403);
+		// setFlowRule reads the network first, so nothing of it may have run.
+		expect(ztController.get_network).not.toHaveBeenCalled();
+		expect(ztController.network_update).not.toHaveBeenCalled();
+		expect(db.network.update).not.toHaveBeenCalled();
 	});
 
 	it("allows public when the organization has no cap", async () => {

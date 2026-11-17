@@ -74,6 +74,14 @@ export const POST_network = SecuredOrganizationApiRoute(
 				v6AssignMode: { type: "object", destinations: ["controller"] },
 			};
 
+			// A public network authorizes every node that joins, so it cannot be
+			// combined with an organization cap on authorized members. Checked
+			// before anything is applied (the flow rule below is written inside the
+			// loop), so a refused request changes nothing.
+			if (validatedBody.private === false) {
+				await enforceQuota(() => assertOrgNetworkCanBePublic(ctx.prisma, networkId));
+			}
+
 			const databasePayload: Partial<network> = {};
 			const controllerPayload: Partial<network> = {};
 
@@ -118,12 +126,6 @@ export const POST_network = SecuredOrganizationApiRoute(
 
 			if (!network) {
 				return res.status(401).json({ error: "Network not found or access denied." });
-			}
-
-			// A public network authorizes every node that joins, so it cannot be
-			// combined with an organization cap on authorized members.
-			if (validatedBody.private === false) {
-				await enforceQuota(() => assertOrgNetworkCanBePublic(ctx.prisma, networkId));
 			}
 
 			/**

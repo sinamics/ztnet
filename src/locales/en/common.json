@@ -851,6 +851,7 @@
 				"maxMembersDescription": "Maximum authorized members per network",
 				"overLimitNotice": "Current usage is above a limit. Nothing is removed, but nothing new can be added until usage drops below the limit.",
 				"publicNetworksWarning": "These networks are public, so the member limit is not enforced on them: {networks}. A public network authorizes every device that joins. Switch them to private to apply the limit.",
+				"publicCheckFailed": "The controller did not answer for these networks, so it is unknown whether they are public: {networks}. Reload the page to check again.",
 				"noOrganizations": "No organizations yet."
 			}
 		},

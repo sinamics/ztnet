@@ -1,7 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import {
 	assertNetworkFitsOrgMemberCap,
+	assertOrgMemberCanBeHidden,
 	assertOrgMemberCap,
+	assertOrgMemberRestoreFitsCap,
 	assertOrgNetworkCanBePublic,
 	assertOrgNetworkQuota,
 	enforceQuota,
@@ -162,6 +164,120 @@ describe("assertOrgMemberCap", () => {
 		await expect(assertOrgMemberCap(prisma, "nw1", "m1")).rejects.toThrow(
 			CustomLimitError,
 		);
+	});
+
+	it.each([
+		{ deleted: true, permanentlyDeleted: false },
+		{ deleted: true, permanentlyDeleted: true },
+	])("refuses to authorize a hidden member even below the cap (%p)", async (flags) => {
+		// A hidden row is not counted, so authorizing it would never use a slot.
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 5,
+			authorizedCount: 1,
+			member: { authorized: false, ...flags },
+		});
+		await expect(assertOrgMemberCap(prisma, "nw1", "m1")).rejects.toThrow(
+			/Restore it before authorizing/,
+		);
+	});
+
+	it("lets a hidden member be authorized when the same request restores it", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 5,
+			authorizedCount: 4,
+			member: { authorized: false, deleted: true, permanentlyDeleted: false },
+		});
+		await expect(
+			assertOrgMemberCap(prisma, "nw1", "m1", { restoring: true }),
+		).resolves.toBeUndefined();
+	});
+
+	it("still checks the count when a restore also authorizes", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 5,
+			authorizedCount: 5,
+			member: { authorized: false, deleted: true, permanentlyDeleted: false },
+		});
+		await expect(
+			assertOrgMemberCap(prisma, "nw1", "m1", { restoring: true }),
+		).rejects.toThrow(/limit of 5 authorized members/);
+	});
+});
+
+describe("assertOrgMemberRestoreFitsCap", () => {
+	const stashed = (authorized: boolean) => ({
+		authorized,
+		deleted: true,
+		permanentlyDeleted: false,
+	});
+
+	it("refuses to restore a still authorized member into a full network", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: stashed(true),
+		});
+		await expect(assertOrgMemberRestoreFitsCap(prisma, "nw1", "m1")).rejects.toThrow(
+			/limit of 2 authorized members/,
+		);
+	});
+
+	it("restores a still authorized member while there is room", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 1,
+			member: stashed(true),
+		});
+		await expect(
+			assertOrgMemberRestoreFitsCap(prisma, "nw1", "m1"),
+		).resolves.toBeUndefined();
+	});
+
+	it("always restores a member that is not authorized", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 9,
+			member: stashed(false),
+		});
+		await expect(
+			assertOrgMemberRestoreFitsCap(prisma, "nw1", "m1"),
+		).resolves.toBeUndefined();
+	});
+
+	it("ignores networks without a cap", async () => {
+		const prisma = buildPrisma({ authorizedCount: 9, member: stashed(true) });
+		await expect(
+			assertOrgMemberRestoreFitsCap(prisma, "nw1", "m1"),
+		).resolves.toBeUndefined();
+	});
+});
+
+describe("assertOrgMemberCanBeHidden", () => {
+	const visible = (authorized: boolean) => ({
+		authorized,
+		deleted: false,
+		permanentlyDeleted: false,
+	});
+
+	it("refuses to hide a member that is still authorized under a cap", async () => {
+		const prisma = buildPrisma({ maxMembersPerNetwork: 2, member: visible(true) });
+		await expect(assertOrgMemberCanBeHidden(prisma, "nw1", "m1")).rejects.toThrow(
+			/still authorized/,
+		);
+	});
+
+	it("hides a deauthorized member", async () => {
+		const prisma = buildPrisma({ maxMembersPerNetwork: 2, member: visible(false) });
+		await expect(
+			assertOrgMemberCanBeHidden(prisma, "nw1", "m1"),
+		).resolves.toBeUndefined();
+	});
+
+	it("ignores networks without a cap", async () => {
+		const prisma = buildPrisma({ member: visible(true) });
+		await expect(
+			assertOrgMemberCanBeHidden(prisma, "nw1", "m1"),
+		).resolves.toBeUndefined();
 	});
 });
 

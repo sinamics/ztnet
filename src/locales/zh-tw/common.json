@@ -851,6 +851,7 @@
 				"maxMembersDescription": "每個網路的最大已授權成員數",
 				"overLimitNotice": "目前用量已超過限制。不會移除任何內容，但在用量降到限制以下之前無法新增。",
 				"publicNetworksWarning": "這些網路是公開的，因此成員限制對它們不生效：{networks}。公開網路會授權每一台加入的裝置。請將它們切換為私人以套用限制。",
+				"publicCheckFailed": "控制器未能回應這些網路的資訊，因此無法確定它們是否為公開網路：{networks}。請重新整理頁面再檢查一次。",
 				"noOrganizations": "還沒有組織。"
 			}
 		},

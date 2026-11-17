@@ -48,27 +48,45 @@ const organizationQuotaValue = z
 	.max(1_000_000, "The limit is too high")
 	.nullable();
 
+type QuotaNetwork = { nwid: string; name: string | null };
+
+// The controller is shared by every user, so the admin page may only run a
+// few lookups against it at a time, however many networks there are.
+const PUBLIC_CHECK_CONCURRENCY = 5;
+
 /**
- * Asks the controller which of the given networks are public. A network the
- * controller cannot answer for is skipped, so a controller hiccup never breaks
- * the admin page.
+ * Asks the controller which of the given networks are public, a few at a time.
+ * A network the controller cannot answer for never breaks the admin page: it
+ * is returned as unchecked, so the admin is told the answer is incomplete.
  */
 const findPublicNetworks = async (
 	// biome-ignore lint/suspicious/noExplicitAny: tRPC context
 	ctx: any,
-	networks: { nwid: string; name: string | null }[],
+	networks: QuotaNetwork[],
 ) => {
-	const checked = await Promise.all(
-		networks.map(async (nw) => {
+	const states: ("public" | "private" | "unchecked")[] = new Array(networks.length);
+	let next = 0;
+	const worker = async () => {
+		while (next < networks.length) {
+			const index = next++;
 			try {
-				const controllerNetwork = await ztController.get_network(ctx, nw.nwid);
-				return controllerNetwork?.private === false ? nw : null;
+				const controllerNetwork = await ztController.get_network(
+					ctx,
+					networks[index].nwid,
+				);
+				states[index] = controllerNetwork?.private === false ? "public" : "private";
 			} catch {
-				return null;
+				states[index] = "unchecked";
 			}
-		}),
+		}
+	};
+	await Promise.all(
+		Array.from({ length: Math.min(PUBLIC_CHECK_CONCURRENCY, networks.length) }, worker),
 	);
-	return checked.filter((nw): nw is { nwid: string; name: string | null } => nw !== null);
+	return {
+		publicNetworks: networks.filter((_, index) => states[index] === "public"),
+		uncheckedNetworks: networks.filter((_, index) => states[index] === "unchecked"),
+	};
 };
 
 export const adminRouter = createTRPCRouter({
@@ -2059,22 +2077,35 @@ export const adminRouter = createTRPCRouter({
 			authorizedPerNetwork.map((row) => [row.nwid, row._count._all]),
 		);
 
-		return await Promise.all(
-			organizations.map(async ({ networks, ...org }) => {
-				const memberCounts = networks.map((nw) => authorizedByNwid.get(nw.nwid) ?? 0);
-				const cap = org.maxMembersPerNetwork;
-				return {
-					...org,
-					networkCount: networks.length,
-					// Authorized members on the busiest network, the number to compare
-					// against the per network cap.
-					largestNetworkMembers: Math.max(0, ...memberCounts),
-					networksOverMemberCap:
-						cap === null ? 0 : memberCounts.filter((count) => count > cap).length,
-					publicNetworks: cap === null ? [] : await findPublicNetworks(ctx, networks),
-				};
-			}),
+		// One bounded pass over the networks of every capped organization, so the
+		// number of controller requests in flight does not grow with the number
+		// of organizations.
+		const { publicNetworks, uncheckedNetworks } = await findPublicNetworks(
+			ctx,
+			organizations
+				.filter((org) => org.maxMembersPerNetwork !== null)
+				.flatMap((org) => org.networks),
 		);
+		const publicNwids = new Set(publicNetworks.map((nw) => nw.nwid));
+		const uncheckedNwids = new Set(uncheckedNetworks.map((nw) => nw.nwid));
+
+		return organizations.map(({ networks, ...org }) => {
+			const memberCounts = networks.map((nw) => authorizedByNwid.get(nw.nwid) ?? 0);
+			const cap = org.maxMembersPerNetwork;
+			return {
+				...org,
+				networkCount: networks.length,
+				// Authorized members on the busiest network, the number to compare
+				// against the per network cap.
+				largestNetworkMembers: Math.max(0, ...memberCounts),
+				networksOverMemberCap:
+					cap === null ? 0 : memberCounts.filter((count) => count > cap).length,
+				publicNetworks:
+					cap === null ? [] : networks.filter((nw) => publicNwids.has(nw.nwid)),
+				uncheckedNetworks:
+					cap === null ? [] : networks.filter((nw) => uncheckedNwids.has(nw.nwid)),
+			};
+		});
 	}),
 	/**
 	 * Sets the quotas of one organization. Instance admins only: organization
@@ -2120,11 +2151,11 @@ export const adminRouter = createTRPCRouter({
 
 			// Existing public networks are left as they are. They are returned so
 			// the admin can be warned that the cap does not apply to them.
-			const publicNetworks =
+			const { publicNetworks, uncheckedNetworks } =
 				input.maxMembersPerNetwork === null
-					? []
+					? { publicNetworks: [], uncheckedNetworks: [] }
 					: await findPublicNetworks(ctx, organization.networks);
 
-			return { ...updated, publicNetworks };
+			return { ...updated, publicNetworks, uncheckedNetworks };
 		}),
 });

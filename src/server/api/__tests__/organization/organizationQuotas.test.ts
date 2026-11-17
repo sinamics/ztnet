@@ -104,7 +104,7 @@ const buildPrisma = (overrides: Partial<State> = {}) => {
 						: null,
 				}),
 			),
-			update: jest.fn().mockResolvedValue({}),
+			update: jest.fn().mockResolvedValue({ networkMembers: [] }),
 			delete: jest.fn(),
 			deleteMany: jest.fn(),
 		},
@@ -114,9 +114,11 @@ const buildPrisma = (overrides: Partial<State> = {}) => {
 			// Other organization networks the member is in (global rename)
 			findMany: jest.fn().mockResolvedValue([{ nwid: OTHER_NWID }]),
 			update: jest.fn().mockResolvedValue({}),
+			upsert: jest.fn().mockResolvedValue({}),
 			updateMany: jest.fn(),
 			delete: jest.fn(),
 			deleteMany: jest.fn(),
+			groupBy: jest.fn().mockResolvedValue([]),
 		},
 		$queryRaw: jest.fn().mockResolvedValue([]),
 		$transaction: jest.fn(),
@@ -297,6 +299,31 @@ describe("networkMember.Update member cap", () => {
 		expect(memberUpdate).toHaveBeenCalledTimes(1);
 	});
 
+	it("writes an authorized member without a database row through, so it uses a slot", async () => {
+		const prisma = buildPrisma({ maxMembersPerNetwork: 3, authorizedCount: 2 });
+		await update(prisma, { authorized: true });
+		expect(prisma.network_members.upsert).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: { id_nwid: { id: MEMBER, nwid: NWID } },
+				create: expect.objectContaining({ id: MEMBER, authorized: true }),
+				update: { authorized: true },
+			}),
+		);
+	});
+
+	it("refuses to authorize a hidden member, which would not be counted", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 3,
+			authorizedCount: 0,
+			member: { authorized: false, deleted: true, permanentlyDeleted: false },
+		});
+		await expect(update(prisma, { authorized: true })).rejects.toMatchObject({
+			code: "FORBIDDEN",
+			message: expect.stringContaining("Restore it before authorizing"),
+		});
+		expect(memberUpdate).not.toHaveBeenCalled();
+	});
+
 	it("a global rename carries only the name into the other networks", async () => {
 		const prisma = buildPrisma({
 			maxMembersPerNetwork: 5,
@@ -341,6 +368,98 @@ describe("networkMember.Update member cap", () => {
 			updateParams: { authorized: true },
 		});
 		expect(memberUpdate).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("restoring and hiding members under a member cap", () => {
+	const stashedAuthorized = {
+		authorized: true,
+		deleted: true,
+		permanentlyDeleted: false,
+	};
+	const databaseOnly = (
+		prisma: ReturnType<typeof buildPrisma>,
+		updateParams: { deleted?: boolean },
+	) =>
+		callerFor(prisma).networkMember.UpdateDatabaseOnly({
+			nwid: NWID,
+			id: MEMBER,
+			organizationId: ORG,
+			updateParams,
+		});
+
+	it("UpdateDatabaseOnly refuses to restore a still authorized member into a full network", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: stashedAuthorized,
+		});
+		await expect(databaseOnly(prisma, { deleted: false })).rejects.toMatchObject({
+			code: "FORBIDDEN",
+			message: expect.stringContaining("instance administrator"),
+		});
+		expect(prisma.network.update).not.toHaveBeenCalled();
+	});
+
+	it("UpdateDatabaseOnly restores a deauthorized member into a full network", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: { authorized: false, deleted: true, permanentlyDeleted: false },
+		});
+		await databaseOnly(prisma, { deleted: false });
+		expect(prisma.network.update).toHaveBeenCalledTimes(1);
+	});
+
+	it("UpdateDatabaseOnly refuses to hide a member that is still authorized", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: { authorized: true, deleted: false, permanentlyDeleted: false },
+		});
+		await expect(databaseOnly(prisma, { deleted: true })).rejects.toMatchObject({
+			code: "FORBIDDEN",
+			message: expect.stringContaining("still authorized"),
+		});
+		expect(prisma.network.update).not.toHaveBeenCalled();
+	});
+
+	it("create refuses to bring a still authorized member back into a full network", async () => {
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: stashedAuthorized,
+		});
+		await expect(
+			callerFor(prisma).networkMember.create({
+				nwid: NWID,
+				id: MEMBER,
+				organizationId: ORG,
+			}),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+		expect(prisma.network_members.update).not.toHaveBeenCalled();
+	});
+
+	it("stash keeps a member visible when the controller could not deauthorize it", async () => {
+		memberUpdate.mockRejectedValue(new Error("controller down"));
+		const prisma = buildPrisma({
+			maxMembersPerNetwork: 2,
+			authorizedCount: 2,
+			member: { authorized: true, deleted: false, permanentlyDeleted: false },
+		});
+		const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+		await expect(
+			callerFor(prisma).networkMember.stash({
+				nwid: NWID,
+				id: MEMBER,
+				organizationId: ORG,
+			}),
+		).rejects.toMatchObject({
+			code: "FORBIDDEN",
+			message: expect.stringContaining("still authorized"),
+		});
+		consoleError.mockRestore();
+		expect(prisma.network.update).not.toHaveBeenCalled();
 	});
 });
 
@@ -457,6 +576,68 @@ describe("admin.updateOrganizationQuotas", () => {
 		);
 		expect(result.publicNetworks).toEqual([{ nwid: NWID, name: "net" }]);
 		expect(networkUpdate).not.toHaveBeenCalled();
+	});
+});
+
+describe("admin.getOrganizationQuotas public network check", () => {
+	const withNetworks = (count: number, cap: number | null) => {
+		const prisma = buildPrisma();
+		const networks = (org: string) =>
+			Array.from({ length: count }, (_, i) => ({ nwid: `${org}-${i}`, name: null }));
+		Object.assign(prisma.organization, {
+			findMany: jest.fn().mockResolvedValue(
+				["a", "b", "c"].map((org) => ({
+					id: org,
+					orgName: org,
+					maxNetworks: null,
+					maxMembersPerNetwork: cap,
+					networks: networks(org),
+				})),
+			),
+		});
+		return prisma;
+	};
+
+	it("never runs more than a few controller requests at once, across all organizations", async () => {
+		let running = 0;
+		let peak = 0;
+		getNetwork.mockImplementation(async (_ctx, nwid: string) => {
+			running += 1;
+			peak = Math.max(peak, running);
+			await new Promise((resolve) => setTimeout(resolve, 1));
+			running -= 1;
+			return { nwid, private: nwid !== "b-3" };
+		});
+		const result = await callerFor(
+			withNetworks(8, 5),
+			"ADMIN",
+		).admin.getOrganizationQuotas();
+
+		expect(getNetwork).toHaveBeenCalledTimes(24);
+		expect(peak).toBeLessThanOrEqual(5);
+		expect(result.map((org) => org.publicNetworks)).toEqual([
+			[],
+			[{ nwid: "b-3", name: null }],
+			[],
+		]);
+	});
+
+	it("reports the networks the controller could not answer for", async () => {
+		getNetwork.mockImplementation(async (_ctx, nwid: string) => {
+			if (nwid === "a-1") throw new Error("controller timeout");
+			return { nwid, private: true };
+		});
+		const result = await callerFor(
+			withNetworks(2, 5),
+			"ADMIN",
+		).admin.getOrganizationQuotas();
+		expect(result[0].uncheckedNetworks).toEqual([{ nwid: "a-1", name: null }]);
+		expect(result[1].uncheckedNetworks).toEqual([]);
+	});
+
+	it("does not ask the controller about organizations without a member cap", async () => {
+		await callerFor(withNetworks(3, null), "ADMIN").admin.getOrganizationQuotas();
+		expect(getNetwork).not.toHaveBeenCalled();
 	});
 });
 

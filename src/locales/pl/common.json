@@ -851,6 +851,7 @@
 				"maxMembersDescription": "Maksymalna liczba autoryzowanych członków na sieć",
 				"overLimitNotice": "Bieżące użycie przekracza limit. Nic nie jest usuwane, ale nie można dodać niczego nowego, dopóki użycie nie spadnie poniżej limitu.",
 				"publicNetworksWarning": "Te sieci są publiczne, więc limit członków nie jest w nich egzekwowany: {networks}. Sieć publiczna autoryzuje każde urządzenie, które dołączy. Przełącz je na prywatne, aby limit obowiązywał.",
+				"publicCheckFailed": "Kontroler nie odpowiedział dla tych sieci, więc nie wiadomo, czy są publiczne: {networks}. Odśwież stronę, aby sprawdzić ponownie.",
 				"noOrganizations": "Brak organizacji."
 			}
 		},

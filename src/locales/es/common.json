@@ -851,6 +851,7 @@
 				"maxMembersDescription": "Máximo de miembros autorizados por red",
 				"overLimitNotice": "El uso actual supera un límite. No se elimina nada, pero no se puede añadir nada nuevo hasta que el uso baje del límite.",
 				"publicNetworksWarning": "Estas redes son públicas, por lo que el límite de miembros no se aplica en ellas: {networks}. Una red pública autoriza a todos los dispositivos que se unen. Cámbialas a privadas para aplicar el límite.",
+				"publicCheckFailed": "El controlador no respondió para estas redes, por lo que no se sabe si son públicas: {networks}. Recargue la página para comprobarlo de nuevo.",
 				"noOrganizations": "Todavía no hay organizaciones."
 			}
 		},

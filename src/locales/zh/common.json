@@ -851,6 +851,7 @@
 				"maxMembersDescription": "每个网络的最大已授权成员数",
 				"overLimitNotice": "当前用量已超过限制。不会移除任何内容，但在用量降到限制以下之前无法新增。",
 				"publicNetworksWarning": "这些网络是公开的，因此成员限制对它们不生效：{networks}。公开网络会授权每一台加入的设备。请将它们切换为私有以应用限制。",
+				"publicCheckFailed": "控制器未能返回这些网络的信息，因此无法确定它们是否为公开网络：{networks}。请刷新页面重新检查。",
 				"noOrganizations": "还没有组织。"
 			}
 		},

@@ -28,6 +28,10 @@ export const ORG_QUOTA_MESSAGES = {
 		"This organization has a limit on authorized members per network, so its networks cannot be made public. Contact the instance administrator.",
 	transferPublic:
 		"This organization has a limit on authorized members per network, so a public network cannot be transferred to it. Make the network private first.",
+	memberDeleted:
+		"This member is deleted, so it would not count against the organization limit on authorized members. Restore it before authorizing it.",
+	memberStillAuthorized:
+		"This member is still authorized, so it keeps its place in the organization limit on authorized members. Deauthorize it before removing it.",
 	transferMemberLimit: (limit: number) =>
 		`This network has more authorized members than the organization limit of ${limit}. Deauthorize members first, or contact the instance administrator to raise the limit.`,
 };
@@ -102,12 +106,63 @@ export const getOrgMemberCap = async (
 	return network.organization?.maxMembersPerNetwork ?? null;
 };
 
+type CountedMember = {
+	authorized: boolean;
+	deleted: boolean;
+	permanentlyDeleted: boolean;
+} | null;
+
+const findCountedMember = (
+	prisma: QuotaClient,
+	nwid: string,
+	memberId: string,
+): Promise<CountedMember> =>
+	prisma.network_members.findUnique({
+		where: { id_nwid: { id: memberId, nwid } },
+		select: { authorized: true, deleted: true, permanentlyDeleted: true },
+	});
+
+const isHidden = (member: CountedMember) =>
+	Boolean(member?.deleted || member?.permanentlyDeleted);
+
 /**
  * Throws a CustomLimitError when authorizing `memberId` would take an
  * organization network past its member cap. A member that already counts
  * against the cap passes, so saving an authorized member again is never blocked.
+ *
+ * A stashed or deleted member is not counted, so authorizing it would never
+ * use a slot. It is refused unless the same request restores it (`restoring`),
+ * in which case it is checked like any other new authorization.
  */
 export const assertOrgMemberCap = async (
+	prisma: QuotaClient,
+	nwid: string,
+	memberId: string,
+	{ restoring = false }: { restoring?: boolean } = {},
+) => {
+	const limit = await getOrgMemberCap(prisma, nwid);
+	if (limit === null) return;
+
+	const member = await findCountedMember(prisma, nwid, memberId);
+	const hidden = isHidden(member);
+	if (member?.authorized && !hidden) return;
+	if (hidden && !restoring) {
+		throw new CustomLimitError(ORG_QUOTA_MESSAGES.memberDeleted);
+	}
+
+	const authorizedCount = await countAuthorizedMembers(prisma, nwid);
+	if (authorizedCount >= limit) {
+		throw new CustomLimitError(ORG_QUOTA_MESSAGES.memberLimit(limit));
+	}
+};
+
+/**
+ * Throws a CustomLimitError when restoring a stashed or deleted member would
+ * take an organization network past its member cap. Only a row that is still
+ * flagged authorized matters: restoring it makes it count again. Restoring a
+ * deauthorized member adds nothing and always passes.
+ */
+export const assertOrgMemberRestoreFitsCap = async (
 	prisma: QuotaClient,
 	nwid: string,
 	memberId: string,
@@ -115,15 +170,31 @@ export const assertOrgMemberCap = async (
 	const limit = await getOrgMemberCap(prisma, nwid);
 	if (limit === null) return;
 
-	const member = await prisma.network_members.findUnique({
-		where: { id_nwid: { id: memberId, nwid } },
-		select: { authorized: true, deleted: true, permanentlyDeleted: true },
-	});
-	if (member?.authorized && !member.deleted && !member.permanentlyDeleted) return;
+	const member = await findCountedMember(prisma, nwid, memberId);
+	if (!member?.authorized || !isHidden(member)) return;
 
 	const authorizedCount = await countAuthorizedMembers(prisma, nwid);
 	if (authorizedCount >= limit) {
 		throw new CustomLimitError(ORG_QUOTA_MESSAGES.memberLimit(limit));
+	}
+};
+
+/**
+ * Throws a CustomLimitError when a member of a capped organization network is
+ * about to be hidden (stashed) while it is still authorized. Hiding it would
+ * free a slot although the device stays authorized on the controller.
+ */
+export const assertOrgMemberCanBeHidden = async (
+	prisma: QuotaClient,
+	nwid: string,
+	memberId: string,
+) => {
+	const limit = await getOrgMemberCap(prisma, nwid);
+	if (limit === null) return;
+
+	const member = await findCountedMember(prisma, nwid, memberId);
+	if (member?.authorized && !isHidden(member)) {
+		throw new CustomLimitError(ORG_QUOTA_MESSAGES.memberStillAuthorized);
 	}
 };
 
