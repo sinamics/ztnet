@@ -8,7 +8,6 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { type NetworkMemberNotation, type MemberEntity } from "~/types/local/member";
 import { sortingMemberHex, sortingPhysicalIpAddress } from "~/utils/sorting";
-import { compareMemberStatus } from "~/utils/memberStatus";
 import { COLUMN_SIZING } from "./constants";
 import { AuthorizedCell } from "./cells/AuthorizedCell";
 import { EditableNameCell } from "./cells/EditableNameCell";
@@ -190,10 +189,9 @@ export const useMemberColumns = ({
 				header: () => <span>{c("header.conStatus.header")}</span>,
 				id: "conStatus",
 				...COLUMN_SIZING.conStatus,
-				// First click puts online members on top.
+				// Sorted by the server from live peer status (the table is paginated);
+				// see getNetworkMembers + SERVER_SORTABLE. First click puts online on top.
 				sortDescFirst: true,
-				sortingFn: (rowA, rowB) =>
-					compareMemberStatus(rowA.original, rowB.original, central),
 				cell: ({ row: { original } }) => (
 					<ConnectionStatusCell original={original} central={central} />
 				),

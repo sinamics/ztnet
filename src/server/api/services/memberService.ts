@@ -554,15 +554,27 @@ export const reconcileNetworkMembers = async (
 export const attachLiveStatus = async (
 	ctx: UserContext,
 	members: network_members[],
+	peersByAddress?: Map<string, Peers>,
 ): Promise<MemberEntity[]> => {
+	const peers = peersByAddress ?? (await fetchPeersByAddress(ctx));
+	return members.map((db) =>
+		buildServedMember(db, peers.get(db.address || "") ?? ({} as Peers)),
+	);
+};
+
+/**
+ * Live controller peers keyed by member address, from a single `peers` call.
+ * Empty when the controller can't be reached, so every member reads as offline.
+ */
+export const fetchPeersByAddress = async (
+	ctx: UserContext,
+): Promise<Map<string, Peers>> => {
 	const controllerPeers = await ztController.peers(ctx).catch(() => []);
 	const peersByAddress = new Map<string, Peers>();
 	for (const peer of controllerPeers) {
 		peersByAddress.set(peer.address, peer as unknown as Peers);
 	}
-	return members.map((db) =>
-		buildServedMember(db, peersByAddress.get(db.address || "") ?? ({} as Peers)),
-	);
+	return peersByAddress;
 };
 
 /**

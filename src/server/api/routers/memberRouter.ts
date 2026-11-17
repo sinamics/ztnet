@@ -768,6 +768,10 @@ export const networkMemberRouter = createTRPCRouter({
 							},
 							data: {
 								...input.updateParams,
+								// Restoring clears both flags, like the REST API does.
+								...(input.updateParams.deleted === false
+									? { permanentlyDeleted: false }
+									: {}),
 							},
 						},
 					},

@@ -18,9 +18,15 @@ import { type network_members } from "@prisma/client";
 interface IProps {
 	nwid: string;
 	organizationId?: string;
+	// Show permanently deleted members instead of stashed ones.
+	permanentlyDeleted?: boolean;
 }
 
-export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => {
+export const DeletedNetworkMembersTable = ({
+	nwid,
+	organizationId,
+	permanentlyDeleted,
+}: IProps) => {
 	const { query } = useRouter();
 	const t = useTranslations("networkById");
 	const [sorting, setSorting] = useState<SortingState>([{ id: "id", desc: true }]);
@@ -82,7 +88,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 			columnHelper.display({
 				header: () => <span>Conn Status</span>,
 				id: "conStatus",
-				cell: () => <span>stashed</span>,
+				cell: () => <span>{permanentlyDeleted ? "deleted" : "stashed"}</span>,
 			}),
 			columnHelper.display({
 				header: () => <span>Action</span>,
@@ -91,39 +97,49 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 					row: {
 						original: { nwid, id },
 					},
-				}) => (
-					<span className="space-x-5">
+				}) =>
+					permanentlyDeleted ? (
 						<button
-							onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
+							onClick={() =>
+								updateUser({ nwid, id, organizationId, updateParams: { deleted: false } })
+							}
 							className="btn btn-primary btn-xs"
 						>
 							Re-Activate
 						</button>
-						<button
-							onClick={() =>
-								callModal({
-									title: <p>Force delete {id}?</p>,
-									description: (
-										<p>
-											By performing this action, the member will be removed from the
-											database. To re-add the user in the future, you must manually enter
-											their Member ID.
-										</p>
-									),
-									yesAction: () => {
-										void deleteMember(
-											{ organizationId, nwid, id },
-											{ onSuccess: () => void refetchNetworkById() },
-										);
-									},
-								})
-							}
-							className="bg-red-800 btn btn-xs hover:bg-red-500"
-						>
-							Force Delete
-						</button>
-					</span>
-				),
+					) : (
+						<span className="space-x-5">
+							<button
+								onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
+								className="btn btn-primary btn-xs"
+							>
+								Re-Activate
+							</button>
+							<button
+								onClick={() =>
+									callModal({
+										title: <p>Force delete {id}?</p>,
+										description: (
+											<p>
+												By performing this action, the member will be hidden and will not
+												reappear as a new join request. You can re-activate it later from
+												the permanently deleted members list.
+											</p>
+										),
+										yesAction: () => {
+											void deleteMember(
+												{ organizationId, nwid, id },
+												{ onSuccess: () => void refetchNetworkById() },
+											);
+										},
+									})
+								}
+								className="bg-red-800 btn btn-xs hover:bg-red-500"
+							>
+								Force Delete
+							</button>
+						</span>
+					),
 			}),
 		],
 		[],
@@ -131,8 +147,15 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 
 	const [data, setData] = useState<network_members[]>([]);
 	useEffect(() => {
-		setData((networkById?.zombieMembers as network_members[]) || []);
-	}, [networkById?.zombieMembers]);
+		const members = permanentlyDeleted
+			? networkById?.permanentlyDeletedMembers
+			: networkById?.zombieMembers;
+		setData((members as network_members[]) || []);
+	}, [
+		permanentlyDeleted,
+		networkById?.zombieMembers,
+		networkById?.permanentlyDeletedMembers,
+	]);
 
 	const table = useReactTable<network_members>({
 		data,
@@ -145,7 +168,7 @@ export const DeletedNetworkMembersTable = ({ nwid, organizationId }: IProps) => 
 
 	return (
 		<div className="pt-2">
-			{data && data.length > 0 && (
+			{!permanentlyDeleted && data && data.length > 0 && (
 				<div className="mb-4 flex justify-end">
 					<button
 						onClick={() =>
