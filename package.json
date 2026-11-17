@@ -107,5 +107,14 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.8.0"
+  },
+  "overrides": {
+    "glob": "^14.0.2",
+    "test-exclude": {
+      "minimatch": "^11.0.1"
+    },
+    "@prisma/config": {
+      "deepmerge-ts": "^8.0.2"
+    }
   }
 }
