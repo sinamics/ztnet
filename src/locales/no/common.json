@@ -836,6 +836,22 @@
 				"numberOfMembers": "Antall Medlemmer:",
 				"pendingInvitations": "Ventende Invitasjoner:",
 				"activeWebhooks": "Aktive Webhooks:"
+			},
+			"quotas": {
+				"title": "Organisasjonskvoter",
+				"description": "Begrens hvor mange nettverk hver organisasjon kan ha, og hvor mange medlemmer som kan autoriseres på hvert av nettverkene. La et felt stå tomt for ubegrenset. Å senke en grense under dagens bruk fjerner ingenting, det blokkerer bare nye tillegg.",
+				"networksUsage": "Nettverk",
+				"membersUsage": "Autoriserte medlemmer på det største nettverket",
+				"unlimited": "Ubegrenset",
+				"unlimitedPlaceholder": "Tom for ubegrenset",
+				"editLabel": "Grenser",
+				"editDescription": "Bare instansadministratorer kan endre disse grensene.",
+				"currentLimits": "Nettverk: {networks}. Autoriserte medlemmer per nettverk: {members}.",
+				"maxNetworksDescription": "Maksimalt antall nettverk",
+				"maxMembersDescription": "Maksimalt antall autoriserte medlemmer per nettverk",
+				"overLimitNotice": "Dagens bruk er over en grense. Ingenting fjernes, men ingenting nytt kan legges til før bruken er under grensen.",
+				"publicNetworksWarning": "Disse nettverkene er offentlige, så medlemsgrensen håndheves ikke på dem: {networks}. Et offentlig nettverk autoriserer alle enheter som blir med. Bytt dem til private for å bruke grensen.",
+				"noOrganizations": "Ingen organisasjoner ennå."
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1123,15 @@
 		"networkSection": {
 			"title": "Nettverk",
 			"noNetworksToShow": "Ingen nettverk å vise."
+		},
+		"quotas": {
+			"networks": "Nettverk:",
+			"membersPerNetwork": "Medlemsgrense per nettverk:",
+			"networksUsage": "{used}/{limit} nettverk",
+			"networkLimitReached": "Denne organisasjonen har nådd nettverksgrensen. Kontakt instansadministratoren for å heve den.",
+			"membersUsage": "{used}/{limit} autoriserte medlemmer",
+			"memberLimitReached": "Dette nettverket har nådd organisasjonens grense for autoriserte medlemmer. Kontakt instansadministratoren for å heve den.",
+			"publicNetworkNotice": "Dette nettverket er offentlig, så organisasjonens medlemsgrense håndheves ikke på det."
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "Forlate organisasjonen?",

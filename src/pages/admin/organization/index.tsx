@@ -3,6 +3,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { useTranslations } from "next-intl";
 import AddOrgForm from "~/components/networkByIdPage/organization/addOrgForm";
 import ListOrganizations from "~/components/networkByIdPage/organization/listOrganizations";
+import OrganizationQuotas from "~/components/adminPage/organization/organizationQuotas";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
 
 const Organization = () => {
@@ -23,6 +24,9 @@ const Organization = () => {
 					<AddOrgForm />
 				</div>
 				<ListOrganizations />
+			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper title={t("organization.quotas.title")}>
+				<OrganizationQuotas />
 			</MenuSectionDividerWrapper>
 		</main>
 	);

@@ -99,6 +99,11 @@ const OrganizationById = ({ user, orgIds }) => {
 		);
 	}
 
+	const networkLimit = orgData.maxNetworks ?? null;
+	const networkCount = orgData.networks?.length ?? 0;
+	const networkLimitReached = networkLimit !== null && networkCount >= networkLimit;
+	const memberLimit = orgData.maxMembersPerNetwork ?? null;
+
 	const truncatedOrgName =
 		orgData.orgName.length > 20 ? `${orgData.orgName.slice(0, 20)}...` : orgData.orgName;
 	return (
@@ -204,15 +209,46 @@ const OrganizationById = ({ user, orgIds }) => {
 								</span>
 								<span>{orgData?.invitations.length}</span>
 							</li>
+							{networkLimit !== null ? (
+								<li className="flex justify-between">
+									<span className="font-medium">{t("quotas.networks")}</span>
+									<span data-testid="org-network-usage">
+										{networkCount} / {networkLimit}
+									</span>
+								</li>
+							) : null}
+							{memberLimit !== null ? (
+								<li className="flex justify-between">
+									<span className="font-medium">{t("quotas.membersPerNetwork")}</span>
+									<span data-testid="org-member-limit">{memberLimit}</span>
+								</li>
+							) : null}
 						</ul>
 					</section>
 
 					{/* Network Table and Add Network Button */}
 					<section className="col-span-1 md:col-span-2 bg-base-200 rounded-lg shadow-lg p-3">
 						<div className="py-1 flex justify-between items-center border-b border-gray-700">
-							<h2 className="text-xl font-semibold">{t("networkSection.title")}</h2>
+							<h2 className="text-xl font-semibold">
+								{t("networkSection.title")}
+								{networkLimit !== null ? (
+									<span
+										data-testid="org-network-usage-badge"
+										className={cn("badge badge-outline ml-3 align-middle", {
+											"badge-warning": networkLimitReached,
+										})}
+									>
+										{t("quotas.networksUsage", {
+											used: networkCount,
+											limit: networkLimit,
+										})}
+									</span>
+								) : null}
+							</h2>
 							<button
 								className="btn btn-primary btn-sm btn-outline font-semibold px-4 rounded-lg flex items-center"
+								disabled={networkLimitReached}
+								title={networkLimitReached ? t("quotas.networkLimitReached") : undefined}
 								onClick={() =>
 									createNetwork(
 										{
@@ -244,6 +280,14 @@ const OrganizationById = ({ user, orgIds }) => {
 								{b("addNetwork")}
 							</button>
 						</div>
+						{networkLimitReached ? (
+							<p
+								data-testid="org-network-limit-notice"
+								className="text-sm text-warning p-2"
+							>
+								{t("quotas.networkLimitReached")}
+							</p>
+						) : null}
 						<div className="p-1">
 							{orgData?.networks && orgData.networks.length > 0 ? (
 								<OrganizationNetworkTable tableData={orgData.networks} />

@@ -13,6 +13,10 @@ import { handleApiErrors } from "~/utils/errors";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
+import {
+	assertOrgMemberCap,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 import { HandlerContextSchema, PostBodySchema } from "./_schema";
 
 // Rate limit using environment configuration
@@ -160,6 +164,12 @@ export const POST_orgUpdateNetworkMember = SecuredOrganizationApiRoute(
 					error:
 						"Member is deleted. Set `deleted: false` to restore the member before modifying it.",
 				});
+			}
+
+			// Organization member cap: refuse to authorize one more member once the
+			// network is full. Re-saving an already authorized member passes.
+			if (controllerPayload.authorized === true) {
+				await enforceQuota(() => assertOrgMemberCap(ctx.prisma, networkId, memberId));
 			}
 
 			// Restore the member in the database when requested.

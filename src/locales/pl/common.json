@@ -836,6 +836,22 @@
 				"numberOfMembers": "Liczba użytkowników:",
 				"pendingInvitations": "Oczekujące zaproszenia:",
 				"activeWebhooks": "Aktywne webhooki:"
+			},
+			"quotas": {
+				"title": "Limity organizacji",
+				"description": "Ogranicz liczbę sieci, które może mieć każda organizacja, oraz liczbę członków, których można autoryzować w każdej z jej sieci. Pozostaw pole puste, aby nie ustawiać limitu. Obniżenie limitu poniżej bieżącego użycia niczego nie usuwa, blokuje tylko nowe dodania.",
+				"networksUsage": "Sieci",
+				"membersUsage": "Autoryzowani członkowie w największej sieci",
+				"unlimited": "Bez limitu",
+				"unlimitedPlaceholder": "Puste oznacza brak limitu",
+				"editLabel": "Limity",
+				"editDescription": "Tylko administratorzy instancji mogą zmieniać te limity.",
+				"currentLimits": "Sieci: {networks}. Autoryzowani członkowie na sieć: {members}.",
+				"maxNetworksDescription": "Maksymalna liczba sieci",
+				"maxMembersDescription": "Maksymalna liczba autoryzowanych członków na sieć",
+				"overLimitNotice": "Bieżące użycie przekracza limit. Nic nie jest usuwane, ale nie można dodać niczego nowego, dopóki użycie nie spadnie poniżej limitu.",
+				"publicNetworksWarning": "Te sieci są publiczne, więc limit członków nie jest w nich egzekwowany: {networks}. Sieć publiczna autoryzuje każde urządzenie, które dołączy. Przełącz je na prywatne, aby limit obowiązywał.",
+				"noOrganizations": "Brak organizacji."
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1123,15 @@
 		"networkSection": {
 			"title": "Sieci",
 			"noNetworksToShow": "Brak sieci do wyświetlenia."
+		},
+		"quotas": {
+			"networks": "Sieci:",
+			"membersPerNetwork": "Limit członków na sieć:",
+			"networksUsage": "Sieci: {used}/{limit}",
+			"networkLimitReached": "Ta organizacja osiągnęła limit sieci. Skontaktuj się z administratorem instancji, aby go zwiększyć.",
+			"membersUsage": "Autoryzowani członkowie: {used}/{limit}",
+			"memberLimitReached": "Ta sieć osiągnęła limit autoryzowanych członków organizacji. Skontaktuj się z administratorem instancji, aby go zwiększyć.",
+			"publicNetworkNotice": "Ta sieć jest publiczna, więc limit członków organizacji nie jest w niej egzekwowany."
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "Opuścić organizację?",

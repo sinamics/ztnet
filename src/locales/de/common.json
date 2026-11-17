@@ -836,6 +836,22 @@
 				"numberOfMembers": "Anzahl der Mitglieder:",
 				"pendingInvitations": "Ausstehende Einladungen:",
 				"activeWebhooks": "Aktive Webhooks:"
+			},
+			"quotas": {
+				"title": "Organisationskontingente",
+				"description": "Begrenzen Sie, wie viele Netzwerke jede Organisation haben kann und wie viele Mitglieder in jedem ihrer Netzwerke autorisiert werden können. Lassen Sie ein Feld leer für unbegrenzt. Wird ein Limit unter die aktuelle Nutzung gesenkt, wird nichts entfernt, es werden nur neue Hinzufügungen blockiert.",
+				"networksUsage": "Netzwerke",
+				"membersUsage": "Autorisierte Mitglieder im größten Netzwerk",
+				"unlimited": "Unbegrenzt",
+				"unlimitedPlaceholder": "Leer für unbegrenzt",
+				"editLabel": "Limits",
+				"editDescription": "Nur Instanzadministratoren können diese Limits ändern.",
+				"currentLimits": "Netzwerke: {networks}. Autorisierte Mitglieder pro Netzwerk: {members}.",
+				"maxNetworksDescription": "Maximale Anzahl an Netzwerken",
+				"maxMembersDescription": "Maximale Anzahl autorisierter Mitglieder pro Netzwerk",
+				"overLimitNotice": "Die aktuelle Nutzung liegt über einem Limit. Es wird nichts entfernt, aber es kann nichts Neues hinzugefügt werden, bis die Nutzung unter dem Limit liegt.",
+				"publicNetworksWarning": "Diese Netzwerke sind öffentlich, daher wird das Mitgliederlimit dort nicht durchgesetzt: {networks}. Ein öffentliches Netzwerk autorisiert jedes Gerät, das beitritt. Stellen Sie sie auf privat um, damit das Limit gilt.",
+				"noOrganizations": "Noch keine Organisationen."
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1123,15 @@
 		"networkSection": {
 			"title": "Netzwerke",
 			"noNetworksToShow": "Keine Netzwerke zum Anzeigen verfügbar."
+		},
+		"quotas": {
+			"networks": "Netzwerke:",
+			"membersPerNetwork": "Mitgliederlimit pro Netzwerk:",
+			"networksUsage": "{used}/{limit} Netzwerke",
+			"networkLimitReached": "Diese Organisation hat ihr Netzwerklimit erreicht. Wenden Sie sich an den Instanzadministrator, um es zu erhöhen.",
+			"membersUsage": "{used}/{limit} autorisierte Mitglieder",
+			"memberLimitReached": "Dieses Netzwerk hat das Organisationslimit für autorisierte Mitglieder erreicht. Wenden Sie sich an den Instanzadministrator, um es zu erhöhen.",
+			"publicNetworkNotice": "Dieses Netzwerk ist öffentlich, daher wird das Mitgliederlimit der Organisation hier nicht durchgesetzt."
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "Organisation verlassen?",

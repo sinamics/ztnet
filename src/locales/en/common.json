@@ -836,6 +836,22 @@
 				"numberOfMembers": "Number of Members:",
 				"pendingInvitations": "Pending Invitations:",
 				"activeWebhooks": "Active Webhooks:"
+			},
+			"quotas": {
+				"title": "Organization Quotas",
+				"description": "Limit how many networks each organization can have and how many members can be authorized on each of its networks. Leave a field empty for unlimited. Lowering a limit below the current usage removes nothing, it only blocks new additions.",
+				"networksUsage": "Networks",
+				"membersUsage": "Authorized members on the busiest network",
+				"unlimited": "Unlimited",
+				"unlimitedPlaceholder": "Empty for unlimited",
+				"editLabel": "Limits",
+				"editDescription": "Only instance administrators can change these limits.",
+				"currentLimits": "Networks: {networks}. Authorized members per network: {members}.",
+				"maxNetworksDescription": "Maximum number of networks",
+				"maxMembersDescription": "Maximum authorized members per network",
+				"overLimitNotice": "Current usage is above a limit. Nothing is removed, but nothing new can be added until usage drops below the limit.",
+				"publicNetworksWarning": "These networks are public, so the member limit is not enforced on them: {networks}. A public network authorizes every device that joins. Switch them to private to apply the limit.",
+				"noOrganizations": "No organizations yet."
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1123,15 @@
 		"networkSection": {
 			"title": "Networks",
 			"noNetworksToShow": "No networks to display."
+		},
+		"quotas": {
+			"networks": "Networks:",
+			"membersPerNetwork": "Member limit per network:",
+			"networksUsage": "{used}/{limit} networks",
+			"networkLimitReached": "This organization has reached its network limit. Contact the instance administrator to raise it.",
+			"membersUsage": "{used}/{limit} authorized members",
+			"memberLimitReached": "This network has reached the organization limit on authorized members. Contact the instance administrator to raise it.",
+			"publicNetworkNotice": "This network is public, so the organization member limit is not enforced on it."
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "Leave Organization?",

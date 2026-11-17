@@ -19,6 +19,10 @@ import {
 import { sendWebhook } from "~/utils/webhook";
 import { throwError } from "~/server/helpers/errorHandler";
 import { isValidIP } from "../utils/ipUtils";
+import {
+	assertOrgMemberCap,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -390,6 +394,12 @@ export const networkMemberRouter = createTRPCRouter({
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, nwid, Role.USER);
 
+			// Organization member cap: refuse to authorize one more member once the
+			// network is full. Re-saving an already authorized member passes.
+			if (!central && updateParams.authorized === true) {
+				await enforceQuota(() => assertOrgMemberCap(ctx.prisma, nwid, memberId));
+			}
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -478,13 +488,15 @@ export const networkMemberRouter = createTRPCRouter({
 
 						// Update both controller and database for OTHER networks where the member exists
 						for (const { nwid: networkId } of networksWithMember) {
-							// Update ZeroTier controller
+							// Update ZeroTier controller. Only the name is propagated: the
+							// other fields (authorized in particular) belong to the network
+							// being edited and must not leak into the other networks, where
+							// they would bypass the organization member cap.
 							await ztController.member_update({
 								ctx,
 								nwid: networkId,
 								memberId: memberId,
-								//@ts-expect-error
-								updateParams: updateParams,
+								updateParams: { name: updateParams.name },
 							});
 
 							// Update database

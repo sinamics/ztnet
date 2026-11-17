@@ -836,6 +836,22 @@
 				"numberOfMembers": "成员数量：",
 				"pendingInvitations": "待处理的邀请：",
 				"activeWebhooks": "活动的 Webhooks:"
+			},
+			"quotas": {
+				"title": "组织配额",
+				"description": "限制每个组织可以拥有的网络数量，以及其每个网络可以授权的成员数量。留空表示不限制。将限制调低到当前用量以下不会移除任何内容，只会阻止新增。",
+				"networksUsage": "网络",
+				"membersUsage": "成员最多的网络中的已授权成员",
+				"unlimited": "不限制",
+				"unlimitedPlaceholder": "留空表示不限制",
+				"editLabel": "限制",
+				"editDescription": "只有实例管理员可以更改这些限制。",
+				"currentLimits": "网络：{networks}。每个网络的已授权成员：{members}。",
+				"maxNetworksDescription": "最大网络数量",
+				"maxMembersDescription": "每个网络的最大已授权成员数",
+				"overLimitNotice": "当前用量已超过限制。不会移除任何内容，但在用量降到限制以下之前无法新增。",
+				"publicNetworksWarning": "这些网络是公开的，因此成员限制对它们不生效：{networks}。公开网络会授权每一台加入的设备。请将它们切换为私有以应用限制。",
+				"noOrganizations": "还没有组织。"
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1123,15 @@
 		"networkSection": {
 			"title": "网络",
 			"noNetworksToShow": "没有网络显示。"
+		},
+		"quotas": {
+			"networks": "网络：",
+			"membersPerNetwork": "每个网络的成员限制：",
+			"networksUsage": "{used}/{limit} 个网络",
+			"networkLimitReached": "该组织已达到网络数量限制。请联系实例管理员提高限制。",
+			"membersUsage": "{used}/{limit} 个已授权成员",
+			"memberLimitReached": "该网络已达到组织的已授权成员限制。请联系实例管理员提高限制。",
+			"publicNetworkNotice": "该网络是公开的，因此组织的成员限制对它不生效。"
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "离开组织？",

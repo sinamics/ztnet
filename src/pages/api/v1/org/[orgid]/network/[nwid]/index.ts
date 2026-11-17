@@ -6,6 +6,10 @@ import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import * as ztController from "~/utils/ztApi";
+import {
+	assertOrgNetworkCanBePublic,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 import { HandlerContextSchema, NetworkUpdateSchema } from "./_schema";
 
 // Rate limit using environment configuration
@@ -114,6 +118,12 @@ export const POST_network = SecuredOrganizationApiRoute(
 
 			if (!network) {
 				return res.status(401).json({ error: "Network not found or access denied." });
+			}
+
+			// A public network authorizes every node that joins, so it cannot be
+			// combined with an organization cap on authorized members.
+			if (validatedBody.private === false) {
+				await enforceQuota(() => assertOrgNetworkCanBePublic(ctx.prisma, networkId));
 			}
 
 			/**

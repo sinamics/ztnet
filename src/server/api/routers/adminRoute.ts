@@ -40,6 +40,37 @@ type GlobalOptionsResponse = WithError<Omit<GlobalOptions, "smtpPassword">> & {
 	hasSmtpPassword: boolean;
 };
 
+// A quota is a positive whole number, or null for unlimited.
+const organizationQuotaValue = z
+	.number()
+	.int("The limit must be a whole number")
+	.min(1, "The limit must be at least 1")
+	.max(1_000_000, "The limit is too high")
+	.nullable();
+
+/**
+ * Asks the controller which of the given networks are public. A network the
+ * controller cannot answer for is skipped, so a controller hiccup never breaks
+ * the admin page.
+ */
+const findPublicNetworks = async (
+	// biome-ignore lint/suspicious/noExplicitAny: tRPC context
+	ctx: any,
+	networks: { nwid: string; name: string | null }[],
+) => {
+	const checked = await Promise.all(
+		networks.map(async (nw) => {
+			try {
+				const controllerNetwork = await ztController.get_network(ctx, nw.nwid);
+				return controllerNetwork?.private === false ? nw : null;
+			} catch {
+				return null;
+			}
+		}),
+	);
+	return checked.filter((nw): nw is { nwid: string; name: string | null } => nw !== null);
+};
+
 export const adminRouter = createTRPCRouter({
 	updateUser: adminRoleProtectedRoute
 		.input(
@@ -1996,5 +2027,104 @@ export const adminRouter = createTRPCRouter({
 			} catch (error) {
 				throwError(`Upload failed: ${error.message}`);
 			}
+		}),
+	/**
+	 * Every organization on the instance with its quotas and current usage.
+	 * Organizations under a member cap also list their public networks, because
+	 * the cap cannot be enforced on those.
+	 */
+	getOrganizationQuotas: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		const organizations = await ctx.prisma.organization.findMany({
+			select: {
+				id: true,
+				orgName: true,
+				maxNetworks: true,
+				maxMembersPerNetwork: true,
+				networks: { select: { nwid: true, name: true } },
+			},
+			orderBy: { createdAt: "desc" },
+		});
+
+		const authorizedPerNetwork = await ctx.prisma.network_members.groupBy({
+			by: ["nwid"],
+			where: {
+				authorized: true,
+				deleted: false,
+				permanentlyDeleted: false,
+				nwid_ref: { organizationId: { not: null } },
+			},
+			_count: { _all: true },
+		});
+		const authorizedByNwid = new Map(
+			authorizedPerNetwork.map((row) => [row.nwid, row._count._all]),
+		);
+
+		return await Promise.all(
+			organizations.map(async ({ networks, ...org }) => {
+				const memberCounts = networks.map((nw) => authorizedByNwid.get(nw.nwid) ?? 0);
+				const cap = org.maxMembersPerNetwork;
+				return {
+					...org,
+					networkCount: networks.length,
+					// Authorized members on the busiest network, the number to compare
+					// against the per network cap.
+					largestNetworkMembers: Math.max(0, ...memberCounts),
+					networksOverMemberCap:
+						cap === null ? 0 : memberCounts.filter((count) => count > cap).length,
+					publicNetworks: cap === null ? [] : await findPublicNetworks(ctx, networks),
+				};
+			}),
+		);
+	}),
+	/**
+	 * Sets the quotas of one organization. Instance admins only: organization
+	 * owners and admins have no procedure or REST route that writes these fields.
+	 * `null` means unlimited. Lowering a quota below the current usage is allowed
+	 * and removes nothing, it only blocks new additions.
+	 */
+	updateOrganizationQuotas: adminRoleProtectedRoute
+		.input(
+			z.object({
+				organizationId: z.string(),
+				maxNetworks: organizationQuotaValue,
+				maxMembersPerNetwork: organizationQuotaValue,
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const organization = await ctx.prisma.organization.findUnique({
+				where: { id: input.organizationId },
+				select: { id: true, networks: { select: { nwid: true, name: true } } },
+			});
+			if (!organization) {
+				return throwError("Organization not found", "NOT_FOUND");
+			}
+
+			const updated = await ctx.prisma.organization.update({
+				where: { id: input.organizationId },
+				data: {
+					maxNetworks: input.maxNetworks,
+					maxMembersPerNetwork: input.maxMembersPerNetwork,
+				},
+				select: { id: true, maxNetworks: true, maxMembersPerNetwork: true },
+			});
+
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: `Instance admin set organization quotas: networks ${
+						input.maxNetworks ?? "unlimited"
+					}, authorized members per network ${input.maxMembersPerNetwork ?? "unlimited"}`,
+					performedById: ctx.session.user.id,
+					organizationId: input.organizationId,
+				},
+			});
+
+			// Existing public networks are left as they are. They are returned so
+			// the admin can be warned that the cap does not apply to them.
+			const publicNetworks =
+				input.maxMembersPerNetwork === null
+					? []
+					: await findPublicNetworks(ctx, organization.networks);
+
+			return { ...updated, publicNetworks };
 		}),
 });
