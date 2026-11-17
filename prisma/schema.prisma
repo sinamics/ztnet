@@ -30,6 +30,12 @@ model GlobalOptions {
   // Networks
   enablePersonalNetworks Boolean @default(true)
 
+  // Member status log (opt in). The sampler in cronTasks reads these on every
+  // run, so a change takes effect without a restart.
+  memberStatusLogEnabled        Boolean @default(false)
+  memberStatusLogRetentionDays  Int     @default(30)
+  memberStatusLogSampleInterval Int     @default(60) // seconds
+
   // Email configuration
   smtpHost                           String?
   smtpPort                           String  @default("587")
@@ -129,6 +135,38 @@ model network_members {
   notations          NetworkMemberNotation[]
 
   @@unique([id, nwid])
+}
+
+enum MemberConnectionStatus {
+  OFFLINE
+  DIRECT
+  RELAY
+}
+
+// One row per connection status change of a node, as sampled from the local
+// controller's peer list. Keyed by node address, not by network: the
+// controller only knows its own link to a node. Access is decided at read
+// time by joining network_members.address.
+model MemberStatusEvent {
+  id              Int                    @id @default(autoincrement())
+  address         String
+  fromStatus      MemberConnectionStatus
+  toStatus        MemberConnectionStatus
+  physicalAddress String?
+  createdAt       DateTime               @default(now())
+
+  @@index([address, createdAt])
+  @@index([createdAt])
+}
+
+// Last connection status the sampler saw for a node. This is the baseline the
+// next sample is compared against. Cleared when the log is disabled and on
+// startup, so a gap in sampling never turns into a made up transition.
+model MemberStatusState {
+  address         String                 @id
+  status          MemberConnectionStatus
+  physicalAddress String?
+  updatedAt       DateTime               @updatedAt
 }
 
 model network {

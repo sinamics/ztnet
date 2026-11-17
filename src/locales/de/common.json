@@ -492,6 +492,44 @@
 			"dnsPushText5": "Dies muss auf jedem Client mit der Option „allowDNS“ aktiviert werden. Verwenden Sie in der Benutzeroberfläche in den Details eines Netzwerks das Kontrollkästchen „Managed zulassen“."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Protokolle",
+		"memberTitle": "Statusprotokoll",
+		"description": "Änderungen des Verbindungsstatus der Mitglieder dieses Netzwerks, vom Controller abgefragt. Kurze Unterbrechungen zwischen zwei Abfragen werden nicht erfasst.",
+		"memberDescription": "Änderungen des Verbindungsstatus dieses Mitglieds, vom Controller abgefragt.",
+		"columns": {
+			"time": "Zeit",
+			"member": "Mitglied",
+			"change": "Änderung",
+			"physicalAddress": "Physische Adresse"
+		},
+		"status": {
+			"OFFLINE": "Offline",
+			"DIRECT": "Direkt",
+			"RELAY": "Relay"
+		},
+		"changedTo": "geändert zu",
+		"filters": {
+			"member": "Mitglied",
+			"allMembers": "Alle Mitglieder",
+			"status": "Neuer Status",
+			"allStatuses": "Alle Status",
+			"includeConnectionChanges": "Wechsel zwischen Direkt und Relay einbeziehen",
+			"network": "Netzwerk",
+			"allNetworks": "Alle Netzwerke",
+			"address": "Knotenadresse",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Noch keine Statusänderungen erfasst.",
+		"emptyFiltered": "Keine Statusänderungen entsprechen den Filtern.",
+		"noNetwork": "Mitglied in keinem Netzwerk",
+		"pagination": {
+			"range": "{from} bis {to} von {total}",
+			"page": "Seite {page} von {pages}",
+			"previous": "Zurück",
+			"next": "Weiter"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -503,6 +541,45 @@
 			"publicPages": {
 				"sectionTitle": "Öffentliche Seiten",
 				"description": "Passen Sie den Text auf Ihren Anmelde- und Registrierungsseiten an, um ihn besser an anzupassen oder Ihren Benutzern spezifische Anweisungen zu geben."
+			},
+			"memberStatusLog": {
+				"title": "Statusprotokoll der Mitglieder",
+				"description": "Zeichnet auf, wann Netzwerkmitglieder online oder offline gehen. ZeroTier speichert das nicht selbst, daher fragt ZTNET den Controller regelmäßig ab und hält jede Änderung fest. Das Protokoll wird auf jeder Netzwerkseite und unten angezeigt.",
+				"enable": "Statusprotokoll der Mitglieder aktivieren",
+				"enableDescription": "Standardmäßig aus. Solange es aus ist, wird nichts abgefragt oder gespeichert und der Bereich Protokolle ist für alle Benutzer ausgeblendet.",
+				"stateOn": "Ein",
+				"stateOff": "Aus",
+				"retention": {
+					"label": "Aufbewahrung",
+					"description": "Ältere Ereignisse werden automatisch gelöscht. {min} bis {max} Tage.",
+					"value": "{days} Tage",
+					"invalid": "Die Aufbewahrung muss eine ganze Zahl zwischen {min} und {max} Tagen sein."
+				},
+				"interval": {
+					"label": "Abfrageintervall",
+					"description": "Wie oft der Controller nach dem Status seiner Mitglieder gefragt wird. {min} bis {max} Sekunden.",
+					"value": "{seconds} Sekunden",
+					"invalid": "Das Abfrageintervall muss eine ganze Zahl zwischen {min} und {max} Sekunden sein."
+				},
+				"limits": {
+					"title": "Was das Protokoll aussagt und was nicht",
+					"sampled": "Der Status wird im obigen Intervall vom Controller abgefragt. Er zeigt die Verbindung des Controllers zu einem Mitglied, nicht die Verbindungen der Mitglieder untereinander.",
+					"shortDrops": "Eine Unterbrechung, die zwischen zwei Abfragen beginnt und endet, wird nicht erfasst.",
+					"lateOffline": "Offline wird verzögert gemeldet. Der Controller behält ein Mitglied noch mehrere Minuten nach dessen Verschwinden in seiner Peer-Liste, ein Offline-Ereignis liegt daher später als der tatsächliche Ausfall.",
+					"relay": "Relay ist eine Schätzung anhand der Angaben des Controllers, Wechsel zwischen Direkt und Relay können daher unruhig sein. Sie sind standardmäßig ausgeblendet.",
+					"localOnly": "Nur Netzwerke auf dem lokalen Controller werden erfasst. Für ZeroTier Central Netzwerke gibt es keine Statusdaten."
+				},
+				"instanceLog": {
+					"sectionTitle": "Statusprotokoll der Mitglieder, alle Netzwerke",
+					"title": "Alle Netzwerke",
+					"description": "Statusänderungen aller Mitglieder auf diesem Controller. Die Netzwerkseiten zeigen dasselbe Protokoll, beschränkt auf die eigenen Mitglieder."
+				},
+				"clear": {
+					"button": "Protokoll leeren",
+					"title": "Statusprotokoll der Mitglieder leeren",
+					"description": "Damit werden alle gespeicherten Statusänderungen aller Netzwerke gelöscht. Das kann nicht rückgängig gemacht werden."
+				},
+				"cleared": "{count} Ereignisse gelöscht"
 			}
 		},
 		"mail": {

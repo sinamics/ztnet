@@ -34,6 +34,12 @@ import {
 	assertOrgNetworkCanBePublic,
 	enforceQuota,
 } from "~/server/api/services/organizationQuotaService";
+import {
+	EMPTY_MEMBER_STATUS_EVENT_PAGE,
+	isMemberStatusLogEnabled,
+	queryMemberStatusEvents,
+} from "../services/memberStatusLogService";
+import { MemberStatusEventQuerySchema } from "./_schema";
 
 const RouteSchema = z.object({
 	target: z
@@ -1720,5 +1726,45 @@ accept;`;
 					nwid: input.nwid,
 				},
 			});
+		}),
+	/**
+	 * Connection status history of the members of one network. Personal and
+	 * organization networks both go through checkNetworkAccess, and the events
+	 * are joined through network_members, so a node's history is only visible
+	 * through a network the user can read.
+	 */
+	getMemberStatusEvents: protectedProcedure
+		.input(
+			MemberStatusEventQuerySchema.extend({
+				nwid: z.string(),
+				memberId: z.string().optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
+
+			// Disabled is not an error: the pages simply have nothing to show.
+			if (!(await isMemberStatusLogEnabled())) {
+				return { enabled: false, ...EMPTY_MEMBER_STATUS_EVENT_PAGE, members: [] };
+			}
+
+			// Members to pick from in the filter. Always the whole network, also
+			// while one member is selected, or the selection would have no option
+			// left to show.
+			const members = await ctx.prisma.network_members.findMany({
+				where: { nwid: input.nwid, deleted: false },
+				select: { id: true, name: true },
+				orderBy: { name: "asc" },
+			});
+
+			const result = await queryMemberStatusEvents({
+				nwid: input.nwid,
+				address: input.memberId,
+				status: input.status,
+				includeConnectionChanges: input.includeConnectionChanges,
+				page: input.page,
+				pageSize: input.pageSize,
+			});
+			return { enabled: true, ...result, members };
 		}),
 });

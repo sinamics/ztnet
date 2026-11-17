@@ -492,6 +492,44 @@
 			"dnsPushText5": "This must be enabled on each client with the allowDNS option. There is a checkbox in the UI in each network's details, near the Allow Managed checkbox."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Logs",
+		"memberTitle": "Status log",
+		"description": "Connection status changes of the members of this network, sampled from the controller. Short drops between two samples are not recorded.",
+		"memberDescription": "Connection status changes of this member, sampled from the controller.",
+		"columns": {
+			"time": "Time",
+			"member": "Member",
+			"change": "Change",
+			"physicalAddress": "Physical address"
+		},
+		"status": {
+			"OFFLINE": "Offline",
+			"DIRECT": "Direct",
+			"RELAY": "Relay"
+		},
+		"changedTo": "changed to",
+		"filters": {
+			"member": "Member",
+			"allMembers": "All members",
+			"status": "New status",
+			"allStatuses": "All statuses",
+			"includeConnectionChanges": "Include Direct/Relay changes",
+			"network": "Network",
+			"allNetworks": "All networks",
+			"address": "Node address",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "No status changes recorded yet.",
+		"emptyFiltered": "No status changes match the filters.",
+		"noNetwork": "Not a member of any network",
+		"pagination": {
+			"range": "{from} to {to} of {total}",
+			"page": "Page {page} of {pages}",
+			"previous": "Previous",
+			"next": "Next"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -503,6 +541,45 @@
 			"publicPages": {
 				"sectionTitle": "Public Pages",
 				"description": "Customize the text displayed on your login and registration pages to better align with your brand or provide specific instructions to your users."
+			},
+			"memberStatusLog": {
+				"title": "Member status log",
+				"description": "Keep a history of when network members go online or offline. ZeroTier does not store this itself, so ZTNET samples the controller and records every change it sees. The log is shown on each network page and below.",
+				"enable": "Enable member status log",
+				"enableDescription": "Off by default. While off, nothing is sampled or stored and the Logs section is hidden for all users.",
+				"stateOn": "On",
+				"stateOff": "Off",
+				"retention": {
+					"label": "Retention",
+					"description": "Events older than this are deleted automatically. {min} to {max} days.",
+					"value": "{days} days",
+					"invalid": "Retention must be a whole number between {min} and {max} days."
+				},
+				"interval": {
+					"label": "Sample interval",
+					"description": "How often the controller is asked for the status of its members. {min} to {max} seconds.",
+					"value": "{seconds} seconds",
+					"invalid": "Sample interval must be a whole number between {min} and {max} seconds."
+				},
+				"limits": {
+					"title": "What the log can and cannot tell",
+					"sampled": "Status is sampled from the controller on the interval above. It shows the controller's own link to a member, not the links between members.",
+					"shortDrops": "A drop that starts and ends between two samples is not recorded.",
+					"lateOffline": "Offline is reported late. The controller keeps a member in its peer list for several minutes after it disappeared, so an Offline event is later than the actual drop.",
+					"relay": "Relay is a best guess based on what the controller reports, so Direct/Relay changes can be noisy. They are hidden by default.",
+					"localOnly": "Only networks on the local controller are covered. ZeroTier Central networks have no status data."
+				},
+				"instanceLog": {
+					"sectionTitle": "Member status log, all networks",
+					"title": "All networks",
+					"description": "Status changes of every member on this controller. Network pages show the same log limited to their own members."
+				},
+				"clear": {
+					"button": "Clear log",
+					"title": "Clear member status log",
+					"description": "This deletes every stored status change for all networks. It cannot be undone."
+				},
+				"cleared": "{count} events deleted"
 			}
 		},
 		"mail": {

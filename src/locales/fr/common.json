@@ -492,6 +492,44 @@
 			"dnsPushText5": "Cela doit être activé sur chaque client avec l'option allowDNS. Il y a une case à cocher dans l'interface utilisateur dans les détails de chaque réseau, à côté de la case Autoriser les réseaux gérés."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Journaux",
+		"memberTitle": "Journal d'état",
+		"description": "Changements d'état de connexion des membres de ce réseau, relevés auprès du contrôleur. Les coupures brèves entre deux relevés ne sont pas enregistrées.",
+		"memberDescription": "Changements d'état de connexion de ce membre, relevés auprès du contrôleur.",
+		"columns": {
+			"time": "Heure",
+			"member": "Membre",
+			"change": "Changement",
+			"physicalAddress": "Adresse physique"
+		},
+		"status": {
+			"OFFLINE": "Hors ligne",
+			"DIRECT": "Direct",
+			"RELAY": "Relais"
+		},
+		"changedTo": "est passé à",
+		"filters": {
+			"member": "Membre",
+			"allMembers": "Tous les membres",
+			"status": "Nouvel état",
+			"allStatuses": "Tous les états",
+			"includeConnectionChanges": "Inclure les changements entre Direct et Relais",
+			"network": "Réseau",
+			"allNetworks": "Tous les réseaux",
+			"address": "Adresse du nœud",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Aucun changement d'état enregistré pour le moment.",
+		"emptyFiltered": "Aucun changement d'état ne correspond aux filtres.",
+		"noNetwork": "Membre d'aucun réseau",
+		"pagination": {
+			"range": "{from} à {to} sur {total}",
+			"page": "Page {page} sur {pages}",
+			"previous": "Précédent",
+			"next": "Suivant"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -503,6 +541,45 @@
 			"publicPages": {
 				"sectionTitle": "Pages publiques",
 				"description": "Personnalisez le texte affiché sur vos pages de connexion et d'inscription pour mieux correspondre à votre marque ou fournir des instructions spécifiques à vos utilisateurs."
+			},
+			"memberStatusLog": {
+				"title": "Journal d'état des membres",
+				"description": "Conserve un historique des connexions et déconnexions des membres du réseau. ZeroTier ne le stocke pas, ZTNET interroge donc le contrôleur à intervalles réguliers et enregistre chaque changement observé. Le journal est affiché sur la page de chaque réseau et ci-dessous.",
+				"enable": "Activer le journal d'état des membres",
+				"enableDescription": "Désactivé par défaut. Tant qu'il est désactivé, rien n'est relevé ni stocké et la section Journaux est masquée pour tous les utilisateurs.",
+				"stateOn": "Activé",
+				"stateOff": "Désactivé",
+				"retention": {
+					"label": "Conservation",
+					"description": "Les événements plus anciens sont supprimés automatiquement. De {min} à {max} jours.",
+					"value": "{days} jours",
+					"invalid": "La conservation doit être un nombre entier compris entre {min} et {max} jours."
+				},
+				"interval": {
+					"label": "Intervalle de relevé",
+					"description": "Fréquence à laquelle le contrôleur est interrogé sur l'état de ses membres. De {min} à {max} secondes.",
+					"value": "{seconds} secondes",
+					"invalid": "L'intervalle de relevé doit être un nombre entier compris entre {min} et {max} secondes."
+				},
+				"limits": {
+					"title": "Ce que le journal peut dire ou non",
+					"sampled": "L'état est relevé auprès du contrôleur selon l'intervalle ci-dessus. Il reflète le lien du contrôleur avec un membre, pas les liens entre les membres.",
+					"shortDrops": "Une coupure qui commence et se termine entre deux relevés n'est pas enregistrée.",
+					"lateOffline": "L'état Hors ligne est signalé avec retard. Le contrôleur garde un membre dans sa liste de pairs plusieurs minutes après sa disparition, l'événement est donc postérieur à la coupure réelle.",
+					"relay": "Relais est une estimation fondée sur ce que rapporte le contrôleur, les changements entre Direct et Relais peuvent donc être bruités. Ils sont masqués par défaut.",
+					"localOnly": "Seuls les réseaux du contrôleur local sont couverts. Les réseaux ZeroTier Central n'ont pas de données d'état."
+				},
+				"instanceLog": {
+					"sectionTitle": "Journal d'état des membres, tous les réseaux",
+					"title": "Tous les réseaux",
+					"description": "Changements d'état de tous les membres de ce contrôleur. Les pages de réseau affichent le même journal, limité à leurs propres membres."
+				},
+				"clear": {
+					"button": "Vider le journal",
+					"title": "Vider le journal d'état des membres",
+					"description": "Cela supprime tous les changements d'état enregistrés pour tous les réseaux. Cette action est irréversible."
+				},
+				"cleared": "{count} événements supprimés"
 			}
 		},
 		"mail": {

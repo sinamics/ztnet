@@ -8,6 +8,9 @@ import {
 	useTrpcApiSuccessHandler,
 } from "~/hooks/useTrpcApiHandler";
 import MenuSectionDividerWrapper from "~/components/shared/menuSectionDividerWrapper";
+import MemberStatusLogSettings, {
+	InstanceMemberStatusLog,
+} from "~/components/adminPage/settings/memberStatusLogSettings";
 
 const Settings = () => {
 	const t = useTranslations("admin");
@@ -36,111 +39,118 @@ const Settings = () => {
 	}
 
 	return (
-		<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
-			<MenuSectionDividerWrapper
-				title={t("settings.application.title")}
-				className="space-y-5"
-			>
-				<div className="text-sm text-gray-400">
-					<p>{t("settings.application.description")}</p>
-				</div>
-				<div className="space-y-5">
-					<EditableField
-						isLoading={false}
-						label="Sitename"
-						size="sm"
-						placeholder={options?.siteName || "ZTNET"}
-						fields={[
-							{
-								name: "siteName",
-								description: "Max 30 Char",
-								type: "text",
-								value: options?.siteName,
-							},
-						]}
-						submitHandler={(params) =>
-							new Promise((resolve) => {
-								setGlobalOptions(params);
-								resolve(true);
-							})
-						}
-					/>
-					<div className="flex items-center justify-between">
-						<label>
-							<p className="font-medium">
-								{t("settings.application.enablePersonalNetworks")}
-							</p>
-							<p className="text-sm text-gray-500">
-								{t("settings.application.enablePersonalNetworksDescription")}
-							</p>
-						</label>
-						<input
-							type="checkbox"
-							checked={options?.enablePersonalNetworks}
-							className="checkbox-primary checkbox checkbox-sm"
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setGlobalOptions({ enablePersonalNetworks: e.target.checked });
-							}}
+		<>
+			<main className="flex w-full flex-col justify-center space-y-10 bg-base-100 p-5 sm:p-3 xl:w-6/12">
+				<MenuSectionDividerWrapper
+					title={t("settings.application.title")}
+					className="space-y-5"
+				>
+					<div className="text-sm text-gray-400">
+						<p>{t("settings.application.description")}</p>
+					</div>
+					<div className="space-y-5">
+						<EditableField
+							isLoading={false}
+							label="Sitename"
+							size="sm"
+							placeholder={options?.siteName || "ZTNET"}
+							fields={[
+								{
+									name: "siteName",
+									description: "Max 30 Char",
+									type: "text",
+									value: options?.siteName,
+								},
+							]}
+							submitHandler={(params) =>
+								new Promise((resolve) => {
+									setGlobalOptions(params);
+									resolve(true);
+								})
+							}
+						/>
+						<div className="flex items-center justify-between">
+							<label>
+								<p className="font-medium">
+									{t("settings.application.enablePersonalNetworks")}
+								</p>
+								<p className="text-sm text-gray-500">
+									{t("settings.application.enablePersonalNetworksDescription")}
+								</p>
+							</label>
+							<input
+								type="checkbox"
+								checked={options?.enablePersonalNetworks}
+								className="checkbox-primary checkbox checkbox-sm"
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									setGlobalOptions({ enablePersonalNetworks: e.target.checked });
+								}}
+							/>
+						</div>
+					</div>
+				</MenuSectionDividerWrapper>
+				<MenuSectionDividerWrapper
+					title={t("settings.publicPages.sectionTitle")}
+					className="space-y-5"
+				>
+					<div className="text-sm text-gray-400">
+						<p>{t("settings.publicPages.description")}</p>
+					</div>
+					<div className="space-y-5">
+						<EditableField
+							isLoading={false}
+							label="Title"
+							size="sm"
+							placeholder={options?.welcomeMessageTitle || "ZTNET"}
+							fields={[
+								{
+									name: "welcomeMessageTitle",
+									description: "Max 50 Char",
+									type: "text",
+									placeholder: "Write a cool title ....",
+									value: options?.welcomeMessageTitle,
+								},
+							]}
+							submitHandler={(params) =>
+								new Promise((resolve) => {
+									setGlobalOptions(params);
+									resolve(true);
+								})
+							}
+						/>
+						<EditableField
+							isLoading={false}
+							label="Content"
+							size="sm"
+							placeholder={
+								options?.welcomeMessageBody ||
+								"ZeroTier VPN is your key to boundless connectivity and ultimate privacy.Experience a secure and borderless digital world, free from limitations. Empower yourself with unmatched performance, while safeguarding your data."
+							}
+							fields={[
+								{
+									name: "welcomeMessageBody",
+									description: "Max 350 Char",
+									placeholder: "Write something ....",
+									elementType: "textarea",
+									value: options?.welcomeMessageBody,
+								},
+							]}
+							submitHandler={(params) =>
+								new Promise((resolve) => {
+									setGlobalOptions(params);
+									resolve(true);
+								})
+							}
 						/>
 					</div>
-				</div>
-			</MenuSectionDividerWrapper>
-			<MenuSectionDividerWrapper
-				title={t("settings.publicPages.sectionTitle")}
-				className="space-y-5"
-			>
-				<div className="text-sm text-gray-400">
-					<p>{t("settings.publicPages.description")}</p>
-				</div>
-				<div className="space-y-5">
-					<EditableField
-						isLoading={false}
-						label="Title"
-						size="sm"
-						placeholder={options?.welcomeMessageTitle || "ZTNET"}
-						fields={[
-							{
-								name: "welcomeMessageTitle",
-								description: "Max 50 Char",
-								type: "text",
-								placeholder: "Write a cool title ....",
-								value: options?.welcomeMessageTitle,
-							},
-						]}
-						submitHandler={(params) =>
-							new Promise((resolve) => {
-								setGlobalOptions(params);
-								resolve(true);
-							})
-						}
-					/>
-					<EditableField
-						isLoading={false}
-						label="Content"
-						size="sm"
-						placeholder={
-							options?.welcomeMessageBody ||
-							"ZeroTier VPN is your key to boundless connectivity and ultimate privacy.Experience a secure and borderless digital world, free from limitations. Empower yourself with unmatched performance, while safeguarding your data."
-						}
-						fields={[
-							{
-								name: "welcomeMessageBody",
-								description: "Max 350 Char",
-								placeholder: "Write something ....",
-								elementType: "textarea",
-								value: options?.welcomeMessageBody,
-							},
-						]}
-						submitHandler={(params) =>
-							new Promise((resolve) => {
-								setGlobalOptions(params);
-								resolve(true);
-							})
-						}
-					/>
-				</div>
-			</MenuSectionDividerWrapper>
-		</main>
+				</MenuSectionDividerWrapper>
+				<MemberStatusLogSettings />
+			</main>
+			{/* wider than the settings column, the log is a table */}
+			<div className="w-full bg-base-100 p-5 pt-10 sm:p-3 sm:pt-10 xl:w-10/12">
+				<InstanceMemberStatusLog />
+			</div>
+		</>
 	);
 };
 

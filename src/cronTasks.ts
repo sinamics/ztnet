@@ -3,6 +3,12 @@ import { prisma } from "./server/db";
 import * as ztController from "~/utils/ztApi";
 
 import { reconcileNetworkMembers } from "./server/api/services/memberService";
+import {
+	MEMBER_STATUS_LOG_IDLE_POLL_SECONDS,
+	pruneMemberStatusEvents,
+	runMemberStatusSampler,
+	samplerState,
+} from "./server/api/services/memberStatusLogService";
 
 type FakeContext = {
 	session: {
@@ -268,6 +274,72 @@ export const updatePeers = async () => {
 				await reconcileInactiveUsersNetworks();
 			} catch (error) {
 				console.error("cron task updatePeers:", error);
+			}
+		},
+		null,
+		true,
+		"America/Los_Angeles",
+	);
+};
+
+/**
+ * Member status log sampler.
+ *
+ * Asks the controller for its peer list once per sample interval and stores a
+ * row for every node whose connection status changed. It is deliberately not
+ * driven by the member reconcile: that runs every 10 seconds for networks
+ * somebody is looking at and every 10 minutes for the rest, which would make
+ * the log more detailed for some networks than for others.
+ *
+ * The interval is an admin setting in seconds, so this is a timer that
+ * re-arms itself rather than a fixed cron expression. Every run reads the
+ * settings, and saving them wakes the timer, so enabling or disabling the log
+ * needs no restart. While the log is disabled a run is one settings read.
+ */
+export const memberStatusSampler = async () => {
+	const state = samplerState();
+	let timer: NodeJS.Timeout | undefined;
+	let running = false;
+
+	const run = async () => {
+		if (running) return;
+		running = true;
+		let delay = MEMBER_STATUS_LOG_IDLE_POLL_SECONDS;
+		try {
+			delay = await runMemberStatusSampler();
+		} catch (error) {
+			// Controller or database not reachable. Skip this sample, an
+			// unanswered call says nothing about the members.
+			console.error("cron task memberStatusSampler:", error);
+		} finally {
+			running = false;
+			clearTimeout(timer);
+			timer = setTimeout(run, delay * 1000);
+			timer.unref?.();
+		}
+	};
+
+	state.wake = () => {
+		clearTimeout(timer);
+		void run();
+	};
+
+	void run();
+};
+
+/**
+ * Removes member status events older than the retention set by the admin.
+ * Runs whether or not the log is enabled, so events from an earlier period
+ * still age out after the log has been turned off.
+ */
+export const pruneMemberStatusLog = async () => {
+	new cron.CronJob(
+		"0 30 3 * * *", // 03:30 every day
+		async () => {
+			try {
+				await pruneMemberStatusEvents();
+			} catch (error) {
+				console.error("cron task pruneMemberStatusLog:", error);
 			}
 		},
 		null,
