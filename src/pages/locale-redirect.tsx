@@ -104,9 +104,17 @@ const LocaleRedirect = () => {
 
 		// Build the redirect URL with the preferred locale. The target may carry its
 		// own query string and hash, so merge the remaining parameters into it.
-		const [pathAndSearch, hash] = targetPath.split("#", 2);
-		const [pathname, search] = pathAndSearch.split("?", 2);
-		const searchParams = new URLSearchParams(search);
+		// Cut at the first "#" and the first "?" only, so delimiters embedded in a
+		// query value or in the fragment are kept as they are.
+		const hashIndex = targetPath.indexOf("#");
+		const hash = hashIndex === -1 ? "" : targetPath.slice(hashIndex);
+		const pathAndSearch = hashIndex === -1 ? targetPath : targetPath.slice(0, hashIndex);
+		const searchIndex = pathAndSearch.indexOf("?");
+		const pathname =
+			searchIndex === -1 ? pathAndSearch : pathAndSearch.slice(0, searchIndex);
+		const searchParams = new URLSearchParams(
+			searchIndex === -1 ? "" : pathAndSearch.slice(searchIndex + 1),
+		);
 
 		// Add all remaining query parameters
 		for (const [key, value] of Object.entries(restQuery)) {
@@ -117,9 +125,7 @@ const LocaleRedirect = () => {
 
 		const queryString = searchParams.toString();
 		const localePrefix = preferredLocale === defaultLocale ? "" : `/${preferredLocale}`;
-		const redirectPath = `${localePrefix}${pathname}${queryString ? `?${queryString}` : ""}${
-			hash ? `#${hash}` : ""
-		}`;
+		const redirectPath = `${localePrefix}${pathname}${queryString ? `?${queryString}` : ""}${hash}`;
 
 		// Redirect to the localized version
 		router.replace(redirectPath);

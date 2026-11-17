@@ -37,6 +37,19 @@ describe("LocaleRedirect", () => {
 		expect(replace).toHaveBeenCalledWith("/auth/login?a=1&invite=abc#top");
 	});
 
+	it("keeps delimiters embedded in a query value and in the fragment", () => {
+		const replace = renderWithQuery({
+			target: "/auth/login?callbackUrl=/network/abc?tab=members#section#details",
+			invite: "abc",
+		});
+		const [redirectPath] = replace.mock.calls[0];
+		const url = new URL(redirectPath, "http://localhost");
+		expect(url.pathname).toBe("/auth/login");
+		expect(url.searchParams.get("callbackUrl")).toBe("/network/abc?tab=members");
+		expect(url.searchParams.get("invite")).toBe("abc");
+		expect(url.hash).toBe("#section#details");
+	});
+
 	it.each([
 		"https://evil.example",
 		"//evil.example",
