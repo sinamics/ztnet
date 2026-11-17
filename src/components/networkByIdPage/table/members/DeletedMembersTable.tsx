@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import TimeAgo from "react-timeago";
 import { api } from "~/utils/api";
+import { networkByIdInput } from "~/utils/networkQueryInput";
 import { useRouter } from "next/router";
 import { useModalStore } from "~/utils/store";
 import { useTranslations } from "next-intl";
@@ -34,16 +35,12 @@ export const DeletedNetworkMembersTable = ({
 	const utils = api.useUtils();
 
 	const { data: networkById, refetch: refetchNetworkById } =
-		api.network.getNetworkById.useQuery(
-			{ nwid: nwid as string, central: false },
-			{ enabled: !!query.id },
-		);
+		api.network.getNetworkById.useQuery(networkByIdInput(nwid), {
+			enabled: !!query.id,
+		});
 
 	const invalidate = async () => {
-		await utils.network.getNetworkById.invalidate({
-			nwid: nwid as string,
-			central: false,
-		});
+		await utils.network.getNetworkById.invalidate(networkByIdInput(nwid));
 		await utils.network.getNetworkMembers.invalidate();
 		void refetchNetworkById();
 	};
@@ -110,7 +107,14 @@ export const DeletedNetworkMembersTable = ({
 					) : (
 						<span className="space-x-5">
 							<button
-								onClick={() => updateUser({ nwid, id, updateParams: { deleted: false } })}
+								onClick={() =>
+									updateUser({
+										nwid,
+										id,
+										organizationId,
+										updateParams: { deleted: false },
+									})
+								}
 								className="btn btn-primary btn-xs"
 							>
 								Re-Activate
