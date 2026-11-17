@@ -159,6 +159,96 @@ export const CheckExpiredUsers = async () => {
 };
 
 /**
+ * Reconciles the networks of every user that has been inactive for five
+ * minutes. Viewed networks are synced by the SyncManager, so this is only the
+ * backstop that keeps idle networks converged with the controller.
+ * Returns the ids of the networks that were reconciled.
+ */
+export const reconcileInactiveUsersNetworks = async (): Promise<string[]> => {
+	// fetch all users
+	const users = await prisma.user.findMany({
+		where: {
+			isActive: true,
+		},
+		select: {
+			id: true,
+			lastseen: true,
+			memberOfOrgs: {
+				select: {
+					networks: true,
+				},
+			},
+		},
+	});
+
+	// if no users return
+	if (users.length === 0) return [];
+
+	// Get all users that have been inactive for 5 minutes
+	const now = new Date();
+	const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
+	const inactiveUsers = users.filter((user) => {
+		return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
+	});
+
+	// keep track of processed networks
+	const processedNetworks = new Set<string>();
+
+	// fetch all networks for each user
+	for (const user of inactiveUsers) {
+		const networks = await prisma.network.findMany({
+			where: {
+				authorId: user.id,
+			},
+			select: {
+				nwid: true,
+			},
+		});
+
+		// include get organization networks
+		const organizationNetworks =
+			user.memberOfOrgs?.flatMap((org) =>
+				org.networks.map((network) => ({
+					nwid: network.nwid,
+				})),
+			) ?? [];
+
+		// merge user and organization networks
+		const allNetworks = [...networks, ...organizationNetworks];
+
+		// A user without networks must only be skipped. Returning here would end
+		// the run and leave every user after this one without the backstop.
+		if (allNetworks.length === 0) continue;
+
+		// fetch all members for each network
+		for (const network of allNetworks) {
+			if (network && !processedNetworks.has(network.nwid)) {
+				processedNetworks.add(network.nwid);
+				const context: FakeContext = {
+					session: {
+						user: {
+							id: user.id,
+						},
+					},
+				};
+
+				// Reconcile members against the controller (revision-delta +
+				// self-healing). Replaces the old per-member N+1 fetch + write storm,
+				// and serves as the periodic backstop that keeps idle networks' caches
+				// converged with the controller.
+				await reconcileNetworkMembers(
+					// @ts-expect-error fake context for the cron
+					context,
+					network.nwid,
+				);
+			}
+		}
+	}
+
+	return [...processedNetworks];
+};
+
+/**
  * Updates the peers for all active users and their networks.
  * This function is scheduled to run periodically using a cron job.
  *
@@ -175,83 +265,7 @@ export const updatePeers = async () => {
 		"*/10 * * * *", // every 10min
 		async () => {
 			try {
-				// fetch all users
-				const users = await prisma.user.findMany({
-					where: {
-						isActive: true,
-					},
-					select: {
-						id: true,
-						lastseen: true,
-						memberOfOrgs: {
-							select: {
-								networks: true,
-							},
-						},
-					},
-				});
-
-				// if no users return
-				if (users.length === 0) return;
-
-				// Get all users that have been inactive for 5 minutes
-				const now = new Date();
-				const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
-				const inactiveUsers = users.filter((user) => {
-					return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
-				});
-
-				// keep track of processed networks
-				const processedNetworks = new Set();
-
-				// fetch all networks for each user
-				for (const user of inactiveUsers) {
-					const networks = await prisma.network.findMany({
-						where: {
-							authorId: user.id,
-						},
-						select: {
-							nwid: true,
-						},
-					});
-
-					// include get organization networks
-					const organizationNetworks = user.memberOfOrgs?.flatMap((org) =>
-						org.networks.map((network) => ({
-							nwid: network.nwid,
-						})),
-					);
-
-					// merge user and organization networks
-					const allNetworks = [...networks, ...organizationNetworks];
-
-					// if no networks return
-					if (allNetworks.length === 0) return;
-
-					// fetch all members for each network
-					for (const network of allNetworks) {
-						if (network && !processedNetworks.has(network.nwid)) {
-							processedNetworks.add(network.nwid);
-							const context: FakeContext = {
-								session: {
-									user: {
-										id: user.id,
-									},
-								},
-							};
-
-							// Reconcile members against the controller (revision-delta +
-							// self-healing). Replaces the old per-member N+1 fetch + write storm,
-							// and serves as the periodic backstop that keeps idle networks' caches
-							// converged with the controller.
-							await reconcileNetworkMembers(
-								// @ts-expect-error fake context for the cron
-								context,
-								network.nwid,
-							);
-						}
-					}
-				}
+				await reconcileInactiveUsersNetworks();
 			} catch (error) {
 				console.error("cron task updatePeers:", error);
 			}
