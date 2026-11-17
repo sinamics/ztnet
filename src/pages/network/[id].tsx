@@ -48,6 +48,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 	const [state, setState] = useState({
 		viewZombieTable: false,
+		viewPermanentlyDeletedTable: false,
 		isDebug: false,
 	});
 
@@ -346,6 +347,32 @@ const NetworkById = ({ orgIds }: IProps) => {
 						</>
 					) : null}
 				</div>
+			</div>
+			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
+				{networkById?.permanentlyDeletedMembers?.length > 0 ? (
+					<>
+						<button
+							onClick={() =>
+								setState({
+									...state,
+									viewPermanentlyDeletedTable: !state.viewPermanentlyDeletedTable,
+								})
+							}
+							className="btn btn-wide"
+						>
+							{t(
+								"networkById.deletedNetworkMembersTable.buttons.viewPermanentlyDeletedMembers",
+							)}{" "}
+							({networkById?.permanentlyDeletedMembers?.length})
+						</button>
+
+						{state.viewPermanentlyDeletedTable ? (
+							<div className="membersTable-wrapper text-center">
+								<DeletedNetworkMembersTable nwid={network.nwid} permanentlyDeleted />
+							</div>
+						) : null}
+					</>
+				) : null}
 			</div>
 			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkFlowRules />
