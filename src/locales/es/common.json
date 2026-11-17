@@ -836,6 +836,23 @@
 				"numberOfMembers": "Número de Miembros:",
 				"pendingInvitations": "Invitaciones Pendientes:",
 				"activeWebhooks": "Webhooks Activos:"
+			},
+			"quotas": {
+				"title": "Cuotas de la organización",
+				"description": "Limita cuántas redes puede tener cada organización y cuántos miembros se pueden autorizar en cada una de sus redes. Deja un campo vacío para ilimitado. Bajar un límite por debajo del uso actual no elimina nada, solo bloquea nuevas incorporaciones.",
+				"networksUsage": "Redes",
+				"membersUsage": "Miembros autorizados en la red más grande",
+				"unlimited": "Ilimitado",
+				"unlimitedPlaceholder": "Vacío para ilimitado",
+				"editLabel": "Límites",
+				"editDescription": "Solo los administradores de la instancia pueden cambiar estos límites.",
+				"currentLimits": "Redes: {networks}. Miembros autorizados por red: {members}.",
+				"maxNetworksDescription": "Número máximo de redes",
+				"maxMembersDescription": "Máximo de miembros autorizados por red",
+				"overLimitNotice": "El uso actual supera un límite. No se elimina nada, pero no se puede añadir nada nuevo hasta que el uso baje del límite.",
+				"publicNetworksWarning": "Estas redes son públicas, por lo que el límite de miembros no se aplica en ellas: {networks}. Una red pública autoriza a todos los dispositivos que se unen. Cámbialas a privadas para aplicar el límite.",
+				"publicCheckFailed": "El controlador no respondió para estas redes, por lo que no se sabe si son públicas: {networks}. Recargue la página para comprobarlo de nuevo.",
+				"noOrganizations": "Todavía no hay organizaciones."
 			}
 		},
 		"backupRestore": {
@@ -1107,6 +1124,15 @@
 		"networkSection": {
 			"title": "Redes",
 			"noNetworksToShow": "No hay redes para mostrar."
+		},
+		"quotas": {
+			"networks": "Redes:",
+			"membersPerNetwork": "Límite de miembros por red:",
+			"networksUsage": "{used}/{limit} redes",
+			"networkLimitReached": "Esta organización ha alcanzado su límite de redes. Contacta con el administrador de la instancia para ampliarlo.",
+			"membersUsage": "{used}/{limit} miembros autorizados",
+			"memberLimitReached": "Esta red ha alcanzado el límite de miembros autorizados de la organización. Contacta con el administrador de la instancia para ampliarlo.",
+			"publicNetworkNotice": "Esta red es pública, por lo que el límite de miembros de la organización no se aplica en ella."
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "¿Abandonar la Organización?",

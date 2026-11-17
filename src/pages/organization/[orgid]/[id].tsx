@@ -62,7 +62,14 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 		// connected, faster when not.
 		{ enabled: !!query.id, refetchInterval: socketConnected ? 60000 : 20000 },
 	);
-	const { network, memberCount = 0 } = networkById || {};
+	// memberLimit is the organization quota on authorized members (null is unlimited)
+	const {
+		network,
+		memberCount = 0,
+		authorizedMemberCount = 0,
+		memberLimit = null,
+	} = networkById || {};
+	const memberLimitReached = memberLimit !== null && authorizedMemberCount >= memberLimit;
 	const pageTitle = `${globalOptions?.siteName} - ${network?.name}`;
 
 	if (errorNetwork) {
@@ -229,6 +236,29 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 			<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
 				{t("networkById.networkMembers")}
 			</div>
+			{memberLimit !== null ? (
+				<div className="w-5/5 mx-auto w-full text-sm space-y-1">
+					<span
+						data-testid="org-member-usage"
+						className={cn("badge badge-outline", { "badge-warning": memberLimitReached })}
+					>
+						{t("organization.quotas.membersUsage", {
+							used: authorizedMemberCount,
+							limit: memberLimit,
+						})}
+					</span>
+					{memberLimitReached ? (
+						<p data-testid="org-member-limit-notice" className="text-warning">
+							{t("organization.quotas.memberLimitReached")}
+						</p>
+					) : null}
+					{network?.private === false ? (
+						<p data-testid="org-member-public-notice" className="text-warning">
+							{t("organization.quotas.publicNetworkNotice")}
+						</p>
+					) : null}
+				</div>
+			) : null}
 			<div className="w-5/5 mx-auto w-full  py-4 text-sm md:text-base">
 				{memberCount ? (
 					<div className="membersTable-wrapper">

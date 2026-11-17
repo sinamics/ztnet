@@ -19,6 +19,12 @@ import {
 import { sendWebhook } from "~/utils/webhook";
 import { throwError } from "~/server/helpers/errorHandler";
 import { isValidIP } from "../utils/ipUtils";
+import {
+	assertOrgMemberCanBeHidden,
+	assertOrgMemberCap,
+	assertOrgMemberRestoreFitsCap,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 
 const isValidZeroTierNetworkId = (id: string) => {
 	const hexRegex = /^[0-9a-fA-F]{10}$/;
@@ -117,6 +123,12 @@ export const networkMemberRouter = createTRPCRouter({
 				},
 			});
 			if (member) {
+				// Organization member cap: a stashed row that is still flagged
+				// authorized counts again once it is restored.
+				await enforceQuota(() =>
+					assertOrgMemberRestoreFitsCap(ctx.prisma, input.nwid, input.id),
+				);
+
 				// Get user options to determine naming behavior for existing member
 				const userOptions = await ctx.prisma.userOptions.findFirst({
 					where: {
@@ -390,6 +402,13 @@ export const networkMemberRouter = createTRPCRouter({
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, nwid, Role.USER);
 
+			// Organization member cap: refuse to authorize one more member once the
+			// network is full. Re-saving an already authorized member passes, and a
+			// stashed member has to be restored first so that it is counted.
+			if (!central && updateParams.authorized === true) {
+				await enforceQuota(() => assertOrgMemberCap(ctx.prisma, nwid, memberId));
+			}
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -478,13 +497,15 @@ export const networkMemberRouter = createTRPCRouter({
 
 						// Update both controller and database for OTHER networks where the member exists
 						for (const { nwid: networkId } of networksWithMember) {
-							// Update ZeroTier controller
+							// Update ZeroTier controller. Only the name is propagated: the
+							// other fields (authorized in particular) belong to the network
+							// being edited and must not leak into the other networks, where
+							// they would bypass the organization member cap.
 							await ztController.member_update({
 								ctx,
 								nwid: networkId,
 								memberId: memberId,
-								//@ts-expect-error
-								updateParams: updateParams,
+								updateParams: { name: updateParams.name },
 							});
 
 							// Update database
@@ -591,6 +612,24 @@ export const networkMemberRouter = createTRPCRouter({
 							data: databaseUpdateData,
 						});
 					}
+				} else if (payload.authorized === true) {
+					// The controller knows this member but the database does not yet.
+					// Write the authorization through now, so the member is counted
+					// against the organization member cap before the next request,
+					// not only after the next reconcile.
+					await ctx.prisma.network_members.upsert({
+						where: { id_nwid: { id: memberId, nwid } },
+						update: { authorized: true },
+						create: {
+							id: memberId,
+							address: memberId,
+							lastSeen: new Date(),
+							creationTime: new Date(),
+							name: payload.name || null,
+							authorized: true,
+							nwid_ref: { connect: { nwid } },
+						},
+					});
 				}
 			}
 
@@ -742,6 +781,19 @@ export const networkMemberRouter = createTRPCRouter({
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, input.nwid, Role.USER);
 
+			// Organization member cap. Restoring a row that is still flagged
+			// authorized makes it count again, and hiding an authorized row would
+			// free a slot while the device stays authorized on the controller.
+			if (input.updateParams.deleted === false) {
+				await enforceQuota(() =>
+					assertOrgMemberRestoreFitsCap(ctx.prisma, input.nwid, input.id),
+				);
+			} else if (input.updateParams.deleted === true) {
+				await enforceQuota(() =>
+					assertOrgMemberCanBeHidden(ctx.prisma, input.nwid, input.id),
+				);
+			}
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -840,6 +892,15 @@ export const networkMemberRouter = createTRPCRouter({
 				});
 			} catch (error) {
 				console.error(error);
+			}
+
+			// Organization member cap: when the deauthorization above failed and the
+			// member is still authorized, hiding it would free a slot for a device
+			// the controller keeps authorized.
+			if (!response) {
+				await enforceQuota(() =>
+					assertOrgMemberCanBeHidden(ctx.prisma, input.nwid, input.id),
+				);
 			}
 
 			// Set member with deleted status in database.

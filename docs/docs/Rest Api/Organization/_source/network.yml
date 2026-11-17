@@ -89,6 +89,18 @@ paths:
                 
         401:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        403:
+          description: |
+            The organization has reached its network quota. The quota is set by the instance administrator, see [Organization Quotas](/usage/organization-quotas/).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "This organization has reached its limit of 5 networks. Contact the instance administrator to raise the limit."
         429:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
@@ -161,6 +173,18 @@ paths:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        403:
+          description: |
+            `private: false` was sent for a network of an organization that has a limit on authorized members per network. Such a network cannot be made public, see [Organization Quotas](/usage/organization-quotas/).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "This organization has a limit on authorized members per network, so its networks cannot be made public. Contact the instance administrator."
         429:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
