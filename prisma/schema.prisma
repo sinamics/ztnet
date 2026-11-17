@@ -27,6 +27,9 @@ model GlobalOptions {
   enableRegistration    Boolean @default(true)
   firstUserRegistration Boolean @default(true) // not in use, will be removed at a later stage
 
+  // Networks
+  enablePersonalNetworks Boolean @default(true)
+
   // Email configuration
   smtpHost                           String?
   smtpPort                           String  @default("587")

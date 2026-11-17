@@ -189,7 +189,9 @@ export const useMemberColumns = ({
 				header: () => <span>{c("header.conStatus.header")}</span>,
 				id: "conStatus",
 				...COLUMN_SIZING.conStatus,
-				enableSorting: false,
+				// Sorted by the server from live peer status (the table is paginated);
+				// see getNetworkMembers + SERVER_SORTABLE. First click puts online on top.
+				sortDescFirst: true,
 				cell: ({ row: { original } }) => (
 					<ConnectionStatusCell original={original} central={central} />
 				),

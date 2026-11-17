@@ -48,7 +48,11 @@
   },
   "overrides": {
     "serialize-javascript": ">=7.0.4",
-    "lodash": ">=4.17.22"
+    "lodash": ">=4.17.22",
+    "openapi-to-postmanv2": {
+      "js-yaml": "^4.3.2"
+    },
+    "yaml@^1.10.2": "^1.10.3"
   },
   "engines": {
     "node": ">=18.0"

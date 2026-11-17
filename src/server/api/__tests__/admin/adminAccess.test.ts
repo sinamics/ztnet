@@ -205,12 +205,19 @@ describe("what a regular user can read", () => {
 		});
 	});
 
-	it("settings.getAllOptions only selects the site name", async () => {
-		findGlobalOptions.mockResolvedValue({ siteName: "ZTNET" });
+	it("settings.getAllOptions only selects the site name and personal network switch", async () => {
+		findGlobalOptions.mockResolvedValue({
+			siteName: "ZTNET",
+			enablePersonalNetworks: true,
+		});
 
 		await expect(callerAs("USER").settings.getAllOptions()).resolves.toEqual({
 			siteName: "ZTNET",
+			enablePersonalNetworks: true,
 		});
-		expect(findGlobalOptions.mock.calls[0][0].select).toEqual({ siteName: true });
+		expect(findGlobalOptions.mock.calls[0][0].select).toEqual({
+			siteName: true,
+			enablePersonalNetworks: true,
+		});
 	});
 });

@@ -545,6 +545,7 @@ export const adminRouter = createTRPCRouter({
 			z.object({
 				enableRegistration: z.boolean().optional(),
 				firstUserRegistration: z.boolean().optional(),
+				enablePersonalNetworks: z.boolean().optional(),
 				userRegistrationNotification: z.boolean().optional(),
 				welcomeMessageTitle: z.string().max(50).optional(),
 				welcomeMessageBody: z.string().max(350).optional(),

@@ -65,6 +65,24 @@ const Settings = () => {
 							})
 						}
 					/>
+					<div className="flex items-center justify-between">
+						<label>
+							<p className="font-medium">
+								{t("settings.application.enablePersonalNetworks")}
+							</p>
+							<p className="text-sm text-gray-500">
+								{t("settings.application.enablePersonalNetworksDescription")}
+							</p>
+						</label>
+						<input
+							type="checkbox"
+							checked={options?.enablePersonalNetworks}
+							className="checkbox-primary checkbox checkbox-sm"
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								setGlobalOptions({ enablePersonalNetworks: e.target.checked });
+							}}
+						/>
+					</div>
 				</div>
 			</MenuSectionDividerWrapper>
 			<MenuSectionDividerWrapper

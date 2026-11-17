@@ -31,6 +31,7 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const title = `${globalOptions?.siteName} - Local Controller`;
+	const personalNetworksEnabled = globalOptions?.enablePersonalNetworks !== false;
 
 	const handleApiError = useTrpcApiErrorHandler();
 	const handleApiSuccess = useTrpcApiSuccessHandler();
@@ -122,7 +123,10 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 					{/* Network table and controls */}
 					<div className="w-full">
 						{userNetworks && userNetworks.length > 0 && (
-							<NetworkTable tableData={userNetworks} onCreateNetwork={addNewNetwork} />
+							<NetworkTable
+								tableData={userNetworks}
+								onCreateNetwork={personalNetworksEnabled ? addNewNetwork : undefined}
+							/>
 						)}
 						{!userNetworks ||
 							(userNetworks.length === 0 && (
@@ -141,30 +145,36 @@ const Networks: NextPageWithLayout = ({ orgIds, user }: IProps) => {
 												d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
 											/>
 										</svg>
-										<span>{t("noNetworksMessage")}</span>
+										<span>
+											{personalNetworksEnabled
+												? t("noNetworksMessage")
+												: t("personalNetworksDisabled")}
+										</span>
 									</div>
-									<div className="mt-6">
-										<button
-											className="btn btn-primary gap-2 shadow-md hover:shadow-lg transition-all"
-											onClick={addNewNetwork}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												strokeWidth="1.5"
-												stroke="currentColor"
-												className="h-5 w-5"
+									{personalNetworksEnabled && (
+										<div className="mt-6">
+											<button
+												className="btn btn-primary gap-2 shadow-md hover:shadow-lg transition-all"
+												onClick={addNewNetwork}
 											>
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M12 4.5v15m7.5-7.5h-15"
-												/>
-											</svg>
-											<span>{b("addNetwork")}</span>
-										</button>
-									</div>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													fill="none"
+													viewBox="0 0 24 24"
+													strokeWidth="1.5"
+													stroke="currentColor"
+													className="h-5 w-5"
+												>
+													<path
+														strokeLinecap="round"
+														strokeLinejoin="round"
+														d="M12 4.5v15m7.5-7.5h-15"
+													/>
+												</svg>
+												<span>{b("addNetwork")}</span>
+											</button>
+										</div>
+									)}
 								</div>
 							))}
 					</div>

@@ -18,11 +18,25 @@ export const nameGeneratorConfig: Config = {
  * @param {Object} ctx - The context object.
  * @param {Object} input - The input object.
  * @returns {Promise<Object>} - The created network service.
- * @throws {CustomLimitError} - If the user has reached the maximum number of networks allowed for their user group.
+ * @throws {CustomLimitError} - If personal networks are disabled, or the user has reached the maximum number of networks allowed for their user group.
  * @throws {Error} - If an error occurs while creating the network service.
  */
 export const networkProvisioningFactory = async ({ ctx, input }) => {
 	try {
+		// Central networks live in the ZeroTier Central account, not in ZTNET,
+		// so only local personal networks follow the global switch.
+		if (!input.central) {
+			const options = await ctx.prisma.globalOptions.findFirst({
+				where: { id: 1 },
+				select: { enablePersonalNetworks: true },
+			});
+			if (options && !options.enablePersonalNetworks) {
+				throw new CustomLimitError(
+					"Personal networks are disabled. Create the network in an organization.",
+				);
+			}
+		}
+
 		// 1. Fetch the user with its related UserGroup
 		const userWithGroup = await ctx.prisma.user.findUnique({
 			where: { id: ctx.session.user.id },
