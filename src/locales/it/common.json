@@ -32,7 +32,7 @@
 		"remove": "Rimuovi",
 		"update": "Aggiorna",
 		"close": "Chiudi",
-		"stash": "Metti da parte",
+		"stash": "Archivia",
 		"yes": "Sì",
 		"imSure": "Sì, confermo",
 		"generate": "Genera",
@@ -49,6 +49,8 @@
 		"userActions": "Azioni utente",
 		"addWebhooks": "Aggiungi webhook",
 		"options": "Opzioni",
+		"notes": "Note",
+		"save": "Salva",
 		"settings": "Impostazioni",
 		"resend": "Reinvia",
 		"enable2fa": "Attiva 2FA",
@@ -261,7 +263,7 @@
 		"networkMembersAlert": {
 			"message": "Unendosi a questo ID di rete, il dispositivo verrà mostrato automaticamente"
 		},
-		"viewStashedMembers": "Mostra membri messi da parte",
+		"viewStashedMembers": "Mostra membri archiviati",
 		"networkActions": "Azioni sulla rete",
 		"deleteNetwork": {
 			"title": "Elimina rete {networkName}",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Cerca...",
 			"optionModalTitle": "Opzioni del membro",
+			"notesModalTitle": "Note per il membro",
+			"notesPlaceholder": "Aggiungi note su questo membro (dettagli del dispositivo, posizione, contatti...)",
+			"notesReadOnly": "Hai accesso in sola lettura a queste note.",
+			"notesNoAccess": "Non hai accesso alle note dei membri.",
 			"tableRow": {
 				"updateName": "Fare clic per cambiare il nome",
 				"updateDescription": "Fare clic per aggiungere una descrizione"
@@ -390,13 +396,13 @@
 		},
 		"deletedNetworkMembersTable": {
 			"buttons": {
-				"viewStashedMembers": "Mostra membri messi da parte",
+				"viewStashedMembers": "Mostra membri archiviati",
 				"viewPermanentlyDeletedMembers": "Mostra membri eliminati definitivamente",
-				"deleteAll": "Elimina tutti i membri messi da parte ({count})"
+				"deleteAll": "Elimina tutti i membri archiviati ({count})"
 			},
 			"bulkDelete": {
-				"modalTitle": "Eliminare tutti i membri messi da parte?",
-				"modalDescription": "Tutti i {count} membri messi da parte verranno eliminati definitivamente. Resteranno nel controller ZeroTier, ma saranno nascosti e non riappariranno come nuove richieste di accesso.",
+				"modalTitle": "Eliminare tutti i membri archiviati?",
+				"modalDescription": "Tutti i {count} membri archiviati verranno eliminati definitivamente. Resteranno nel controller ZeroTier, ma saranno nascosti e non riappariranno come nuove richieste di accesso.",
 				"modalWarning": "Potrai riattivarli in seguito dall'elenco dei membri eliminati definitivamente."
 			}
 		},
@@ -1199,8 +1205,8 @@
 						"description": "Notifica agli amministratori quando un nuovo nodo entra in una qualsiasi rete dell'organizzazione"
 					},
 					"nodeDeleted": {
-						"title": "Nodo messo da parte",
-						"description": "Notifica agli amministratori quando un nodo viene messo da parte in una qualsiasi rete dell'organizzazione"
+						"title": "Nodo archiviato",
+						"description": "Notifica agli amministratori quando un nodo viene archiviato in una qualsiasi rete dell'organizzazione"
 					},
 					"nodePermanentlyDeleted": {
 						"title": "Nodo eliminato definitivamente",
