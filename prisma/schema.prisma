@@ -463,6 +463,9 @@ model OrganizationSettings {
   id                 Int      @id @default(autoincrement())
   renameNodeGlobally Boolean? @default(false)
 
+  // Minimum role to change routes, DNS, IP assignment and flow rules
+  networkConfigRole Role @default(USER)
+
   // Admin notification settings
   nodeAddedNotification              Boolean? @default(false)
   nodeDeletedNotification            Boolean? @default(false)

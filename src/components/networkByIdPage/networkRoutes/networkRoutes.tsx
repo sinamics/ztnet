@@ -9,6 +9,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { NetworkRoutesTable } from "./networkRoutesTable";
 import Input from "~/components/elements/input";
+import { NetworkConfigFieldset } from "../networkConfigFieldset";
 
 const initialRouteInput = {
 	target: "",
@@ -113,78 +114,83 @@ export const NetworkRoutes = ({ central = false, organizationId }: IProp) => {
 						</div>
 					</div>
 				) : null}
-				<div className="grid grid-cols-1 pt-3">
-					<NetworkRoutesTable central={central} />
-				</div>
-				{showRouteInput ? (
-					<form className="relative my-5 space-y-4 max-w-2xl" onSubmit={submitHandler}>
-						<div className="flex flex-col sm:flex-row sm:items-start gap-4">
-							<div className="flex-1">
-								<label htmlFor="target-input" className="block text-sm font-medium mb-1">
-									{t("networkRoutes.destinationPlaceholder")}
-								</label>
-								<Input
-									id="target-input"
-									type="text"
-									name="target"
-									onChange={routeHandler}
-									placeholder="10.11.12.0/24"
-									className="w-full border rounded-md shadow-sm text-sm input-sm"
-								/>
-								<p className="mt-1 text-xs text-gray-500">
-									{t("networkRoutes.destinationInputDescription")}
-								</p>
-							</div>
+				<NetworkConfigFieldset central={central}>
+					<div className="grid grid-cols-1 pt-3">
+						<NetworkRoutesTable central={central} />
+					</div>
+					{showRouteInput ? (
+						<form className="relative my-5 space-y-4 max-w-2xl" onSubmit={submitHandler}>
+							<div className="flex flex-col sm:flex-row sm:items-start gap-4">
+								<div className="flex-1">
+									<label
+										htmlFor="target-input"
+										className="block text-sm font-medium mb-1"
+									>
+										{t("networkRoutes.destinationPlaceholder")}
+									</label>
+									<Input
+										id="target-input"
+										type="text"
+										name="target"
+										onChange={routeHandler}
+										placeholder="10.11.12.0/24"
+										className="w-full border rounded-md shadow-sm text-sm input-sm"
+									/>
+									<p className="mt-1 text-xs text-gray-500">
+										{t("networkRoutes.destinationInputDescription")}
+									</p>
+								</div>
 
-							<div className="flex-1">
-								<label htmlFor="via-input" className="block text-sm font-medium mb-1">
-									{t("networkRoutes.viaPlaceholder")}
-								</label>
-								<Input
-									id="via-input"
-									type="text"
-									name="via"
-									onChange={routeHandler}
-									placeholder="192.168.168.1"
-									className="w-full border rounded-md shadow-sm text-sm input-sm"
-								/>
-								<p className="mt-1 text-xs text-gray-500">
-									{t("networkRoutes.viaInputDescription")}
-								</p>
-							</div>
+								<div className="flex-1">
+									<label htmlFor="via-input" className="block text-sm font-medium mb-1">
+										{t("networkRoutes.viaPlaceholder")}
+									</label>
+									<Input
+										id="via-input"
+										type="text"
+										name="via"
+										onChange={routeHandler}
+										placeholder="192.168.168.1"
+										className="w-full border rounded-md shadow-sm text-sm input-sm"
+									/>
+									<p className="mt-1 text-xs text-gray-500">
+										{t("networkRoutes.viaInputDescription")}
+									</p>
+								</div>
 
-							<div className="flex gap-2 sm:ml-4 sm:mt-6">
-								<button type="submit" className="btn btn-primary btn-xs">
-									{b("add")}
-								</button>
-								<button
-									type="button"
-									onClick={() => setShowRouteInput(!showRouteInput)}
-									className="btn btn-xs"
-								>
-									{b("cancel")}
-								</button>
+								<div className="flex gap-2 sm:ml-4 sm:mt-6">
+									<button type="submit" className="btn btn-primary btn-xs">
+										{b("add")}
+									</button>
+									<button
+										type="button"
+										onClick={() => setShowRouteInput(!showRouteInput)}
+										className="btn btn-xs"
+									>
+										{b("cancel")}
+									</button>
+								</div>
 							</div>
-						</div>
-					</form>
-				) : null}
-				<div>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						strokeWidth="1.5"
-						stroke="currentColor"
-						className="mt-2 h-6 w-6 cursor-pointer  rounded-md border text-primary"
-						onClick={() => setShowRouteInput(!showRouteInput)}
-					>
-						<path
-							strokeLinecap="round"
-							strokeLinejoin="round"
-							d="M12 4.5v15m7.5-7.5h-15"
-						/>
-					</svg>
-				</div>
+						</form>
+					) : null}
+					<div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth="1.5"
+							stroke="currentColor"
+							className="mt-2 h-6 w-6 cursor-pointer  rounded-md border text-primary"
+							onClick={() => setShowRouteInput(!showRouteInput)}
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="M12 4.5v15m7.5-7.5h-15"
+							/>
+						</svg>
+					</div>
+				</NetworkConfigFieldset>
 			</div>
 		</div>
 	);

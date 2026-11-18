@@ -81,9 +81,18 @@ const setCallerRole = (role: string | null) => {
 		);
 };
 
+// The organization's minimum role for routes, DNS, IP assignment and flow rules;
+// null means the organization never saved the setting.
+const setNetworkConfigRole = (role: string | null) => {
+	prisma.organizationSettings.findUnique = jest
+		.fn()
+		.mockResolvedValue(role ? { networkConfigRole: role } : null);
+};
+
 describe("organization network access scoping", () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		setNetworkConfigRole(null);
 
 		(encryptionModule.decryptAndVerifyToken as jest.Mock).mockResolvedValue({
 			userId: CALLER_USER_ID,
@@ -187,9 +196,9 @@ describe("organization network access scoping", () => {
 
 			await apiOrgNetworkByIdHandler(buildUpdateRequest(), res);
 
-			expect(res.status).not.toHaveBeenCalledWith(200);
+			expect(res.status).toHaveBeenCalledWith(403);
 			expect(res.json).toHaveBeenCalledWith({
-				message: expect.stringContaining("required permission"),
+				error: expect.stringContaining("required permission"),
 			});
 			expect(ztController.network_update).not.toHaveBeenCalled();
 			expect(prisma.network.update).not.toHaveBeenCalled();
@@ -226,6 +235,12 @@ describe("organization network access scoping", () => {
 		describe.each([
 			["routes", { routes: [{ target: "10.1.0.0/24" }] }],
 			["dns", { dns: { domain: "orga.internal", servers: ["10.1.0.1"] } }],
+			[
+				"ipAssignmentPools",
+				{ ipAssignmentPools: [{ ipRangeStart: "10.1.0.1", ipRangeEnd: "10.1.0.254" }] },
+			],
+			["v4AssignMode", { v4AssignMode: { zt: true } }],
+			["v6AssignMode", { v6AssignMode: { rfc4193: true } }],
 		])("%s updates", (_field, body) => {
 			const buildFieldRequest = () =>
 				({
@@ -233,18 +248,8 @@ describe("organization network access scoping", () => {
 					body,
 				}) as unknown as NextApiRequest;
 
-			it.each(["USER", "MODERATOR"])("rejects POST from a %s member", async (role) => {
-				setCallerRole(role);
-				const res = buildResponse();
-
-				await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
-
-				expect(res.status).not.toHaveBeenCalledWith(200);
-				expect(ztController.network_update).not.toHaveBeenCalled();
-			});
-
-			it("accepts POST from an ADMIN member", async () => {
-				setCallerRole("ADMIN");
+			it("accepts POST from a USER member when the organization keeps the default", async () => {
+				setCallerRole("USER");
 				const res = buildResponse();
 
 				await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
@@ -254,6 +259,70 @@ describe("organization network access scoping", () => {
 					expect.objectContaining({ updateParams: body }),
 				);
 			});
+
+			it.each([
+				["ADMIN", "USER"],
+				["ADMIN", "MODERATOR"],
+				["MODERATOR", "USER"],
+			])(
+				"rejects POST with 403 when the organization requires %s and the caller is %s",
+				async (requiredRole, role) => {
+					setNetworkConfigRole(requiredRole);
+					setCallerRole(role);
+					const res = buildResponse();
+
+					await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
+
+					expect(res.status).toHaveBeenCalledWith(403);
+					expect(ztController.network_update).not.toHaveBeenCalled();
+				},
+			);
+
+			it.each([
+				["ADMIN", "ADMIN"],
+				["MODERATOR", "MODERATOR"],
+				["MODERATOR", "ADMIN"],
+			])(
+				"accepts POST when the organization requires %s and the caller is %s",
+				async (requiredRole, role) => {
+					setNetworkConfigRole(requiredRole);
+					setCallerRole(role);
+					const res = buildResponse();
+
+					await apiOrgNetworkByIdHandler(buildFieldRequest(), res);
+
+					expect(res.status).toHaveBeenCalledWith(200);
+					expect(ztController.network_update).toHaveBeenCalledWith(
+						expect.objectContaining({ updateParams: body }),
+					);
+				},
+			);
+		});
+
+		it("rejects a flow rule update with 403 below the organization's role", async () => {
+			setNetworkConfigRole("ADMIN");
+			setCallerRole("USER");
+			const res = buildResponse();
+
+			await apiOrgNetworkByIdHandler(
+				{
+					...buildRequest(ORG_A, NETWORK_IN_ORG_A, "POST"),
+					body: { flowRule: "accept;" },
+				} as unknown as NextApiRequest,
+				res,
+			);
+
+			expect(res.status).toHaveBeenCalledWith(403);
+		});
+
+		it("still lets USER change other fields when the organization requires ADMIN", async () => {
+			setNetworkConfigRole("ADMIN");
+			setCallerRole("USER");
+			const res = buildResponse();
+
+			await apiOrgNetworkByIdHandler(buildUpdateRequest(), res);
+
+			expect(res.status).toHaveBeenCalledWith(200);
 		});
 
 		it("still lets a READ_ONLY member read the network", async () => {

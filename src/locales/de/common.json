@@ -1159,6 +1159,10 @@
 					"description": "Wenn diese Funktion aktiviert ist, wird sie:",
 					"bulletPoints": "Einen einheitlichen Namen für jeden Knoten in allen Netzwerken der Organisation verwenden.\nDen Namen des Knotens in allen Netzwerken aktualisieren, wenn Sie ihn in einem Netzwerk umbenennen.\nBei der Registrierung eines Mitglieds überprüfen, ob dieses Mitglied in Ihrer Organisation vorhanden ist und den ersten gefundenen Eintrag verwenden.",
 					"note": "Hinweis: Dies gilt ausschließlich für Netzwerke innerhalb dieser bestimmten Organisation."
+				},
+				"networkConfigRole": {
+					"title": "Mindestrolle zum Ändern der Netzwerkkonfiguration",
+					"description": "Mitglieder benötigen mindestens diese Rolle, um verwaltete Routen, DNS, IP-Zuweisung und Flow-Regeln in den Netzwerken dieser Organisation zu ändern. Mitglieder mit einer niedrigeren Rolle können sie weiterhin ansehen."
 				}
 			},
 			"notifications": {

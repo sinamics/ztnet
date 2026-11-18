@@ -4,6 +4,7 @@ import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
+import { getNetworkConfigRole } from "~/utils/networkAccess";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
@@ -58,12 +59,21 @@ export const POST_network = SecuredOrganizationApiRoute(
 			// Validate the body against the NetworkUpdateSchema
 			const validatedBody = NetworkUpdateSchema.parse(body);
 
-			// Routes and DNS match the tRPC managedRoutes and dns procedures: admin only
-			if ("routes" in validatedBody || "dns" in validatedBody) {
+			// Same rule as the tRPC procedures: these fields need the organization's
+			// network configuration role, checked before anything is written
+			const networkConfigFields = [
+				"routes",
+				"dns",
+				"ipAssignmentPools",
+				"v4AssignMode",
+				"v6AssignMode",
+				"flowRule",
+			];
+			if (networkConfigFields.some((field) => field in validatedBody)) {
 				await checkUserOrganizationRole({
 					ctx,
 					organizationId: context.orgId,
-					minimumRequiredRole: Role.ADMIN,
+					minimumRequiredRole: await getNetworkConfigRole(ctx, context.orgId),
 				});
 			}
 

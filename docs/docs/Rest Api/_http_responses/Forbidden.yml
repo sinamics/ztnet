@@ -1,0 +1,11 @@
+Forbidden:
+  description: Forbidden, indicating that the API key is valid but its user does not have the organization role this request needs.
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          error:
+            type: string
+            description: A message detailing the missing permission.
+            example: "You don't have required permission to perform this action. Contact your organization administrator to request access."

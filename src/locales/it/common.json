@@ -1159,6 +1159,10 @@
 					"description": "Se attiva, questa funzione:",
 					"bulletPoints": "Mantiene lo stesso nome per ogni nodo in tutte le reti dell'organizzazione.\nAggiorna il nome del nodo in tutte le reti quando viene rinominato in una di esse.\nAlla registrazione di un membro, verifica se esiste nell'organizzazione e usa il primo nome trovato.",
 					"note": "Nota: si applica esclusivamente alle reti di questa organizzazione."
+				},
+				"networkConfigRole": {
+					"title": "Ruolo minimo per modificare la configurazione di rete",
+					"description": "I membri devono avere almeno questo ruolo per modificare le route gestite, il DNS, l'assegnazione IP e le regole di flusso nelle reti di questa organizzazione. I membri con un ruolo inferiore possono comunque visualizzarle."
 				}
 			},
 			"notifications": {

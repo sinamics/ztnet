@@ -128,7 +128,7 @@ paths:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
     post:
       summary: Update a specific organization network
-      description: Requires the USER role or higher in the organization. READ_ONLY members can only read the network.
+      description: Requires the USER role or higher in the organization. READ_ONLY members can only read the network. Changing `routes`, `dns`, `ipAssignmentPools`, `v4AssignMode`, `v6AssignMode` or `flowRule` requires the minimum role set in the organization's network settings (USER by default, can be raised to MODERATOR or ADMIN); a lower role gets 403.
       operationId: updateNetworkInfo
       parameters:
         - name: networkId
@@ -161,6 +161,8 @@ paths:
                 $ref: '../../_example/NetworkExample.yml#/NetworkExample'
         401:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        403:
+          $ref: '../../_http_responses/Forbidden.yml#/Forbidden'
         429:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:

@@ -1757,6 +1757,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				renameNodeGlobally: z.boolean().optional(),
+				networkConfigRole: z.enum([Role.USER, Role.MODERATOR, Role.ADMIN]).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1775,9 +1776,11 @@ export const organizationRouter = createTRPCRouter({
 				create: {
 					organizationId: input.organizationId,
 					renameNodeGlobally: input.renameNodeGlobally,
+					networkConfigRole: input.networkConfigRole,
 				},
 				update: {
 					renameNodeGlobally: input.renameNodeGlobally,
+					networkConfigRole: input.networkConfigRole,
 				},
 			});
 		}),
