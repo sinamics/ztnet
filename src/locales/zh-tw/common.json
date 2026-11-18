@@ -397,12 +397,13 @@
 		"deletedNetworkMembersTable": {
 			"buttons": {
 				"viewStashedMembers": "顯示隱藏的成員",
+				"viewPermanentlyDeletedMembers": "顯示永久刪除的成員",
 				"deleteAll": "刪除所有隱藏的 ({count})"
 			},
 			"bulkDelete": {
 				"modalTitle": "刪除所有隱藏的成員？",
-				"modalDescription": "這將永久刪除資料庫中的所有{count}個隱藏成員。它們將保留在ZeroTier控制器中，必須手動重新添加。",
-				"modalWarning": "警告：此操作無法撤銷。要在將來重新添加這些成員，您必須手動輸入他們的成員ID。"
+				"modalDescription": "這將永久刪除所有{count}個隱藏成員。它們會保留在ZeroTier控制器中，但會被隱藏，不會再以新的加入請求出現。",
+				"modalWarning": "您之後可以從永久刪除的成員清單中重新啟用它們。"
 			}
 		},
 		"inviteMemberByMail": {
@@ -841,6 +842,23 @@
 				"numberOfMembers": "成員數量：",
 				"pendingInvitations": "待處理的邀請：",
 				"activeWebhooks": "活躍的 Webhooks:"
+			},
+			"quotas": {
+				"title": "組織配額",
+				"description": "限制每個組織可以擁有的網路數量，以及其每個網路可以授權的成員數量。留空表示不限制。將限制調低到目前用量以下不會移除任何內容，只會阻止新增。",
+				"networksUsage": "網路",
+				"membersUsage": "成員最多的網路中的已授權成員",
+				"unlimited": "不限制",
+				"unlimitedPlaceholder": "留空表示不限制",
+				"editLabel": "限制",
+				"editDescription": "只有實例管理員可以變更這些限制。",
+				"currentLimits": "網路：{networks}。每個網路的已授權成員：{members}。",
+				"maxNetworksDescription": "最大網路數量",
+				"maxMembersDescription": "每個網路的最大已授權成員數",
+				"overLimitNotice": "目前用量已超過限制。不會移除任何內容，但在用量降到限制以下之前無法新增。",
+				"publicNetworksWarning": "這些網路是公開的，因此成員限制對它們不生效：{networks}。公開網路會授權每一台加入的裝置。請將它們切換為私人以套用限制。",
+				"publicCheckFailed": "控制器未能回應這些網路的資訊，因此無法確定它們是否為公開網路：{networks}。請重新整理頁面再檢查一次。",
+				"noOrganizations": "還沒有組織。"
 			}
 		},
 		"backupRestore": {
@@ -1112,6 +1130,15 @@
 		"networkSection": {
 			"title": "網路",
 			"noNetworksToShow": "沒有網路顯示。"
+		},
+		"quotas": {
+			"networks": "網路：",
+			"membersPerNetwork": "每個網路的成員限制：",
+			"networksUsage": "{used}/{limit} 個網路",
+			"networkLimitReached": "此組織已達到網路數量限制。請聯絡實例管理員提高限制。",
+			"membersUsage": "{used}/{limit} 個已授權成員",
+			"memberLimitReached": "此網路已達到組織的已授權成員限制。請聯絡實例管理員提高限制。",
+			"publicNetworkNotice": "此網路是公開的，因此組織的成員限制對它不生效。"
 		},
 		"leaveOrganization": {
 			"confirmationTitle": "離開組織？",

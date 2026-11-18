@@ -30,6 +30,10 @@ import { networkProvisioningFactory } from "../services/networkService";
 import { Address4, Address6 } from "ip-address";
 import { MailTemplateKey } from "~/utils/enums";
 import { syncNetworkRoutesOnce } from "../services/routesService";
+import {
+	assertOrgNetworkCanBePublic,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 
 const RouteSchema = z.object({
 	target: z
@@ -140,7 +144,9 @@ export const networkRouter = createTRPCRouter({
 					network: centralResponse?.network,
 					memberCount: centralMembers.length,
 					authorizedMemberCount: centralMembers.filter((m) => m.authorized).length,
+					memberLimit: null as number | null,
 					zombieMembers: [] as network_members[],
+					permanentlyDeletedMembers: [] as network_members[],
 				};
 			}
 
@@ -207,9 +213,18 @@ export const networkRouter = createTRPCRouter({
 				// Generate CIDR options for IP configuration
 				const { cidrOptions } = IPv4gen(null, []);
 
-				const [zombieMembers, memberCount, authorizedMemberCount] = await Promise.all([
+				const [
+					zombieMembers,
+					permanentlyDeletedMembers,
+					memberCount,
+					authorizedMemberCount,
+				] = await Promise.all([
 					ctx.prisma.network_members.findMany({
 						where: { nwid: input.nwid, deleted: true, permanentlyDeleted: false },
+					}),
+					// Permanently deleted members stay in the DB so they don't reappear as new nodes.
+					ctx.prisma.network_members.findMany({
+						where: { nwid: input.nwid, permanentlyDeleted: true },
 					}),
 					ctx.prisma.network_members.count({
 						where: { nwid: input.nwid, deleted: false },
@@ -309,7 +324,10 @@ export const networkRouter = createTRPCRouter({
 					},
 					memberCount,
 					authorizedMemberCount,
+					// Organization quota on authorized members, null when unlimited
+					memberLimit: networkFromDatabase.organization?.maxMembersPerNetwork ?? null,
 					zombieMembers,
+					permanentlyDeletedMembers,
 				};
 			} catch (error) {
 				console.error("Error in getNetworkById:", error);
@@ -1013,6 +1031,12 @@ export const networkRouter = createTRPCRouter({
 		.mutation(async ({ ctx, input }) => {
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+
+			// A public network authorizes every node that joins, so it cannot be
+			// combined with an organization cap on authorized members.
+			if (!input.central && input.updateParams.private === false) {
+				await enforceQuota(() => assertOrgNetworkCanBePublic(ctx.prisma, input.nwid));
+			}
 
 			// Log the action
 			await ctx.prisma.activityLog.create({

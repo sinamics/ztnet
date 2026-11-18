@@ -400,23 +400,26 @@ model OrganizationInvitation {
 }
 
 model Organization {
-  id                 String                   @id @default(cuid())
-  createdAt          DateTime                 @default(now())
-  ownerId            String
-  orgName            String
-  description        String?
-  users              User[]                   @relation("MemberRelation")
-  networks           network[]
-  settings           OrganizationSettings?
-  membershipRequests MembershipRequest[]      @relation("MembershipRequestsForOrganization")
-  isActive           Boolean                  @default(true)
-  require2FA         Boolean                  @default(false)
-  userRoles          UserOrganizationRole[]
-  messages           Messages[]
-  lastReadByUsers    LastReadMessage[]
-  ActivityLog        ActivityLog[]
-  webhooks           Webhook[]
-  invitations        OrganizationInvitation[]
+  id                   String                   @id @default(cuid())
+  createdAt            DateTime                 @default(now())
+  ownerId              String
+  orgName              String
+  description          String?
+  users                User[]                   @relation("MemberRelation")
+  networks             network[]
+  settings             OrganizationSettings?
+  membershipRequests   MembershipRequest[]      @relation("MembershipRequestsForOrganization")
+  isActive             Boolean                  @default(true)
+  require2FA           Boolean                  @default(false)
+  // Quotas set by the instance admin. NULL means unlimited.
+  maxNetworks          Int?
+  maxMembersPerNetwork Int?
+  userRoles            UserOrganizationRole[]
+  messages             Messages[]
+  lastReadByUsers      LastReadMessage[]
+  ActivityLog          ActivityLog[]
+  webhooks             Webhook[]
+  invitations          OrganizationInvitation[]
 }
 
 model Webhook {

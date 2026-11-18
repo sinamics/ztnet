@@ -30,7 +30,13 @@ import { checkUserOrganizationRole } from "~/utils/role";
 import { emailSchema } from "./_schema";
 import { normalizeEmail } from "~/utils/email";
 import { HookType, NetworkCreated, OrgMemberRemoved } from "~/types/webhooks";
-import { throwError } from "~/server/helpers/errorHandler";
+import { CustomLimitError, throwError } from "~/server/helpers/errorHandler";
+import {
+	assertNetworkFitsOrgMemberCap,
+	assertOrgNetworkQuota,
+	enforceQuota,
+	withOrgNetworkQuota,
+} from "../services/organizationQuotaService";
 import { sendWebhook } from "~/utils/webhook";
 import { assertPublicHttpsUrl } from "~/utils/ssrfGuard";
 import { nameGeneratorConfig } from "../services/networkService";
@@ -517,6 +523,10 @@ export const organizationRouter = createTRPCRouter({
 				});
 			}
 
+			// Refuse early when the organization network quota is used up, before
+			// anything is created on the controller.
+			await enforceQuota(() => assertOrgNetworkQuota(ctx.prisma, input.organizationId));
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -556,28 +566,46 @@ export const organizationRouter = createTRPCRouter({
 				false, // central
 			);
 
-			// Store the created network in the database
-			await ctx.prisma.organization.update({
-				where: { id: input.organizationId },
-				data: {
-					networks: {
-						create: {
-							name: input.networkName,
-							nwid: newNw.nwid,
-							description: input.orgName,
-							routes: {
-								create: ipAssignmentPools.routes.map((route) => ({
-									target: route.target,
-									via: route.via,
-								})),
+			// Store the created network in the database. The quota is checked again
+			// under a lock on the organization, so concurrent requests cannot both
+			// slip past the check above. If this request lost that race, the
+			// controller network it just created is removed again.
+			try {
+				await withOrgNetworkQuota(ctx.prisma, input.organizationId, (tx) =>
+					tx.organization.update({
+						where: { id: input.organizationId },
+						data: {
+							networks: {
+								create: {
+									name: input.networkName,
+									nwid: newNw.nwid,
+									description: input.orgName,
+									routes: {
+										create: ipAssignmentPools.routes.map((route) => ({
+											target: route.target,
+											via: route.via,
+										})),
+									},
+								},
 							},
 						},
-					},
-				},
-				include: {
-					networks: true, // Optionally include the updated list of networks in the response
-				},
-			});
+						select: { id: true },
+					}),
+				);
+			} catch (error) {
+				if (error instanceof CustomLimitError) {
+					await ztController
+						.network_delete(ctx, newNw.nwid)
+						.catch((cleanupError) =>
+							console.error(
+								`Failed to remove network ${newNw.nwid} after quota refusal:`,
+								cleanupError,
+							),
+						);
+					return throwError(error.message, "FORBIDDEN");
+				}
+				throw error;
+			}
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -1644,10 +1672,34 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.USER,
 			});
 
-			// Update the network with the new organization ID
-			await ctx.prisma.network.update({
+			// Only the owner of a personal network can transfer it.
+			const personalNetwork = await ctx.prisma.network.findFirst({
 				where: { nwid: input.nwid, authorId: ctx.session.user.id },
-				data: { organizationId: input.organizationId, authorId: null },
+				select: { nwid: true },
+			});
+			if (!personalNetwork) {
+				return throwError("Network not found!", "NOT_FOUND");
+			}
+
+			// A transfer adds a network to the organization, so it follows the same
+			// quotas as creating one there. The network quota is checked under a lock
+			// on the organization, in the same transaction as the move.
+			await enforceQuota(async () => {
+				await assertNetworkFitsOrgMemberCap(
+					ctx.prisma,
+					input.organizationId,
+					input.nwid,
+					async () => {
+						const controllerNetwork = await ztController.get_network(ctx, input.nwid);
+						return controllerNetwork?.private !== false;
+					},
+				);
+				await withOrgNetworkQuota(ctx.prisma, input.organizationId, (tx) =>
+					tx.network.update({
+						where: { nwid: input.nwid, authorId: ctx.session.user.id },
+						data: { organizationId: input.organizationId, authorId: null },
+					}),
+				);
 			});
 
 			// Log the action

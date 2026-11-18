@@ -47,7 +47,7 @@
     "jose": "^6.2.2",
     "jsonwebtoken": "9.0.3",
     "lru-cache": "10.0.1",
-    "next": "^16.4.4",
+    "next": "^16.4.6",
     "next-intl": "^4.14.9",
     "next-themes": "^0.4.6",
     "nodemailer": "^10.3.1",
@@ -107,5 +107,14 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.8.0"
+  },
+  "overrides": {
+    "glob": "^14.0.2",
+    "test-exclude": {
+      "minimatch": "^11.0.1"
+    },
+    "@prisma/config": {
+      "deepmerge-ts": "^8.0.2"
+    }
   }
 }

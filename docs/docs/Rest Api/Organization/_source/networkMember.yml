@@ -99,6 +99,8 @@ paths:
       description: |
         Modify a organization network member. This endpoint can also be used to pre-authorize a member that has not yet joined the network by providing their ZeroTier node ID as the `memberId`. If the member does not yet exist in the database, it will be created on the ZeroTier controller and returned in the response.
 
+        If the organization has a limit on authorized members per network, sending `authorized: true` for a member that is not yet authorized returns `403 Forbidden` once the network is full.
+
         A stashed (deleted) member cannot be modified. Attempting to do so returns `409 Conflict`. To restore a stashed member, send `deleted: false` (optionally together with the other fields you want to update in the same request).
       parameters:
         - in: path
@@ -180,6 +182,18 @@ paths:
                 $ref: '../../_example/NetworkMemberExample.yml#/NetworkArrayMemberExample'
         401:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
+        403:
+          description: |
+            `authorized: true` was sent, but the network already has as many authorized members as the organization quota allows. Updating a member that is already authorized is not affected. See [Organization Quotas](/usage/organization-quotas/).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: "This network has reached the organization limit of 5 authorized members. Contact the instance administrator to raise the limit."
         409:
           description: |
             The member is stashed (deleted) and cannot be modified. Send `deleted: false` to restore it before modifying.

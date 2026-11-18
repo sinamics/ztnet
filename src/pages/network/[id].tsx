@@ -5,6 +5,7 @@ import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networ
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
 import { useNetworkSocketStore } from "~/hooks/useNetworkMembersSocket";
 import { api } from "~/utils/api";
+import { networkByIdInput } from "~/utils/networkQueryInput";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
 import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
@@ -48,6 +49,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 
 	const [state, setState] = useState({
 		viewZombieTable: false,
+		viewPermanentlyDeletedTable: false,
 		isDebug: false,
 	});
 
@@ -67,10 +69,7 @@ const NetworkById = ({ orgIds }: IProps) => {
 		isPending: loadingNetwork,
 		error: errorNetwork,
 	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central: false,
-		},
+		networkByIdInput(query.id as string),
 		// The WebSocket is the primary update path (it invalidates this query on
 		// change); poll only as a fallback — slow while connected, faster when not.
 		{ enabled: !!query.id, refetchInterval: socketConnected ? 60000 : 20000 },
@@ -346,6 +345,32 @@ const NetworkById = ({ orgIds }: IProps) => {
 						</>
 					) : null}
 				</div>
+			</div>
+			<div className="mx-auto w-full px-4 py-4 text-sm sm:px-10 md:text-base">
+				{networkById?.permanentlyDeletedMembers?.length > 0 ? (
+					<>
+						<button
+							onClick={() =>
+								setState({
+									...state,
+									viewPermanentlyDeletedTable: !state.viewPermanentlyDeletedTable,
+								})
+							}
+							className="btn btn-wide"
+						>
+							{t(
+								"networkById.deletedNetworkMembersTable.buttons.viewPermanentlyDeletedMembers",
+							)}{" "}
+							({networkById?.permanentlyDeletedMembers?.length})
+						</button>
+
+						{state.viewPermanentlyDeletedTable ? (
+							<div className="membersTable-wrapper text-center">
+								<DeletedNetworkMembersTable nwid={network.nwid} permanentlyDeleted />
+							</div>
+						) : null}
+					</>
+				) : null}
 			</div>
 			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkFlowRules />

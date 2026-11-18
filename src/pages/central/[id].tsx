@@ -4,6 +4,7 @@ import { LayoutAuthenticated } from "~/components/layouts/layout";
 import { NetworkRoutes } from "~/components/networkByIdPage/networkRoutes/networkRoutes";
 import { NetworkMembersTable } from "~/components/networkByIdPage/table/members/NetworkMembersTable";
 import { api } from "~/utils/api";
+import { networkByIdInput } from "~/utils/networkQueryInput";
 import { NetworkIpAssignment } from "~/components/networkByIdPage/networkIpAssignments";
 import { NetworkPrivatePublic } from "~/components/networkByIdPage/networkPrivatePublic";
 import { AddMemberById } from "~/components/networkByIdPage/addMemberById";
@@ -49,13 +50,10 @@ const CentralNetworkById = ({ orgIds }) => {
 		data: networkById,
 		isPending: loadingNetwork,
 		error: errorNetwork,
-	} = api.network.getNetworkById.useQuery(
-		{
-			nwid: query.id as string,
-			central: true,
-		},
-		{ enabled: !!query.id, refetchInterval: 15000 },
-	);
+	} = api.network.getNetworkById.useQuery(networkByIdInput(query.id as string, true), {
+		enabled: !!query.id,
+		refetchInterval: 15000,
+	});
 
 	useOrganizationWebsocket(orgIds);
 
