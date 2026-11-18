@@ -11,13 +11,19 @@ import {
 	MEMBER_STATUS_LOG_IDLE_POLL_SECONDS,
 	type KnownStatus,
 	MEMBER_STATUS_EVENT_COUNT_CAP,
+	ADDRESS_SEARCH_LIMIT,
+	PEER_REQUEST_TIMEOUT_MS,
 	PRUNE_BATCH_SIZE,
+	applyHeldSample,
 	diffMemberStatuses,
 	getTrackedAddresses,
 	isSuspectSample,
+	markTrackedMemberships,
 	peerConnectionStatus,
 	pruneMemberStatusEvents,
 	queryMemberStatusEvents,
+	resetMemberStatusBaseline,
+	runExclusive,
 	runMemberStatusSampler,
 	sampleMemberStatuses,
 	samplerState,
@@ -95,9 +101,12 @@ const run = (
 
 beforeEach(() => {
 	samplerState().hasBaseline = false;
-	samplerState().suspectSince = null;
-	peersMock.mockReset().mockResolvedValue([]);
+	samplerState().held = null;
+	samplerState().queue = undefined;
+	// The controller always has its root servers as peers.
+	peersMock.mockReset().mockResolvedValue([directPeer("planet0001")]);
 	db.network_members.findMany = jest.fn().mockResolvedValue([]);
+	db.network_members.updateMany = jest.fn().mockResolvedValue({ count: 0 });
 	db.memberStatusState.findMany = jest.fn().mockResolvedValue([]);
 	db.memberStatusState.deleteMany = jest.fn().mockResolvedValue({ count: 0 });
 	db.memberStatusState.createMany = jest.fn().mockResolvedValue({ count: 0 });
@@ -161,11 +170,60 @@ describe("diffMemberStatuses", () => {
 		const diff = diffMemberStatuses(
 			["aaaaaaaaaa", "bbbbbbbbbb"],
 			peerMap(directPeer("aaaaaaaaaa")),
-			known({ aaaaaaaaaa: "DIRECT", bbbbbbbbbb: "OFFLINE" }),
+			known({ aaaaaaaaaa: "DIRECT", bbbbbbbbbb: "OFFLINE" }, "203.0.113.7/9993"),
 			off,
 		);
 
 		expect(diff).toEqual({ transitions: [], states: [], stale: [] });
+	});
+
+	test("a node that stays online on a new address has the address stored", () => {
+		const start = known({ aaaaaaaaaa: "DIRECT" }, "198.51.100.4/9993");
+
+		const moved = diffMemberStatuses(
+			["aaaaaaaaaa"],
+			peerMap(directPeer("aaaaaaaaaa", "203.0.113.7/9993")),
+			start,
+			off,
+		);
+		expect(moved.transitions).toEqual([]);
+		expect(moved.states).toEqual([
+			{
+				address: "aaaaaaaaaa",
+				status: "DIRECT",
+				physicalAddress: "203.0.113.7/9993",
+				pendingStatus: null,
+				pendingSince: null,
+			},
+		]);
+
+		// so the event for it going offline later carries the last address
+		const { events } = run(
+			[
+				{ at: T0, peers: [directPeer("aaaaaaaaaa", "203.0.113.7/9993")] },
+				{ at: T1, peers: [] },
+				{ at: T2, peers: [] },
+			],
+			["aaaaaaaaaa"],
+			start,
+		);
+		expect(events).toEqual([
+			expect.objectContaining({
+				toStatus: "OFFLINE",
+				physicalAddress: "203.0.113.7/9993",
+			}),
+		]);
+	});
+
+	test("falling back to a relay does not forget the last address", () => {
+		const diff = diffMemberStatuses(
+			["aaaaaaaaaa"],
+			peerMap(relayPeer("aaaaaaaaaa")),
+			known({ aaaaaaaaaa: "DIRECT" }, "198.51.100.4/9993"),
+			off,
+		);
+
+		expect(diff.states).toEqual([]);
 	});
 
 	test("a change seen once is only remembered, not logged", () => {
@@ -275,7 +333,7 @@ describe("diffMemberStatuses", () => {
 					{ at: T2, peers: [directPeer("aaaaaaaaaa")] },
 				],
 				["aaaaaaaaaa"],
-				known({ aaaaaaaaaa: "DIRECT" }),
+				known({ aaaaaaaaaa: "DIRECT" }, "203.0.113.7/9993"),
 			);
 
 			expect(events).toEqual([]);
@@ -385,31 +443,6 @@ describe("diffMemberStatuses", () => {
 		});
 	});
 
-	test("a confirmed mass drop is dated to the sample that first showed it", () => {
-		const diff = diffMemberStatuses(
-			["aaaaaaaaaa", "bbbbbbbbbb"],
-			peerMap(directPeer("bbbbbbbbbb")),
-			known({ aaaaaaaaaa: "DIRECT", bbbbbbbbbb: "OFFLINE" }),
-			{ now: T1, logConnectionChanges: false, offlineSeenSince: T0 },
-		);
-
-		expect(diff.transitions).toEqual([
-			expect.objectContaining({
-				address: "aaaaaaaaaa",
-				toStatus: "OFFLINE",
-				createdAt: T0,
-			}),
-		]);
-		// it only vouches for nodes going offline, one coming online still waits
-		expect(diff.states).toContainEqual(
-			expect.objectContaining({
-				address: "bbbbbbbbbb",
-				status: "OFFLINE",
-				pendingStatus: "DIRECT",
-			}),
-		);
-	});
-
 	test("a node that is a member of several networks is only looked at once", () => {
 		const diff = diffMemberStatuses(
 			["aaaaaaaaaa", "aaaaaaaaaa"],
@@ -425,7 +458,7 @@ describe("diffMemberStatuses", () => {
 		const diff = diffMemberStatuses(
 			["aaaaaaaaaa"],
 			peerMap(directPeer("aaaaaaaaaa"), directPeer("planet0001")),
-			known({ aaaaaaaaaa: "DIRECT" }),
+			known({ aaaaaaaaaa: "DIRECT" }, "203.0.113.7/9993"),
 			off,
 		);
 
@@ -442,6 +475,122 @@ describe("diffMemberStatuses", () => {
 
 		expect(diff.stale).toEqual(["gone000000"]);
 		expect(diff.transitions).toEqual([]);
+	});
+});
+
+describe("applyHeldSample", () => {
+	const held = (statuses: Record<string, KnownStatus["status"]>) => ({
+		since: T0,
+		statuses: new Map(Object.entries(statuses)),
+	});
+
+	test("a status it showed for the first time waits from the held sample", () => {
+		const adjusted = applyHeldSample(
+			known({ aaaaaaaaaa: "DIRECT" }),
+			held({ aaaaaaaaaa: "OFFLINE" }),
+			false,
+		);
+
+		expect(adjusted.get("aaaaaaaaaa")).toMatchObject({
+			status: "DIRECT",
+			pendingStatus: "OFFLINE",
+			pendingSince: T0,
+		});
+	});
+
+	test("the next sample confirms only the nodes that were gone in both", () => {
+		// held: a and b gone. next: a still gone, b back, c gone for the first time
+		const start = known({
+			aaaaaaaaaa: "DIRECT",
+			bbbbbbbbbb: "DIRECT",
+			cccccccccc: "DIRECT",
+		});
+		const adjusted = applyHeldSample(
+			start,
+			held({ aaaaaaaaaa: "OFFLINE", bbbbbbbbbb: "OFFLINE", cccccccccc: "DIRECT" }),
+			false,
+		);
+
+		const diff = diffMemberStatuses(
+			["aaaaaaaaaa", "bbbbbbbbbb", "cccccccccc"],
+			peerMap(directPeer("bbbbbbbbbb")),
+			adjusted,
+			{ now: T1, logConnectionChanges: false },
+		);
+
+		expect(diff.transitions).toEqual([
+			expect.objectContaining({
+				address: "aaaaaaaaaa",
+				toStatus: "OFFLINE",
+				createdAt: T0,
+			}),
+		]);
+		// c was seen gone once, it waits like any other first sighting
+		expect(diff.states).toContainEqual(
+			expect.objectContaining({
+				address: "cccccccccc",
+				status: "DIRECT",
+				pendingStatus: "OFFLINE",
+				pendingSince: T1,
+			}),
+		);
+	});
+
+	test("a wait the held sample contradicted is dropped", () => {
+		// stored: offline, seen online once. held sample: offline again.
+		const start = new Map<string, KnownStatus>([
+			[
+				"aaaaaaaaaa",
+				{
+					status: "OFFLINE",
+					physicalAddress: null,
+					pendingStatus: "DIRECT",
+					pendingSince: new Date(T0.getTime() - 10000),
+				},
+			],
+		]);
+		const adjusted = applyHeldSample(start, held({ aaaaaaaaaa: "OFFLINE" }), false);
+		expect(adjusted.get("aaaaaaaaaa")).toMatchObject({ pendingStatus: null });
+
+		// online in the sample after it is a first sighting again, not an event
+		const diff = diffMemberStatuses(
+			["aaaaaaaaaa"],
+			peerMap(directPeer("aaaaaaaaaa")),
+			adjusted,
+			{ now: T1, logConnectionChanges: false },
+		);
+		expect(diff.transitions).toEqual([]);
+		expect(diff.states).toEqual([
+			expect.objectContaining({ pendingStatus: "DIRECT", pendingSince: T1 }),
+		]);
+	});
+
+	test("a wait the held sample agreed with keeps its first sighting", () => {
+		const first = new Date(T0.getTime() - 10000);
+		const start = new Map<string, KnownStatus>([
+			[
+				"aaaaaaaaaa",
+				{
+					status: "DIRECT",
+					physicalAddress: null,
+					pendingStatus: "OFFLINE",
+					pendingSince: first,
+				},
+			],
+		]);
+
+		const adjusted = applyHeldSample(start, held({ aaaaaaaaaa: "OFFLINE" }), false);
+
+		expect(adjusted.get("aaaaaaaaaa")).toMatchObject({
+			pendingStatus: "OFFLINE",
+			pendingSince: first,
+		});
+	});
+
+	test("leaves the stored statuses it was given untouched", () => {
+		const start = known({ aaaaaaaaaa: "DIRECT" });
+		applyHeldSample(start, held({ aaaaaaaaaa: "OFFLINE" }), false);
+		expect(start.get("aaaaaaaaaa")).toEqual({ status: "DIRECT", physicalAddress: null });
 	});
 });
 
@@ -509,7 +658,7 @@ describe("sampleMemberStatuses", () => {
 	const stored = (over: Record<string, unknown> = {}) => ({
 		address: "aaaaaaaaaa",
 		status: "DIRECT",
-		physicalAddress: "198.51.100.4/9993",
+		physicalAddress: "203.0.113.7/9993",
 		pendingStatus: null,
 		pendingSince: null,
 		...over,
@@ -522,8 +671,18 @@ describe("sampleMemberStatuses", () => {
 
 		const result = await sampleMemberStatuses();
 
-		expect(result).toEqual({ tracked: 1, events: 0, stateWrites: 0, suspect: false });
+		expect(result).toEqual({
+			tracked: 1,
+			events: 0,
+			stateWrites: 0,
+			suspect: false,
+			deferred: false,
+		});
 		expect(peersMock).toHaveBeenCalledTimes(1);
+		// bounded, so a controller that stops answering cannot stall the sampler
+		expect(peersMock).toHaveBeenCalledWith(expect.anything(), {
+			timeout: PEER_REQUEST_TIMEOUT_MS,
+		});
 		expect(db.$transaction).not.toHaveBeenCalled();
 	});
 
@@ -558,7 +717,7 @@ describe("sampleMemberStatuses", () => {
 					address: "aaaaaaaaaa",
 					fromStatus: "DIRECT",
 					toStatus: "OFFLINE",
-					physicalAddress: "198.51.100.4/9993",
+					physicalAddress: "203.0.113.7/9993",
 					createdAt: T0,
 				},
 			],
@@ -586,6 +745,17 @@ describe("sampleMemberStatuses", () => {
 				data: [stored({ physicalAddress: "203.0.113.7/9993" })],
 			}),
 		);
+	});
+
+	test("no baseline and no peers at all: nothing is stored yet", async () => {
+		db.network_members.findMany.mockResolvedValue(members);
+		peersMock.mockResolvedValue([]);
+
+		const result = await sampleMemberStatuses({ now: T0 });
+
+		expect(result).toMatchObject({ deferred: true, events: 0, stateWrites: 0 });
+		expect(db.$transaction).not.toHaveBeenCalled();
+		expect(samplerState().held).toBeNull();
 	});
 
 	test("an unreachable controller is an error, not everybody going offline", async () => {
@@ -616,9 +786,16 @@ describe("sampleMemberStatuses", () => {
 
 			const result = await sampleMemberStatuses({ now: T0 });
 
-			expect(result).toEqual({ tracked: 10, events: 0, stateWrites: 0, suspect: true });
+			expect(result).toEqual({
+				tracked: 10,
+				events: 0,
+				stateWrites: 0,
+				suspect: true,
+				deferred: false,
+			});
 			expect(db.$transaction).not.toHaveBeenCalled();
-			expect(samplerState().suspectSince).toEqual(T0);
+			expect(samplerState().held?.since).toEqual(T0);
+			expect(samplerState().held?.statuses.size).toBe(10);
 		});
 
 		test("the controller coming back clears it without a single write", async () => {
@@ -630,7 +807,7 @@ describe("sampleMemberStatuses", () => {
 
 			expect(result).toMatchObject({ events: 0, stateWrites: 0, suspect: false });
 			expect(db.$transaction).not.toHaveBeenCalled();
-			expect(samplerState().suspectSince).toBeNull();
+			expect(samplerState().held).toBeNull();
 		});
 
 		test("the same drop in the next sample is real and dated to the first", async () => {
@@ -643,7 +820,57 @@ describe("sampleMemberStatuses", () => {
 			const { data } = db.memberStatusEvent.createMany.mock.calls[0][0];
 			expect(data).toHaveLength(10);
 			expect(data[0]).toMatchObject({ toStatus: "OFFLINE", createdAt: T0 });
-			expect(samplerState().suspectSince).toBeNull();
+			expect(samplerState().held).toBeNull();
+		});
+
+		test("a second, different mass drop does not confirm nodes seen gone once", async () => {
+			const [first, second] = [many.slice(0, 9), many.slice(1)];
+			// sample 1: every node but the last is gone. sample 2: every node but
+			// the first is gone.
+			peersMock.mockResolvedValue([directPeer(many[9])]);
+			await sampleMemberStatuses({ now: T0 });
+			peersMock.mockResolvedValue([directPeer(many[0])]);
+
+			const result = await sampleMemberStatuses({ now: T1 });
+
+			const gone = first.filter((n) => second.includes(n));
+			expect(result.events).toBe(gone.length);
+			const { data } = db.memberStatusEvent.createMany.mock.calls[0][0];
+			expect(data.map((e: { address: string }) => e.address).sort()).toEqual(gone);
+			// the last node dropped for the first time now and only waits
+			expect(db.memberStatusState.createMany.mock.calls[0][0].data).toContainEqual(
+				stored({ address: many[9], pendingStatus: "OFFLINE", pendingSince: T1 }),
+			);
+		});
+
+		test("a stored wait the held sample contradicted is written back", async () => {
+			// node 0 was offline and had been seen online once. The held sample
+			// shows it offline again, the next one shows everybody online.
+			db.memberStatusState.findMany.mockResolvedValue([
+				stored({
+					address: many[0],
+					status: "OFFLINE",
+					pendingStatus: "DIRECT",
+					pendingSince: new Date(T0.getTime() - 10000),
+				}),
+				...many.slice(1).map((address) => stored({ address })),
+			]);
+			peersMock.mockResolvedValue([]);
+			await sampleMemberStatuses({ now: T0 });
+			peersMock.mockResolvedValue(many.map((n) => directPeer(n)));
+
+			const result = await sampleMemberStatuses({ now: T1 });
+
+			// no event, and its wait starts over at this sample
+			expect(result).toMatchObject({ events: 0, stateWrites: 1 });
+			expect(db.memberStatusState.createMany.mock.calls[0][0].data).toEqual([
+				stored({
+					address: many[0],
+					status: "OFFLINE",
+					pendingStatus: "DIRECT",
+					pendingSince: T1,
+				}),
+			]);
 		});
 	});
 
@@ -676,6 +903,39 @@ describe("sampleMemberStatuses", () => {
 			),
 		).toEqual([2000, 2000, 500]);
 		expect(db.$transaction).toHaveBeenCalledTimes(1);
+	});
+});
+
+describe("markTrackedMemberships", () => {
+	test("a stashed row loses its start, an active row without one gets now", async () => {
+		await markTrackedMemberships(T1);
+
+		expect(db.network_members.updateMany.mock.calls).toEqual([
+			[
+				{
+					where: { deleted: true, statusLogSince: { not: null } },
+					data: { statusLogSince: null },
+				},
+			],
+			[{ where: { deleted: false, statusLogSince: null }, data: { statusLogSince: T1 } }],
+		]);
+	});
+
+	test("runs with every sample, before the members are read", async () => {
+		const order: string[] = [];
+		db.network_members.updateMany.mockImplementation(async () => {
+			order.push("mark");
+			return { count: 0 };
+		});
+		db.network_members.findMany.mockImplementation(async () => {
+			order.push("read");
+			return [];
+		});
+		peersMock.mockResolvedValue([directPeer("planet0001")]);
+
+		await sampleMemberStatuses({ now: T0 });
+
+		expect(order).toEqual(["mark", "mark", "read"]);
 	});
 });
 
@@ -724,6 +984,62 @@ describe("runMemberStatusSampler", () => {
 		await runMemberStatusSampler();
 		expect(db.memberStatusState.deleteMany).toHaveBeenCalledWith({});
 		expect(peersMock).toHaveBeenCalledTimes(1);
+	});
+
+	test("a controller without any peers does not count as a baseline", async () => {
+		db.network_members.findMany.mockResolvedValue([
+			{ id: "aaaaaaaaaa", address: "aaaaaaaaaa", nwid: "cccccccccc000001" },
+		]);
+		peersMock.mockResolvedValue([]);
+
+		await runMemberStatusSampler();
+		expect(samplerState().hasBaseline).toBe(false);
+		expect(db.$transaction).not.toHaveBeenCalled();
+
+		peersMock.mockResolvedValue([directPeer("aaaaaaaaaa")]);
+		await runMemberStatusSampler();
+		expect(samplerState().hasBaseline).toBe(true);
+		expect(db.memberStatusEvent.createMany).not.toHaveBeenCalled();
+	});
+
+	test("a settings reset waits for the sample that is running", async () => {
+		const order: string[] = [];
+		let answer: (peers: Peers[]) => void = () => {};
+		peersMock.mockReturnValue(
+			new Promise<Peers[]>((resolve) => {
+				answer = resolve;
+			}),
+		);
+		db.network_members.findMany.mockResolvedValue([
+			{ id: "aaaaaaaaaa", address: "aaaaaaaaaa", nwid: "cccccccccc000001" },
+		]);
+		db.$transaction.mockImplementation(async () => {
+			order.push("sample written");
+			return [];
+		});
+
+		const sample = runMemberStatusSampler();
+		const reset = runExclusive(async () => {
+			order.push("reset");
+			await resetMemberStatusBaseline();
+		});
+		// the reset was asked for while the sample is still waiting for peers
+		await Promise.resolve();
+		expect(order).toEqual([]);
+
+		answer([directPeer("aaaaaaaaaa")]);
+		await Promise.all([sample, reset]);
+
+		expect(order).toEqual(["sample written", "reset"]);
+	});
+
+	test("a failed task does not block the ones queued after it", async () => {
+		await expect(
+			runExclusive(async () => {
+				throw new Error("boom");
+			}),
+		).rejects.toThrow("boom");
+		await expect(runExclusive(async () => "next")).resolves.toBe("next");
 	});
 
 	test("a failed sample leaves the baseline flag alone", async () => {
@@ -849,7 +1165,7 @@ describe("queryMemberStatusEvents", () => {
 			expect(query.sql).toContain('JOIN "network_members" m');
 			// only active members, and only from the moment they joined
 			expect(query.sql).toContain('m."deleted" IS NOT TRUE');
-			expect(query.sql).toContain('e."createdAt" >= m."creationTime"');
+			expect(query.sql).toContain('e."createdAt" >= m."statusLogSince"');
 			expect(query.values).toContain("nw1");
 		}
 		expect(events.sql).toContain('ORDER BY e."createdAt" DESC, e."id" DESC');
@@ -919,46 +1235,54 @@ describe("queryMemberStatusEvents", () => {
 		expect(events.sql).not.toContain("aaaaaaaaaa");
 	});
 
-	test("an address search is resolved to addresses first, no LIKE on the events", async () => {
-		db.network_members.findMany.mockResolvedValue([
-			{ id: "aaaaaaaaaa", address: "aaaaaaaaaa" },
-			{ id: "aaaabbbbbb", address: "" },
-		]);
+	test("an address search is resolved to addresses first, no scan of the events", async () => {
+		db.$queryRaw
+			.mockResolvedValueOnce([{ address: "aaaaaaaaaa" }, { address: "aaaabbbbbb" }])
+			.mockResolvedValueOnce([])
+			.mockResolvedValueOnce([{ total: 0 }]);
 
 		await queryMemberStatusEvents({ addressSearch: " AAAA " });
 
-		expect(db.network_members.findMany).toHaveBeenCalledWith(
-			expect.objectContaining({
-				where: {
-					OR: [
-						{ address: { contains: "aaaa", mode: "insensitive" } },
-						{ id: { contains: "aaaa", mode: "insensitive" } },
-					],
-				},
-			}),
-		);
-		const { events } = lastQuery();
+		const [lookup, events] = db.$queryRaw.mock.calls.map(([sql]) => sql);
+		// the addresses come from the events, so a node that has left every
+		// network is found as well
+		expect(lookup.sql).toContain("WITH RECURSIVE");
+		expect(lookup.sql).toContain('FROM "MemberStatusEvent"');
+		expect(lookup.values).toEqual(["aaaa", ADDRESS_SEARCH_LIMIT + 1]);
+		expect(db.network_members.findMany).not.toHaveBeenCalled();
 		expect(events.sql).not.toContain("JOIN");
-		expect(events.sql).not.toContain("LIKE");
+		expect(events.sql).not.toContain("position(");
 		expect(events.sql).toContain('e."address" IN (');
 		expect(events.values).toEqual(expect.arrayContaining(["aaaaaaaaaa", "aaaabbbbbb"]));
 	});
 
-	test("a full address also finds a node that left every network", async () => {
-		db.network_members.findMany.mockResolvedValue([]);
+	test("too many matching addresses are searched on the events, not cut off", async () => {
+		db.$queryRaw
+			.mockResolvedValueOnce(
+				Array.from({ length: ADDRESS_SEARCH_LIMIT + 1 }, (_, i) => ({
+					address: `a${String(i).padStart(9, "0")}`,
+				})),
+			)
+			.mockResolvedValueOnce([])
+			.mockResolvedValueOnce([{ total: 0 }]);
 
-		await queryMemberStatusEvents({ addressSearch: "0123456789" });
+		await queryMemberStatusEvents({ addressSearch: "a", nwid: "nw1" });
 
-		expect(lastQuery().events.values).toContain("0123456789");
+		const [, events, count] = db.$queryRaw.mock.calls.map(([sql]) => sql);
+		for (const query of [events, count]) {
+			expect(query.sql).toContain('position(? in lower(e."address")) > 0');
+			expect(query.sql).not.toContain('e."address" IN (');
+			expect(query.values).toContain("a");
+		}
 	});
 
 	test("a search that matches no node returns nothing without reading events", async () => {
-		db.network_members.findMany.mockResolvedValue([]);
+		db.$queryRaw.mockResolvedValueOnce([]);
 
 		const result = await queryMemberStatusEvents({ addressSearch: "zz" });
 
 		expect(result).toMatchObject({ events: [], total: 0, nextCursor: null });
-		expect(db.$queryRaw).not.toHaveBeenCalled();
+		expect(db.$queryRaw).toHaveBeenCalledTimes(1);
 	});
 
 	test("caps the page size", async () => {

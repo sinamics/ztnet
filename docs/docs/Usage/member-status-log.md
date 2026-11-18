@@ -37,7 +37,7 @@ Turning the log off stops sampling and hides the log for everyone. Events that w
 - **Member options**: the options dialog of a member shows the log for that one member.
 - **Admin** -> **Settings** -> **Member status log**: admins get a view across all networks, with filters for network, node address and status.
 
-A user only sees events for members of a network they have access to, and only from the time the member joined that network.
+A user only sees events for members of a network they have access to, and only from the time the member was added to that network. A member that is stashed and restored later starts over: what the device did while it was stashed is not shown in that network.
 
 ## How it works
 
@@ -45,7 +45,7 @@ ZeroTier does not keep any connection history. The controller can only tell whic
 
 A change becomes a log entry once **two samples in a row** show it. The entry is dated to the first of the two. A member that looks different in one sample and is back to normal in the next leaves no trace, which keeps a flapping connection from filling the log.
 
-A sample in which the peer list is empty, or in which nearly every member that was online is suddenly gone, is treated as a controller hiccup: nothing is stored for it. If the next sample shows the same, the members are logged as offline from the time of the first one.
+A sample in which the peer list is empty, or in which nearly every member that was online is suddenly gone, is treated as a controller hiccup: nothing is stored for it. The members that are still gone in the next sample are logged as offline from the time of the first one.
 
 Every status is one of:
 
@@ -67,6 +67,7 @@ The log is useful for answering "roughly when did this device drop off", not for
 - **Offline is reported late.** The controller keeps a node in its peer list for a while after the node has gone silent. In a test with ZeroTier 1.14.2 a member that was shut down was still reported as Direct for about 4 minutes, then as Relay, and as Offline about 8 and a half minutes after it was stopped. The timestamp of an Offline event is therefore later than the moment the device actually disappeared.
 - **It is the controller's view.** The status describes the link between the controller and the member. Two members can still reach each other while one of them shows as Relay or Offline to the controller, and the other way around.
 - **Status is per node, not per network.** A device that is a member of several networks has one status. The same event shows up in the log of every network the device is a member of.
+- **A member is a node ID, not proof that the device joined.** Like the status and physical address in the member table, the log follows the node, whichever network it is active in. Somebody who adds a node ID to their network sees that node's status from then on, also when the device never joined that network.
 - **Relay is a best guess.** The controller does not say outright that a connection is relayed, ZTNET derives it from the peer data. Direct and Relay changes can be noisy, which is why they are hidden by default.
 - **Local controller only.** Networks on ZeroTier Central have no peer data and are not covered.
 - **No events across a gap.** After a restart of ZTNET, or after the log was disabled, the first sample only records the current status. A change that happened while nothing was sampling is not turned into an event.

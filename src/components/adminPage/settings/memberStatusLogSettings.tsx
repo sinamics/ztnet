@@ -65,17 +65,18 @@ const InstanceStatusLogTable = ({
 	const paging = useEventPaging();
 
 	const { data: networks } = api.admin.getMemberStatusLogNetworks.useQuery();
-	const { data, isPending, refetch } = api.admin.getMemberStatusLog.useQuery(
-		{
-			nwid: nwid || undefined,
-			addressSearch: addressSearch || undefined,
-			status: status || undefined,
-			includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
-			cursor: paging.cursor,
-			pageSize: PAGE_SIZE,
-		},
-		{ refetchInterval: 30000, placeholderData: (previous) => previous },
-	);
+	const { data, isPending, isPlaceholderData, refetch } =
+		api.admin.getMemberStatusLog.useQuery(
+			{
+				nwid: nwid || undefined,
+				addressSearch: addressSearch || undefined,
+				status: status || undefined,
+				includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
+				cursor: paging.cursor,
+				pageSize: PAGE_SIZE,
+			},
+			{ refetchInterval: 30000, placeholderData: (previous) => previous },
+		);
 	const { mutate: clearLog } = api.admin.clearMemberStatusLog.useMutation({
 		onSuccess: ({ deleted }) => {
 			toast.success(a("cleared", { count: deleted }));
@@ -105,7 +106,7 @@ const InstanceStatusLogTable = ({
 				<button
 					type="button"
 					className="btn btn-error btn-outline btn-sm"
-					disabled={!data?.total && !nwid && !addressSearch && !status}
+					disabled={!data?.hasEvents}
 					onClick={() =>
 						callModal({
 							title: a("clear.title"),
@@ -163,6 +164,7 @@ const InstanceStatusLogTable = ({
 				onNextPage={() => paging.next(data?.nextCursor)}
 				onPreviousPage={paging.previous}
 				isLoading={isPending}
+				isChangingPage={isPlaceholderData}
 				filtered={!!nwid || !!addressSearch || !!status}
 				renderMember={(event) => {
 					const memberOf = data?.members?.[event.address] ?? [];

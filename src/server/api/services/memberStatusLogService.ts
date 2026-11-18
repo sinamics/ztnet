@@ -81,11 +81,13 @@ export interface DiffOptions {
 	logConnectionChanges: boolean;
 	/** Off: a change counts the first time it is seen. Only for measuring. */
 	debounce?: boolean;
-	/**
-	 * Set when the previous sample already showed the same mass drop: nodes
-	 * going offline are confirmed now, dated to that previous sample.
-	 */
-	offlineSeenSince?: Date;
+}
+
+/** A sample that looked like an outage and was kept in memory, not acted on. */
+export interface HeldSample {
+	since: Date;
+	/** What that sample showed for every tracked node. */
+	statuses: Map<string, MemberConnectionStatus>;
 }
 
 const clamp = (value: number, { min, max }: { min: number; max: number }) =>
@@ -181,7 +183,7 @@ export const diffMemberStatuses = (
 	previous: Map<string, KnownStatus>,
 	options: DiffOptions,
 ): StatusDiff => {
-	const { now, logConnectionChanges, debounce = true, offlineSeenSince } = options;
+	const { now, logConnectionChanges, debounce = true } = options;
 	const diff: StatusDiff = { transitions: [], states: [], stale: [] };
 	const seen = new Set<string>();
 
@@ -205,12 +207,16 @@ export const diffMemberStatuses = (
 		}
 
 		if (sameStatus(known.status, status, logConnectionChanges)) {
-			// Back to where it was: whatever was waiting was a blip.
-			if (known.pendingStatus) {
+			// Back to where it was: whatever was waiting was a blip. A node that
+			// stayed online but moved to another address is remembered too, so
+			// the event for it going offline later carries the last address.
+			const current = peerPhysicalAddress(peer);
+			const moved = current !== null && current !== known.physicalAddress;
+			if (known.pendingStatus || moved) {
 				diff.states.push({
 					address,
 					status: known.status,
-					physicalAddress: known.physicalAddress,
+					physicalAddress: moved ? current : known.physicalAddress,
 					pendingStatus: null,
 					pendingSince: null,
 				});
@@ -227,8 +233,6 @@ export const diffMemberStatuses = (
 			sameStatus(known.pendingStatus, status, logConnectionChanges)
 		) {
 			firstSeen = known.pendingSince;
-		} else if (offlineSeenSince && isOffline(status)) {
-			firstSeen = offlineSeenSince;
 		}
 
 		if (!firstSeen) {
@@ -299,6 +303,46 @@ export const isSuspectSample = (
 };
 
 /**
+ * Folds a held sample into the stored statuses, in memory only. The held
+ * sample counts as one sighting per node and never confirms anything by
+ * itself: a status it showed for the first time starts waiting from that
+ * sample, and a wait it contradicted is dropped. The next sample is then
+ * diffed against the result, so every node still needs two sightings in a row.
+ */
+export const applyHeldSample = (
+	previous: Map<string, KnownStatus>,
+	held: HeldSample,
+	logConnectionChanges: boolean,
+): Map<string, KnownStatus> => {
+	const adjusted = new Map(previous);
+	for (const [address, known] of previous) {
+		const seen = held.statuses.get(address);
+		if (seen === undefined) continue;
+		if (sameStatus(known.status, seen, logConnectionChanges)) {
+			if (known.pendingStatus) {
+				adjusted.set(address, { ...known, pendingStatus: null, pendingSince: null });
+			}
+			continue;
+		}
+		const alreadyWaiting =
+			known.pendingStatus &&
+			known.pendingSince &&
+			sameStatus(known.pendingStatus, seen, logConnectionChanges);
+		if (!alreadyWaiting) {
+			adjusted.set(address, { ...known, pendingStatus: seen, pendingSince: held.since });
+		}
+	}
+	return adjusted;
+};
+
+const sameStoredStatus = (a: KnownStatus | undefined, b: KnownStatus): boolean =>
+	!!a &&
+	a.status === b.status &&
+	a.physicalAddress === b.physicalAddress &&
+	(a.pendingStatus ?? null) === (b.pendingStatus ?? null) &&
+	(a.pendingSince?.getTime() ?? null) === (b.pendingSince?.getTime() ?? null);
+
+/**
  * Node addresses of every member of a local controller network. The
  * controller's own node is left out, it is never in its own peer list.
  */
@@ -314,6 +358,28 @@ export const getTrackedAddresses = async (): Promise<string[]> => {
 	}
 	return [...addresses];
 };
+
+/**
+ * Keeps network_members.statusLogSince current: the time from which a member
+ * row has been continuously active, as far as the sampler saw. A stashed row
+ * loses it and gets a new one when it is restored, so the events of the time
+ * in between are never shown in that network. Two statements that normally
+ * match no rows.
+ */
+export const markTrackedMemberships = async (now: Date): Promise<void> => {
+	await prisma.network_members.updateMany({
+		where: { deleted: true, statusLogSince: { not: null } },
+		data: { statusLogSince: null },
+	});
+	await prisma.network_members.updateMany({
+		where: { deleted: false, statusLogSince: null },
+		data: { statusLogSince: now },
+	});
+};
+
+// The peer list is one request. Without a limit a controller that accepts the
+// connection and then stops answering would stall the sampler for good.
+export const PEER_REQUEST_TIMEOUT_MS = 10000;
 
 // The local controller is an instance wide setting, ztApi never reads the user
 // from the context for it.
@@ -346,6 +412,11 @@ export interface SampleResult {
 	stateWrites: number;
 	/** True when the sample looked like an outage and was not acted on. */
 	suspect: boolean;
+	/**
+	 * True when there was no baseline yet and the controller had no peers at
+	 * all. Nothing was stored, the next sample tries again.
+	 */
+	deferred: boolean;
 }
 
 /**
@@ -359,17 +430,20 @@ export const sampleMemberStatuses = async (
 	const { now = new Date(), logConnectionChanges = false, debounce = true } = options;
 	const sampler = samplerState();
 
-	const controllerPeers = await ztController.peers(SYSTEM_CONTEXT);
+	const controllerPeers = await ztController.peers(SYSTEM_CONTEXT, {
+		timeout: PEER_REQUEST_TIMEOUT_MS,
+	});
 	const peersByAddress = new Map<string, Peers>();
 	for (const peer of controllerPeers) {
 		peersByAddress.set(peer.address, peer as unknown as Peers);
 	}
 
+	await markTrackedMemberships(now);
 	const [addresses, states] = await Promise.all([
 		getTrackedAddresses(),
 		prisma.memberStatusState.findMany(),
 	]);
-	const previous = new Map<string, KnownStatus>(
+	const stored = new Map<string, KnownStatus>(
 		states.map((s) => [
 			s.address,
 			{
@@ -380,31 +454,65 @@ export const sampleMemberStatuses = async (
 			},
 		]),
 	);
+	const result = { tracked: addresses.length, events: 0, stateWrites: 0 };
+
+	// No baseline yet and a controller that is not talking to anybody, which
+	// is what it looks like right after it started. Storing that would make
+	// every member "offline" and log all of them coming online a moment later.
+	if (stored.size === 0 && peersByAddress.size === 0) {
+		return { ...result, suspect: false, deferred: true };
+	}
 
 	// A mass drop is held back once. Nothing is written for it, not even the
 	// "waiting for confirmation" marks, so an outage costs no writes at all.
-	let offlineSeenSince: Date | undefined;
-	if (debounce && isSuspectSample(addresses, peersByAddress, previous)) {
-		if (!sampler.suspectSince) {
-			sampler.suspectSince = now;
-			return { tracked: addresses.length, events: 0, stateWrites: 0, suspect: true };
-		}
-		offlineSeenSince = sampler.suspectSince;
+	// It is kept in memory and counts as one sighting per node when the next
+	// sample is compared.
+	const held = sampler.held;
+	sampler.held = null;
+	if (debounce && !held && isSuspectSample(addresses, peersByAddress, stored)) {
+		sampler.held = {
+			since: now,
+			statuses: new Map(
+				addresses.map((address) => [
+					address,
+					peerConnectionStatus(address, peersByAddress.get(address)),
+				]),
+			),
+		};
+		return { ...result, suspect: true, deferred: false };
 	}
-	sampler.suspectSince = null;
+	const previous =
+		held && debounce ? applyHeldSample(stored, held, logConnectionChanges) : stored;
 
 	const diff = diffMemberStatuses(addresses, peersByAddress, previous, {
 		now,
 		logConnectionChanges,
 		debounce,
-		offlineSeenSince,
 	});
+
+	// What the held sample changed in memory has to be stored as well, and
+	// rows that end up the way they are stored need no write.
+	const touched = new Set(diff.states.map((s) => s.address));
+	const tracked = new Set(addresses);
+	for (const [address, known] of previous) {
+		if (touched.has(address) || !tracked.has(address)) continue;
+		if (known === stored.get(address)) continue;
+		diff.states.push({
+			address,
+			status: known.status,
+			physicalAddress: known.physicalAddress,
+			pendingStatus: known.pendingStatus ?? null,
+			pendingSince: known.pendingSince ?? null,
+		});
+	}
+	diff.states = diff.states.filter((s) => !sameStoredStatus(stored.get(s.address), s));
+
 	if (
 		diff.transitions.length === 0 &&
 		diff.states.length === 0 &&
 		diff.stale.length === 0
 	) {
-		return { tracked: addresses.length, events: 0, stateWrites: 0, suspect: false };
+		return { ...result, suspect: false, deferred: false };
 	}
 
 	// Changed rows are replaced: delete and insert keeps the number of
@@ -427,12 +535,13 @@ export const sampleMemberStatuses = async (
 		events: diff.transitions.length,
 		stateWrites: diff.states.length,
 		suspect: false,
+		deferred: false,
 	};
 };
 
 /** Forgets every stored status, so the next sample starts from no baseline. */
 export const resetMemberStatusBaseline = async (): Promise<void> => {
-	samplerState().suspectSince = null;
+	samplerState().held = null;
 	await prisma.memberStatusState.deleteMany({});
 };
 
@@ -476,9 +585,11 @@ export const pruneMemberStatusEvents = async (
 interface SamplerState {
 	/** True once a sample has been stored since the log was last off. */
 	hasBaseline: boolean;
-	/** Time of a mass drop that is waiting for the next sample to confirm it. */
-	suspectSince?: Date | null;
+	/** A mass drop that is waiting for the next sample to confirm it. */
+	held?: HeldSample | null;
 	wake?: () => void;
+	/** Tail of the chain that runExclusive appends to. */
+	queue?: Promise<void>;
 }
 const globalForSampler = globalThis as unknown as {
 	memberStatusSampler?: SamplerState;
@@ -488,6 +599,22 @@ export const samplerState = (): SamplerState => {
 		globalForSampler.memberStatusSampler = { hasBaseline: false };
 	}
 	return globalForSampler.memberStatusSampler;
+};
+
+/**
+ * Runs `task` after everything queued before it has finished. A sample and a
+ * settings change both go through here, so a sample that started under the
+ * old settings is done before the baseline is reset, and can neither write
+ * events after the log was turned off nor bring the old baseline back.
+ */
+export const runExclusive = <T>(task: () => Promise<T>): Promise<T> => {
+	const state = samplerState();
+	const result = (state.queue ?? Promise.resolve()).then(task);
+	state.queue = result.then(
+		() => undefined,
+		() => undefined,
+	);
+	return result;
 };
 
 /** Makes the sampler read the settings now instead of at its next wake up. */
@@ -500,7 +627,10 @@ export const wakeMemberStatusSampler = (): void => {
  * turning the log on or off take effect without a restart. Returns the number
  * of seconds until the next run.
  */
-export const runMemberStatusSampler = async (): Promise<number> => {
+export const runMemberStatusSampler = (): Promise<number> =>
+	runExclusive(runMemberStatusSamplerOnce);
+
+const runMemberStatusSamplerOnce = async (): Promise<number> => {
 	const state = samplerState();
 	const settings = await getMemberStatusLogSettings();
 
@@ -515,8 +645,10 @@ export const runMemberStatusSampler = async (): Promise<number> => {
 	// First sample since startup or since the log was enabled: whatever is
 	// stored is from before a gap of unknown length and cannot be compared to.
 	if (!state.hasBaseline) await resetMemberStatusBaseline();
-	await sampleMemberStatuses({ logConnectionChanges: settings.logConnectionChanges });
-	state.hasBaseline = true;
+	const sample = await sampleMemberStatuses({
+		logConnectionChanges: settings.logConnectionChanges,
+	});
+	if (!sample.deferred) state.hasBaseline = true;
 
 	return settings.sampleInterval;
 };
@@ -569,35 +701,40 @@ export interface MemberStatusEventPage {
 // count stops here and the views show it as "1000+".
 export const MEMBER_STATUS_EVENT_COUNT_CAP = 1000;
 
-// At most this many node addresses are matched by an address search.
-const ADDRESS_SEARCH_LIMIT = 1000;
+// Above this many matching node addresses the search is done on the events
+// directly, which is slower but has no upper bound.
+export const ADDRESS_SEARCH_LIMIT = 5000;
 
 /** A JS date as a UTC `timestamp`, which is how Prisma stores DateTime. */
 const utcTimestamp = (date: Date) =>
 	Prisma.sql`(${date}::timestamptz AT TIME ZONE 'UTC')`;
 
 /**
- * Node addresses containing `search`. The search runs against the member
- * table, which is small, so the event table can then be read through its
- * (address, createdAt) index instead of being scanned with a LIKE.
+ * Node addresses that have events and contain `term`, or null when there are
+ * more than ADDRESS_SEARCH_LIMIT of them.
+ *
+ * The addresses come from the events themselves, so a node that has left
+ * every network is still found. Listing them is a skip scan over the
+ * (address, createdAt) index, one probe per distinct address, not a pass over
+ * every event. The events are then read through that same index.
  */
-const findAddresses = async (search: string): Promise<string[]> => {
-	const term = search.trim().toLowerCase();
-	const members = await prisma.network_members.findMany({
-		where: {
-			OR: [
-				{ address: { contains: term, mode: "insensitive" } },
-				{ id: { contains: term, mode: "insensitive" } },
-			],
-		},
-		select: { id: true, address: true },
-		distinct: ["id"],
-		take: ADDRESS_SEARCH_LIMIT,
-	});
-	const addresses = new Set(members.map((m) => m.address || m.id));
-	// A complete address also finds a node that has left every network.
-	if (/^[0-9a-f]{10}$/.test(term)) addresses.add(term);
-	return [...addresses];
+const findEventAddresses = async (term: string): Promise<string[] | null> => {
+	const rows = await prisma.$queryRaw<Array<{ address: string }>>(Prisma.sql`
+		WITH RECURSIVE known AS (
+			(SELECT "address" FROM "MemberStatusEvent" ORDER BY "address" LIMIT 1)
+			UNION ALL
+			SELECT (
+				SELECT e."address" FROM "MemberStatusEvent" e
+				WHERE e."address" > k."address"
+				ORDER BY e."address" LIMIT 1
+			)
+			FROM known k WHERE k."address" IS NOT NULL
+		)
+		SELECT "address" FROM known
+		WHERE "address" IS NOT NULL AND position(${term} in lower("address")) > 0
+		LIMIT ${ADDRESS_SEARCH_LIMIT + 1}`);
+	if (rows.length > ADDRESS_SEARCH_LIMIT) return null;
+	return rows.map((row) => row.address);
 };
 
 /**
@@ -605,9 +742,10 @@ const findAddresses = async (search: string): Promise<string[]> => {
  *
  * With `nwid` the events are joined through network_members, so only nodes
  * that are an active member of that network are returned, and only events
- * from after the node joined it. Whatever a node did before it was a member
- * belongs to another network. The caller is responsible for checking that the
- * user may read `nwid`.
+ * from the time the member row has been continuously active (statusLogSince,
+ * see markTrackedMemberships). Whatever a node did before it was a member, or
+ * while it was stashed, belongs to another network. The caller is responsible
+ * for checking that the user may read `nwid`.
  *
  * Paging is by cursor (the last row of the previous page), not by offset: a
  * page deep into a large log costs the same as the first one.
@@ -629,15 +767,21 @@ export const queryMemberStatusEvents = async (
 				ON COALESCE(NULLIF(m."address", ''), m."id") = e."address"
 				AND m."nwid" = ${filter.nwid}
 				AND m."deleted" IS NOT TRUE
-				AND e."createdAt" >= m."creationTime"`
+				AND e."createdAt" >= m."statusLogSince"`
 		: Prisma.empty;
 
 	const conditions: Prisma.Sql[] = [];
 	if (filter.address) conditions.push(Prisma.sql`e."address" = ${filter.address}`);
 	if (filter.addressSearch?.trim()) {
-		const addresses = await findAddresses(filter.addressSearch);
-		if (addresses.length === 0) return empty;
-		conditions.push(Prisma.sql`e."address" IN (${Prisma.join(addresses)})`);
+		const term = filter.addressSearch.trim().toLowerCase();
+		const addresses = await findEventAddresses(term);
+		if (addresses === null) {
+			conditions.push(Prisma.sql`position(${term} in lower(e."address")) > 0`);
+		} else if (addresses.length === 0) {
+			return empty;
+		} else {
+			conditions.push(Prisma.sql`e."address" IN (${Prisma.join(addresses)})`);
+		}
 	}
 	if (filter.status) {
 		conditions.push(

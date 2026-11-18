@@ -33,6 +33,7 @@ import {
 	pruneMemberStatusEvents,
 	queryMemberStatusEvents,
 	resetMemberStatusBaseline,
+	runExclusive,
 	wakeMemberStatusSampler,
 } from "~/server/api/services/memberStatusLogService";
 import { USER_SECRET_FIELDS } from "~/server/api/userFields";
@@ -2191,29 +2192,36 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const options = await ctx.prisma.globalOptions.update({
-				where: { id: 1 },
-				data: {
-					memberStatusLogEnabled: input.enabled,
-					memberStatusLogRetentionDays: input.retentionDays,
-					memberStatusLogSampleInterval: input.sampleInterval,
-					memberStatusLogConnectionChanges: input.logConnectionChanges,
-				},
-				select: {
-					memberStatusLogEnabled: true,
-					memberStatusLogRetentionDays: true,
-					memberStatusLogSampleInterval: true,
-					memberStatusLogConnectionChanges: true,
-				},
-			});
+			// Queued behind a sample that may be running: it finishes under the
+			// settings it started with, and only then are they changed and the
+			// baseline reset. It can no longer write after the reset.
+			const options = await runExclusive(async () => {
+				const updated = await ctx.prisma.globalOptions.update({
+					where: { id: 1 },
+					data: {
+						memberStatusLogEnabled: input.enabled,
+						memberStatusLogRetentionDays: input.retentionDays,
+						memberStatusLogSampleInterval: input.sampleInterval,
+						memberStatusLogConnectionChanges: input.logConnectionChanges,
+					},
+					select: {
+						memberStatusLogEnabled: true,
+						memberStatusLogRetentionDays: true,
+						memberStatusLogSampleInterval: true,
+						memberStatusLogConnectionChanges: true,
+					},
+				});
 
-			// Off means no baseline: the next time the log is enabled it starts
-			// from scratch instead of comparing against a stale status.
-			// The same goes for switching Direct/Relay logging: the stored statuses
-			// were kept under the other rule and cannot be compared across it.
-			if (input.enabled === false || input.logConnectionChanges !== undefined) {
-				await resetMemberStatusBaseline();
-			}
+				// Off means no baseline: the next time the log is enabled it starts
+				// from scratch instead of comparing against a stale status.
+				// The same goes for switching Direct/Relay logging: the stored
+				// statuses were kept under the other rule and cannot be compared
+				// across it.
+				if (input.enabled === false || input.logConnectionChanges !== undefined) {
+					await resetMemberStatusBaseline();
+				}
+				return updated;
+			});
 			// A shorter retention applies now, not at the next nightly prune.
 			if (input.retentionDays !== undefined) {
 				await pruneMemberStatusEvents(new Date(), input.retentionDays);
@@ -2232,7 +2240,12 @@ export const adminRouter = createTRPCRouter({
 		)
 		.query(async ({ ctx, input }) => {
 			if (!(await isMemberStatusLogEnabled())) {
-				return { enabled: false, ...EMPTY_MEMBER_STATUS_EVENT_PAGE, members: {} };
+				return {
+					enabled: false,
+					...EMPTY_MEMBER_STATUS_EVENT_PAGE,
+					members: {},
+					hasEvents: false,
+				};
 			}
 
 			const result = await queryMemberStatusEvents({
@@ -2282,7 +2295,13 @@ export const adminRouter = createTRPCRouter({
 				});
 			}
 
-			return { enabled: true, ...result, members };
+			// Whether anything is stored at all, whatever the filters show. This
+			// is what decides if there is something to clear.
+			const hasEvents =
+				result.events.length > 0 ||
+				(await ctx.prisma.memberStatusEvent.findFirst({ select: { id: true } })) !== null;
+
+			return { enabled: true, ...result, members, hasEvents };
 		}),
 	/** Local networks to pick from in the instance wide log filter. */
 	getMemberStatusLogNetworks: adminRoleProtectedRoute.query(async ({ ctx }) => {

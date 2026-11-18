@@ -243,6 +243,29 @@ describe("admin member status log procedures", () => {
 		expect(db.$queryRaw.mock.calls[0][0].sql).not.toContain("JOIN");
 	});
 
+	test("the view says whether anything is stored, whatever the filters show", async () => {
+		mockUserRole("ADMIN");
+		// the filters match nothing, but the log is not empty
+		db.$queryRaw = jest
+			.fn()
+			.mockResolvedValueOnce([])
+			.mockResolvedValueOnce([{ total: 0 }]);
+		db.memberStatusEvent.findFirst = jest.fn().mockResolvedValue({ id: 7 });
+
+		const filtered = await callerAs("admin", "ADMIN").admin.getMemberStatusLog({
+			status: "RELAY",
+		});
+		expect(filtered).toMatchObject({ events: [], total: 0, hasEvents: true });
+
+		db.$queryRaw = jest
+			.fn()
+			.mockResolvedValueOnce([])
+			.mockResolvedValueOnce([{ total: 0 }]);
+		db.memberStatusEvent.findFirst = jest.fn().mockResolvedValue(null);
+		const empty = await callerAs("admin", "ADMIN").admin.getMemberStatusLog({});
+		expect(empty.hasEvents).toBe(false);
+	});
+
 	test("the instance wide view is empty while the log is disabled", async () => {
 		mockEnabled(false);
 		mockUserRole("ADMIN");

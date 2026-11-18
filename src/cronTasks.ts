@@ -190,11 +190,13 @@ export const reconcileInactiveUsersNetworks = async (): Promise<string[]> => {
 	// if no users return
 	if (users.length === 0) return [];
 
-	// Get all users that have been inactive for 5 minutes
+	// Get all users that have been inactive for 5 minutes. A user that has
+	// never been seen (an account that is only used through the API, or one
+	// that never signed in) is inactive too: nobody is looking at its networks.
 	const now = new Date();
 	const fiveMinutesAgo = new Date(now.getTime() - 5 * 60000);
 	const inactiveUsers = users.filter((user) => {
-		return user?.lastseen && new Date(user.lastseen) < fiveMinutesAgo;
+		return !user?.lastseen || new Date(user.lastseen) < fiveMinutesAgo;
 	});
 
 	// keep track of processed networks
@@ -300,10 +302,17 @@ export const memberStatusSampler = async () => {
 	const state = samplerState();
 	let timer: NodeJS.Timeout | undefined;
 	let running = false;
+	let wakePending = false;
 
 	const run = async () => {
-		if (running) return;
+		if (running) {
+			// The run in progress may already have read the old settings. Run
+			// once more right after it instead of dropping the wake.
+			wakePending = true;
+			return;
+		}
 		running = true;
+		wakePending = false;
 		let delay = MEMBER_STATUS_LOG_IDLE_POLL_SECONDS;
 		try {
 			delay = await runMemberStatusSampler();
@@ -314,7 +323,7 @@ export const memberStatusSampler = async () => {
 		} finally {
 			running = false;
 			clearTimeout(timer);
-			timer = setTimeout(run, delay * 1000);
+			timer = setTimeout(run, wakePending ? 0 : delay * 1000);
 			timer.unref?.();
 		}
 	};

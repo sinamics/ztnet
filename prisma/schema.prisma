@@ -134,6 +134,10 @@ model network_members {
   // tags, capabilities, ssoExempt, lastAuthorizedTime, ..., #983). NULL =
   // never fetched (triggers a one-time reconcile backfill).
   controllerConfig   Json?
+  // Member status log: since when this row has been continuously active, as
+  // seen by the sampler. NULL while stashed. Events older than this are not
+  // shown in this network.
+  statusLogSince     DateTime?
   notations          NetworkMemberNotation[]
 
   @@unique([id, nwid])
@@ -159,6 +163,7 @@ model MemberStatusEvent {
 
   @@index([address, createdAt])
   @@index([createdAt])
+  @@index([toStatus, createdAt])
 }
 
 // Last connection status the sampler saw for a node. This is the baseline the

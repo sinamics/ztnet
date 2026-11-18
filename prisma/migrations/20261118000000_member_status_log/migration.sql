@@ -7,6 +7,9 @@ ADD COLUMN "memberStatusLogRetentionDays" INTEGER NOT NULL DEFAULT 30,
 ADD COLUMN "memberStatusLogSampleInterval" INTEGER NOT NULL DEFAULT 60,
 ADD COLUMN "memberStatusLogConnectionChanges" BOOLEAN NOT NULL DEFAULT false;
 
+-- AlterTable
+ALTER TABLE "network_members" ADD COLUMN "statusLogSince" TIMESTAMP(3);
+
 -- CreateTable
 CREATE TABLE "MemberStatusEvent" (
     "id" SERIAL NOT NULL,
@@ -36,3 +39,6 @@ CREATE INDEX "MemberStatusEvent_address_createdAt_idx" ON "MemberStatusEvent"("a
 
 -- CreateIndex
 CREATE INDEX "MemberStatusEvent_createdAt_idx" ON "MemberStatusEvent"("createdAt");
+
+-- CreateIndex
+CREATE INDEX "MemberStatusEvent_toStatus_createdAt_idx" ON "MemberStatusEvent"("toStatus", "createdAt");

@@ -95,6 +95,8 @@ interface TableProps {
 	onNextPage: () => void;
 	onPreviousPage: () => void;
 	isLoading?: boolean;
+	/** True while the page that was asked for has not arrived yet. */
+	isChangingPage?: boolean;
 	/** True when a filter is active, picks the right empty message. */
 	filtered?: boolean;
 	/** Hide the member column, for a log that is already about one member. */
@@ -113,6 +115,7 @@ export const StatusEventTable = ({
 	onNextPage,
 	onPreviousPage,
 	isLoading,
+	isChangingPage,
 	filtered,
 	hideMember,
 	renderMember,
@@ -131,11 +134,48 @@ export const StatusEventTable = ({
 		);
 	}
 
+	const pager =
+		page > 0 || hasNextPage ? (
+			<div className="flex items-center gap-2">
+				<button
+					type="button"
+					className="btn btn-primary btn-outline btn-xs"
+					onClick={onPreviousPage}
+					disabled={page <= 0 || isChangingPage}
+				>
+					{t("pagination.previous")}
+				</button>
+				<span>
+					{pageCount
+						? t("pagination.page", {
+								page: page + 1,
+								pages: Math.max(pageCount, page + 1),
+							})
+						: t("pagination.pageOnly", { page: page + 1 })}
+				</span>
+				<button
+					type="button"
+					className="btn btn-primary btn-outline btn-xs"
+					onClick={onNextPage}
+					disabled={!hasNextPage || isChangingPage}
+				>
+					{t("pagination.next")}
+				</button>
+			</div>
+		) : null;
+
 	if (events.length === 0) {
 		return (
-			<p className="py-6 text-center text-sm text-gray-500">
-				{filtered ? t("emptyFiltered") : t("empty")}
-			</p>
+			<div className="space-y-3">
+				<p className="py-6 text-center text-sm text-gray-500">
+					{filtered ? t("emptyFiltered") : t("empty")}
+				</p>
+				{/* A later page can end up empty after a prune or a clear. Keep the
+				    way back to the pages before it. */}
+				{pager ? (
+					<div className="flex justify-end text-xs text-base-content/70">{pager}</div>
+				) : null}
+			</div>
 		);
 	}
 
@@ -201,34 +241,7 @@ export const StatusEventTable = ({
 							: String(Math.max(total, from + events.length - 1)),
 					})}
 				</span>
-				{page > 0 || hasNextPage ? (
-					<div className="flex items-center gap-2">
-						<button
-							type="button"
-							className="btn btn-primary btn-outline btn-xs"
-							onClick={onPreviousPage}
-							disabled={page <= 0}
-						>
-							{t("pagination.previous")}
-						</button>
-						<span>
-							{pageCount
-								? t("pagination.page", {
-										page: page + 1,
-										pages: Math.max(pageCount, page + 1),
-									})
-								: t("pagination.pageOnly", { page: page + 1 })}
-						</span>
-						<button
-							type="button"
-							className="btn btn-primary btn-outline btn-xs"
-							onClick={onNextPage}
-							disabled={!hasNextPage}
-						>
-							{t("pagination.next")}
-						</button>
-					</div>
-				) : null}
+				{pager}
 			</div>
 		</div>
 	);

@@ -31,21 +31,22 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 	// The Direct/Relay filter only makes sense while those changes are logged.
 	const showConnectionChanges = globalOptions?.memberStatusLogConnectionChanges === true;
 
-	const { data, isPending } = api.network.getMemberStatusEvents.useQuery(
-		{
-			nwid,
-			memberId: memberId || member || undefined,
-			status: status || undefined,
-			includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
-			cursor: paging.cursor,
-			pageSize,
-		},
-		{
-			enabled: enabled && !!nwid,
-			refetchInterval: 30000,
-			placeholderData: (previous) => previous,
-		},
-	);
+	const { data, isPending, isPlaceholderData } =
+		api.network.getMemberStatusEvents.useQuery(
+			{
+				nwid,
+				memberId: memberId || member || undefined,
+				status: status || undefined,
+				includeConnectionChanges: showConnectionChanges && includeConnectionChanges,
+				cursor: paging.cursor,
+				pageSize,
+			},
+			{
+				enabled: enabled && !!nwid,
+				refetchInterval: 30000,
+				placeholderData: (previous) => previous,
+			},
+		);
 
 	if (!enabled || data?.enabled === false) return null;
 
@@ -100,6 +101,7 @@ export const NetworkMemberStatusLog = ({ nwid, memberId, pageSize = 25 }: Props)
 				onNextPage={() => paging.next(data?.nextCursor)}
 				onPreviousPage={paging.previous}
 				isLoading={isPending}
+				isChangingPage={isPlaceholderData}
 				filtered={!!member || !!status}
 				hideMember={!!memberId}
 			/>

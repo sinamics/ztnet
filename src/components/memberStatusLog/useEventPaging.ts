@@ -18,7 +18,14 @@ export const useEventPaging = () => {
 		page: cursors.length,
 		cursor: cursors[cursors.length - 1] ?? null,
 		next: (nextCursor: EventCursor | null | undefined) => {
-			if (nextCursor) setCursors((previous) => [...previous, nextCursor]);
+			if (!nextCursor) return;
+			setCursors((previous) => {
+				// A second click before the next page has arrived hands in the
+				// cursor that is already open.
+				const open = previous[previous.length - 1];
+				if (open && open.id === nextCursor.id) return previous;
+				return [...previous, nextCursor];
+			});
 		},
 		previous: () => setCursors((previous) => previous.slice(0, -1)),
 		reset: () => setCursors([]),
