@@ -28,6 +28,7 @@ import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import HeadSection from "~/components/shared/metaTags";
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
+import { NetworkMemberStatusLog } from "~/components/memberStatusLog/networkMemberStatusLog";
 
 type OrganizationId = {
 	id: string;
@@ -407,6 +408,16 @@ const OrganizationNetworkById = ({ orgIds }: IProps) => {
 					</>
 				) : null}
 			</div>
+			{globalOptions?.memberStatusLogEnabled ? (
+				<>
+					<div className="w-5/5 divider mx-auto flex  py-4 text-sm md:text-base">
+						{t("memberStatusLog.title")}
+					</div>
+					<div className="w-5/5 mx-auto flex py-4 text-sm md:text-base">
+						<NetworkMemberStatusLog nwid={network.nwid} />
+					</div>
+				</>
+			) : null}
 			<div className="w-5/5 mx-auto flex  py-4 text-sm md:text-base">
 				<NetworkFlowRules organizationId={organizationId} />
 			</div>

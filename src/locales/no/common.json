@@ -498,6 +498,45 @@
 			"dnsPushText5": "Dette må aktiveres på hver klient med alternativet allowDNS. Det er en avkrysningsboks i brukergrensesnittet i hver nettverksdetaljer, nær avkrysningsboksen Tillat Administrert."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Logger",
+		"memberTitle": "Statuslogg",
+		"description": "Endringer i tilkoblingsstatus for medlemmene i dette nettverket, målt fra kontrolleren. Korte brudd mellom to målinger blir ikke registrert.",
+		"memberDescription": "Endringer i tilkoblingsstatus for dette medlemmet, målt fra kontrolleren.",
+		"columns": {
+			"time": "Tid",
+			"member": "Medlem",
+			"change": "Endring",
+			"physicalAddress": "Fysisk adresse"
+		},
+		"status": {
+			"OFFLINE": "Frakoblet",
+			"DIRECT": "Direkte",
+			"RELAY": "Relé"
+		},
+		"changedTo": "endret til",
+		"filters": {
+			"member": "Medlem",
+			"allMembers": "Alle medlemmer",
+			"status": "Ny status",
+			"allStatuses": "Alle statuser",
+			"includeConnectionChanges": "Ta med endringer mellom Direkte og Relé",
+			"network": "Nettverk",
+			"allNetworks": "Alle nettverk",
+			"address": "Nodeadresse",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Ingen statusendringer er registrert ennå.",
+		"emptyFiltered": "Ingen statusendringer passer med filtrene.",
+		"noNetwork": "Ikke medlem av noe nettverk",
+		"pagination": {
+			"range": "{from} til {to} av {total}",
+			"page": "Side {page} av {pages}",
+			"previous": "Forrige",
+			"next": "Neste",
+			"pageOnly": "Side {page}"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -509,6 +548,49 @@
 			"publicPages": {
 				"sectionTitle": "Offentlige Sider",
 				"description": "Tilpass teksten som vises på innloggings- og registreringssidene dine for å bedre samsvare med merkevaren din eller gi spesifikke instruksjoner til brukerne dine."
+			},
+			"memberStatusLog": {
+				"title": "Statuslogg for medlemmer",
+				"description": "Ta vare på historikk over når nettverksmedlemmer kobler seg til eller fra. ZeroTier lagrer ikke dette selv, så ZTNET spør kontrolleren med jevne mellomrom og registrerer hver endring. Loggen vises på hver nettverksside og nedenfor.",
+				"enable": "Aktiver statuslogg for medlemmer",
+				"enableDescription": "Av som standard. Når den er av, blir ingenting målt eller lagret, og Logger er skjult for alle brukere.",
+				"stateOn": "På",
+				"stateOff": "Av",
+				"retention": {
+					"label": "Oppbevaring",
+					"description": "Hendelser som er eldre enn dette slettes automatisk. {min} til {max} dager.",
+					"value": "{days} dager",
+					"invalid": "Oppbevaring må være et heltall mellom {min} og {max} dager."
+				},
+				"interval": {
+					"label": "Måleintervall",
+					"description": "Hvor ofte kontrolleren blir spurt om statusen til medlemmene. {min} til {max} sekunder.",
+					"value": "{seconds} sekunder",
+					"invalid": "Måleintervall må være et heltall mellom {min} og {max} sekunder."
+				},
+				"connectionChanges": {
+					"label": "Logg endringer mellom Direkte og Relé",
+					"description": "Av som standard. Når den er av, lagres bare endringer til eller fra Frakoblet, noe som holder loggen liten. Slå den på for også å registrere når et medlem bytter mellom direkte og videresendt forbindelse."
+				},
+				"limits": {
+					"title": "Hva loggen kan og ikke kan fortelle",
+					"sampled": "Status måles fra kontrolleren med intervallet over. Den viser kontrollerens egen forbindelse til et medlem, ikke forbindelsene mellom medlemmene.",
+					"shortDrops": "En endring lagres når to målinger på rad viser den. Et brudd som er kortere enn to målinger blir ikke registrert, og heller ikke ett enkelt tomt svar fra en kontroller som starter på nytt.",
+					"lateOffline": "Frakoblet rapporteres sent. Kontrolleren beholder et medlem i listen sin i flere minutter etter at det forsvant, så en Frakoblet hendelse kommer senere enn selve bruddet.",
+					"relay": "Relé er et anslag basert på det kontrolleren rapporterer, så endringer mellom Direkte og Relé kan gi støy. De lagres bare mens bryteren over er på.",
+					"localOnly": "Bare nettverk på den lokale kontrolleren dekkes. ZeroTier Central nettverk har ingen statusdata."
+				},
+				"instanceLog": {
+					"sectionTitle": "Statuslogg for medlemmer, alle nettverk",
+					"title": "Alle nettverk",
+					"description": "Statusendringer for alle medlemmer på denne kontrolleren. Nettverkssidene viser den samme loggen, begrenset til egne medlemmer."
+				},
+				"clear": {
+					"button": "Tøm logg",
+					"title": "Tøm statuslogg for medlemmer",
+					"description": "Dette sletter alle lagrede statusendringer for alle nettverk. Det kan ikke angres."
+				},
+				"cleared": "{count} hendelser slettet"
 			}
 		},
 		"mail": {

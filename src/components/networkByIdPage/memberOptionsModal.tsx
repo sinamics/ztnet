@@ -15,6 +15,7 @@ import {
 } from "~/hooks/useTrpcApiHandler";
 import { RoutesEntity } from "~/types/local/network";
 import TimeAgo from "react-timeago";
+import { NetworkMemberStatusLog } from "~/components/memberStatusLog/networkMemberStatusLog";
 
 interface ModalContentProps {
 	nwid: string;
@@ -45,6 +46,7 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 	const utils = api.useUtils();
 	const refetchMembersTable = () => void utils.network.getNetworkMembers.invalidate();
 
+	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
 	const { data: networkById, refetch: refetchNetworkById } =
 		api.network.getNetworkById.useQuery(
 			{
@@ -509,6 +511,18 @@ export const MemberOptionsModal: React.FC<ModalContentProps> = ({
 						)}
 					</div>
 				</div>
+
+				{/* Status log of this member, full width below the two columns.
+				    Local controller only, and only when the instance admin has
+				    enabled the log. */}
+				{!central && globalOptions?.memberStatusLogEnabled ? (
+					<div className="card bg-base-100 border border-base-200 shadow-sm mt-4">
+						<div className="card-body p-4">
+							<h3 className="card-title text-base">{t("memberStatusLog.memberTitle")}</h3>
+							<NetworkMemberStatusLog nwid={nwid} memberId={memberId} pageSize={5} />
+						</div>
+					</div>
+				) : null}
 			</div>
 		</div>
 	);

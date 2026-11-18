@@ -25,7 +25,17 @@ import path from "node:path";
 import archiver from "archiver";
 import { BackupMetadata } from "~/types/backupRestore";
 import { checkAndDeactivateExpiredUsers } from "~/cronTasks";
-import { emailSchema } from "./_schema";
+import { emailSchema, MemberStatusEventQuerySchema } from "./_schema";
+import {
+	EMPTY_MEMBER_STATUS_EVENT_PAGE,
+	MEMBER_STATUS_LOG_LIMITS,
+	isMemberStatusLogEnabled,
+	pruneMemberStatusEvents,
+	queryMemberStatusEvents,
+	resetMemberStatusBaseline,
+	runExclusive,
+	wakeMemberStatusSampler,
+} from "~/server/api/services/memberStatusLogService";
 import { USER_SECRET_FIELDS } from "~/server/api/userFields";
 import {
 	getDefaultLocalControllerUrl,
@@ -2158,4 +2168,151 @@ export const adminRouter = createTRPCRouter({
 
 			return { ...updated, publicNetworks, uncheckedNetworks };
 		}),
+	/**
+	 * Member status log settings. Saving wakes the sampler, so the change is
+	 * picked up right away and not at its next run.
+	 */
+	updateMemberStatusLogSettings: adminRoleProtectedRoute
+		.input(
+			z.object({
+				enabled: z.boolean().optional(),
+				logConnectionChanges: z.boolean().optional(),
+				retentionDays: z
+					.number()
+					.int()
+					.min(MEMBER_STATUS_LOG_LIMITS.retentionDays.min)
+					.max(MEMBER_STATUS_LOG_LIMITS.retentionDays.max)
+					.optional(),
+				sampleInterval: z
+					.number()
+					.int()
+					.min(MEMBER_STATUS_LOG_LIMITS.sampleInterval.min)
+					.max(MEMBER_STATUS_LOG_LIMITS.sampleInterval.max)
+					.optional(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			// Queued behind a sample that may be running: it finishes under the
+			// settings it started with, and only then are they changed and the
+			// baseline reset. It can no longer write after the reset.
+			const options = await runExclusive(async () => {
+				const updated = await ctx.prisma.globalOptions.update({
+					where: { id: 1 },
+					data: {
+						memberStatusLogEnabled: input.enabled,
+						memberStatusLogRetentionDays: input.retentionDays,
+						memberStatusLogSampleInterval: input.sampleInterval,
+						memberStatusLogConnectionChanges: input.logConnectionChanges,
+					},
+					select: {
+						memberStatusLogEnabled: true,
+						memberStatusLogRetentionDays: true,
+						memberStatusLogSampleInterval: true,
+						memberStatusLogConnectionChanges: true,
+					},
+				});
+
+				// Off means no baseline: the next time the log is enabled it starts
+				// from scratch instead of comparing against a stale status.
+				// The same goes for switching Direct/Relay logging: the stored
+				// statuses were kept under the other rule and cannot be compared
+				// across it.
+				if (input.enabled === false || input.logConnectionChanges !== undefined) {
+					await resetMemberStatusBaseline();
+				}
+				return updated;
+			});
+			// A shorter retention applies now, not at the next nightly prune.
+			if (input.retentionDays !== undefined) {
+				await pruneMemberStatusEvents(new Date(), input.retentionDays);
+			}
+			wakeMemberStatusSampler();
+
+			return options;
+		}),
+	/** Instance wide view of the member status log, every local network. */
+	getMemberStatusLog: adminRoleProtectedRoute
+		.input(
+			MemberStatusEventQuerySchema.extend({
+				nwid: z.string().optional(),
+				addressSearch: z.string().max(10).optional(),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			if (!(await isMemberStatusLogEnabled())) {
+				return {
+					enabled: false,
+					...EMPTY_MEMBER_STATUS_EVENT_PAGE,
+					members: {},
+					hasEvents: false,
+				};
+			}
+
+			const result = await queryMemberStatusEvents({
+				nwid: input.nwid || undefined,
+				addressSearch: input.addressSearch?.trim() || undefined,
+				status: input.status,
+				includeConnectionChanges: input.includeConnectionChanges,
+				cursor: input.cursor,
+				pageSize: input.pageSize,
+			});
+
+			// Events only carry the node address. Resolve the networks each node
+			// on this page is a member of, for display.
+			const addresses = [...new Set(result.events.map((e) => e.address))];
+			const rows = addresses.length
+				? await ctx.prisma.network_members.findMany({
+						where: {
+							deleted: false,
+							OR: [{ address: { in: addresses } }, { id: { in: addresses } }],
+						},
+						select: {
+							id: true,
+							address: true,
+							name: true,
+							nwid: true,
+							nwid_ref: { select: { name: true, organizationId: true } },
+						},
+					})
+				: [];
+			const members: Record<
+				string,
+				Array<{
+					name: string | null;
+					nwid: string;
+					networkName: string | null;
+					organizationId: string | null;
+				}>
+			> = {};
+			for (const row of rows) {
+				const address = row.address || row.id;
+				if (!members[address]) members[address] = [];
+				members[address].push({
+					name: row.name,
+					nwid: row.nwid,
+					networkName: row.nwid_ref?.name ?? null,
+					organizationId: row.nwid_ref?.organizationId ?? null,
+				});
+			}
+
+			// Whether anything is stored at all, whatever the filters show. This
+			// is what decides if there is something to clear.
+			const hasEvents =
+				result.events.length > 0 ||
+				(await ctx.prisma.memberStatusEvent.findFirst({ select: { id: true } })) !== null;
+
+			return { enabled: true, ...result, members, hasEvents };
+		}),
+	/** Local networks to pick from in the instance wide log filter. */
+	getMemberStatusLogNetworks: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.network.findMany({
+			select: { nwid: true, name: true },
+			orderBy: { name: "asc" },
+		});
+	}),
+	/** Deletes every stored member status event. */
+	clearMemberStatusLog: adminRoleProtectedRoute.mutation(async ({ ctx }) => {
+		const { count } = await ctx.prisma.memberStatusEvent.deleteMany({});
+		return { deleted: count };
+	}),
 });

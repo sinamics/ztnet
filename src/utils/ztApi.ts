@@ -745,7 +745,10 @@ export const member_details = async (
 
 // Get all peers
 // https://docs.zerotier.com/service/v1/#operation/getPeers
-export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer[]> => {
+export const peers = async (
+	ctx: UserContext,
+	options: { timeout?: number } = {},
+): Promise<ZTControllerGetPeer[]> => {
 	// get headers based on local or central api
 	const { localControllerUrl } = await getOptions(ctx, false);
 
@@ -756,6 +759,7 @@ export const peers = async (ctx: UserContext): Promise<ZTControllerGetPeer[]> =>
 	try {
 		const response: AxiosResponse = await axios.get(addr, {
 			...request,
+			...(options.timeout ? { timeout: options.timeout } : {}),
 		});
 		return response.data as ZTControllerGetPeer[];
 	} catch (error) {

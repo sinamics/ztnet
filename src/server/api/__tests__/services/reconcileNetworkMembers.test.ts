@@ -165,6 +165,7 @@ describe("reconcileNetworkMembers — revision-delta sync", () => {
 		dbMock.findMany.mockResolvedValueOnce([dbRow("A")]).mockResolvedValueOnce([
 			dbRow("A", {
 				name: "user-set-name",
+				statusLogSince: new Date("2026-11-18T10:00:00Z"),
 				controllerConfig: {
 					objtype: "member",
 					identity: "A:pubkey",
@@ -191,6 +192,8 @@ describe("reconcileNetworkMembers — revision-delta sync", () => {
 		expect(result[0].name).toBe("user-set-name");
 		// The internal cache blob itself is never served.
 		expect(result[0]).not.toHaveProperty("controllerConfig");
+		// Neither is the member status log's bookkeeping column.
+		expect(result[0]).not.toHaveProperty("statusLogSince");
 	});
 
 	test("falls back to the controller name when the DB has none (migration)", async () => {

@@ -498,6 +498,45 @@
 			"dnsPushText5": "Esto debe estar habilitado en cada cliente con la opción allowDNS. Hay una casilla de verificación en la interfaz de usuario en los detalles de cada red, cerca de la casilla de verificación Permitir administrado."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Registros",
+		"memberTitle": "Registro de estado",
+		"description": "Cambios en el estado de conexión de los miembros de esta red, muestreados desde el controlador. Las caídas breves entre dos muestras no se registran.",
+		"memberDescription": "Cambios en el estado de conexión de este miembro, muestreados desde el controlador.",
+		"columns": {
+			"time": "Hora",
+			"member": "Miembro",
+			"change": "Cambio",
+			"physicalAddress": "Dirección física"
+		},
+		"status": {
+			"OFFLINE": "Desconectado",
+			"DIRECT": "Directo",
+			"RELAY": "Relay"
+		},
+		"changedTo": "cambió a",
+		"filters": {
+			"member": "Miembro",
+			"allMembers": "Todos los miembros",
+			"status": "Nuevo estado",
+			"allStatuses": "Todos los estados",
+			"includeConnectionChanges": "Incluir cambios entre Directo y Relay",
+			"network": "Red",
+			"allNetworks": "Todas las redes",
+			"address": "Dirección del nodo",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Aún no se han registrado cambios de estado.",
+		"emptyFiltered": "Ningún cambio de estado coincide con los filtros.",
+		"noNetwork": "No es miembro de ninguna red",
+		"pagination": {
+			"range": "{from} a {to} de {total}",
+			"page": "Página {page} de {pages}",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"pageOnly": "Página {page}"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -509,6 +548,49 @@
 			"publicPages": {
 				"sectionTitle": "Páginas Públicas",
 				"description": "Personaliza el texto que se muestra en tus páginas de inicio de sesión y registro para alinearlo mejor con tu marca o proporcionar instrucciones específicas a tus usuarios."
+			},
+			"memberStatusLog": {
+				"title": "Registro de estado de miembros",
+				"description": "Guarda un historial de cuándo los miembros de la red se conectan o desconectan. ZeroTier no lo almacena, así que ZTNET consulta el controlador periódicamente y registra cada cambio que observa. El registro se muestra en la página de cada red y más abajo.",
+				"enable": "Activar el registro de estado de miembros",
+				"enableDescription": "Desactivado por defecto. Mientras esté desactivado no se muestrea ni se almacena nada y la sección Registros queda oculta para todos los usuarios.",
+				"stateOn": "Activado",
+				"stateOff": "Desactivado",
+				"retention": {
+					"label": "Retención",
+					"description": "Los eventos más antiguos se eliminan automáticamente. De {min} a {max} días.",
+					"value": "{days} días",
+					"invalid": "La retención debe ser un número entero entre {min} y {max} días."
+				},
+				"interval": {
+					"label": "Intervalo de muestreo",
+					"description": "Cada cuánto se consulta al controlador el estado de sus miembros. De {min} a {max} segundos.",
+					"value": "{seconds} segundos",
+					"invalid": "El intervalo de muestreo debe ser un número entero entre {min} y {max} segundos."
+				},
+				"connectionChanges": {
+					"label": "Registrar cambios entre Directo y Relay",
+					"description": "Desactivado por defecto. Mientras esté desactivado solo se guardan los cambios desde o hacia Desconectado, lo que mantiene el registro pequeño. Actívalo para registrar también cuándo un miembro cambia entre conexión directa y retransmitida."
+				},
+				"limits": {
+					"title": "Lo que el registro puede y no puede decir",
+					"sampled": "El estado se muestrea desde el controlador con el intervalo indicado. Refleja el enlace del propio controlador con un miembro, no los enlaces entre miembros.",
+					"shortDrops": "Un cambio se guarda cuando dos muestras seguidas lo confirman. Una caída más corta que dos muestras no se registra, ni tampoco una única respuesta vacía de un controlador que se está reiniciando.",
+					"lateOffline": "El estado Desconectado se registra con retraso. El controlador mantiene a un miembro en su lista de pares varios minutos después de que desaparezca, por lo que el evento es posterior a la caída real.",
+					"relay": "Relay es una estimación basada en lo que informa el controlador, por lo que los cambios entre Directo y Relay pueden generar ruido. Solo se guardan mientras el interruptor de arriba está activado.",
+					"localOnly": "Solo se cubren las redes del controlador local. Las redes de ZeroTier Central no tienen datos de estado."
+				},
+				"instanceLog": {
+					"sectionTitle": "Registro de estado de miembros, todas las redes",
+					"title": "Todas las redes",
+					"description": "Cambios de estado de todos los miembros de este controlador. Las páginas de red muestran el mismo registro limitado a sus propios miembros."
+				},
+				"clear": {
+					"button": "Vaciar registro",
+					"title": "Vaciar el registro de estado de miembros",
+					"description": "Esto elimina todos los cambios de estado almacenados de todas las redes. No se puede deshacer."
+				},
+				"cleared": "{count} eventos eliminados"
 			}
 		},
 		"mail": {

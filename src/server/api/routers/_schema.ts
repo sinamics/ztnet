@@ -37,3 +37,12 @@ export const passwordSchema = (errorMessage: string) =>
 			message: errorMessage,
 		})
 		.optional();
+
+/** Filters and paging shared by the member status log queries. */
+export const MemberStatusEventQuerySchema = z.object({
+	status: z.enum(["OFFLINE", "DIRECT", "RELAY"]).optional(),
+	includeConnectionChanges: z.boolean().default(false),
+	// last event of the previous page, see queryMemberStatusEvents
+	cursor: z.object({ createdAt: z.date(), id: z.number().int() }).nullish(),
+	pageSize: z.number().int().min(1).max(100).default(25),
+});
