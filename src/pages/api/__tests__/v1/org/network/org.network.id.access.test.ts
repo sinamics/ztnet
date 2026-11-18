@@ -115,6 +115,15 @@ describe("organization network access scoping", () => {
 
 		prisma.network.update = jest.fn();
 
+		// Making a network public reads the organization member cap. These
+		// organizations have none.
+		prisma.network.findUnique = jest.fn().mockImplementation(({ where }) =>
+			Promise.resolve({
+				organizationId: NETWORK_OWNER[where.nwid],
+				organization: { maxMembersPerNetwork: null },
+			}),
+		);
+
 		(ztController.local_network_and_membercount as jest.Mock).mockResolvedValue({
 			network: {
 				id: NETWORK_IN_ORG_B,

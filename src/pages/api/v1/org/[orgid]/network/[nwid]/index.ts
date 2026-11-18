@@ -8,6 +8,10 @@ import { getNetworkConfigRole } from "~/utils/networkAccess";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
 import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
+import {
+	assertOrgNetworkCanBePublic,
+	enforceQuota,
+} from "~/server/api/services/organizationQuotaService";
 import { HandlerContextSchema, NetworkUpdateSchema } from "./_schema";
 
 // Rate limit using environment configuration
@@ -89,6 +93,14 @@ export const POST_network = SecuredOrganizationApiRoute(
 				v4AssignMode: { type: "object", destinations: ["controller"] },
 				v6AssignMode: { type: "object", destinations: ["controller"] },
 			};
+
+			// A public network authorizes every node that joins, so it cannot be
+			// combined with an organization cap on authorized members. Checked
+			// before anything is applied (the flow rule below is written inside the
+			// loop), so a refused request changes nothing.
+			if (validatedBody.private === false) {
+				await enforceQuota(() => assertOrgNetworkCanBePublic(ctx.prisma, networkId));
+			}
 
 			const databasePayload: Partial<network> = {};
 			const controllerPayload: Partial<network> = {};
