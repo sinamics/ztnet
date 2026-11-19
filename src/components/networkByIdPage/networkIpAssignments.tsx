@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Ipv4Assignment } from "./ipv4Assignment";
 import { Ipv6assignment } from "./ipv6assignment";
 import { NetworkMTU } from "./networkMtu";
+import { NetworkConfigFieldset } from "./networkConfigFieldset";
 
 interface IProp {
 	central?: boolean;
@@ -45,12 +46,15 @@ export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) 
 				</div>
 				{activeTab === "IPv4" ? (
 					// Show ipv4 assignment content here
+					// Ipv4Assignment disables its own edit controls and keeps the pools viewable
 					<Ipv4Assignment central={central} organizationId={organizationId} />
 				) : null}
 
 				{activeTab === "IPv6" ? (
 					// Show ipv6 assignment content here
-					<Ipv6assignment central={central} organizationId={organizationId} />
+					<NetworkConfigFieldset central={central}>
+						<Ipv6assignment central={central} organizationId={organizationId} />
+					</NetworkConfigFieldset>
 				) : null}
 
 				{activeTab === "mtu" ? (

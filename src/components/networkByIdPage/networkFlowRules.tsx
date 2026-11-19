@@ -8,6 +8,10 @@ import { useEffect, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import { type CustomBackendError } from "~/types/errorHandling";
 import { useRouter } from "next/router";
+import {
+	NetworkConfigFieldset,
+	useCanChangeNetworkConfig,
+} from "./networkConfigFieldset";
 
 const initialErrorState = { error: null, line: null };
 interface IProps {
@@ -17,6 +21,7 @@ interface IProps {
 export const NetworkFlowRules = ({ organizationId }: IProps) => {
 	const { query } = useRouter();
 	const utils = api.useUtils();
+	const canChangeNetworkConfig = useCanChangeNetworkConfig();
 
 	// Local state to store changes to the flow route
 	const {
@@ -95,39 +100,42 @@ export const NetworkFlowRules = ({ organizationId }: IProps) => {
 			<input type="checkbox" />
 			<div className="collapse-title">Flow Rules</div>
 			<div className="collapse-content" style={{ width: "100%" }}>
-				<CodeMirror
-					tabIndex={0}
-					value={flowRoute}
-					onChange={handleFlowRouteChange}
-					maxHeight="1500px"
-					width="100%"
-					theme={okaidia}
-					extensions={[python(), errorColorTheme, classnameExt]}
-					basicSetup={{
-						lineNumbers: true,
-						highlightActiveLineGutter: false,
-						highlightActiveLine: false,
-					}}
-				/>
-				<div className="space-x-4">
-					<button
-						onClick={() =>
-							void updateFlowRoute({
-								nwid: query.id as string,
-								organizationId,
-								updateParams: {
-									flowRoute: flowRoute || "#",
-								},
-							})
-						}
-						className="btn my-3 bg-base-300"
-					>
-						Save Changes
-					</button>
-					<button onClick={handleReset} className="btn btn-outline my-3 ">
-						Reset
-					</button>
-				</div>
+				<NetworkConfigFieldset>
+					<CodeMirror
+						tabIndex={0}
+						value={flowRoute}
+						editable={canChangeNetworkConfig}
+						onChange={handleFlowRouteChange}
+						maxHeight="1500px"
+						width="100%"
+						theme={okaidia}
+						extensions={[python(), errorColorTheme, classnameExt]}
+						basicSetup={{
+							lineNumbers: true,
+							highlightActiveLineGutter: false,
+							highlightActiveLine: false,
+						}}
+					/>
+					<div className="space-x-4">
+						<button
+							onClick={() =>
+								void updateFlowRoute({
+									nwid: query.id as string,
+									organizationId,
+									updateParams: {
+										flowRoute: flowRoute || "#",
+									},
+								})
+							}
+							className="btn my-3 bg-base-300"
+						>
+							Save Changes
+						</button>
+						<button onClick={handleReset} className="btn btn-outline my-3 ">
+							Reset
+						</button>
+					</div>
+				</NetworkConfigFieldset>
 			</div>
 		</div>
 	);

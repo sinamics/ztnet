@@ -220,6 +220,39 @@ describe("<NetworkIpAssignment />", () => {
 		expect(api.network.advancedIpAssignment.useMutation).toHaveBeenCalled();
 	});
 
+	it("lets members below the network configuration role view pools but not change them", async () => {
+		api.network.getNetworkById.useQuery = jest.fn().mockReturnValue({
+			data: {
+				canChangeNetworkConfig: false,
+				network: {
+					duplicateRoutes: [],
+					v4AssignMode: { zt: true },
+					ipAssignmentPools: [{ ipRangeStart: "10.0.0.1", ipRangeEnd: "10.0.0.254" }],
+					cidr: [],
+				},
+			},
+			isPending: false,
+		});
+
+		render(
+			<QueryClientProvider client={queryClient}>
+				<NextIntlClientProvider locale="en" messages={enTranslation}>
+					<NetworkIpAssignment />
+				</NextIntlClientProvider>
+			</QueryClientProvider>,
+		);
+
+		expect(screen.getByTestId("auto-assign-checkbox")).toBeDisabled();
+
+		// The Easy/Advanced tabs stay usable, so the existing pools can be inspected
+		expect(screen.getByText("Advanced").closest("fieldset[disabled]")).toBeNull();
+		fireEvent.click(screen.getByText("Advanced"));
+		expect(screen.getByText(/10\.0\.0\.1 - 10\.0\.0\.254/)).toBeInTheDocument();
+		expect(screen.queryByTitle(/delete/i)).not.toBeInTheDocument();
+		expect(screen.getByPlaceholderText(/192.168.168.1/i)).toBeDisabled();
+		expect(screen.getByRole("button", { name: /Submit/i })).toBeDisabled();
+	});
+
 	// Clear mock functions after each test
 	afterEach(() => {
 		jest.clearAllMocks();

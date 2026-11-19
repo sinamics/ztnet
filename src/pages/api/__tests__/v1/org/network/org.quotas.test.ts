@@ -64,6 +64,8 @@ const setupDatabase = ({
 	Object.assign(db, {
 		userOrganizationRole: { findFirst: jest.fn().mockResolvedValue({ role: "ADMIN" }) },
 		activityLog: { create: jest.fn().mockResolvedValue({}) },
+		// No settings row, so the network configuration role is the USER default
+		organizationSettings: { findUnique: jest.fn().mockResolvedValue(null) },
 		organization: {
 			findUnique: jest.fn().mockResolvedValue({ maxNetworks, maxMembersPerNetwork }),
 			findFirst: jest.fn().mockResolvedValue({ id: ORG }),

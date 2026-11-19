@@ -132,9 +132,9 @@ describe("organization api validation", () => {
 
 		await GET_orgById(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
 
-		expect(mockResponse.status).toHaveBeenCalledWith(500);
+		expect(mockResponse.status).toHaveBeenCalledWith(403);
 		expect(mockResponse.json).toHaveBeenCalledWith({
-			message:
+			error:
 				"You are not a member of this organization. Contact your organization administrator to request access.",
 		});
 	});
