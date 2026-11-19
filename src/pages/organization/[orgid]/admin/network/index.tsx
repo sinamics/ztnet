@@ -61,14 +61,16 @@ const OrganizationNetworkSetting = () => {
 			<MenuSectionDividerWrapper title={t("networkById.networkSettings")}>
 				<div className="flex justify-between gap-5 py-2">
 					<div>
-						<p className="font-medium">
+						<label htmlFor="networkConfigRole" className="block font-medium">
 							{t("organization.settings.network.networkConfigRole.title")}
-						</p>
-						<span className="text-sm text-gray-500">
+						</label>
+						<span id="networkConfigRoleDescription" className="text-sm text-gray-500">
 							{t("organization.settings.network.networkConfigRole.description")}
 						</span>
 					</div>
 					<select
+						id="networkConfigRole"
+						aria-describedby="networkConfigRoleDescription"
 						value={settings?.networkConfigRole ?? "USER"}
 						className="select select-bordered select-sm justify-self-end"
 						onChange={(e) => {

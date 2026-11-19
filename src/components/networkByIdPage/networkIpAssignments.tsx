@@ -46,9 +46,8 @@ export const NetworkIpAssignment = ({ central = false, organizationId }: IProp) 
 				</div>
 				{activeTab === "IPv4" ? (
 					// Show ipv4 assignment content here
-					<NetworkConfigFieldset central={central}>
-						<Ipv4Assignment central={central} organizationId={organizationId} />
-					</NetworkConfigFieldset>
+					// Ipv4Assignment disables its own edit controls and keeps the pools viewable
+					<Ipv4Assignment central={central} organizationId={organizationId} />
 				) : null}
 
 				{activeTab === "IPv6" ? (
