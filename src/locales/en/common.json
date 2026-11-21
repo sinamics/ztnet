@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>IMPORTANT:</span><br></br>Restoring ZeroTier configuration will replicate the exact ZeroTier identity from the backup source. This means this server will have the same ZeroTier identity as the original server.<br></br>Having two servers with identical ZeroTier identities can cause network conflicts and unpredictable behavior. Only proceed if you are migrating from the original server or if the original server is permanently decommissioned."
 				}
 			},
+			"versionMismatchModal": {
+				"title": "Different version detected",
+				"description": "This backup was created with ZTNet {backupVersion}, but this server is running {currentVersion}.",
+				"hint": "Restoring data from another version may cause errors or missing features. Create a backup of the current data first, and only continue if you are sure."
+			},
 			"restoreCompleteModal": {
 				"title": "Restore Complete",
 				"successMessage": "✅ Backup restoration completed successfully!",

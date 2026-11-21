@@ -18,6 +18,7 @@ import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
 import { globalSiteVersion } from "~/utils/global";
+import { isBackupVersionMismatch } from "~/utils/backupVersion";
 import { detectServerMajor, resolvePgDumpPath } from "~/utils/pgVersion";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 import type { InvitationLinkType } from "~/types/invitation";
@@ -1708,6 +1709,8 @@ export const adminRouter = createTRPCRouter({
 				fileName: z.string(),
 				restoreDatabase: z.boolean().default(true),
 				restoreZerotier: z.boolean().default(true),
+				// Set by the client after the user accepted the version mismatch warning.
+				confirmVersionMismatch: z.boolean().default(false),
 			}),
 		)
 		.mutation(async ({ input }) => {
@@ -1754,6 +1757,21 @@ export const adminRouter = createTRPCRouter({
 				let metadata: BackupMetadata = {};
 				if (fs.existsSync(metadataPath)) {
 					metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+				}
+
+				// Warn (not block) when the backup comes from a different app version.
+				// Nothing has been restored yet, so just report back and let the user decide.
+				if (
+					!input.confirmVersionMismatch &&
+					isBackupVersionMismatch(metadata.version, globalSiteVersion)
+				) {
+					fs.rmSync(extractDir, { recursive: true, force: true });
+					return {
+						success: false as const,
+						requiresConfirmation: true as const,
+						backupVersion: metadata.version as string,
+						currentVersion: globalSiteVersion,
+					};
 				}
 
 				// Restore database
@@ -2011,7 +2029,8 @@ export const adminRouter = createTRPCRouter({
 				fs.rmSync(extractDir, { recursive: true, force: true });
 
 				return {
-					success: true,
+					success: true as const,
+					requiresConfirmation: false as const,
 					metadata,
 					restoredDatabase: input.restoreDatabase,
 					restoredZerotier: input.restoreZerotier,

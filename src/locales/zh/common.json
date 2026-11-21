@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>恢复ZeroTier配置将复制备份源的确切ZeroTier身份。这意味着此服务器将具有与原始服务器相同的ZeroTier身份。<br></br>拥有两个具有相同ZeroTier身份的服务器可能会导致网络冲突和不可预测的行为。仅在您从原始服务器迁移或原始服务器已永久停用时才继续。"
 				}
 			},
+			"versionMismatchModal": {
+				"title": "检测到不同版本",
+				"description": "此备份由 ZTNet {backupVersion} 创建，但此服务器运行的是 {currentVersion}。",
+				"hint": "从其他版本恢复数据可能导致错误或功能缺失。请先备份当前数据，确认无误后再继续。"
+			},
 			"restoreCompleteModal": {
 				"title": "恢复完成",
 				"successMessage": "✅ 备份恢复成功完成！",
