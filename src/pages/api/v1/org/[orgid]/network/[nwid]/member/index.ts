@@ -41,12 +41,10 @@ export const GET_orgNetworkMembers = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
 	async (_req, res, { networkId, orgId, ctx }) => {
 		try {
-			// Check if the user is an organization admin
-			// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: orgId,
-				minimumRequiredRole: Role.USER,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 
 			// @ts-expect-error
