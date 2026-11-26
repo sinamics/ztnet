@@ -58,7 +58,6 @@ const RATE_LIMIT_WINDOW_MS =
 
 const invitationRateLimit = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Tracks in-flight background reconciliations per organization so that opening
@@ -1223,6 +1222,7 @@ export const organizationRouter = createTRPCRouter({
 			const INVITATION_REQUEST_LIMIT = 50;
 			try {
 				await invitationRateLimit.check(
+					ctx.req,
 					ctx.res,
 					INVITATION_REQUEST_LIMIT,
 					"ORGANIZATION_INVITATION",

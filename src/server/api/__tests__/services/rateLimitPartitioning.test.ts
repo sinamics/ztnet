@@ -49,7 +49,7 @@ const callReset = async (ip: string, email: string) => {
 	}
 };
 
-describe("rateLimit partitioning (GHSA-5p34-fh6h-7892)", () => {
+describe("rateLimit partitioning", () => {
 	// CONTROL: runs first, on a cold bucket. If this fails, every later
 	// assertion is meaningless because the endpoint would be rejecting for
 	// some reason other than the rate limiter.
@@ -57,51 +57,46 @@ describe("rateLimit partitioning (GHSA-5p34-fh6h-7892)", () => {
 		expect(await callReset("198.51.100.1", "control@example.com")).toBe("allowed");
 	});
 
-	it("one attacker IP exhausts passwordResetLink for every other IP", async () => {
+	it("one client using up passwordResetLink does not lock out other clients", async () => {
 		// Drain from a single source IP until it is cut off, rather than
 		// hardcoding the limit, so the test does not depend on env config.
-		let attackerCalls = 0;
-		while (
-			(await callReset("203.0.113.66", `junk${attackerCalls}@example.com`)) === "allowed"
-		) {
-			attackerCalls++;
-			if (attackerCalls > 200) throw new Error("limiter never engaged");
+		let calls = 0;
+		while ((await callReset("203.0.113.66", `junk${calls}@example.com`)) === "allowed") {
+			calls++;
+			if (calls > 200) throw new Error("limiter never engaged");
 		}
-		console.info(`attacker was cut off after ${attackerCalls} accepted calls`);
 
-		// Three unrelated, never-seen clients on completely different IPs.
+		// the noisy client stays cut off
+		expect(await callReset("203.0.113.66", "again@example.com")).toBe(
+			"TOO_MANY_REQUESTS",
+		);
+
+		// unrelated clients on other addresses are not affected
 		const outcomes = [];
 		for (const ip of ["198.51.100.7", "192.0.2.44", "203.0.113.201"]) {
 			outcomes.push(await callReset(ip, "real.user@example.com"));
 		}
-
-		console.info("victim outcomes:", outcomes);
-		expect(outcomes).toEqual([
-			"TOO_MANY_REQUESTS",
-			"TOO_MANY_REQUESTS",
-			"TOO_MANY_REQUESTS",
-		]);
+		expect(outcomes).toEqual(["allowed", "allowed", "allowed"]);
 	});
 
-	it("the mfaAuth bucket is separate from auth, but equally global", async () => {
-		// Proves the partitioning that DOES exist is per-endpoint, not per-caller:
-		// the auth bucket is exhausted by the previous test, yet MFA still works
-		// -- until one client exhausts that one too.
-		const attacker = makeClient("203.0.113.66");
-		for (let i = 0; i < 9; i++) {
-			await attacker.mfaAuth.mfaResetLink({ email: `junk${i}@example.com` });
-		}
-
-		let victimCode = "allowed";
+	it("limits are separate per endpoint and per client", async () => {
+		// 203.0.113.66 is cut off from passwordResetLink above, mfaResetLink
+		// has its own budget
+		const noisy = makeClient("203.0.113.66");
+		let noisyCode = "allowed";
 		try {
-			await makeClient("198.51.100.99").mfaAuth.mfaResetLink({
-				email: "locked.out@example.com",
-			});
+			for (let i = 0; i < 200; i++) {
+				await noisy.mfaAuth.mfaResetLink({ email: `junk${i}@example.com` });
+			}
 		} catch (e) {
-			victimCode = (e as { code?: string }).code ?? "unknown";
+			noisyCode = (e as { code?: string }).code ?? "unknown";
 		}
+		expect(noisyCode).toBe("TOO_MANY_REQUESTS");
 
-		console.info("mfa victim outcome:", victimCode);
-		expect(victimCode).toBe("TOO_MANY_REQUESTS");
+		await expect(
+			makeClient("198.51.100.99").mfaAuth.mfaResetLink({
+				email: "not.locked.out@example.com",
+			}),
+		).resolves.toBeDefined();
 	});
 });

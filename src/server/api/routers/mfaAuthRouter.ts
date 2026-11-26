@@ -24,7 +24,6 @@ const GENERAL_REQUEST_LIMIT =
 
 const limiter = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Rate limit tokens for MFA operations
@@ -70,6 +69,7 @@ export const mfaAuthRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.MFA_VALIDATE_TOKEN,
@@ -110,6 +110,7 @@ export const mfaAuthRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.MFA_RESET_LINK,
@@ -178,6 +179,7 @@ export const mfaAuthRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.MFA_RESET_VALIDATION,
@@ -283,6 +285,7 @@ export const mfaAuthRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.MFA_VALIDATE_RECOVERY,
