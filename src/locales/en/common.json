@@ -49,6 +49,8 @@
 		"userActions": "User Actions",
 		"addWebhooks": "Add Webhooks",
 		"options": "Options",
+		"notes": "Notes",
+		"save": "Save",
 		"settings": "Settings",
 		"resend": "Resend",
 		"enable2fa": "Enable 2FA",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Search anything...",
 			"optionModalTitle": "Options for member",
+			"notesModalTitle": "Notes for member",
+			"notesPlaceholder": "Add notes about this member (device details, location, contacts...)",
+			"notesReadOnly": "You have read-only access to these notes.",
+			"notesNoAccess": "You don't have access to member notes.",
 			"tableRow": {
 				"updateName": "Click to change name",
 				"updateDescription": "Click to add description"
@@ -1267,6 +1273,10 @@
 					"description": "When enabled, this feature will:",
 					"bulletPoints": "Maintain a consistent name for each node across all networks in the organization.\nUpdate the node's name in all networks when you rename it in one network.\nUpon member registration, check if the member exists in your organization and use the first name found.",
 					"note": "Note: This is applicable exclusively to networks within this particular organization."
+				},
+				"networkConfigRole": {
+					"title": "Minimum role to change network configuration",
+					"description": "Members need at least this role to change managed routes, DNS, IP assignment and flow rules in this organization's networks. Members with a lower role can still view them."
 				}
 			},
 			"notifications": {

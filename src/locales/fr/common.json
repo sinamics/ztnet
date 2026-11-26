@@ -49,6 +49,8 @@
 		"userActions": "Gérer l'utilisateur",
 		"addWebhooks": "Ajouter des Webhooks",
 		"options": "Options",
+		"notes": "Notes",
+		"save": "Enregistrer",
 		"settings": "Paramètres",
 		"resend": "Renvoyer",
 		"enable2fa": "Activer 2FA",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Rechercher n'importe quoi...",
 			"optionModalTitle": "Options pour les membres",
+			"notesModalTitle": "Notes du membre",
+			"notesPlaceholder": "Ajoutez des notes sur ce membre (détails de l'appareil, emplacement, contacts...)",
+			"notesReadOnly": "Vous disposez d'un accès en lecture seule à ces notes.",
+			"notesNoAccess": "Vous n'avez pas accès aux notes des membres.",
 			"tableRow": {
 				"updateName": "Cliquez pour changer de nom",
 				"updateDescription": "Cliquez pour ajouter une description"
@@ -1267,6 +1273,10 @@
 					"description": "Lorsqu'elle est activée, cette fonctionnalité va :",
 					"bulletPoints": "Maintenir un nom cohérent pour chaque nœud dans tous les réseaux de l'organisation.\nMettre à jour le nom du nœud dans tous les réseaux lorsque vous le renommez dans un réseau.\nLors de l'enregistrement d'un membre, vérifier si le membre existe dans votre organisation et utiliser le premier nom trouvé.",
 					"note": "Remarque : Ceci s'applique exclusivement aux réseaux au sein de cette organisation particulière."
+				},
+				"networkConfigRole": {
+					"title": "Rôle minimum pour modifier la configuration réseau",
+					"description": "Les membres doivent avoir au moins ce rôle pour modifier les routes gérées, le DNS, l'attribution des adresses IP et les règles de flux dans les réseaux de cette organisation. Les membres ayant un rôle inférieur peuvent toujours les consulter."
 				}
 			},
 			"notifications": {

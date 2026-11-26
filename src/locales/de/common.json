@@ -49,6 +49,8 @@
 		"userActions": "Benutzeraktionen",
 		"addWebhooks": "Webhooks hinzufügen",
 		"options": "Optionen",
+		"notes": "Notizen",
+		"save": "Speichern",
 		"settings": "Einstellungen",
 		"resend": "Erneut senden",
 		"enable2fa": "2FA aktivieren",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Suchen...",
 			"optionModalTitle": "Optionen für Mitglied",
+			"notesModalTitle": "Notizen zum Mitglied",
+			"notesPlaceholder": "Notizen zu diesem Mitglied hinzufügen (Gerätedetails, Standort, Kontakte ...)",
+			"notesReadOnly": "Sie haben nur Lesezugriff auf diese Notizen.",
+			"notesNoAccess": "Sie haben keinen Zugriff auf die Mitgliedernotizen.",
 			"tableRow": {
 				"updateName": "Klicken, um den Namen zu ändern",
 				"updateDescription": "Klicken, um Beschriftung hinzuzufügen"
@@ -1267,6 +1273,10 @@
 					"description": "Wenn diese Funktion aktiviert ist, wird sie:",
 					"bulletPoints": "Einen einheitlichen Namen für jeden Knoten in allen Netzwerken der Organisation verwenden.\nDen Namen des Knotens in allen Netzwerken aktualisieren, wenn Sie ihn in einem Netzwerk umbenennen.\nBei der Registrierung eines Mitglieds überprüfen, ob dieses Mitglied in Ihrer Organisation vorhanden ist und den ersten gefundenen Eintrag verwenden.",
 					"note": "Hinweis: Dies gilt ausschließlich für Netzwerke innerhalb dieser bestimmten Organisation."
+				},
+				"networkConfigRole": {
+					"title": "Mindestrolle zum Ändern der Netzwerkkonfiguration",
+					"description": "Mitglieder benötigen mindestens diese Rolle, um verwaltete Routen, DNS, IP-Zuweisung und Flow-Regeln in den Netzwerken dieser Organisation zu ändern. Mitglieder mit einer niedrigeren Rolle können sie weiterhin ansehen."
 				}
 			},
 			"notifications": {

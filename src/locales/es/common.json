@@ -49,6 +49,8 @@
 		"userActions": "Acciones del usuario",
 		"addWebhooks": "Añadir Webhooks",
 		"options": "Opciones",
+		"notes": "Notas",
+		"save": "Guardar",
 		"settings": "Configuraciones",
 		"resend": "Reenviar",
 		"enable2fa": "Activar 2FA",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Buscar cualquier cosa...",
 			"optionModalTitle": "Opciones para miembro",
+			"notesModalTitle": "Notas del miembro",
+			"notesPlaceholder": "Añada notas sobre este miembro (datos del dispositivo, ubicación, contactos...)",
+			"notesReadOnly": "Solo tiene acceso de lectura a estas notas.",
+			"notesNoAccess": "No tiene acceso a las notas de los miembros.",
 			"tableRow": {
 				"updateName": "Haz clic para cambiar el nombre",
 				"updateDescription": "Haz clic para agregar descripción"
@@ -1267,6 +1273,10 @@
 					"description": "Cuando se habilita, esta función:",
 					"bulletPoints": "Mantendrá un nombre consistente para cada nodo en todas las redes de la organización.\nActualizará el nombre del nodo en todas las redes cuando lo renombres en una red.\nAl registrar un miembro, verificará si el miembro existe en tu organización y usará el primer nombre encontrado.",
 					"note": "Nota: Esto se aplica exclusivamente a las redes dentro de esta organización en particular."
+				},
+				"networkConfigRole": {
+					"title": "Rol mínimo para cambiar la configuración de red",
+					"description": "Los miembros necesitan al menos este rol para cambiar las rutas gestionadas, el DNS, la asignación de IP y las reglas de flujo en las redes de esta organización. Los miembros con un rol inferior aún pueden verlas."
 				}
 			},
 			"notifications": {

@@ -153,10 +153,10 @@ export function createGenericApiTests(
 
 			await handler(mockRequest as NextApiRequest, mockResponse as NextApiResponse);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(expect.any(Number));
+			expect(mockResponse.status).toHaveBeenCalledWith(403);
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
-					message: expect.stringContaining("You are not a member of this organization"),
+					error: expect.stringContaining("You are not a member of this organization"),
 				}),
 			);
 		});

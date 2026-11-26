@@ -49,6 +49,8 @@
 		"userActions": "Akcje",
 		"addWebhooks": "Dodaj webhooki",
 		"options": "Opcje",
+		"notes": "Notatki",
+		"save": "Zapisz",
 		"settings": "Ustawienia",
 		"resend": "Wyślij ponownie",
 		"enable2fa": "Włącz 2FA",
@@ -368,6 +370,10 @@
 		"networkMembersTable": {
 			"searchPlaceholder": "Szukaj cokolwiek...",
 			"optionModalTitle": "Opcje członka sieci",
+			"notesModalTitle": "Notatki członka",
+			"notesPlaceholder": "Dodaj notatki o tym członku (szczegóły urządzenia, lokalizacja, kontakty...)",
+			"notesReadOnly": "Masz dostęp do tych notatek tylko do odczytu.",
+			"notesNoAccess": "Nie masz dostępu do notatek członków.",
 			"tableRow": {
 				"updateName": "Kliknij aby zmienić nazwę",
 				"updateDescription": "Kliknij aby dodać opis"
@@ -1267,6 +1273,10 @@
 					"description": "Po włączeniu ta funkcja będzie:",
 					"bulletPoints": "Utrzymywać spójną nazwę każdego węzła we wszystkich sieciach tej organizacji.\nAktualizować nazwę węzła we wszystkich sieciach, gdy zmienisz ją w jednej sieci.\nPodczas rejestracji członka sprawdzać, czy członek istnieje w Twojej organizacji i będzie używać pierwszej znalezionej nazwy.",
 					"note": "Uwaga: Dotyczy to wyłącznie sieci w ramach tej konkretnej organizacji."
+				},
+				"networkConfigRole": {
+					"title": "Minimalna rola do zmiany konfiguracji sieci",
+					"description": "Członkowie potrzebują co najmniej tej roli, aby zmieniać zarządzane trasy, DNS, przydzielanie adresów IP i reguły przepływu w sieciach tej organizacji. Członkowie z niższą rolą nadal mogą je przeglądać."
 				}
 			},
 			"notifications": {

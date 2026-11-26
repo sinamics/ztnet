@@ -9,7 +9,6 @@ import { checkUserOrganizationRole } from "~/utils/role";
 // Rate limit using environment configuration
 const limiter = rateLimit({
 	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
-	uniqueTokenPerInterval: 500,
 });
 
 export default async function apiNetworkMembersHandler(
@@ -18,6 +17,7 @@ export default async function apiNetworkMembersHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"ORGANIZATION_NETWORK_MEMBERS_CACHE_TOKEN",
@@ -41,12 +41,10 @@ export const GET_orgNetworkMembers = SecuredOrganizationApiRoute(
 	{ requiredRole: Role.READ_ONLY, requireNetworkId: true },
 	async (_req, res, { networkId, orgId, ctx }) => {
 		try {
-			// Check if the user is an organization admin
-			// TODO This might be redundant as the caller.createOrgNetwork will check for the same thing. Keeping it for now
 			await checkUserOrganizationRole({
 				ctx,
 				organizationId: orgId,
-				minimumRequiredRole: Role.USER,
+				minimumRequiredRole: Role.READ_ONLY,
 			});
 
 			// @ts-expect-error
