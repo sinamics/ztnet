@@ -335,6 +335,63 @@ describe("Member router access control", () => {
 		).rejects.toThrow("You do not have access to this network!");
 	});
 
+	it("should only return annotations of members in the checked network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.networkMemberNotation.findMany = jest.fn().mockResolvedValue([]);
+
+		const caller = createCaller(ownerSession);
+		await caller.networkMember.getMemberAnotations({ nwid: "test-nwid", nodeid: 7 });
+
+		expect(prisma.networkMemberNotation.findMany).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: {
+					nodeid: 7,
+					member: { nwid: "test-nwid" },
+					label: { nwid: "test-nwid" },
+				},
+			}),
+		);
+	});
+
+	it("should reject addAnotation for a member of another network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.network_members.findFirst = jest.fn().mockResolvedValue(null);
+		prisma.activityLog.create = jest.fn();
+		prisma.notation.upsert = jest.fn();
+		prisma.networkMemberNotation.upsert = jest.fn();
+
+		const caller = createCaller(ownerSession);
+		await expect(
+			caller.network.addAnotation({ nwid: "test-nwid", nodeid: 7, name: "label" }),
+		).rejects.toThrow("Member not found!");
+
+		expect(prisma.network_members.findFirst).toHaveBeenCalledWith(
+			expect.objectContaining({ where: { nodeid: 7, nwid: "test-nwid" } }),
+		);
+		expect(prisma.notation.upsert).not.toHaveBeenCalled();
+		expect(prisma.networkMemberNotation.upsert).not.toHaveBeenCalled();
+		expect(prisma.activityLog.create).not.toHaveBeenCalled();
+	});
+
+	it("should link addAnotation to a member of the checked network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.network_members.findFirst = jest.fn().mockResolvedValue({ nodeid: 7 });
+		prisma.activityLog.create = jest.fn().mockResolvedValue({});
+		prisma.notation.upsert = jest.fn().mockResolvedValue({ id: 3 });
+		prisma.networkMemberNotation.upsert = jest
+			.fn()
+			.mockResolvedValue({ notationId: 3, nodeid: 7 });
+
+		const caller = createCaller(ownerSession);
+		const result = await caller.network.addAnotation({
+			nwid: "test-nwid",
+			nodeid: 7,
+			name: "label",
+		});
+
+		expect(result).toEqual({ notationId: 3, nodeid: 7 });
+	});
+
 	it("should allow owner to access getMemberById", async () => {
 		mockPersonalNetwork("owner-user-id");
 		prisma.network_members.findFirst = jest.fn().mockResolvedValue({
