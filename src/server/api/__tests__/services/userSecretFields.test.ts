@@ -364,9 +364,14 @@ describe("org.preValidateUserInvite", () => {
 
 	it("tells the holder of an invitation link nothing about the invited account", async () => {
 		const token = inviteFor("invited@example.test");
-		db.invitation.findFirst.mockResolvedValue({
-			token,
-			expiresAt: new Date(Date.now() + 3600000),
+		db.organizationInvitation.findFirst.mockResolvedValue({
+			organizationId: "org",
+			invitation: {
+				id: 1,
+				token,
+				role: "USER",
+				expiresAt: new Date(Date.now() + 3600000),
+			},
 		});
 		// worst case: the lookup returns the whole row
 		db.user.findFirst.mockResolvedValue(fullUser("invited"));
@@ -381,5 +386,61 @@ describe("org.preValidateUserInvite", () => {
 		// the invited user is still added to the organization
 		expect(db.organization.update).toHaveBeenCalledTimes(1);
 		expect(db.organization.update.mock.calls[0][0].include).toBeUndefined();
+	});
+
+	it("looks the invitation up through the organization and consumes it", async () => {
+		const token = inviteFor("invited@example.test");
+		db.organizationInvitation.findFirst.mockResolvedValue({
+			organizationId: "org",
+			invitation: {
+				id: 7,
+				token,
+				role: "READ_ONLY",
+				expiresAt: new Date(Date.now() + 3600000),
+			},
+		});
+		db.user.findFirst.mockResolvedValue({ id: "invited", name: "invited" });
+		db.userOrganizationRole.findFirst.mockResolvedValue(null);
+
+		await callerAs(null).org.preValidateUserInvite({ token });
+
+		expect(db.organizationInvitation.findFirst.mock.calls[0][0].where).toEqual({
+			organizationId: "org",
+			invitation: { token },
+		});
+		expect(db.invitation.delete).toHaveBeenCalledWith({ where: { id: 7 } });
+		// the stored role wins over the one in the token
+		expect(db.organization.update.mock.calls[0][0].data.userRoles.create.role).toBe(
+			"READ_ONLY",
+		);
+	});
+
+	it("rejects an invitation that is no longer linked to the organization", async () => {
+		const token = inviteFor("invited@example.test");
+		db.organizationInvitation.findFirst.mockResolvedValue(null);
+		db.user.findFirst.mockResolvedValue({ id: "invited", name: "invited" });
+
+		await expect(callerAs(null).org.preValidateUserInvite({ token })).rejects.toThrow(
+			"An error occurred while processing the invitation link.",
+		);
+		expect(db.organization.update).not.toHaveBeenCalled();
+		expect(db.invitation.delete).not.toHaveBeenCalled();
+	});
+});
+
+describe("org.deleteInvite", () => {
+	it("deletes the invitation itself so its token stops working", async () => {
+		db.userOrganizationRole.findFirst.mockResolvedValue({ role: "ADMIN" });
+		db.invitation.deleteMany.mockResolvedValue({ count: 1 });
+
+		const response = await callerAs("USER").org.deleteInvite({
+			organizationId: "org",
+			invitationId: "link-id",
+		});
+
+		expect(response).toEqual({ count: 1 });
+		expect(db.invitation.deleteMany).toHaveBeenCalledWith({
+			where: { organizations: { some: { id: "link-id", organizationId: "org" } } },
+		});
 	});
 });
