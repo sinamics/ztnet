@@ -376,6 +376,7 @@ describe("org.preValidateUserInvite", () => {
 		// worst case: the lookup returns the whole row
 		db.user.findFirst.mockResolvedValue(fullUser("invited"));
 		db.userOrganizationRole.findFirst.mockResolvedValue(null);
+		db.invitation.deleteMany.mockResolvedValue({ count: 1 });
 
 		// public procedure, called without a session
 		const response = await callerAs(null).org.preValidateUserInvite({ token });
@@ -401,6 +402,7 @@ describe("org.preValidateUserInvite", () => {
 		});
 		db.user.findFirst.mockResolvedValue({ id: "invited", name: "invited" });
 		db.userOrganizationRole.findFirst.mockResolvedValue(null);
+		db.invitation.deleteMany.mockResolvedValue({ count: 1 });
 
 		await callerAs(null).org.preValidateUserInvite({ token });
 
@@ -408,11 +410,37 @@ describe("org.preValidateUserInvite", () => {
 			organizationId: "org",
 			invitation: { token },
 		});
-		expect(db.invitation.delete).toHaveBeenCalledWith({ where: { id: 7 } });
+		expect(db.invitation.deleteMany.mock.calls[0][0]).toEqual({ where: { id: 7 } });
+		// other pending invitations of the same user to the organization
+		expect(db.invitation.deleteMany.mock.calls[1][0].where.organizations).toEqual({
+			some: { organizationId: "org" },
+		});
 		// the stored role wins over the one in the token
 		expect(db.organization.update.mock.calls[0][0].data.userRoles.create.role).toBe(
 			"READ_ONLY",
 		);
+	});
+
+	it("adds nobody when the invitation was consumed in the meantime", async () => {
+		const token = inviteFor("invited@example.test");
+		db.organizationInvitation.findFirst.mockResolvedValue({
+			organizationId: "org",
+			invitation: {
+				id: 7,
+				token,
+				role: "USER",
+				email: "invited@example.test",
+				expiresAt: new Date(Date.now() + 3600000),
+			},
+		});
+		db.user.findFirst.mockResolvedValue({ id: "invited", name: "invited" });
+		db.userOrganizationRole.findFirst.mockResolvedValue(null);
+		db.invitation.deleteMany.mockResolvedValue({ count: 0 });
+
+		await expect(callerAs(null).org.preValidateUserInvite({ token })).rejects.toThrow(
+			"An error occurred while processing the invitation link.",
+		);
+		expect(db.organization.update).not.toHaveBeenCalled();
 	});
 
 	it("rejects an invitation that is no longer linked to the organization", async () => {
@@ -424,7 +452,7 @@ describe("org.preValidateUserInvite", () => {
 			"An error occurred while processing the invitation link.",
 		);
 		expect(db.organization.update).not.toHaveBeenCalled();
-		expect(db.invitation.delete).not.toHaveBeenCalled();
+		expect(db.invitation.deleteMany).not.toHaveBeenCalled();
 	});
 });
 

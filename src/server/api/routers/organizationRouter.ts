@@ -1278,11 +1278,27 @@ export const organizationRouter = createTRPCRouter({
 						throw new Error("You are already a member of the organization.");
 					}
 					// Consume the invitation and add the user in one transaction, so
-					// the link works exactly once. The delete fails if the invitation
-					// is already gone, which rolls the membership back.
+					// the link works exactly once. If the invitation is already gone
+					// (used or revoked meanwhile) nothing is written.
 					await ctx.prisma.$transaction(async (tx) => {
-						await tx.invitation.delete({
+						const consumed = await tx.invitation.deleteMany({
 							where: { id: invitation.id },
+						});
+						if (consumed.count !== 1) {
+							throw new Error("An error occurred while processing the invitation link.");
+						}
+						// any other pending invitation of this user to the organization
+						// is void now as well
+						await tx.invitation.deleteMany({
+							where: {
+								email: {
+									equals: invitation.email ?? tokenPayload.email,
+									mode: "insensitive",
+								},
+								organizations: {
+									some: { organizationId: orgInvitation.organizationId },
+								},
+							},
 						});
 						await tx.organization.update({
 							where: {
