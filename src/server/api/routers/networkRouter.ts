@@ -21,6 +21,8 @@ import {
 	attachLiveStatus,
 	fetchPeersByAddress,
 	reconcileNetworkMembersOnce,
+	serializeMemberRow,
+	type SerializedMemberRow,
 	triggerBackgroundReconcile,
 } from "../services/memberService";
 import { determineConnectionStatus } from "../utils/memberUtils";
@@ -151,8 +153,8 @@ export const networkRouter = createTRPCRouter({
 					memberCount: centralMembers.length,
 					authorizedMemberCount: centralMembers.filter((m) => m.authorized).length,
 					memberLimit: null as number | null,
-					zombieMembers: [] as network_members[],
-					permanentlyDeletedMembers: [] as network_members[],
+					zombieMembers: [] as SerializedMemberRow[],
+					permanentlyDeletedMembers: [] as SerializedMemberRow[],
 					canChangeNetworkConfig: true,
 				};
 			}
@@ -342,8 +344,10 @@ export const networkRouter = createTRPCRouter({
 					authorizedMemberCount,
 					// Organization quota on authorized members, null when unlimited
 					memberLimit: networkFromDatabase.organization?.maxMembersPerNetwork ?? null,
-					zombieMembers,
-					permanentlyDeletedMembers,
+					zombieMembers: zombieMembers.map((row) => serializeMemberRow(row)),
+					permanentlyDeletedMembers: permanentlyDeletedMembers.map((row) =>
+						serializeMemberRow(row),
+					),
 					canChangeNetworkConfig,
 				};
 			} catch (error) {
