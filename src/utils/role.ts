@@ -1,4 +1,4 @@
-import { TRPCClientError } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
 
 enum Role {
 	READ_ONLY = 0,
@@ -54,11 +54,13 @@ export const checkUserOrganizationRole = async ({
 		},
 	});
 
-	// If user role is not found, deny access
+	// If user role is not found, deny access. FORBIDDEN maps to HTTP 403 in tRPC and the REST API.
 	if (!orgUserRole) {
-		throw new TRPCClientError(
-			"You are not a member of this organization. Contact your organization administrator to request access.",
-		);
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message:
+				"You are not a member of this organization. Contact your organization administrator to request access.",
+		});
 	}
 
 	// Directly return true for admin role
@@ -73,7 +75,9 @@ export const checkUserOrganizationRole = async ({
 	if (userRoleValue >= requiredRoleValue) {
 		return true;
 	}
-	throw new Error(
-		"You don't have required permission to perform this action. Contact your organization administrator to request access.",
-	);
+	throw new TRPCError({
+		code: "FORBIDDEN",
+		message:
+			"You don't have required permission to perform this action. Contact your organization administrator to request access.",
+	});
 };

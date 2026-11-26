@@ -9,7 +9,7 @@ import { sendMailWithTemplate } from "~/utils/mail";
 import type { TagsByName, NetworkEntity, RoutesEntity } from "~/types/local/network";
 import type { MemberEntity, CapabilitiesByName } from "~/types/local/member";
 import type { CentralNetwork } from "~/types/central/network";
-import { checkNetworkAccess } from "~/utils/networkAccess";
+import { checkNetworkAccess, checkNetworkConfigAccess } from "~/utils/networkAccess";
 import { type network, type network_members, Role } from "@prisma/client";
 import {
 	HookType,
@@ -147,6 +147,7 @@ export const networkRouter = createTRPCRouter({
 					memberLimit: null as number | null,
 					zombieMembers: [] as network_members[],
 					permanentlyDeletedMembers: [] as network_members[],
+					canChangeNetworkConfig: true,
 				};
 			}
 
@@ -311,6 +312,15 @@ export const networkRouter = createTRPCRouter({
 				// Remove duplicates from the list of duplicated IPs
 				const uniqueDuplicatedIPs = [...new Set(duplicatedIPs)];
 
+				// Lets the UI disable route, DNS, IP assignment and flow rule controls
+				const canChangeNetworkConfig = await checkNetworkConfigAccess(
+					ctx,
+					input.nwid,
+				).then(
+					() => true,
+					() => false,
+				);
+
 				// Construct the final response object using the already fetched network data
 				return {
 					network: {
@@ -328,6 +338,7 @@ export const networkRouter = createTRPCRouter({
 					memberLimit: networkFromDatabase.organization?.maxMembersPerNetwork ?? null,
 					zombieMembers,
 					permanentlyDeletedMembers,
+					canChangeNetworkConfig,
 				};
 			} catch (error) {
 				console.error("Error in getNetworkById:", error);
@@ -647,8 +658,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// IP assignment needs the organization's network configuration role
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -711,8 +722,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// IP assignment needs the organization's network configuration role
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -768,8 +779,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Routes need the organization's network configuration role; other roles can view them
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -857,8 +868,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Replaces the network routes, so it needs the same role as managedRoutes
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			await ctx.prisma.activityLog.create({
 				data: {
@@ -920,8 +931,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Adds routes for the pools, so it needs the same role as managedRoutes
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -1239,8 +1250,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// DNS needs the organization's network configuration role; other roles can view it
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({
@@ -1434,8 +1445,8 @@ export const networkRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to access this network
-			await checkNetworkAccess(ctx, input.nwid, Role.USER);
+			// Flow rules need the organization's network configuration role
+			await checkNetworkConfigAccess(ctx, input.nwid);
 
 			// Log the action
 			await ctx.prisma.activityLog.create({

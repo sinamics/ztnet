@@ -140,7 +140,7 @@ paths:
           $ref: '../../_http_responses/InternalServerError.yml#/InternalServerError'
     post:
       summary: Update a specific organization network
-      description: Requires the USER role or higher in the organization. READ_ONLY members can only read the network.
+      description: Requires the USER role or higher in the organization. READ_ONLY members can only read the network. Changing `routes`, `dns`, `ipAssignmentPools`, `v4AssignMode`, `v6AssignMode` or `flowRule` requires the minimum role set in the organization's network settings (USER by default, can be raised to MODERATOR or ADMIN); a lower role gets 403.
       operationId: updateNetworkInfo
       parameters:
         - name: networkId
@@ -175,7 +175,9 @@ paths:
           $ref: '../../_http_responses/Unauthorized.yml#/Unauthorized'
         403:
           description: |
-            `private: false` was sent for a network of an organization that has a limit on authorized members per network. Such a network cannot be made public, see [Organization Quotas](/usage/organization-quotas/).
+            Returned when:
+            - the API key's user does not have the organization role this request needs, for example below the organization's minimum role to change network configuration.
+            - `private: false` was sent for a network of an organization that has a limit on authorized members per network. Such a network cannot be made public, see [Organization Quotas](/usage/organization-quotas/).
           content:
             application/json:
               schema:
@@ -183,8 +185,13 @@ paths:
                 properties:
                   error:
                     type: string
-              example:
-                error: "This organization has a limit on authorized members per network, so its networks cannot be made public. Contact the instance administrator."
+              examples:
+                role:
+                  value:
+                    error: "You don't have required permission to perform this action. Contact your organization administrator to request access."
+                quota:
+                  value:
+                    error: "This organization has a limit on authorized members per network, so its networks cannot be made public. Contact the instance administrator."
         429:
           $ref: '../../_http_responses/RateLimitExceeded.yml#/RateLimitExceeded'
         500:
