@@ -1,5 +1,6 @@
 import type { NextApiResponse } from "next";
 import { LRUCache } from "lru-cache";
+import { getClientKey } from "~/utils/clientAddress";
 
 type Options = {
 	uniqueTokenPerInterval?: number;
@@ -31,6 +32,13 @@ export const RATE_LIMIT_CONFIG = {
 	},
 };
 
+type RateLimitRequest = Parameters<typeof getClientKey>[0];
+
+/**
+ * Counts requests per client and per `token` (the operation being limited).
+ * Each client has its own budget, so one client using up its requests does
+ * not lock anyone else out.
+ */
 export default function rateLimit(options?: Options) {
 	const tokenCache = new LRUCache({
 		max: options?.uniqueTokenPerInterval || 500,
@@ -38,18 +46,24 @@ export default function rateLimit(options?: Options) {
 	});
 
 	return {
-		check: (res: NextApiResponse, limit: number, token: string) =>
+		check: (
+			req: RateLimitRequest,
+			res: Pick<NextApiResponse, "setHeader"> | null | undefined,
+			limit: number,
+			token: string,
+		) =>
 			new Promise<void>((resolve, reject) => {
-				const tokenCount = (tokenCache.get(token) as number[]) || [0];
+				const key = `${token}:${getClientKey(req)}`;
+				const tokenCount = (tokenCache.get(key) as number[]) || [0];
 				if (tokenCount[0] === 0) {
-					tokenCache.set(token, tokenCount);
+					tokenCache.set(key, tokenCount);
 				}
 				tokenCount[0] += 1;
 
 				const currentUsage = tokenCount[0];
 				const isRateLimited = currentUsage >= limit;
-				res.setHeader("X-RateLimit-Limit", limit);
-				res.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
+				res?.setHeader("X-RateLimit-Limit", limit);
+				res?.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
 
 				return isRateLimited ? reject() : resolve();
 			}),

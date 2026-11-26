@@ -24,6 +24,7 @@ export default async function apiNetworkByIdHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"ORGANIZATION_NETWORKID_CACHE_TOKEN",

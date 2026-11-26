@@ -16,7 +16,12 @@ export default async function createStatsHandler(
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, RATE_LIMIT_CONFIG.API_MAX_REQUESTS, "STATS_CACHE_TOKEN");
+		await limiter.check(
+			req,
+			res,
+			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
+			"STATS_CACHE_TOKEN",
+		);
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}

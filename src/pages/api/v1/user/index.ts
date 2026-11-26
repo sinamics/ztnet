@@ -21,6 +21,7 @@ export default async function createUserHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"CREATE_USER_CACHE_TOKEN",

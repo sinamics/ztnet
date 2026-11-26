@@ -1213,6 +1213,7 @@ export const organizationRouter = createTRPCRouter({
 			const INVITATION_REQUEST_LIMIT = 50;
 			try {
 				await invitationRateLimit.check(
+					ctx.req,
 					ctx.res,
 					INVITATION_REQUEST_LIMIT,
 					"ORGANIZATION_INVITATION",

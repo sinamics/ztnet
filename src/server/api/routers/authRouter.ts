@@ -80,6 +80,7 @@ export const authRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.REGISTER_USER,
@@ -520,6 +521,7 @@ export const authRouter = createTRPCRouter({
 				// add rate limit
 				try {
 					await limiter.check(
+						ctx.req,
 						ctx.res,
 						GENERAL_REQUEST_LIMIT,
 						RATE_LIMIT_TOKENS.VALIDATE_RESET_TOKEN,
@@ -550,6 +552,7 @@ export const authRouter = createTRPCRouter({
 			const { email } = input;
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.PASSWORD_RESET_LINK,
@@ -609,6 +612,7 @@ export const authRouter = createTRPCRouter({
 			const { token, password, newPassword } = input;
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.CHANGE_PASSWORD,
@@ -661,6 +665,7 @@ export const authRouter = createTRPCRouter({
 		// add cooldown to prevent spam
 		try {
 			await limiter.check(
+				ctx.req,
 				ctx.res,
 				SHORT_REQUEST_LIMIT,
 				RATE_LIMIT_TOKENS.SEND_EMAIL_VERIFICATION,
@@ -723,6 +728,7 @@ export const authRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.EMAIL_VERIFICATION_LINK,

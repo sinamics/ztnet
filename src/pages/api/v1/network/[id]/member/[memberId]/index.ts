@@ -29,6 +29,7 @@ export default async function apiNetworkUpdateMembersHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"UPDATE_USER_CACHE_TOKEN",

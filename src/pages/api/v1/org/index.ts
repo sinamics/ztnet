@@ -17,6 +17,7 @@ export default async function apiOrganizationHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"GET_ORGANIZATION_CACHE_TOKEN",

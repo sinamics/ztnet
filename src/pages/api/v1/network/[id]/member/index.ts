@@ -21,6 +21,7 @@ export default async function apiNetworkMembersHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"NETWORK_MEMBERS_CACHE_TOKEN",
