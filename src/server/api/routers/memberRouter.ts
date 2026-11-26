@@ -1198,9 +1198,13 @@ export const networkMemberRouter = createTRPCRouter({
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, input.nwid, Role.READ_ONLY);
 
+			// nodeid is a global key, so tie both the member and the label to the
+			// network the caller was checked against.
 			return await ctx.prisma.networkMemberNotation.findMany({
 				where: {
 					nodeid: input.nodeid,
+					member: { nwid: input.nwid },
+					label: { nwid: input.nwid },
 				},
 				include: {
 					label: true,
