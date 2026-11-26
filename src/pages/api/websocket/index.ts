@@ -6,6 +6,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { prisma } from "~/server/db";
 import { checkNetworkAccess } from "~/utils/networkAccess";
 import { syncManager, networkRoom } from "~/server/sync/syncManager";
+import { joinOrganizationRooms } from "~/server/sync/organizationRooms";
 import type { UserContext } from "~/types/ctx";
 
 interface SocketIoExtension {
@@ -59,6 +60,14 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 				session: { user: { id: userId } },
 				prisma,
 			} as unknown as UserContext;
+
+			// Organization chat is delivered per organization room, so only
+			// members receive it.
+			if (userId) {
+				joinOrganizationRooms(socket, userId, prisma).catch(() => {
+					// no rooms joined, the socket simply receives no chat messages
+				});
+			}
 
 			socket.on("subscribe:network", async ({ nwid }: { nwid?: string }) => {
 				if (!nwid || subscribed.has(nwid) || !userId) return;
