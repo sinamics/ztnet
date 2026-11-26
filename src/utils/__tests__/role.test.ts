@@ -28,7 +28,23 @@ jest.mock("~/server/api/root", () => ({
 	},
 }));
 
-import { GET_orgNetworkMembers } from "~/pages/api/v1/org/[orgid]/network/[nwid]/member";
+import { GET_orgNetworkMembers as getOrgNetworkMembers } from "~/pages/api/v1/org/[orgid]/network/[nwid]/member";
+
+// `SecuredOrganizationApiRoute` types its return as a two-argument handler,
+// but the jest.mock above unwraps it to the inner three-argument handler at
+// runtime. Cast to the runtime signature so the mocked context can be passed
+// without an argument-count error during type-checking.
+type MockedOrgHandler = (
+	req: NextApiRequest,
+	res: NextApiResponse,
+	context: {
+		networkId: string;
+		orgId: string;
+		ctx: { session: { user: { id: string } } };
+	},
+) => Promise<void>;
+
+const GET_orgNetworkMembers = getOrgNetworkMembers as unknown as MockedOrgHandler;
 
 describe("GET_orgNetworkMembers role check", () => {
 	it("requires only READ_ONLY to list organization network members", async () => {
@@ -42,7 +58,7 @@ describe("GET_orgNetworkMembers role check", () => {
 			networkId: "nwid",
 			orgId: "orgId",
 			ctx: { session: { user: { id: "userId" } } },
-		} as never);
+		});
 
 		expect(checkUserOrganizationRole).toHaveBeenCalledWith(
 			expect.objectContaining({ minimumRequiredRole: 0 }),
