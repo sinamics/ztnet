@@ -61,41 +61,67 @@ Tests are mock based and do not need a running database, but the environment is 
 - `prisma/schema.prisma` and `prisma/migrations` hold the database schema
 - `docs/docs` holds the user documentation, `docs/docs/Rest Api/*/_source/*.yml` the OpenAPI source for the REST API pages
 
-## Rules that are easy to get wrong
+## Rules
 
-Access control
+These are requirements, not suggestions. A pull request that breaks one of them will not be merged. If a rule seems to block a legitimate change, say so in the pull request instead of working around it.
 
-- Every procedure or route that takes a network id must call `checkNetworkAccess` from `src/utils/networkAccess.ts` before reading or writing. Changes to routes, DNS, IP assignment or flow rules use `checkNetworkConfigAccess` instead.
-- Organization scoped code calls `checkUserOrganizationRole` from `src/utils/role.ts` with the lowest role that should be allowed.
-- REST routes are wrapped in `SecuredPrivateApiRoute` or `SecuredOrganizationApiRoute` from `src/utils/apiRouteAuth.ts`.
-- Ids from the client are not proof of ownership. `network_members.nodeid`, invitation ids and similar keys are global, so tie them to the network or organization the caller was checked against in the same query.
-- Check access first, then log and write. A rejected request must leave no trace in the database or activity log.
+### Scope
 
-Data that must not leave the server
+- MUST keep a pull request to one topic. No unrelated refactoring, renaming, reformatting or dependency changes.
+- MUST NOT add, remove or upgrade a dependency unless the change requires it, and then say why in the description.
+- MUST NOT change files you were not asked to change in order to make a check pass. That includes CI workflows, `biome.json`, `tsconfig.json` and the Jest configs.
+- MUST NOT guess. Read the code you are changing and the code that calls it before editing.
 
-- Never return a full `User` row. Select the fields you need, or use `ORG_MEMBER_FIELDS` and `USER_SECRET_FIELDS` from `src/server/api/userFields.ts`.
-- Member rows sent to the client go through `serializeMemberRow` in `src/server/api/services/memberService.ts`.
+### Access control
 
-Outbound requests and limits
+- MUST call `checkNetworkAccess` from `src/utils/networkAccess.ts` in every procedure or route that takes a network id, before any read or write.
+- MUST use `checkNetworkConfigAccess` for changes to routes, DNS, IP assignment and flow rules.
+- MUST call `checkUserOrganizationRole` from `src/utils/role.ts` in organization scoped code, with the lowest role that should be allowed.
+- MUST wrap REST routes in `SecuredPrivateApiRoute` or `SecuredOrganizationApiRoute` from `src/utils/apiRouteAuth.ts`.
+- MUST use `adminRoleProtectedRoute` for anything only the instance admin may do. A check in the UI is not access control.
+- MUST NOT treat an id from the client as proof of ownership. `network_members.nodeid`, invitation ids and similar keys are global. Tie them to the network or organization the caller was checked against, in the same query.
+- MUST check access before logging or writing. A rejected request leaves no trace in the database or the activity log.
 
-- A URL that a user can type in (webhooks, the ZeroTier Central URL) must go through `src/utils/ssrfGuard.ts` before the server requests it.
-- Public endpoints are rate limited with `src/utils/rateLimit.ts`. The call is `limiter.check(req, res, limit, token)` and counts per client.
+### Data that must not leave the server
 
-Live updates
+- MUST NOT return a full `User` row from any procedure or route. Select the fields you need, or use `ORG_MEMBER_FIELDS` and `USER_SECRET_FIELDS` from `src/server/api/userFields.ts`.
+- MUST send member rows through `serializeMemberRow` in `src/server/api/services/memberService.ts` before they reach a client.
+- MUST NOT put secrets, tokens or password hashes in responses, error messages or logs.
+- MUST NOT commit secrets or `.env` files.
 
-- Emit Socket.IO events to rooms, never to every socket. See `src/utils/socketChannels.ts` and `src/server/sync`.
+### Outbound requests, limits and live updates
 
-Database
+- MUST pass every URL a user can type in (webhooks, the ZeroTier Central URL) through `src/utils/ssrfGuard.ts` before the server requests it.
+- MUST rate limit public endpoints with `src/utils/rateLimit.ts`. The call is `limiter.check(req, res, limit, token)` and counts per client.
+- MUST emit Socket.IO events to rooms, never to every socket. See `src/utils/socketChannels.ts` and `src/server/sync`.
 
-- Schema changes need a migration in `prisma/migrations`, named `<timestamp>_<description>`. Migrations must be additive and safe on existing data: new columns need a default or must be nullable. Never edit a migration that has been released.
+### Database
 
-Translations
+- MUST add a migration in `prisma/migrations`, named `<timestamp>_<description>`, for every schema change.
+- MUST keep migrations additive and safe on existing data. New columns need a default or must be nullable.
+- MUST NOT edit or delete a migration that is already on `main`.
+- MUST NOT drop or rewrite a column in the same release that stops using it. A downgrade has to keep working.
 
-- New UI text goes in `src/locales/en/common.json` and in every other language folder with the same keys. Do not leave keys missing in some languages.
+### Tests
 
-REST API
+- MUST add or update tests for every behaviour change.
+- MUST include a test for the rejected case when the change is about access.
+- MUST NOT delete, skip or weaken a test to make it pass. If a test is wrong, fix it and explain why in the description.
+- MUST NOT add `any`, `@ts-ignore`, `@ts-expect-error` or `biome-ignore` to get a change past the type checker or linter. Existing ones are not a licence to add more.
 
-- When a REST route changes, update its OpenAPI source under `docs/docs/Rest Api` so the documented schema matches the response.
+### Translations and docs
+
+- MUST add new UI text to `src/locales/en/common.json` and to every other language folder with the same keys.
+- MUST NOT hard code user facing text in components.
+- MUST update the OpenAPI source under `docs/docs/Rest Api` when a REST route changes, so the documented schema matches the response.
+- MUST document new environment variables in `docs/docs/Installation/options.md` and `.env.example`.
+
+### Before opening a pull request
+
+- MUST run lint, format, tests and build locally, and all four MUST pass.
+- MUST branch from `main` and open the pull request against `main`.
+- MUST write a short description: what changed and why. No generated summaries of the diff.
+- MUST NOT report a security problem in a public issue or pull request. Use a private report under the repository's Security tab.
 
 ## Style
 
@@ -103,10 +129,3 @@ REST API
 - Import from `src` with the `~/` alias.
 - Prefer one shared helper over copies of the same check or serializer.
 - Comments explain why, not what.
-- Add or update tests for every behaviour change, including a test for the rejected case when the change is about access.
-
-## Pull requests
-
-- Branch from `main` and open the pull request against `main`.
-- One topic per pull request. Keep the description short: what changed and why.
-- Do not report security problems in a public issue or pull request. Use a private report under the repository's Security tab.
