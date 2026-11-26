@@ -9,5 +9,14 @@ export async function register() {
 		if (cronTasksModule.updatePeers) {
 			cronTasksModule.updatePeers();
 		}
+
+		// member status log: sampler and daily prune. Both do nothing until an
+		// admin enables the log.
+		if (cronTasksModule.memberStatusSampler) {
+			cronTasksModule.memberStatusSampler();
+		}
+		if (cronTasksModule.pruneMemberStatusLog) {
+			cronTasksModule.pruneMemberStatusLog();
+		}
 	}
 }

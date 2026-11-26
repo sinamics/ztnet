@@ -498,6 +498,45 @@
 			"dnsPushText5": "必须在每个客户端上启用 allowDNS 选项。在每个网络详情的 UI 中，靠近允许管理复选框附近有一个复选框。"
 		}
 	},
+	"memberStatusLog": {
+		"title": "日志",
+		"memberTitle": "状态日志",
+		"description": "此网络成员的连接状态变化，由控制器定时采样得出。两次采样之间的短暂掉线不会被记录。",
+		"memberDescription": "此成员的连接状态变化，由控制器定时采样得出。",
+		"columns": {
+			"time": "时间",
+			"member": "成员",
+			"change": "变化",
+			"physicalAddress": "物理地址"
+		},
+		"status": {
+			"OFFLINE": "离线",
+			"DIRECT": "直连",
+			"RELAY": "中继"
+		},
+		"changedTo": "变为",
+		"filters": {
+			"member": "成员",
+			"allMembers": "所有成员",
+			"status": "新状态",
+			"allStatuses": "所有状态",
+			"includeConnectionChanges": "包含直连与中继之间的切换",
+			"network": "网络",
+			"allNetworks": "所有网络",
+			"address": "节点地址",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "尚未记录任何状态变化。",
+		"emptyFiltered": "没有符合筛选条件的状态变化。",
+		"noNetwork": "不属于任何网络",
+		"pagination": {
+			"range": "第 {from} 至 {to} 条，共 {total} 条",
+			"page": "第 {page} 页，共 {pages} 页",
+			"previous": "上一页",
+			"next": "下一页",
+			"pageOnly": "第 {page} 页"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -509,6 +548,49 @@
 			"publicPages": {
 				"sectionTitle": "公共页面",
 				"description": "自定义登录和注册页面上显示的文本，以更好地与您的品牌保持一致或向您的用户提供具体说明。"
+			},
+			"memberStatusLog": {
+				"title": "成员状态日志",
+				"description": "保留网络成员上线和离线的历史记录。ZeroTier 本身不保存这些信息，因此 ZTNET 会定时向控制器采样并记录观察到的每次变化。日志显示在每个网络页面以及下方。",
+				"enable": "启用成员状态日志",
+				"enableDescription": "默认关闭。关闭时不会采样或保存任何数据，并且对所有用户隐藏日志部分。",
+				"stateOn": "已开启",
+				"stateOff": "已关闭",
+				"retention": {
+					"label": "保留时间",
+					"description": "早于该时间的事件会被自动删除。{min} 至 {max} 天。",
+					"value": "{days} 天",
+					"invalid": "保留时间必须是 {min} 至 {max} 之间的整数天数。"
+				},
+				"interval": {
+					"label": "采样间隔",
+					"description": "向控制器查询成员状态的频率。{min} 至 {max} 秒。",
+					"value": "{seconds} 秒",
+					"invalid": "采样间隔必须是 {min} 至 {max} 之间的整数秒数。"
+				},
+				"connectionChanges": {
+					"label": "记录直连与中继之间的切换",
+					"description": "默认关闭。关闭时只保存进入或离开离线状态的变化，日志体积较小。开启后还会记录成员在直连与中继连接之间的切换。"
+				},
+				"limits": {
+					"title": "日志能说明什么，不能说明什么",
+					"sampled": "状态按上述间隔从控制器采样。它反映的是控制器自身与成员之间的链路，而不是成员彼此之间的链路。",
+					"shortDrops": "只有连续两次采样都显示同一变化时才会保存。短于两次采样的掉线不会被记录，控制器重启时偶尔返回的一次空结果也不会被记录。",
+					"lateOffline": "离线状态的记录会有延迟。成员消失后，控制器仍会在其对等节点列表中保留该成员数分钟，因此离线事件的时间晚于实际掉线时间。",
+					"relay": "中继是根据控制器报告的信息做出的推测，因此直连与中继之间的切换可能比较频繁。仅在上方开关开启时才会保存这些切换。",
+					"localOnly": "仅涵盖本地控制器上的网络。ZeroTier Central 网络没有状态数据。"
+				},
+				"instanceLog": {
+					"sectionTitle": "成员状态日志，所有网络",
+					"title": "所有网络",
+					"description": "此控制器上所有成员的状态变化。网络页面显示同一份日志，但仅限其自身成员。"
+				},
+				"clear": {
+					"button": "清空日志",
+					"title": "清空成员状态日志",
+					"description": "这将删除所有网络已保存的全部状态变化，且无法撤销。"
+				},
+				"cleared": "已删除 {count} 条事件"
 			}
 		},
 		"mail": {

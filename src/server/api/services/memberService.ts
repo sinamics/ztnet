@@ -585,7 +585,8 @@ export const fetchPeersByAddress = async (
  * peer data and version semantics (#984).
  */
 const buildServedMember = (db: network_members, peers: Peers): MemberEntity => {
-	const { controllerConfig, ...dbFields } = db;
+	// statusLogSince is bookkeeping for the member status log, not member data.
+	const { controllerConfig, statusLogSince: _statusLogSince, ...dbFields } = db;
 	const cached = (controllerConfig ?? {}) as Partial<MemberEntity>;
 	const activePreferredPath = findActivePreferredPeerPath(peers);
 	const member = {
@@ -653,13 +654,16 @@ export const preferredMemberName = (
  * Strips internal-only columns from a member DB row before it is merged into
  * any client-facing response. `controllerConfig` is a server-side cache; its
  * contents are served field-by-field (buildServedMember), never as a blob.
+ * `statusLogSince` is bookkeeping for the member status log.
  * Null-safe so callers can spread the result directly.
  */
-export const serializeMemberRow = <T extends { controllerConfig?: unknown }>(
+export const serializeMemberRow = <
+	T extends { controllerConfig?: unknown; statusLogSince?: unknown },
+>(
 	row: T | null | undefined,
-): Omit<T, "controllerConfig"> | Record<string, never> => {
+): Omit<T, "controllerConfig" | "statusLogSince"> | Record<string, never> => {
 	if (!row) return {};
-	const { controllerConfig: _internal, ...rest } = row;
+	const { controllerConfig: _internal, statusLogSince: _statusLogSince, ...rest } = row;
 	return rest;
 };
 

@@ -498,6 +498,45 @@
 			"dnsPushText5": "L'opzione allowDNS deve essere attivata su ogni client. Nei dettagli di ciascuna rete, nell'interfaccia, è presente una casella accanto a quella Allow Managed."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Registri",
+		"memberTitle": "Registro di stato",
+		"description": "Variazioni dello stato di connessione dei membri di questa rete, campionate dal controller. Le interruzioni brevi tra due campioni non vengono registrate.",
+		"memberDescription": "Variazioni dello stato di connessione di questo membro, campionate dal controller.",
+		"columns": {
+			"time": "Ora",
+			"member": "Membro",
+			"change": "Variazione",
+			"physicalAddress": "Indirizzo fisico"
+		},
+		"status": {
+			"OFFLINE": "Offline",
+			"DIRECT": "Diretto",
+			"RELAY": "Relay"
+		},
+		"changedTo": "passato a",
+		"filters": {
+			"member": "Membro",
+			"allMembers": "Tutti i membri",
+			"status": "Nuovo stato",
+			"allStatuses": "Tutti gli stati",
+			"includeConnectionChanges": "Includi i passaggi tra Diretto e Relay",
+			"network": "Rete",
+			"allNetworks": "Tutte le reti",
+			"address": "Indirizzo del nodo",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Nessuna variazione di stato registrata finora.",
+		"emptyFiltered": "Nessuna variazione di stato corrisponde ai filtri.",
+		"noNetwork": "Non è membro di alcuna rete",
+		"pagination": {
+			"range": "Da {from} a {to} di {total}",
+			"page": "Pagina {page} di {pages}",
+			"previous": "Precedente",
+			"next": "Successivo",
+			"pageOnly": "Pagina {page}"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -509,6 +548,49 @@
 			"publicPages": {
 				"sectionTitle": "Pagine pubbliche",
 				"description": "Personalizzazione del testo mostrato nelle pagine di accesso e di registrazione, per adattarlo al proprio marchio o fornire istruzioni specifiche agli utenti."
+			},
+			"memberStatusLog": {
+				"title": "Registro di stato dei membri",
+				"description": "Conserva uno storico di quando i membri della rete vanno online o offline. ZeroTier non lo memorizza, quindi ZTNET interroga il controller a intervalli regolari e registra ogni variazione osservata. Il registro è visibile nella pagina di ogni rete e qui sotto.",
+				"enable": "Abilita il registro di stato dei membri",
+				"enableDescription": "Disattivato per impostazione predefinita. Finché è disattivato non viene campionato né salvato nulla e la sezione Registri è nascosta a tutti gli utenti.",
+				"stateOn": "Attivo",
+				"stateOff": "Disattivo",
+				"retention": {
+					"label": "Conservazione",
+					"description": "Gli eventi più vecchi vengono eliminati automaticamente. Da {min} a {max} giorni.",
+					"value": "{days} giorni",
+					"invalid": "La conservazione deve essere un numero intero tra {min} e {max} giorni."
+				},
+				"interval": {
+					"label": "Intervallo di campionamento",
+					"description": "Ogni quanto viene chiesto al controller lo stato dei suoi membri. Da {min} a {max} secondi.",
+					"value": "{seconds} secondi",
+					"invalid": "L'intervallo di campionamento deve essere un numero intero tra {min} e {max} secondi."
+				},
+				"connectionChanges": {
+					"label": "Registra i passaggi tra Diretto e Relay",
+					"description": "Disattivato per impostazione predefinita. Finché è disattivato vengono salvati solo i passaggi da o verso Offline, mantenendo piccolo il registro. Attivalo per registrare anche quando un membro passa da una connessione diretta a una inoltrata."
+				},
+				"limits": {
+					"title": "Cosa può e non può dire il registro",
+					"sampled": "Lo stato è campionato dal controller con l'intervallo indicato sopra. Mostra il collegamento del controller con un membro, non i collegamenti tra i membri.",
+					"shortDrops": "Una variazione viene salvata quando due campioni consecutivi la mostrano. Un'interruzione più breve di due campioni non viene registrata, e nemmeno una singola risposta vuota di un controller in fase di riavvio.",
+					"lateOffline": "Lo stato Offline viene segnalato in ritardo. Il controller mantiene un membro nella propria lista dei peer per alcuni minuti dopo la sua scomparsa, quindi l'evento è successivo all'interruzione reale.",
+					"relay": "Relay è una stima basata su ciò che riporta il controller, quindi i passaggi tra Diretto e Relay possono essere rumorosi. Vengono salvati solo quando l'opzione qui sopra è attiva.",
+					"localOnly": "Sono coperte solo le reti del controller locale. Le reti ZeroTier Central non hanno dati di stato."
+				},
+				"instanceLog": {
+					"sectionTitle": "Registro di stato dei membri, tutte le reti",
+					"title": "Tutte le reti",
+					"description": "Variazioni di stato di tutti i membri di questo controller. Le pagine di rete mostrano lo stesso registro limitato ai propri membri."
+				},
+				"clear": {
+					"button": "Svuota registro",
+					"title": "Svuota il registro di stato dei membri",
+					"description": "Questa operazione elimina tutte le variazioni di stato salvate per tutte le reti. Non può essere annullata."
+				},
+				"cleared": "{count} eventi eliminati"
 			}
 		},
 		"mail": {

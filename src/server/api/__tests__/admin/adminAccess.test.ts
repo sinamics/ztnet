@@ -205,19 +205,27 @@ describe("what a regular user can read", () => {
 		});
 	});
 
-	it("settings.getAllOptions only selects the site name and personal network switch", async () => {
+	it("settings.getAllOptions only selects the site name and the feature switches", async () => {
 		findGlobalOptions.mockResolvedValue({
 			siteName: "ZTNET",
 			enablePersonalNetworks: true,
+			memberStatusLogEnabled: false,
+			memberStatusLogConnectionChanges: false,
 		});
 
 		await expect(callerAs("USER").settings.getAllOptions()).resolves.toEqual({
 			siteName: "ZTNET",
 			enablePersonalNetworks: true,
+			memberStatusLogEnabled: false,
+			memberStatusLogConnectionChanges: false,
 		});
+		// The pages need to know whether to show the member status log and its
+		// Direct/Relay filter. Retention and interval stay admin only.
 		expect(findGlobalOptions.mock.calls[0][0].select).toEqual({
 			siteName: true,
 			enablePersonalNetworks: true,
+			memberStatusLogEnabled: true,
+			memberStatusLogConnectionChanges: true,
 		});
 	});
 });

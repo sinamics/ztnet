@@ -30,6 +30,14 @@ model GlobalOptions {
   // Networks
   enablePersonalNetworks Boolean @default(true)
 
+  // Member status log (opt in). The sampler in cronTasks reads these on every
+  // run, so a change takes effect without a restart.
+  memberStatusLogEnabled           Boolean @default(false)
+  memberStatusLogRetentionDays     Int     @default(30)
+  memberStatusLogSampleInterval    Int     @default(60) // seconds
+  // Also store Direct <-> Relay changes. Off: only changes to or from Offline.
+  memberStatusLogConnectionChanges Boolean @default(false)
+
   // Email configuration
   smtpHost                           String?
   smtpPort                           String  @default("587")
@@ -126,6 +134,10 @@ model network_members {
   // tags, capabilities, ssoExempt, lastAuthorizedTime, ..., #983). NULL =
   // never fetched (triggers a one-time reconcile backfill).
   controllerConfig   Json?
+  // Member status log: since when this row has been continuously active, as
+  // seen by the sampler. NULL while stashed. Events older than this are not
+  // shown in this network.
+  statusLogSince     DateTime?
   notations          NetworkMemberNotation[]
   // Free-text notes live in their own table (not a column here) because the
   // served member object spreads the whole DB row; a column would leak notes to
@@ -133,6 +145,43 @@ model network_members {
   note               NetworkMemberNote?
 
   @@unique([id, nwid])
+}
+
+enum MemberConnectionStatus {
+  OFFLINE
+  DIRECT
+  RELAY
+}
+
+// One row per connection status change of a node, as sampled from the local
+// controller's peer list. Keyed by node address, not by network: the
+// controller only knows its own link to a node. Access is decided at read
+// time by joining network_members.address.
+model MemberStatusEvent {
+  id              Int                    @id @default(autoincrement())
+  address         String
+  fromStatus      MemberConnectionStatus
+  toStatus        MemberConnectionStatus
+  physicalAddress String?
+  createdAt       DateTime               @default(now())
+
+  @@index([address, createdAt])
+  @@index([createdAt])
+  @@index([toStatus, createdAt])
+}
+
+// Last connection status the sampler saw for a node. This is the baseline the
+// next sample is compared against. Cleared when the log is disabled and on
+// startup, so a gap in sampling never turns into a made up transition.
+model MemberStatusState {
+  address         String                  @id
+  status          MemberConnectionStatus
+  physicalAddress String?
+  // A different status that was seen in one sample and becomes an event only
+  // if the next sample shows it too. pendingSince is that first sighting.
+  pendingStatus   MemberConnectionStatus?
+  pendingSince    DateTime?
+  updatedAt       DateTime                @updatedAt
 }
 
 model network {

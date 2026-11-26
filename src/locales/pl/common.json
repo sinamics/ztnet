@@ -498,6 +498,45 @@
 			"dnsPushText5": "Należy to włączyć na każdym kliencie za pomocą opcji allowDNS. W interfejsie użytkownika w szczegółach każdej sieci znajduje się pole wyboru, obok pola wyboru Allow managed."
 		}
 	},
+	"memberStatusLog": {
+		"title": "Dzienniki",
+		"memberTitle": "Dziennik statusu",
+		"description": "Zmiany statusu połączenia członków tej sieci, odczytywane z kontrolera. Krótkie przerwy między dwoma odczytami nie są rejestrowane.",
+		"memberDescription": "Zmiany statusu połączenia tego członka, odczytywane z kontrolera.",
+		"columns": {
+			"time": "Czas",
+			"member": "Członek",
+			"change": "Zmiana",
+			"physicalAddress": "Adres fizyczny"
+		},
+		"status": {
+			"OFFLINE": "Offline",
+			"DIRECT": "Bezpośrednie",
+			"RELAY": "Relay"
+		},
+		"changedTo": "zmieniono na",
+		"filters": {
+			"member": "Członek",
+			"allMembers": "Wszyscy członkowie",
+			"status": "Nowy status",
+			"allStatuses": "Wszystkie statusy",
+			"includeConnectionChanges": "Uwzględnij zmiany między Bezpośrednie i Relay",
+			"network": "Sieć",
+			"allNetworks": "Wszystkie sieci",
+			"address": "Adres węzła",
+			"addressPlaceholder": "abcdef1234"
+		},
+		"empty": "Nie zarejestrowano jeszcze żadnych zmian statusu.",
+		"emptyFiltered": "Żadna zmiana statusu nie pasuje do filtrów.",
+		"noNetwork": "Nie należy do żadnej sieci",
+		"pagination": {
+			"range": "{from} do {to} z {total}",
+			"page": "Strona {page} z {pages}",
+			"previous": "Poprzednia",
+			"next": "Następna",
+			"pageOnly": "Strona {page}"
+		}
+	},
 	"admin": {
 		"settings": {
 			"application": {
@@ -509,6 +548,49 @@
 			"publicPages": {
 				"sectionTitle": "Strony startowe",
 				"description": "Dostosuj tekst wyświetlany na stronach logowania i rejestracji, aby lepiej pasował do Twojej marki lub zapewniał użytkownikom szczegółowe instrukcje."
+			},
+			"memberStatusLog": {
+				"title": "Dziennik statusu członków",
+				"description": "Przechowuje historię tego, kiedy członkowie sieci przechodzą w tryb online lub offline. ZeroTier sam tego nie zapisuje, dlatego ZTNET regularnie odpytuje kontroler i rejestruje każdą zauważoną zmianę. Dziennik jest widoczny na stronie każdej sieci oraz poniżej.",
+				"enable": "Włącz dziennik statusu członków",
+				"enableDescription": "Domyślnie wyłączony. Gdy jest wyłączony, nic nie jest odczytywane ani zapisywane, a sekcja Dzienniki jest ukryta dla wszystkich użytkowników.",
+				"stateOn": "Włączony",
+				"stateOff": "Wyłączony",
+				"retention": {
+					"label": "Przechowywanie",
+					"description": "Starsze zdarzenia są usuwane automatycznie. Od {min} do {max} dni.",
+					"value": "{days} dni",
+					"invalid": "Przechowywanie musi być liczbą całkowitą od {min} do {max} dni."
+				},
+				"interval": {
+					"label": "Interwał odczytu",
+					"description": "Jak często kontroler jest pytany o status swoich członków. Od {min} do {max} sekund.",
+					"value": "{seconds} sekund",
+					"invalid": "Interwał odczytu musi być liczbą całkowitą od {min} do {max} sekund."
+				},
+				"connectionChanges": {
+					"label": "Rejestruj zmiany między Bezpośrednie i Relay",
+					"description": "Domyślnie wyłączone. Gdy jest wyłączone, zapisywane są tylko zmiany na Offline lub z Offline, dzięki czemu dziennik pozostaje mały. Włącz, aby rejestrować także przejścia członka między połączeniem bezpośrednim a przekazywanym."
+				},
+				"limits": {
+					"title": "Co dziennik może pokazać, a czego nie",
+					"sampled": "Status jest odczytywany z kontrolera w podanym wyżej interwale. Pokazuje połączenie samego kontrolera z członkiem, a nie połączenia między członkami.",
+					"shortDrops": "Zmiana jest zapisywana, gdy pokażą ją dwa odczyty z rzędu. Przerwa krótsza niż dwa odczyty nie jest rejestrowana, podobnie jak pojedyncza pusta odpowiedź restartującego się kontrolera.",
+					"lateOffline": "Status Offline jest zgłaszany z opóźnieniem. Kontroler trzyma członka na liście peerów jeszcze przez kilka minut po jego zniknięciu, więc zdarzenie jest późniejsze niż faktyczna przerwa.",
+					"relay": "Relay to szacunek oparty na danych z kontrolera, więc zmiany między Bezpośrednie i Relay mogą być niestabilne. Są zapisywane tylko wtedy, gdy powyższy przełącznik jest włączony.",
+					"localOnly": "Obsługiwane są tylko sieci na lokalnym kontrolerze. Sieci ZeroTier Central nie mają danych o statusie."
+				},
+				"instanceLog": {
+					"sectionTitle": "Dziennik statusu członków, wszystkie sieci",
+					"title": "Wszystkie sieci",
+					"description": "Zmiany statusu wszystkich członków na tym kontrolerze. Strony sieci pokazują ten sam dziennik ograniczony do własnych członków."
+				},
+				"clear": {
+					"button": "Wyczyść dziennik",
+					"title": "Wyczyść dziennik statusu członków",
+					"description": "Spowoduje to usunięcie wszystkich zapisanych zmian statusu dla wszystkich sieci. Tej operacji nie można cofnąć."
+				},
+				"cleared": "Usunięto zdarzenia: {count}"
 			}
 		},
 		"mail": {

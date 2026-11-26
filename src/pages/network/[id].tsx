@@ -28,6 +28,7 @@ import { getServerSideProps } from "~/server/getServerSideProps";
 import useOrganizationWebsocket from "~/hooks/useOrganizationWebsocket";
 import NetworkLoadingSkeleton from "~/components/shared/networkLoadingSkeleton";
 import NetworkQrCode from "~/components/networkByIdPage/networkQrCode";
+import { NetworkMemberStatusLog } from "~/components/memberStatusLog/networkMemberStatusLog";
 
 const HeadSection = ({ title }: { title: string }) => (
 	<Head>
@@ -372,6 +373,16 @@ const NetworkById = ({ orgIds }: IProps) => {
 					</>
 				) : null}
 			</div>
+			{globalOptions?.memberStatusLogEnabled ? (
+				<>
+					<div className="divider mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
+						{t("memberStatusLog.title")}
+					</div>
+					<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
+						<NetworkMemberStatusLog nwid={network.nwid} />
+					</div>
+				</>
+			) : null}
 			<div className="mx-auto flex px-4 py-4 text-sm sm:px-10 md:text-base">
 				<NetworkFlowRules />
 			</div>
