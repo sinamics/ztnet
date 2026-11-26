@@ -47,6 +47,7 @@ import { TRPCError } from "@trpc/server";
 import { MemberCounts } from "~/types/local/member";
 import { UserContext } from "~/types/ctx";
 import { ORG_MEMBER_FIELDS, USER_SECRET_FIELDS } from "~/server/api/userFields";
+import { emitOrganizationMessage } from "~/server/sync/organizationChat";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -798,8 +799,17 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			// emit to other users in the same organization
-			ctx.wss.emit(input.organizationId, newMessage);
+			// emit to the members of the organization
+			try {
+				await emitOrganizationMessage(
+					ctx.wss,
+					ctx.prisma,
+					input.organizationId,
+					newMessage,
+				);
+			} catch {
+				// the message is stored, a failed push must not fail the request
+			}
 
 			// Return the newly created message
 			return newMessage;
