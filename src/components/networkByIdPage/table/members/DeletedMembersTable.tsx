@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import TimeAgo from "react-timeago";
-import { api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { networkByIdInput } from "~/utils/networkQueryInput";
 import { useRouter } from "next/router";
 import { useModalStore } from "~/utils/store";
@@ -14,7 +14,8 @@ import {
 	type SortingState,
 	type ColumnDef,
 } from "@tanstack/react-table";
-import { type network_members } from "@prisma/client";
+
+type DeletedMember = RouterOutputs["network"]["getNetworkById"]["zombieMembers"][number];
 
 interface IProps {
 	nwid: string;
@@ -55,9 +56,9 @@ export const DeletedNetworkMembersTable = ({
 		onSuccess: invalidate,
 	});
 
-	const columnHelper = createColumnHelper<network_members>();
+	const columnHelper = createColumnHelper<DeletedMember>();
 	// biome-ignore lint/correctness/useExhaustiveDependencies: static column set
-	const columns = useMemo<ColumnDef<network_members>[]>(
+	const columns = useMemo<ColumnDef<DeletedMember>[]>(
 		() => [
 			columnHelper.accessor("authorized", {
 				header: () => <span>Authorized</span>,
@@ -149,19 +150,19 @@ export const DeletedNetworkMembersTable = ({
 		[],
 	);
 
-	const [data, setData] = useState<network_members[]>([]);
+	const [data, setData] = useState<DeletedMember[]>([]);
 	useEffect(() => {
 		const members = permanentlyDeleted
 			? networkById?.permanentlyDeletedMembers
 			: networkById?.zombieMembers;
-		setData((members as network_members[]) || []);
+		setData(members || []);
 	}, [
 		permanentlyDeleted,
 		networkById?.zombieMembers,
 		networkById?.permanentlyDeletedMembers,
 	]);
 
-	const table = useReactTable<network_members>({
+	const table = useReactTable<DeletedMember>({
 		data,
 		columns,
 		onSortingChange: setSorting,

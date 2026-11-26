@@ -1,8 +1,19 @@
+// Use the global `jest` so ts-jest hoists these module mocks above the imports.
+jest.mock("~/server/api/services/memberService", () => ({
+	...jest.requireActual("~/server/api/services/memberService"),
+	reconcileNetworkMembersOnce: jest.fn().mockResolvedValue([]),
+	triggerBackgroundReconcile: jest.fn(),
+}));
+jest.mock("~/utils/ztApi", () => ({
+	get_network: jest.fn(),
+}));
+
 import { PrismaClient } from "@prisma/client";
 import type { Session } from "~/lib/authTypes";
 import { appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
 import { TRPCError } from "@trpc/server";
+import * as ztController from "~/utils/ztApi";
 
 const prisma = new PrismaClient();
 const mockSession: PartialDeep<Session> = {
@@ -35,6 +46,69 @@ it("should throw an error if the user is not the author of the network", async (
 		expect(error.message).toBe("Network not found!");
 		expect(error.code).toBe("BAD_REQUEST");
 	}
+});
+
+describe("stashed and permanently deleted members", () => {
+	const row = (id: string, over: Record<string, unknown> = {}) => ({
+		id,
+		nwid: "nw1",
+		name: `node ${id}`,
+		authorized: false,
+		deleted: true,
+		permanentlyDeleted: false,
+		creationTime: new Date("2026-01-01T00:00:00Z"),
+		controllerConfig: { authorized: false, ipAssignments: ["10.0.0.1"] },
+		statusLogSince: new Date("2026-02-01T00:00:00Z"),
+		...over,
+	});
+
+	it("strips internal columns from both lists", async () => {
+		(ztController.get_network as jest.Mock).mockResolvedValue({
+			id: "nw1",
+			routes: [],
+		});
+		const ctx = {
+			session: mockSession as Session,
+			wss: null,
+			res: null,
+			req: null,
+			prisma: {
+				network: {
+					findUnique: jest.fn().mockResolvedValue({
+						nwid: "nw1",
+						authorId: "userid",
+						organizationId: null,
+						organization: null,
+						routes: [],
+					}),
+				},
+				network_members: {
+					count: jest.fn().mockResolvedValue(3),
+					findMany: jest
+						.fn()
+						.mockResolvedValueOnce([row("stashed01")])
+						.mockResolvedValueOnce([row("deleted01", { permanentlyDeleted: true })]),
+				},
+			},
+		};
+
+		// biome-ignore lint/suspicious/noExplicitAny: minimal trpc ctx
+		const caller = appRouter.createCaller(ctx as any);
+		const result = await caller.network.getNetworkById({ nwid: "nw1" });
+
+		expect(result.zombieMembers.map((m) => m.id)).toEqual(["stashed01"]);
+		expect(result.permanentlyDeletedMembers.map((m) => m.id)).toEqual(["deleted01"]);
+		for (const member of [...result.zombieMembers, ...result.permanentlyDeletedMembers]) {
+			expect(member).not.toHaveProperty("controllerConfig");
+			expect(member).not.toHaveProperty("statusLogSince");
+			// Fields the deleted members table renders are still served.
+			expect(member).toMatchObject({
+				nwid: "nw1",
+				authorized: false,
+				creationTime: expect.any(Date),
+			});
+		}
+	});
 });
 
 // test("getNetworkById returns network and member data", async () => {

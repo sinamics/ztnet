@@ -91,9 +91,11 @@ export default function rateLimit(options?: Options) {
 				counter.count += 1;
 
 				const currentUsage = counter.count;
-				const isRateLimited = currentUsage >= limit;
+				// `limit` is the number of requests served per window, so the
+				// request that reaches it still goes through.
+				const isRateLimited = currentUsage > limit;
 				res?.setHeader("X-RateLimit-Limit", limit);
-				res?.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
+				res?.setHeader("X-RateLimit-Remaining", Math.max(0, limit - currentUsage));
 
 				return isRateLimited ? reject() : resolve();
 			}),

@@ -65,6 +65,10 @@ describe("rateLimit partitioning", () => {
 			calls++;
 			if (calls > 200) throw new Error("limiter never engaged");
 		}
+		// the configured limit is the number of requests served, not one fewer
+		const shortLimit =
+			Number.parseInt(process.env.RATE_LIMIT_MAX_REQUESTS_SHORT || "10", 10) || 10;
+		expect(calls).toBe(shortLimit);
 
 		// the noisy client stays cut off
 		expect(await callReset("203.0.113.66", "again@example.com")).toBe(

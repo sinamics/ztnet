@@ -8,7 +8,7 @@ We encourage all contributors to follow our [Code of Conduct](CODE_OF_CONDUCT.md
 
 ## Reporting Issues
 
-If you encounter any issues or bugs with the ztnet repository, please report them on our [GitHub issue tracker](https://github.com/ztnet/issues). Please include as much detail as possible, including steps to reproduce the issue and any relevant error messages.
+If you encounter any issues or bugs with the ztnet repository, please report them on our [GitHub issue tracker](https://github.com/sinamics/ztnet/issues). Please include as much detail as possible, including steps to reproduce the issue and any relevant error messages.
 
 ## Contributing Code
 
@@ -19,18 +19,18 @@ If you would like to contribute code to the ztnet repository, please follow thes
 3. Write your code, and include relevant tests to ensure that your changes are working as expected.
 4. Ensure that your code follows the project's [style guide](STYLE_GUIDE.md).
 5. Commit your changes and push them to your forked repository.
-6. Create a pull request towards the `dev` branch of the main repository. Please include a description of your changes and any relevant information.
+6. Create a pull request towards the `main` branch of the main repository. Please include a description of your changes and any relevant information.
 
 ## Pull Requests
 
 When submitting a pull request, please follow these guidelines:
 
-1. Ensure that your changes are based on the latest version of the `dev` branch of the main repository.
+1. Ensure that your changes are based on the latest version of the `main` branch of the main repository.
 2. Ensure that your changes are thoroughly tested.
 3. Provide a clear and concise description of your changes, including any relevant information for reviewers.
 4. Follow the project's [style guide](STYLE_GUIDE.md).
 
-Please note that all pull requests will be reviewed by the project maintainers before they are merged into the `dev` branch.
+Please note that all pull requests will be reviewed by the project maintainers before they are merged into the `main` branch.
 
 ## Conclusion
 

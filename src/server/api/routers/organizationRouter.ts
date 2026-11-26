@@ -1351,60 +1351,6 @@ export const organizationRouter = createTRPCRouter({
 			// if the user does not exist, return empty object
 			return {};
 		}),
-	generateInviteLink: protectedProcedure
-		.input(
-			z.object({
-				organizationId: z.string(),
-				role: z.nativeEnum(Role),
-				// `.email()` matches inviteUserByMail below. The value is stored on
-				// the Invitation row and embedded in the token, where it is later
-				// compared against a registration email, so a non-address is never
-				// usable here.
-				email: emailSchema(),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			// Check if the user has permission to generate invite links for this org
-			await checkUserOrganizationRole({
-				ctx,
-				organizationId: input.organizationId,
-				minimumRequiredRole: Role.ADMIN,
-			});
-
-			const payload = {
-				email: input.email,
-				organizationId: input.organizationId,
-				role: input.role,
-				invitedById: ctx.session.user.id,
-				expiresAt: Date.now() + 3600000, // Current time + 1 hour
-			};
-
-			// Encrypt the payload
-			const secret = generateInstanceSecret(ORG_INVITE_TOKEN_SECRET); // Use SMTP_SECRET or any other relevant context
-			const encryptedToken = encrypt(JSON.stringify(payload), secret);
-
-			// Store the token in the database
-			const invitation = await ctx.prisma.invitation.create({
-				data: {
-					email: input.email,
-					token: encryptedToken,
-					url: null,
-					invitedById: ctx.session.user.id as string,
-					expiresAt: new Date(payload.expiresAt),
-					role: input.role,
-					organizations: {
-						create: {
-							organizationId: input.organizationId,
-						},
-					},
-				},
-			});
-
-			const invitationLink = `${process.env.NEXTAUTH_URL}/locale-redirect?organizationInvite=${invitation.token}`;
-
-			// Return the invitation link
-			return { invitationLink, encryptedToken };
-		}),
 	resendInvite: protectedProcedure
 		.input(
 			z.object({

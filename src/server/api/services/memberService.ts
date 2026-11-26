@@ -657,15 +657,26 @@ export const preferredMemberName = (
  * `statusLogSince` is bookkeeping for the member status log.
  * Null-safe so callers can spread the result directly.
  */
-export const serializeMemberRow = <
-	T extends { controllerConfig?: unknown; statusLogSince?: unknown },
->(
+type InternalMemberColumns = { controllerConfig?: unknown; statusLogSince?: unknown };
+
+export type SerializedMemberRow<T extends InternalMemberColumns = network_members> = Omit<
+	T,
+	"controllerConfig" | "statusLogSince"
+>;
+
+export function serializeMemberRow<T extends InternalMemberColumns>(
+	row: T,
+): SerializedMemberRow<T>;
+export function serializeMemberRow<T extends InternalMemberColumns>(
 	row: T | null | undefined,
-): Omit<T, "controllerConfig" | "statusLogSince"> | Record<string, never> => {
+): SerializedMemberRow<T> | Record<string, never>;
+export function serializeMemberRow<T extends InternalMemberColumns>(
+	row: T | null | undefined,
+): SerializedMemberRow<T> | Record<string, never> {
 	if (!row) return {};
 	const { controllerConfig: _internal, statusLogSince: _statusLogSince, ...rest } = row;
 	return rest;
-};
+}
 
 /**
  * Version semantics for a served member (#984): a DB NULL (row not yet
