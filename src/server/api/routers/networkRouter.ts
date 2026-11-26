@@ -1676,6 +1676,15 @@ accept;`;
 			// Check if the user has permission to access this network
 			await checkNetworkAccess(ctx, input.nwid, Role.USER);
 
+			// nodeid is a global key, so the member must belong to this network.
+			const member = await ctx.prisma.network_members.findFirst({
+				where: { nodeid: input.nodeid, nwid: input.nwid },
+				select: { nodeid: true },
+			});
+			if (!member) {
+				return throwError("Member not found!", "NOT_FOUND");
+			}
+
 			// Log the action
 			await ctx.prisma.activityLog.create({
 				data: {

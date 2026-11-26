@@ -49,7 +49,6 @@ const SHORT_REQUEST_LIMIT =
 
 const limiter = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Rate limit tokens - each endpoint should have its own token to prevent
@@ -80,6 +79,7 @@ export const authRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					GENERAL_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.REGISTER_USER,
@@ -225,68 +225,100 @@ export const authRouter = createTRPCRouter({
 			});
 
 			// create new user
-			const newUser = await ctx.prisma.user.create({
-				data: {
-					name,
-					email,
-					expiresAt,
-					lastLogin: new Date().toISOString(),
-					role: userCount === 0 ? "ADMIN" : "USER",
-					hash,
+			const createUser = (db: Pick<typeof ctx.prisma, "user">) =>
+				db.user.create({
+					data: {
+						name,
+						email,
+						expiresAt,
+						lastLogin: new Date().toISOString(),
+						role: userCount === 0 ? "ADMIN" : "USER",
+						hash,
 
-					// Conditionally assign user to a group
-					...(invitation?.groupId
-						? {
-								userGroup: {
-									connect: {
-										id: parseInt(invitation.groupId, 10),
-									},
-								},
-							}
-						: defaultUserGroup
+						// Conditionally assign user to a group
+						...(invitation?.groupId
 							? {
 									userGroup: {
 										connect: {
-											id: defaultUserGroup.id,
+											id: parseInt(invitation.groupId, 10),
 										},
 									},
 								}
-							: {}),
-					// add user to organizationRoles if the token is valid
-					organizationRoles: decryptedOrgToken
-						? {
-								create: {
-									organizationId: decryptedOrgToken.organizationId,
-									role: decryptedOrgToken.invitation.role,
-								},
-							}
-						: undefined,
-					// add the user to the organization if the token is valid
-					memberOfOrgs: decryptedOrgToken
-						? {
-								connect: {
-									id: decryptedOrgToken.organizationId,
-								},
-							}
-						: undefined,
-					options: {
-						create: {},
-					},
-				},
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					expiresAt: true,
-					role: true,
-					memberOfOrgs: {
-						select: {
-							id: true,
-							orgName: true,
+							: defaultUserGroup
+								? {
+										userGroup: {
+											connect: {
+												id: defaultUserGroup.id,
+											},
+										},
+									}
+								: {}),
+						// add user to organizationRoles if the token is valid
+						organizationRoles: decryptedOrgToken
+							? {
+									create: {
+										organizationId: decryptedOrgToken.organizationId,
+										role: decryptedOrgToken.invitation.role,
+									},
+								}
+							: undefined,
+						// add the user to the organization if the token is valid
+						memberOfOrgs: decryptedOrgToken
+							? {
+									connect: {
+										id: decryptedOrgToken.organizationId,
+									},
+								}
+							: undefined,
+						options: {
+							create: {},
 						},
 					},
-				},
-			});
+					select: {
+						id: true,
+						name: true,
+						email: true,
+						expiresAt: true,
+						role: true,
+						memberOfOrgs: {
+							select: {
+								id: true,
+								orgName: true,
+							},
+						},
+					},
+				});
+
+			// An organization invitation is consumed in the same transaction that
+			// creates the account and its membership. If it was used or revoked in
+			// the meantime nothing is written.
+			const newUser = decryptedOrgToken
+				? await ctx.prisma.$transaction(async (tx) => {
+						const consumed = await tx.invitation.deleteMany({
+							where: { id: decryptedOrgToken.invitation.id },
+						});
+						if (consumed.count !== 1) {
+							throw new TRPCError({
+								code: "BAD_REQUEST",
+								message: "Invalid token data!",
+							});
+						}
+						// any other pending invitation of this user to the organization
+						// is void now as well
+						await tx.invitation.deleteMany({
+							where: {
+								email: {
+									equals: decryptedOrgToken.invitation.email ?? email,
+									mode: "insensitive",
+								},
+								organizations: {
+									some: { organizationId: decryptedOrgToken.organizationId },
+								},
+							},
+						});
+						return createUser(tx);
+					})
+				: await createUser(ctx.prisma);
 
 			// Mirror the password into the better-auth credential Account row so the
 			// user can immediately sign in via `authClient.signIn.email`.
@@ -339,13 +371,6 @@ export const authRouter = createTRPCRouter({
 						action: `User ${newUser.name} has registered with email ${newUser.email} and has been added to the organization ${decryptedOrgToken.organizationId} with the role ${decryptedOrgToken?.invitation.role}!`,
 						performedById: decryptedOrgToken?.invitation?.invitedById,
 						organizationId: decryptedOrgToken?.organizationId,
-					},
-				});
-
-				// delete the organization token
-				await ctx.prisma.invitation.delete({
-					where: {
-						token: ztnetOrganizationToken,
 					},
 				});
 			}
@@ -520,6 +545,7 @@ export const authRouter = createTRPCRouter({
 				// add rate limit
 				try {
 					await limiter.check(
+						ctx.req,
 						ctx.res,
 						GENERAL_REQUEST_LIMIT,
 						RATE_LIMIT_TOKENS.VALIDATE_RESET_TOKEN,
@@ -550,6 +576,7 @@ export const authRouter = createTRPCRouter({
 			const { email } = input;
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.PASSWORD_RESET_LINK,
@@ -609,6 +636,7 @@ export const authRouter = createTRPCRouter({
 			const { token, password, newPassword } = input;
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.CHANGE_PASSWORD,
@@ -661,6 +689,7 @@ export const authRouter = createTRPCRouter({
 		// add cooldown to prevent spam
 		try {
 			await limiter.check(
+				ctx.req,
 				ctx.res,
 				SHORT_REQUEST_LIMIT,
 				RATE_LIMIT_TOKENS.SEND_EMAIL_VERIFICATION,
@@ -723,6 +752,7 @@ export const authRouter = createTRPCRouter({
 			// add rate limit
 			try {
 				await limiter.check(
+					ctx.req,
 					ctx.res,
 					SHORT_REQUEST_LIMIT,
 					RATE_LIMIT_TOKENS.EMAIL_VERIFICATION_LINK,

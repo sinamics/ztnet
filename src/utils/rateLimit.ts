@@ -1,5 +1,5 @@
 import type { NextApiResponse } from "next";
-import { LRUCache } from "lru-cache";
+import { getClientKey } from "~/utils/clientAddress";
 
 type Options = {
 	uniqueTokenPerInterval?: number;
@@ -31,28 +31,72 @@ export const RATE_LIMIT_CONFIG = {
 	},
 };
 
+type RateLimitRequest = Parameters<typeof getClientKey>[0];
+
+type Counter = { count: number; expiresAt: number };
+
+// Counters kept per limiter. Each one is a client and operation pair.
+const DEFAULT_MAX_COUNTERS = 10000;
+
+/**
+ * Counts requests per client and per `token` (the operation being limited),
+ * in a fixed window that starts with the client's first request. Each client
+ * has its own budget, so one client using up its requests does not lock
+ * anyone else out.
+ *
+ * A counter is only dropped before its window ends when the store is full,
+ * and then the counter with the fewest requests goes first. Flooding the
+ * store with new clients therefore cannot reset the budget of a client that
+ * is close to, or over, its limit.
+ */
 export default function rateLimit(options?: Options) {
-	const tokenCache = new LRUCache({
-		max: options?.uniqueTokenPerInterval || 500,
-		ttl: options?.interval || 60000,
-	});
+	const maxCounters = options?.uniqueTokenPerInterval || DEFAULT_MAX_COUNTERS;
+	const windowMs = options?.interval || 60000;
+	const counters = new Map<string, Counter>();
+
+	const makeRoom = (now: number) => {
+		for (const [key, counter] of counters) {
+			if (counter.expiresAt <= now) counters.delete(key);
+		}
+		while (counters.size >= maxCounters) {
+			let lowestKey: string | undefined;
+			let lowestCount = Number.POSITIVE_INFINITY;
+			for (const [key, counter] of counters) {
+				if (counter.count < lowestCount) {
+					lowestKey = key;
+					lowestCount = counter.count;
+				}
+			}
+			counters.delete(lowestKey);
+		}
+	};
 
 	return {
-		check: (res: NextApiResponse, limit: number, token: string) =>
+		check: (
+			req: RateLimitRequest,
+			res: Pick<NextApiResponse, "setHeader"> | null | undefined,
+			limit: number,
+			token: string,
+		) =>
 			new Promise<void>((resolve, reject) => {
-				const tokenCount = (tokenCache.get(token) as number[]) || [0];
-				if (tokenCount[0] === 0) {
-					tokenCache.set(token, tokenCount);
+				const now = Date.now();
+				const key = `${token}:${getClientKey(req)}`;
+				let counter = counters.get(key);
+				if (!counter || counter.expiresAt <= now) {
+					counters.delete(key);
+					if (counters.size >= maxCounters) makeRoom(now);
+					counter = { count: 0, expiresAt: now + windowMs };
+					counters.set(key, counter);
 				}
-				tokenCount[0] += 1;
+				counter.count += 1;
 
-				const currentUsage = tokenCount[0];
+				const currentUsage = counter.count;
 				const isRateLimited = currentUsage >= limit;
-				res.setHeader("X-RateLimit-Limit", limit);
-				res.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
+				res?.setHeader("X-RateLimit-Limit", limit);
+				res?.setHeader("X-RateLimit-Remaining", isRateLimited ? 0 : limit - currentUsage);
 
 				return isRateLimited ? reject() : resolve();
 			}),
-		reset: () => tokenCache.clear(),
+		reset: () => counters.clear(),
 	};
 }
