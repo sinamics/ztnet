@@ -58,6 +58,37 @@ const OrganizationNetworkSetting = () => {
 					/>
 				</div>
 			</MenuSectionDividerWrapper>
+			<MenuSectionDividerWrapper title={t("networkById.networkSettings")}>
+				<div className="flex justify-between gap-5 py-2">
+					<div>
+						<label htmlFor="networkConfigRole" className="block font-medium">
+							{t("organization.settings.network.networkConfigRole.title")}
+						</label>
+						<span id="networkConfigRoleDescription" className="text-sm text-gray-500">
+							{t("organization.settings.network.networkConfigRole.description")}
+						</span>
+					</div>
+					<select
+						id="networkConfigRole"
+						aria-describedby="networkConfigRoleDescription"
+						value={settings?.networkConfigRole ?? "USER"}
+						className="select select-bordered select-sm justify-self-end"
+						onChange={(e) => {
+							updateSettings(
+								{
+									organizationId: organizationId as string,
+									networkConfigRole: e.target.value as "USER" | "MODERATOR" | "ADMIN",
+								},
+								{ onSuccess: () => void refetchSettings() },
+							);
+						}}
+					>
+						<option value="USER">USER</option>
+						<option value="MODERATOR">MODERATOR</option>
+						<option value="ADMIN">ADMIN</option>
+					</select>
+				</div>
+			</MenuSectionDividerWrapper>
 		</main>
 	);
 };

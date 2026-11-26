@@ -4,7 +4,9 @@ import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { SecuredOrganizationApiRoute } from "~/utils/apiRouteAuth";
 import { handleApiErrors } from "~/utils/errors";
+import { getNetworkConfigRole } from "~/utils/networkAccess";
 import rateLimit, { RATE_LIMIT_CONFIG } from "~/utils/rateLimit";
+import { checkUserOrganizationRole } from "~/utils/role";
 import * as ztController from "~/utils/ztApi";
 import {
 	assertOrgNetworkCanBePublic,
@@ -15,7 +17,6 @@ import { HandlerContextSchema, NetworkUpdateSchema } from "./_schema";
 // Rate limit using environment configuration
 const limiter = rateLimit({
 	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
-	uniqueTokenPerInterval: 500,
 });
 
 export default async function apiNetworkByIdHandler(
@@ -24,6 +25,7 @@ export default async function apiNetworkByIdHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"ORGANIZATION_NETWORKID_CACHE_TOKEN",
@@ -60,6 +62,24 @@ export const POST_network = SecuredOrganizationApiRoute(
 
 			// Validate the body against the NetworkUpdateSchema
 			const validatedBody = NetworkUpdateSchema.parse(body);
+
+			// Same rule as the tRPC procedures: these fields need the organization's
+			// network configuration role, checked before anything is written
+			const networkConfigFields = [
+				"routes",
+				"dns",
+				"ipAssignmentPools",
+				"v4AssignMode",
+				"v6AssignMode",
+				"flowRule",
+			];
+			if (networkConfigFields.some((field) => field in validatedBody)) {
+				await checkUserOrganizationRole({
+					ctx,
+					organizationId: context.orgId,
+					minimumRequiredRole: await getNetworkConfigRole(ctx, context.orgId),
+				});
+			}
 
 			const updateableFields = {
 				name: { type: "string", destinations: ["controller", "database"] },

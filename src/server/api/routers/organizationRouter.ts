@@ -47,6 +47,7 @@ import { TRPCError } from "@trpc/server";
 import { MemberCounts } from "~/types/local/member";
 import { UserContext } from "~/types/ctx";
 import { ORG_MEMBER_FIELDS, USER_SECRET_FIELDS } from "~/server/api/userFields";
+import { emitOrganizationMessage } from "~/server/sync/organizationChat";
 
 // Create a Zod schema for the HookType enum
 const HookTypeEnum = z.enum(Object.values(HookType) as [HookType, ...HookType[]]);
@@ -57,7 +58,6 @@ const RATE_LIMIT_WINDOW_MS =
 
 const invitationRateLimit = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Tracks in-flight background reconciliations per organization so that opening
@@ -798,8 +798,17 @@ export const organizationRouter = createTRPCRouter({
 				},
 			});
 
-			// emit to other users in the same organization
-			ctx.wss.emit(input.organizationId, newMessage);
+			// emit to the members of the organization
+			try {
+				await emitOrganizationMessage(
+					ctx.wss,
+					ctx.prisma,
+					input.organizationId,
+					newMessage,
+				);
+			} catch {
+				// the message is stored, a failed push must not fail the request
+			}
 
 			// Return the newly created message
 			return newMessage;
@@ -1213,6 +1222,7 @@ export const organizationRouter = createTRPCRouter({
 			const INVITATION_REQUEST_LIMIT = 50;
 			try {
 				await invitationRateLimit.check(
+					ctx.req,
 					ctx.res,
 					INVITATION_REQUEST_LIMIT,
 					"ORGANIZATION_INVITATION",
@@ -1232,12 +1242,19 @@ export const organizationRouter = createTRPCRouter({
 					throw new Error("An error occurred while processing the invitation link.");
 				}
 
-				// make sure the invitation exist
-				const invitation = await ctx.prisma.invitation.findFirst({
-					where: {
-						token: input.token,
-					},
-				});
+				// The invitation must still be linked to the organization named in
+				// the token. A revoked or already used invitation has no such link.
+				const orgInvitation =
+					typeof tokenPayload.organizationId === "string"
+						? await ctx.prisma.organizationInvitation.findFirst({
+								where: {
+									organizationId: tokenPayload.organizationId,
+									invitation: { token: input.token },
+								},
+								include: { invitation: true },
+							})
+						: null;
+				const invitation = orgInvitation?.invitation;
 
 				// Check if the invitation is valid
 				if (!invitation) {
@@ -1270,37 +1287,47 @@ export const organizationRouter = createTRPCRouter({
 					if (isMember) {
 						throw new Error("You are already a member of the organization.");
 					}
-					// Add the user to the organization
-					// Add user to the organization
-					await ctx.prisma.organization.update({
-						where: {
-							id: tokenPayload.organizationId,
-						},
-						data: {
-							userRoles: {
-								create: {
-									userId: doesUserExist.id,
-									role: tokenPayload.role,
+					// Consume the invitation and add the user in one transaction, so
+					// the link works exactly once. If the invitation is already gone
+					// (used or revoked meanwhile) nothing is written.
+					await ctx.prisma.$transaction(async (tx) => {
+						const consumed = await tx.invitation.deleteMany({
+							where: { id: invitation.id },
+						});
+						if (consumed.count !== 1) {
+							throw new Error("An error occurred while processing the invitation link.");
+						}
+						// any other pending invitation of this user to the organization
+						// is void now as well
+						await tx.invitation.deleteMany({
+							where: {
+								email: {
+									equals: invitation.email ?? tokenPayload.email,
+									mode: "insensitive",
+								},
+								organizations: {
+									some: { organizationId: orgInvitation.organizationId },
 								},
 							},
-							users: {
-								connect: {
-									id: doesUserExist.id,
+						});
+						await tx.organization.update({
+							where: {
+								id: orgInvitation.organizationId,
+							},
+							data: {
+								userRoles: {
+									create: {
+										userId: doesUserExist.id,
+										role: invitation.role,
+									},
+								},
+								users: {
+									connect: {
+										id: doesUserExist.id,
+									},
 								},
 							},
-						},
-					});
-
-					// delete the invitation
-					await ctx.prisma.invitation.deleteMany({
-						where: {
-							email: tokenPayload.email,
-							organizations: {
-								some: {
-									organizationId: tokenPayload.organizationId,
-								},
-							},
-						},
+						});
 					});
 
 					// Log the action
@@ -1614,13 +1641,15 @@ export const organizationRouter = createTRPCRouter({
 				minimumRequiredRole: Role.ADMIN,
 			});
 
-			const invite = await ctx.prisma.organizationInvitation.deleteMany({
+			// Delete the invitation itself, not only its link to the organization,
+			// so the token stops working. The link row is removed by cascade.
+			return await ctx.prisma.invitation.deleteMany({
 				where: {
-					organizationId,
-					id: invitationId,
+					organizations: {
+						some: { id: invitationId, organizationId },
+					},
 				},
 			});
-			return invite;
 		}),
 	getInvites: protectedProcedure
 		.input(
@@ -1809,6 +1838,7 @@ export const organizationRouter = createTRPCRouter({
 			z.object({
 				organizationId: z.string(),
 				renameNodeGlobally: z.boolean().optional(),
+				networkConfigRole: z.enum([Role.USER, Role.MODERATOR, Role.ADMIN]).optional(),
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
@@ -1827,9 +1857,11 @@ export const organizationRouter = createTRPCRouter({
 				create: {
 					organizationId: input.organizationId,
 					renameNodeGlobally: input.renameNodeGlobally,
+					networkConfigRole: input.networkConfigRole,
 				},
 				update: {
 					renameNodeGlobally: input.renameNodeGlobally,
+					networkConfigRole: input.networkConfigRole,
 				},
 			});
 		}),

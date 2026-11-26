@@ -17,6 +17,7 @@ import { decrypt, encrypt, generateInstanceSecret } from "~/utils/encryption";
 import { SMTP_SECRET } from "~/utils/encryption";
 import { ZT_FOLDER } from "~/utils/ztApi";
 import { isRunningInDocker } from "~/utils/docker";
+import { globalSiteVersion } from "~/utils/global";
 import { detectServerMajor, resolvePgDumpPath } from "~/utils/pgVersion";
 import { getNetworkClassCIDR } from "~/utils/IPv4gen";
 import type { InvitationLinkType } from "~/types/invitation";
@@ -1440,7 +1441,10 @@ export const adminRouter = createTRPCRouter({
 		.mutation(async ({ input }) => {
 			try {
 				const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-				const backupName = input.backupName || `ztnet-backup-${timestamp}`;
+				// Include the running app version (set at build time) in the default name,
+				// sanitized so it is always safe to use as a filename.
+				const versionPart = globalSiteVersion.replace(/[^A-Za-z0-9._-]/g, "_");
+				const backupName = input.backupName || `ztnet-backup-${versionPart}-${timestamp}`;
 				const backupDir = path.join(process.cwd(), "tmp", "backups");
 				const tempDir = path.join(backupDir, "temp", Date.now().toString());
 				const backupPath = path.join(backupDir, `${backupName}.tar.gz`);

@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import type { Session } from "~/lib/authTypes";
 import { appRouter } from "../../root";
 import { type PartialDeep } from "type-fest";
+import * as ztController from "~/utils/ztApi";
 
 // Mock ztController to prevent actual ZeroTier API calls
 jest.mock("~/utils/ztApi", () => ({
@@ -85,6 +86,14 @@ const mockOrgRole = (role: string | null) => {
 	prisma.userOrganizationRole.findFirst = jest
 		.fn()
 		.mockResolvedValue(role ? { role } : null);
+};
+
+// Helper to mock the organization's network configuration role setting;
+// null means the organization never saved it, so USER applies.
+const mockNetworkConfigRole = (role: string | null) => {
+	prisma.organizationSettings.findUnique = jest
+		.fn()
+		.mockResolvedValue(role ? { networkConfigRole: role } : null);
 };
 
 // Helper to mock non-existent network
@@ -285,6 +294,121 @@ describe("checkNetworkAccess - helper behavior via endpoints", () => {
 		});
 	});
 
+	describe("Organization network - network configuration role setting", () => {
+		const callNetworkConfig = {
+			managedRoutes: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.managedRoutes({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { routes: [{ target: "10.1.0.0/24", via: null }] },
+				}),
+			easyIpAssignment: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.easyIpAssignment({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { routes: [{ target: "10.1.0.0/24", via: null }] },
+				}),
+			advancedIpAssignment: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.advancedIpAssignment({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: {
+						ipAssignmentPools: [{ ipRangeStart: "10.1.0.1", ipRangeEnd: "10.1.0.254" }],
+					},
+				}),
+			dns: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.dns({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { dns: { domain: "org.internal", servers: ["10.1.0.1"] } },
+				}),
+			ipv6: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.ipv6({
+					nwid: "test-nwid",
+					central: false,
+					v6AssignMode: { rfc4193: true },
+				}),
+			enableIpv4AutoAssign: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.enableIpv4AutoAssign({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { v4AssignMode: { zt: true } },
+				}),
+			setFlowRule: (caller: ReturnType<typeof createCaller>) =>
+				caller.network.setFlowRule({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { flowRoute: "accept;" },
+				}),
+		};
+
+		beforeEach(() => {
+			prisma.activityLog.create = jest.fn().mockResolvedValue({});
+			prisma.$transaction = jest.fn().mockResolvedValue([]);
+		});
+
+		describe.each(Object.entries(callNetworkConfig))("%s", (_name, call) => {
+			it.each([
+				[null, "READ_ONLY"],
+				["MODERATOR", "USER"],
+				["ADMIN", "USER"],
+				["ADMIN", "MODERATOR"],
+			])(
+				"rejects with FORBIDDEN when the organization requires %s and the member is %s",
+				async (requiredRole, role) => {
+					mockOrgNetwork("owner-user-id", "org-1");
+					mockNetworkConfigRole(requiredRole);
+					mockOrgRole(role);
+
+					await expect(call(createCaller(orgMemberSession))).rejects.toMatchObject({
+						code: "FORBIDDEN",
+						message: expect.stringContaining("required permission"),
+					});
+					expect(prisma.activityLog.create).not.toHaveBeenCalled();
+					expect(ztController.network_update).not.toHaveBeenCalled();
+				},
+			);
+
+			it.each([
+				[null, "USER"],
+				["MODERATOR", "MODERATOR"],
+				["ADMIN", "ADMIN"],
+			])(
+				"allows the change when the organization requires %s and the member is %s",
+				async (requiredRole, role) => {
+					mockOrgNetwork("owner-user-id", "org-1");
+					mockNetworkConfigRole(requiredRole);
+					mockOrgRole(role);
+
+					await expect(call(createCaller(orgMemberSession))).resolves.toBeDefined();
+					expect(ztController.network_update).toHaveBeenCalledTimes(1);
+				},
+			);
+
+			it("still allows the owner of a personal network", async () => {
+				mockPersonalNetwork("owner-user-id");
+
+				await expect(call(createCaller(ownerSession))).resolves.toBeDefined();
+				expect(ztController.network_update).toHaveBeenCalledTimes(1);
+			});
+		});
+
+		it("keeps other network settings at USER when the organization requires ADMIN", async () => {
+			mockOrgNetwork("owner-user-id", "org-1");
+			mockNetworkConfigRole("ADMIN");
+			mockOrgRole("USER");
+			prisma.network.update = jest.fn().mockResolvedValue({});
+
+			await expect(
+				createCaller(orgMemberSession).network.networkName({
+					nwid: "test-nwid",
+					central: false,
+					updateParams: { name: "new-name" },
+				}),
+			).resolves.toBeDefined();
+		});
+	});
+
 	describe("Activity log not created for unauthorized requests", () => {
 		it("should not create activity log when non-owner attempts networkName mutation", async () => {
 			mockPersonalNetwork("owner-user-id");
@@ -333,6 +457,63 @@ describe("Member router access control", () => {
 				nodeid: 1,
 			}),
 		).rejects.toThrow("You do not have access to this network!");
+	});
+
+	it("should only return annotations of members in the checked network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.networkMemberNotation.findMany = jest.fn().mockResolvedValue([]);
+
+		const caller = createCaller(ownerSession);
+		await caller.networkMember.getMemberAnotations({ nwid: "test-nwid", nodeid: 7 });
+
+		expect(prisma.networkMemberNotation.findMany).toHaveBeenCalledWith(
+			expect.objectContaining({
+				where: {
+					nodeid: 7,
+					member: { nwid: "test-nwid" },
+					label: { nwid: "test-nwid" },
+				},
+			}),
+		);
+	});
+
+	it("should reject addAnotation for a member of another network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.network_members.findFirst = jest.fn().mockResolvedValue(null);
+		prisma.activityLog.create = jest.fn();
+		prisma.notation.upsert = jest.fn();
+		prisma.networkMemberNotation.upsert = jest.fn();
+
+		const caller = createCaller(ownerSession);
+		await expect(
+			caller.network.addAnotation({ nwid: "test-nwid", nodeid: 7, name: "label" }),
+		).rejects.toThrow("Member not found!");
+
+		expect(prisma.network_members.findFirst).toHaveBeenCalledWith(
+			expect.objectContaining({ where: { nodeid: 7, nwid: "test-nwid" } }),
+		);
+		expect(prisma.notation.upsert).not.toHaveBeenCalled();
+		expect(prisma.networkMemberNotation.upsert).not.toHaveBeenCalled();
+		expect(prisma.activityLog.create).not.toHaveBeenCalled();
+	});
+
+	it("should link addAnotation to a member of the checked network", async () => {
+		mockPersonalNetwork("owner-user-id");
+		prisma.network_members.findFirst = jest.fn().mockResolvedValue({ nodeid: 7 });
+		prisma.activityLog.create = jest.fn().mockResolvedValue({});
+		prisma.notation.upsert = jest.fn().mockResolvedValue({ id: 3 });
+		prisma.networkMemberNotation.upsert = jest
+			.fn()
+			.mockResolvedValue({ notationId: 3, nodeid: 7 });
+
+		const caller = createCaller(ownerSession);
+		const result = await caller.network.addAnotation({
+			nwid: "test-nwid",
+			nodeid: 7,
+			name: "label",
+		});
+
+		expect(result).toEqual({ notationId: 3, nodeid: 7 });
 	});
 
 	it("should allow owner to access getMemberById", async () => {
