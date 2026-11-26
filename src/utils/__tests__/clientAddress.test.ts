@@ -89,10 +89,30 @@ describe("getClientKey", () => {
 describe("rateLimit", () => {
 	const res = { setHeader: jest.fn() };
 
+	it("serves exactly `limit` requests per window and rejects the next one", async () => {
+		const limiter = rateLimit({ interval: 60000 });
+		const client = request("203.0.113.5");
+		const headers = { setHeader: jest.fn() };
+		const remaining = () =>
+			headers.setHeader.mock.calls
+				.filter(([name]) => name === "X-RateLimit-Remaining")
+				.map(([, value]) => value);
+
+		for (let i = 0; i < 10; i++) {
+			await expect(limiter.check(client, headers, 10, "TOKEN")).resolves.toBeUndefined();
+		}
+		await expect(limiter.check(client, headers, 10, "TOKEN")).rejects.toBeUndefined();
+		await expect(limiter.check(client, headers, 10, "TOKEN")).rejects.toBeUndefined();
+
+		expect(remaining()).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 0, 0]);
+		expect(headers.setHeader).toHaveBeenCalledWith("X-RateLimit-Limit", 10);
+	});
+
 	it("counts each client separately", async () => {
 		const limiter = rateLimit({ interval: 60000 });
 		const noisy = request("203.0.113.5");
 
+		await limiter.check(noisy, res, 3, "TOKEN");
 		await limiter.check(noisy, res, 3, "TOKEN");
 		await limiter.check(noisy, res, 3, "TOKEN");
 		await expect(limiter.check(noisy, res, 3, "TOKEN")).rejects.toBeUndefined();
@@ -107,6 +127,7 @@ describe("rateLimit", () => {
 		const client = request("203.0.113.5");
 
 		await limiter.check(client, res, 2, "A");
+		await limiter.check(client, res, 2, "A");
 		await expect(limiter.check(client, res, 2, "A")).rejects.toBeUndefined();
 		await expect(limiter.check(client, res, 2, "B")).resolves.toBeUndefined();
 	});
@@ -115,6 +136,7 @@ describe("rateLimit", () => {
 		const limiter = rateLimit({ interval: 60000, uniqueTokenPerInterval: 5 });
 		const noisy = request("203.0.113.5");
 
+		await limiter.check(noisy, res, 3, "TOKEN");
 		await limiter.check(noisy, res, 3, "TOKEN");
 		await limiter.check(noisy, res, 3, "TOKEN");
 		await expect(limiter.check(noisy, res, 3, "TOKEN")).rejects.toBeUndefined();
@@ -133,6 +155,7 @@ describe("rateLimit", () => {
 			const limiter = rateLimit({ interval: 1000 });
 			const client = request("203.0.113.5");
 
+			await limiter.check(client, res, 2, "TOKEN");
 			await limiter.check(client, res, 2, "TOKEN");
 			await expect(limiter.check(client, res, 2, "TOKEN")).rejects.toBeUndefined();
 
