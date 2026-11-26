@@ -37,6 +37,8 @@ const PRIVATE_IPV6_CIDRS = ["::1/128", "fc00::/7", "fe80::/10"].map(
 	(cidr) => new Address6(cidr),
 );
 
+const IPV4_MAPPED_IPV6 = new Address6("::ffff:0:0/96");
+
 type ParsedAddress = { v4: Address4 } | { v6: Address6 };
 
 const parseAddress = (value: string | undefined | null): ParsedAddress | null => {
@@ -50,9 +52,12 @@ const parseAddress = (value: string | undefined | null): ParsedAddress | null =>
 		if (isIP(raw) === 4) return { v4: new Address4(raw) };
 		if (isIP(raw) === 6) {
 			const v6 = new Address6(raw);
-			// ::ffff:a.b.c.d is an IPv4 client seen through a dual stack socket
-			if (v6.is4() && v6.isInSubnet(new Address6("::ffff:0:0/96"))) {
-				return { v4: v6.to4() };
+			// An IPv4 client seen through a dual stack socket, written either as
+			// ::ffff:a.b.c.d or in hex as ::ffff:aabb:ccdd. The subnet test covers
+			// both spellings, the IPv4 address is the last 32 bits.
+			if (v6.isInSubnet(IPV4_MAPPED_IPV6)) {
+				const bits = v6.bigInt() & BigInt(0xffffffff);
+				return { v4: Address4.fromBigInt(bits) };
 			}
 			return { v6 };
 		}

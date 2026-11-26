@@ -24,7 +24,6 @@ const GENERAL_REQUEST_LIMIT =
 
 const limiter = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Rate limit tokens for MFA operations

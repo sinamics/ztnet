@@ -58,8 +58,16 @@ describe("getClientKey", () => {
 		expect(getClientKey(request("203.0.113.9", "198.51.100.1"))).toBe("198.51.100.1");
 	});
 
-	it("maps IPv4 mapped IPv6 to the IPv4 address", () => {
+	it("maps IPv4 mapped IPv6 to the IPv4 address, in both spellings", () => {
 		expect(getClientKey(request("::ffff:203.0.113.5"))).toBe("203.0.113.5");
+		expect(getClientKey(request("::ffff:cb00:7105"))).toBe("203.0.113.5");
+		// two IPv4 clients must not share an IPv6 prefix bucket
+		expect(getClientKey(request("::ffff:c633:6401"))).toBe("198.51.100.1");
+	});
+
+	it("treats a hex spelled private peer as a proxy", () => {
+		// ::ffff:ac12:2 is 172.18.0.2
+		expect(getClientKey(request("::ffff:ac12:2", "198.51.100.1"))).toBe("198.51.100.1");
 	});
 
 	it("groups IPv6 clients by /64", () => {
@@ -101,6 +109,38 @@ describe("rateLimit", () => {
 		await limiter.check(client, res, 2, "A");
 		await expect(limiter.check(client, res, 2, "A")).rejects.toBeUndefined();
 		await expect(limiter.check(client, res, 2, "B")).resolves.toBeUndefined();
+	});
+
+	it("keeps a blocked client blocked when the store overflows", async () => {
+		const limiter = rateLimit({ interval: 60000, uniqueTokenPerInterval: 5 });
+		const noisy = request("203.0.113.5");
+
+		await limiter.check(noisy, res, 3, "TOKEN");
+		await limiter.check(noisy, res, 3, "TOKEN");
+		await expect(limiter.check(noisy, res, 3, "TOKEN")).rejects.toBeUndefined();
+
+		// far more distinct clients than the store holds
+		for (let i = 1; i <= 50; i++) {
+			await limiter.check(request(`198.51.100.${i}`), res, 3, "TOKEN");
+		}
+
+		await expect(limiter.check(noisy, res, 3, "TOKEN")).rejects.toBeUndefined();
+	});
+
+	it("starts a new window once the old one has ended", async () => {
+		jest.useFakeTimers();
+		try {
+			const limiter = rateLimit({ interval: 1000 });
+			const client = request("203.0.113.5");
+
+			await limiter.check(client, res, 2, "TOKEN");
+			await expect(limiter.check(client, res, 2, "TOKEN")).rejects.toBeUndefined();
+
+			jest.advanceTimersByTime(1001);
+			await expect(limiter.check(client, res, 2, "TOKEN")).resolves.toBeUndefined();
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it("works without a response object", async () => {

@@ -49,7 +49,6 @@ const SHORT_REQUEST_LIMIT =
 
 const limiter = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Rate limit tokens - each endpoint should have its own token to prevent

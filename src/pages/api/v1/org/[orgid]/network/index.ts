@@ -11,7 +11,6 @@ import { prisma } from "~/server/db";
 // Rate limit using environment configuration
 const limiter = rateLimit({
 	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
-	uniqueTokenPerInterval: 500,
 });
 
 export default async function apiNetworkHandler(

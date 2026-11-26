@@ -57,7 +57,6 @@ const RATE_LIMIT_WINDOW_MS =
 
 const invitationRateLimit = rateLimit({
 	interval: RATE_LIMIT_WINDOW_MS,
-	uniqueTokenPerInterval: 1000,
 });
 
 // Tracks in-flight background reconciliations per organization so that opening
