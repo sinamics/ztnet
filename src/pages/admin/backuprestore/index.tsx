@@ -64,7 +64,30 @@ const BackupRestore = () => {
 	// Updated mutation with translation keys
 	const { mutate: restoreBackup, isPending: restoringBackup } =
 		api.admin.restoreBackup.useMutation({
-			onSuccess: (data) => {
+			onSuccess: (data, variables) => {
+				// The backup was made by a different app version: nothing was restored yet.
+				// Ask the user, and only then repeat the restore with the confirmation flag.
+				if (data.requiresConfirmation && variables) {
+					callModal({
+						title: t("versionMismatchModal.title"),
+						description: (
+							<div className="space-y-2">
+								<p>
+									{t("versionMismatchModal.description", {
+										backupVersion: data.backupVersion,
+										currentVersion: data.currentVersion,
+									})}
+								</p>
+								<p>{t("versionMismatchModal.hint")}</p>
+							</div>
+						),
+						yesAction: () => {
+							restoreBackup({ ...variables, confirmVersionMismatch: true });
+						},
+					});
+					return;
+				}
+
 				handleApiSuccess({
 					toastMessage: t("restoreFromFile.restoreSuccessToast"),
 				})();

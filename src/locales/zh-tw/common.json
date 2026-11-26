@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>重要提示：</span><br></br>還原ZeroTier設定將複製備份來源的確切ZeroTier身分。這意味著此伺服器將具有與原始伺服器相同的ZeroTier身分。<br></br>擁有兩個具有相同ZeroTier身分的伺服器可能會導致網路衝突和不可預測的行為。僅在您從原始伺服器遷移或原始伺服器已永久停用時才繼續。"
 				}
 			},
+			"versionMismatchModal": {
+				"title": "偵測到不同版本",
+				"description": "此備份由 ZTNet {backupVersion} 建立，但此伺服器執行的是 {currentVersion}。",
+				"hint": "從其他版本還原資料可能導致錯誤或功能缺失。請先備份目前的資料，確認無誤後再繼續。"
+			},
 			"restoreCompleteModal": {
 				"title": "復原完成",
 				"successMessage": "✅ 備份復原成功完成！",

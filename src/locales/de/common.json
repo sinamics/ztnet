@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>Wichtig:</span><br></br>Durch die Wiederherstellung der ZeroTier-Konfiguration wird die ZeroTier-Identität aus der Sicherungsquelle übernommen. Das bedeutet, dass dieser Server dieselbe ZeroTier-Identität wie der ursprüngliche Server hat. <br></br>Zwei Server mit identischen ZeroTier-Identitäten können zu Netzwerkkonflikten und unvorhersehbarem Verhalten führen. Fahren Sie nur fort, wenn Sie vom ursprünglichen Server migrieren oder wenn der ursprüngliche Server dauerhaft außer Betrieb genommen wird."
 				}
 			},
+			"versionMismatchModal": {
+				"title": "Andere Version erkannt",
+				"description": "Dieses Backup wurde mit ZTNet {backupVersion} erstellt, dieser Server läuft jedoch mit {currentVersion}.",
+				"hint": "Das Wiederherstellen von Daten einer anderen Version kann zu Fehlern oder fehlenden Funktionen führen. Erstelle zuerst ein Backup der aktuellen Daten und fahre nur fort, wenn du sicher bist."
+			},
 			"restoreCompleteModal": {
 				"title": "Wiederherstellung abgeschlossen",
 				"successMessage": "✅ Sicherung erfolgreich wiederhergestellt!",

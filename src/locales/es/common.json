@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>IMPORTANTE:</span><br></br>Restaurar la configuración de ZeroTier replicará la identidad exacta de ZeroTier de la fuente de la copia de seguridad. Esto significa que este servidor tendrá la misma identidad de ZeroTier que el servidor original.<br></br>Tener dos servidores con identidades de ZeroTier idénticas puede causar conflictos de red y comportamiento impredecible. Solo procede si estás migrando desde el servidor original o si el servidor original está permanentemente dado de baja."
 				}
 			},
+			"versionMismatchModal": {
+				"title": "Versión diferente detectada",
+				"description": "Esta copia de seguridad se creó con ZTNet {backupVersion}, pero este servidor ejecuta {currentVersion}.",
+				"hint": "Restaurar datos de otra versión puede causar errores o funciones ausentes. Crea primero una copia de seguridad de los datos actuales y continúa solo si estás seguro."
+			},
 			"restoreCompleteModal": {
 				"title": "Restauración Completa",
 				"successMessage": "✅ ¡La restauración de la copia de seguridad se completó exitosamente!",

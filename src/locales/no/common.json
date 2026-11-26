@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>VIKTIG:</span><br></br>Gjenoppretting av ZeroTier-konfigurasjon vil replikere den eksakte ZeroTier-identiteten fra sikkerhetskopi-kilden. Dette betyr at denne serveren vil ha samme ZeroTier-identitet som den opprinnelige serveren.<br></br>Å ha to servere med identiske ZeroTier-identiteter kan forårsake nettverkskonflikter og uforutsigbar oppførsel. Fortsett kun hvis du migrerer fra den opprinnelige serveren eller hvis den opprinnelige serveren er permanent stengt ned."
 				}
 			},
+			"versionMismatchModal": {
+				"title": "Annen versjon oppdaget",
+				"description": "Denne sikkerhetskopien ble opprettet med ZTNet {backupVersion}, men denne serveren kjører {currentVersion}.",
+				"hint": "Gjenoppretting av data fra en annen versjon kan gi feil eller manglende funksjoner. Ta først en sikkerhetskopi av gjeldende data, og fortsett bare hvis du er sikker."
+			},
 			"restoreCompleteModal": {
 				"title": "Gjenoppretting Fullført",
 				"successMessage": "✅ Sikkerhetskopi-gjenoppretting fullført med suksess!",

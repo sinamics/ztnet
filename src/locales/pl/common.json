@@ -1005,6 +1005,11 @@
 					"zerotierWarning": "⚠️ <span>WAŻNE:</span><br></br>Przywracanie konfiguracji ZeroTier spowoduje replikację dokładnej tożsamości ZeroTier ze źródła kopii zapasowej. Oznacza to, że ten serwer będzie miał taką samą tożsamość ZeroTier jak oryginalny serwer.<br></br>Posiadanie dwóch serwerów z identycznymi tożsamościami ZeroTier może powodować konflikty sieciowe i nieprzewidywalne zachowanie. Kontynuuj tylko wtedy, gdy migrujesz z oryginalnego serwera lub gdy oryginalny serwer jest trwale wyłączony z eksploatacji."
 				}
 			},
+			"versionMismatchModal": {
+				"title": "Wykryto inną wersję",
+				"description": "Ta kopia zapasowa została utworzona w ZTNet {backupVersion}, ale ten serwer działa w wersji {currentVersion}.",
+				"hint": "Przywracanie danych z innej wersji może powodować błędy lub brak funkcji. Najpierw utwórz kopię zapasową bieżących danych i kontynuuj tylko wtedy, gdy masz pewność."
+			},
 			"restoreCompleteModal": {
 				"title": "Przywracanie zakończone",
 				"successMessage": "✅ Przywracanie kopii zapasowej zakończone pomyślnie!",
