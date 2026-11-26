@@ -10,7 +10,6 @@ import { createNetworkContextSchema } from "./_schema";
 // Rate limit using environment configuration
 const limiter = rateLimit({
 	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
-	uniqueTokenPerInterval: 500,
 });
 
 export default async function apiNetworkHandler(
@@ -18,7 +17,12 @@ export default async function apiNetworkHandler(
 	res: NextApiResponse,
 ) {
 	try {
-		await limiter.check(res, RATE_LIMIT_CONFIG.API_MAX_REQUESTS, "NETWORK_CACHE_TOKEN");
+		await limiter.check(
+			req,
+			res,
+			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
+			"NETWORK_CACHE_TOKEN",
+		);
 	} catch {
 		return res.status(429).json({ error: "Rate limit exceeded" });
 	}

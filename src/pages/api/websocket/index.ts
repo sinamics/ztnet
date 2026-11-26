@@ -6,6 +6,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { prisma } from "~/server/db";
 import { checkNetworkAccess } from "~/utils/networkAccess";
 import { syncManager, networkRoom } from "~/server/sync/syncManager";
+import { userRoom } from "~/utils/socketChannels";
 import type { UserContext } from "~/types/ctx";
 
 interface SocketIoExtension {
@@ -59,6 +60,10 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponseWithSocket
 				session: { user: { id: userId } },
 				prisma,
 			} as unknown as UserContext;
+
+			// Events meant for one user, such as organization chat messages, are
+			// emitted to this room.
+			if (userId) socket.join(userRoom(userId));
 
 			socket.on("subscribe:network", async ({ nwid }: { nwid?: string }) => {
 				if (!nwid || subscribed.has(nwid) || !userId) return;

@@ -142,6 +142,12 @@ For more information on NEXTAUTH environment variables, see [NEXTAUTH Environmen
 
 Rate limiting helps protect against brute force attacks and abuse. There are separate configurations for authentication endpoints and REST API endpoints.
 
+Limits are counted per client: per IPv4 address, or per `/64` for IPv6. One client reaching its limit does not affect other clients.
+
+- `RATE_LIMIT_TRUSTED_PROXY_HOPS`
+  - Description: Number of reverse proxies in front of ZTNET, used to find the client address in the `X-Forwarded-For` header. With `1` the last entry of the header is the client, with `2` the second last, and so on. `0` ignores the header and always uses the address of the connection. Set it when ZTNET is behind more than one proxy (for example a CDN in front of your own reverse proxy), or to `0` when ZTNET is reachable without a proxy from a private network. The proxy must set or append `X-Forwarded-For` itself. Caddy, Traefik and Apache do this by default. nginx only does it with `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;`, without that line it passes on whatever the client sent and the limits can be bypassed, see [Reverse Proxy](./reverse-proxy.md).
+  - Default: unset. The header is read as with `1` when the connection comes from a loopback or private address, which covers a reverse proxy on the same host or container network, and ignored otherwise.
+
 ### Authentication Endpoints
 
 These settings control rate limiting for authentication operations (registration, password reset, email verification, MFA).

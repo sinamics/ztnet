@@ -20,7 +20,6 @@ import {
 // Rate limit using environment configuration
 const limiter = rateLimit({
 	interval: RATE_LIMIT_CONFIG.API_WINDOW_MS,
-	uniqueTokenPerInterval: 500,
 });
 
 export default async function apiNetworkUpdateMembersHandler(
@@ -29,6 +28,7 @@ export default async function apiNetworkUpdateMembersHandler(
 ) {
 	try {
 		await limiter.check(
+			req,
 			res,
 			RATE_LIMIT_CONFIG.API_MAX_REQUESTS,
 			"UPDATE_USER_CACHE_TOKEN",
