@@ -2452,23 +2452,38 @@ export const adminRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const { activityLogRetentionDays } = await ctx.prisma.globalOptions.update({
-				where: { id: 1 },
-				data: { activityLogRetentionDays: input.retentionDays },
-				select: { activityLogRetentionDays: true },
-			});
+			const action = input.retentionDays
+				? `Set activity log retention to ${input.retentionDays} days`
+				: "Set activity log retention to keep every entry";
+			// The setting and its audit entry are committed together, before the
+			// prune: a prune that fails part way still leaves who changed it. The
+			// entry is newer than any cutoff, so the prune never removes it.
+			const [{ activityLogRetentionDays }, auditEntry] = await ctx.prisma.$transaction([
+				ctx.prisma.globalOptions.update({
+					where: { id: 1 },
+					data: { activityLogRetentionDays: input.retentionDays },
+					select: { activityLogRetentionDays: true },
+				}),
+				ctx.prisma.activityLog.create({
+					data: { action, performedById: ctx.session.user.id },
+					select: { id: true },
+				}),
+			]);
 			// A shorter retention applies now, not at the next nightly prune.
 			const deleted = await pruneActivityLogEntries(new Date(), activityLogRetentionDays);
-			// Written after the prune so it survives it: a shortened log always
-			// shows who shortened it.
-			await ctx.prisma.activityLog.create({
-				data: {
-					action: activityLogRetentionDays
-						? `Set activity log retention to ${activityLogRetentionDays} days, deleted ${deleted} older entries`
-						: "Set activity log retention to keep every entry",
-					performedById: ctx.session.user.id,
-				},
-			});
+			if (activityLogRetentionDays) {
+				await ctx.prisma.activityLog.update({
+					where: { id: auditEntry.id },
+					data: { action: `${action}, deleted ${deleted} older entries` },
+				});
+			}
 			return { retentionDays: activityLogRetentionDays, deleted };
 		}),
+	/** Organizations to pick from in the activity log filter. */
+	getActivityLogOrganizations: adminRoleProtectedRoute.query(async ({ ctx }) => {
+		return await ctx.prisma.organization.findMany({
+			select: { id: true, orgName: true },
+			orderBy: { orgName: "asc" },
+		});
+	}),
 });

@@ -104,7 +104,7 @@ const ActivityLogTable = () => {
 	};
 	const { scope, userId, actionType, from, to, search } = filters;
 
-	const { data: organizations } = api.admin.getOrganizationQuotas.useQuery();
+	const { data: organizations } = api.admin.getActivityLogOrganizations.useQuery();
 	const { data: users } = api.admin.getUsers.useQuery({ isAdmin: false });
 	const { data, isPending, isPlaceholderData } = api.admin.getActivityLog.useQuery(
 		{
