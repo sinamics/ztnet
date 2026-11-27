@@ -1,10 +1,19 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import toast from "react-hot-toast";
 import { DebouncedInput } from "~/components/elements/debouncedInput";
+import EditableField from "~/components/elements/inputField";
+import {
+	useTrpcApiErrorHandler,
+	useTrpcApiSuccessHandler,
+} from "~/hooks/useTrpcApiHandler";
 import { useEventPaging } from "~/components/memberStatusLog/useEventPaging";
 import { api } from "~/utils/api";
+import { useModalStore } from "~/utils/store";
 
 const PAGE_SIZE = 25;
+// Keep in sync with ACTIVITY_LOG_RETENTION_LIMITS on the server, which enforces them.
+const RETENTION = { min: 1, max: 3650 };
 // select value for rows without an organization
 const PERSONAL = "__personal__";
 const ACTION_TYPES = ["NETWORK", "MEMBER", "ORGANIZATION"] as const;
@@ -15,6 +24,63 @@ const dayAfter = (date: string) => {
 	const next = new Date(`${date}T00:00:00`);
 	next.setDate(next.getDate() + 1);
 	return next;
+};
+
+/** How long rows are kept. Empty keeps every row. */
+const RetentionSetting = () => {
+	const t = useTranslations("admin.activityLog.retention");
+	const handleApiError = useTrpcApiErrorHandler();
+	const handleApiSuccess = useTrpcApiSuccessHandler();
+	const callModal = useModalStore((state) => state.callModal);
+	const utils = api.useUtils();
+	const { data: options, refetch } = api.admin.getAllOptions.useQuery();
+	const { mutate: updateSettings } = api.admin.updateActivityLogSettings.useMutation({
+		onSuccess: handleApiSuccess({
+			actions: [refetch, () => utils.admin.getActivityLog.invalidate()],
+		}),
+		onError: handleApiError,
+	});
+	const days = options?.activityLogRetentionDays ?? null;
+
+	return (
+		<EditableField
+			isLoading={false}
+			label={t("label")}
+			description={t("description", RETENTION)}
+			size="sm"
+			placeholder={days ? t("value", { days }) : t("keepAll")}
+			fields={[
+				{
+					name: "retentionDays",
+					type: "number",
+					placeholder: t("keepAll"),
+					value: days ?? "",
+				},
+			]}
+			submitHandler={async (values) => {
+				const text = String(values.retentionDays ?? "").trim();
+				const value = text === "" ? null : Number(text);
+				if (
+					value !== null &&
+					(!/^\d+$/.test(text) || value < RETENTION.min || value > RETENTION.max)
+				) {
+					toast.error(t("invalid", RETENTION));
+					return false;
+				}
+				// A shorter retention deletes entries for good, so it asks first.
+				if (value !== null && (days === null || value < days)) {
+					callModal({
+						title: t("confirm.title"),
+						description: t("confirm.description", { days: value }),
+						yesAction: () => updateSettings({ retentionDays: value }),
+					});
+				} else {
+					updateSettings({ retentionDays: value });
+				}
+				return true;
+			}}
+		/>
+	);
 };
 
 /** Every activity log row on the instance, for admins. */
@@ -59,6 +125,7 @@ const ActivityLogTable = () => {
 
 	return (
 		<div className="space-y-4">
+			<RetentionSetting />
 			<p className="text-sm text-gray-500">{t("description")}</p>
 			<div className="flex flex-wrap items-end gap-3">
 				<label className="form-control">
@@ -186,27 +253,47 @@ const ActivityLogTable = () => {
 					</table>
 				</div>
 			)}
-			{paging.page > 0 || data?.nextCursor ? (
-				<div className="flex items-center justify-end gap-2 text-xs text-base-content/70">
-					<button
-						type="button"
-						className="btn btn-primary btn-outline btn-xs"
-						onClick={paging.previous}
-						disabled={paging.page <= 0 || isPlaceholderData}
-					>
-						{p("previous")}
-					</button>
-					<span>{p("pageOnly", { page: paging.page + 1 })}</span>
-					<button
-						type="button"
-						className="btn btn-primary btn-outline btn-xs"
-						onClick={() => paging.next(data?.nextCursor)}
-						disabled={!data?.nextCursor || isPlaceholderData}
-					>
-						{p("next")}
-					</button>
-				</div>
-			) : null}
+			<div className="flex items-center justify-between gap-4 text-xs text-base-content/70">
+				<span>
+					{logs.length > 0
+						? p("range", {
+								from: paging.page * PAGE_SIZE + 1,
+								to: paging.page * PAGE_SIZE + logs.length,
+								total: String(data?.total ?? 0),
+							})
+						: null}
+				</span>
+				{paging.page > 0 || data?.nextCursor ? (
+					<div className="flex items-center gap-2">
+						<button
+							type="button"
+							className="btn btn-primary btn-outline btn-xs"
+							onClick={paging.previous}
+							disabled={paging.page <= 0 || isPlaceholderData}
+						>
+							{p("previous")}
+						</button>
+						<span>
+							{p("page", {
+								page: paging.page + 1,
+								// rows written while paging can make the count lag the page
+								pages: Math.max(
+									Math.ceil((data?.total ?? 0) / PAGE_SIZE),
+									paging.page + 1,
+								),
+							})}
+						</span>
+						<button
+							type="button"
+							className="btn btn-primary btn-outline btn-xs"
+							onClick={() => paging.next(data?.nextCursor)}
+							disabled={!data?.nextCursor || isPlaceholderData}
+						>
+							{p("next")}
+						</button>
+					</div>
+				) : null}
+			</div>
 		</div>
 	);
 };

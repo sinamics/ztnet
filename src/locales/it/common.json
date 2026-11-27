@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Modifiche effettuate dagli utenti in tutta l'istanza, le più recenti per prime. Le voci personali provengono da reti che non appartengono a un'organizzazione.",
+			"description": "Modifiche effettuate dagli utenti in tutta l'istanza, le più recenti per prime. Le voci senza organizzazione provengono da reti personali e impostazioni dell'istanza.",
+			"retention": {
+				"label": "Conservazione",
+				"description": "Le voci più vecchie di questo numero di giorni vengono eliminate ogni notte. Lascia vuoto per conservare tutte le voci. Da {min} a {max} giorni.",
+				"value": "{days} giorni",
+				"keepAll": "Conserva per sempre",
+				"invalid": "Inserisci un numero intero da {min} a {max} oppure lascia il campo vuoto.",
+				"confirm": {
+					"title": "Eliminare le voci più vecchie?",
+					"description": "Tutte le voci più vecchie di {days} giorni vengono eliminate ora e non possono essere ripristinate. Continuare?"
+				}
+			},
 			"filters": {
 				"organization": "Organizzazione",
 				"user": "Utente",
@@ -1050,7 +1061,7 @@
 				"organization": "Organizzazione",
 				"action": "Azione"
 			},
-			"personal": "Personale",
+			"personal": "Nessuna organizzazione",
 			"empty": "Nessuna attività è stata ancora registrata.",
 			"emptyFiltered": "Nessuna voce corrisponde ai filtri."
 		}

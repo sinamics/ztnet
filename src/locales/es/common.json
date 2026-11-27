@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Cambios realizados por los usuarios en toda la instancia, los más recientes primero. Las entradas personales provienen de redes que no pertenecen a una organización.",
+			"description": "Cambios realizados por los usuarios en toda la instancia, los más recientes primero. Las entradas sin organización provienen de redes personales y de la configuración de la instancia.",
+			"retention": {
+				"label": "Retención",
+				"description": "Las entradas con más de estos días se eliminan cada noche. Déjelo vacío para conservar todas las entradas. De {min} a {max} días.",
+				"value": "{days} días",
+				"keepAll": "Conservar siempre",
+				"invalid": "Introduzca un número entero de {min} a {max} o deje el campo vacío.",
+				"confirm": {
+					"title": "¿Eliminar entradas antiguas?",
+					"description": "Todas las entradas con más de {days} días se eliminan ahora y no se pueden restaurar. ¿Continuar?"
+				}
+			},
 			"filters": {
 				"organization": "Organización",
 				"user": "Usuario",
@@ -1050,7 +1061,7 @@
 				"organization": "Organización",
 				"action": "Acción"
 			},
-			"personal": "Personal",
+			"personal": "Sin organización",
 			"empty": "Aún no se ha registrado ninguna actividad.",
 			"emptyFiltered": "Ninguna entrada coincide con los filtros."
 		}

@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Änderungen der Benutzer in der gesamten Instanz, neueste zuerst. Persönliche Einträge stammen aus Netzwerken, die keiner Organisation gehören.",
+			"description": "Änderungen der Benutzer in der gesamten Instanz, neueste zuerst. Einträge ohne Organisation stammen aus persönlichen Netzwerken und Instanzeinstellungen.",
+			"retention": {
+				"label": "Aufbewahrung",
+				"description": "Einträge, die älter als diese Anzahl Tage sind, werden jede Nacht gelöscht. Leer lassen, um alle Einträge zu behalten. {min} bis {max} Tage.",
+				"value": "{days} Tage",
+				"keepAll": "Für immer behalten",
+				"invalid": "Geben Sie eine ganze Zahl von {min} bis {max} ein oder lassen Sie das Feld leer.",
+				"confirm": {
+					"title": "Ältere Einträge löschen?",
+					"description": "Alle Einträge, die älter als {days} Tage sind, werden jetzt gelöscht und können nicht wiederhergestellt werden. Fortfahren?"
+				}
+			},
 			"filters": {
 				"organization": "Organisation",
 				"user": "Benutzer",
@@ -1050,7 +1061,7 @@
 				"organization": "Organisation",
 				"action": "Aktion"
 			},
-			"personal": "Persönlich",
+			"personal": "Keine Organisation",
 			"empty": "Es wurde noch keine Aktivität protokolliert.",
 			"emptyFiltered": "Keine Einträge entsprechen den Filtern."
 		}

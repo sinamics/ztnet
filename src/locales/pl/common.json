@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Zmiany wprowadzone przez użytkowników w całej instancji, od najnowszych. Wpisy osobiste pochodzą z sieci, które nie należą do żadnej organizacji.",
+			"description": "Zmiany wprowadzone przez użytkowników w całej instancji, od najnowszych. Wpisy bez organizacji pochodzą z sieci osobistych i ustawień instancji.",
+			"retention": {
+				"label": "Przechowywanie",
+				"description": "Wpisy starsze niż podana liczba dni są usuwane każdej nocy. Pozostaw puste, aby zachować wszystkie wpisy. Od {min} do {max} dni.",
+				"value": "{days} dni",
+				"keepAll": "Przechowuj zawsze",
+				"invalid": "Wpisz liczbę całkowitą od {min} do {max} lub pozostaw pole puste.",
+				"confirm": {
+					"title": "Usunąć starsze wpisy?",
+					"description": "Wszystkie wpisy starsze niż {days} dni zostaną teraz usunięte i nie będzie można ich przywrócić. Kontynuować?"
+				}
+			},
 			"filters": {
 				"organization": "Organizacja",
 				"user": "Użytkownik",
@@ -1050,7 +1061,7 @@
 				"organization": "Organizacja",
 				"action": "Akcja"
 			},
-			"personal": "Osobiste",
+			"personal": "Brak organizacji",
 			"empty": "Nie zarejestrowano jeszcze żadnej aktywności.",
 			"emptyFiltered": "Żaden wpis nie pasuje do filtrów."
 		}

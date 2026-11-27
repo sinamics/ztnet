@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Endringer gjort av brukere i hele instansen, nyeste først. Personlige oppføringer kommer fra nettverk som ikke tilhører en organisasjon.",
+			"description": "Endringer gjort av brukere i hele instansen, nyeste først. Oppføringer uten organisasjon kommer fra personlige nettverk og instansinnstillinger.",
+			"retention": {
+				"label": "Oppbevaring",
+				"description": "Oppføringer eldre enn dette antallet dager slettes hver natt. La feltet stå tomt for å beholde alle oppføringer. {min} til {max} dager.",
+				"value": "{days} dager",
+				"keepAll": "Behold for alltid",
+				"invalid": "Skriv inn et heltall fra {min} til {max}, eller la feltet stå tomt.",
+				"confirm": {
+					"title": "Slette eldre oppføringer?",
+					"description": "Alle oppføringer eldre enn {days} dager slettes nå og kan ikke gjenopprettes. Fortsette?"
+				}
+			},
 			"filters": {
 				"organization": "Organisasjon",
 				"user": "Bruker",
@@ -1050,7 +1061,7 @@
 				"organization": "Organisasjon",
 				"action": "Handling"
 			},
-			"personal": "Personlig",
+			"personal": "Ingen organisasjon",
 			"empty": "Ingen aktivitet er logget ennå.",
 			"emptyFiltered": "Ingen oppføringer samsvarer med filtrene."
 		}

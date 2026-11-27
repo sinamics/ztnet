@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "整个实例中用户所做的更改，最新的在前。个人条目来自不属于任何组织的网络。",
+			"description": "整个实例中用户所做的更改，最新的在前。没有组织的条目来自个人网络和实例设置。",
+			"retention": {
+				"label": "保留期限",
+				"description": "早于此天数的条目每晚删除。留空则保留所有条目。{min} 至 {max} 天。",
+				"value": "{days} 天",
+				"keepAll": "永久保留",
+				"invalid": "请输入 {min} 至 {max} 之间的整数，或留空。",
+				"confirm": {
+					"title": "删除较早的条目？",
+					"description": "所有早于 {days} 天的条目将立即删除且无法恢复。是否继续？"
+				}
+			},
 			"filters": {
 				"organization": "组织",
 				"user": "用户",
@@ -1050,7 +1061,7 @@
 				"organization": "组织",
 				"action": "操作"
 			},
-			"personal": "个人",
+			"personal": "无组织",
 			"empty": "尚未记录任何活动。",
 			"emptyFiltered": "没有符合筛选条件的条目。"
 		}

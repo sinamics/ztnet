@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "整個實例中使用者所做的變更，最新的在前。個人條目來自不屬於任何組織的網路。",
+			"description": "整個實例中使用者所做的變更，最新的在前。沒有組織的條目來自個人網路和實例設定。",
+			"retention": {
+				"label": "保留期限",
+				"description": "早於此天數的條目每晚刪除。留空則保留所有條目。{min} 至 {max} 天。",
+				"value": "{days} 天",
+				"keepAll": "永久保留",
+				"invalid": "請輸入 {min} 至 {max} 之間的整數，或留空。",
+				"confirm": {
+					"title": "刪除較早的條目？",
+					"description": "所有早於 {days} 天的條目將立即刪除且無法復原。是否繼續？"
+				}
+			},
 			"filters": {
 				"organization": "組織",
 				"user": "使用者",
@@ -1050,7 +1061,7 @@
 				"organization": "組織",
 				"action": "操作"
 			},
-			"personal": "個人",
+			"personal": "無組織",
 			"empty": "尚未記錄任何活動。",
 			"emptyFiltered": "沒有符合篩選條件的條目。"
 		}

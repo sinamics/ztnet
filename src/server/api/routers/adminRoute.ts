@@ -3,7 +3,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import * as ztController from "~/utils/ztApi";
 import { mailTemplateMap, sendMailWithTemplate } from "~/utils/mail";
-import { type GlobalOptions, Role } from "@prisma/client";
+import { type GlobalOptions, type Prisma, Role } from "@prisma/client";
 import { throwError } from "~/server/helpers/errorHandler";
 import type { ZTControllerNodeStatus } from "~/types/ztController";
 import { execFileSync, execSync } from "node:child_process";
@@ -39,6 +39,10 @@ import {
 	wakeMemberStatusSampler,
 } from "~/server/api/services/memberStatusLogService";
 import { USER_SECRET_FIELDS } from "~/server/api/userFields";
+import {
+	ACTIVITY_LOG_RETENTION_LIMITS,
+	pruneActivityLogEntries,
+} from "~/server/api/services/activityLogService";
 import {
 	getDefaultLocalControllerUrl,
 	getStoredControllerOptions,
@@ -2371,62 +2375,100 @@ export const adminRouter = createTRPCRouter({
 				MEMBER: { action: { contains: "member", mode: "insensitive" } },
 				ORGANIZATION: { action: { contains: "organization", mode: "insensitive" } },
 			} as const;
-			const rows = await ctx.prisma.activityLog.findMany({
-				where: {
-					AND: [
-						input.organizationId !== undefined
-							? { organizationId: input.organizationId }
-							: {},
-						input.userId ? { performedById: input.userId } : {},
-						input.actionType ? actionTypes[input.actionType] : {},
-						input.from || input.to
-							? { createdAt: { gte: input.from, lt: input.to } }
-							: {},
-						search
-							? {
-									OR: [
-										{ action: { contains: search, mode: "insensitive" } },
-										{
-											performedBy: { name: { contains: search, mode: "insensitive" } },
-										},
-										{
-											performedBy: {
-												email: { contains: search, mode: "insensitive" },
-											},
-										},
-									],
-								}
-							: {},
-						cursor
-							? {
-									OR: [
-										{ createdAt: { lt: cursor.createdAt } },
-										{ createdAt: cursor.createdAt, id: { lt: cursor.id } },
-									],
-								}
-							: {},
-					],
-				},
-				orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-				// one extra row tells whether there is a next page
-				take: input.pageSize + 1,
-				select: {
-					id: true,
-					action: true,
-					createdAt: true,
-					performedBy: { select: { id: true, name: true, email: true } },
-					organization: { select: { id: true, orgName: true } },
-				},
-			});
+			const filters: Prisma.ActivityLogWhereInput[] = [
+				input.organizationId !== undefined
+					? { organizationId: input.organizationId }
+					: {},
+				input.userId ? { performedById: input.userId } : {},
+				input.actionType ? actionTypes[input.actionType] : {},
+				input.from || input.to ? { createdAt: { gte: input.from, lt: input.to } } : {},
+				search
+					? {
+							OR: [
+								{ action: { contains: search, mode: "insensitive" } },
+								{
+									performedBy: { name: { contains: search, mode: "insensitive" } },
+								},
+								{
+									performedBy: {
+										email: { contains: search, mode: "insensitive" },
+									},
+								},
+							],
+						}
+					: {},
+			];
+			const [rows, total] = await Promise.all([
+				ctx.prisma.activityLog.findMany({
+					where: {
+						AND: [
+							...filters,
+							cursor
+								? {
+										OR: [
+											{ createdAt: { lt: cursor.createdAt } },
+											{ createdAt: cursor.createdAt, id: { lt: cursor.id } },
+										],
+									}
+								: {},
+						],
+					},
+					orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+					// one extra row tells whether there is a next page
+					take: input.pageSize + 1,
+					select: {
+						id: true,
+						action: true,
+						createdAt: true,
+						performedBy: { select: { id: true, name: true, email: true } },
+						organization: { select: { id: true, orgName: true } },
+					},
+				}),
+				// matching rows on every page, for "page x of y"
+				ctx.prisma.activityLog.count({ where: { AND: filters } }),
+			]);
 
 			const logs = rows.slice(0, input.pageSize);
 			const last = logs[logs.length - 1];
 			return {
 				logs,
+				total,
 				nextCursor:
 					rows.length > input.pageSize
 						? { createdAt: last.createdAt, id: last.id }
 						: null,
 			};
+		}),
+	/** Sets how long activity log rows are kept. Null keeps every row. */
+	updateActivityLogSettings: adminRoleProtectedRoute
+		.input(
+			z.object({
+				retentionDays: z
+					.number()
+					.int()
+					.min(ACTIVITY_LOG_RETENTION_LIMITS.min)
+					.max(ACTIVITY_LOG_RETENTION_LIMITS.max)
+					.nullable(),
+			}),
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { activityLogRetentionDays } = await ctx.prisma.globalOptions.update({
+				where: { id: 1 },
+				data: { activityLogRetentionDays: input.retentionDays },
+				select: { activityLogRetentionDays: true },
+			});
+			// A shorter retention applies now, not at the next nightly prune.
+			const deleted = await pruneActivityLogEntries(new Date(), activityLogRetentionDays);
+			// Written after the prune so it survives it: a shortened log always
+			// shows who shortened it.
+			await ctx.prisma.activityLog.create({
+				data: {
+					action: activityLogRetentionDays
+						? `Set activity log retention to ${activityLogRetentionDays} days, deleted ${deleted} older entries`
+						: "Set activity log retention to keep every entry",
+					performedById: ctx.session.user.id,
+				},
+			});
+			return { retentionDays: activityLogRetentionDays, deleted };
 		}),
 });

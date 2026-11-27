@@ -38,6 +38,10 @@ model GlobalOptions {
   // Also store Direct <-> Relay changes. Off: only changes to or from Offline.
   memberStatusLogConnectionChanges Boolean @default(false)
 
+  // Activity log rows older than this many days are deleted every night.
+  // Null keeps every row.
+  activityLogRetentionDays Int?
+
   // Email configuration
   smtpHost                           String?
   smtpPort                           String  @default("587")

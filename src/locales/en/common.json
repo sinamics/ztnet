@@ -1028,7 +1028,18 @@
 			}
 		},
 		"activityLog": {
-			"description": "Changes made by users across the instance, newest first. Personal entries come from networks that do not belong to an organization.",
+			"description": "Changes made by users across the instance, newest first. Entries without an organization come from personal networks and instance settings.",
+			"retention": {
+				"label": "Retention",
+				"description": "Entries older than this many days are deleted every night. Leave empty to keep every entry. {min} to {max} days.",
+				"value": "{days} days",
+				"keepAll": "Keep forever",
+				"invalid": "Enter a whole number from {min} to {max}, or leave the field empty.",
+				"confirm": {
+					"title": "Delete older entries?",
+					"description": "Every entry older than {days} days is deleted now and cannot be restored. Continue?"
+				}
+			},
 			"filters": {
 				"organization": "Organization",
 				"user": "User",
@@ -1050,7 +1061,7 @@
 				"organization": "Organization",
 				"action": "Action"
 			},
-			"personal": "Personal",
+			"personal": "No organization",
 			"empty": "No activity has been logged yet.",
 			"emptyFiltered": "No entries match the filters."
 		}

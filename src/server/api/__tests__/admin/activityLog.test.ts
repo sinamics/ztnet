@@ -1,6 +1,7 @@
 /**
  * The instance wide activity log shows every organization's and every personal
- * network's history, so only the instance admin may read it.
+ * network's history, so only the instance admin may read it or change how
+ * long it is kept.
  */
 jest.mock("~/utils/ztApi", () => ({ ZT_FOLDER: "/var/lib/zerotier-one" }));
 jest.mock("~/utils/mail", () => ({
@@ -8,14 +9,29 @@ jest.mock("~/utils/mail", () => ({
 	mailTemplateMap: {},
 }));
 jest.mock("~/server/db", () => ({
-	prisma: { activityLog: { findMany: jest.fn() } },
+	prisma: {
+		activityLog: {
+			findMany: jest.fn(),
+			count: jest.fn(),
+			deleteMany: jest.fn(),
+			create: jest.fn(),
+		},
+		globalOptions: { findFirst: jest.fn(), update: jest.fn() },
+	},
 }));
 
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import type { Session } from "~/lib/authTypes";
+import { pruneActivityLogEntries } from "~/server/api/services/activityLogService";
 
 const findMany = prisma.activityLog.findMany as jest.Mock;
+const deleteMany = prisma.activityLog.deleteMany as jest.Mock;
+const createLog = prisma.activityLog.create as jest.Mock;
+const countLogs = prisma.activityLog.count as jest.Mock;
+const findOptions = prisma.globalOptions.findFirst as jest.Mock;
+const updateOptions = prisma.globalOptions.update as jest.Mock;
+const DAY = 24 * 60 * 60 * 1000;
 
 const callerAs = (role: "ADMIN" | "USER" | null) =>
 	appRouter.createCaller({
@@ -36,6 +52,17 @@ const row = (id: number, createdAt: string) => ({
 
 beforeEach(() => {
 	findMany.mockReset().mockResolvedValue([]);
+	deleteMany
+		.mockReset()
+		.mockImplementation(({ where }) => Promise.resolve({ count: where.id.in.length }));
+	createLog.mockReset().mockResolvedValue({});
+	countLogs.mockReset().mockResolvedValue(0);
+	findOptions.mockReset().mockResolvedValue({ activityLogRetentionDays: null });
+	updateOptions
+		.mockReset()
+		.mockImplementation(({ data }) =>
+			Promise.resolve({ activityLogRetentionDays: data.activityLogRetentionDays }),
+		);
 });
 
 describe("admin.getActivityLog", () => {
@@ -77,6 +104,10 @@ describe("admin.getActivityLog", () => {
 		});
 		const conditions = findMany.mock.calls[1][0].where.AND;
 		expect(conditions).toContainEqual({ organizationId: "org1" });
+		// the total counts the same filtered rows
+		expect(countLogs.mock.calls[1][0].where.AND).toContainEqual({
+			organizationId: "org1",
+		});
 		const search = conditions.find((condition: { OR?: unknown[] }) =>
 			condition.OR?.some((part) => "performedBy" in (part as object)),
 		);
@@ -122,7 +153,9 @@ describe("admin.getActivityLog", () => {
 			row(1, "2026-11-27T08:00:00Z"),
 		]);
 
+		countLogs.mockResolvedValue(3);
 		const first = await callerAs("ADMIN").admin.getActivityLog({ pageSize: 2 });
+		expect(first.total).toBe(3);
 		expect(first.logs.map((log) => log.id)).toEqual([3, 2]);
 		expect(first.nextCursor).toEqual({
 			createdAt: new Date("2026-11-27T09:00:00Z"),
@@ -135,11 +168,114 @@ describe("admin.getActivityLog", () => {
 			cursor: first.nextCursor,
 		});
 		expect(second.nextCursor).toBeNull();
+		// the total counts every page, so it ignores the cursor
+		expect(countLogs.mock.calls[1][0].where.AND).not.toContainEqual(
+			findMany.mock.calls[1][0].where.AND.at(-1),
+		);
 		expect(findMany.mock.calls[1][0].where.AND).toContainEqual({
 			OR: [
 				{ createdAt: { lt: new Date("2026-11-27T09:00:00Z") } },
 				{ createdAt: new Date("2026-11-27T09:00:00Z"), id: { lt: 2 } },
 			],
 		});
+	});
+});
+
+describe("admin.updateActivityLogSettings", () => {
+	it("is refused for a regular user without changing or deleting anything", async () => {
+		await expect(
+			callerAs("USER").admin.updateActivityLogSettings({ retentionDays: 1 }),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+		expect(updateOptions).not.toHaveBeenCalled();
+		expect(findMany).not.toHaveBeenCalled();
+		expect(deleteMany).not.toHaveBeenCalled();
+		expect(createLog).not.toHaveBeenCalled();
+	});
+
+	it.each([0, 3651, 1.5])("rejects a retention of %s days", async (retentionDays) => {
+		await expect(
+			callerAs("ADMIN").admin.updateActivityLogSettings({ retentionDays }),
+		).rejects.toMatchObject({ code: "BAD_REQUEST" });
+		expect(updateOptions).not.toHaveBeenCalled();
+		expect(createLog).not.toHaveBeenCalled();
+	});
+
+	it("saves the retention, prunes older rows and logs the change after the prune", async () => {
+		findMany.mockResolvedValueOnce([{ id: 1 }, { id: 2 }]);
+		const before = Date.now();
+
+		const result = await callerAs("ADMIN").admin.updateActivityLogSettings({
+			retentionDays: 30,
+		});
+
+		expect(updateOptions.mock.calls[0][0].data).toEqual({ activityLogRetentionDays: 30 });
+		expect(result).toEqual({ retentionDays: 30, deleted: 2 });
+		const cutoff: Date = findMany.mock.calls[0][0].where.createdAt.lt;
+		expect(before - cutoff.getTime()).toBeGreaterThanOrEqual(30 * DAY - 1000);
+		expect(before - cutoff.getTime()).toBeLessThanOrEqual(30 * DAY + 1000);
+		expect(createLog).toHaveBeenCalledWith({
+			data: {
+				action: "Set activity log retention to 30 days, deleted 2 older entries",
+				performedById: "id-ADMIN",
+			},
+		});
+		expect(createLog.mock.invocationCallOrder[0]).toBeGreaterThan(
+			deleteMany.mock.invocationCallOrder[0],
+		);
+	});
+
+	it("keeps every row when the retention is cleared, and logs that", async () => {
+		const result = await callerAs("ADMIN").admin.updateActivityLogSettings({
+			retentionDays: null,
+		});
+
+		expect(updateOptions.mock.calls[0][0].data).toEqual({
+			activityLogRetentionDays: null,
+		});
+		expect(result).toEqual({ retentionDays: null, deleted: 0 });
+		expect(deleteMany).not.toHaveBeenCalled();
+		expect(createLog.mock.calls[0][0].data.action).toBe(
+			"Set activity log retention to keep every entry",
+		);
+	});
+});
+
+describe("pruneActivityLogEntries", () => {
+	const now = new Date("2026-11-27T12:00:00Z");
+
+	it("deletes nothing while no retention is set", async () => {
+		expect(await pruneActivityLogEntries(now)).toBe(0);
+		expect(findMany).not.toHaveBeenCalled();
+		expect(deleteMany).not.toHaveBeenCalled();
+	});
+
+	it("deletes rows older than the saved retention, oldest first, in batches", async () => {
+		findOptions.mockResolvedValue({ activityLogRetentionDays: 7 });
+		findMany
+			.mockResolvedValueOnce([{ id: 1 }, { id: 2 }])
+			.mockResolvedValueOnce([{ id: 3 }, { id: 4 }])
+			.mockResolvedValueOnce([{ id: 5 }]);
+
+		expect(await pruneActivityLogEntries(now, undefined, 2)).toBe(5);
+
+		expect(findMany).toHaveBeenCalledTimes(3);
+		expect(findMany.mock.calls[0][0]).toMatchObject({
+			where: { createdAt: { lt: new Date("2026-11-20T12:00:00Z") } },
+			orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+			take: 2,
+		});
+		expect(deleteMany.mock.calls.map(([args]) => args.where.id.in)).toEqual([
+			[1, 2],
+			[3, 4],
+			[5],
+		]);
+	});
+
+	it("stops when a full batch is followed by an empty one", async () => {
+		findOptions.mockResolvedValue({ activityLogRetentionDays: 7 });
+		findMany.mockResolvedValueOnce([{ id: 1 }, { id: 2 }]).mockResolvedValueOnce([]);
+
+		expect(await pruneActivityLogEntries(now, undefined, 2)).toBe(2);
+		expect(deleteMany).toHaveBeenCalledTimes(1);
 	});
 });

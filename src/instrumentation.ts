@@ -18,5 +18,10 @@ export async function register() {
 		if (cronTasksModule.pruneMemberStatusLog) {
 			cronTasksModule.pruneMemberStatusLog();
 		}
+
+		// activity log: daily prune, does nothing until an admin sets a retention
+		if (cronTasksModule.pruneActivityLog) {
+			cronTasksModule.pruneActivityLog();
+		}
 	}
 }
