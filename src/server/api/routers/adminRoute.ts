@@ -2338,4 +2338,95 @@ export const adminRouter = createTRPCRouter({
 		const { count } = await ctx.prisma.memberStatusEvent.deleteMany({});
 		return { deleted: count };
 	}),
+	/**
+	 * Every activity log row on the instance, newest first. Rows without an
+	 * organization come from personal networks and are shown nowhere else.
+	 */
+	getActivityLog: adminRoleProtectedRoute
+		.input(
+			z.object({
+				// undefined: every row, null: rows without an organization
+				organizationId: z.string().nullish(),
+				userId: z.string().optional(),
+				actionType: z.enum(["NETWORK", "MEMBER", "ORGANIZATION"]).optional(),
+				from: z.date().optional(),
+				// exclusive
+				to: z.date().optional(),
+				// matches the action text and the name or email of who did it
+				search: z.string().trim().max(100).optional(),
+				// last row of the previous page
+				cursor: z.object({ createdAt: z.date(), id: z.number().int() }).nullish(),
+				pageSize: z.number().int().min(1).max(100).default(25),
+			}),
+		)
+		.query(async ({ ctx, input }) => {
+			const { cursor, search } = input;
+			// shortcut: actions are free text, so the type is a keyword match. Replace
+			// with a type column if the log ever stores one.
+			const actionTypes = {
+				NETWORK: {
+					action: { contains: "network", mode: "insensitive" },
+					NOT: { action: { contains: "member", mode: "insensitive" } },
+				},
+				MEMBER: { action: { contains: "member", mode: "insensitive" } },
+				ORGANIZATION: { action: { contains: "organization", mode: "insensitive" } },
+			} as const;
+			const rows = await ctx.prisma.activityLog.findMany({
+				where: {
+					AND: [
+						input.organizationId !== undefined
+							? { organizationId: input.organizationId }
+							: {},
+						input.userId ? { performedById: input.userId } : {},
+						input.actionType ? actionTypes[input.actionType] : {},
+						input.from || input.to
+							? { createdAt: { gte: input.from, lt: input.to } }
+							: {},
+						search
+							? {
+									OR: [
+										{ action: { contains: search, mode: "insensitive" } },
+										{
+											performedBy: { name: { contains: search, mode: "insensitive" } },
+										},
+										{
+											performedBy: {
+												email: { contains: search, mode: "insensitive" },
+											},
+										},
+									],
+								}
+							: {},
+						cursor
+							? {
+									OR: [
+										{ createdAt: { lt: cursor.createdAt } },
+										{ createdAt: cursor.createdAt, id: { lt: cursor.id } },
+									],
+								}
+							: {},
+					],
+				},
+				orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+				// one extra row tells whether there is a next page
+				take: input.pageSize + 1,
+				select: {
+					id: true,
+					action: true,
+					createdAt: true,
+					performedBy: { select: { id: true, name: true, email: true } },
+					organization: { select: { id: true, orgName: true } },
+				},
+			});
+
+			const logs = rows.slice(0, input.pageSize);
+			const last = logs[logs.length - 1];
+			return {
+				logs,
+				nextCursor:
+					rows.length > input.pageSize
+						? { createdAt: last.createdAt, id: last.id }
+						: null,
+			};
+		}),
 });

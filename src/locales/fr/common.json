@@ -135,6 +135,7 @@
 		"controller": "Contrôleur ZT",
 		"organization": "Organisation",
 		"backuprestore": "Sauvegardes",
+		"activityLog": "Journal d'activité",
 		"account": "Compte",
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "La base de données a été restaurée. Vous devrez peut-être actualiser la page pour voir les données mises à jour.",
 				"gotItButton": "Compris !"
 			}
+		},
+		"activityLog": {
+			"description": "Modifications effectuées par les utilisateurs sur toute l'instance, les plus récentes en premier. Les entrées personnelles proviennent de réseaux qui n'appartiennent à aucune organisation.",
+			"filters": {
+				"organization": "Organisation",
+				"user": "Utilisateur",
+				"actionType": "Type d'action",
+				"from": "Du",
+				"to": "Au",
+				"all": "Toutes",
+				"search": "Rechercher",
+				"searchPlaceholder": "Action, nom d'utilisateur ou e-mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Réseau",
+				"MEMBER": "Membre",
+				"ORGANIZATION": "Organisation"
+			},
+			"columns": {
+				"time": "Heure",
+				"user": "Utilisateur",
+				"organization": "Organisation",
+				"action": "Action"
+			},
+			"personal": "Personnel",
+			"empty": "Aucune activité n'a encore été enregistrée.",
+			"emptyFiltered": "Aucune entrée ne correspond aux filtres."
 		}
 	},
 	"userSettings": {

@@ -135,6 +135,7 @@
 		"controller": "Controlador",
 		"organization": "Organización",
 		"backuprestore": "Respaldos",
+		"activityLog": "Registro de actividad",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "La base de datos ha sido restaurada. Es posible que necesites actualizar la página para ver los datos actualizados.",
 				"gotItButton": "¡Entendido!"
 			}
+		},
+		"activityLog": {
+			"description": "Cambios realizados por los usuarios en toda la instancia, los más recientes primero. Las entradas personales provienen de redes que no pertenecen a una organización.",
+			"filters": {
+				"organization": "Organización",
+				"user": "Usuario",
+				"actionType": "Tipo de acción",
+				"from": "Desde",
+				"to": "Hasta",
+				"all": "Todas",
+				"search": "Buscar",
+				"searchPlaceholder": "Acción, nombre de usuario o correo"
+			},
+			"actionTypes": {
+				"NETWORK": "Red",
+				"MEMBER": "Miembro",
+				"ORGANIZATION": "Organización"
+			},
+			"columns": {
+				"time": "Hora",
+				"user": "Usuario",
+				"organization": "Organización",
+				"action": "Acción"
+			},
+			"personal": "Personal",
+			"empty": "Aún no se ha registrado ninguna actividad.",
+			"emptyFiltered": "Ninguna entrada coincide con los filtros."
 		}
 	},
 	"userSettings": {

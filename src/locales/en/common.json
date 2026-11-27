@@ -135,6 +135,7 @@
 		"controller": "ZT Controller",
 		"organization": "Organization",
 		"backuprestore": "Backup & Restore",
+		"activityLog": "Activity Log",
 		"account": "Account",
 		"user-settings": "User Settings",
 		"logout": "Logout"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "Database has been restored. You may need to refresh the page to see updated data.",
 				"gotItButton": "Got it!"
 			}
+		},
+		"activityLog": {
+			"description": "Changes made by users across the instance, newest first. Personal entries come from networks that do not belong to an organization.",
+			"filters": {
+				"organization": "Organization",
+				"user": "User",
+				"actionType": "Action type",
+				"from": "From",
+				"to": "To",
+				"all": "All",
+				"search": "Search",
+				"searchPlaceholder": "Action, user name or email"
+			},
+			"actionTypes": {
+				"NETWORK": "Network",
+				"MEMBER": "Member",
+				"ORGANIZATION": "Organization"
+			},
+			"columns": {
+				"time": "Time",
+				"user": "User",
+				"organization": "Organization",
+				"action": "Action"
+			},
+			"personal": "Personal",
+			"empty": "No activity has been logged yet.",
+			"emptyFiltered": "No entries match the filters."
 		}
 	},
 	"userSettings": {

@@ -14,6 +14,7 @@ import MetaTags from "~/components/shared/metaTags";
 import Link from "next/link";
 import { api } from "~/utils/api";
 import BackupRestore from "./backuprestore";
+import ActivityLogTable from "~/components/adminPage/activityLog/activityLogTable";
 
 const AdminSettings = ({ orgIds }) => {
 	const { data: globalOptions } = api.settings.getAllOptions.useQuery();
@@ -60,6 +61,11 @@ const AdminSettings = ({ orgIds }) => {
 			name: t("organization"),
 			value: "organization",
 			component: <Organization />,
+		},
+		{
+			name: t("activityLog"),
+			value: "activity-log",
+			component: <ActivityLogTable />,
 		},
 		{
 			name: t("backuprestore"),

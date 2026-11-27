@@ -135,6 +135,7 @@
 		"controller": "ZT Controller",
 		"organization": "Organisation",
 		"backuprestore": "Datensicherung",
+		"activityLog": "Aktivitätsprotokoll",
 		"account": "Konto",
 		"user-settings": "Benutzereinstellungen",
 		"logout": "Abmelden"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "Die Datenbank wurde wiederhergestellt. Möglicherweise müssen Sie die Seite neu laden, um die aktualisierten Daten anzuzeigen.",
 				"gotItButton": "Verstanden!"
 			}
+		},
+		"activityLog": {
+			"description": "Änderungen der Benutzer in der gesamten Instanz, neueste zuerst. Persönliche Einträge stammen aus Netzwerken, die keiner Organisation gehören.",
+			"filters": {
+				"organization": "Organisation",
+				"user": "Benutzer",
+				"actionType": "Aktionstyp",
+				"from": "Von",
+				"to": "Bis",
+				"all": "Alle",
+				"search": "Suche",
+				"searchPlaceholder": "Aktion, Benutzername oder E-Mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Netzwerk",
+				"MEMBER": "Mitglied",
+				"ORGANIZATION": "Organisation"
+			},
+			"columns": {
+				"time": "Zeit",
+				"user": "Benutzer",
+				"organization": "Organisation",
+				"action": "Aktion"
+			},
+			"personal": "Persönlich",
+			"empty": "Es wurde noch keine Aktivität protokolliert.",
+			"emptyFiltered": "Keine Einträge entsprechen den Filtern."
 		}
 	},
 	"userSettings": {

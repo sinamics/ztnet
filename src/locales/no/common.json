@@ -134,6 +134,7 @@
 		"notification": "Varsling",
 		"controller": "ZT Kontroller",
 		"backuprestore": "Sikkerhetskopi",
+		"activityLog": "Aktivitetslogg",
 		"account": "Konto",
 		"organization": "Organisasjon",
 		"user-settings": "Brukerinnstillinger",
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "Databasen har blitt gjenopprettet. Du må kanskje oppdatere siden for å se oppdaterte data.",
 				"gotItButton": "Skjønt!"
 			}
+		},
+		"activityLog": {
+			"description": "Endringer gjort av brukere i hele instansen, nyeste først. Personlige oppføringer kommer fra nettverk som ikke tilhører en organisasjon.",
+			"filters": {
+				"organization": "Organisasjon",
+				"user": "Bruker",
+				"actionType": "Handlingstype",
+				"from": "Fra",
+				"to": "Til",
+				"all": "Alle",
+				"search": "Søk",
+				"searchPlaceholder": "Handling, brukernavn eller e-post"
+			},
+			"actionTypes": {
+				"NETWORK": "Nettverk",
+				"MEMBER": "Medlem",
+				"ORGANIZATION": "Organisasjon"
+			},
+			"columns": {
+				"time": "Tid",
+				"user": "Bruker",
+				"organization": "Organisasjon",
+				"action": "Handling"
+			},
+			"personal": "Personlig",
+			"empty": "Ingen aktivitet er logget ennå.",
+			"emptyFiltered": "Ingen oppføringer samsvarer med filtrene."
 		}
 	},
 	"userSettings": {

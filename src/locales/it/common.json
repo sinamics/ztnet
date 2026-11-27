@@ -135,6 +135,7 @@
 		"controller": "ZT Controller",
 		"organization": "Organizzazione",
 		"backuprestore": "Backup e ripristino",
+		"activityLog": "Registro attività",
 		"account": "Account",
 		"user-settings": "Impostazioni utente",
 		"logout": "Esci"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "Il database è stato ripristinato. Potrebbe essere necessario aggiornare la pagina per vedere i dati aggiornati.",
 				"gotItButton": "Ho capito!"
 			}
+		},
+		"activityLog": {
+			"description": "Modifiche effettuate dagli utenti in tutta l'istanza, le più recenti per prime. Le voci personali provengono da reti che non appartengono a un'organizzazione.",
+			"filters": {
+				"organization": "Organizzazione",
+				"user": "Utente",
+				"actionType": "Tipo di azione",
+				"from": "Dal",
+				"to": "Al",
+				"all": "Tutte",
+				"search": "Cerca",
+				"searchPlaceholder": "Azione, nome utente o email"
+			},
+			"actionTypes": {
+				"NETWORK": "Rete",
+				"MEMBER": "Membro",
+				"ORGANIZATION": "Organizzazione"
+			},
+			"columns": {
+				"time": "Ora",
+				"user": "Utente",
+				"organization": "Organizzazione",
+				"action": "Azione"
+			},
+			"personal": "Personale",
+			"empty": "Nessuna attività è stata ancora registrata.",
+			"emptyFiltered": "Nessuna voce corrisponde ai filtri."
 		}
 	},
 	"userSettings": {

@@ -571,6 +571,8 @@ model ActivityLog {
   performedBy    User          @relation(fields: [performedById], references: [id], onDelete: Cascade)
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt, id])
 }
 
 // To map your data model to the database schema, you need to use the prisma migrate CLI commands:

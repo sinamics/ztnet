@@ -135,6 +135,7 @@
 		"controller": "Kontroler ZT",
 		"organization": "Organizacje",
 		"backuprestore": "Kopie zapasowe",
+		"activityLog": "Dziennik aktywności",
 		"account": "Konto",
 		"user-settings": "Ustawienia konta",
 		"logout": "Wyloguj"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "Baza danych została przywrócona. Może być konieczne odświeżenie strony, aby zobaczyć zaktualizowane dane.",
 				"gotItButton": "Rozumiem!"
 			}
+		},
+		"activityLog": {
+			"description": "Zmiany wprowadzone przez użytkowników w całej instancji, od najnowszych. Wpisy osobiste pochodzą z sieci, które nie należą do żadnej organizacji.",
+			"filters": {
+				"organization": "Organizacja",
+				"user": "Użytkownik",
+				"actionType": "Typ akcji",
+				"from": "Od",
+				"to": "Do",
+				"all": "Wszystkie",
+				"search": "Szukaj",
+				"searchPlaceholder": "Akcja, nazwa użytkownika lub e-mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Sieć",
+				"MEMBER": "Członek",
+				"ORGANIZATION": "Organizacja"
+			},
+			"columns": {
+				"time": "Czas",
+				"user": "Użytkownik",
+				"organization": "Organizacja",
+				"action": "Akcja"
+			},
+			"personal": "Osobiste",
+			"empty": "Nie zarejestrowano jeszcze żadnej aktywności.",
+			"emptyFiltered": "Żaden wpis nie pasuje do filtrów."
 		}
 	},
 	"userSettings": {

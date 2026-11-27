@@ -135,6 +135,7 @@
 		"controller": "控制器",
 		"organization": "组织",
 		"backuprestore": "备份",
+		"activityLog": "活动日志",
 		"account": "账户",
 		"user-settings": "用户设置",
 		"logout": "登出"
@@ -1025,6 +1026,33 @@
 				"databaseRestored": "数据库已恢复。您可能需要刷新页面以查看更新的数据。",
 				"gotItButton": "知道了！"
 			}
+		},
+		"activityLog": {
+			"description": "整个实例中用户所做的更改，最新的在前。个人条目来自不属于任何组织的网络。",
+			"filters": {
+				"organization": "组织",
+				"user": "用户",
+				"actionType": "操作类型",
+				"from": "从",
+				"to": "至",
+				"all": "全部",
+				"search": "搜索",
+				"searchPlaceholder": "操作、用户名或邮箱"
+			},
+			"actionTypes": {
+				"NETWORK": "网络",
+				"MEMBER": "成员",
+				"ORGANIZATION": "组织"
+			},
+			"columns": {
+				"time": "时间",
+				"user": "用户",
+				"organization": "组织",
+				"action": "操作"
+			},
+			"personal": "个人",
+			"empty": "尚未记录任何活动。",
+			"emptyFiltered": "没有符合筛选条件的条目。"
 		}
 	},
 	"userSettings": {
