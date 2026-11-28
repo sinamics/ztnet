@@ -135,6 +135,7 @@
 		"controller": "Controlador",
 		"organization": "Organización",
 		"backuprestore": "Respaldos",
+		"activityLog": "Registro de actividad",
 		"account": "Cuenta",
 		"user-settings": "Ajustes de usuario",
 		"logout": "Cerrar sesión"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "La base de datos ha sido restaurada. Es posible que necesites actualizar la página para ver los datos actualizados.",
 				"gotItButton": "¡Entendido!"
 			}
+		},
+		"activityLog": {
+			"description": "Cambios realizados por los usuarios en toda la instancia, los más recientes primero. Las entradas sin organización provienen de redes personales y de la configuración de la instancia.",
+			"retention": {
+				"label": "Retención",
+				"description": "Las entradas con más de estos días se eliminan cada noche. Déjelo vacío para conservar todas las entradas. De {min} a {max} días.",
+				"value": "{days} días",
+				"keepAll": "Conservar siempre",
+				"invalid": "Introduzca un número entero de {min} a {max} o deje el campo vacío.",
+				"confirm": {
+					"title": "¿Eliminar entradas antiguas?",
+					"description": "Todas las entradas con más de {days} días se eliminan ahora y no se pueden restaurar. ¿Continuar?"
+				}
+			},
+			"filters": {
+				"organization": "Organización",
+				"user": "Usuario",
+				"actionType": "Tipo de acción",
+				"from": "Desde",
+				"to": "Hasta",
+				"all": "Todas",
+				"search": "Buscar",
+				"searchPlaceholder": "Acción, nombre de usuario o correo"
+			},
+			"actionTypes": {
+				"NETWORK": "Red",
+				"MEMBER": "Miembro",
+				"ORGANIZATION": "Organización"
+			},
+			"columns": {
+				"time": "Hora",
+				"user": "Usuario",
+				"organization": "Organización",
+				"action": "Acción"
+			},
+			"personal": "Sin organización",
+			"empty": "Aún no se ha registrado ninguna actividad.",
+			"emptyFiltered": "Ninguna entrada coincide con los filtros."
 		}
 	},
 	"userSettings": {

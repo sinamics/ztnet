@@ -135,6 +135,7 @@
 		"controller": "Kontroler ZT",
 		"organization": "Organizacje",
 		"backuprestore": "Kopie zapasowe",
+		"activityLog": "Dziennik aktywności",
 		"account": "Konto",
 		"user-settings": "Ustawienia konta",
 		"logout": "Wyloguj"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "Baza danych została przywrócona. Może być konieczne odświeżenie strony, aby zobaczyć zaktualizowane dane.",
 				"gotItButton": "Rozumiem!"
 			}
+		},
+		"activityLog": {
+			"description": "Zmiany wprowadzone przez użytkowników w całej instancji, od najnowszych. Wpisy bez organizacji pochodzą z sieci osobistych i ustawień instancji.",
+			"retention": {
+				"label": "Przechowywanie",
+				"description": "Wpisy starsze niż podana liczba dni są usuwane każdej nocy. Pozostaw puste, aby zachować wszystkie wpisy. Od {min} do {max} dni.",
+				"value": "{days} dni",
+				"keepAll": "Przechowuj zawsze",
+				"invalid": "Wpisz liczbę całkowitą od {min} do {max} lub pozostaw pole puste.",
+				"confirm": {
+					"title": "Usunąć starsze wpisy?",
+					"description": "Wszystkie wpisy starsze niż {days} dni zostaną teraz usunięte i nie będzie można ich przywrócić. Kontynuować?"
+				}
+			},
+			"filters": {
+				"organization": "Organizacja",
+				"user": "Użytkownik",
+				"actionType": "Typ akcji",
+				"from": "Od",
+				"to": "Do",
+				"all": "Wszystkie",
+				"search": "Szukaj",
+				"searchPlaceholder": "Akcja, nazwa użytkownika lub e-mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Sieć",
+				"MEMBER": "Członek",
+				"ORGANIZATION": "Organizacja"
+			},
+			"columns": {
+				"time": "Czas",
+				"user": "Użytkownik",
+				"organization": "Organizacja",
+				"action": "Akcja"
+			},
+			"personal": "Brak organizacji",
+			"empty": "Nie zarejestrowano jeszcze żadnej aktywności.",
+			"emptyFiltered": "Żaden wpis nie pasuje do filtrów."
 		}
 	},
 	"userSettings": {

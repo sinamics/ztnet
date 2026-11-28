@@ -135,6 +135,7 @@
 		"controller": "控制器",
 		"organization": "組織",
 		"backuprestore": "備份",
+		"activityLog": "活動日誌",
 		"account": "帳戶",
 		"user-settings": "使用者設定",
 		"logout": "登出"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "資料庫已復原。您可能需要重新整理頁面以查看更新的資料。",
 				"gotItButton": "知道了！"
 			}
+		},
+		"activityLog": {
+			"description": "整個實例中使用者所做的變更，最新的在前。沒有組織的條目來自個人網路和實例設定。",
+			"retention": {
+				"label": "保留期限",
+				"description": "早於此天數的條目每晚刪除。留空則保留所有條目。{min} 至 {max} 天。",
+				"value": "{days} 天",
+				"keepAll": "永久保留",
+				"invalid": "請輸入 {min} 至 {max} 之間的整數，或留空。",
+				"confirm": {
+					"title": "刪除較早的條目？",
+					"description": "所有早於 {days} 天的條目將立即刪除且無法復原。是否繼續？"
+				}
+			},
+			"filters": {
+				"organization": "組織",
+				"user": "使用者",
+				"actionType": "操作類型",
+				"from": "從",
+				"to": "至",
+				"all": "全部",
+				"search": "搜尋",
+				"searchPlaceholder": "操作、使用者名稱或電子郵件"
+			},
+			"actionTypes": {
+				"NETWORK": "網路",
+				"MEMBER": "成員",
+				"ORGANIZATION": "組織"
+			},
+			"columns": {
+				"time": "時間",
+				"user": "使用者",
+				"organization": "組織",
+				"action": "操作"
+			},
+			"personal": "無組織",
+			"empty": "尚未記錄任何活動。",
+			"emptyFiltered": "沒有符合篩選條件的條目。"
 		}
 	},
 	"userSettings": {

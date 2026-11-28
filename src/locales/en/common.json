@@ -135,6 +135,7 @@
 		"controller": "ZT Controller",
 		"organization": "Organization",
 		"backuprestore": "Backup & Restore",
+		"activityLog": "Activity Log",
 		"account": "Account",
 		"user-settings": "User Settings",
 		"logout": "Logout"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "Database has been restored. You may need to refresh the page to see updated data.",
 				"gotItButton": "Got it!"
 			}
+		},
+		"activityLog": {
+			"description": "Changes made by users across the instance, newest first. Entries without an organization come from personal networks and instance settings.",
+			"retention": {
+				"label": "Retention",
+				"description": "Entries older than this many days are deleted every night. Leave empty to keep every entry. {min} to {max} days.",
+				"value": "{days} days",
+				"keepAll": "Keep forever",
+				"invalid": "Enter a whole number from {min} to {max}, or leave the field empty.",
+				"confirm": {
+					"title": "Delete older entries?",
+					"description": "Every entry older than {days} days is deleted now and cannot be restored. Continue?"
+				}
+			},
+			"filters": {
+				"organization": "Organization",
+				"user": "User",
+				"actionType": "Action type",
+				"from": "From",
+				"to": "To",
+				"all": "All",
+				"search": "Search",
+				"searchPlaceholder": "Action, user name or email"
+			},
+			"actionTypes": {
+				"NETWORK": "Network",
+				"MEMBER": "Member",
+				"ORGANIZATION": "Organization"
+			},
+			"columns": {
+				"time": "Time",
+				"user": "User",
+				"organization": "Organization",
+				"action": "Action"
+			},
+			"personal": "No organization",
+			"empty": "No activity has been logged yet.",
+			"emptyFiltered": "No entries match the filters."
 		}
 	},
 	"userSettings": {

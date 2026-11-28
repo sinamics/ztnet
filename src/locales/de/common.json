@@ -135,6 +135,7 @@
 		"controller": "ZT Controller",
 		"organization": "Organisation",
 		"backuprestore": "Datensicherung",
+		"activityLog": "Aktivitätsprotokoll",
 		"account": "Konto",
 		"user-settings": "Benutzereinstellungen",
 		"logout": "Abmelden"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "Die Datenbank wurde wiederhergestellt. Möglicherweise müssen Sie die Seite neu laden, um die aktualisierten Daten anzuzeigen.",
 				"gotItButton": "Verstanden!"
 			}
+		},
+		"activityLog": {
+			"description": "Änderungen der Benutzer in der gesamten Instanz, neueste zuerst. Einträge ohne Organisation stammen aus persönlichen Netzwerken und Instanzeinstellungen.",
+			"retention": {
+				"label": "Aufbewahrung",
+				"description": "Einträge, die älter als diese Anzahl Tage sind, werden jede Nacht gelöscht. Leer lassen, um alle Einträge zu behalten. {min} bis {max} Tage.",
+				"value": "{days} Tage",
+				"keepAll": "Für immer behalten",
+				"invalid": "Geben Sie eine ganze Zahl von {min} bis {max} ein oder lassen Sie das Feld leer.",
+				"confirm": {
+					"title": "Ältere Einträge löschen?",
+					"description": "Alle Einträge, die älter als {days} Tage sind, werden jetzt gelöscht und können nicht wiederhergestellt werden. Fortfahren?"
+				}
+			},
+			"filters": {
+				"organization": "Organisation",
+				"user": "Benutzer",
+				"actionType": "Aktionstyp",
+				"from": "Von",
+				"to": "Bis",
+				"all": "Alle",
+				"search": "Suche",
+				"searchPlaceholder": "Aktion, Benutzername oder E-Mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Netzwerk",
+				"MEMBER": "Mitglied",
+				"ORGANIZATION": "Organisation"
+			},
+			"columns": {
+				"time": "Zeit",
+				"user": "Benutzer",
+				"organization": "Organisation",
+				"action": "Aktion"
+			},
+			"personal": "Keine Organisation",
+			"empty": "Es wurde noch keine Aktivität protokolliert.",
+			"emptyFiltered": "Keine Einträge entsprechen den Filtern."
 		}
 	},
 	"userSettings": {

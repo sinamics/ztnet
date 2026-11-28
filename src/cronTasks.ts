@@ -9,6 +9,7 @@ import {
 	runMemberStatusSampler,
 	samplerState,
 } from "./server/api/services/memberStatusLogService";
+import { pruneActivityLogEntries } from "./server/api/services/activityLogService";
 
 type FakeContext = {
 	session: {
@@ -349,6 +350,23 @@ export const pruneMemberStatusLog = async () => {
 				await pruneMemberStatusEvents();
 			} catch (error) {
 				console.error("cron task pruneMemberStatusLog:", error);
+			}
+		},
+		null,
+		true,
+		"America/Los_Angeles",
+	);
+};
+
+/** Removes activity log rows older than the retention set by the admin, if any. */
+export const pruneActivityLog = async () => {
+	new cron.CronJob(
+		"0 45 3 * * *", // 03:45 every day
+		async () => {
+			try {
+				await pruneActivityLogEntries();
+			} catch (error) {
+				console.error("cron task pruneActivityLog:", error);
 			}
 		},
 		null,

@@ -135,6 +135,7 @@
 		"controller": "Contrôleur ZT",
 		"organization": "Organisation",
 		"backuprestore": "Sauvegardes",
+		"activityLog": "Journal d'activité",
 		"account": "Compte",
 		"user-settings": "Mes réglages",
 		"logout": "Se déconnecter"
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "La base de données a été restaurée. Vous devrez peut-être actualiser la page pour voir les données mises à jour.",
 				"gotItButton": "Compris !"
 			}
+		},
+		"activityLog": {
+			"description": "Modifications effectuées par les utilisateurs sur toute l'instance, les plus récentes en premier. Les entrées sans organisation proviennent des réseaux personnels et des paramètres de l'instance.",
+			"retention": {
+				"label": "Conservation",
+				"description": "Les entrées plus anciennes que ce nombre de jours sont supprimées chaque nuit. Laissez vide pour tout conserver. De {min} à {max} jours.",
+				"value": "{days} jours",
+				"keepAll": "Conserver pour toujours",
+				"invalid": "Saisissez un nombre entier de {min} à {max}, ou laissez le champ vide.",
+				"confirm": {
+					"title": "Supprimer les entrées plus anciennes ?",
+					"description": "Toutes les entrées de plus de {days} jours sont supprimées maintenant et ne peuvent pas être restaurées. Continuer ?"
+				}
+			},
+			"filters": {
+				"organization": "Organisation",
+				"user": "Utilisateur",
+				"actionType": "Type d'action",
+				"from": "Du",
+				"to": "Au",
+				"all": "Toutes",
+				"search": "Rechercher",
+				"searchPlaceholder": "Action, nom d'utilisateur ou e-mail"
+			},
+			"actionTypes": {
+				"NETWORK": "Réseau",
+				"MEMBER": "Membre",
+				"ORGANIZATION": "Organisation"
+			},
+			"columns": {
+				"time": "Heure",
+				"user": "Utilisateur",
+				"organization": "Organisation",
+				"action": "Action"
+			},
+			"personal": "Aucune organisation",
+			"empty": "Aucune activité n'a encore été enregistrée.",
+			"emptyFiltered": "Aucune entrée ne correspond aux filtres."
 		}
 	},
 	"userSettings": {

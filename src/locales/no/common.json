@@ -134,6 +134,7 @@
 		"notification": "Varsling",
 		"controller": "ZT Kontroller",
 		"backuprestore": "Sikkerhetskopi",
+		"activityLog": "Aktivitetslogg",
 		"account": "Konto",
 		"organization": "Organisasjon",
 		"user-settings": "Brukerinnstillinger",
@@ -1025,6 +1026,44 @@
 				"databaseRestored": "Databasen har blitt gjenopprettet. Du må kanskje oppdatere siden for å se oppdaterte data.",
 				"gotItButton": "Skjønt!"
 			}
+		},
+		"activityLog": {
+			"description": "Endringer gjort av brukere i hele instansen, nyeste først. Oppføringer uten organisasjon kommer fra personlige nettverk og instansinnstillinger.",
+			"retention": {
+				"label": "Oppbevaring",
+				"description": "Oppføringer eldre enn dette antallet dager slettes hver natt. La feltet stå tomt for å beholde alle oppføringer. {min} til {max} dager.",
+				"value": "{days} dager",
+				"keepAll": "Behold for alltid",
+				"invalid": "Skriv inn et heltall fra {min} til {max}, eller la feltet stå tomt.",
+				"confirm": {
+					"title": "Slette eldre oppføringer?",
+					"description": "Alle oppføringer eldre enn {days} dager slettes nå og kan ikke gjenopprettes. Fortsette?"
+				}
+			},
+			"filters": {
+				"organization": "Organisasjon",
+				"user": "Bruker",
+				"actionType": "Handlingstype",
+				"from": "Fra",
+				"to": "Til",
+				"all": "Alle",
+				"search": "Søk",
+				"searchPlaceholder": "Handling, brukernavn eller e-post"
+			},
+			"actionTypes": {
+				"NETWORK": "Nettverk",
+				"MEMBER": "Medlem",
+				"ORGANIZATION": "Organisasjon"
+			},
+			"columns": {
+				"time": "Tid",
+				"user": "Bruker",
+				"organization": "Organisasjon",
+				"action": "Handling"
+			},
+			"personal": "Ingen organisasjon",
+			"empty": "Ingen aktivitet er logget ennå.",
+			"emptyFiltered": "Ingen oppføringer samsvarer med filtrene."
 		}
 	},
 	"userSettings": {
