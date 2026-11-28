@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "LOGG",
+			"toggleLogAriaLabel": "Vis eller skjul logger",
 			"logHeader": "Siste 100 aktivitetslogger",
 			"loading": "Henter logger..."
 		},

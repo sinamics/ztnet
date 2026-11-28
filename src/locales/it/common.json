@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "LOG",
+			"toggleLogAriaLabel": "Mostra o nascondi i log",
 			"logHeader": "Ultimi 100 log di attività",
 			"loading": "Recupero dei log..."
 		},

@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "LOG",
+			"toggleLogAriaLabel": "Logs ein- oder ausblenden",
 			"logHeader": "Letzte 100 Aktivitäten",
 			"loading": "Logs laden..."
 		},

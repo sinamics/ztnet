@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "REG",
+			"toggleLogAriaLabel": "Mostrar u ocultar registros",
 			"logHeader": "Últimos 100 registros de actividad",
 			"loading": "Cargando registros..."
 		},

@@ -205,6 +205,29 @@ describe("createOrgNetwork network quota", () => {
 	});
 });
 
+describe("createOrgNetwork activity log", () => {
+	it("logs the created network once, with its id", async () => {
+		const prisma = buildPrisma();
+		await callerFor(prisma).org.createOrgNetwork({ organizationId: ORG });
+		expect(prisma.activityLog.create).toHaveBeenCalledTimes(1);
+		expect(prisma.activityLog.create).toHaveBeenCalledWith({
+			data: {
+				action: `Created a new network: ${NWID}`,
+				performedById: "user-1",
+				organizationId: ORG,
+			},
+		});
+	});
+
+	it("logs nothing when the network was not created", async () => {
+		const prisma = buildPrisma({ maxNetworks: 2, networkCounts: [1, 2] });
+		await expect(
+			callerFor(prisma).org.createOrgNetwork({ organizationId: ORG }),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+		expect(prisma.activityLog.create).not.toHaveBeenCalled();
+	});
+});
+
 describe("transferNetworkOwnership quotas", () => {
 	const transfer = (prisma: ReturnType<typeof buildPrisma>) =>
 		callerFor(prisma).org.transferNetworkOwnership({ organizationId: ORG, nwid: NWID });

@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "日誌",
+			"toggleLogAriaLabel": "顯示或隱藏日誌",
 			"logHeader": "最近100個活動日誌",
 			"loading": "正在取得日誌..."
 		},
