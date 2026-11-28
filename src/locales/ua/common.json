@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "ЛОГ",
+			"toggleLogAriaLabel": "Показати або сховати журнали",
 			"logHeader": "Останні 100 журналів активності",
 			"loading": "Отримання журналів..."
 		},

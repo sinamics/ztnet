@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "LOG",
+			"toggleLogAriaLabel": "Toggle logs",
 			"logHeader": "Last 100 Activity Logs",
 			"loading": "Fetching logs..."
 		},

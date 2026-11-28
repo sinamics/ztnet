@@ -527,15 +527,6 @@ export const organizationRouter = createTRPCRouter({
 			// anything is created on the controller.
 			await enforceQuota(() => assertOrgNetworkQuota(ctx.prisma, input.organizationId));
 
-			// Log the action
-			await ctx.prisma.activityLog.create({
-				data: {
-					action: `Created a new network: ${input.networkName}`,
-					performedById: ctx.session.user.id,
-					organizationId: input.organizationId || null,
-				},
-			});
-
 			// get used IPs from the database
 			const usedCidr = await ctx.prisma.network.findMany({
 				where: {

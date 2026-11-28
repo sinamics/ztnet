@@ -23,20 +23,27 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 	const { open: logsOpen, toggle: toggleLogs } = useLogAsideStore();
 	const {
 		data: organizationLogs,
+		error: logsError,
 		refetch: refetchLogs,
-		isPending: logsLoading,
-	} = api.org.getLogs.useQuery({
-		organizationId: orgId,
-	});
+		isFetching: logsLoading,
+	} = api.org.getLogs.useQuery(
+		{
+			organizationId: orgId,
+		},
+		// orgid is missing while statically optimized pages hydrate. Fetching only
+		// while the panel is open also refreshes the log each time it is opened.
+		{ enabled: !!orgId && logsOpen },
+	);
 	return (
 		<>
 			<button
 				className={`fixed z-10 flex items-center justify-center flex-col text-6xl ${
-					asideOpen ? "right-[calc(16%+1rem)]" : "right-[calc(1%+1rem)]"
+					asideOpen ? "right-[calc(18rem+1rem)]" : "right-[calc(1%+1rem)]"
 				} ${
-					logsOpen ? "bottom-[calc(350px/2+2.5rem)]" : "bottom-[0px]"
+					// bottom-52 matches the panel height (h-52) at every font size
+					logsOpen ? "bottom-52" : "bottom-[0px]"
 				} rounded-full p-2 shadow-md transition-all duration-150`}
-				aria-label="Toggle logs"
+				aria-label={t("logFooter.toggleLogAriaLabel")}
 				onClick={() => toggleLogs()}
 			>
 				{logsOpen ? (
@@ -46,7 +53,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 						viewBox="0 0 24 24"
 						strokeWidth="1.5"
 						stroke="currentColor"
-						className="w-6 h-6 text-white"
+						className="w-6 h-6"
 					>
 						<path
 							strokeLinecap="round"
@@ -61,7 +68,7 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 						viewBox="0 0 24 24"
 						strokeWidth="1.5"
 						stroke="currentColor"
-						className="w-6 h-6 text-white"
+						className="w-6 h-6"
 					>
 						<path
 							strokeLinecap="round"
@@ -72,8 +79,10 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 				)}
 				<p className="text-xs">{t("logFooter.toggleLogLabel")}</p>
 			</button>
+			{/* fixed like the toggle button: absolute put it at the end of a layout taller than the viewport */}
 			<div
-				className={`absolute bg-base-200 shadow-md transition-all duration-150 ${
+				data-testid="logs-panel"
+				className={`fixed z-10 bg-base-200 shadow-md transition-all duration-150 ${
 					sidebarOpen ? "left-64" : "left-0"
 				} ${asideOpen ? "right-72" : "right-0"} ${
 					logsOpen ? "bottom-0 h-52" : "bottom-0 h-0"
@@ -106,10 +115,12 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 					)}
 				</div>
 				<CodeMirror
-					value={formatLogsData(organizationLogs)}
-					maxHeight="210px"
+					value={logsError ? logsError.message : formatLogsData(organizationLogs)}
+					readOnly
+					// panel h-52 (13rem) minus the 1.5rem header row; rem follows the font size setting
+					maxHeight="11.5rem"
 					width="100%"
-					className="custom-scrollbar inner-container"
+					className="custom-scrollbar"
 					theme={okaidia}
 					basicSetup={{
 						lineNumbers: false,
@@ -118,6 +129,8 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 					}}
 				/>
 			</div>
+			{/* The panel is fixed, so reserve its height to keep the page end reachable. */}
+			{logsOpen && <div aria-hidden="true" className="h-52" />}
 		</>
 	);
 };

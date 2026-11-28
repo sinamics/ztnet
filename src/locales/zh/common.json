@@ -1280,6 +1280,7 @@
 		},
 		"logFooter": {
 			"toggleLogLabel": "日志",
+			"toggleLogAriaLabel": "显示或隐藏日志",
 			"logHeader": "最近100个活动日志",
 			"loading": "正在获取日志..."
 		},
