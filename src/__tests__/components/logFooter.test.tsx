@@ -106,7 +106,7 @@ describe("<LogsFooter />", () => {
 		const { container, rerender } = renderFooter();
 		expect(container.querySelector('div[aria-hidden="true"].h-52')).not.toBeNull();
 		expect(codeMirrorProps).toHaveBeenLastCalledWith(
-			expect.objectContaining({ maxHeight: "184px", className: "custom-scrollbar" }),
+			expect.objectContaining({ maxHeight: "11.5rem", className: "custom-scrollbar" }),
 		);
 
 		useLogAsideStore.setState({ open: false });
@@ -122,6 +122,12 @@ describe("<LogsFooter />", () => {
 		renderFooter();
 		expect(screen.getByTestId("logs-panel")).toHaveClass("fixed", "bottom-0", "h-52");
 		expect(screen.getByTestId("logs-panel")).not.toHaveClass("absolute");
+	});
+
+	it("keeps the open toggle above the panel at every font size", () => {
+		renderFooter();
+		// both use the 52 spacing step (13rem), so the panel never covers the toggle
+		expect(screen.getByRole("button", { name: "Toggle logs" })).toHaveClass("bottom-52");
 	});
 
 	it("shows the loading state while a refresh is running", () => {

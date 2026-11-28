@@ -40,7 +40,8 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 				className={`fixed z-10 flex items-center justify-center flex-col text-6xl ${
 					asideOpen ? "right-[calc(18rem+1rem)]" : "right-[calc(1%+1rem)]"
 				} ${
-					logsOpen ? "bottom-[calc(350px/2+2.5rem)]" : "bottom-[0px]"
+					// bottom-52 matches the panel height (h-52) at every font size
+					logsOpen ? "bottom-52" : "bottom-[0px]"
 				} rounded-full p-2 shadow-md transition-all duration-150`}
 				aria-label={t("logFooter.toggleLogAriaLabel")}
 				onClick={() => toggleLogs()}
@@ -116,8 +117,8 @@ export const LogsFooter = ({ sidebarOpen, asideOpen }) => {
 				<CodeMirror
 					value={logsError ? logsError.message : formatLogsData(organizationLogs)}
 					readOnly
-					// panel h-52 (208px) minus the 24px header row
-					maxHeight="184px"
+					// panel h-52 (13rem) minus the 1.5rem header row; rem follows the font size setting
+					maxHeight="11.5rem"
 					width="100%"
 					className="custom-scrollbar"
 					theme={okaidia}
