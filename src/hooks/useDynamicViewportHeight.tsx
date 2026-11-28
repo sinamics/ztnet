@@ -15,7 +15,13 @@ const useDynamicViewportHeight = (dependencies: any[] = []) => {
 	useEffect(() => {
 		updateViewportHeight();
 		window.addEventListener("resize", updateViewportHeight);
-		return () => window.removeEventListener("resize", updateViewportHeight);
+		// The header changes height after the font size class is applied or when it wraps.
+		const observer = new ResizeObserver(updateViewportHeight);
+		if (headerRef.current) observer.observe(headerRef.current);
+		return () => {
+			window.removeEventListener("resize", updateViewportHeight);
+			observer.disconnect();
+		};
 	}, [updateViewportHeight, ...dependencies]);
 
 	return headerRef;
