@@ -84,6 +84,8 @@ export const LayoutAuthenticated = ({ children }: Props): JSX.Element => {
 export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Element => {
 	const { open } = useSidebarStore();
 	const isAdmin = props?.user?.role === "ADMIN";
+	const { fontSize } = useFontSizeStore();
+	const headerRef = useDynamicViewportHeight([fontSize]);
 
 	// Add password change enforcement
 	const { shouldBlockContent } = usePasswordChangeEnforcement();
@@ -111,7 +113,7 @@ export const LayoutAdminAuthenticated = ({ children, props }: Props): JSX.Elemen
 	return (
 		<div className="outer-container">
 			<Modal />
-			<Header />
+			<Header ref={headerRef} />
 			<div className="flex">
 				<aside className={`duration-150 ${open ? "w-64" : "w-0 opacity-0"}`}>
 					<Sidebar />
